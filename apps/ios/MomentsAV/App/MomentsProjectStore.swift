@@ -12,6 +12,7 @@ final class MomentsProjectStore: ObservableObject {
     @Published private(set) var isSavingStory = false
     @Published private(set) var isSavingPreview = false
     @Published private(set) var isSavingFinalRender = false
+    @Published private(set) var isDeletingProject = false
     @Published var errorMessage: String?
 
     private nonisolated(unsafe) let client: ConvexClient?
@@ -333,6 +334,38 @@ final class MomentsProjectStore: ObservableObject {
             return renderJobId != nil
         } catch {
             isSavingFinalRender = false
+            errorMessage = error.localizedDescription
+            return false
+        }
+    }
+
+    func deleteProject(ownerUserId: String, projectId: String) async -> Bool {
+        guard let client else {
+            errorMessage = "Project sync is not configured for this build."
+            return false
+        }
+
+        isDeletingProject = true
+        errorMessage = nil
+
+        do {
+            let _: String? = try await client.mutation(
+                "moments:deleteProject",
+                with: [
+                    "ownerUserId": ownerUserId,
+                    "projectId": projectId,
+                    "deleteSourceMedia": true,
+                    "deleteGeneratedArtifacts": true,
+                    "reason": "user request"
+                ]
+            )
+            isDeletingProject = false
+            activeProject = nil
+            activeWorkspace = nil
+            observeProjects(ownerUserId: ownerUserId)
+            return true
+        } catch {
+            isDeletingProject = false
             errorMessage = error.localizedDescription
             return false
         }

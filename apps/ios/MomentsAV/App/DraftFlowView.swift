@@ -88,6 +88,11 @@ struct DraftFlowView: View {
                     latestPreview: projectStore.activeWorkspace?.artifacts.first { $0.kind == "preview" },
                     finalExport: projectStore.activeWorkspace?.artifacts.first { $0.kind == "final_export" }
                 )
+
+                ProjectDeletionView(project: activeProject) {
+                    createdProjectId = nil
+                    dismiss()
+                }
             }
 
             Section {
