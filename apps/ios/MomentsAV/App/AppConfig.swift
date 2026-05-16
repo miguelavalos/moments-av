@@ -11,6 +11,10 @@ enum AppConfig {
         !avAccountKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
+    static var momentsConvexURL: String {
+        Bundle.main.object(forInfoDictionaryKey: "MOMENTSAV_CONVEX_URL") as? String ?? ""
+    }
+
     static func configureAVAccountIfPossible() {
         AccountAVClerk.configureIfPossible(publishableKey: avAccountKey)
     }

@@ -1,0 +1,145 @@
+import Foundation
+
+enum MomentTemplateID: String, CaseIterable, Identifiable, Codable {
+    case birthdayMessage = "birthday_message"
+    case partyRecap = "party_recap"
+    case softRoast = "soft_roast"
+
+    var id: String { rawValue }
+}
+
+struct MomentTemplate: Identifiable, Equatable {
+    let id: MomentTemplateID
+    let title: String
+    let durationSeconds: Int
+    let creditCost: Int
+    let minimumAssets: Int
+    let maximumAssets: Int
+    let summary: String
+
+    var duration: String {
+        "\(durationSeconds) sec"
+    }
+
+    var mediaRange: String {
+        "\(minimumAssets)-\(maximumAssets) photos or clips"
+    }
+
+    static let birthdayMessage = MomentTemplate(
+        id: .birthdayMessage,
+        title: "Birthday Message",
+        durationSeconds: 30,
+        creditCost: 2,
+        minimumAssets: 3,
+        maximumAssets: 20,
+        summary: "A warm greeting built from selected memories and captions."
+    )
+
+    static let partyRecap = MomentTemplate(
+        id: .partyRecap,
+        title: "Party Recap",
+        durationSeconds: 45,
+        creditCost: 3,
+        minimumAssets: 6,
+        maximumAssets: 40,
+        summary: "A quick montage for gatherings, trips, and shared celebrations."
+    )
+
+    static let softRoast = MomentTemplate(
+        id: .softRoast,
+        title: "Soft Roast",
+        durationSeconds: 30,
+        creditCost: 2,
+        minimumAssets: 3,
+        maximumAssets: 20,
+        summary: "Light, affectionate humor for people who are in on the joke."
+    )
+
+    static let launchTemplates = [
+        birthdayMessage,
+        partyRecap,
+        softRoast
+    ]
+}
+
+enum MomentDraftTone: String, CaseIterable, Identifiable {
+    case warm
+    case playful
+    case cinematic
+
+    var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .warm: "Warm"
+        case .playful: "Playful"
+        case .cinematic: "Cinematic"
+        }
+    }
+}
+
+enum MomentDraftTempo: String, CaseIterable, Identifiable {
+    case gentle
+    case balanced
+    case upbeat
+
+    var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .gentle: "Gentle"
+        case .balanced: "Balanced"
+        case .upbeat: "Upbeat"
+        }
+    }
+}
+
+struct MomentDraftForm: Equatable {
+    var template: MomentTemplate
+    var occasion = "Birthday"
+    var recipient = ""
+    var tone: MomentDraftTone = .warm
+    var tempo: MomentDraftTempo = .balanced
+    var details = ""
+
+    var title: String {
+        let trimmedRecipient = recipient.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmedRecipient.isEmpty ? template.title : "\(template.title) for \(trimmedRecipient)"
+    }
+
+    var canCreateDraft: Bool {
+        !occasion.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
+}
+
+struct MomentDraftProject: Identifiable, Decodable, Equatable {
+    let id: String
+    let template: MomentTemplateID
+    let status: String
+    let title: String
+    let tone: String?
+    let tempo: String?
+    let occasion: String?
+    let details: String?
+    let durationSeconds: Double
+    let creditCost: Double
+    let previewCount: Double
+    let previewLimit: Double
+    let updatedAt: Double
+
+    enum CodingKeys: String, CodingKey {
+        case id = "_id"
+        case template
+        case status
+        case title
+        case tone
+        case tempo
+        case occasion
+        case details
+        case durationSeconds
+        case creditCost
+        case previewCount
+        case previewLimit
+        case updatedAt
+    }
+}

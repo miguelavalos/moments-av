@@ -30,6 +30,7 @@ enum AppTab: String, CaseIterable, Identifiable {
 
 struct RootView: View {
     @StateObject private var accountController = AccountController()
+    @StateObject private var projectStore = MomentsProjectStore()
     @State private var selectedTab: AppTab = .create
 
     var body: some View {
@@ -47,6 +48,10 @@ struct RootView: View {
         }
         .tint(MomentsTheme.accent)
         .environmentObject(accountController)
+        .environmentObject(projectStore)
+        .onChange(of: accountController.user?.id, initial: true) { _, ownerUserId in
+            projectStore.observeProjects(ownerUserId: ownerUserId)
+        }
         .alert("Account action failed", isPresented: errorIsPresented) {
             Button("OK", role: .cancel) {
                 accountController.errorMessage = nil
@@ -91,14 +96,14 @@ struct CreateMomentView: View {
                 AppHeader()
 
                 if accountController.isSignedIn {
-                    if MomentsCreditGate.canAffordAny(MomentTemplate.sample, balance: accountController.creditBalance) {
+                    if MomentsCreditGate.canAffordAny(MomentTemplate.launchTemplates, balance: accountController.creditBalance) {
                         CreditBalanceSummary(balance: accountController.creditBalance)
 
                         VStack(alignment: .leading, spacing: 12) {
                             Text("Choose a memory format")
                                 .font(.title2.weight(.semibold))
 
-                            ForEach(MomentTemplate.sample) { template in
+                            ForEach(MomentTemplate.launchTemplates) { template in
                                 TemplateCard(
                                     template: template,
                                     balance: accountController.creditBalance
@@ -199,14 +204,30 @@ struct PurchaseRouteRow: View {
 
 struct ProjectsView: View {
     @EnvironmentObject private var accountController: AccountController
+    @EnvironmentObject private var projectStore: MomentsProjectStore
 
     var body: some View {
         Group {
-            if accountController.isSignedIn {
+            if accountController.isSignedIn && !projectStore.projects.isEmpty {
+                List(projectStore.projects) { project in
+                    NavigationLink {
+                        DraftProjectDetailView(project: project)
+                    } label: {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(project.title)
+                                .font(.headline)
+                            Text("\(project.status.capitalized) · \(Int(project.durationSeconds)) sec · \(Int(project.creditCost)) credits")
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                }
+                .scrollContentBackground(.hidden)
+            } else if accountController.isSignedIn {
                 ContentUnavailableView(
                     "No projects yet",
                     systemImage: "film.stack",
-                    description: Text("Drafts and exports will appear here after project sync is connected.")
+                    description: Text(projectStore.isConfigured ? "Drafts and exports will appear here after creation." : "Project sync is not configured for this build.")
                 )
             } else {
                 VStack(spacing: 18) {
@@ -225,6 +246,40 @@ struct ProjectsView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
+        .background(MomentsTheme.background)
+    }
+}
+
+struct DraftProjectDetailView: View {
+    let project: MomentDraftProject
+
+    var body: some View {
+        List {
+            Section("Project") {
+                LabeledContent("Title", value: project.title)
+                LabeledContent("Status", value: project.status.capitalized)
+                LabeledContent("Duration", value: "\(Int(project.durationSeconds)) sec")
+                LabeledContent("Credits", value: "\(Int(project.creditCost))")
+            }
+
+            Section("Avi Direction") {
+                if let occasion = project.occasion {
+                    LabeledContent("Occasion", value: occasion)
+                }
+                if let tone = project.tone {
+                    LabeledContent("Tone", value: tone.capitalized)
+                }
+                if let tempo = project.tempo {
+                    LabeledContent("Tempo", value: tempo.capitalized)
+                }
+                if let details = project.details, !details.isEmpty {
+                    Text(details)
+                        .foregroundStyle(.secondary)
+                }
+            }
+        }
+        .navigationTitle("Draft")
+        .scrollContentBackground(.hidden)
         .background(MomentsTheme.background)
     }
 }
@@ -423,9 +478,11 @@ struct TemplateCard: View {
                     .font(.caption.weight(.medium))
                     .foregroundStyle(.secondary)
                 Spacer()
-                Button(canAfford ? "Start" : "Add credits") {}
+                NavigationLink(canAfford ? "Start" : "Add credits") {
+                    DraftFlowView(template: template)
+                }
                     .buttonStyle(.bordered)
-                    .disabled(true)
+                    .disabled(!canAfford)
             }
         }
         .padding(16)
@@ -454,48 +511,6 @@ struct GuidePanel: View {
         .padding(16)
         .background(MomentsTheme.panel, in: RoundedRectangle(cornerRadius: 8))
     }
-}
-
-struct MomentTemplate: Identifiable {
-    let id: String
-    let title: String
-    let duration: String
-    let creditCost: Int
-    let mediaRange: String
-    let summary: String
-
-    static let birthdayMessage = MomentTemplate(
-            id: "birthday",
-            title: "Birthday Message",
-            duration: "30 sec",
-        creditCost: 2,
-            mediaRange: "3-20 photos or clips",
-            summary: "A warm greeting built from selected memories and captions."
-    )
-
-    static let partyRecap = MomentTemplate(
-            id: "party",
-            title: "Party Recap",
-            duration: "45 sec",
-        creditCost: 3,
-            mediaRange: "6-40 photos or clips",
-            summary: "A quick montage for gatherings, trips, and shared celebrations."
-    )
-
-    static let softRoast = MomentTemplate(
-            id: "soft-roast",
-            title: "Soft Roast",
-            duration: "30 sec",
-        creditCost: 2,
-            mediaRange: "3-20 photos or clips",
-            summary: "Light, affectionate humor for people who are in on the joke."
-    )
-
-    static let sample = [
-        birthdayMessage,
-        partyRecap,
-        softRoast
-    ]
 }
 
 enum MomentsTheme {

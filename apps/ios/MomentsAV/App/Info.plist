@@ -10,8 +10,10 @@
   <string>$(EXECUTABLE_NAME)</string>
   <key>CFBundleIdentifier</key>
   <string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
-  <key>ACCOUNTAV_PUBLISHABLE_KEY</key>
-  <string>$(ACCOUNTAV_PUBLISHABLE_KEY)</string>
+	<key>ACCOUNTAV_PUBLISHABLE_KEY</key>
+	<string>$(ACCOUNTAV_PUBLISHABLE_KEY)</string>
+	<key>MOMENTSAV_CONVEX_URL</key>
+	<string>$(MOMENTSAV_CONVEX_URL)</string>
   <key>CFBundleInfoDictionaryVersion</key>
   <string>6.0</string>
   <key>CFBundleName</key>

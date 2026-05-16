@@ -4,7 +4,7 @@ import XCTest
 final class MomentsCreditGateTests: XCTestCase {
     func testEmptyBalanceCannotAffordAnyLaunchTemplate() {
         XCTAssertFalse(
-            MomentsCreditGate.canAffordAny(MomentTemplate.sample, balance: .empty)
+            MomentsCreditGate.canAffordAny(MomentTemplate.launchTemplates, balance: .empty)
         )
     }
 
@@ -51,5 +51,32 @@ final class MomentsCreditGateTests: XCTestCase {
                 balance: MomentsCreditBalance(proMonthly: 0, promotional: 1, purchased: 1)
             )
         )
+    }
+
+    func testLaunchTemplateDurationsCreditsAndAssetRanges() {
+        XCTAssertEqual(MomentTemplate.birthdayMessage.durationSeconds, 30)
+        XCTAssertEqual(MomentTemplate.birthdayMessage.creditCost, 2)
+        XCTAssertEqual(MomentTemplate.birthdayMessage.minimumAssets, 3)
+        XCTAssertEqual(MomentTemplate.birthdayMessage.maximumAssets, 20)
+
+        XCTAssertEqual(MomentTemplate.partyRecap.durationSeconds, 45)
+        XCTAssertEqual(MomentTemplate.partyRecap.creditCost, 3)
+        XCTAssertEqual(MomentTemplate.partyRecap.minimumAssets, 6)
+        XCTAssertEqual(MomentTemplate.partyRecap.maximumAssets, 40)
+
+        XCTAssertEqual(MomentTemplate.softRoast.durationSeconds, 30)
+        XCTAssertEqual(MomentTemplate.softRoast.creditCost, 2)
+        XCTAssertEqual(MomentTemplate.softRoast.minimumAssets, 3)
+        XCTAssertEqual(MomentTemplate.softRoast.maximumAssets, 20)
+    }
+
+    func testDraftFormRequiresOccasionBeforeCreate() {
+        var form = MomentDraftForm(template: .birthdayMessage)
+
+        XCTAssertTrue(form.canCreateDraft)
+
+        form.occasion = "  "
+
+        XCTAssertFalse(form.canCreateDraft)
     }
 }

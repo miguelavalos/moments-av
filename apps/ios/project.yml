@@ -10,10 +10,14 @@ settings:
     DEVELOPMENT_LANGUAGE: en
     PRODUCT_NAME: Moments AV
     SWIFT_VERSION: "6.0"
+    EXCLUDED_ARCHS[sdk=iphonesimulator*]: x86_64
 
 packages:
   AccountAV:
     path: ../../../account-av
+  ConvexMobile:
+    url: https://github.com/get-convex/convex-swift
+    from: 0.8.1
 
 schemes:
   MomentsAV:
@@ -48,6 +52,8 @@ targets:
     dependencies:
       - package: AccountAV
         product: AccountAV
+      - package: ConvexMobile
+        product: ConvexMobile
     settings:
       base:
         CODE_SIGN_STYLE: Automatic
