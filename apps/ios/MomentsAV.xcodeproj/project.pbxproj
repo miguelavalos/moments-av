@@ -7,15 +7,28 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		00A804B651ECE4E2BFB337BD /* MomentsCreditGate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3E955ED5A2483EFD2490B51 /* MomentsCreditGate.swift */; };
 		05646C4D80684A9A3EFAA6B4 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B01F9E3D844FCB7741CFB87D /* RootView.swift */; };
 		25DE61AEB481F66A413BBC29 /* MomentsAVApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EF8B2EE66F151280AFAB93D /* MomentsAVApp.swift */; };
 		9909E65C42E141C537DD3516 /* AppConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15A301123AE2CC26B14C1FDB /* AppConfig.swift */; };
+		AEBDEFABA1261671A0B306B4 /* MomentsCreditGateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12D095393477FF611CAA3D1C /* MomentsCreditGateTests.swift */; };
 		B26C9199CBFC3D4F45955B4A /* AccountController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E06C90C6C71B33B9E0BC8FB8 /* AccountController.swift */; };
 		BC8575546EB68E020EEAFC53 /* AVAccountService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C85967468773643759D0A50 /* AVAccountService.swift */; };
 		D49C53A9DBDE0D94EEF18DF0 /* AccountAV in Frameworks */ = {isa = PBXBuildFile; productRef = 55C46B29A672949F0C432479 /* AccountAV */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		BFA6FF5D8C7AD4AD7EF7EF4A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 966438B9FFC08A8002C95513 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2247C5C4A8FA1F58720EB018;
+			remoteInfo = MomentsAV;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
+		12D095393477FF611CAA3D1C /* MomentsCreditGateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MomentsCreditGateTests.swift; sourceTree = "<group>"; };
 		15A301123AE2CC26B14C1FDB /* AppConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConfig.swift; sourceTree = "<group>"; };
 		360DEDB5362D8F41586DCB79 /* account-av */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "account-av"; path = "../../../account-av"; sourceTree = SOURCE_ROOT; };
 		7EF8B2EE66F151280AFAB93D /* MomentsAVApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MomentsAVApp.swift; sourceTree = "<group>"; };
@@ -23,7 +36,9 @@
 		8C85967468773643759D0A50 /* AVAccountService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AVAccountService.swift; sourceTree = "<group>"; };
 		B01F9E3D844FCB7741CFB87D /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		B93C9F7BF82F37766D6F1080 /* Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
+		C69680D932F1E9DA72EE968B /* MomentsAVTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = MomentsAVTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E06C90C6C71B33B9E0BC8FB8 /* AccountController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountController.swift; sourceTree = "<group>"; };
+		E3E955ED5A2483EFD2490B51 /* MomentsCreditGate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MomentsCreditGate.swift; sourceTree = "<group>"; };
 		EE50BE8F243DA735CB43236A /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
 		F574B823BCDEC53161058BC4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -40,6 +55,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		21A2340840E18ABCDAD22BEC /* MomentsAVTests */ = {
+			isa = PBXGroup;
+			children = (
+				12D095393477FF611CAA3D1C /* MomentsCreditGateTests.swift */,
+			);
+			path = MomentsAVTests;
+			sourceTree = "<group>";
+		};
 		9FC715BD0E2A7D54BA405F10 /* Config */ = {
 			isa = PBXGroup;
 			children = (
@@ -62,6 +85,7 @@
 			children = (
 				9FC715BD0E2A7D54BA405F10 /* Config */,
 				B44BD7C4D58D70AA4E356ECA /* MomentsAV */,
+				21A2340840E18ABCDAD22BEC /* MomentsAVTests */,
 				E9966D57AE2C9EB7341B9C92 /* Packages */,
 				DDB5FA7A0F0FD709C6F68CE5 /* Products */,
 			);
@@ -75,6 +99,7 @@
 				8C85967468773643759D0A50 /* AVAccountService.swift */,
 				F574B823BCDEC53161058BC4 /* Info.plist */,
 				7EF8B2EE66F151280AFAB93D /* MomentsAVApp.swift */,
+				E3E955ED5A2483EFD2490B51 /* MomentsCreditGate.swift */,
 				B01F9E3D844FCB7741CFB87D /* RootView.swift */,
 			);
 			path = App;
@@ -84,6 +109,7 @@
 			isa = PBXGroup;
 			children = (
 				83D0E1A31764827F2CF0A6FC /* MomentsAV.app */,
+				C69680D932F1E9DA72EE968B /* MomentsAVTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -118,6 +144,24 @@
 			productReference = 83D0E1A31764827F2CF0A6FC /* MomentsAV.app */;
 			productType = "com.apple.product-type.application";
 		};
+		51F05547A8F0D50009427963 /* MomentsAVTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 461C834528856A13D49E4B3F /* Build configuration list for PBXNativeTarget "MomentsAVTests" */;
+			buildPhases = (
+				0F48090B821C2CB3406268B6 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				CB584E8F1138AB7880128160 /* PBXTargetDependency */,
+			);
+			name = MomentsAVTests;
+			packageProductDependencies = (
+			);
+			productName = MomentsAVTests;
+			productReference = C69680D932F1E9DA72EE968B /* MomentsAVTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -151,11 +195,20 @@
 			projectRoot = "";
 			targets = (
 				2247C5C4A8FA1F58720EB018 /* MomentsAV */,
+				51F05547A8F0D50009427963 /* MomentsAVTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXSourcesBuildPhase section */
+		0F48090B821C2CB3406268B6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AEBDEFABA1261671A0B306B4 /* MomentsCreditGateTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		3F90CC1FEEBB9A3A72B5FD65 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -164,13 +217,40 @@
 				B26C9199CBFC3D4F45955B4A /* AccountController.swift in Sources */,
 				9909E65C42E141C537DD3516 /* AppConfig.swift in Sources */,
 				25DE61AEB481F66A413BBC29 /* MomentsAVApp.swift in Sources */,
+				00A804B651ECE4E2BFB337BD /* MomentsCreditGate.swift in Sources */,
 				05646C4D80684A9A3EFAA6B4 /* RootView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		CB584E8F1138AB7880128160 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2247C5C4A8FA1F58720EB018 /* MomentsAV */;
+			targetProxy = BFA6FF5D8C7AD4AD7EF7EF4A /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		0E532A53CC18AE7292682C83 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "$(PRODUCT_BUNDLE_IDENTIFIER).tests";
+				PRODUCT_MODULE_NAME = MomentsAVTests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Moments AV.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Moments AV";
+			};
+			name = Release;
+		};
 		55D876097C23C7B825BA96A1 /* Release */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = EE50BE8F243DA735CB43236A /* Release.xcconfig */;
@@ -248,6 +328,24 @@
 				SWIFT_VERSION = 6.0;
 			};
 			name = Release;
+		};
+		9F15A2E6DE21D99E00F401D6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "$(PRODUCT_BUNDLE_IDENTIFIER).tests";
+				PRODUCT_MODULE_NAME = MomentsAVTests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Moments AV.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Moments AV";
+			};
+			name = Debug;
 		};
 		A52EAF6BF4F38D50441E2FDF /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -337,6 +435,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		461C834528856A13D49E4B3F /* Build configuration list for PBXNativeTarget "MomentsAVTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9F15A2E6DE21D99E00F401D6 /* Debug */,
+				0E532A53CC18AE7292682C83 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
 		5CF275CD626C9D8084CE6FFD /* Build configuration list for PBXProject "MomentsAV" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

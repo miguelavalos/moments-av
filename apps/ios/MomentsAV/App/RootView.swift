@@ -91,19 +91,28 @@ struct CreateMomentView: View {
                 AppHeader()
 
                 if accountController.isSignedIn {
-                    VStack(alignment: .leading, spacing: 12) {
-                        Text("Choose a memory format")
-                            .font(.title2.weight(.semibold))
+                    if MomentsCreditGate.canAffordAny(MomentTemplate.sample, balance: accountController.creditBalance) {
+                        CreditBalanceSummary(balance: accountController.creditBalance)
 
-                        ForEach(MomentTemplate.sample) { template in
-                            TemplateCard(template: template)
+                        VStack(alignment: .leading, spacing: 12) {
+                            Text("Choose a memory format")
+                                .font(.title2.weight(.semibold))
+
+                            ForEach(MomentTemplate.sample) { template in
+                                TemplateCard(
+                                    template: template,
+                                    balance: accountController.creditBalance
+                                )
+                            }
                         }
-                    }
 
-                    GuidePanel(
-                        title: "Avi helps shape the story",
-                        text: "Creation opens here after project state and media selection are connected."
-                    )
+                        GuidePanel(
+                            title: "Avi helps shape the story",
+                            text: "Preview and final render both require enough spendable credits for the selected template."
+                        )
+                    } else {
+                        CreditRequiredView()
+                    }
                 } else {
                     SignedOutGateView()
                 }
@@ -136,6 +145,55 @@ struct SignedOutGateView: View {
         }
         .padding(18)
         .background(.background, in: RoundedRectangle(cornerRadius: 8))
+    }
+}
+
+struct CreditRequiredView: View {
+    var body: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            Label("Credits required before creation", systemImage: "creditcard")
+                .font(.title3.weight(.semibold))
+
+            Text("Choose Pro monthly credits or an extra credit pack before starting a Moments AV project.")
+                .font(.body)
+                .foregroundStyle(.secondary)
+
+            VStack(spacing: 10) {
+                PurchaseRouteRow(title: "Pro monthly", detail: "Monthly final-render allowance")
+                PurchaseRouteRow(title: "Credit packs", detail: "Extra credits for giftable exports")
+            }
+
+            Text("Delivered usable final renders consume credits and are not refunded for taste preferences.")
+                .font(.footnote)
+                .foregroundStyle(.secondary)
+        }
+        .padding(18)
+        .background(.background, in: RoundedRectangle(cornerRadius: 8))
+    }
+}
+
+struct PurchaseRouteRow: View {
+    let title: String
+    let detail: String
+
+    var body: some View {
+        HStack(spacing: 12) {
+            Image(systemName: "plus.circle")
+                .foregroundStyle(MomentsTheme.accent)
+            VStack(alignment: .leading, spacing: 3) {
+                Text(title)
+                    .font(.headline)
+                Text(detail)
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+            }
+            Spacer()
+            Image(systemName: "chevron.right")
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(.tertiary)
+        }
+        .padding(14)
+        .background(MomentsTheme.panel, in: RoundedRectangle(cornerRadius: 8))
     }
 }
 
@@ -194,6 +252,15 @@ struct AccountView: View {
                         .listRowInsets(EdgeInsets(top: 12, leading: 16, bottom: 12, trailing: 16))
                 }
             }
+
+            if accountController.isSignedIn {
+                Section("Credits") {
+                    CreditSourceRow(source: .proMonthly, amount: accountController.creditBalance.proMonthly)
+                    CreditSourceRow(source: .promotional, amount: accountController.creditBalance.promotional)
+                    CreditSourceRow(source: .purchased, amount: accountController.creditBalance.purchased)
+                    LabeledContent("Spendable", value: "\(accountController.creditBalance.spendable)")
+                }
+            }
         }
         .scrollContentBackground(.hidden)
         .background(MomentsTheme.background)
@@ -224,6 +291,56 @@ struct AuthActionButtons: View {
             .controlSize(.large)
         }
         .disabled(accountController.isBusy || !accountController.isAccountAvailable)
+    }
+}
+
+struct CreditBalanceSummary: View {
+    let balance: MomentsCreditBalance
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Spendable credits")
+                .font(.headline)
+            HStack(spacing: 10) {
+                CreditSourcePill(source: .proMonthly, amount: balance.proMonthly)
+                CreditSourcePill(source: .promotional, amount: balance.promotional)
+                CreditSourcePill(source: .purchased, amount: balance.purchased)
+            }
+            Text("Credits are spent in this order: Pro monthly, promotional, then purchased.")
+                .font(.footnote)
+                .foregroundStyle(.secondary)
+        }
+        .padding(16)
+        .background(.background, in: RoundedRectangle(cornerRadius: 8))
+    }
+}
+
+struct CreditSourcePill: View {
+    let source: CreditSource
+    let amount: Int
+
+    var body: some View {
+        VStack(spacing: 3) {
+            Text("\(amount)")
+                .font(.headline)
+            Text(source.title)
+                .font(.caption2)
+                .foregroundStyle(.secondary)
+                .lineLimit(1)
+                .minimumScaleFactor(0.8)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 10)
+        .background(MomentsTheme.panel, in: RoundedRectangle(cornerRadius: 8))
+    }
+}
+
+struct CreditSourceRow: View {
+    let source: CreditSource
+    let amount: Int
+
+    var body: some View {
+        LabeledContent(source.title, value: "\(amount)")
     }
 }
 
@@ -276,6 +393,11 @@ struct AppHeader: View {
 
 struct TemplateCard: View {
     let template: MomentTemplate
+    let balance: MomentsCreditBalance
+
+    private var canAfford: Bool {
+        MomentsCreditGate.canAfford(template, balance: balance)
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -295,9 +417,20 @@ struct TemplateCard: View {
             Label(template.mediaRange, systemImage: "photo.on.rectangle.angled")
                 .font(.caption.weight(.medium))
                 .foregroundStyle(.secondary)
+
+            HStack {
+                Label("\(template.creditCost) credits", systemImage: "bolt.circle")
+                    .font(.caption.weight(.medium))
+                    .foregroundStyle(.secondary)
+                Spacer()
+                Button(canAfford ? "Start" : "Add credits") {}
+                    .buttonStyle(.bordered)
+                    .disabled(true)
+            }
         }
         .padding(16)
         .background(.background, in: RoundedRectangle(cornerRadius: 8))
+        .opacity(canAfford ? 1 : 0.68)
     }
 }
 
@@ -327,31 +460,41 @@ struct MomentTemplate: Identifiable {
     let id: String
     let title: String
     let duration: String
+    let creditCost: Int
     let mediaRange: String
     let summary: String
 
-    static let sample = [
-        MomentTemplate(
+    static let birthdayMessage = MomentTemplate(
             id: "birthday",
             title: "Birthday Message",
             duration: "30 sec",
+        creditCost: 2,
             mediaRange: "3-20 photos or clips",
             summary: "A warm greeting built from selected memories and captions."
-        ),
-        MomentTemplate(
+    )
+
+    static let partyRecap = MomentTemplate(
             id: "party",
             title: "Party Recap",
             duration: "45 sec",
+        creditCost: 3,
             mediaRange: "6-40 photos or clips",
             summary: "A quick montage for gatherings, trips, and shared celebrations."
-        ),
-        MomentTemplate(
+    )
+
+    static let softRoast = MomentTemplate(
             id: "soft-roast",
             title: "Soft Roast",
             duration: "30 sec",
+        creditCost: 2,
             mediaRange: "3-20 photos or clips",
             summary: "Light, affectionate humor for people who are in on the joke."
-        )
+    )
+
+    static let sample = [
+        birthdayMessage,
+        partyRecap,
+        softRoast
     ]
 }
 

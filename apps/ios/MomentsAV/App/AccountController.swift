@@ -4,6 +4,7 @@ import Foundation
 @MainActor
 final class AccountController: ObservableObject {
     @Published private(set) var user: AccountAVUser?
+    @Published private(set) var creditBalance = MomentsCreditBalance.empty
     @Published private(set) var isBusy = false
     @Published var errorMessage: String?
 
@@ -24,6 +25,9 @@ final class AccountController: ObservableObject {
 
     func refresh() {
         user = service.currentUser
+        if user == nil {
+            creditBalance = .empty
+        }
     }
 
     func signInWithApple() {

@@ -31,6 +31,10 @@ schemes:
       config: Release
     management:
       shared: true
+    test:
+      config: Debug
+      targets:
+        - MomentsAVTests
 
 targets:
   MomentsAV:
@@ -53,3 +57,18 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: "$(PRODUCT_BUNDLE_IDENTIFIER)"
         TARGETED_DEVICE_FAMILY: "1"
         SUPPORTS_MACCATALYST: NO
+
+  MomentsAVTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: MomentsAVTests
+    dependencies:
+      - target: MomentsAV
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        PRODUCT_MODULE_NAME: MomentsAVTests
+        PRODUCT_BUNDLE_IDENTIFIER: "$(PRODUCT_BUNDLE_IDENTIFIER).tests"
+        TARGETED_DEVICE_FAMILY: "1"
+        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/Moments AV.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Moments AV"
