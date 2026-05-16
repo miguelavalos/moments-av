@@ -9,9 +9,9 @@ The app uses the sibling public `account-av` package for Account AV sign-in.
 only in local or release build settings.
 `MOMENTSAV_CONVEX_URL` is also blank in committed configs; set it in local or
 release build settings to enable draft creation and realtime project sync.
-`MOMENTSAV_API_BASE_URL` is blank in committed configs; set it alongside the
-Convex URL to enable signed media upload preparation, story drafts, previews,
-final renders, and project deletion.
+`ACCOUNTAV_API_BASE_URL` is blank in committed configs; set it alongside the
+Convex URL to enable signed account, credit, media, preview, final render, and
+project workflows through the shared Account AV API.
 
 ## Build
 

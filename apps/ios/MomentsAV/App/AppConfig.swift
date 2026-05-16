@@ -16,7 +16,7 @@ enum AppConfig {
     }
 
     static var momentsAPIBaseURL: String {
-        Bundle.main.object(forInfoDictionaryKey: "MOMENTSAV_API_BASE_URL") as? String ?? ""
+        Bundle.main.object(forInfoDictionaryKey: "ACCOUNTAV_API_BASE_URL") as? String ?? ""
     }
 
     static func configureAVAccountIfPossible() {

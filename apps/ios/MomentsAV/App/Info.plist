@@ -14,8 +14,8 @@
 	<string>$(ACCOUNTAV_PUBLISHABLE_KEY)</string>
 	<key>MOMENTSAV_CONVEX_URL</key>
 	<string>$(MOMENTSAV_CONVEX_URL)</string>
-	<key>MOMENTSAV_API_BASE_URL</key>
-	<string>$(MOMENTSAV_API_BASE_URL)</string>
+	<key>ACCOUNTAV_API_BASE_URL</key>
+	<string>$(ACCOUNTAV_API_BASE_URL)</string>
   <key>CFBundleInfoDictionaryVersion</key>
   <string>6.0</string>
   <key>CFBundleName</key>
