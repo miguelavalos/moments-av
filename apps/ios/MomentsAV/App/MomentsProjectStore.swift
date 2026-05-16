@@ -11,6 +11,7 @@ final class MomentsProjectStore: ObservableObject {
     @Published private(set) var isSavingMedia = false
     @Published private(set) var isSavingStory = false
     @Published private(set) var isSavingPreview = false
+    @Published private(set) var isSavingFinalRender = false
     @Published var errorMessage: String?
 
     private nonisolated(unsafe) let client: ConvexClient?
@@ -266,6 +267,72 @@ final class MomentsProjectStore: ObservableObject {
             return renderJobId != nil
         } catch {
             isSavingPreview = false
+            errorMessage = error.localizedDescription
+            return false
+        }
+    }
+
+    func saveFinalRenderResult(
+        ownerUserId: String,
+        projectId: String,
+        finalRender: MomentsFinalRenderResponse,
+        template: MomentTemplate
+    ) async -> Bool {
+        guard let client else {
+            errorMessage = "Project sync is not configured for this build."
+            return false
+        }
+
+        isSavingFinalRender = true
+        errorMessage = nil
+
+        do {
+            let renderJobId: String? = try await client.mutation(
+                "moments:createRenderJob",
+                with: [
+                    "ownerUserId": ownerUserId,
+                    "projectId": projectId,
+                    "kind": "final",
+                    "workflowRunId": finalRender.workflowRunId,
+                    "creditReservationId": finalRender.reservationId,
+                    "provider": "mock",
+                    "providerRequestId": finalRender.renderJobId
+                ]
+            )
+
+            if let renderJobId {
+                let _: String? = try await client.mutation(
+                    "moments:attachArtifact",
+                    with: [
+                        "ownerUserId": ownerUserId,
+                        "projectId": projectId,
+                        "renderJobId": renderJobId,
+                        "kind": "final_export",
+                        "r2Key": finalRender.r2Key,
+                        "status": "available",
+                        "durationSeconds": template.durationSeconds,
+                        "creditCost": finalRender.creditsCommitted,
+                        "hasWatermark": false,
+                        "expiresAt": Date().addingTimeInterval(30 * 24 * 60 * 60).timeIntervalSince1970 * 1000
+                    ]
+                )
+
+                let _: String? = try await client.mutation(
+                    "moments:updateRenderJobStatus",
+                    with: [
+                        "ownerUserId": ownerUserId,
+                        "renderJobId": renderJobId,
+                        "status": "completed"
+                    ]
+                )
+            }
+
+            isSavingFinalRender = false
+            observeActiveProject(ownerUserId: ownerUserId, projectId: projectId)
+            observeProjects(ownerUserId: ownerUserId)
+            return renderJobId != nil
+        } catch {
+            isSavingFinalRender = false
             errorMessage = error.localizedDescription
             return false
         }

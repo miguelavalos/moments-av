@@ -81,6 +81,13 @@ struct DraftFlowView: View {
                     project: activeProject,
                     latestPreview: projectStore.activeWorkspace?.artifacts.first { $0.kind == "preview" }
                 )
+
+                FinalRenderView(
+                    template: template,
+                    project: activeProject,
+                    latestPreview: projectStore.activeWorkspace?.artifacts.first { $0.kind == "preview" },
+                    finalExport: projectStore.activeWorkspace?.artifacts.first { $0.kind == "final_export" }
+                )
             }
 
             Section {

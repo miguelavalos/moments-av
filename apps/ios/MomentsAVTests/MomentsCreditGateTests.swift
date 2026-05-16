@@ -161,4 +161,56 @@ final class MomentsCreditGateTests: XCTestCase {
         )
         XCTAssertFalse(MomentsPreviewRules.canGenerate(project: limitedProject, template: .birthdayMessage, balance: balance))
     }
+
+    func testFinalRenderRulesRequirePreviewAndCredits() {
+        let balance = MomentsCreditBalance(proMonthly: 0, promotional: 0, purchased: 2)
+        let project = MomentDraftProject(
+            id: "project-1",
+            template: .birthdayMessage,
+            status: "preview_ready",
+            title: "Birthday",
+            tone: nil,
+            tempo: nil,
+            occasion: nil,
+            details: nil,
+            durationSeconds: 30,
+            creditCost: 2,
+            previewCount: 1,
+            previewLimit: 3,
+            updatedAt: 0
+        )
+        let preview = MomentArtifact(
+            id: "preview-1",
+            kind: "preview",
+            r2Key: "momentsav/user/project/previews/preview-1.mp4",
+            status: "available",
+            hasWatermark: true,
+            expiresAt: 0
+        )
+
+        XCTAssertTrue(
+            MomentsFinalRenderRules.canGenerate(
+                project: project,
+                template: .birthdayMessage,
+                balance: balance,
+                latestPreview: preview
+            )
+        )
+        XCTAssertFalse(
+            MomentsFinalRenderRules.canGenerate(
+                project: project,
+                template: .birthdayMessage,
+                balance: .empty,
+                latestPreview: preview
+            )
+        )
+        XCTAssertFalse(
+            MomentsFinalRenderRules.canGenerate(
+                project: project,
+                template: .birthdayMessage,
+                balance: balance,
+                latestPreview: nil
+            )
+        )
+    }
 }
