@@ -45,6 +45,46 @@ final class MomentsAPIClientTests: XCTestCase {
         XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.value(forHTTPHeaderField: "Authorization"), "Bearer user-1")
     }
 
+    func testUploadUsesPreparedURLAndHeaders() async throws {
+        let session = makeMockSession(json: "{}")
+        let client = MomentsUploadClient(baseURLString: accountAPIBaseURL, session: session)
+        let uploadURL = URL(string: "\(accountAPIBaseURL)/v1/apps/momentsav/uploads/upload-1")!
+        let media = MomentsSelectedMedia(
+            id: UUID(uuidString: "00000000-0000-0000-0000-000000000002")!,
+            sourceLocalIdentifier: "local-1",
+            originalFilename: "photo.jpg",
+            contentType: "image/jpeg",
+            kind: "photo",
+            byteSize: 4,
+            sha256: "abcd",
+            data: Data([1, 2, 3, 4]),
+            sortOrder: 0,
+            selected: true
+        )
+        let prepared = MomentsPreparedUpload(
+            appId: "momentsav",
+            projectId: "project-1",
+            mediaAssetId: "media-1",
+            uploadId: "upload-1",
+            uploadUrl: uploadURL,
+            method: "PUT",
+            headers: [
+                "content-type": "image/jpeg",
+                "x-appsav-moments-project-id": "project-1",
+                "x-appsav-moments-media-asset-id": "media-1"
+            ],
+            storageKey: "momentsav/user/project/source/media-1",
+            expiresAt: "2026-05-16T17:00:00Z",
+            generatedAt: "2026-05-16T16:00:00Z"
+        )
+
+        try await client.upload(media: media, preparedUpload: prepared)
+
+        XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.url?.absoluteString, uploadURL.absoluteString)
+        XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.httpMethod, "PUT")
+        XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.value(forHTTPHeaderField: "x-appsav-moments-project-id"), "project-1")
+    }
+
     func testStoryDraftUsesSharedAccountAPIBaseURL() async throws {
         let session = makeMockSession(
             json: """
