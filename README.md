@@ -6,8 +6,12 @@ Moments AV helps people turn personal photos and short clips into short memory
 videos.
 
 This repository contains the public client app code and public user-facing docs.
+It intentionally excludes credentials, provider configuration, internal
+operations, and private service implementation details.
 
-Project status: early setup.
+Project status: iOS v1 frontend scaffold with account, credit gate, draft,
+media, story, preview, final render, and deletion flows. Production endpoints
+and store credentials are configured outside this public repo.
 
 ## License
 

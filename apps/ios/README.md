@@ -1,6 +1,8 @@
 # Moments AV iOS
 
-SwiftUI app shell for Moments AV.
+SwiftUI app shell for Moments AV. The current v1 frontend includes account
+state, credit gating, template draft creation, media metadata, story draft,
+preview generation, final render/export, and project deletion flows.
 
 The app uses the sibling public `account-av` package for Account AV sign-in.
 `ACCOUNTAV_PUBLISHABLE_KEY` is intentionally blank in committed configs; set it
@@ -8,7 +10,8 @@ only in local or release build settings.
 `MOMENTSAV_CONVEX_URL` is also blank in committed configs; set it in local or
 release build settings to enable draft creation and realtime project sync.
 `MOMENTSAV_API_BASE_URL` is blank in committed configs; set it alongside the
-Convex URL to enable signed media upload preparation.
+Convex URL to enable signed media upload preparation, story drafts, previews,
+final renders, and project deletion.
 
 ## Build
 
@@ -25,3 +28,11 @@ xcodebuild -project apps/ios/MomentsAV.xcodeproj -scheme MomentsAV -destination 
 ```
 
 Local signing values belong in untracked local configuration only.
+
+## Test
+
+Run the focused simulator test suite after generating the Xcode project:
+
+```bash
+xcodebuild test -project apps/ios/MomentsAV.xcodeproj -scheme MomentsAV -destination 'platform=iOS Simulator,name=iPhone 17'
+```
