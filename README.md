@@ -15,8 +15,6 @@ This repository is released under the MIT license. See [LICENSE](LICENSE).
 
 ## Repository Shape
 
-Planned shape:
-
 ```text
 apps/
   ios/      SwiftUI iOS app
@@ -36,13 +34,9 @@ shared/
 
 ## Local Setup
 
-The app scaffold has not been added yet.
-
-When the iOS app is available:
-
-1. Install repo tooling.
-2. Open the Xcode project in `apps/ios`.
-3. Run the Moments AV scheme in Xcode.
+1. Install Xcode and XcodeGen.
+2. Run `xcodegen generate --spec apps/ios/project.yml`.
+3. Build with `xcodebuild -project apps/ios/MomentsAV.xcodeproj -scheme MomentsAV -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO build`.
 
 Generated local config, signing material, and machine-specific files must stay
 out of git.

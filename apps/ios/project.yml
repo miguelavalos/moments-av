@@ -1,0 +1,48 @@
+name: MomentsAV
+options:
+  bundleIdPrefix: com.avalsys
+  deploymentTarget:
+    iOS: "18.0"
+  xcodeVersion: "16.0"
+
+settings:
+  base:
+    DEVELOPMENT_LANGUAGE: en
+    PRODUCT_NAME: Moments AV
+    SWIFT_VERSION: "6.0"
+
+schemes:
+  MomentsAV:
+    build:
+      targets:
+        MomentsAV: all
+    run:
+      config: Debug
+      executable: MomentsAV
+    analyze:
+      config: Debug
+    profile:
+      config: Release
+    archive:
+      config: Release
+    management:
+      shared: true
+
+targets:
+  MomentsAV:
+    type: application
+    platform: iOS
+    configFiles:
+      Debug: Config/Debug.xcconfig
+      Release: Config/Release.xcconfig
+    sources:
+      - path: MomentsAV
+    settings:
+      base:
+        CODE_SIGN_STYLE: Automatic
+        DEVELOPMENT_TEAM: "$(AVALSYS_APPLE_DEVELOPMENT_TEAM)"
+        GENERATE_INFOPLIST_FILE: NO
+        INFOPLIST_FILE: MomentsAV/App/Info.plist
+        PRODUCT_BUNDLE_IDENTIFIER: "$(PRODUCT_BUNDLE_IDENTIFIER)"
+        TARGETED_DEVICE_FAMILY: "1"
+        SUPPORTS_MACCATALYST: NO
