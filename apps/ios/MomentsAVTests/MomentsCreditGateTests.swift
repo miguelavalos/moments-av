@@ -79,4 +79,16 @@ final class MomentsCreditGateTests: XCTestCase {
 
         XCTAssertFalse(form.canCreateDraft)
     }
+
+    func testMediaRulesEnforceTemplateMinimumsAndMaximums() {
+        XCTAssertFalse(MomentsMediaRules.canStartPreview(template: .birthdayMessage, selectedCount: 2))
+        XCTAssertTrue(MomentsMediaRules.canStartPreview(template: .birthdayMessage, selectedCount: 3))
+        XCTAssertTrue(MomentsMediaRules.canStartPreview(template: .birthdayMessage, selectedCount: 20))
+        XCTAssertFalse(MomentsMediaRules.canStartPreview(template: .birthdayMessage, selectedCount: 21))
+
+        XCTAssertFalse(MomentsMediaRules.canStartPreview(template: .partyRecap, selectedCount: 5))
+        XCTAssertTrue(MomentsMediaRules.canStartPreview(template: .partyRecap, selectedCount: 6))
+        XCTAssertTrue(MomentsMediaRules.canStartPreview(template: .partyRecap, selectedCount: 40))
+        XCTAssertFalse(MomentsMediaRules.canStartPreview(template: .partyRecap, selectedCount: 41))
+    }
 }

@@ -15,6 +15,10 @@ enum AppConfig {
         Bundle.main.object(forInfoDictionaryKey: "MOMENTSAV_CONVEX_URL") as? String ?? ""
     }
 
+    static var momentsAPIBaseURL: String {
+        Bundle.main.object(forInfoDictionaryKey: "MOMENTSAV_API_BASE_URL") as? String ?? ""
+    }
+
     static func configureAVAccountIfPossible() {
         AccountAVClerk.configureIfPossible(publishableKey: avAccountKey)
     }

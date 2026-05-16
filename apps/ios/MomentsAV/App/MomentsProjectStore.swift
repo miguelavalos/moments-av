@@ -7,6 +7,7 @@ final class MomentsProjectStore: ObservableObject {
     @Published private(set) var projects: [MomentDraftProject] = []
     @Published private(set) var activeProject: MomentDraftProject?
     @Published private(set) var isCreatingDraft = false
+    @Published private(set) var isSavingMedia = false
     @Published var errorMessage: String?
 
     private nonisolated(unsafe) let client: ConvexClient?
@@ -106,6 +107,44 @@ final class MomentsProjectStore: ObservableObject {
             isCreatingDraft = false
             errorMessage = error.localizedDescription
             return nil
+        }
+    }
+
+    func saveMediaAsset(
+        ownerUserId: String,
+        projectId: String,
+        media: MomentsSelectedMedia,
+        preparedUpload: MomentsPreparedUpload
+    ) async -> Bool {
+        guard let client else {
+            errorMessage = "Project sync is not configured for this build."
+            return false
+        }
+
+        isSavingMedia = true
+        errorMessage = nil
+
+        do {
+            let _: String? = try await client.mutation(
+                "moments:addMediaAsset",
+                with: [
+                    "ownerUserId": ownerUserId,
+                    "projectId": projectId,
+                    "kind": media.kind,
+                    "r2Key": preparedUpload.storageKey,
+                    "sortOrder": media.sortOrder,
+                    "selected": media.selected,
+                    "moderationStatus": "pending"
+                ]
+            )
+            isSavingMedia = false
+            observeActiveProject(ownerUserId: ownerUserId, projectId: projectId)
+            observeProjects(ownerUserId: ownerUserId)
+            return true
+        } catch {
+            isSavingMedia = false
+            errorMessage = error.localizedDescription
+            return false
         }
     }
 }

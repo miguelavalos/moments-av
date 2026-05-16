@@ -65,6 +65,8 @@ struct DraftFlowView: View {
                 Section("Draft State") {
                     ProjectStateView(project: activeProject)
                 }
+
+                MediaSelectionView(template: template, projectId: activeProject.id)
             }
 
             Section {
