@@ -34,6 +34,7 @@
 		DB214834F05720BC16CE7409 /* ProjectDeletionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99DE90ADB7F90853751B67E6 /* ProjectDeletionView.swift */; };
 		E2E1C5F8DA05696690E66088 /* ConvexMobile in Frameworks */ = {isa = PBXBuildFile; productRef = E55ADAAE01D91D0E794079EB /* ConvexMobile */; };
 		EDEAB3BFD0E1DD8A3A3AC386 /* MomentsPreviewModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21D08CD94A55C2128776FCE0 /* MomentsPreviewModels.swift */; };
+		F24D5CE719D8EA6E2B10706A /* MomentsAPIClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F4A958E6478D1BB9E3AC0ED /* MomentsAPIClientTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -54,6 +55,7 @@
 		21D08CD94A55C2128776FCE0 /* MomentsPreviewModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MomentsPreviewModels.swift; sourceTree = "<group>"; };
 		315E1D1182DD96F38A22A397 /* PreviewGenerationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewGenerationView.swift; sourceTree = "<group>"; };
 		360DEDB5362D8F41586DCB79 /* account-av */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "account-av"; path = "../../../account-av"; sourceTree = SOURCE_ROOT; };
+		3F4A958E6478D1BB9E3AC0ED /* MomentsAPIClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MomentsAPIClientTests.swift; sourceTree = "<group>"; };
 		6791D61933CFC94E1E844E02 /* MomentsMediaModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MomentsMediaModels.swift; sourceTree = "<group>"; };
 		7EF8B2EE66F151280AFAB93D /* MomentsAVApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MomentsAVApp.swift; sourceTree = "<group>"; };
 		83D0E1A31764827F2CF0A6FC /* MomentsAV.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = MomentsAV.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -96,6 +98,7 @@
 		21A2340840E18ABCDAD22BEC /* MomentsAVTests */ = {
 			isa = PBXGroup;
 			children = (
+				3F4A958E6478D1BB9E3AC0ED /* MomentsAPIClientTests.swift */,
 				12D095393477FF611CAA3D1C /* MomentsCreditGateTests.swift */,
 				E51FEE4EFE08767AB4FC85A8 /* MomentsProjectStoreTests.swift */,
 			);
@@ -263,6 +266,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F24D5CE719D8EA6E2B10706A /* MomentsAPIClientTests.swift in Sources */,
 				AEBDEFABA1261671A0B306B4 /* MomentsCreditGateTests.swift in Sources */,
 				9CC093403B48A7F2B50E3EC5 /* MomentsProjectStoreTests.swift in Sources */,
 			);
