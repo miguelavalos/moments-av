@@ -1,3 +1,4 @@
+import AccountAV
 import SwiftUI
 
 enum AppTab: String, CaseIterable, Identifiable {
@@ -28,6 +29,7 @@ enum AppTab: String, CaseIterable, Identifiable {
 }
 
 struct RootView: View {
+    @StateObject private var accountController = AccountController()
     @State private var selectedTab: AppTab = .create
 
     var body: some View {
@@ -44,6 +46,25 @@ struct RootView: View {
             }
         }
         .tint(MomentsTheme.accent)
+        .environmentObject(accountController)
+        .alert("Account action failed", isPresented: errorIsPresented) {
+            Button("OK", role: .cancel) {
+                accountController.errorMessage = nil
+            }
+        } message: {
+            Text(accountController.errorMessage ?? "")
+        }
+    }
+
+    private var errorIsPresented: Binding<Bool> {
+        Binding(
+            get: { accountController.errorMessage != nil },
+            set: { isPresented in
+                if !isPresented {
+                    accountController.errorMessage = nil
+                }
+            }
+        )
     }
 
     @ViewBuilder
@@ -54,7 +75,7 @@ struct RootView: View {
         case .projects:
             ProjectsView()
         case .account:
-            AccountPlaceholderView()
+            AccountView()
         case .settings:
             SettingsView()
         }
@@ -62,24 +83,30 @@ struct RootView: View {
 }
 
 struct CreateMomentView: View {
+    @EnvironmentObject private var accountController: AccountController
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
                 AppHeader()
 
-                VStack(alignment: .leading, spacing: 12) {
-                    Text("Choose a memory format")
-                        .font(.title2.weight(.semibold))
+                if accountController.isSignedIn {
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text("Choose a memory format")
+                            .font(.title2.weight(.semibold))
 
-                    ForEach(MomentTemplate.sample) { template in
-                        TemplateCard(template: template)
+                        ForEach(MomentTemplate.sample) { template in
+                            TemplateCard(template: template)
+                        }
                     }
-                }
 
-                GuidePanel(
-                    title: "Avi helps shape the story",
-                    text: "Pick the template and media first. Story drafts, previews, and exports unlock after sign-in and project setup are connected."
-                )
+                    GuidePanel(
+                        title: "Avi helps shape the story",
+                        text: "Creation opens here after project state and media selection are connected."
+                    )
+                } else {
+                    SignedOutGateView()
+                }
             }
             .padding(20)
         }
@@ -87,39 +114,136 @@ struct CreateMomentView: View {
     }
 }
 
-struct ProjectsView: View {
+struct SignedOutGateView: View {
+    @EnvironmentObject private var accountController: AccountController
+
     var body: some View {
-        ContentUnavailableView(
-            "No projects yet",
-            systemImage: "film.stack",
-            description: Text("Drafts and exports will appear here after project sync is connected.")
-        )
+        VStack(alignment: .leading, spacing: 16) {
+            Label("Sign in to start a memory video", systemImage: "lock")
+                .font(.title3.weight(.semibold))
+
+            Text("Creation needs an Account AV session before photos, clips, or drafts can be attached to a private project.")
+                .font(.body)
+                .foregroundStyle(.secondary)
+
+            AuthActionButtons()
+
+            if !accountController.isAccountAvailable {
+                Text("Account sign-in is not configured for this build.")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .padding(18)
+        .background(.background, in: RoundedRectangle(cornerRadius: 8))
+    }
+}
+
+struct ProjectsView: View {
+    @EnvironmentObject private var accountController: AccountController
+
+    var body: some View {
+        Group {
+            if accountController.isSignedIn {
+                ContentUnavailableView(
+                    "No projects yet",
+                    systemImage: "film.stack",
+                    description: Text("Drafts and exports will appear here after project sync is connected.")
+                )
+            } else {
+                VStack(spacing: 18) {
+                    Image(systemName: "lock.rectangle.stack")
+                        .font(.system(size: 48))
+                        .foregroundStyle(MomentsTheme.accent)
+                    Text("Sign in to view projects")
+                        .font(.title2.weight(.semibold))
+                    Text("Your Moments AV drafts and exports appear only after Account AV sign-in.")
+                        .font(.body)
+                        .multilineTextAlignment(.center)
+                        .foregroundStyle(.secondary)
+                    AuthActionButtons()
+                }
+                .padding(24)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            }
+        }
         .background(MomentsTheme.background)
     }
 }
 
-struct AccountPlaceholderView: View {
+struct AccountView: View {
+    @EnvironmentObject private var accountController: AccountController
+
     var body: some View {
-        VStack(spacing: 18) {
-            Image(systemName: "person.crop.circle.badge.checkmark")
-                .font(.system(size: 52))
-                .foregroundStyle(MomentsTheme.accent)
-            Text("Account")
-                .font(.title2.weight(.semibold))
-            Text("Sign-in and Apps AV account controls are added in the next implementation slice.")
-                .font(.body)
-                .multilineTextAlignment(.center)
-                .foregroundStyle(.secondary)
+        List {
+            Section("Account AV") {
+                if let user = accountController.user {
+                    LabeledContent("Status", value: "Signed in")
+                    LabeledContent("Name", value: user.displayName)
+                    if let email = user.emailAddress {
+                        LabeledContent("Email", value: email)
+                    }
+                    Button("Sign Out", role: .destructive) {
+                        accountController.signOut()
+                    }
+                    .disabled(accountController.isBusy)
+                } else {
+                    Text("Sign in before creating Moments AV projects.")
+                        .foregroundStyle(.secondary)
+                    AuthActionButtons()
+                        .listRowInsets(EdgeInsets(top: 12, leading: 16, bottom: 12, trailing: 16))
+                }
+            }
         }
-        .padding(24)
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .scrollContentBackground(.hidden)
         .background(MomentsTheme.background)
+    }
+}
+
+struct AuthActionButtons: View {
+    @EnvironmentObject private var accountController: AccountController
+
+    var body: some View {
+        VStack(spacing: 10) {
+            Button {
+                accountController.signInWithApple()
+            } label: {
+                Label("Continue with Apple", systemImage: "apple.logo")
+                    .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(.borderedProminent)
+            .controlSize(.large)
+
+            Button {
+                accountController.signInWithGoogle()
+            } label: {
+                Label("Continue with Google", systemImage: "globe")
+                    .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(.bordered)
+            .controlSize(.large)
+        }
+        .disabled(accountController.isBusy || !accountController.isAccountAvailable)
     }
 }
 
 struct SettingsView: View {
+    @EnvironmentObject private var accountController: AccountController
+
     var body: some View {
         List {
+            Section("Account") {
+                if accountController.isSignedIn {
+                    NavigationLink("Account controls") {
+                        AccountView()
+                            .navigationTitle("Account")
+                    }
+                } else {
+                    Text("Account controls appear after sign-in.")
+                        .foregroundStyle(.secondary)
+                }
+            }
+
             Section("Privacy") {
                 Label("Private by default", systemImage: "lock")
                 Label("User-controlled export", systemImage: "square.and.arrow.up")

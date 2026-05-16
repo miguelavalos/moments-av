@@ -11,6 +11,10 @@ settings:
     PRODUCT_NAME: Moments AV
     SWIFT_VERSION: "6.0"
 
+packages:
+  AccountAV:
+    path: ../../../account-av
+
 schemes:
   MomentsAV:
     build:
@@ -37,6 +41,9 @@ targets:
       Release: Config/Release.xcconfig
     sources:
       - path: MomentsAV
+    dependencies:
+      - package: AccountAV
+        product: AccountAV
     settings:
       base:
         CODE_SIGN_STYLE: Automatic

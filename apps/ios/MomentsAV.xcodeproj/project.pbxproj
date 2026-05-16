@@ -9,16 +9,35 @@
 /* Begin PBXBuildFile section */
 		05646C4D80684A9A3EFAA6B4 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B01F9E3D844FCB7741CFB87D /* RootView.swift */; };
 		25DE61AEB481F66A413BBC29 /* MomentsAVApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EF8B2EE66F151280AFAB93D /* MomentsAVApp.swift */; };
+		9909E65C42E141C537DD3516 /* AppConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15A301123AE2CC26B14C1FDB /* AppConfig.swift */; };
+		B26C9199CBFC3D4F45955B4A /* AccountController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E06C90C6C71B33B9E0BC8FB8 /* AccountController.swift */; };
+		BC8575546EB68E020EEAFC53 /* AVAccountService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C85967468773643759D0A50 /* AVAccountService.swift */; };
+		D49C53A9DBDE0D94EEF18DF0 /* AccountAV in Frameworks */ = {isa = PBXBuildFile; productRef = 55C46B29A672949F0C432479 /* AccountAV */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		15A301123AE2CC26B14C1FDB /* AppConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConfig.swift; sourceTree = "<group>"; };
+		360DEDB5362D8F41586DCB79 /* account-av */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "account-av"; path = "../../../account-av"; sourceTree = SOURCE_ROOT; };
 		7EF8B2EE66F151280AFAB93D /* MomentsAVApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MomentsAVApp.swift; sourceTree = "<group>"; };
 		83D0E1A31764827F2CF0A6FC /* MomentsAV.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = MomentsAV.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		8C85967468773643759D0A50 /* AVAccountService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AVAccountService.swift; sourceTree = "<group>"; };
 		B01F9E3D844FCB7741CFB87D /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		B93C9F7BF82F37766D6F1080 /* Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
+		E06C90C6C71B33B9E0BC8FB8 /* AccountController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountController.swift; sourceTree = "<group>"; };
 		EE50BE8F243DA735CB43236A /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
 		F574B823BCDEC53161058BC4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		11B8C251CF8585591EF8A28A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D49C53A9DBDE0D94EEF18DF0 /* AccountAV in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		9FC715BD0E2A7D54BA405F10 /* Config */ = {
@@ -43,6 +62,7 @@
 			children = (
 				9FC715BD0E2A7D54BA405F10 /* Config */,
 				B44BD7C4D58D70AA4E356ECA /* MomentsAV */,
+				E9966D57AE2C9EB7341B9C92 /* Packages */,
 				DDB5FA7A0F0FD709C6F68CE5 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -50,6 +70,9 @@
 		CF75ECD51246BFECD05B70AE /* App */ = {
 			isa = PBXGroup;
 			children = (
+				E06C90C6C71B33B9E0BC8FB8 /* AccountController.swift */,
+				15A301123AE2CC26B14C1FDB /* AppConfig.swift */,
+				8C85967468773643759D0A50 /* AVAccountService.swift */,
 				F574B823BCDEC53161058BC4 /* Info.plist */,
 				7EF8B2EE66F151280AFAB93D /* MomentsAVApp.swift */,
 				B01F9E3D844FCB7741CFB87D /* RootView.swift */,
@@ -65,6 +88,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		E9966D57AE2C9EB7341B9C92 /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				360DEDB5362D8F41586DCB79 /* account-av */,
+			);
+			name = Packages;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -73,6 +104,7 @@
 			buildConfigurationList = CFA3A703C2C179FA2B93D162 /* Build configuration list for PBXNativeTarget "MomentsAV" */;
 			buildPhases = (
 				3F90CC1FEEBB9A3A72B5FD65 /* Sources */,
+				11B8C251CF8585591EF8A28A /* Frameworks */,
 			);
 			buildRules = (
 			);
@@ -80,6 +112,7 @@
 			);
 			name = MomentsAV;
 			packageProductDependencies = (
+				55C46B29A672949F0C432479 /* AccountAV */,
 			);
 			productName = MomentsAV;
 			productReference = 83D0E1A31764827F2CF0A6FC /* MomentsAV.app */;
@@ -109,6 +142,9 @@
 			);
 			mainGroup = BF96C80843B6A49A8146E1E2;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				617823A9532327B96F24D3A6 /* XCLocalSwiftPackageReference "../../../account-av" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = DDB5FA7A0F0FD709C6F68CE5 /* Products */;
 			projectDirPath = "";
@@ -124,6 +160,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BC8575546EB68E020EEAFC53 /* AVAccountService.swift in Sources */,
+				B26C9199CBFC3D4F45955B4A /* AccountController.swift in Sources */,
+				9909E65C42E141C537DD3516 /* AppConfig.swift in Sources */,
 				25DE61AEB481F66A413BBC29 /* MomentsAVApp.swift in Sources */,
 				05646C4D80684A9A3EFAA6B4 /* RootView.swift in Sources */,
 			);
@@ -317,6 +356,20 @@
 			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		617823A9532327B96F24D3A6 /* XCLocalSwiftPackageReference "../../../account-av" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = "../../../account-av";
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		55C46B29A672949F0C432479 /* AccountAV */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = AccountAV;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 966438B9FFC08A8002C95513 /* Project object */;
 }

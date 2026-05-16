@@ -2,6 +2,10 @@
 
 SwiftUI app shell for Moments AV.
 
+The app uses the sibling public `account-av` package for Account AV sign-in.
+`ACCOUNTAV_PUBLISHABLE_KEY` is intentionally blank in committed configs; set it
+only in local or release build settings.
+
 ## Build
 
 Generate the Xcode project after editing `project.yml`:
