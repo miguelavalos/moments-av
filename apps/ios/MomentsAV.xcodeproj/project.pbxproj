@@ -22,6 +22,7 @@
 		8C072D5285CC373659A2FE47 /* StoryDraftView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 983BDA28C3496384D19E2E6E /* StoryDraftView.swift */; };
 		90261B9EE295E90E1FD9AB87 /* FinalRenderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A83D2AEAB457692EA48442BE /* FinalRenderView.swift */; };
 		9909E65C42E141C537DD3516 /* AppConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15A301123AE2CC26B14C1FDB /* AppConfig.swift */; };
+		9CC093403B48A7F2B50E3EC5 /* MomentsProjectStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E51FEE4EFE08767AB4FC85A8 /* MomentsProjectStoreTests.swift */; };
 		9D0EA3E261A3B0222A952297 /* MomentsFinalRenderClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD3FEC39A4B95CB4E21A6A37 /* MomentsFinalRenderClient.swift */; };
 		AEBDEFABA1261671A0B306B4 /* MomentsCreditGateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12D095393477FF611CAA3D1C /* MomentsCreditGateTests.swift */; };
 		B26C9199CBFC3D4F45955B4A /* AccountController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E06C90C6C71B33B9E0BC8FB8 /* AccountController.swift */; };
@@ -74,6 +75,7 @@
 		D82BC17FCA99452F959665F6 /* MomentsPreviewClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MomentsPreviewClient.swift; sourceTree = "<group>"; };
 		E06C90C6C71B33B9E0BC8FB8 /* AccountController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountController.swift; sourceTree = "<group>"; };
 		E3E955ED5A2483EFD2490B51 /* MomentsCreditGate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MomentsCreditGate.swift; sourceTree = "<group>"; };
+		E51FEE4EFE08767AB4FC85A8 /* MomentsProjectStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MomentsProjectStoreTests.swift; sourceTree = "<group>"; };
 		EE50BE8F243DA735CB43236A /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
 		F574B823BCDEC53161058BC4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -95,6 +97,7 @@
 			isa = PBXGroup;
 			children = (
 				12D095393477FF611CAA3D1C /* MomentsCreditGateTests.swift */,
+				E51FEE4EFE08767AB4FC85A8 /* MomentsProjectStoreTests.swift */,
 			);
 			path = MomentsAVTests;
 			sourceTree = "<group>";
@@ -261,6 +264,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				AEBDEFABA1261671A0B306B4 /* MomentsCreditGateTests.swift in Sources */,
+				9CC093403B48A7F2B50E3EC5 /* MomentsProjectStoreTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
