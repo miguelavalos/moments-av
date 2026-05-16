@@ -6,8 +6,10 @@ import Foundation
 final class MomentsProjectStore: ObservableObject {
     @Published private(set) var projects: [MomentDraftProject] = []
     @Published private(set) var activeProject: MomentDraftProject?
+    @Published private(set) var activeWorkspace: MomentProjectWorkspace?
     @Published private(set) var isCreatingDraft = false
     @Published private(set) var isSavingMedia = false
+    @Published private(set) var isSavingStory = false
     @Published var errorMessage: String?
 
     private nonisolated(unsafe) let client: ConvexClient?
@@ -49,24 +51,26 @@ final class MomentsProjectStore: ObservableObject {
     func observeActiveProject(ownerUserId: String?, projectId: String?) {
         activeProjectTask?.cancel()
         activeProject = nil
+        activeWorkspace = nil
 
         guard let client, let ownerUserId, let projectId else { return }
 
         activeProjectTask = Task { [weak self, client] in
             let updates = client.subscribe(
-                to: "moments:getProject",
+                to: "moments:getProjectWorkspace",
                 with: [
                     "ownerUserId": ownerUserId,
                     "projectId": projectId
                 ],
-                yielding: MomentDraftProject?.self
+                yielding: MomentProjectWorkspace?.self
             )
             .replaceError(with: nil)
             .values
 
-            for await project in updates {
+            for await workspace in updates {
                 await MainActor.run {
-                    self?.activeProject = project
+                    self?.activeWorkspace = workspace
+                    self?.activeProject = workspace?.project
                 }
             }
         }
@@ -143,6 +147,59 @@ final class MomentsProjectStore: ObservableObject {
             return true
         } catch {
             isSavingMedia = false
+            errorMessage = error.localizedDescription
+            return false
+        }
+    }
+
+    func saveStoryDraft(
+        ownerUserId: String,
+        projectId: String,
+        draft: MomentsStoryDraftResponse
+    ) async -> Bool {
+        guard let client else {
+            errorMessage = "Project sync is not configured for this build."
+            return false
+        }
+
+        isSavingStory = true
+        errorMessage = nil
+
+        do {
+            for scene in draft.scenes {
+                let mediaAssetIds: [ConvexEncodable?] = scene.mediaAssetIds.map { $0 as ConvexEncodable }
+                let _: String? = try await client.mutation(
+                    "moments:upsertStoryScene",
+                    with: [
+                        "ownerUserId": ownerUserId,
+                        "projectId": projectId,
+                        "sceneIndex": scene.sceneIndex,
+                        "mediaAssetIds": mediaAssetIds,
+                        "caption": scene.caption,
+                        "narrationText": scene.narrationText,
+                        "tone": scene.tone,
+                        "musicCue": scene.musicCue,
+                        "durationMs": scene.durationMs,
+                        "createdBy": "avi"
+                    ]
+                )
+            }
+
+            let _: String? = try await client.mutation(
+                "moments:markStoryReady",
+                with: [
+                    "ownerUserId": ownerUserId,
+                    "projectId": projectId,
+                    "workflowRunId": draft.workflowRunId,
+                    "moderationStatus": draft.moderationStatus == "allowed" ? "approved" : "blocked"
+                ]
+            )
+            isSavingStory = false
+            observeActiveProject(ownerUserId: ownerUserId, projectId: projectId)
+            observeProjects(ownerUserId: ownerUserId)
+            return true
+        } catch {
+            isSavingStory = false
             errorMessage = error.localizedDescription
             return false
         }

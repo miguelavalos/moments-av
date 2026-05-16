@@ -91,4 +91,19 @@ final class MomentsCreditGateTests: XCTestCase {
         XCTAssertTrue(MomentsMediaRules.canStartPreview(template: .partyRecap, selectedCount: 40))
         XCTAssertFalse(MomentsMediaRules.canStartPreview(template: .partyRecap, selectedCount: 41))
     }
+
+    func testStoryDraftRulesUseSelectedConvexMediaCount() {
+        let assets = (0..<3).map {
+            MomentMediaAsset(
+                id: "media-\($0)",
+                kind: "photo",
+                sortOrder: Double($0),
+                selected: true,
+                moderationStatus: "pending"
+            )
+        }
+
+        XCTAssertTrue(MomentsStoryDraftRules.canDraft(mediaAssets: assets, template: .birthdayMessage))
+        XCTAssertFalse(MomentsStoryDraftRules.canDraft(mediaAssets: assets, template: .partyRecap))
+    }
 }

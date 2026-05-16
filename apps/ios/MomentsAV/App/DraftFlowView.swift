@@ -67,6 +67,14 @@ struct DraftFlowView: View {
                 }
 
                 MediaSelectionView(template: template, projectId: activeProject.id)
+
+                StoryDraftView(
+                    template: template,
+                    projectId: activeProject.id,
+                    form: form,
+                    mediaAssets: projectStore.activeWorkspace?.mediaAssets ?? [],
+                    savedScenes: projectStore.activeWorkspace?.storyScenes ?? []
+                )
             }
 
             Section {
