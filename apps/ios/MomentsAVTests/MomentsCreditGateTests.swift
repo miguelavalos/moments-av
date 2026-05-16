@@ -106,4 +106,59 @@ final class MomentsCreditGateTests: XCTestCase {
         XCTAssertTrue(MomentsStoryDraftRules.canDraft(mediaAssets: assets, template: .birthdayMessage))
         XCTAssertFalse(MomentsStoryDraftRules.canDraft(mediaAssets: assets, template: .partyRecap))
     }
+
+    func testPreviewRulesRequireStoryReadyCreditsAndLimit() {
+        let balance = MomentsCreditBalance(proMonthly: 0, promotional: 0, purchased: 2)
+        let project = MomentDraftProject(
+            id: "project-1",
+            template: .birthdayMessage,
+            status: "story_ready",
+            title: "Birthday",
+            tone: nil,
+            tempo: nil,
+            occasion: nil,
+            details: nil,
+            durationSeconds: 30,
+            creditCost: 2,
+            previewCount: 2,
+            previewLimit: 3,
+            updatedAt: 0
+        )
+
+        XCTAssertTrue(MomentsPreviewRules.canGenerate(project: project, template: .birthdayMessage, balance: balance))
+
+        let previewReadyProject = MomentDraftProject(
+            id: project.id,
+            template: project.template,
+            status: "preview_ready",
+            title: project.title,
+            tone: project.tone,
+            tempo: project.tempo,
+            occasion: project.occasion,
+            details: project.details,
+            durationSeconds: project.durationSeconds,
+            creditCost: project.creditCost,
+            previewCount: project.previewCount,
+            previewLimit: project.previewLimit,
+            updatedAt: project.updatedAt
+        )
+        XCTAssertTrue(MomentsPreviewRules.canGenerate(project: previewReadyProject, template: .birthdayMessage, balance: balance))
+
+        let limitedProject = MomentDraftProject(
+            id: project.id,
+            template: project.template,
+            status: project.status,
+            title: project.title,
+            tone: project.tone,
+            tempo: project.tempo,
+            occasion: project.occasion,
+            details: project.details,
+            durationSeconds: project.durationSeconds,
+            creditCost: project.creditCost,
+            previewCount: 3,
+            previewLimit: 3,
+            updatedAt: project.updatedAt
+        )
+        XCTAssertFalse(MomentsPreviewRules.canGenerate(project: limitedProject, template: .birthdayMessage, balance: balance))
+    }
 }

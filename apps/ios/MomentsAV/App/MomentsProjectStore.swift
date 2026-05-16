@@ -10,6 +10,7 @@ final class MomentsProjectStore: ObservableObject {
     @Published private(set) var isCreatingDraft = false
     @Published private(set) var isSavingMedia = false
     @Published private(set) var isSavingStory = false
+    @Published private(set) var isSavingPreview = false
     @Published var errorMessage: String?
 
     private nonisolated(unsafe) let client: ConvexClient?
@@ -200,6 +201,71 @@ final class MomentsProjectStore: ObservableObject {
             return true
         } catch {
             isSavingStory = false
+            errorMessage = error.localizedDescription
+            return false
+        }
+    }
+
+    func savePreviewResult(
+        ownerUserId: String,
+        projectId: String,
+        preview: MomentsPreviewResponse,
+        template: MomentTemplate
+    ) async -> Bool {
+        guard let client else {
+            errorMessage = "Project sync is not configured for this build."
+            return false
+        }
+
+        isSavingPreview = true
+        errorMessage = nil
+
+        do {
+            let renderJobId: String? = try await client.mutation(
+                "moments:createRenderJob",
+                with: [
+                    "ownerUserId": ownerUserId,
+                    "projectId": projectId,
+                    "kind": "preview",
+                    "workflowRunId": preview.workflowRunId,
+                    "provider": "mock",
+                    "providerRequestId": preview.renderJobId
+                ]
+            )
+
+            if let renderJobId {
+                let _: String? = try await client.mutation(
+                    "moments:attachArtifact",
+                    with: [
+                        "ownerUserId": ownerUserId,
+                        "projectId": projectId,
+                        "renderJobId": renderJobId,
+                        "kind": "preview",
+                        "r2Key": preview.r2Key,
+                        "status": "available",
+                        "durationSeconds": template.durationSeconds,
+                        "creditCost": 0,
+                        "hasWatermark": preview.hasWatermark,
+                        "expiresAt": Date().addingTimeInterval(30 * 24 * 60 * 60).timeIntervalSince1970 * 1000
+                    ]
+                )
+
+                let _: String? = try await client.mutation(
+                    "moments:updateRenderJobStatus",
+                    with: [
+                        "ownerUserId": ownerUserId,
+                        "renderJobId": renderJobId,
+                        "status": "completed"
+                    ]
+                )
+            }
+
+            isSavingPreview = false
+            observeActiveProject(ownerUserId: ownerUserId, projectId: projectId)
+            observeProjects(ownerUserId: ownerUserId)
+            return renderJobId != nil
+        } catch {
+            isSavingPreview = false
             errorMessage = error.localizedDescription
             return false
         }

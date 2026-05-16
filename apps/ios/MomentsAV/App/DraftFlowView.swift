@@ -75,6 +75,12 @@ struct DraftFlowView: View {
                     mediaAssets: projectStore.activeWorkspace?.mediaAssets ?? [],
                     savedScenes: projectStore.activeWorkspace?.storyScenes ?? []
                 )
+
+                PreviewGenerationView(
+                    template: template,
+                    project: activeProject,
+                    latestPreview: projectStore.activeWorkspace?.artifacts.first { $0.kind == "preview" }
+                )
             }
 
             Section {
