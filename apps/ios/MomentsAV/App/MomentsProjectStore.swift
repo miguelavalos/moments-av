@@ -132,16 +132,21 @@ final class MomentsProjectStore: ObservableObject {
         errorMessage = nil
 
         do {
+            let uploadedAt = Date()
             let _: String? = try await client.mutation(
                 "moments:addMediaAsset",
                 with: [
                     "ownerUserId": ownerUserId,
                     "projectId": projectId,
+                    "platformMediaAssetId": preparedUpload.mediaAssetId,
+                    "uploadId": preparedUpload.uploadId,
                     "kind": media.kind,
                     "r2Key": preparedUpload.storageKey,
                     "sortOrder": media.sortOrder,
                     "selected": media.selected,
-                    "moderationStatus": "pending"
+                    "moderationStatus": "pending",
+                    "uploadedAt": uploadedAt.timeIntervalSince1970 * 1000,
+                    "sourceExpiresAt": uploadedAt.addingTimeInterval(30 * 24 * 60 * 60).timeIntervalSince1970 * 1000
                 ]
             )
             isSavingMedia = false

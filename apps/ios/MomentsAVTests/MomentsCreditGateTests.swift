@@ -96,10 +96,14 @@ final class MomentsCreditGateTests: XCTestCase {
         let assets = (0..<3).map {
             MomentMediaAsset(
                 id: "media-\($0)",
+                platformMediaAssetId: "platform-media-\($0)",
+                uploadId: "upload-\($0)",
                 kind: "photo",
                 sortOrder: Double($0),
                 selected: true,
-                moderationStatus: "pending"
+                moderationStatus: "pending",
+                uploadedAt: 1_779_000_000_000,
+                sourceExpiresAt: 1_781_592_000_000
             )
         }
 
