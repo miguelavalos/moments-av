@@ -122,6 +122,17 @@ require_http_url() {
   esac
 }
 
+require_expected_url() {
+  local name="$1"
+  local value="$2"
+  local expected="$3"
+
+  if [ "$value" != "$expected" ]; then
+    echo "$name for $env_name must be $expected." >&2
+    exit 1
+  fi
+}
+
 escape_xcconfig_value() {
   printf '%s' "$1" | sed 's#/#$(XCCONFIG_SLASH)#g'
 }
@@ -138,6 +149,12 @@ development_team="$(read_required_config AVALSYS_APPLE_DEVELOPMENT_TEAM)"
 
 require_http_url MOMENTSAV_CONVEX_URL "$moments_convex_url"
 require_http_url ACCOUNTAV_API_BASE_URL "$account_api_base_url"
+
+if [ "$env_name" = "staging" ]; then
+  require_expected_url ACCOUNTAV_API_BASE_URL "$account_api_base_url" "https://api-account-av-preview.avalsys.com"
+elif [ "$env_name" = "prod" ]; then
+  require_expected_url ACCOUNTAV_API_BASE_URL "$account_api_base_url" "https://api-account-av.avalsys.com"
+fi
 
 generated_at="$(date -u '+%Y-%m-%dT%H:%M:%SZ')"
 content="$(cat <<EOF
