@@ -5,6 +5,10 @@ repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 env_name=""
 configuration="Debug"
 destination_args=(-destination "generic/platform=iOS")
+local_worker_api_url="http://127.0.0.1:"
+local_worker_api_url="${local_worker_api_url}8788"
+preview_worker_api_url="https://api-account-av-preview.avalsys.com"
+production_worker_api_url="https://api-account-av.avalsys.com"
 
 usage() {
   cat <<'USAGE'
@@ -114,18 +118,18 @@ done
 
 if [ "$env_name" = "prod" ]; then
   [ "$product_bundle_identifier" = "com.avalsys.momentsav" ] || fail "prod bundle must be com.avalsys.momentsav, got $product_bundle_identifier"
-  [ "$api_base_url" = "https://api-account-av.avalsys.com" ] || fail "prod API URL mismatch"
+  [ "$api_base_url" = "$production_worker_api_url" ] || fail "prod API URL mismatch"
   [[ "$publishable_key" == pk_live_* ]] || fail "prod publishable key must use pk_live"
   if printf '%s\n%s\n%s\n' "$product_bundle_identifier" "$api_base_url" "$convex_url" | rg -q 'preview|127\.0\.0\.1|localhost|\.dev'; then
     fail "prod settings contain preview/local/dev values"
   fi
 elif [ "$env_name" = "staging" ]; then
   [ "$product_bundle_identifier" = "com.avalsys.momentsav.dev" ] || fail "staging bundle must be com.avalsys.momentsav.dev, got $product_bundle_identifier"
-  [ "$api_base_url" = "https://api-account-av-preview.avalsys.com" ] || fail "staging API URL mismatch"
+  [ "$api_base_url" = "$preview_worker_api_url" ] || fail "staging API URL mismatch"
   [[ "$publishable_key" == pk_test_* ]] || fail "staging publishable key must use pk_test"
 else
   [ "$product_bundle_identifier" = "com.avalsys.momentsav.dev" ] || fail "$env_name bundle must be com.avalsys.momentsav.dev, got $product_bundle_identifier"
-  if [ "$api_base_url" != "http://127.0.0.1:8788" ] && [ "$api_base_url" != "https://api-account-av-preview.avalsys.com" ]; then
+  if [ "$api_base_url" != "$local_worker_api_url" ] && [ "$api_base_url" != "$preview_worker_api_url" ]; then
     fail "dev API URL must be local worker or preview worker"
   fi
   [[ "$publishable_key" == pk_test_* ]] || fail "$env_name publishable key must use pk_test"
