@@ -14,6 +14,8 @@ struct MomentsFinalRenderResponse: Decodable, Equatable {
     let projectId: String
     let renderJobId: String
     let workflowRunId: String
+    let provider: String
+    let model: String
     let reservationId: String
     let artifactId: String
     let artifactKind: String

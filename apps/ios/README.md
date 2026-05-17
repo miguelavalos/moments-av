@@ -15,6 +15,9 @@ project workflows through the shared Account AV API. Client requests surface the
 API error message returned by Account AV for credit, provider, storage, and
 deletion failures so the creation flow can distinguish retryable setup/runtime
 issues from credit or policy blocks.
+Preview and final render responses also carry client-safe provider/model
+metadata from Account AV so Convex project render records do not use placeholder
+provider values.
 
 ## Build
 

@@ -125,6 +125,8 @@ final class MomentsAPIClientTests: XCTestCase {
               "projectId": "project-1",
               "renderJobId": "render-1",
               "workflowRunId": "workflow-1",
+              "provider": "mock",
+              "model": "mock-preview-route",
               "artifactId": "artifact-1",
               "artifactKind": "preview",
               "status": "completed",
@@ -139,7 +141,7 @@ final class MomentsAPIClientTests: XCTestCase {
         )
         let client = MomentsPreviewClient(baseURLString: accountAPIBaseURL, session: session)
 
-        _ = try await client.generatePreview(
+        let preview = try await client.generatePreview(
             projectId: "project-1",
             ownerUserId: "user-1",
             template: .birthdayMessage,
@@ -147,6 +149,8 @@ final class MomentsAPIClientTests: XCTestCase {
         )
 
         XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.url?.absoluteString, "\(accountAPIBaseURL)/v1/apps/momentsav/previews/generate")
+        XCTAssertEqual(preview.provider, "mock")
+        XCTAssertEqual(preview.model, "mock-preview-route")
     }
 
     func testPreviewGenerationSurfacesAPIErrorMessage() async throws {
@@ -184,6 +188,8 @@ final class MomentsAPIClientTests: XCTestCase {
               "projectId": "project-1",
               "renderJobId": "render-1",
               "workflowRunId": "workflow-1",
+              "provider": "mock",
+              "model": "mock-final-route",
               "reservationId": "reservation-1",
               "artifactId": "artifact-1",
               "artifactKind": "final_export",
@@ -199,13 +205,15 @@ final class MomentsAPIClientTests: XCTestCase {
         )
         let client = MomentsFinalRenderClient(baseURLString: accountAPIBaseURL, session: session)
 
-        _ = try await client.generateFinalRender(
+        let finalRender = try await client.generateFinalRender(
             projectId: "project-1",
             ownerUserId: "user-1",
             template: .birthdayMessage
         )
 
         XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.url?.absoluteString, "\(accountAPIBaseURL)/v1/apps/momentsav/final-renders/generate")
+        XCTAssertEqual(finalRender.provider, "mock")
+        XCTAssertEqual(finalRender.model, "mock-final-route")
     }
 
     func testFinalRenderSurfacesProviderFailureMessage() async throws {

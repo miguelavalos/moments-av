@@ -235,7 +235,7 @@ final class MomentsProjectStore: ObservableObject {
                     "projectId": projectId,
                     "kind": "preview",
                     "workflowRunId": preview.workflowRunId,
-                    "provider": "mock",
+                    "provider": preview.provider,
                     "providerRequestId": preview.renderJobId
                 ]
             )
@@ -301,7 +301,7 @@ final class MomentsProjectStore: ObservableObject {
                     "kind": "final",
                     "workflowRunId": finalRender.workflowRunId,
                     "creditReservationId": finalRender.reservationId,
-                    "provider": "mock",
+                    "provider": finalRender.provider,
                     "providerRequestId": finalRender.renderJobId
                 ]
             )
