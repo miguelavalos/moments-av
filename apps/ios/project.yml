@@ -8,7 +8,7 @@ options:
 settings:
   base:
     DEVELOPMENT_LANGUAGE: en
-    PRODUCT_NAME: Moments AV
+    PRODUCT_NAME: MomentsAV
     SWIFT_VERSION: "6.0"
     EXCLUDED_ARCHS[sdk=iphonesimulator*]: x86_64
 
@@ -58,6 +58,7 @@ targets:
       base:
         CODE_SIGN_STYLE: Automatic
         DEVELOPMENT_TEAM: "$(AVALSYS_APPLE_DEVELOPMENT_TEAM)"
+        ENABLE_DEBUG_DYLIB: NO
         GENERATE_INFOPLIST_FILE: NO
         INFOPLIST_FILE: MomentsAV/App/Info.plist
         PRODUCT_BUNDLE_IDENTIFIER: "$(PRODUCT_BUNDLE_IDENTIFIER)"
@@ -77,4 +78,4 @@ targets:
         PRODUCT_MODULE_NAME: MomentsAVTests
         PRODUCT_BUNDLE_IDENTIFIER: "$(PRODUCT_BUNDLE_IDENTIFIER).tests"
         TARGETED_DEVICE_FAMILY: "1"
-        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/Moments AV.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Moments AV"
+        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/MomentsAV.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/MomentsAV"

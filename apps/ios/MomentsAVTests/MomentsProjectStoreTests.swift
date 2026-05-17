@@ -1,5 +1,5 @@
 import XCTest
-@testable import Moments_AV
+@testable import MomentsAV
 
 @MainActor
 final class MomentsProjectStoreTests: XCTestCase {

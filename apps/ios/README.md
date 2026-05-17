@@ -42,5 +42,5 @@ Local signing values belong in untracked local configuration only.
 Run the focused simulator test suite after generating the Xcode project:
 
 ```bash
-xcodebuild test -project apps/ios/MomentsAV.xcodeproj -scheme MomentsAV -destination 'platform=iOS Simulator,name=iPhone 16,OS=18.5'
+xcodebuild test -project apps/ios/MomentsAV.xcodeproj -scheme MomentsAV -destination 'platform=iOS Simulator,name=iPhone 16,OS=18.5' CODE_SIGNING_ALLOWED=NO
 ```

@@ -1,5 +1,5 @@
 import XCTest
-@testable import Moments_AV
+@testable import MomentsAV
 
 final class MomentsCreditGateTests: XCTestCase {
     func testEmptyBalanceCannotAffordAnyLaunchTemplate() {

@@ -1,6 +1,6 @@
 import Foundation
 import XCTest
-@testable import Moments_AV
+@testable import MomentsAV
 
 final class MomentsAPIClientTests: XCTestCase {
     override func tearDown() {
