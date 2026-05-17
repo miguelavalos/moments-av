@@ -43,7 +43,11 @@ struct MomentsDeletionClient {
 
         let (data, response) = try await session.data(for: request)
         guard let httpResponse = response as? HTTPURLResponse, 200..<300 ~= httpResponse.statusCode else {
-            throw MomentsDeletionError.deletionFailed
+            throw MomentsAPIError.decode(
+                from: data,
+                fallbackCode: "moments_deletion_failed",
+                fallbackMessage: MomentsDeletionError.deletionFailed.localizedDescription
+            )
         }
 
         return try JSONDecoder().decode(MomentsDeletionResponse.self, from: data)

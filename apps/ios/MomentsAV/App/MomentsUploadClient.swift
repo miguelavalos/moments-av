@@ -57,7 +57,11 @@ struct MomentsUploadClient {
 
         let (data, response) = try await session.data(for: request)
         guard let httpResponse = response as? HTTPURLResponse, 200..<300 ~= httpResponse.statusCode else {
-            throw MomentsUploadError.prepareFailed
+            throw MomentsAPIError.decode(
+                from: data,
+                fallbackCode: "moments_upload_prepare_failed",
+                fallbackMessage: MomentsUploadError.prepareFailed.localizedDescription
+            )
         }
 
         return try JSONDecoder().decode(MomentsPreparedUpload.self, from: data)

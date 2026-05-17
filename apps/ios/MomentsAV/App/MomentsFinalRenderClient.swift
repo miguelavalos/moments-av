@@ -38,7 +38,11 @@ struct MomentsFinalRenderClient {
 
         let (data, response) = try await session.data(for: request)
         guard let httpResponse = response as? HTTPURLResponse, 200..<300 ~= httpResponse.statusCode else {
-            throw MomentsFinalRenderError.generationFailed
+            throw MomentsAPIError.decode(
+                from: data,
+                fallbackCode: "moments_final_render_failed",
+                fallbackMessage: MomentsFinalRenderError.generationFailed.localizedDescription
+            )
         }
 
         return try JSONDecoder().decode(MomentsFinalRenderResponse.self, from: data)

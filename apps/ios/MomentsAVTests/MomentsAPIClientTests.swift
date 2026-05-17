@@ -149,6 +149,33 @@ final class MomentsAPIClientTests: XCTestCase {
         XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.url?.absoluteString, "\(accountAPIBaseURL)/v1/apps/momentsav/previews/generate")
     }
 
+    func testPreviewGenerationSurfacesAPIErrorMessage() async throws {
+        let session = makeMockSession(
+            statusCode: 409,
+            json: """
+            {
+              "error": {
+                "code": "insufficient_moments_credits",
+                "message": "Not enough spendable Moments AV credits."
+              }
+            }
+            """
+        )
+        let client = MomentsPreviewClient(baseURLString: accountAPIBaseURL, session: session)
+
+        do {
+            _ = try await client.generatePreview(
+                projectId: "project-1",
+                ownerUserId: "user-1",
+                template: .birthdayMessage,
+                previewIndex: 0
+            )
+            XCTFail("Expected API error")
+        } catch {
+            XCTAssertEqual(error.localizedDescription, "Not enough spendable Moments AV credits.")
+        }
+    }
+
     func testFinalRenderUsesSharedAccountAPIBaseURL() async throws {
         let session = makeMockSession(
             json: """
@@ -181,6 +208,32 @@ final class MomentsAPIClientTests: XCTestCase {
         XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.url?.absoluteString, "\(accountAPIBaseURL)/v1/apps/momentsav/final-renders/generate")
     }
 
+    func testFinalRenderSurfacesProviderFailureMessage() async throws {
+        let session = makeMockSession(
+            statusCode: 500,
+            json: """
+            {
+              "error": {
+                "code": "moments_final_provider_failed",
+                "message": "Final render failed before a usable export was delivered."
+              }
+            }
+            """
+        )
+        let client = MomentsFinalRenderClient(baseURLString: accountAPIBaseURL, session: session)
+
+        do {
+            _ = try await client.generateFinalRender(
+                projectId: "project-1",
+                ownerUserId: "user-1",
+                template: .birthdayMessage
+            )
+            XCTFail("Expected API error")
+        } catch {
+            XCTAssertEqual(error.localizedDescription, "Final render failed before a usable export was delivered.")
+        }
+    }
+
     func testDeletionUsesSharedAccountAPIBaseURL() async throws {
         let session = makeMockSession(
             json: """
@@ -203,7 +256,8 @@ final class MomentsAPIClientTests: XCTestCase {
         "https://api-account-av-preview.avalsys.com"
     }
 
-    private func makeMockSession(json: String) -> URLSession {
+    private func makeMockSession(statusCode: Int = 200, json: String) -> URLSession {
+        MomentsURLProtocolMock.statusCode = statusCode
         MomentsURLProtocolMock.responseData = Data(json.utf8)
         let configuration = URLSessionConfiguration.ephemeral
         configuration.protocolClasses = [MomentsURLProtocolMock.self]
@@ -212,6 +266,7 @@ final class MomentsAPIClientTests: XCTestCase {
 }
 
 private final class MomentsURLProtocolMock: URLProtocol {
+    nonisolated(unsafe) static var statusCode = 200
     nonisolated(unsafe) static var responseData = Data()
     nonisolated(unsafe) static var lastRequest: URLRequest?
 
@@ -227,7 +282,7 @@ private final class MomentsURLProtocolMock: URLProtocol {
         Self.lastRequest = request
         let response = HTTPURLResponse(
             url: request.url!,
-            statusCode: 200,
+            statusCode: Self.statusCode,
             httpVersion: nil,
             headerFields: ["content-type": "application/json"]
         )!
@@ -239,6 +294,7 @@ private final class MomentsURLProtocolMock: URLProtocol {
     override func stopLoading() {}
 
     static func reset() {
+        statusCode = 200
         responseData = Data()
         lastRequest = nil
     }

@@ -11,7 +11,10 @@ only in local or release build settings.
 release build settings to enable draft creation and realtime project sync.
 `ACCOUNTAV_API_BASE_URL` is blank in committed configs; set it alongside the
 Convex URL to enable signed account, credit, media, preview, final render, and
-project workflows through the shared Account AV API.
+project workflows through the shared Account AV API. Client requests surface the
+API error message returned by Account AV for credit, provider, storage, and
+deletion failures so the creation flow can distinguish retryable setup/runtime
+issues from credit or policy blocks.
 
 ## Build
 
@@ -34,5 +37,5 @@ Local signing values belong in untracked local configuration only.
 Run the focused simulator test suite after generating the Xcode project:
 
 ```bash
-xcodebuild test -project apps/ios/MomentsAV.xcodeproj -scheme MomentsAV -destination 'platform=iOS Simulator,name=iPhone 17'
+xcodebuild test -project apps/ios/MomentsAV.xcodeproj -scheme MomentsAV -destination 'platform=iOS Simulator,name=iPhone 16,OS=18.5'
 ```

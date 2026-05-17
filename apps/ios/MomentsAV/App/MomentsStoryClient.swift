@@ -56,7 +56,11 @@ struct MomentsStoryClient {
 
         let (data, response) = try await session.data(for: request)
         guard let httpResponse = response as? HTTPURLResponse, 200..<300 ~= httpResponse.statusCode else {
-            throw MomentsStoryError.draftFailed
+            throw MomentsAPIError.decode(
+                from: data,
+                fallbackCode: "moments_story_draft_failed",
+                fallbackMessage: MomentsStoryError.draftFailed.localizedDescription
+            )
         }
 
         let draft = try JSONDecoder().decode(MomentsStoryDraftResponse.self, from: data)
