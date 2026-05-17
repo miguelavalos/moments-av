@@ -4,14 +4,20 @@ struct PreviewGenerationView: View {
     let template: MomentTemplate
     let project: MomentDraftProject
     let latestPreview: MomentArtifact?
+    let latestRenderJob: MomentRenderJob?
 
     @EnvironmentObject private var accountController: AccountController
     @EnvironmentObject private var projectStore: MomentsProjectStore
     @State private var statusMessage: String?
     @State private var isGenerating = false
+    @State private var isRefreshingStatus = false
 
     private var previewClient: MomentsPreviewClient {
         MomentsPreviewClient(baseURLString: AppConfig.momentsAPIBaseURL)
+    }
+
+    private var statusClient: MomentsRenderStatusClient {
+        MomentsRenderStatusClient(baseURLString: AppConfig.momentsAPIBaseURL)
     }
 
     private var canGenerate: Bool {
@@ -34,6 +40,17 @@ struct PreviewGenerationView: View {
                 Text("Avi can generate a low-cost preview after the story is ready.")
                     .font(.footnote)
                     .foregroundStyle(.secondary)
+            }
+
+            if let latestRenderJob {
+                RenderJobStatusView(renderJob: latestRenderJob)
+
+                Button {
+                    Task { await refreshRenderStatus(renderJob: latestRenderJob) }
+                } label: {
+                    Label(isRefreshingStatus ? "Refreshing Status" : "Refresh Preview Status", systemImage: "arrow.clockwise")
+                }
+                .disabled(accountController.user == nil || !statusClient.isConfigured || isRefreshingStatus)
             }
 
             Button {
@@ -77,5 +94,22 @@ struct PreviewGenerationView: View {
         }
 
         isGenerating = false
+    }
+
+    private func refreshRenderStatus(renderJob: MomentRenderJob) async {
+        guard let ownerUserId = accountController.user?.id else { return }
+
+        isRefreshingStatus = true
+        statusMessage = nil
+
+        if await projectStore.refreshRenderStatus(
+            ownerUserId: ownerUserId,
+            renderJob: renderJob,
+            statusClient: statusClient
+        ) {
+            statusMessage = "Preview status updated."
+        }
+
+        isRefreshingStatus = false
     }
 }

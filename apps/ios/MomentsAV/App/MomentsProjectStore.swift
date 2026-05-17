@@ -346,6 +346,40 @@ final class MomentsProjectStore: ObservableObject {
         }
     }
 
+    func refreshRenderStatus(
+        ownerUserId: String,
+        renderJob: MomentRenderJob,
+        statusClient: MomentsRenderStatusClient
+    ) async -> Bool {
+        guard let client else {
+            errorMessage = "Project sync is not configured for this build."
+            return false
+        }
+
+        guard let providerRequestId = renderJob.providerRequestId else {
+            errorMessage = "Render status is missing its platform request id."
+            return false
+        }
+
+        do {
+            let status = try await statusClient.fetchStatus(renderJobId: providerRequestId, ownerUserId: ownerUserId)
+            let _: String? = try await client.mutation(
+                "moments:updateRenderJobStatus",
+                with: [
+                    "ownerUserId": ownerUserId,
+                    "renderJobId": renderJob.id,
+                    "status": status.status,
+                    "errorCode": status.errorCode,
+                    "errorMessage": status.errorMessage
+                ]
+            )
+            return true
+        } catch {
+            errorMessage = error.localizedDescription
+            return false
+        }
+    }
+
     func deleteProject(ownerUserId: String, projectId: String) async -> Bool {
         guard let client else {
             errorMessage = "Project sync is not configured for this build."

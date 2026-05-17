@@ -79,14 +79,16 @@ struct DraftFlowView: View {
                 PreviewGenerationView(
                     template: template,
                     project: activeProject,
-                    latestPreview: projectStore.activeWorkspace?.artifacts.first { $0.kind == "preview" }
+                    latestPreview: projectStore.activeWorkspace?.artifacts.first { $0.kind == "preview" },
+                    latestRenderJob: projectStore.activeWorkspace?.renderJobs.first { $0.kind == "preview" }
                 )
 
                 FinalRenderView(
                     template: template,
                     project: activeProject,
                     latestPreview: projectStore.activeWorkspace?.artifacts.first { $0.kind == "preview" },
-                    finalExport: projectStore.activeWorkspace?.artifacts.first { $0.kind == "final_export" }
+                    finalExport: projectStore.activeWorkspace?.artifacts.first { $0.kind == "final_export" },
+                    latestRenderJob: projectStore.activeWorkspace?.renderJobs.first { $0.kind == "final" }
                 )
 
                 ProjectDeletionView(project: activeProject) {

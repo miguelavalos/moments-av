@@ -18,6 +18,8 @@ retryable setup/runtime issues from credit or policy blocks.
 Preview and final render responses also carry client-safe provider/model
 metadata from Account AV so Convex project render records do not use placeholder
 provider values.
+Project workspaces include Convex render jobs, and the preview/final sections
+can refresh their status through the shared Account AV render status endpoint.
 
 ## Build
 
