@@ -40,6 +40,12 @@ xcodebuild -project apps/ios/MomentsAV.xcodeproj -scheme MomentsAV -destination 
 
 Local signing values belong in untracked local configuration only.
 
+Validate the effective runtime config after generating local settings:
+
+```bash
+scripts/check-ios-runtime-config.sh --env dev
+```
+
 ## Test
 
 Run the focused simulator test suite after generating the Xcode project:
