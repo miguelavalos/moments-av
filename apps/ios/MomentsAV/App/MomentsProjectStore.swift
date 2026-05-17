@@ -263,7 +263,7 @@ final class MomentsProjectStore: ObservableObject {
                     with: [
                         "ownerUserId": ownerUserId,
                         "renderJobId": renderJobId,
-                        "status": "completed"
+                        "status": preview.status
                     ]
                 )
             }
@@ -330,7 +330,7 @@ final class MomentsProjectStore: ObservableObject {
                     with: [
                         "ownerUserId": ownerUserId,
                         "renderJobId": renderJobId,
-                        "status": "completed"
+                        "status": finalRender.status
                     ]
                 )
             }
