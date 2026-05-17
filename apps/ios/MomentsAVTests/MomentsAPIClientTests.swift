@@ -242,6 +242,59 @@ final class MomentsAPIClientTests: XCTestCase {
         }
     }
 
+    func testRenderStatusUsesSharedAccountAPIBaseURL() async throws {
+        let session = makeMockSession(
+            json: """
+            {
+              "appId": "momentsav",
+              "projectId": "project-1",
+              "renderJobId": "render-1",
+              "workflowRunId": "workflow-1",
+              "renderKind": "preview",
+              "status": "running",
+              "progressPercent": 25,
+              "artifactId": null,
+              "artifactKind": null,
+              "artifactStatus": null,
+              "errorCode": null,
+              "errorMessage": null,
+              "updatedAt": "2026-05-16T16:00:00Z"
+            }
+            """
+        )
+        let client = MomentsRenderStatusClient(baseURLString: accountAPIBaseURL, session: session)
+
+        let status = try await client.fetchStatus(renderJobId: "render-1", ownerUserId: "user-1")
+
+        XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.url?.absoluteString, "\(accountAPIBaseURL)/v1/apps/momentsav/renders/render-1/status")
+        XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.httpMethod, "GET")
+        XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.value(forHTTPHeaderField: "Authorization"), "Bearer user-1")
+        XCTAssertEqual(status.status, "running")
+        XCTAssertEqual(status.progressPercent, 25)
+    }
+
+    func testRenderStatusSurfacesAPIErrorMessage() async throws {
+        let session = makeMockSession(
+            statusCode: 404,
+            json: """
+            {
+              "error": {
+                "code": "moments_render_not_found",
+                "message": "Render job was not found."
+              }
+            }
+            """
+        )
+        let client = MomentsRenderStatusClient(baseURLString: accountAPIBaseURL, session: session)
+
+        do {
+            _ = try await client.fetchStatus(renderJobId: "missing-render", ownerUserId: "user-1")
+            XCTFail("Expected API error")
+        } catch {
+            XCTAssertEqual(error.localizedDescription, "Render job was not found.")
+        }
+    }
+
     func testDeletionUsesSharedAccountAPIBaseURL() async throws {
         let session = makeMockSession(
             json: """

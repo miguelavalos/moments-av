@@ -10,11 +10,11 @@ only in local or release build settings.
 `MOMENTSAV_CONVEX_URL` is also blank in committed configs; set it in local or
 release build settings to enable draft creation and realtime project sync.
 `ACCOUNTAV_API_BASE_URL` is blank in committed configs; set it alongside the
-Convex URL to enable signed account, credit, media, preview, final render, and
-project workflows through the shared Account AV API. Client requests surface the
-API error message returned by Account AV for credit, provider, storage, and
-deletion failures so the creation flow can distinguish retryable setup/runtime
-issues from credit or policy blocks.
+Convex URL to enable signed account, credit, media, preview, final render,
+render status, and project workflows through the shared Account AV API. Client
+requests surface the API error message returned by Account AV for credit,
+provider, storage, and deletion failures so the creation flow can distinguish
+retryable setup/runtime issues from credit or policy blocks.
 Preview and final render responses also carry client-safe provider/model
 metadata from Account AV so Convex project render records do not use placeholder
 provider values.
