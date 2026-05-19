@@ -15,6 +15,11 @@ render status, and project workflows through the shared Account AV API. Client
 requests surface the API error message returned by Account AV for credit,
 provider, storage, and deletion failures so the creation flow can distinguish
 retryable setup/runtime issues from credit or policy blocks.
+`MARKETING_VERSION` and `CURRENT_PROJECT_VERSION` are defined in committed
+xcconfigs so App Store builds use the same version source as Xcode archives.
+Legal/support URLs are also xcconfig-backed:
+`MOMENTSAV_SUPPORT_URL`, `MOMENTSAV_PRIVACY_URL`, `MOMENTSAV_TERMS_URL`, and
+`ACCOUNTAV_DELETE_ACCOUNT_URL`.
 Generated staging and production configs reject non-canonical Account AV API
 hosts so a local or release build cannot silently point at the wrong preview or
 production Worker route.

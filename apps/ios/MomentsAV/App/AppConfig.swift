@@ -20,22 +20,28 @@ enum AppConfig {
     }
 
     static var supportURL: URL {
-        URL(string: "https://moments-av.avalsys.com/support")!
+        configuredURL(for: "MOMENTSAV_SUPPORT_URL", fallback: "https://moments-av.avalsys.com/support")
     }
 
     static var privacyPolicyURL: URL {
-        URL(string: "https://moments-av.avalsys.com/privacy")!
+        configuredURL(for: "MOMENTSAV_PRIVACY_URL", fallback: "https://moments-av.avalsys.com/privacy")
     }
 
     static var termsURL: URL {
-        URL(string: "https://moments-av.avalsys.com/terms")!
+        configuredURL(for: "MOMENTSAV_TERMS_URL", fallback: "https://moments-av.avalsys.com/terms")
     }
 
     static var accountDeletionURL: URL {
-        URL(string: "https://account.avalsys.com/account/delete")!
+        configuredURL(for: "ACCOUNTAV_DELETE_ACCOUNT_URL", fallback: "https://account.avalsys.com/account/delete")
     }
 
     static func configureAVAccountIfPossible() {
         AccountAVClerk.configureIfPossible(publishableKey: avAccountKey)
+    }
+
+    private static func configuredURL(for key: String, fallback: String) -> URL {
+        let rawValue = Bundle.main.object(forInfoDictionaryKey: key) as? String ?? ""
+        let trimmedValue = rawValue.trimmingCharacters(in: .whitespacesAndNewlines)
+        return URL(string: trimmedValue.isEmpty ? fallback : trimmedValue) ?? URL(string: fallback)!
     }
 }
