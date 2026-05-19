@@ -385,17 +385,25 @@ struct AccountView: View {
                     CreditSourceRow(source: .promotional, amount: accountController.creditBalance.promotional)
                     CreditSourceRow(source: .purchased, amount: accountController.creditBalance.purchased)
                     LabeledContent("Spendable", value: "\(accountController.creditBalance.spendable)")
+                    Text("Preview checks require spendable credits. Delivered usable final exports commit credits; drafts and failed provider runs do not commit final credits.")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
                 }
             }
 
             Section("Privacy") {
                 Label("Private by default", systemImage: "lock")
                 Label("User-controlled export", systemImage: "square.and.arrow.up")
+                Text("Moments AV uses Account AV for identity. Selected media, drafts, previews, and exports remain tied to your account and project deletion removes project media and generated artifacts where available.")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
             }
 
             Section("Support") {
-                Link("Support", destination: URL(string: "https://moments-av.avalsys.com/support")!)
-                Link("Privacy Policy", destination: URL(string: "https://moments-av.avalsys.com/privacy")!)
+                Link("Support", destination: AppConfig.supportURL)
+                Link("Privacy Policy", destination: AppConfig.privacyPolicyURL)
+                Link("Terms", destination: AppConfig.termsURL)
+                Link("Delete Account", destination: AppConfig.accountDeletionURL)
             }
         }
         .scrollContentBackground(.hidden)

@@ -19,6 +19,22 @@ enum AppConfig {
         Bundle.main.object(forInfoDictionaryKey: "ACCOUNTAV_API_BASE_URL") as? String ?? ""
     }
 
+    static var supportURL: URL {
+        URL(string: "https://moments-av.avalsys.com/support")!
+    }
+
+    static var privacyPolicyURL: URL {
+        URL(string: "https://moments-av.avalsys.com/privacy")!
+    }
+
+    static var termsURL: URL {
+        URL(string: "https://moments-av.avalsys.com/terms")!
+    }
+
+    static var accountDeletionURL: URL {
+        URL(string: "https://account.avalsys.com/account/delete")!
+    }
+
     static func configureAVAccountIfPossible() {
         AccountAVClerk.configureIfPossible(publishableKey: avAccountKey)
     }
