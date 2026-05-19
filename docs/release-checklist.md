@@ -176,6 +176,9 @@ Screenshot rules:
 
 ## Review Notes TODO
 
+Use [app-review-notes.md](app-review-notes.md) as the App Store Connect review
+notes draft.
+
 - [ ] Explain Account AV sign-in and demo account access.
 - [ ] Explain where account deletion is located.
 - [ ] Explain credit behavior and when credits are committed.

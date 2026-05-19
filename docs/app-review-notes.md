@@ -1,0 +1,126 @@
+# Moments AV App Review Notes
+
+Status: first-publication draft. Final values must be copied into App Store
+Connect only after the release-candidate build, production backend, public URLs,
+App Privacy answers, and demo account are confirmed.
+
+## Submission Context
+
+- App: Moments AV
+- Bundle ID: `com.avalsys.momentsav`
+- Version: `1.0`
+- Build: `1`
+- Submitted commit SHA: TODO
+- Backend environment: production
+- Review contact: TODO
+- Review phone: TODO
+- Demo account: TODO
+- Demo account password storage: TODO
+
+## Suggested Review Notes
+
+Use this as the starting point for App Store Connect review notes:
+
+```text
+Moments AV lets signed-in users create private memory video projects from
+selected photos and short clips.
+
+Account and sign-in:
+- The app uses Account AV for authentication and account state.
+- Use the provided demo account to sign in and reach the full creation flow.
+
+Creation flow:
+- Open Create.
+- Sign in if prompted.
+- Choose a template such as Birthday Message, Party Recap, or Soft Roast.
+- Confirm readiness items for Account AV, credits, media, and Avi workflow.
+- Select approved sample photos or short clips.
+- Ask Avi to draft the story.
+- Generate a preview.
+- Request the final export when the preview is ready.
+
+Credits:
+- Previews and final exports require spendable Moments AV credits.
+- Final credits are committed only after a usable final export is delivered.
+- Drafts and failed provider runs do not commit final credits.
+
+Account deletion and project deletion:
+- Account deletion is available from Account > Delete Account.
+- Individual Moments AV projects can also be deleted from the project deletion
+  flow; that requests deletion of source media, previews, exports, and project
+  metadata where available.
+
+Avi:
+- Avi is a guided in-app assistant for onboarding, draft guidance, preview
+  preparation, final export status, credits, and recovery guidance.
+- Avi is not presented as open-ended chat or autonomous cross-app control.
+
+Public URLs:
+- Support: https://moments-av.avalsys.com/support
+- Privacy Policy: https://moments-av.avalsys.com/privacy
+- Terms: https://moments-av.avalsys.com/terms
+- Account deletion: https://account.avalsys.com/account/delete
+```
+
+## Demo Account TODO
+
+- [ ] Create a review-safe Account AV user.
+- [ ] Confirm the demo account can sign in on the submitted build.
+- [ ] Confirm the demo account has enough spendable Moments AV credits to run
+  preview and final export flows, or document why generation is limited.
+- [ ] Confirm demo media is synthetic or approved for App Review.
+- [ ] Confirm no private user data, internal IDs, or debug URLs appear.
+- [ ] Store the password in the approved private handoff location, not this repo.
+
+## Reviewer Route Checks
+
+Before submission, test these paths on the exact build:
+
+- [ ] Signed-out launch explains Account AV requirement.
+- [ ] Account AV sign-in succeeds with the demo account.
+- [ ] Create tab opens template selection.
+- [ ] Launch readiness checklist is visible before template creation.
+- [ ] Media selection uses Apple Photos picker and only user-selected media.
+- [ ] Story draft flow can be reached after media selection.
+- [ ] Preview generation can be reached after story draft readiness.
+- [ ] Final render flow can be reached after preview readiness.
+- [ ] Projects tab shows submitted demo projects.
+- [ ] Account tab shows support, privacy, terms, and delete-account routes.
+- [ ] Account deletion URL opens correctly.
+- [ ] Project deletion messaging matches backend behavior.
+
+## Provider Availability
+
+Final review notes must say whether preview/final generation is expected to run
+against production providers during review.
+
+Choose one before submission:
+
+- [ ] Production provider generation is fully enabled for the demo account.
+- [ ] Generation is limited; review notes explain the limitation and provide
+  screenshots/evidence of the expected states.
+
+Do not submit if the selected mode would leave reviewers blocked without a clear
+route through the app.
+
+## Known Limitations TODO
+
+Record only true limitations of the submitted build:
+
+- [ ] Supported device families:
+- [ ] Supported regions:
+- [ ] Supported locales:
+- [ ] Paid credits/subscriptions live in this build: yes/no/TODO
+- [ ] Provider generation availability during review:
+- [ ] Any temporary backend limitation:
+
+## Final Gate
+
+Before copying notes into App Store Connect:
+
+1. Demo account was tested on the archived build.
+2. URLs were opened outside the app.
+3. Credit behavior in notes matches code, backend, screenshots, and metadata.
+4. Account deletion route was verified.
+5. Provider availability statement matches production reality.
+6. Notes do not include secrets, passwords, private URLs, or internal IDs.
