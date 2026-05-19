@@ -51,6 +51,14 @@ Validate the effective runtime config after generating local settings:
 scripts/check-ios-runtime-config.sh --env dev
 ```
 
+Before archiving for App Store review, run the same check against the Release
+configuration and production local settings:
+
+```bash
+scripts/generate-ios-local-xcconfig.sh --env prod
+scripts/check-ios-runtime-config.sh --env prod --configuration Release
+```
+
 ## Test
 
 Run the focused simulator test suite after generating the Xcode project:

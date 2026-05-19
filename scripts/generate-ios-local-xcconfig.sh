@@ -93,6 +93,10 @@ MOMENTSAV_CONVEX_URL=infisical()
 ACCOUNTAV_API_BASE_URL=infisical()
 ACCOUNTAV_PUBLISHABLE_KEY=infisical()
 AVALSYS_APPLE_DEVELOPMENT_TEAM=infisical()
+MOMENTSAV_SUPPORT_URL=https://moments-av.avalsys.com/support
+MOMENTSAV_PRIVACY_URL=https://moments-av.avalsys.com/privacy
+MOMENTSAV_TERMS_URL=https://moments-av.avalsys.com/terms
+ACCOUNTAV_DELETE_ACCOUNT_URL=https://account.avalsys.com/account/delete
 SCHEMA
 
 read_required_config() {
@@ -146,9 +150,17 @@ moments_convex_url="$(read_required_config MOMENTSAV_CONVEX_URL)"
 account_api_base_url="$(read_required_config ACCOUNTAV_API_BASE_URL)"
 account_publishable_key="$(read_required_config ACCOUNTAV_PUBLISHABLE_KEY)"
 development_team="$(read_required_config AVALSYS_APPLE_DEVELOPMENT_TEAM)"
+support_url="$(read_required_config MOMENTSAV_SUPPORT_URL)"
+privacy_url="$(read_required_config MOMENTSAV_PRIVACY_URL)"
+terms_url="$(read_required_config MOMENTSAV_TERMS_URL)"
+delete_account_url="$(read_required_config ACCOUNTAV_DELETE_ACCOUNT_URL)"
 
 require_http_url MOMENTSAV_CONVEX_URL "$moments_convex_url"
 require_http_url ACCOUNTAV_API_BASE_URL "$account_api_base_url"
+require_http_url MOMENTSAV_SUPPORT_URL "$support_url"
+require_http_url MOMENTSAV_PRIVACY_URL "$privacy_url"
+require_http_url MOMENTSAV_TERMS_URL "$terms_url"
+require_http_url ACCOUNTAV_DELETE_ACCOUNT_URL "$delete_account_url"
 
 if [ "$env_name" = "staging" ]; then
   require_expected_url ACCOUNTAV_API_BASE_URL "$account_api_base_url" "https://api-account-av-preview.avalsys.com"
@@ -168,6 +180,10 @@ AVALSYS_APPLE_DEVELOPMENT_TEAM = $development_team
 ACCOUNTAV_PUBLISHABLE_KEY = $account_publishable_key
 ACCOUNTAV_API_BASE_URL = $(escape_xcconfig_value "$account_api_base_url")
 MOMENTSAV_CONVEX_URL = $(escape_xcconfig_value "$moments_convex_url")
+MOMENTSAV_SUPPORT_URL = $(escape_xcconfig_value "$support_url")
+MOMENTSAV_PRIVACY_URL = $(escape_xcconfig_value "$privacy_url")
+MOMENTSAV_TERMS_URL = $(escape_xcconfig_value "$terms_url")
+ACCOUNTAV_DELETE_ACCOUNT_URL = $(escape_xcconfig_value "$delete_account_url")
 EOF
 )"
 

@@ -103,24 +103,49 @@ api_base_url="$(setting ACCOUNTAV_API_BASE_URL)"
 convex_url="$(setting MOMENTSAV_CONVEX_URL)"
 publishable_key="$(setting ACCOUNTAV_PUBLISHABLE_KEY)"
 development_team="$(setting DEVELOPMENT_TEAM)"
+marketing_version="$(setting MARKETING_VERSION)"
+current_project_version="$(setting CURRENT_PROJECT_VERSION)"
+support_url="$(setting MOMENTSAV_SUPPORT_URL)"
+privacy_url="$(setting MOMENTSAV_PRIVACY_URL)"
+terms_url="$(setting MOMENTSAV_TERMS_URL)"
+delete_account_url="$(setting ACCOUNTAV_DELETE_ACCOUNT_URL)"
 
 for item in \
   "PRODUCT_BUNDLE_IDENTIFIER:$product_bundle_identifier" \
   "MOMENTSAV_CONFIG_ENVIRONMENT:$config_environment" \
   "ACCOUNTAV_API_BASE_URL:$api_base_url" \
   "MOMENTSAV_CONVEX_URL:$convex_url" \
-  "ACCOUNTAV_PUBLISHABLE_KEY:$publishable_key"; do
+  "ACCOUNTAV_PUBLISHABLE_KEY:$publishable_key" \
+  "MARKETING_VERSION:$marketing_version" \
+  "CURRENT_PROJECT_VERSION:$current_project_version" \
+  "MOMENTSAV_SUPPORT_URL:$support_url" \
+  "MOMENTSAV_PRIVACY_URL:$privacy_url" \
+  "MOMENTSAV_TERMS_URL:$terms_url" \
+  "ACCOUNTAV_DELETE_ACCOUNT_URL:$delete_account_url"; do
   require_present "${item%%:*}" "${item#*:}"
 done
 
 [ "$config_environment" = "$env_name" ] || fail "MOMENTSAV_CONFIG_ENVIRONMENT must be $env_name, got ${config_environment:-missing}"
 [[ "$convex_url" == https://*.convex.cloud ]] || fail "MOMENTSAV_CONVEX_URL must be a Convex cloud URL"
+[[ "$marketing_version" =~ ^[0-9]+(\.[0-9]+){1,2}$ ]] || fail "MARKETING_VERSION must look like 1.0 or 1.0.0"
+[[ "$current_project_version" =~ ^[0-9]+$ ]] || fail "CURRENT_PROJECT_VERSION must be an integer"
+[[ "$support_url" == https://* ]] || fail "MOMENTSAV_SUPPORT_URL must be https"
+[[ "$privacy_url" == https://* ]] || fail "MOMENTSAV_PRIVACY_URL must be https"
+[[ "$terms_url" == https://* ]] || fail "MOMENTSAV_TERMS_URL must be https"
+[[ "$delete_account_url" == https://* ]] || fail "ACCOUNTAV_DELETE_ACCOUNT_URL must be https"
 
 if [ "$env_name" = "prod" ]; then
   [ "$product_bundle_identifier" = "com.avalsys.momentsav" ] || fail "prod bundle must be com.avalsys.momentsav, got $product_bundle_identifier"
   [ "$api_base_url" = "$production_worker_api_url" ] || fail "prod API URL mismatch"
   [[ "$publishable_key" == pk_live_* ]] || fail "prod publishable key must use pk_live"
-  if printf '%s\n%s\n%s\n' "$product_bundle_identifier" "$api_base_url" "$convex_url" | rg -q 'preview|127\.0\.0\.1|localhost|\.dev'; then
+  if printf '%s\n%s\n%s\n%s\n%s\n%s\n%s\n' \
+      "$product_bundle_identifier" \
+      "$api_base_url" \
+      "$convex_url" \
+      "$support_url" \
+      "$privacy_url" \
+      "$terms_url" \
+      "$delete_account_url" | rg -q 'preview|127\.0\.0\.1|localhost|\.dev'; then
     fail "prod settings contain preview/local/dev values"
   fi
 elif [ "$env_name" = "staging" ]; then
@@ -144,10 +169,16 @@ cat <<EOF
 Moments AV iOS runtime config ($env_name)
   configuration: $configuration
   product bundle: $product_bundle_identifier
+  marketing version: $marketing_version
+  build number: $current_project_version
   config environment: $config_environment
   development team: ${development_team:-unknown}
   Account AV API: $api_base_url
   Convex URL: $convex_url
+  support URL: $support_url
+  privacy URL: $privacy_url
+  terms URL: $terms_url
+  delete account URL: $delete_account_url
   publishable key: $redacted_key
 EOF
 
