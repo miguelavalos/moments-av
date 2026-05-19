@@ -4,6 +4,8 @@ SwiftUI app shell for Moments AV. The current v1 frontend includes account
 state, credit gating, template draft creation, media metadata, story draft,
 preview generation, final render/export, and project deletion flows.
 
+For full local setup, see [../../docs/install-ios.md](../../docs/install-ios.md).
+
 The app uses the sibling public `account-av` package for Account AV sign-in.
 `ACCOUNTAV_PUBLISHABLE_KEY` is intentionally blank in committed configs; set it
 only in local or release build settings.
