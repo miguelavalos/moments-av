@@ -94,6 +94,7 @@ struct CreateMomentView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
                 AppHeader()
+                LaunchReadinessView(balance: accountController.creditBalance)
 
                 if accountController.isSignedIn {
                     if MomentsCreditGate.canAffordAny(MomentTemplate.launchTemplates, balance: accountController.creditBalance) {
@@ -139,6 +140,11 @@ struct SignedOutGateView: View {
             Text("Creation needs an Account AV session before photos, clips, or drafts can be attached to a private project.")
                 .font(.body)
                 .foregroundStyle(.secondary)
+
+            AviCompanionView(
+                state: .onboarding,
+                message: "I can guide the project after sign-in, but private media and exports stay tied to Account AV."
+            )
 
             AuthActionButtons()
 
@@ -204,6 +210,66 @@ struct PurchaseRouteRow: View {
         }
         .padding(14)
         .background(MomentsBrand.ColorToken.panelBackground, in: RoundedRectangle(cornerRadius: MomentsBrand.Radius.panel))
+    }
+}
+
+struct LaunchReadinessView: View {
+    let balance: MomentsCreditBalance
+
+    @EnvironmentObject private var accountController: AccountController
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Before you create")
+                .font(.headline)
+
+            ReadinessRow(
+                title: "Account AV",
+                detail: accountController.isSignedIn ? "Signed in and ready for private projects" : "Required before media, drafts, and exports",
+                systemImage: accountController.isSignedIn ? "checkmark.circle.fill" : "person.crop.circle.badge.exclamationmark",
+                isComplete: accountController.isSignedIn
+            )
+
+            ReadinessRow(
+                title: "Credits",
+                detail: balance.spendable > 0 ? "\(balance.spendable) spendable credits available" : "Needed before preview and final export",
+                systemImage: balance.spendable > 0 ? "checkmark.circle.fill" : "creditcard",
+                isComplete: balance.spendable > 0
+            )
+
+            ReadinessRow(
+                title: "Avi workflow",
+                detail: "Avi helps shape the draft, preview, and export status",
+                systemImage: "sparkles",
+                isComplete: true
+            )
+        }
+        .padding(16)
+        .background(MomentsBrand.ColorToken.elevatedSurface, in: RoundedRectangle(cornerRadius: MomentsBrand.Radius.panel))
+    }
+}
+
+struct ReadinessRow: View {
+    let title: String
+    let detail: String
+    let systemImage: String
+    let isComplete: Bool
+
+    var body: some View {
+        HStack(alignment: .top, spacing: 12) {
+            Image(systemName: systemImage)
+                .font(.headline)
+                .foregroundStyle(isComplete ? MomentsBrand.ColorToken.primaryAccent : .secondary)
+                .frame(width: 24)
+
+            VStack(alignment: .leading, spacing: 3) {
+                Text(title)
+                    .font(.subheadline.weight(.semibold))
+                Text(detail)
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+            }
+        }
     }
 }
 

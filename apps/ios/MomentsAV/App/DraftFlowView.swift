@@ -32,6 +32,13 @@ struct DraftFlowView: View {
                 }
             }
 
+            Section {
+                AviCompanionView(
+                    state: .onboarding,
+                    message: "Add enough context for a useful draft. You can edit scenes before preview and final export."
+                )
+            }
+
             Section("Occasion") {
                 TextField("Occasion", text: $form.occasion)
                 TextField("Who is this for?", text: $form.recipient)
@@ -59,6 +66,9 @@ struct DraftFlowView: View {
                 LabeledContent("Credit cost", value: "\(template.creditCost)")
                 LabeledContent("Media needed", value: template.mediaRange)
                 SpendPlanView(template: template, balance: accountController.creditBalance)
+                Text("Preview checks require spendable credits, and final credits are committed only after a usable export is delivered.")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
             }
 
             if let activeProject = projectStore.activeProject, activeProject.id == createdProjectId {
