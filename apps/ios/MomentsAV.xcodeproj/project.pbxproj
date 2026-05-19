@@ -32,6 +32,7 @@
 		B6BB7FE8B254C1A15F4BF9F6 /* MomentsUploadClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7FE4A79C0B4B6874C5A630A /* MomentsUploadClient.swift */; };
 		BBD014911E31737FBC581AF5 /* PreviewGenerationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 315E1D1182DD96F38A22A397 /* PreviewGenerationView.swift */; };
 		BC8575546EB68E020EEAFC53 /* AVAccountService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C85967468773643759D0A50 /* AVAccountService.swift */; };
+		C642FC0E36C675577F033529 /* MomentsBrand.swift in Sources */ = {isa = PBXBuildFile; fileRef = A39378E23A370BEF734CF294 /* MomentsBrand.swift */; };
 		CD1EC23CEC19D3CB473ED43D /* MomentsMediaModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6791D61933CFC94E1E844E02 /* MomentsMediaModels.swift */; };
 		D49C53A9DBDE0D94EEF18DF0 /* AccountAV in Frameworks */ = {isa = PBXBuildFile; productRef = 55C46B29A672949F0C432479 /* AccountAV */; };
 		DB214834F05720BC16CE7409 /* ProjectDeletionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99DE90ADB7F90853751B67E6 /* ProjectDeletionView.swift */; };
@@ -68,6 +69,7 @@
 		8C85967468773643759D0A50 /* AVAccountService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AVAccountService.swift; sourceTree = "<group>"; };
 		983BDA28C3496384D19E2E6E /* StoryDraftView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryDraftView.swift; sourceTree = "<group>"; };
 		99DE90ADB7F90853751B67E6 /* ProjectDeletionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectDeletionView.swift; sourceTree = "<group>"; };
+		A39378E23A370BEF734CF294 /* MomentsBrand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MomentsBrand.swift; sourceTree = "<group>"; };
 		A4EF1BD1B4DAEA9403D388ED /* MomentsDeletionClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MomentsDeletionClient.swift; sourceTree = "<group>"; };
 		A83D2AEAB457692EA48442BE /* FinalRenderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinalRenderView.swift; sourceTree = "<group>"; };
 		AAD34F31BF36F07582D30529 /* MomentsProjectStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MomentsProjectStore.swift; sourceTree = "<group>"; };
@@ -152,6 +154,7 @@
 				D2D2212DB2FE9EA58F97170D /* MomentDraftModels.swift */,
 				653E3FA99D23DEAB99652097 /* MomentsAPIError.swift */,
 				7EF8B2EE66F151280AFAB93D /* MomentsAVApp.swift */,
+				A39378E23A370BEF734CF294 /* MomentsBrand.swift */,
 				E3E955ED5A2483EFD2490B51 /* MomentsCreditGate.swift */,
 				A4EF1BD1B4DAEA9403D388ED /* MomentsDeletionClient.swift */,
 				AD3FEC39A4B95CB4E21A6A37 /* MomentsFinalRenderClient.swift */,
@@ -294,6 +297,7 @@
 				27129EFECB97EB10AAF7107B /* MomentDraftModels.swift in Sources */,
 				653DA74696BC6650C93C1FDC /* MomentsAPIError.swift in Sources */,
 				25DE61AEB481F66A413BBC29 /* MomentsAVApp.swift in Sources */,
+				C642FC0E36C675577F033529 /* MomentsBrand.swift in Sources */,
 				00A804B651ECE4E2BFB337BD /* MomentsCreditGate.swift in Sources */,
 				2A81FAFB53716750A0726D1C /* MomentsDeletionClient.swift in Sources */,
 				9D0EA3E261A3B0222A952297 /* MomentsFinalRenderClient.swift in Sources */,

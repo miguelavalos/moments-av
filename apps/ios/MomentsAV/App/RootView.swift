@@ -46,7 +46,7 @@ struct RootView: View {
                 .tag(tab)
             }
         }
-        .tint(MomentsTheme.accent)
+        .tint(MomentsBrand.ColorToken.primaryAccent)
         .environmentObject(accountController)
         .environmentObject(projectStore)
         .onChange(of: accountController.user?.id, initial: true) { _, ownerUserId in
@@ -124,7 +124,7 @@ struct CreateMomentView: View {
             }
             .padding(20)
         }
-        .background(MomentsTheme.background)
+        .background(MomentsBrand.ColorToken.appBackground)
     }
 }
 
@@ -149,7 +149,7 @@ struct SignedOutGateView: View {
             }
         }
         .padding(18)
-        .background(.background, in: RoundedRectangle(cornerRadius: 8))
+        .background(MomentsBrand.ColorToken.elevatedSurface, in: RoundedRectangle(cornerRadius: MomentsBrand.Radius.panel))
     }
 }
 
@@ -173,7 +173,7 @@ struct CreditRequiredView: View {
                 .foregroundStyle(.secondary)
         }
         .padding(18)
-        .background(.background, in: RoundedRectangle(cornerRadius: 8))
+        .background(MomentsBrand.ColorToken.elevatedSurface, in: RoundedRectangle(cornerRadius: MomentsBrand.Radius.panel))
     }
 }
 
@@ -184,7 +184,7 @@ struct PurchaseRouteRow: View {
     var body: some View {
         HStack(spacing: 12) {
             Image(systemName: "plus.circle")
-                .foregroundStyle(MomentsTheme.accent)
+                .foregroundStyle(MomentsBrand.ColorToken.primaryAccent)
             VStack(alignment: .leading, spacing: 3) {
                 Text(title)
                     .font(.headline)
@@ -198,7 +198,7 @@ struct PurchaseRouteRow: View {
                 .foregroundStyle(.tertiary)
         }
         .padding(14)
-        .background(MomentsTheme.panel, in: RoundedRectangle(cornerRadius: 8))
+        .background(MomentsBrand.ColorToken.panelBackground, in: RoundedRectangle(cornerRadius: MomentsBrand.Radius.panel))
     }
 }
 
@@ -233,7 +233,7 @@ struct ProjectsView: View {
                 VStack(spacing: 18) {
                     Image(systemName: "lock.rectangle.stack")
                         .font(.system(size: 48))
-                        .foregroundStyle(MomentsTheme.accent)
+                        .foregroundStyle(MomentsBrand.ColorToken.primaryAccent)
                     Text("Sign in to view projects")
                         .font(.title2.weight(.semibold))
                     Text("Your Moments AV drafts and exports appear only after Account AV sign-in.")
@@ -246,7 +246,7 @@ struct ProjectsView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
-        .background(MomentsTheme.background)
+        .background(MomentsBrand.ColorToken.appBackground)
     }
 }
 
@@ -280,7 +280,7 @@ struct DraftProjectDetailView: View {
         }
         .navigationTitle("Draft")
         .scrollContentBackground(.hidden)
-        .background(MomentsTheme.background)
+        .background(MomentsBrand.ColorToken.appBackground)
     }
 }
 
@@ -318,7 +318,7 @@ struct AccountView: View {
             }
         }
         .scrollContentBackground(.hidden)
-        .background(MomentsTheme.background)
+        .background(MomentsBrand.ColorToken.appBackground)
     }
 }
 
@@ -366,7 +366,7 @@ struct CreditBalanceSummary: View {
                 .foregroundStyle(.secondary)
         }
         .padding(16)
-        .background(.background, in: RoundedRectangle(cornerRadius: 8))
+        .background(MomentsBrand.ColorToken.elevatedSurface, in: RoundedRectangle(cornerRadius: MomentsBrand.Radius.panel))
     }
 }
 
@@ -386,7 +386,7 @@ struct CreditSourcePill: View {
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 10)
-        .background(MomentsTheme.panel, in: RoundedRectangle(cornerRadius: 8))
+        .background(MomentsBrand.ColorToken.panelBackground, in: RoundedRectangle(cornerRadius: MomentsBrand.Radius.panel))
     }
 }
 
@@ -427,7 +427,7 @@ struct SettingsView: View {
             }
         }
         .scrollContentBackground(.hidden)
-        .background(MomentsTheme.background)
+        .background(MomentsBrand.ColorToken.appBackground)
     }
 }
 
@@ -442,7 +442,7 @@ struct AppHeader: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(20)
-        .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 8))
+        .background(.thinMaterial, in: RoundedRectangle(cornerRadius: MomentsBrand.Radius.panel))
     }
 }
 
@@ -462,7 +462,7 @@ struct TemplateCard: View {
                 Spacer()
                 Text(template.duration)
                     .font(.subheadline.weight(.medium))
-                    .foregroundStyle(MomentsTheme.accent)
+                    .foregroundStyle(MomentsBrand.ColorToken.primaryAccent)
             }
 
             Text(template.summary)
@@ -486,7 +486,7 @@ struct TemplateCard: View {
             }
         }
         .padding(16)
-        .background(.background, in: RoundedRectangle(cornerRadius: 8))
+        .background(MomentsBrand.ColorToken.elevatedSurface, in: RoundedRectangle(cornerRadius: MomentsBrand.Radius.panel))
         .opacity(canAfford ? 1 : 0.68)
     }
 }
@@ -499,7 +499,7 @@ struct GuidePanel: View {
         HStack(alignment: .top, spacing: 12) {
             Image(systemName: "sparkle.magnifyingglass")
                 .font(.title3)
-                .foregroundStyle(MomentsTheme.accent)
+                .foregroundStyle(MomentsBrand.ColorToken.primaryAccent)
             VStack(alignment: .leading, spacing: 6) {
                 Text(title)
                     .font(.headline)
@@ -509,14 +509,8 @@ struct GuidePanel: View {
             }
         }
         .padding(16)
-        .background(MomentsTheme.panel, in: RoundedRectangle(cornerRadius: 8))
+        .background(MomentsBrand.ColorToken.panelBackground, in: RoundedRectangle(cornerRadius: MomentsBrand.Radius.panel))
     }
-}
-
-enum MomentsTheme {
-    static let accent = Color(red: 0.85, green: 0.36, blue: 0.28)
-    static let background = Color(red: 0.97, green: 0.94, blue: 0.91)
-    static let panel = Color(red: 1.0, green: 0.98, blue: 0.95)
 }
 
 #Preview {

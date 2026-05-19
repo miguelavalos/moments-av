@@ -40,7 +40,7 @@ struct MediaSelectionView: View {
             LabeledContent("Selected", value: "\(selectedCount)/\(template.mediaRange)")
             Text(MomentsMediaRules.message(template: template, selectedCount: selectedCount))
                 .font(.caption)
-                .foregroundStyle(isReady ? MomentsTheme.accent : .secondary)
+                .foregroundStyle(isReady ? MomentsBrand.ColorToken.primaryAccent : .secondary)
 
             if !selectedMedia.isEmpty {
                 ForEach(selectedMedia) { media in
@@ -170,7 +170,7 @@ struct MediaAssetRow: View {
     var body: some View {
         HStack(spacing: 12) {
             Image(systemName: media.kind == "video" ? "video" : "photo")
-                .foregroundStyle(MomentsTheme.accent)
+                .foregroundStyle(MomentsBrand.ColorToken.primaryAccent)
             VStack(alignment: .leading, spacing: 3) {
                 Text(media.originalFilename)
                     .font(.subheadline.weight(.medium))

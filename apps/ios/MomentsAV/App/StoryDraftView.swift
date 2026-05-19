@@ -102,7 +102,7 @@ struct StorySceneRow: View {
         VStack(alignment: .leading, spacing: 6) {
             Text("Scene \(sceneIndex + 1)")
                 .font(.caption.weight(.semibold))
-                .foregroundStyle(MomentsTheme.accent)
+                .foregroundStyle(MomentsBrand.ColorToken.primaryAccent)
             Text(caption)
                 .font(.subheadline.weight(.medium))
             Text(narrationText)
