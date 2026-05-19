@@ -151,7 +151,9 @@ controls through Account AV.
 
 ## Screenshot Plan
 
-Capture only shipped, release-candidate UI.
+Capture only shipped, release-candidate UI. Use
+[app-store-screenshots.md](app-store-screenshots.md) for the full capture and
+approval plan.
 
 - [ ] First-run or signed-out Account AV gate.
 - [ ] Template selection with Birthday Message, Party Recap, and Soft Roast.
