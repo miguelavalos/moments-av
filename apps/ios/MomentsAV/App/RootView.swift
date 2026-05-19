@@ -111,9 +111,9 @@ struct CreateMomentView: View {
                             }
                         }
 
-                        GuidePanel(
-                            title: "Avi helps shape the story",
-                            text: "Preview and final render both require enough spendable credits for the selected template."
+                        AviCompanionView(
+                            state: .storyDraft,
+                            message: "Preview and final render both require enough spendable credits for the selected template."
                         )
                     } else {
                         CreditRequiredView()
@@ -171,6 +171,11 @@ struct CreditRequiredView: View {
             Text("Delivered usable final renders consume credits and are not refunded for taste preferences.")
                 .font(.footnote)
                 .foregroundStyle(.secondary)
+
+            AviCompanionView(
+                state: .creditExplanation,
+                message: "Pick a credit path before creating so preview and export stay clear."
+            )
         }
         .padding(18)
         .background(MomentsBrand.ColorToken.elevatedSurface, in: RoundedRectangle(cornerRadius: MomentsBrand.Radius.panel))
@@ -488,28 +493,6 @@ struct TemplateCard: View {
         .padding(16)
         .background(MomentsBrand.ColorToken.elevatedSurface, in: RoundedRectangle(cornerRadius: MomentsBrand.Radius.panel))
         .opacity(canAfford ? 1 : 0.68)
-    }
-}
-
-struct GuidePanel: View {
-    let title: String
-    let text: String
-
-    var body: some View {
-        HStack(alignment: .top, spacing: 12) {
-            Image(systemName: "sparkle.magnifyingglass")
-                .font(.title3)
-                .foregroundStyle(MomentsBrand.ColorToken.primaryAccent)
-            VStack(alignment: .leading, spacing: 6) {
-                Text(title)
-                    .font(.headline)
-                Text(text)
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-            }
-        }
-        .padding(16)
-        .background(MomentsBrand.ColorToken.panelBackground, in: RoundedRectangle(cornerRadius: MomentsBrand.Radius.panel))
     }
 }
 

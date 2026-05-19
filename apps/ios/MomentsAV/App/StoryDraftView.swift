@@ -26,6 +26,11 @@ struct StoryDraftView: View {
 
     var body: some View {
         Section("Story") {
+            AviCompanionView(
+                state: .storyDraft,
+                message: "Review the generated scenes before preview. The draft stays editable."
+            )
+
             if !savedScenes.isEmpty {
                 ForEach(savedScenes.sorted { $0.sceneIndex < $1.sceneIndex }) { scene in
                     StorySceneRow(

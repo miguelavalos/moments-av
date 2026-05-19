@@ -36,9 +36,10 @@ struct FinalRenderView: View {
     var body: some View {
         Section("Final Export") {
             LabeledContent("Credits", value: "\(template.creditCost)")
-            Text("Final render commits credits after a usable export is delivered.")
-                .font(.footnote)
-                .foregroundStyle(.secondary)
+            AviCompanionView(
+                state: .finalRender,
+                message: "Final render commits credits after a usable export is delivered."
+            )
 
             if let finalExport {
                 Label("Export ready", systemImage: "square.and.arrow.up")
@@ -66,9 +67,7 @@ struct FinalRenderView: View {
             .disabled(!canGenerate)
 
             if let statusMessage {
-                Text(statusMessage)
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
+                AviStatusMessage(message: statusMessage)
             }
         }
     }

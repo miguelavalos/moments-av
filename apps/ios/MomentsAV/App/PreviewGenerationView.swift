@@ -37,9 +37,10 @@ struct PreviewGenerationView: View {
                     .font(.footnote)
                     .foregroundStyle(.secondary)
             } else {
-                Text("Avi can generate a low-cost preview after the story is ready.")
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
+                AviCompanionView(
+                    state: .previewProgress,
+                    message: "Generate a preview after the story is ready, then edit before final export."
+                )
             }
 
             if let latestRenderJob {
@@ -61,9 +62,7 @@ struct PreviewGenerationView: View {
             .disabled(!canGenerate)
 
             if let statusMessage {
-                Text(statusMessage)
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
+                AviStatusMessage(message: statusMessage)
             }
         }
     }
