@@ -4,8 +4,8 @@ import SwiftUI
 enum AppTab: String, CaseIterable, Identifiable {
     case create
     case projects
+    case avi
     case account
-    case settings
 
     var id: String { rawValue }
 
@@ -13,17 +13,17 @@ enum AppTab: String, CaseIterable, Identifiable {
         switch self {
         case .create: "Create"
         case .projects: "Projects"
+        case .avi: "Avi"
         case .account: "Account"
-        case .settings: "Settings"
         }
     }
 
     var symbolName: String {
         switch self {
-        case .create: "sparkles"
+        case .create: "plus.app"
         case .projects: "rectangle.stack"
+        case .avi: "sparkles"
         case .account: "person.crop.circle"
-        case .settings: "gearshape"
         }
     }
 }
@@ -79,10 +79,10 @@ struct RootView: View {
             CreateMomentView()
         case .projects:
             ProjectsView()
+        case .avi:
+            AviHomeView()
         case .account:
             AccountView()
-        case .settings:
-            SettingsView()
         }
     }
 }
@@ -321,6 +321,16 @@ struct AccountView: View {
                     LabeledContent("Spendable", value: "\(accountController.creditBalance.spendable)")
                 }
             }
+
+            Section("Privacy") {
+                Label("Private by default", systemImage: "lock")
+                Label("User-controlled export", systemImage: "square.and.arrow.up")
+            }
+
+            Section("Support") {
+                Link("Support", destination: URL(string: "https://moments-av.avalsys.com/support")!)
+                Link("Privacy Policy", destination: URL(string: "https://moments-av.avalsys.com/privacy")!)
+            }
         }
         .scrollContentBackground(.hidden)
         .background(MomentsBrand.ColorToken.appBackground)
@@ -404,31 +414,61 @@ struct CreditSourceRow: View {
     }
 }
 
-struct SettingsView: View {
+struct AviHomeView: View {
     @EnvironmentObject private var accountController: AccountController
+    @EnvironmentObject private var projectStore: MomentsProjectStore
 
     var body: some View {
         List {
-            Section("Account") {
+            Section {
+                AviCompanionView(
+                    state: accountController.isSignedIn ? .storyDraft : .onboarding,
+                    message: accountController.isSignedIn
+                        ? "I can help explain credits, draft structure, previews, final export, and recovery paths."
+                        : "Sign in first so project guidance, credits, drafts, and exports stay tied to your private account."
+                )
+            }
+
+            Section("Next Step") {
                 if accountController.isSignedIn {
-                    NavigationLink("Account controls") {
-                        AccountView()
-                            .navigationTitle("Account")
+                    NavigationLink {
+                        CreateMomentView()
+                            .navigationTitle("Create")
+                    } label: {
+                        Label("Create a memory video", systemImage: "plus.app")
+                    }
+
+                    NavigationLink {
+                        ProjectsView()
+                            .navigationTitle("Projects")
+                    } label: {
+                        Label(projectStore.projects.isEmpty ? "Review projects" : "Review \(projectStore.projects.count) projects", systemImage: "rectangle.stack")
                     }
                 } else {
-                    Text("Account controls appear after sign-in.")
+                    AuthActionButtons()
+                        .listRowInsets(EdgeInsets(top: 12, leading: 16, bottom: 12, trailing: 16))
+                }
+            }
+
+            Section("Credits") {
+                if accountController.isSignedIn {
+                    CreditSourceRow(source: .proMonthly, amount: accountController.creditBalance.proMonthly)
+                    CreditSourceRow(source: .promotional, amount: accountController.creditBalance.promotional)
+                    CreditSourceRow(source: .purchased, amount: accountController.creditBalance.purchased)
+                    LabeledContent("Spendable", value: "\(accountController.creditBalance.spendable)")
+                } else {
+                    Text("Credit details appear after Account AV sign-in.")
                         .foregroundStyle(.secondary)
                 }
             }
 
-            Section("Privacy") {
-                Label("Private by default", systemImage: "lock")
-                Label("User-controlled export", systemImage: "square.and.arrow.up")
-            }
-
-            Section("Support") {
-                Link("Support", destination: URL(string: "https://moments-av.avalsys.com/support")!)
-                Link("Privacy Policy", destination: URL(string: "https://moments-av.avalsys.com/privacy")!)
+            Section("Help") {
+                NavigationLink {
+                    AccountView()
+                        .navigationTitle("Account")
+                } label: {
+                    Label("Account and support", systemImage: "person.crop.circle")
+                }
             }
         }
         .scrollContentBackground(.hidden)
