@@ -33,6 +33,8 @@ and review note must match the exact build submitted for review.
   reachable outside the app.
 - [ ] App Privacy answers match Account AV, selected user media, generated
   artifacts, credits, diagnostics, and backend retention behavior.
+- [ ] App Privacy answers have been checked against
+  [app-privacy-inventory.md](app-privacy-inventory.md).
 - [ ] Account deletion is reachable from the app and documented for review.
 - [ ] The app has been smoke tested on every device family enabled in App Store
   Connect.
