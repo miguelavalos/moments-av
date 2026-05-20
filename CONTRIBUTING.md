@@ -18,6 +18,22 @@ Contributions are welcome for:
 2. Make sure the app still builds locally when app code exists.
 3. Update public docs if setup or user-facing behavior changes.
 4. Do not commit local config, secrets, signing material, or generated files.
+5. Run the public readiness checks:
+
+```bash
+scripts/check-public-release-readiness.sh
+```
+
+These checks verify public config hygiene, Markdown links, and the canonical
+asset gate.
+
+## Branding And Assets
+
+- Do not commit App Store icons, splash assets, AV monograms, or Avi artwork
+  unless they come from approved canonical assets.
+- Do not use generated, approximate, or placeholder AV marks.
+- Avi is the in-app assistant, not the product logo or app icon.
+- App Store screenshots must show real submitted app UI and shipped behavior.
 
 ## Pull Requests
 
