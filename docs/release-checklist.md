@@ -86,7 +86,8 @@ Record final values before submission:
 
 ## ASO Draft
 
-These are working candidates only. Recheck Apple field limits, token
+Use [app-store-metadata.md](app-store-metadata.md) for the working metadata
+package. These are quick candidates only. Recheck Apple field limits, token
 duplication, localization, and screenshot captions before entering them in App
 Store Connect.
 
