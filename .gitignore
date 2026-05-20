@@ -12,3 +12,11 @@ xcuserdata/
 !.env.schema
 Local.xcconfig
 local.properties
+*.xcarchive/
+*.xcresult/
+*.ipa
+*.dSYM/
+ExportOptions.plist
+*.mobileprovision
+*.provisionprofile
+*.p12
