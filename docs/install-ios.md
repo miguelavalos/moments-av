@@ -99,6 +99,8 @@ This blocks tracked local configs, local worker URLs, development team IDs, and
 secret-looking keys from entering the public repo.
 The documentation link check catches broken relative links across public
 Markdown files.
+The canonical asset gate blocks accidental App Store icon, splash, AV monogram,
+or Avi artwork commits until approved assets are ready.
 
 ## App Store Preparation Links
 
