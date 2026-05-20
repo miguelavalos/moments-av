@@ -23,10 +23,13 @@ This repository is released under the MIT license. See [LICENSE](LICENSE).
 apps/
   ios/      SwiftUI iOS app
 docs/
+  README.md
   install-ios.md
   release-checklist.md
-shared/
-  apple/    Swift modules and shared Apple-domain code
+  app-privacy-inventory.md
+  app-store-metadata.md
+  app-store-screenshots.md
+  app-review-notes.md
 ```
 
 ## What Is Included
@@ -37,6 +40,10 @@ shared/
 - client-side code that is safe to publish.
 
 ## Local Setup
+
+See [docs/install-ios.md](docs/install-ios.md) for the full iOS setup flow.
+
+Quick build check:
 
 1. Install Xcode and XcodeGen.
 2. Run `xcodegen generate --spec apps/ios/project.yml`.
