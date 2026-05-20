@@ -93,10 +93,13 @@ Before committing, run:
 
 ```bash
 scripts/check-public-config-hygiene.sh
+scripts/check-doc-links.sh
 ```
 
 This blocks tracked local configs, local worker URLs, development team IDs, and
 secret-looking keys from entering the public repo.
+The documentation link check catches broken relative links across public
+Markdown files.
 
 ## App Store Preparation Links
 
