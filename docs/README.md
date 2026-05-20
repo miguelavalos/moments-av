@@ -22,6 +22,9 @@ Use these documents in this order:
    sample data rules, Avi rules, and canonical asset gate.
 5. [app-review-notes.md](app-review-notes.md): App Review notes draft, demo
    account TODOs, reviewer route checks, and provider availability notes.
+6. [release-evidence-template.md](release-evidence-template.md): copyable
+   template for recording checks, archive/upload, TestFlight, screenshots, App
+   Store Connect fields, and final submission decision.
 
 ## Asset Rule
 
