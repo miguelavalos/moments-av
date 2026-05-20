@@ -190,6 +190,10 @@ notes draft.
 
 ## Final Submission Gate
 
+Create a release evidence file from
+[release-evidence-template.md](release-evidence-template.md) before making the
+final submit/no-submit decision.
+
 Submit only when all answers are yes:
 
 1. Does the archive use production config and the production bundle ID?
@@ -199,3 +203,5 @@ Submit only when all answers are yes:
 5. Are all visible assets canonical and approved?
 6. Does every ASO claim match a shipped, reviewable feature?
 7. Are account deletion, credits, and generated media handling clear to review?
+8. Is the release evidence file complete and free of secrets, passwords, private
+   URLs, access tokens, and private user data?
