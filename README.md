@@ -1,5 +1,7 @@
 # Moments AV
 
+[![Public Readiness](https://github.com/miguelavalos/moments-av/actions/workflows/public-readiness.yml/badge.svg)](https://github.com/miguelavalos/moments-av/actions/workflows/public-readiness.yml)
+
 Open-source frontend app repo for Moments AV.
 
 Moments AV helps people turn personal photos and short clips into short memory
@@ -51,6 +53,12 @@ Quick build check:
 
 Generated local config, signing material, and machine-specific files must stay
 out of git.
+
+Run public release checks before opening a PR or preparing release docs:
+
+```bash
+scripts/check-public-release-readiness.sh
+```
 
 ## Contributing And Security
 
