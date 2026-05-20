@@ -1,0 +1,21 @@
+name: Public Readiness
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  public-readiness:
+    name: Public release readiness
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Run public readiness checks
+        run: scripts/check-public-release-readiness.sh
