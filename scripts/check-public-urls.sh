@@ -5,7 +5,7 @@ urls=(
   "https://moments-av.avalsys.com/support"
   "https://moments-av.avalsys.com/privacy"
   "https://moments-av.avalsys.com/terms"
-  "https://account.avalsys.com/account/delete"
+  "https://account-av.avalsys.com/account/delete"
 )
 
 failures=0

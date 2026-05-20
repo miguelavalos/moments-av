@@ -96,7 +96,7 @@ AVALSYS_APPLE_DEVELOPMENT_TEAM=infisical()
 MOMENTSAV_SUPPORT_URL=https://moments-av.avalsys.com/support
 MOMENTSAV_PRIVACY_URL=https://moments-av.avalsys.com/privacy
 MOMENTSAV_TERMS_URL=https://moments-av.avalsys.com/terms
-ACCOUNTAV_DELETE_ACCOUNT_URL=https://account.avalsys.com/account/delete
+ACCOUNTAV_DELETE_ACCOUNT_URL=https://account-av.avalsys.com/account/delete
 SCHEMA
 
 read_required_config() {

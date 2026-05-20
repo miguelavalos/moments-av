@@ -28,7 +28,7 @@ access tokens, screenshots containing account data, or personal contact details.
 Use the in-app Account tab or the public support URL for account-specific
 support. Account deletion is handled through Account AV:
 
-- https://account.avalsys.com/account/delete
+- https://account-av.avalsys.com/account/delete
 
 Public policy URLs used by the app:
 

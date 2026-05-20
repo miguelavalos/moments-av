@@ -59,7 +59,7 @@ Public URLs:
 - Support: https://moments-av.avalsys.com/support
 - Privacy Policy: https://moments-av.avalsys.com/privacy
 - Terms: https://moments-av.avalsys.com/terms
-- Account deletion: https://account.avalsys.com/account/delete
+- Account deletion: https://account-av.avalsys.com/account/delete
 ```
 
 ## Demo Account TODO
