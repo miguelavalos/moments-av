@@ -31,3 +31,26 @@ After public releases begin, supported versions will be documented in this file.
 This is a public open-source repository. Do not commit production keys, local
 config, signing material, provisioning profiles, generated local config, access
 tokens, or service credentials.
+
+Before opening a PR or preparing a public release, run:
+
+```bash
+scripts/check-public-release-readiness.sh
+```
+
+This checks public config hygiene, Markdown links, and the canonical asset gate.
+
+## Public Data Safety
+
+Do not include any of the following in public issues, pull requests, release
+evidence, screenshots, or logs:
+
+- Account AV user identifiers;
+- purchase receipts or credit ledger details;
+- access tokens, session values, provider request IDs, or signed upload URLs;
+- private photos, clips, generated exports, or project metadata;
+- demo account passwords;
+- internal backend URLs or private provider configuration.
+
+Security reports that require sensitive details must use a confidential
+reporting channel.
