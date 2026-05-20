@@ -92,8 +92,7 @@ and keep the destination explicit.
 Before committing, run:
 
 ```bash
-scripts/check-public-config-hygiene.sh
-scripts/check-doc-links.sh
+scripts/check-public-release-readiness.sh
 ```
 
 This blocks tracked local configs, local worker URLs, development team IDs, and
