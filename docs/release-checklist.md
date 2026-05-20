@@ -31,6 +31,7 @@ and review note must match the exact build submitted for review.
 - [ ] Production Account AV publishable key is configured.
 - [ ] Support, Privacy Policy, Terms, and Delete Account URLs are live and
   reachable outside the app.
+- [ ] `scripts/check-public-urls.sh` passes.
 - [ ] App Privacy answers match Account AV, selected user media, generated
   artifacts, credits, diagnostics, and backend retention behavior.
 - [ ] App Privacy answers have been checked against

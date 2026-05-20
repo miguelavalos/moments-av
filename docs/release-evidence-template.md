@@ -35,6 +35,15 @@ scripts/check-public-release-readiness.sh
 - Result:
 - Notes:
 
+Record public URL reachability:
+
+```bash
+scripts/check-public-urls.sh
+```
+
+- Result:
+- Notes:
+
 ## Runtime Config Check
 
 Record non-secret output from:
