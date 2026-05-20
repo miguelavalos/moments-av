@@ -2,6 +2,10 @@
 
 ## Public Support
 
+Public support URL:
+
+- https://moments-av.avalsys.com/support
+
 Use GitHub issues for:
 
 - reproducible bugs;
@@ -20,3 +24,13 @@ Do not use public issues for vulnerabilities. Follow [`SECURITY.md`](SECURITY.md
 
 For public repo issues, do not include purchase receipts, account identifiers,
 access tokens, screenshots containing account data, or personal contact details.
+
+Use the in-app Account tab or the public support URL for account-specific
+support. Account deletion is handled through Account AV:
+
+- https://account.avalsys.com/account/delete
+
+Public policy URLs used by the app:
+
+- Privacy Policy: https://moments-av.avalsys.com/privacy
+- Terms: https://moments-av.avalsys.com/terms
