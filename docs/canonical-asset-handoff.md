@@ -6,6 +6,16 @@ Avi artwork, or framed screenshot assets to this public repo.
 Do not use this document to approve generated, approximate, or exploratory
 artwork. It is a handoff record for already-approved canonical assets.
 
+## Current Status
+
+No approved canonical Moments AV asset package is recorded for this public iOS
+repo yet. Do not import placeholder Moments AV logo, mark, concept, or icon
+files from private brand working folders as final App Store assets.
+
+The current implementation should keep using code-level brand tokens and
+system-symbol Avi placeholders until a reviewed asset package is approved and
+recorded here.
+
 ## Asset Package
 
 - Package name:
