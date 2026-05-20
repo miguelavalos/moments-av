@@ -25,12 +25,17 @@ Use these documents in this order:
 6. [release-evidence-template.md](release-evidence-template.md): copyable
    template for recording checks, archive/upload, TestFlight, screenshots, App
    Store Connect fields, and final submission decision.
+7. [canonical-asset-handoff.md](canonical-asset-handoff.md): required handoff
+   record before adding approved icon, splash, AV monogram, Avi artwork, or
+   framed screenshot assets.
 
 ## Asset Rule
 
 Final icon, splash, screenshot frames, AV monogram usage, and Avi artwork must
 wait for approved canonical assets. Do not use generated or approximate marks in
 App Store artwork.
+Use [canonical-asset-handoff.md](canonical-asset-handoff.md) when approved
+assets are ready.
 
 ## Private Context
 

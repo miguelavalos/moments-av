@@ -47,7 +47,9 @@ and review note must match the exact build submitted for review.
 ## Canonical Asset Gate
 
 Do not create or integrate final App Store artwork until the canonical Moments
-AV asset export is approved.
+AV asset export is approved. Use
+[canonical-asset-handoff.md](canonical-asset-handoff.md) to record the approved
+package before adding assets.
 
 Required before touching final icon or splash assets:
 
