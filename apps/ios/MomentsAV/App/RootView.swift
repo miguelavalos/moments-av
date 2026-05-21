@@ -123,7 +123,9 @@ struct CreateMomentView: View {
                     SignedOutGateView()
                 }
             }
-            .padding(20)
+            .padding(.horizontal, 20)
+            .padding(.top, 20)
+            .padding(.bottom, 96)
         }
         .background(MomentsBrand.ColorToken.appBackground)
     }
@@ -552,16 +554,31 @@ struct AviHomeView: View {
 
 struct AppHeader: View {
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Text("Moments AV")
-                .font(.largeTitle.weight(.bold))
+        VStack(alignment: .leading, spacing: 18) {
+            HStack(alignment: .top, spacing: 16) {
+                Image(MomentsBrand.Asset.logo)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(maxWidth: 270, alignment: .leading)
+                    .accessibilityLabel("Moments AV")
+
+                Spacer(minLength: 0)
+            }
+
+            Text("Personal memory videos, made from the moments you choose.")
+                .font(.title2.weight(.semibold))
+                .foregroundStyle(MomentsBrand.ColorToken.ink)
             Text("Turn selected photos and short clips into private memory videos.")
                 .font(.body)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(MomentsBrand.ColorToken.mutedText)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(20)
-        .background(.thinMaterial, in: RoundedRectangle(cornerRadius: MomentsBrand.Radius.panel))
+        .background(MomentsBrand.ColorToken.panelBackground, in: RoundedRectangle(cornerRadius: MomentsBrand.Radius.prominentPanel))
+        .overlay {
+            RoundedRectangle(cornerRadius: MomentsBrand.Radius.prominentPanel)
+                .stroke(MomentsBrand.ColorToken.ink.opacity(0.08))
+        }
     }
 }
 

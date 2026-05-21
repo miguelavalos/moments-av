@@ -42,7 +42,12 @@
     <false/>
   </dict>
   <key>UILaunchScreen</key>
-  <dict/>
+  <dict>
+    <key>UIColorName</key>
+    <string>BrandPaper</string>
+    <key>UIImageName</key>
+    <string>MomentsAVLogo</string>
+  </dict>
   <key>UISupportedInterfaceOrientations</key>
   <array>
     <string>UIInterfaceOrientationPortrait</string>

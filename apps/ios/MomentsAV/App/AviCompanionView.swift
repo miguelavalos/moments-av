@@ -19,16 +19,6 @@ enum AviCompanionState: Equatable {
         }
     }
 
-    var systemImage: String {
-        switch self {
-        case .onboarding: "sparkles"
-        case .creditExplanation: "creditcard"
-        case .storyDraft: "text.bubble"
-        case .previewProgress: "play.rectangle"
-        case .finalRender: "film"
-        case .recovery: "exclamationmark.triangle"
-        }
-    }
 }
 
 struct AviCompanionView: View {
@@ -37,21 +27,31 @@ struct AviCompanionView: View {
 
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
-            Image(systemName: state.systemImage)
-                .font(.title3)
-                .foregroundStyle(MomentsBrand.ColorToken.primaryAccent)
-                .frame(width: 26)
+            Image(MomentsBrand.Asset.aviThinking)
+                .resizable()
+                .scaledToFit()
+                .frame(width: 54, height: 54)
+                .background(
+                    Circle()
+                        .fill(MomentsBrand.ColorToken.softAccent.opacity(0.36))
+                )
+                .accessibilityHidden(true)
 
             VStack(alignment: .leading, spacing: 6) {
                 Text(state.title)
                     .font(.headline)
+                    .foregroundStyle(MomentsBrand.ColorToken.ink)
                 Text(message)
                     .font(.subheadline)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(MomentsBrand.ColorToken.mutedText)
             }
         }
         .padding(16)
-        .background(MomentsBrand.ColorToken.panelBackground, in: RoundedRectangle(cornerRadius: MomentsBrand.Radius.panel))
+        .background(MomentsBrand.ColorToken.panelBackground, in: RoundedRectangle(cornerRadius: MomentsBrand.Radius.prominentPanel))
+        .overlay {
+            RoundedRectangle(cornerRadius: MomentsBrand.Radius.prominentPanel)
+                .stroke(MomentsBrand.ColorToken.ink.opacity(0.08))
+        }
     }
 }
 
