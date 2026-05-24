@@ -141,11 +141,10 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
     }
 
     private var selectedMediaCount: Int {
-        if selectedMedia.isEmpty {
-            return activeWorkspace?.mediaAssets.filter(\.selected).count ?? 0
-        }
-
-        return selectedMedia.filter(\.selected).count
+        MomentsMediaRules.selectedCount(
+            localMedia: selectedMedia,
+            syncedMedia: activeWorkspace?.mediaAssets ?? []
+        )
     }
 
     private func isCurrent(_ generation: Int) -> Bool {

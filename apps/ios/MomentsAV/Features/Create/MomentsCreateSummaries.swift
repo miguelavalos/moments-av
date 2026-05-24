@@ -29,11 +29,10 @@ struct MomentsCreateMediaSummary: Equatable {
     var statusMessage: String?
 
     var selectedCount: Int {
-        if selectedMedia.isEmpty {
-            return syncedMediaAssets.filter(\.selected).count
-        }
-
-        return selectedMedia.filter(\.selected).count
+        MomentsMediaRules.selectedCount(
+            localMedia: selectedMedia,
+            syncedMedia: syncedMediaAssets
+        )
     }
 
     func remainingSlots(template: MomentTemplate) -> Int {

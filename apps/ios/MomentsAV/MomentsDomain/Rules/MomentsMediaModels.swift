@@ -65,6 +65,17 @@ enum MomentsMediaRules {
         max(template.maximumAssets - selectedCount, 0)
     }
 
+    static func selectedCount(
+        localMedia: [MomentsSelectedMedia],
+        syncedMedia: [MomentMediaAsset]
+    ) -> Int {
+        if localMedia.isEmpty {
+            return syncedMedia.filter(\.selected).count
+        }
+
+        return localMedia.filter(\.selected).count
+    }
+
     static func selectionMessage(
         _ availability: Availability,
         readyMessage: String = "Ready for Avi review.",
