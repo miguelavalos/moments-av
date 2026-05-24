@@ -39,6 +39,7 @@ struct MomentsProjectNextAction: Equatable {
     let title: String
     let message: String
     let systemImage: String
+    let primaryButtonTitle: String
 }
 
 extension MomentsProjectGroups: Equatable {
@@ -82,7 +83,8 @@ enum MomentsProjectStatusRules {
             return MomentsProjectNextAction(
                 title: "Review render issue",
                 message: "\(displayKind(failedJob.kind)) failed. Return to Create and refresh or retry the render.",
-                systemImage: "exclamationmark.triangle"
+                systemImage: "exclamationmark.triangle",
+                primaryButtonTitle: "Review in Create"
             )
         }
 
@@ -90,7 +92,8 @@ enum MomentsProjectStatusRules {
             return MomentsProjectNextAction(
                 title: "Add media",
                 message: "Continue in Create and add photos or clips before generating the story.",
-                systemImage: "photo.badge.plus"
+                systemImage: "photo.badge.plus",
+                primaryButtonTitle: "Add Media in Create"
             )
         }
 
@@ -98,7 +101,8 @@ enum MomentsProjectStatusRules {
             return MomentsProjectNextAction(
                 title: "Generate story",
                 message: "Continue in Create and ask Avi to draft the story scenes.",
-                systemImage: "text.bubble"
+                systemImage: "text.bubble",
+                primaryButtonTitle: "Generate Story in Create"
             )
         }
 
@@ -106,7 +110,8 @@ enum MomentsProjectStatusRules {
             return MomentsProjectNextAction(
                 title: "Generate preview",
                 message: "Create a preview to check pacing before spending credits on the final export.",
-                systemImage: "play.rectangle"
+                systemImage: "play.rectangle",
+                primaryButtonTitle: "Generate Preview in Create"
             )
         }
 
@@ -114,14 +119,16 @@ enum MomentsProjectStatusRules {
             return MomentsProjectNextAction(
                 title: "Render final export",
                 message: "Preview is ready. Continue in Create to generate the final export.",
-                systemImage: "square.and.arrow.up"
+                systemImage: "square.and.arrow.up",
+                primaryButtonTitle: "Render Final in Create"
             )
         }
 
         return MomentsProjectNextAction(
             title: "Finished",
             message: "Final export is available.",
-            systemImage: "checkmark.circle"
+            systemImage: "checkmark.circle",
+            primaryButtonTitle: "Open in Create"
         )
     }
 

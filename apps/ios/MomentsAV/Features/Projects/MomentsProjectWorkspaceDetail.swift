@@ -5,6 +5,9 @@ struct MomentsProjectWorkspaceDetail: View {
     let isDeletingProject: Bool
     let continueProject: (MomentDraftProject) -> Void
     let requestDeleteProject: (MomentDraftProject) -> Void
+    private var nextAction: MomentsProjectNextAction {
+        MomentsProjectStatusRules.nextAction(for: workspace)
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -12,7 +15,7 @@ struct MomentsProjectWorkspaceDetail: View {
                 .font(.headline)
 
             header
-            MomentsProjectNextActionRow(action: MomentsProjectStatusRules.nextAction(for: workspace))
+            MomentsProjectNextActionRow(action: nextAction)
             MomentsProjectWorkspaceSummary(workspace: workspace)
             MomentsProjectProgressSection(workspace: workspace)
 
@@ -44,7 +47,7 @@ struct MomentsProjectWorkspaceDetail: View {
         Button {
             continueProject(workspace.project)
         } label: {
-            Label("Continue in Create", systemImage: "arrow.right.circle")
+            Label(nextAction.primaryButtonTitle, systemImage: "arrow.right.circle")
                 .frame(maxWidth: .infinity)
         }
         .buttonStyle(.borderedProminent)
