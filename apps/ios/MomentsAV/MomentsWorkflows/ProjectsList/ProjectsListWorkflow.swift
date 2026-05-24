@@ -12,20 +12,35 @@ final class ProjectsListWorkflow: ObservableObject {
 
     private let currentUserProvider: any MomentsCurrentUserProviding
     private let projectListing: any MomentsProjectListing
+    private let projectsObserver: any MomentsActiveProjectsObserving
     private let workspaceObserver: any MomentsActiveWorkspaceObserving
-    private var projectListTask: Task<Void, Never>?
-    private var projectListGeneration = 0
     private var deletionGeneration = 0
     private var cancellables = Set<AnyCancellable>()
 
     init(
         currentUserProvider: any MomentsCurrentUserProviding,
         projectListing: any MomentsProjectListing,
+        projectsObserver: any MomentsActiveProjectsObserving,
         workspaceObserver: any MomentsActiveWorkspaceObserving
     ) {
         self.currentUserProvider = currentUserProvider
         self.projectListing = projectListing
+        self.projectsObserver = projectsObserver
         self.workspaceObserver = workspaceObserver
+
+        projectsObserver.projectsPublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] projects in
+                self?.apply(projects)
+            }
+            .store(in: &cancellables)
+
+        projectsObserver.projectsErrorPublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] message in
+                self?.applyProjectListError(message)
+            }
+            .store(in: &cancellables)
 
         workspaceObserver.activeWorkspacePublisher
             .receive(on: DispatchQueue.main)
@@ -43,30 +58,10 @@ final class ProjectsListWorkflow: ObservableObject {
     }
 
     func observeProjects(ownerUserId: String?) {
-        projectListGeneration += 1
-        let generation = projectListGeneration
-        projectListTask?.cancel()
         projectSummary = MomentsProjectListSummary()
         errorMessage = nil
         clearActiveProject()
-
-        guard let ownerUserId else { return }
-
-        do {
-            let updates = try projectListing.observeProjects(ownerUserId: ownerUserId).values
-
-            projectListTask = Task { [weak self] in
-                for await projects in updates {
-                    await MainActor.run {
-                        guard self?.projectListGeneration == generation else { return }
-                        self?.apply(projects)
-                    }
-                }
-            }
-        } catch {
-            guard projectListGeneration == generation else { return }
-            errorMessage = error.localizedDescription
-        }
+        projectsObserver.observeProjects(ownerUserId: ownerUserId)
     }
 
     func observeProjectWorkspace(ownerUserId: String?, projectId: String?) {
@@ -133,15 +128,16 @@ final class ProjectsListWorkflow: ObservableObject {
         projectSummary = MomentsProjectListSummary.make(from: projects)
     }
 
+    private func applyProjectListError(_ message: String?) {
+        guard let message else { return }
+        errorMessage = message
+    }
+
     private func clearActiveProject() {
         workspaceObserver.clearWorkspace()
         activeProject = nil
         activeWorkspace = nil
         isLoadingProjectWorkspace = false
-    }
-
-    deinit {
-        projectListTask?.cancel()
     }
 }
 

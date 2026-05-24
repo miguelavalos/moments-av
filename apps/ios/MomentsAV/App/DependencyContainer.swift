@@ -3,6 +3,7 @@ import Foundation
 @MainActor
 final class MomentsDependencyContainer: ObservableObject {
     let accountController: AccountController
+    let projectsObserver: MomentsProjectsObserver
     let workspaceObserver: MomentsWorkspaceObserver
     let projectsListWorkflow: ProjectsListWorkflow
     let projectCreationWorkflow: ProjectCreationWorkflow
@@ -18,15 +19,19 @@ final class MomentsDependencyContainer: ObservableObject {
     init(
         accountController: AccountController = AccountController(),
         projectRepository: MomentsProjectRepository = MomentsProjectRepository(),
+        projectsObserver: MomentsProjectsObserver? = nil,
         workspaceObserver: MomentsWorkspaceObserver? = nil
     ) {
         let clients = MomentsWorkflowClients(baseURLString: AppConfig.momentsAPIBaseURL)
         self.accountController = accountController
+        let resolvedProjectsObserver = projectsObserver ?? MomentsProjectsObserver(projectRepository: projectRepository)
         let resolvedWorkspaceObserver = workspaceObserver ?? MomentsWorkspaceObserver(projectRepository: projectRepository)
+        self.projectsObserver = resolvedProjectsObserver
         self.workspaceObserver = resolvedWorkspaceObserver
         self.projectsListWorkflow = Self.makeProjectsListWorkflow(
             currentUserProvider: accountController,
             projectListing: projectRepository,
+            projectsObserver: resolvedProjectsObserver,
             workspaceObserver: resolvedWorkspaceObserver
         )
         self.projectCreationWorkflow = Self.makeProjectCreationWorkflow(
@@ -80,11 +85,13 @@ private extension MomentsDependencyContainer {
     static func makeProjectsListWorkflow(
         currentUserProvider: any MomentsCurrentUserProviding,
         projectListing: any MomentsProjectListing,
+        projectsObserver: any MomentsActiveProjectsObserving,
         workspaceObserver: any MomentsActiveWorkspaceObserving
     ) -> ProjectsListWorkflow {
         ProjectsListWorkflow(
             currentUserProvider: currentUserProvider,
             projectListing: projectListing,
+            projectsObserver: projectsObserver,
             workspaceObserver: workspaceObserver
         )
     }

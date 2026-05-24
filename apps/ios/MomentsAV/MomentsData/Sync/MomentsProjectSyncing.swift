@@ -73,6 +73,20 @@ protocol MomentsProjectListing {
 }
 
 @MainActor
+protocol MomentsProjectsObserving {
+    func observeProjects(ownerUserId: String) throws -> AnyPublisher<[MomentDraftProject], Never>
+}
+
+@MainActor
+protocol MomentsActiveProjectsObserving {
+    var projectsPublisher: AnyPublisher<[MomentDraftProject], Never> { get }
+    var projectsErrorPublisher: AnyPublisher<String?, Never> { get }
+
+    func observeProjects(ownerUserId: String?)
+    func clearProjects()
+}
+
+@MainActor
 protocol MomentsWorkspaceObserving {
     func observeProjectWorkspace(
         ownerUserId: String,
@@ -97,4 +111,5 @@ extension MomentsProjectRepository:
     MomentsPreviewResultSaving,
     MomentsFinalRenderResultSaving,
     MomentsProjectListing,
+    MomentsProjectsObserving,
     MomentsWorkspaceObserving {}
