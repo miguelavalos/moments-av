@@ -31,6 +31,7 @@ final class MomentsCreateViewModel: ObservableObject {
     @Published private(set) var isGeneratingFinalRender = false
     @Published private(set) var isRefreshingFinalRenderStatus = false
     @Published private(set) var pendingFocus: MomentsProjectContinuationFocus?
+    @Published private(set) var continuationFocusHint: MomentsProjectContinuationFocus?
 
     private(set) var projectCreationWorkflow: ProjectCreationWorkflow?
     private(set) var mediaUploadWorkflow: MediaUploadWorkflow?
@@ -78,12 +79,14 @@ final class MomentsCreateViewModel: ObservableObject {
 
     func prepareNewDraftCreation() {
         isContinuingProject = false
+        continuationFocusHint = nil
     }
 
     func continueProject(_ project: MomentDraftProject, focus: MomentsProjectContinuationFocus = .review) {
         cancelOperations()
         isContinuingProject = true
         pendingFocus = focus
+        continuationFocusHint = focus
 
         if let template = templates.first(where: { $0.id == project.template }) {
             form = MomentDraftForm(
@@ -103,10 +106,15 @@ final class MomentsCreateViewModel: ObservableObject {
         pendingFocus = nil
     }
 
+    func clearContinuationFocusHint() {
+        continuationFocusHint = nil
+    }
+
     func resetActiveProject(force: Bool) {
         cancelOperations()
         isContinuingProject = false
         pendingFocus = nil
+        continuationFocusHint = nil
         projectCreationWorkflow?.resetDraft(force: force)
         mediaUploadWorkflow?.reset(force: force)
         storyDraftWorkflow?.reset(force: force)
