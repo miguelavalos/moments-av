@@ -3,23 +3,23 @@ import SwiftUI
 struct MomentsProjectMediaSection: View {
     let mediaAssets: [MomentMediaAsset]
 
-    private var presentations: [MomentsProjectMediaAssetPresentation] {
-        MomentsProjectMediaAssetPresentation.sorted(mediaAssets)
+    private var presentation: MomentsProjectMediaSectionPresentation {
+        MomentsProjectMediaSectionPresentation(mediaAssets: mediaAssets)
     }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text("Media")
+            Text(presentation.title)
                 .font(.subheadline.weight(.semibold))
 
-            if presentations.isEmpty {
+            if presentation.mediaAssets.isEmpty {
                 MomentsProjectEmptySectionRow(
-                    systemImage: "photo.badge.plus",
-                    message: "Add photos or clips from Create to unlock story drafting."
+                    systemImage: presentation.emptySystemImage,
+                    message: presentation.emptyMessage
                 )
             } else {
-                ForEach(presentations) { presentation in
-                    MomentsProjectMediaAssetRow(presentation: presentation)
+                ForEach(presentation.mediaAssets) { mediaAsset in
+                    MomentsProjectMediaAssetRow(presentation: mediaAsset)
                 }
             }
         }
@@ -29,23 +29,23 @@ struct MomentsProjectMediaSection: View {
 struct MomentsProjectStorySection: View {
     let storyScenes: [MomentStoryScene]
 
-    private var presentations: [MomentsProjectStoryScenePresentation] {
-        MomentsProjectStoryScenePresentation.sorted(storyScenes)
+    private var presentation: MomentsProjectStorySectionPresentation {
+        MomentsProjectStorySectionPresentation(storyScenes: storyScenes)
     }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text("Story")
+            Text(presentation.title)
                 .font(.subheadline.weight(.semibold))
 
-            if presentations.isEmpty {
+            if presentation.storyScenes.isEmpty {
                 MomentsProjectEmptySectionRow(
-                    systemImage: "text.bubble",
-                    message: "Generate a story draft after the project has enough media."
+                    systemImage: presentation.emptySystemImage,
+                    message: presentation.emptyMessage
                 )
             } else {
-                ForEach(presentations) { presentation in
-                    MomentsProjectStorySceneRow(presentation: presentation)
+                ForEach(presentation.storyScenes) { storyScene in
+                    MomentsProjectStorySceneRow(presentation: storyScene)
                 }
             }
         }

@@ -63,6 +63,28 @@ struct MomentsProjectSummaryTilePresentation: Identifiable, Equatable {
     var id: String { title }
 }
 
+struct MomentsProjectMediaSectionPresentation: Equatable {
+    let title = "Media"
+    let emptySystemImage = "photo.badge.plus"
+    let emptyMessage = "Add photos or clips from Create to unlock story drafting."
+    let mediaAssets: [MomentsProjectMediaAssetPresentation]
+
+    init(mediaAssets: [MomentMediaAsset]) {
+        self.mediaAssets = MomentsProjectMediaAssetPresentation.sorted(mediaAssets)
+    }
+}
+
+struct MomentsProjectStorySectionPresentation: Equatable {
+    let title = "Story"
+    let emptySystemImage = "text.bubble"
+    let emptyMessage = "Generate a story draft after the project has enough media."
+    let storyScenes: [MomentsProjectStoryScenePresentation]
+
+    init(storyScenes: [MomentStoryScene]) {
+        self.storyScenes = MomentsProjectStoryScenePresentation.sorted(storyScenes)
+    }
+}
+
 struct MomentsProjectMediaAssetPresentation: Identifiable, Equatable {
     let id: String
     let systemImage: String

@@ -52,6 +52,30 @@ final class MomentsProjectWorkspacePresentationTests: XCTestCase {
         XCTAssertEqual(presentation.tiles.map(\.value), ["Draft Created", "Not ready", "Not ready", "Not started"])
     }
 
+    func testMediaSectionPresentationFormatsTitleEmptyStateAndRows() {
+        let presentation = MomentsProjectMediaSectionPresentation(mediaAssets: [
+            makeMediaAsset(id: "second", kind: "video", sortOrder: 1, selected: false, moderationStatus: "pending"),
+            makeMediaAsset(id: "first", kind: "image", sortOrder: 0, selected: true, moderationStatus: "approved")
+        ])
+
+        XCTAssertEqual(presentation.title, "Media")
+        XCTAssertEqual(presentation.emptySystemImage, "photo.badge.plus")
+        XCTAssertEqual(presentation.emptyMessage, "Add photos or clips from Create to unlock story drafting.")
+        XCTAssertEqual(presentation.mediaAssets.map(\.id), ["first", "second"])
+    }
+
+    func testStorySectionPresentationFormatsTitleEmptyStateAndRows() {
+        let presentation = MomentsProjectStorySectionPresentation(storyScenes: [
+            makeScene(id: "scene-2", sceneIndex: 1, caption: "Second beat"),
+            makeScene(id: "scene-1", sceneIndex: 0, caption: "Opening beat")
+        ])
+
+        XCTAssertEqual(presentation.title, "Story")
+        XCTAssertEqual(presentation.emptySystemImage, "text.bubble")
+        XCTAssertEqual(presentation.emptyMessage, "Generate a story draft after the project has enough media.")
+        XCTAssertEqual(presentation.storyScenes.map(\.id), ["scene-1", "scene-2"])
+    }
+
     func testMediaAssetPresentationSortsBySortOrderAndFormatsRows() {
         let presentations = MomentsProjectMediaAssetPresentation.sorted([
             makeMediaAsset(id: "second", kind: "video", sortOrder: 1, selected: false, moderationStatus: "pending"),
