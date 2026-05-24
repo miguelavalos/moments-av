@@ -11,18 +11,18 @@ final class ProjectsListWorkflow: ObservableObject {
     @Published private(set) var errorMessage: String?
 
     private let projectsObserver: any MomentsActiveProjectsObserving
-    private let workspaceObserver: any MomentsActiveWorkspaceObserving
+    private let workspaceSelectionWorkflow: ProjectWorkspaceSelectionWorkflow
     private let projectDeletionWorkflow: ProjectDeletionWorkflow
     private var currentOwnerUserId: String?
     private var cancellables = Set<AnyCancellable>()
 
     init(
         projectsObserver: any MomentsActiveProjectsObserving,
-        workspaceObserver: any MomentsActiveWorkspaceObserving,
+        workspaceSelectionWorkflow: ProjectWorkspaceSelectionWorkflow,
         projectDeletionWorkflow: ProjectDeletionWorkflow
     ) {
         self.projectsObserver = projectsObserver
-        self.workspaceObserver = workspaceObserver
+        self.workspaceSelectionWorkflow = workspaceSelectionWorkflow
         self.projectDeletionWorkflow = projectDeletionWorkflow
 
         projectsObserver.projectsPublisher
@@ -53,14 +53,28 @@ final class ProjectsListWorkflow: ObservableObject {
             }
             .store(in: &cancellables)
 
-        workspaceObserver.activeWorkspacePublisher
+        workspaceSelectionWorkflow.activeProjectPublisher
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] workspace in
-                self?.apply(workspace: workspace)
+            .sink { [weak self] project in
+                self?.activeProject = project
             }
             .store(in: &cancellables)
 
-        workspaceObserver.workspaceErrorPublisher
+        workspaceSelectionWorkflow.activeWorkspacePublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] workspace in
+                self?.activeWorkspace = workspace
+            }
+            .store(in: &cancellables)
+
+        workspaceSelectionWorkflow.isLoadingProjectWorkspacePublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] isLoading in
+                self?.isLoadingProjectWorkspace = isLoading
+            }
+            .store(in: &cancellables)
+
+        workspaceSelectionWorkflow.workspaceErrorPublisher
             .receive(on: DispatchQueue.main)
             .sink { [weak self] message in
                 self?.applyWorkspaceError(message)
@@ -77,30 +91,13 @@ final class ProjectsListWorkflow: ObservableObject {
     }
 
     func observeProjectWorkspace(ownerUserId: String?, projectId: String?) {
-        activeProject = nil
-        activeWorkspace = nil
-        isLoadingProjectWorkspace = false
         errorMessage = nil
-
-        guard let ownerUserId, let projectId else {
-            workspaceObserver.clearWorkspace()
-            return
-        }
-
-        workspaceObserver.observeWorkspace(ownerUserId: ownerUserId, projectId: projectId)
-        isLoadingProjectWorkspace = true
-    }
-
-    private func apply(workspace: MomentProjectWorkspace?) {
-        activeWorkspace = workspace
-        activeProject = workspace?.project
-        isLoadingProjectWorkspace = false
+        workspaceSelectionWorkflow.observeProjectWorkspace(ownerUserId: ownerUserId, projectId: projectId)
     }
 
     private func applyWorkspaceError(_ message: String?) {
         guard let message else { return }
         errorMessage = message
-        isLoadingProjectWorkspace = false
     }
 
     func clearProjectWorkspace() {
@@ -134,10 +131,7 @@ final class ProjectsListWorkflow: ObservableObject {
     }
 
     private func clearActiveProject() {
-        workspaceObserver.clearWorkspace()
-        activeProject = nil
-        activeWorkspace = nil
-        isLoadingProjectWorkspace = false
+        workspaceSelectionWorkflow.clearProjectWorkspace()
     }
 }
 

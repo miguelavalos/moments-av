@@ -6,6 +6,7 @@ final class MomentsDependencyContainer: ObservableObject {
     let projectsObserver: MomentsProjectsObserver
     let workspaceObserver: MomentsWorkspaceObserver
     let projectDeletionWorkflow: ProjectDeletionWorkflow
+    let projectWorkspaceSelectionWorkflow: ProjectWorkspaceSelectionWorkflow
     let projectsListWorkflow: ProjectsListWorkflow
     let projectCreationWorkflow: ProjectCreationWorkflow
     let mediaUploadWorkflow: MediaUploadWorkflow
@@ -33,9 +34,12 @@ final class MomentsDependencyContainer: ObservableObject {
             currentUserProvider: accountController,
             projectDeleter: projectRepository
         )
+        self.projectWorkspaceSelectionWorkflow = Self.makeProjectWorkspaceSelectionWorkflow(
+            workspaceObserver: resolvedWorkspaceObserver
+        )
         self.projectsListWorkflow = Self.makeProjectsListWorkflow(
             projectsObserver: resolvedProjectsObserver,
-            workspaceObserver: resolvedWorkspaceObserver,
+            workspaceSelectionWorkflow: projectWorkspaceSelectionWorkflow,
             projectDeletionWorkflow: projectDeletionWorkflow
         )
         self.projectCreationWorkflow = Self.makeProjectCreationWorkflow(
@@ -88,14 +92,20 @@ final class MomentsDependencyContainer: ObservableObject {
 private extension MomentsDependencyContainer {
     static func makeProjectsListWorkflow(
         projectsObserver: any MomentsActiveProjectsObserving,
-        workspaceObserver: any MomentsActiveWorkspaceObserving,
+        workspaceSelectionWorkflow: ProjectWorkspaceSelectionWorkflow,
         projectDeletionWorkflow: ProjectDeletionWorkflow
     ) -> ProjectsListWorkflow {
         ProjectsListWorkflow(
             projectsObserver: projectsObserver,
-            workspaceObserver: workspaceObserver,
+            workspaceSelectionWorkflow: workspaceSelectionWorkflow,
             projectDeletionWorkflow: projectDeletionWorkflow
         )
+    }
+
+    static func makeProjectWorkspaceSelectionWorkflow(
+        workspaceObserver: any MomentsActiveWorkspaceObserving
+    ) -> ProjectWorkspaceSelectionWorkflow {
+        ProjectWorkspaceSelectionWorkflow(workspaceObserver: workspaceObserver)
     }
 
     static func makeProjectDeletionWorkflow(

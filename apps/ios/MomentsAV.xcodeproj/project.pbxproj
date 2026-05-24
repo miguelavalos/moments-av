@@ -88,6 +88,7 @@
 		C90B76CDF92DBE7AFE3F4A28 /* MomentsCreateMediaStoryCards.swift in Sources */ = {isa = PBXBuildFile; fileRef = 326E506770942A9486E6AF79 /* MomentsCreateMediaStoryCards.swift */; };
 		CBF2475D92C83FBEBC10B44F /* MomentsAviViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFFB28522104B1FECD83C9DC /* MomentsAviViewModelTests.swift */; };
 		CCFDF7AD60570C22D2D8F6A0 /* MomentsProjectArtifactPresentationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EE738E8291887AB40F046B5 /* MomentsProjectArtifactPresentationTests.swift */; };
+		CEB0DB0EDC5291E0452EFE1B /* ProjectWorkspaceSelectionWorkflow.swift in Sources */ = {isa = PBXBuildFile; fileRef = F734B4ABDB07363C8570B049 /* ProjectWorkspaceSelectionWorkflow.swift */; };
 		D14D3A444DAF1F95FD22F2F3 /* MomentsRootTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3090DB21119F1D752750607 /* MomentsRootTab.swift */; };
 		D2311FCBC897093AAE51DBB5 /* MediaAssetPersistenceRequestTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0EA2271666348C5194DE1B9 /* MediaAssetPersistenceRequestTests.swift */; };
 		D440548CBADA41DC4AA04E90 /* MomentsProjectsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 697DF0CC80C622780CA457E7 /* MomentsProjectsViewModel.swift */; };
@@ -242,6 +243,7 @@
 		EE50BE8F243DA735CB43236A /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
 		F39994B4D37E845593BB20C8 /* MomentsProjectRemoteClient+Dates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MomentsProjectRemoteClient+Dates.swift"; sourceTree = "<group>"; };
 		F574B823BCDEC53161058BC4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		F734B4ABDB07363C8570B049 /* ProjectWorkspaceSelectionWorkflow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectWorkspaceSelectionWorkflow.swift; sourceTree = "<group>"; };
 		F96B508AAD5DFF25FD102698 /* MomentsMediaRulesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MomentsMediaRulesTests.swift; sourceTree = "<group>"; };
 		FDDBAB977C7DB1B46F0E63B5 /* MomentsProjectWorkspaceSections.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MomentsProjectWorkspaceSections.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -403,6 +405,14 @@
 				8D6BBACF9B3682452E9B62DD /* StoryDraftPersistenceRequest.swift */,
 			);
 			path = Sync;
+			sourceTree = "<group>";
+		};
+		314D8432A1D4E798B0898AB0 /* ProjectWorkspaceSelection */ = {
+			isa = PBXGroup;
+			children = (
+				F734B4ABDB07363C8570B049 /* ProjectWorkspaceSelectionWorkflow.swift */,
+			);
+			path = ProjectWorkspaceSelection;
 			sourceTree = "<group>";
 		};
 		32D52F5F778138BCFADF937B /* ProjectDeletion */ = {
@@ -638,6 +648,7 @@
 				6E127143C0D86F7189A08AAF /* ProjectCreation */,
 				32D52F5F778138BCFADF937B /* ProjectDeletion */,
 				461CFC1AC934B6BB039997B1 /* ProjectsList */,
+				314D8432A1D4E798B0898AB0 /* ProjectWorkspaceSelection */,
 				86515B04619EADA84979E7FD /* Shared */,
 				98EC0AF4FC950E7A72719BB4 /* StoryDraft */,
 			);
@@ -931,6 +942,7 @@
 				0B3C639B6190BB9B912DC23A /* ProjectCreationWorkflow.swift in Sources */,
 				5BCD427437DA3D3A4932A7B8 /* ProjectDeletionWorkflow.swift in Sources */,
 				8041F6981F113DB36D7CADE2 /* ProjectMutationRequests.swift in Sources */,
+				CEB0DB0EDC5291E0452EFE1B /* ProjectWorkspaceSelectionWorkflow.swift in Sources */,
 				3FD3EA6B5E80E695A5E06CFC /* ProjectsListWorkflow.swift in Sources */,
 				F22AD4773CA782864A41F061 /* ProjectsListWorkflowContracts.swift in Sources */,
 				FB4E524B22E59C5F63A9DC6A /* RenderJobStatusRefresh.swift in Sources */,
