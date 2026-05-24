@@ -8,7 +8,8 @@ struct MomentsAVApp: App {
 
     var body: some Scene {
         WindowGroup {
-            RootView()
+            MomentsAppBootstrapView()
+                .avBrandPalette(MomentsTheme.brandPalette)
         }
     }
 }

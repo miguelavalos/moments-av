@@ -15,6 +15,8 @@ settings:
 packages:
   AccountAV:
     path: ../../../account-av
+  AppsAV:
+    path: ../../../apps-av/apple
   ConvexMobile:
     url: https://github.com/get-convex/convex-swift
     from: 0.8.1
@@ -52,6 +54,16 @@ targets:
     dependencies:
       - package: AccountAV
         product: AccountAV
+      - package: AppsAV
+        product: AVBrandFoundation
+      - package: AppsAV
+        product: AVAppShellFoundation
+      - package: AppsAV
+        product: AVLaunchFoundation
+      - package: AppsAV
+        product: AVSettingsFoundation
+      - package: AppsAV
+        product: AVAviFoundation
       - package: ConvexMobile
         product: ConvexMobile
     settings:
