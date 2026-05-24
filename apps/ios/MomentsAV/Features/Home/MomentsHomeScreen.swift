@@ -16,6 +16,41 @@ struct MomentsHomeScreen: View {
         guard let latestInProgressProject else { return "" }
         return MomentsProjectFormatting.compactDetail(for: latestInProgressProject, includeTitle: true)
     }
+    private var createAction: MomentsHomeAction {
+        MomentsHomeAction(
+            title: "Create a moment",
+            detail: "Pick the occasion, add media, draft the story, then render.",
+            systemImage: "plus.app",
+            isProminent: latestInProgressProject == nil,
+            isDisabled: !viewModel.isSignedIn
+        )
+    }
+    private var reviewProjectsAction: MomentsHomeAction {
+        MomentsHomeAction(
+            title: "Review projects",
+            detail: projectSummary.hasProjects
+                ? "Open \(projectSummary.projectCount) synced projects with preview and final status."
+                : "Project workspace details will appear after the first synced draft.",
+            systemImage: "rectangle.stack",
+            isDisabled: !viewModel.isSignedIn
+        )
+    }
+    private var aviGuidanceAction: MomentsHomeAction {
+        MomentsHomeAction(
+            title: "Ask Avi for guidance",
+            detail: "Use Avi for media, story, preview, render, and credit guidance.",
+            systemImage: "sparkles"
+        )
+    }
+    private var latestInProgressAction: MomentsHomeAction? {
+        guard latestInProgressProject != nil else { return nil }
+        return MomentsHomeAction(
+            title: "Continue latest project",
+            detail: latestInProgressProjectDetail,
+            systemImage: "arrow.right.circle",
+            isProminent: true
+        )
+    }
 
     init(
         selectTab: @escaping (MomentsRootTab) -> Void,
@@ -101,12 +136,9 @@ struct MomentsHomeScreen: View {
                     )
 
                     VStack(spacing: 10) {
-                        if let latestInProgressProject {
+                        if let latestInProgressAction {
                             MomentsHomeActionRow(
-                                title: "Continue latest project",
-                                detail: latestInProgressProjectDetail,
-                                systemImage: "arrow.right.circle",
-                                isProminent: true
+                                action: latestInProgressAction
                             ) {
                                 if let latestInProgressContinuationRequest {
                                     continueProject(latestInProgressContinuationRequest)
@@ -115,30 +147,19 @@ struct MomentsHomeScreen: View {
                         }
 
                         MomentsHomeActionRow(
-                            title: "Create a moment",
-                            detail: "Pick the occasion, add media, draft the story, then render.",
-                            systemImage: "plus.app",
-                            isProminent: latestInProgressProject == nil,
-                            isDisabled: !viewModel.isSignedIn
+                            action: createAction
                         ) {
                             selectTab(.create)
                         }
 
                         MomentsHomeActionRow(
-                            title: "Review projects",
-                            detail: projectSummary.hasProjects
-                                ? "Open \(projectSummary.projectCount) synced projects with preview and final status."
-                                : "Project workspace details will appear after the first synced draft.",
-                            systemImage: "rectangle.stack",
-                            isDisabled: !viewModel.isSignedIn
+                            action: reviewProjectsAction
                         ) {
                             selectTab(.projects)
                         }
 
                         MomentsHomeActionRow(
-                            title: "Ask Avi for guidance",
-                            detail: "Use Avi for media, story, preview, render, and credit guidance.",
-                            systemImage: "sparkles"
+                            action: aviGuidanceAction
                         ) {
                             selectTab(.avi)
                         }
@@ -150,6 +171,14 @@ struct MomentsHomeScreen: View {
         .background(MomentsTheme.canvas.ignoresSafeArea())
         .navigationTitle("Home")
     }
+}
+
+private struct MomentsHomeAction {
+    let title: String
+    let detail: String
+    let systemImage: String
+    var isProminent = false
+    var isDisabled = false
 }
 
 private struct MomentsHomeSectionHeader: View {
@@ -290,27 +319,23 @@ private struct MomentsHomeMetricTile: View {
 }
 
 private struct MomentsHomeActionRow: View {
-    let title: String
-    let detail: String
-    let systemImage: String
-    var isProminent = false
-    var isDisabled = false
-    let action: () -> Void
+    let action: MomentsHomeAction
+    let perform: () -> Void
 
     var body: some View {
-        Button(action: action) {
+        Button(action: perform) {
             HStack(alignment: .top, spacing: 12) {
-                Image(systemName: systemImage)
+                Image(systemName: action.systemImage)
                     .font(.system(size: 15, weight: .semibold))
-                    .foregroundStyle(isProminent ? .white : MomentsTheme.brandPalette.accent)
+                    .foregroundStyle(action.isProminent ? .white : MomentsTheme.brandPalette.accent)
                     .frame(width: 26, height: 26)
                     .background(iconBackground, in: RoundedRectangle(cornerRadius: 8))
 
                 VStack(alignment: .leading, spacing: 3) {
-                    Text(title)
+                    Text(action.title)
                         .font(.subheadline.weight(.semibold))
                         .foregroundStyle(.primary)
-                    Text(detail)
+                    Text(action.detail)
                         .font(.caption)
                         .foregroundStyle(.secondary)
                         .fixedSize(horizontal: false, vertical: true)
@@ -332,19 +357,19 @@ private struct MomentsHomeActionRow: View {
             }
         }
         .buttonStyle(.plain)
-        .disabled(isDisabled)
-        .opacity(isDisabled ? 0.55 : 1)
+        .disabled(action.isDisabled)
+        .opacity(action.isDisabled ? 0.55 : 1)
     }
 
     private var iconBackground: Color {
-        isProminent ? MomentsTheme.brandPalette.accent : MomentsTheme.brandPalette.accent.opacity(0.12)
+        action.isProminent ? MomentsTheme.brandPalette.accent : MomentsTheme.brandPalette.accent.opacity(0.12)
     }
 
     private var rowBackground: Color {
-        isProminent ? MomentsTheme.brandPalette.accent.opacity(0.08) : Color.primary.opacity(0.03)
+        action.isProminent ? MomentsTheme.brandPalette.accent.opacity(0.08) : Color.primary.opacity(0.03)
     }
 
     private var rowBorder: Color {
-        isProminent ? MomentsTheme.brandPalette.accent.opacity(0.20) : Color.primary.opacity(0.06)
+        action.isProminent ? MomentsTheme.brandPalette.accent.opacity(0.20) : Color.primary.opacity(0.06)
     }
 }
