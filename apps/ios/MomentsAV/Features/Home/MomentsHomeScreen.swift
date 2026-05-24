@@ -8,47 +8,11 @@ struct MomentsHomeScreen: View {
     let continueProject: (MomentsProjectContinuationRequest) -> Void
     let signInActions: AnyView
     private var projectSummary: MomentsProjectListSummary { viewModel.projectSummary }
-    private var latestInProgressProject: MomentDraftProject? { projectSummary.latestInProgressProject }
-    private var latestInProgressContinuationRequest: MomentsProjectContinuationRequest? {
-        projectSummary.latestInProgressContinuationRequest
-    }
-    private var latestInProgressProjectDetail: String {
-        guard let latestInProgressProject else { return "" }
-        return MomentsProjectFormatting.compactDetail(for: latestInProgressProject, includeTitle: true)
-    }
-    private var createAction: MomentsHomeAction {
-        MomentsHomeAction(
-            title: "Create a moment",
-            detail: "Pick the occasion, add media, draft the story, then render.",
-            systemImage: "plus.app",
-            isProminent: latestInProgressProject == nil,
-            isDisabled: !viewModel.isSignedIn
-        )
-    }
-    private var reviewProjectsAction: MomentsHomeAction {
-        MomentsHomeAction(
-            title: "Review projects",
-            detail: projectSummary.hasProjects
-                ? "Open \(projectSummary.projectCount) synced projects with preview and final status."
-                : "Project workspace details will appear after the first synced draft.",
-            systemImage: "rectangle.stack",
-            isDisabled: !viewModel.isSignedIn
-        )
-    }
-    private var aviGuidanceAction: MomentsHomeAction {
-        MomentsHomeAction(
-            title: "Ask Avi for guidance",
-            detail: "Use Avi for media, story, preview, render, and credit guidance.",
-            systemImage: "sparkles"
-        )
-    }
-    private var latestInProgressAction: MomentsHomeAction? {
-        guard latestInProgressProject != nil else { return nil }
-        return MomentsHomeAction(
-            title: "Continue latest project",
-            detail: latestInProgressProjectDetail,
-            systemImage: "arrow.right.circle",
-            isProminent: true
+    private var presentation: MomentsHomePresentation {
+        MomentsHomePresentation.make(
+            isSignedIn: viewModel.isSignedIn,
+            displayName: viewModel.displayName,
+            projectSummary: projectSummary
         )
     }
 
@@ -72,10 +36,8 @@ struct MomentsHomeScreen: View {
 
                 AVSettingsCard {
                     MomentsHomeSectionHeader(
-                        title: viewModel.isSignedIn ? "Account connected" : "Account required",
-                        detail: viewModel.isSignedIn
-                            ? "Signed in as \(viewModel.displayName ?? "Moments AV user")."
-                            : "Sign in is required before creating, rendering, and managing projects."
+                        title: presentation.accountTitle,
+                        detail: presentation.accountDetail
                     )
 
                     if viewModel.isSignedIn {
@@ -100,9 +62,7 @@ struct MomentsHomeScreen: View {
                 AVSettingsCard {
                     MomentsHomeSectionHeader(
                         title: "Project status",
-                        detail: projectSummary.hasProjects
-                            ? "\(projectSummary.projectCount) synced projects tracked across the current account."
-                            : "No synced projects yet."
+                        detail: presentation.projectStatusDetail
                     )
 
                     if let latestProject = projectSummary.latestProject {
@@ -136,30 +96,30 @@ struct MomentsHomeScreen: View {
                     )
 
                     VStack(spacing: 10) {
-                        if let latestInProgressAction {
+                        if let latestInProgressAction = presentation.latestInProgressAction {
                             MomentsHomeActionRow(
                                 action: latestInProgressAction
                             ) {
-                                if let latestInProgressContinuationRequest {
+                                if let latestInProgressContinuationRequest = presentation.latestInProgressContinuationRequest {
                                     continueProject(latestInProgressContinuationRequest)
                                 }
                             }
                         }
 
                         MomentsHomeActionRow(
-                            action: createAction
+                            action: presentation.createAction
                         ) {
                             selectTab(.create)
                         }
 
                         MomentsHomeActionRow(
-                            action: reviewProjectsAction
+                            action: presentation.reviewProjectsAction
                         ) {
                             selectTab(.projects)
                         }
 
                         MomentsHomeActionRow(
-                            action: aviGuidanceAction
+                            action: presentation.aviGuidanceAction
                         ) {
                             selectTab(.avi)
                         }

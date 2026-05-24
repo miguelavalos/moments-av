@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct MomentsHomeAction {
+struct MomentsHomeAction: Equatable {
     let title: String
     let detail: String
     let systemImage: String
