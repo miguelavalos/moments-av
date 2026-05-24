@@ -5,6 +5,13 @@ struct MomentsProjectsScreen: View {
     @EnvironmentObject private var viewModel: MomentsProjectsViewModel
     @State private var projectPendingDeletion: MomentDraftProject?
     let continueProject: (MomentsProjectContinuationRequest) -> Void
+    private var presentation: MomentsProjectsPresentation {
+        MomentsProjectsPresentation.make(
+            isSignedIn: viewModel.isSignedIn,
+            projectSummary: viewModel.projectSummary,
+            projectPendingDeletion: projectPendingDeletion
+        )
+    }
 
     init(continueProject: @escaping (MomentsProjectContinuationRequest) -> Void = { _ in }) {
         self.continueProject = continueProject
@@ -32,7 +39,7 @@ struct MomentsProjectsScreen: View {
                 projectPendingDeletion = nil
             }
         } message: {
-            Text("This removes \(projectPendingDeletion?.title ?? "this project"), including source media records and generated artifacts.")
+            Text(presentation.deletionMessage)
         }
     }
 
@@ -41,19 +48,10 @@ struct MomentsProjectsScreen: View {
             Text("Projects")
                 .font(.headline)
 
-            if !viewModel.isSignedIn {
-                MomentsProjectsUnavailableState(
-                    systemImage: "person.crop.circle.badge.exclamationmark",
-                    title: "Sign in required",
-                    message: "Project history loads after your account is connected."
-                )
-            } else if !viewModel.projectSummary.hasProjects {
-                MomentsProjectsUnavailableState(
-                    systemImage: "rectangle.stack.badge.plus",
-                    title: "No projects yet",
-                    message: "Create a moment first, then drafts, previews, and final exports will appear here."
-                )
-            } else {
+            switch presentation.availability {
+            case let .signedOut(unavailable), let .empty(unavailable):
+                MomentsProjectsUnavailableState(presentation: unavailable)
+            case .available:
                 MomentsProjectsList(
                     projectSummary: viewModel.projectSummary,
                     selectedProjectId: viewModel.selectedProjectId
@@ -106,21 +104,19 @@ struct MomentsProjectsScreen: View {
 }
 
 private struct MomentsProjectsUnavailableState: View {
-    let systemImage: String
-    let title: String
-    let message: String
+    let presentation: MomentsProjectsUnavailablePresentation
 
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
-            Image(systemName: systemImage)
+            Image(systemName: presentation.systemImage)
                 .font(.title3)
                 .foregroundStyle(MomentsTheme.brandPalette.accent)
                 .frame(width: 28)
 
             VStack(alignment: .leading, spacing: 4) {
-                Text(title)
+                Text(presentation.title)
                     .font(.subheadline.weight(.semibold))
-                Text(message)
+                Text(presentation.message)
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
