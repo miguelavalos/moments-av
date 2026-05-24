@@ -35,7 +35,7 @@ struct MomentsHomeScreen: View {
                     if viewModel.isSignedIn {
                         HStack(spacing: 10) {
                             MomentsHomeMetricTile(
-                                title: "Credits",
+                                title: "Spendable",
                                 value: "\(viewModel.creditBalance.spendable)",
                                 systemImage: "creditcard"
                             )
@@ -45,6 +45,7 @@ struct MomentsHomeScreen: View {
                                 systemImage: "rectangle.stack"
                             )
                         }
+                        MomentsHomeCreditBreakdown(balance: viewModel.creditBalance)
                     } else {
                         signInActions
                     }
@@ -62,8 +63,11 @@ struct MomentsHomeScreen: View {
                         MomentsHomeLatestProjectRow(
                             title: latestProject.title,
                             status: MomentsProjectStatusRules.displayTitle(for: latestProject.status),
-                            updatedAt: latestProject.updatedAt
+                            updatedAt: latestProject.updatedAt,
+                            openProject: { selectTab(.projects) }
                         )
+                    } else if viewModel.isSignedIn {
+                        MomentsHomeEmptyProjectRow()
                     }
 
                     HStack(spacing: 10) {
@@ -145,29 +149,38 @@ private struct MomentsHomeLatestProjectRow: View {
     let title: String
     let status: String?
     let updatedAt: Double?
+    let openProject: () -> Void
 
     var body: some View {
-        HStack(alignment: .top, spacing: 12) {
-            Image(systemName: "clock.badge.checkmark")
-                .font(.caption.weight(.semibold))
-                .foregroundStyle(MomentsTheme.brandPalette.accent)
-                .frame(width: 20)
+        Button(action: openProject) {
+            HStack(alignment: .top, spacing: 12) {
+                Image(systemName: "clock.badge.checkmark")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(MomentsTheme.brandPalette.accent)
+                    .frame(width: 20)
 
-            VStack(alignment: .leading, spacing: 3) {
-                Text("Latest project")
+                VStack(alignment: .leading, spacing: 3) {
+                    Text("Latest project")
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(.secondary)
+                    Text(title)
+                        .font(.subheadline.weight(.semibold))
+                        .lineLimit(2)
+                    Text(detailText)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+                Image(systemName: "chevron.right")
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(.secondary)
-                Text(title)
-                    .font(.subheadline.weight(.semibold))
-                    .lineLimit(2)
-                Text(detailText)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .padding(.top, 4)
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(12)
+            .background(Color.primary.opacity(0.03), in: RoundedRectangle(cornerRadius: 8))
         }
-        .padding(12)
-        .background(Color.primary.opacity(0.03), in: RoundedRectangle(cornerRadius: 8))
+        .buttonStyle(.plain)
     }
 
     private var detailText: String {
@@ -177,6 +190,62 @@ private struct MomentsHomeLatestProjectRow: View {
     private var formattedUpdatedAt: String? {
         guard let updatedAt else { return nil }
         return "Updated \(MomentsDateFormatting.formattedDate(milliseconds: updatedAt))"
+    }
+}
+
+private struct MomentsHomeEmptyProjectRow: View {
+    var body: some View {
+        HStack(alignment: .top, spacing: 12) {
+            Image(systemName: "rectangle.stack.badge.plus")
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(MomentsTheme.brandPalette.accent)
+                .frame(width: 20)
+
+            VStack(alignment: .leading, spacing: 3) {
+                Text("No projects yet")
+                    .font(.subheadline.weight(.semibold))
+                Text("Start in Create to sync the first draft, preview, and final export.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .padding(12)
+        .background(Color.primary.opacity(0.03), in: RoundedRectangle(cornerRadius: 8))
+    }
+}
+
+private struct MomentsHomeCreditBreakdown: View {
+    let balance: MomentsCreditBalance
+
+    var body: some View {
+        HStack(spacing: 8) {
+            ForEach(CreditSource.allCases, id: \.rawValue) { source in
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("\(balance.amount(for: source))")
+                        .font(.caption.weight(.semibold))
+                    Text(source.shortTitle)
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.76)
+                }
+                .frame(maxWidth: .infinity, minHeight: 40, alignment: .leading)
+                .padding(8)
+                .background(Color.primary.opacity(0.03), in: RoundedRectangle(cornerRadius: 8))
+            }
+        }
+    }
+}
+
+private extension CreditSource {
+    var shortTitle: String {
+        switch self {
+        case .proMonthly: "Monthly"
+        case .promotional: "Promo"
+        case .purchased: "Purchased"
+        }
     }
 }
 
