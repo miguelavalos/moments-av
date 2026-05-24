@@ -34,8 +34,8 @@ struct MomentsAppShellView: View {
         case .create:
             MomentsCreateScreen()
         case .projects:
-            MomentsProjectsScreen { project in
-                createViewModel.continueProject(project)
+            MomentsProjectsScreen { project, focus in
+                createViewModel.continueProject(project, focus: focus)
                 selectedTab = .create
             }
         case .avi:

@@ -35,11 +35,20 @@ struct MomentsProjectListSummary: Equatable {
     }
 }
 
+enum MomentsProjectContinuationFocus: Hashable {
+    case review
+    case media
+    case story
+    case preview
+    case finalRender
+}
+
 struct MomentsProjectNextAction: Equatable {
     let title: String
     let message: String
     let systemImage: String
     let primaryButtonTitle: String
+    let continuationFocus: MomentsProjectContinuationFocus
 }
 
 extension MomentsProjectGroups: Equatable {
@@ -84,7 +93,8 @@ enum MomentsProjectStatusRules {
                 title: "Review render issue",
                 message: "\(displayKind(failedJob.kind)) failed. Return to Create and refresh or retry the render.",
                 systemImage: "exclamationmark.triangle",
-                primaryButtonTitle: "Review in Create"
+                primaryButtonTitle: "Review in Create",
+                continuationFocus: focus(forFailedJobKind: failedJob.kind)
             )
         }
 
@@ -93,7 +103,8 @@ enum MomentsProjectStatusRules {
                 title: "Add media",
                 message: "Continue in Create and add photos or clips before generating the story.",
                 systemImage: "photo.badge.plus",
-                primaryButtonTitle: "Add Media in Create"
+                primaryButtonTitle: "Add Media in Create",
+                continuationFocus: .media
             )
         }
 
@@ -102,7 +113,8 @@ enum MomentsProjectStatusRules {
                 title: "Generate story",
                 message: "Continue in Create and ask Avi to draft the story scenes.",
                 systemImage: "text.bubble",
-                primaryButtonTitle: "Generate Story in Create"
+                primaryButtonTitle: "Generate Story in Create",
+                continuationFocus: .story
             )
         }
 
@@ -111,7 +123,8 @@ enum MomentsProjectStatusRules {
                 title: "Generate preview",
                 message: "Create a preview to check pacing before spending credits on the final export.",
                 systemImage: "play.rectangle",
-                primaryButtonTitle: "Generate Preview in Create"
+                primaryButtonTitle: "Generate Preview in Create",
+                continuationFocus: .preview
             )
         }
 
@@ -120,7 +133,8 @@ enum MomentsProjectStatusRules {
                 title: "Render final export",
                 message: "Preview is ready. Continue in Create to generate the final export.",
                 systemImage: "square.and.arrow.up",
-                primaryButtonTitle: "Render Final in Create"
+                primaryButtonTitle: "Render Final in Create",
+                continuationFocus: .finalRender
             )
         }
 
@@ -128,8 +142,20 @@ enum MomentsProjectStatusRules {
             title: "Finished",
             message: "Final export is available.",
             systemImage: "checkmark.circle",
-            primaryButtonTitle: "Open in Create"
+            primaryButtonTitle: "Open in Create",
+            continuationFocus: .finalRender
         )
+    }
+
+    private static func focus(forFailedJobKind kind: String) -> MomentsProjectContinuationFocus {
+        switch kind {
+        case "preview":
+            .preview
+        case "final_render":
+            .finalRender
+        default:
+            .review
+        }
     }
 
     private static func isFailureStatus(_ status: String) -> Bool {

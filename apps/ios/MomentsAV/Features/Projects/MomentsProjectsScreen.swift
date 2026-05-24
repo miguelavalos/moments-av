@@ -4,9 +4,9 @@ import SwiftUI
 struct MomentsProjectsScreen: View {
     @EnvironmentObject private var viewModel: MomentsProjectsViewModel
     @State private var projectPendingDeletion: MomentDraftProject?
-    let continueProject: (MomentDraftProject) -> Void
+    let continueProject: (MomentDraftProject, MomentsProjectContinuationFocus) -> Void
 
-    init(continueProject: @escaping (MomentDraftProject) -> Void = { _ in }) {
+    init(continueProject: @escaping (MomentDraftProject, MomentsProjectContinuationFocus) -> Void = { _, _ in }) {
         self.continueProject = continueProject
     }
 

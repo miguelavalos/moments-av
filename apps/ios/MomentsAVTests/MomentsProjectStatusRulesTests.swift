@@ -65,6 +65,7 @@ final class MomentsProjectStatusRulesTests: XCTestCase {
         XCTAssertEqual(action.title, "Add media")
         XCTAssertEqual(action.systemImage, "photo.badge.plus")
         XCTAssertEqual(action.primaryButtonTitle, "Add Media in Create")
+        XCTAssertEqual(action.continuationFocus, .media)
     }
 
     func testNextActionAsksForStoryWhenMediaExistsWithoutScenes() {
@@ -73,6 +74,7 @@ final class MomentsProjectStatusRulesTests: XCTestCase {
         XCTAssertEqual(action.title, "Generate story")
         XCTAssertEqual(action.systemImage, "text.bubble")
         XCTAssertEqual(action.primaryButtonTitle, "Generate Story in Create")
+        XCTAssertEqual(action.continuationFocus, .story)
     }
 
     func testNextActionAsksForPreviewWhenStoryExistsWithoutPreviewArtifact() {
@@ -86,6 +88,7 @@ final class MomentsProjectStatusRulesTests: XCTestCase {
         XCTAssertEqual(action.title, "Generate preview")
         XCTAssertEqual(action.systemImage, "play.rectangle")
         XCTAssertEqual(action.primaryButtonTitle, "Generate Preview in Create")
+        XCTAssertEqual(action.continuationFocus, .preview)
     }
 
     func testNextActionAsksForFinalWhenPreviewIsAvailable() {
@@ -100,6 +103,7 @@ final class MomentsProjectStatusRulesTests: XCTestCase {
         XCTAssertEqual(action.title, "Render final export")
         XCTAssertEqual(action.systemImage, "square.and.arrow.up")
         XCTAssertEqual(action.primaryButtonTitle, "Render Final in Create")
+        XCTAssertEqual(action.continuationFocus, .finalRender)
     }
 
     func testNextActionMarksFinishedWhenFinalExportIsAvailable() {
@@ -117,6 +121,7 @@ final class MomentsProjectStatusRulesTests: XCTestCase {
         XCTAssertEqual(action.title, "Finished")
         XCTAssertEqual(action.systemImage, "checkmark.circle")
         XCTAssertEqual(action.primaryButtonTitle, "Open in Create")
+        XCTAssertEqual(action.continuationFocus, .finalRender)
     }
 
     func testNextActionPrioritizesFailedRenderJobs() {
@@ -131,6 +136,7 @@ final class MomentsProjectStatusRulesTests: XCTestCase {
         XCTAssertEqual(action.title, "Review render issue")
         XCTAssertEqual(action.systemImage, "exclamationmark.triangle")
         XCTAssertEqual(action.primaryButtonTitle, "Review in Create")
+        XCTAssertEqual(action.continuationFocus, .preview)
     }
 
     private func makeProject(

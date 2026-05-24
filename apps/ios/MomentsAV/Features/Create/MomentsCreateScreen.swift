@@ -7,69 +7,91 @@ struct MomentsCreateScreen: View {
     @State private var pickerItems: [PhotosPickerItem] = []
 
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 18) {
-                introCard
-                activeProjectCard
-                creditsCard
-                MomentsCreateDraftSetupCard(
-                    form: $viewModel.form,
-                    templateSelection: templateSelection,
-                    templates: viewModel.templates,
-                    isDraftLocked: viewModel.isDraftLocked,
-                    isCreatingDraft: viewModel.isCreatingDraft,
-                    canCreateDraft: viewModel.canCreateDraft,
-                    availabilityMessage: viewModel.draftAvailabilityMessage,
-                    createdProjectId: viewModel.createdProjectId,
-                    isContinuingProject: viewModel.isContinuingProject,
-                    canStartAnotherProject: viewModel.canStartAnotherProject,
-                    draftErrorMessage: viewModel.draftErrorMessage,
-                    workspaceSummary: viewModel.workspaceSummary,
-                    canAfford: viewModel.canAfford,
-                    spendPlanDescription: viewModel.spendPlanDescription,
-                    createDraft: viewModel.createDraft,
-                    startAnotherProject: viewModel.startAnotherProject
-                )
+        ScrollViewReader { proxy in
+            ScrollView {
+                VStack(alignment: .leading, spacing: 18) {
+                    introCard
+                    activeProjectCard
+                        .id(MomentsCreateSection.review)
+                    creditsCard
+                    MomentsCreateDraftSetupCard(
+                        form: $viewModel.form,
+                        templateSelection: templateSelection,
+                        templates: viewModel.templates,
+                        isDraftLocked: viewModel.isDraftLocked,
+                        isCreatingDraft: viewModel.isCreatingDraft,
+                        canCreateDraft: viewModel.canCreateDraft,
+                        availabilityMessage: viewModel.draftAvailabilityMessage,
+                        createdProjectId: viewModel.createdProjectId,
+                        isContinuingProject: viewModel.isContinuingProject,
+                        canStartAnotherProject: viewModel.canStartAnotherProject,
+                        draftErrorMessage: viewModel.draftErrorMessage,
+                        workspaceSummary: viewModel.workspaceSummary,
+                        canAfford: viewModel.canAfford,
+                        spendPlanDescription: viewModel.spendPlanDescription,
+                        createDraft: viewModel.createDraft,
+                        startAnotherProject: viewModel.startAnotherProject
+                    )
 
-                if let createdProjectId = viewModel.createdProjectId {
-                    MomentsCreateMediaCard(
-                        pickerItems: $pickerItems,
-                        createdProjectId: createdProjectId,
-                        template: viewModel.form.template,
-                        summary: viewModel.mediaSummary,
-                        canAddMedia: viewModel.canAddMedia,
-                        availabilityMessage: viewModel.mediaAvailabilityMessage,
-                        importPickerItems: viewModel.importPickerItems,
-                        removeMedia: viewModel.removeMedia,
-                        autoPickStrongMoments: viewModel.autoPickStrongMoments
-                    )
-                    MomentsCreateStoryCard(
-                        summary: viewModel.storySummary,
-                        canDraftStory: viewModel.canDraftStory,
-                        availabilityMessage: viewModel.storyAvailabilityMessage,
-                        generateStoryDraft: viewModel.generateStoryDraft
-                    )
-                    MomentsCreatePreviewCard(
-                        summary: viewModel.previewSummary,
-                        canGeneratePreview: viewModel.canGeneratePreview,
-                        canRefreshPreviewStatus: viewModel.canRefreshPreviewStatus,
-                        availabilityMessage: viewModel.previewAvailabilityMessage,
-                        refreshAvailabilityMessage: viewModel.previewRefreshAvailabilityMessage,
-                        generatePreview: viewModel.generatePreview,
-                        refreshPreviewStatus: viewModel.refreshPreviewStatus
-                    )
-                    MomentsCreateFinalExportCard(
-                        summary: viewModel.finalRenderSummary,
-                        canGenerateFinalRender: viewModel.canGenerateFinalRender,
-                        canRefreshFinalRenderStatus: viewModel.canRefreshFinalRenderStatus,
-                        availabilityMessage: viewModel.finalRenderAvailabilityMessage,
-                        refreshAvailabilityMessage: viewModel.finalRenderRefreshAvailabilityMessage,
-                        generateFinalRender: viewModel.generateFinalRender,
-                        refreshFinalRenderStatus: viewModel.refreshFinalRenderStatus
-                    )
+                    if let createdProjectId = viewModel.createdProjectId {
+                        MomentsCreateMediaCard(
+                            pickerItems: $pickerItems,
+                            createdProjectId: createdProjectId,
+                            template: viewModel.form.template,
+                            summary: viewModel.mediaSummary,
+                            canAddMedia: viewModel.canAddMedia,
+                            availabilityMessage: viewModel.mediaAvailabilityMessage,
+                            importPickerItems: viewModel.importPickerItems,
+                            removeMedia: viewModel.removeMedia,
+                            autoPickStrongMoments: viewModel.autoPickStrongMoments
+                        )
+                        .id(MomentsCreateSection.media)
+
+                        MomentsCreateStoryCard(
+                            summary: viewModel.storySummary,
+                            canDraftStory: viewModel.canDraftStory,
+                            availabilityMessage: viewModel.storyAvailabilityMessage,
+                            generateStoryDraft: viewModel.generateStoryDraft
+                        )
+                        .id(MomentsCreateSection.story)
+
+                        MomentsCreatePreviewCard(
+                            summary: viewModel.previewSummary,
+                            canGeneratePreview: viewModel.canGeneratePreview,
+                            canRefreshPreviewStatus: viewModel.canRefreshPreviewStatus,
+                            availabilityMessage: viewModel.previewAvailabilityMessage,
+                            refreshAvailabilityMessage: viewModel.previewRefreshAvailabilityMessage,
+                            generatePreview: viewModel.generatePreview,
+                            refreshPreviewStatus: viewModel.refreshPreviewStatus
+                        )
+                        .id(MomentsCreateSection.preview)
+
+                        MomentsCreateFinalExportCard(
+                            summary: viewModel.finalRenderSummary,
+                            canGenerateFinalRender: viewModel.canGenerateFinalRender,
+                            canRefreshFinalRenderStatus: viewModel.canRefreshFinalRenderStatus,
+                            availabilityMessage: viewModel.finalRenderAvailabilityMessage,
+                            refreshAvailabilityMessage: viewModel.finalRenderRefreshAvailabilityMessage,
+                            generateFinalRender: viewModel.generateFinalRender,
+                            refreshFinalRenderStatus: viewModel.refreshFinalRenderStatus
+                        )
+                        .id(MomentsCreateSection.finalRender)
+                    }
                 }
+                .padding(20)
             }
-            .padding(20)
+            .onChange(of: viewModel.pendingFocus) { _, focus in
+                guard let focus else { return }
+                scrollToPendingFocus(focus, proxy: proxy)
+            }
+            .onChange(of: viewModel.createdProjectId) { _, _ in
+                guard let focus = viewModel.pendingFocus else { return }
+                scrollToPendingFocus(focus, proxy: proxy)
+            }
+            .onChange(of: viewModel.activeProject?.id) { _, _ in
+                guard let focus = viewModel.pendingFocus else { return }
+                scrollToPendingFocus(focus, proxy: proxy)
+            }
         }
         .background(MomentsTheme.canvas.ignoresSafeArea())
         .navigationTitle("Create")
@@ -133,4 +155,47 @@ struct MomentsCreateScreen: View {
         }
     }
 
+    private func scrollToPendingFocus(_ focus: MomentsProjectContinuationFocus, proxy: ScrollViewProxy) {
+        guard canScroll(to: focus) else { return }
+
+        Task { @MainActor in
+            await Task.yield()
+            withAnimation(.snappy) {
+                proxy.scrollTo(MomentsCreateSection(focus: focus), anchor: .top)
+            }
+            viewModel.consumePendingFocus()
+        }
+    }
+
+    private func canScroll(to focus: MomentsProjectContinuationFocus) -> Bool {
+        switch focus {
+        case .review:
+            viewModel.activeProject != nil
+        case .media, .story, .preview, .finalRender:
+            viewModel.createdProjectId != nil
+        }
+    }
+}
+
+private enum MomentsCreateSection: Hashable {
+    case review
+    case media
+    case story
+    case preview
+    case finalRender
+
+    init(focus: MomentsProjectContinuationFocus) {
+        switch focus {
+        case .review:
+            self = .review
+        case .media:
+            self = .media
+        case .story:
+            self = .story
+        case .preview:
+            self = .preview
+        case .finalRender:
+            self = .finalRender
+        }
+    }
 }

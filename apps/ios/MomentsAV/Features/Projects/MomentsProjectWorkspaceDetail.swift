@@ -3,7 +3,7 @@ import SwiftUI
 struct MomentsProjectWorkspaceDetail: View {
     let workspace: MomentProjectWorkspace
     let isDeletingProject: Bool
-    let continueProject: (MomentDraftProject) -> Void
+    let continueProject: (MomentDraftProject, MomentsProjectContinuationFocus) -> Void
     let requestDeleteProject: (MomentDraftProject) -> Void
     private var nextAction: MomentsProjectNextAction {
         MomentsProjectStatusRules.nextAction(for: workspace)
@@ -45,7 +45,7 @@ struct MomentsProjectWorkspaceDetail: View {
 
     private var continueProjectButton: some View {
         Button {
-            continueProject(workspace.project)
+            continueProject(workspace.project, nextAction.continuationFocus)
         } label: {
             Label(nextAction.primaryButtonTitle, systemImage: "arrow.right.circle")
                 .frame(maxWidth: .infinity)
