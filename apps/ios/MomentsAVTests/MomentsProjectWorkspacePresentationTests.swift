@@ -2,6 +2,36 @@ import XCTest
 @testable import MomentsAV
 
 final class MomentsProjectWorkspacePresentationTests: XCTestCase {
+    func testWorkspaceDetailPresentationFormatsTitleActionAndContinuationRequest() {
+        let workspace = makeWorkspace(
+            project: makeProject(title: "Family Weekend"),
+            mediaAssets: [
+                makeMediaAsset(id: "media-1", kind: "image", sortOrder: 0, selected: true, moderationStatus: "approved")
+            ]
+        )
+
+        let presentation = MomentsProjectWorkspaceDetailPresentation(workspace: workspace)
+
+        XCTAssertEqual(presentation.title, "Project detail")
+        XCTAssertEqual(presentation.nextAction.title, "Generate story")
+        XCTAssertEqual(presentation.continuationRequest.project, workspace.project)
+        XCTAssertEqual(presentation.continuationRequest.focus, .story)
+    }
+
+    func testWorkspaceDetailPresentationUsesFailedRenderContinuationFocus() {
+        let workspace = makeWorkspace(
+            project: makeProject(title: "Family Weekend"),
+            renderJobs: [
+                makeRenderJob(id: "job-1", kind: "final_render", status: "failed", updatedAt: 20)
+            ]
+        )
+
+        let presentation = MomentsProjectWorkspaceDetailPresentation(workspace: workspace)
+
+        XCTAssertEqual(presentation.nextAction.title, "Review render issue")
+        XCTAssertEqual(presentation.continuationRequest.focus, .finalRender)
+    }
+
     func testWorkspaceHeaderPresentationFormatsTitleUpdateAndCounts() {
         let presentation = MomentsProjectWorkspaceHeaderPresentation(
             workspace: makeWorkspace(

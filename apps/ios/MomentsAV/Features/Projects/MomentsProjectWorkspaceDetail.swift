@@ -5,17 +5,17 @@ struct MomentsProjectWorkspaceDetail: View {
     let isDeletingProject: Bool
     let continueProject: (MomentsProjectContinuationRequest) -> Void
     let requestDeleteProject: (MomentDraftProject) -> Void
-    private var nextAction: MomentsProjectNextAction {
-        MomentsProjectStatusRules.nextAction(for: workspace)
+    private var presentation: MomentsProjectWorkspaceDetailPresentation {
+        MomentsProjectWorkspaceDetailPresentation(workspace: workspace)
     }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Project detail")
+            Text(presentation.title)
                 .font(.headline)
 
             MomentsProjectWorkspaceHeader(workspace: workspace)
-            MomentsProjectNextActionRow(action: nextAction)
+            MomentsProjectNextActionRow(action: presentation.nextAction)
             MomentsProjectWorkspaceSummary(workspace: workspace)
             MomentsProjectProgressSection(workspace: workspace)
 
@@ -25,13 +25,8 @@ struct MomentsProjectWorkspaceDetail: View {
             MomentsProjectMediaSection(mediaAssets: workspace.mediaAssets)
             MomentsProjectStorySection(storyScenes: workspace.storyScenes)
             MomentsProjectRenderJobsSection(renderJobs: workspace.renderJobs)
-            MomentsProjectContinueButton(action: nextAction) {
-                continueProject(
-                    MomentsProjectContinuationRequest(
-                        project: workspace.project,
-                        focus: nextAction.continuationFocus
-                    )
-                )
+            MomentsProjectContinueButton(action: presentation.nextAction) {
+                continueProject(presentation.continuationRequest)
             }
             MomentsProjectDeleteButton(isDeletingProject: isDeletingProject) {
                 requestDeleteProject(workspace.project)
