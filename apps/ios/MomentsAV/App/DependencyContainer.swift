@@ -13,6 +13,7 @@ final class MomentsDependencyContainer: ObservableObject {
     let homeViewModel: MomentsHomeViewModel
     let createViewModel: MomentsCreateViewModel
     let projectsViewModel: MomentsProjectsViewModel
+    let aviViewModel: MomentsAviViewModel
 
     init(
         accountController: AccountController = AccountController(),
@@ -62,6 +63,7 @@ final class MomentsDependencyContainer: ObservableObject {
         self.homeViewModel = MomentsHomeViewModel()
         self.createViewModel = MomentsCreateViewModel()
         self.projectsViewModel = MomentsProjectsViewModel()
+        self.aviViewModel = MomentsAviViewModel()
 
         bindViewModels()
     }
@@ -173,6 +175,8 @@ private extension MomentsDependencyContainer {
         )
         projectsViewModel.bind(to: projectsListWorkflow)
         projectsViewModel.bind(accountStateProvider: accountController)
+        aviViewModel.bind(to: projectsListWorkflow)
+        aviViewModel.bind(accountStateProvider: accountController)
     }
 }
 

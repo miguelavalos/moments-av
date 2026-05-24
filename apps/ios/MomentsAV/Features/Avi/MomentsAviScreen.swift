@@ -4,6 +4,7 @@ import SwiftUI
 
 struct MomentsAviScreen: View {
     let selectTab: (MomentsRootTab) -> Void
+    @EnvironmentObject private var viewModel: MomentsAviViewModel
 
     var body: some View {
         ScrollView {
@@ -49,6 +50,34 @@ struct MomentsAviScreen: View {
                 }
 
                 AVSettingsCard {
+                    Text("Current focus")
+                        .font(.headline)
+                    aviInfoRow(
+                        title: viewModel.workflowFocusTitle,
+                        detail: viewModel.workflowFocusMessage,
+                        systemImage: viewModel.projectSummary.inProgressCount > 0 ? "clock.badge.checkmark" : "sparkles"
+                    )
+
+                    HStack(spacing: 10) {
+                        AVAviStatPill(
+                            title: "Active",
+                            value: "\(viewModel.projectSummary.inProgressCount)",
+                            systemImage: "clock"
+                        )
+                        AVAviStatPill(
+                            title: "Finished",
+                            value: "\(viewModel.projectSummary.finishedCount)",
+                            systemImage: "checkmark.circle"
+                        )
+                        AVAviStatPill(
+                            title: "Credits",
+                            value: "\(viewModel.creditBalance.spendable)",
+                            systemImage: "creditcard"
+                        )
+                    }
+                }
+
+                AVSettingsCard {
                     Text("Credit guidance")
                         .font(.headline)
                     HStack(spacing: 10) {
@@ -56,7 +85,7 @@ struct MomentsAviScreen: View {
                         AVAviStatPill(title: "Then", value: "Bonus", systemImage: "gift")
                         AVAviStatPill(title: "Then", value: "Paid", systemImage: "creditcard")
                     }
-                    Text("Monthly subscription credits are used before promotional and purchased credits. Standalone credits remain available for final renders when monthly credits run out.")
+                    Text(viewModel.creditGuidanceMessage)
                         .foregroundStyle(.secondary)
                 }
 

@@ -10,6 +10,7 @@ struct MomentsAppBootstrapView: View {
             .environmentObject(dependencies.homeViewModel)
             .environmentObject(dependencies.createViewModel)
             .environmentObject(dependencies.projectsViewModel)
+            .environmentObject(dependencies.aviViewModel)
             .onReceive(dependencies.accountController.currentUserIdPublisher) { ownerUserId in
                 dependencies.handleAccountChange(ownerUserId: ownerUserId)
             }

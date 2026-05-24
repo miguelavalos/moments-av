@@ -5,6 +5,7 @@ struct MomentsAppShellView: View {
     @Binding var selectedTab: MomentsRootTab
     @EnvironmentObject private var accountController: AccountController
     @EnvironmentObject private var createViewModel: MomentsCreateViewModel
+    @EnvironmentObject private var aviViewModel: MomentsAviViewModel
 
     var body: some View {
         TabView(selection: $selectedTab) {
@@ -39,6 +40,7 @@ struct MomentsAppShellView: View {
             }
         case .avi:
             MomentsAviScreen { selectedTab = $0 }
+                .environmentObject(aviViewModel)
         }
     }
 }
