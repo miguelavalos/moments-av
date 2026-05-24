@@ -158,26 +158,38 @@ struct MomentsProjectRenderJobRow: View {
                 )
             }
 
-            if let errorMessage = renderJob.errorMessage, !errorMessage.isEmpty {
-                VStack(alignment: .leading, spacing: 3) {
-                    Text(renderJob.errorCode ?? "Render error")
-                        .font(.caption2.weight(.semibold))
-                        .foregroundStyle(.red)
-                    Text(errorMessage)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
-                .frame(maxWidth: .infinity, alignment: .topLeading)
-                .padding(8)
-                .background(Color.red.opacity(0.08), in: RoundedRectangle(cornerRadius: 8))
-            }
+            MomentsProjectRenderJobErrorBlock(
+                errorCode: renderJob.errorCode,
+                errorMessage: renderJob.errorMessage
+            )
 
             VStack(alignment: .leading, spacing: 6) {
                 MomentsProjectDiagnosticIdentifierRow(title: "Job ID", value: renderJob.id)
                 MomentsProjectDiagnosticIdentifierRow(title: "Workflow", value: renderJob.workflowRunId)
                 MomentsProjectDiagnosticIdentifierRow(title: "Provider request", value: renderJob.providerRequestId)
             }
+        }
+    }
+}
+
+private struct MomentsProjectRenderJobErrorBlock: View {
+    let errorCode: String?
+    let errorMessage: String?
+
+    var body: some View {
+        if let errorMessage, !errorMessage.isEmpty {
+            VStack(alignment: .leading, spacing: 3) {
+                Text(errorCode ?? "Render error")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(.red)
+                Text(errorMessage)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            .frame(maxWidth: .infinity, alignment: .topLeading)
+            .padding(8)
+            .background(Color.red.opacity(0.08), in: RoundedRectangle(cornerRadius: 8))
         }
     }
 }
