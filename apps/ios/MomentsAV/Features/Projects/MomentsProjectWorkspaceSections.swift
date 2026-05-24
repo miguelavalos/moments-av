@@ -281,14 +281,84 @@ struct MomentsProjectRenderJobRow: View {
     let renderJob: MomentRenderJob
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 3) {
-            Text("\(MomentsProjectStatusRules.displayKind(renderJob.kind)) · \(MomentsProjectStatusRules.displayTitle(for: renderJob.status))")
-                .font(.caption.weight(.semibold))
-            if let model = renderJob.model {
-                Text(model)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(alignment: .center, spacing: 8) {
+                MomentsProjectArtifactStatusBadge(status: renderJob.status)
+
+                Text(MomentsProjectStatusRules.displayKind(renderJob.kind))
+                    .font(.caption.weight(.semibold))
+
+                Spacer(minLength: 0)
             }
+
+            LazyVGrid(
+                columns: [GridItem(.flexible()), GridItem(.flexible())],
+                alignment: .leading,
+                spacing: 8
+            ) {
+                MomentsProjectArtifactMetadataItem(
+                    title: "Provider",
+                    value: renderJob.provider ?? "Unknown"
+                )
+                MomentsProjectArtifactMetadataItem(
+                    title: "Model",
+                    value: renderJob.model ?? "Unknown"
+                )
+                MomentsProjectArtifactMetadataItem(
+                    title: "Created",
+                    value: MomentsDateFormatting.formattedDate(milliseconds: renderJob.createdAt)
+                )
+                MomentsProjectArtifactMetadataItem(
+                    title: "Updated",
+                    value: MomentsDateFormatting.formattedDate(milliseconds: renderJob.updatedAt)
+                )
+            }
+
+            if let errorMessage = renderJob.errorMessage, !errorMessage.isEmpty {
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(renderJob.errorCode ?? "Render error")
+                        .font(.caption2.weight(.semibold))
+                        .foregroundStyle(.red)
+                    Text(errorMessage)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                .frame(maxWidth: .infinity, alignment: .topLeading)
+                .padding(8)
+                .background(Color.red.opacity(0.08), in: RoundedRectangle(cornerRadius: 8))
+            }
+
+            VStack(alignment: .leading, spacing: 6) {
+                MomentsProjectRenderJobIdentifierRow(title: "Job ID", value: renderJob.id)
+                MomentsProjectRenderJobIdentifierRow(title: "Workflow", value: renderJob.workflowRunId)
+                MomentsProjectRenderJobIdentifierRow(title: "Provider request", value: renderJob.providerRequestId)
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .topLeading)
+        .padding(10)
+        .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 8))
+    }
+}
+
+private struct MomentsProjectRenderJobIdentifierRow: View {
+    let title: String
+    let value: String?
+
+    var body: some View {
+        if let value, !value.isEmpty {
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title)
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(.secondary)
+                Text(value)
+                    .font(.caption.monospaced())
+                    .foregroundStyle(.secondary)
+                    .textSelection(.enabled)
+                    .lineLimit(2)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            .frame(maxWidth: .infinity, alignment: .topLeading)
         }
     }
 }
