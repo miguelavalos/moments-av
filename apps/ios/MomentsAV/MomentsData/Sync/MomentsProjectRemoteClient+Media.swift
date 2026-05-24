@@ -6,7 +6,7 @@ extension MomentsProjectRemoteClient {
         projectId: String,
         media: MomentsSelectedMedia,
         preparedUpload: MomentsPreparedUpload,
-        uploadedAt: Date
+        uploadedAt: Date = Date()
     ) async throws {
         let client = try requireClient()
 

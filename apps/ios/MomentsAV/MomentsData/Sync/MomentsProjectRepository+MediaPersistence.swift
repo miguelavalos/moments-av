@@ -11,8 +11,7 @@ extension MomentsProjectRepository {
             ownerUserId: ownerUserId,
             projectId: projectId,
             media: media,
-            preparedUpload: preparedUpload,
-            uploadedAt: Date()
+            preparedUpload: preparedUpload
         )
     }
 }
