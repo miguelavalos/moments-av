@@ -8,6 +8,18 @@ extension MomentsProjectRemoteClient {
         preparedUpload: MomentsPreparedUpload,
         uploadedAt: Date = Date()
     ) async throws {
+        try await addMediaAsset(
+            ownerUserId: ownerUserId,
+            projectId: projectId,
+            request: .asset(media, preparedUpload: preparedUpload, uploadedAt: uploadedAt)
+        )
+    }
+
+    func addMediaAsset(
+        ownerUserId: String,
+        projectId: String,
+        request: MediaAssetPersistenceRequest
+    ) async throws {
         let client = try requireClient()
 
         let _: String? = try await client.mutation(
@@ -15,15 +27,15 @@ extension MomentsProjectRemoteClient {
             with: [
                 "ownerUserId": ownerUserId,
                 "projectId": projectId,
-                "platformMediaAssetId": preparedUpload.mediaAssetId,
-                "uploadId": preparedUpload.uploadId,
-                "kind": media.kind,
-                "r2Key": preparedUpload.storageKey,
-                "sortOrder": media.sortOrder,
-                "selected": media.selected,
-                "moderationStatus": "pending",
-                "uploadedAt": milliseconds(from: uploadedAt),
-                "sourceExpiresAt": expirationMilliseconds(from: uploadedAt)
+                "platformMediaAssetId": request.platformMediaAssetId,
+                "uploadId": request.uploadId,
+                "kind": request.kind,
+                "r2Key": request.r2Key,
+                "sortOrder": request.sortOrder,
+                "selected": request.selected,
+                "moderationStatus": request.moderationStatus,
+                "uploadedAt": milliseconds(from: request.uploadedAt),
+                "sourceExpiresAt": expirationMilliseconds(from: request.uploadedAt)
             ]
         )
     }
