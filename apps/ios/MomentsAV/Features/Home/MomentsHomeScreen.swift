@@ -11,6 +11,13 @@ struct MomentsHomeScreen: View {
     private var latestInProgressProject: MomentDraftProject? {
         projectSummary.groups.inProgress.first
     }
+    private var latestInProgressProjectDetail: String {
+        guard let latestInProgressProject else { return "" }
+        let status = MomentsProjectStatusRules.displayTitle(for: latestInProgressProject.status)
+        let updated = MomentsDateFormatting.formattedDate(milliseconds: latestInProgressProject.updatedAt)
+        let previewUsage = "\(Int(latestInProgressProject.previewCount))/\(Int(latestInProgressProject.previewLimit)) previews"
+        return "\(latestInProgressProject.title) · \(status) · Updated \(updated) · \(previewUsage)"
+    }
 
     init(
         selectTab: @escaping (MomentsRootTab) -> Void,
@@ -100,7 +107,7 @@ struct MomentsHomeScreen: View {
                         if let latestInProgressProject {
                             MomentsHomeActionRow(
                                 title: "Continue latest project",
-                                detail: "\(latestInProgressProject.title) is ready to review in Create.",
+                                detail: latestInProgressProjectDetail,
                                 systemImage: "arrow.right.circle",
                                 isProminent: true
                             ) {
