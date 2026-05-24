@@ -154,9 +154,9 @@ private struct MomentsProjectArtifactDetail: View {
     let artifact: MomentArtifact
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        MomentsProjectDiagnosticCard {
             HStack(alignment: .center, spacing: 8) {
-                MomentsProjectArtifactStatusBadge(status: artifact.status)
+                MomentsProjectDiagnosticStatusBadge(status: artifact.status)
 
                 Text(MomentsProjectStatusRules.displayKind(artifact.kind))
                     .font(.caption.weight(.semibold))
@@ -169,75 +169,22 @@ private struct MomentsProjectArtifactDetail: View {
                 alignment: .leading,
                 spacing: 8
             ) {
-                MomentsProjectArtifactMetadataItem(
+                MomentsProjectDiagnosticMetadataItem(
                     title: "Watermark",
                     value: artifact.hasWatermark == true ? "Included" : "None"
                 )
-                MomentsProjectArtifactMetadataItem(
+                MomentsProjectDiagnosticMetadataItem(
                     title: "Expires",
                     value: MomentsDateFormatting.formattedDate(milliseconds: artifact.expiresAt)
                 )
             }
 
-            VStack(alignment: .leading, spacing: 3) {
-                Text("Storage key")
-                    .font(.caption2.weight(.semibold))
-                    .foregroundStyle(.secondary)
-                Text(artifact.r2Key)
-                    .font(.caption.monospaced())
-                    .foregroundStyle(.secondary)
-                    .textSelection(.enabled)
-                    .lineLimit(3)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
+            MomentsProjectDiagnosticIdentifierRow(
+                title: "Storage key",
+                value: artifact.r2Key,
+                lineLimit: 3
+            )
         }
-        .frame(maxWidth: .infinity, alignment: .topLeading)
-        .padding(10)
-        .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 8))
-    }
-}
-
-private struct MomentsProjectArtifactStatusBadge: View {
-    let status: String
-
-    var body: some View {
-        Text(MomentsProjectStatusRules.displayTitle(for: status))
-            .font(.caption2.weight(.semibold))
-            .padding(.horizontal, 8)
-            .padding(.vertical, 4)
-            .background(statusColor.opacity(0.14), in: Capsule())
-            .foregroundStyle(statusColor)
-    }
-
-    private var statusColor: Color {
-        switch status {
-        case "available", "completed":
-            .green
-        case "failed", "error", "blocked":
-            .red
-        case "processing", "queued", "rendering":
-            .orange
-        default:
-            .secondary
-        }
-    }
-}
-
-private struct MomentsProjectArtifactMetadataItem: View {
-    let title: String
-    let value: String
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 2) {
-            Text(title)
-                .font(.caption2.weight(.semibold))
-                .foregroundStyle(.secondary)
-            Text(value)
-                .font(.caption.weight(.semibold))
-                .lineLimit(2)
-                .fixedSize(horizontal: false, vertical: true)
-        }
-        .frame(maxWidth: .infinity, alignment: .topLeading)
     }
 }
 
@@ -281,9 +228,9 @@ struct MomentsProjectRenderJobRow: View {
     let renderJob: MomentRenderJob
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        MomentsProjectDiagnosticCard {
             HStack(alignment: .center, spacing: 8) {
-                MomentsProjectArtifactStatusBadge(status: renderJob.status)
+                MomentsProjectDiagnosticStatusBadge(status: renderJob.status)
 
                 Text(MomentsProjectStatusRules.displayKind(renderJob.kind))
                     .font(.caption.weight(.semibold))
@@ -296,19 +243,19 @@ struct MomentsProjectRenderJobRow: View {
                 alignment: .leading,
                 spacing: 8
             ) {
-                MomentsProjectArtifactMetadataItem(
+                MomentsProjectDiagnosticMetadataItem(
                     title: "Provider",
                     value: renderJob.provider ?? "Unknown"
                 )
-                MomentsProjectArtifactMetadataItem(
+                MomentsProjectDiagnosticMetadataItem(
                     title: "Model",
                     value: renderJob.model ?? "Unknown"
                 )
-                MomentsProjectArtifactMetadataItem(
+                MomentsProjectDiagnosticMetadataItem(
                     title: "Created",
                     value: MomentsDateFormatting.formattedDate(milliseconds: renderJob.createdAt)
                 )
-                MomentsProjectArtifactMetadataItem(
+                MomentsProjectDiagnosticMetadataItem(
                     title: "Updated",
                     value: MomentsDateFormatting.formattedDate(milliseconds: renderJob.updatedAt)
                 )
@@ -330,35 +277,10 @@ struct MomentsProjectRenderJobRow: View {
             }
 
             VStack(alignment: .leading, spacing: 6) {
-                MomentsProjectRenderJobIdentifierRow(title: "Job ID", value: renderJob.id)
-                MomentsProjectRenderJobIdentifierRow(title: "Workflow", value: renderJob.workflowRunId)
-                MomentsProjectRenderJobIdentifierRow(title: "Provider request", value: renderJob.providerRequestId)
+                MomentsProjectDiagnosticIdentifierRow(title: "Job ID", value: renderJob.id)
+                MomentsProjectDiagnosticIdentifierRow(title: "Workflow", value: renderJob.workflowRunId)
+                MomentsProjectDiagnosticIdentifierRow(title: "Provider request", value: renderJob.providerRequestId)
             }
-        }
-        .frame(maxWidth: .infinity, alignment: .topLeading)
-        .padding(10)
-        .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 8))
-    }
-}
-
-private struct MomentsProjectRenderJobIdentifierRow: View {
-    let title: String
-    let value: String?
-
-    var body: some View {
-        if let value, !value.isEmpty {
-            VStack(alignment: .leading, spacing: 2) {
-                Text(title)
-                    .font(.caption2.weight(.semibold))
-                    .foregroundStyle(.secondary)
-                Text(value)
-                    .font(.caption.monospaced())
-                    .foregroundStyle(.secondary)
-                    .textSelection(.enabled)
-                    .lineLimit(2)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
-            .frame(maxWidth: .infinity, alignment: .topLeading)
         }
     }
 }
