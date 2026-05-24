@@ -1,0 +1,91 @@
+import Foundation
+
+struct MomentsSelectedMedia: Identifiable, Equatable {
+    let id: UUID
+    let sourceLocalIdentifier: String
+    let originalFilename: String
+    let contentType: String
+    let kind: String
+    let byteSize: Int
+    let sha256: String
+    let data: Data
+    var sortOrder: Int
+    var selected: Bool
+
+    var displaySize: String {
+        ByteCountFormatter.string(fromByteCount: Int64(byteSize), countStyle: .file)
+    }
+}
+
+struct MomentsPreparedUpload: Decodable, Equatable {
+    let appId: String
+    let projectId: String
+    let mediaAssetId: String
+    let uploadId: String
+    let uploadUrl: URL?
+    let method: String
+    let headers: [String: String]
+    let storageKey: String
+    let expiresAt: String
+    let generatedAt: String
+}
+
+enum MomentsMediaRules {
+    enum BlockReason {
+        case tooFewSelected(missingCount: Int)
+        case tooManySelected(extraCount: Int)
+    }
+
+    struct Availability {
+        let canUseSelection: Bool
+        let blockReason: BlockReason?
+    }
+
+    static func canStartPreview(template: MomentTemplate, selectedCount: Int) -> Bool {
+        availability(template: template, selectedCount: selectedCount).canUseSelection
+    }
+
+    static func availability(template: MomentTemplate, selectedCount: Int) -> Availability {
+        if selectedCount < template.minimumAssets {
+            return Availability(
+                canUseSelection: false,
+                blockReason: .tooFewSelected(missingCount: template.minimumAssets - selectedCount)
+            )
+        }
+        if selectedCount > template.maximumAssets {
+            return Availability(
+                canUseSelection: false,
+                blockReason: .tooManySelected(extraCount: selectedCount - template.maximumAssets)
+            )
+        }
+        return Availability(canUseSelection: true, blockReason: nil)
+    }
+
+    static func remainingSlots(template: MomentTemplate, selectedCount: Int) -> Int {
+        max(template.maximumAssets - selectedCount, 0)
+    }
+
+    static func selectionMessage(
+        _ availability: Availability,
+        readyMessage: String = "Ready for Avi review.",
+        tooFewMessage: (Int) -> String,
+        tooManyMessage: (Int) -> String
+    ) -> String {
+        switch availability.blockReason {
+        case nil:
+            return readyMessage
+        case .tooFewSelected(let missingCount):
+            return tooFewMessage(missingCount)
+        case .tooManySelected(let extraCount):
+            return tooManyMessage(extraCount)
+        }
+    }
+
+    static func message(template: MomentTemplate, selectedCount: Int) -> String {
+        selectionMessage(
+            availability(template: template, selectedCount: selectedCount),
+            tooFewMessage: { "Add \($0) more." },
+            tooManyMessage: { "Remove \($0)." }
+        )
+    }
+}
