@@ -4,6 +4,7 @@ import Foundation
 @MainActor
 final class MomentsWorkspaceObserver: ObservableObject {
     @Published private(set) var activeWorkspace: MomentProjectWorkspace?
+    @Published private(set) var errorMessage: String?
 
     private let workspaceObserver: any MomentsWorkspaceObserving
     private var activeWorkspaceTask: Task<Void, Never>?
@@ -17,11 +18,16 @@ final class MomentsWorkspaceObserver: ObservableObject {
         $activeWorkspace.eraseToAnyPublisher()
     }
 
+    var workspaceErrorPublisher: AnyPublisher<String?, Never> {
+        $errorMessage.eraseToAnyPublisher()
+    }
+
     func observeWorkspace(ownerUserId: String?, projectId: String?) {
         observationGeneration += 1
         let generation = observationGeneration
         activeWorkspaceTask?.cancel()
         activeWorkspace = nil
+        errorMessage = nil
 
         guard let ownerUserId, let projectId else { return }
 
@@ -43,6 +49,7 @@ final class MomentsWorkspaceObserver: ObservableObject {
         } catch {
             guard observationGeneration == generation else { return }
             activeWorkspace = nil
+            errorMessage = error.localizedDescription
         }
     }
 
@@ -50,6 +57,7 @@ final class MomentsWorkspaceObserver: ObservableObject {
         observationGeneration += 1
         activeWorkspaceTask?.cancel()
         activeWorkspace = nil
+        errorMessage = nil
     }
 }
 

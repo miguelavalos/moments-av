@@ -12,18 +12,34 @@ final class ProjectsListWorkflow: ObservableObject {
 
     private let currentUserProvider: any MomentsCurrentUserProviding
     private let projectListing: any MomentsProjectListing
+    private let workspaceObserver: any MomentsActiveWorkspaceObserving
     private var projectListTask: Task<Void, Never>?
-    private var activeProjectTask: Task<Void, Never>?
     private var projectListGeneration = 0
-    private var activeProjectGeneration = 0
     private var deletionGeneration = 0
+    private var cancellables = Set<AnyCancellable>()
 
     init(
         currentUserProvider: any MomentsCurrentUserProviding,
-        projectListing: any MomentsProjectListing
+        projectListing: any MomentsProjectListing,
+        workspaceObserver: any MomentsActiveWorkspaceObserving
     ) {
         self.currentUserProvider = currentUserProvider
         self.projectListing = projectListing
+        self.workspaceObserver = workspaceObserver
+
+        workspaceObserver.activeWorkspacePublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] workspace in
+                self?.apply(workspace: workspace)
+            }
+            .store(in: &cancellables)
+
+        workspaceObserver.workspaceErrorPublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] message in
+                self?.applyWorkspaceError(message)
+            }
+            .store(in: &cancellables)
     }
 
     func observeProjects(ownerUserId: String?) {
@@ -54,39 +70,30 @@ final class ProjectsListWorkflow: ObservableObject {
     }
 
     func observeProjectWorkspace(ownerUserId: String?, projectId: String?) {
-        activeProjectGeneration += 1
-        let generation = activeProjectGeneration
-        activeProjectTask?.cancel()
         activeProject = nil
         activeWorkspace = nil
         isLoadingProjectWorkspace = false
         errorMessage = nil
 
-        guard let ownerUserId, let projectId else { return }
-
-        do {
-            let updates = try projectListing.observeProjectWorkspace(
-                ownerUserId: ownerUserId,
-                projectId: projectId
-            )
-            .values
-
-            isLoadingProjectWorkspace = true
-            activeProjectTask = Task { [weak self] in
-                for await workspace in updates {
-                    await MainActor.run {
-                        guard self?.activeProjectGeneration == generation else { return }
-                        self?.activeWorkspace = workspace
-                        self?.activeProject = workspace?.project
-                        self?.isLoadingProjectWorkspace = false
-                    }
-                }
-            }
-        } catch {
-            guard activeProjectGeneration == generation else { return }
-            errorMessage = error.localizedDescription
-            isLoadingProjectWorkspace = false
+        guard let ownerUserId, let projectId else {
+            workspaceObserver.clearWorkspace()
+            return
         }
+
+        workspaceObserver.observeWorkspace(ownerUserId: ownerUserId, projectId: projectId)
+        isLoadingProjectWorkspace = true
+    }
+
+    private func apply(workspace: MomentProjectWorkspace?) {
+        activeWorkspace = workspace
+        activeProject = workspace?.project
+        isLoadingProjectWorkspace = false
+    }
+
+    private func applyWorkspaceError(_ message: String?) {
+        guard let message else { return }
+        errorMessage = message
+        isLoadingProjectWorkspace = false
     }
 
     func clearProjectWorkspace() {
@@ -127,8 +134,7 @@ final class ProjectsListWorkflow: ObservableObject {
     }
 
     private func clearActiveProject() {
-        activeProjectGeneration += 1
-        activeProjectTask?.cancel()
+        workspaceObserver.clearWorkspace()
         activeProject = nil
         activeWorkspace = nil
         isLoadingProjectWorkspace = false
@@ -136,7 +142,6 @@ final class ProjectsListWorkflow: ObservableObject {
 
     deinit {
         projectListTask?.cancel()
-        activeProjectTask?.cancel()
     }
 }
 

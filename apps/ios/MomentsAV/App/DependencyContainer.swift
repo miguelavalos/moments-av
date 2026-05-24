@@ -26,7 +26,8 @@ final class MomentsDependencyContainer: ObservableObject {
         self.workspaceObserver = resolvedWorkspaceObserver
         self.projectsListWorkflow = Self.makeProjectsListWorkflow(
             currentUserProvider: accountController,
-            projectListing: projectRepository
+            projectListing: projectRepository,
+            workspaceObserver: resolvedWorkspaceObserver
         )
         self.projectCreationWorkflow = Self.makeProjectCreationWorkflow(
             currentUserProvider: accountController,
@@ -78,11 +79,13 @@ final class MomentsDependencyContainer: ObservableObject {
 private extension MomentsDependencyContainer {
     static func makeProjectsListWorkflow(
         currentUserProvider: any MomentsCurrentUserProviding,
-        projectListing: any MomentsProjectListing
+        projectListing: any MomentsProjectListing,
+        workspaceObserver: any MomentsActiveWorkspaceObserving
     ) -> ProjectsListWorkflow {
         ProjectsListWorkflow(
             currentUserProvider: currentUserProvider,
-            projectListing: projectListing
+            projectListing: projectListing,
+            workspaceObserver: workspaceObserver
         )
     }
 

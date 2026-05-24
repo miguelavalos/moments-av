@@ -83,6 +83,7 @@ protocol MomentsWorkspaceObserving {
 @MainActor
 protocol MomentsActiveWorkspaceObserving {
     var activeWorkspacePublisher: AnyPublisher<MomentProjectWorkspace?, Never> { get }
+    var workspaceErrorPublisher: AnyPublisher<String?, Never> { get }
 
     func observeWorkspace(ownerUserId: String?, projectId: String?)
     func clearWorkspace()
