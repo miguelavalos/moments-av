@@ -1,5 +1,30 @@
 import Foundation
 
+struct MomentsCreateWorkflowPresentation: Equatable {
+    var createdProjectId: String?
+    var template: MomentTemplate
+    var mediaSummary: MomentsCreateMediaSummary
+    var storySummary: MomentsCreateStorySummary
+    var previewSummary: MomentsCreatePreviewSummary
+    var finalRenderSummary: MomentsCreateFinalRenderSummary
+    var canAddMedia = false
+    var canDraftStory = false
+    var canGeneratePreview = false
+    var canRefreshPreviewStatus = false
+    var canGenerateFinalRender = false
+    var canRefreshFinalRenderStatus = false
+    var mediaAvailabilityMessage: String?
+    var storyAvailabilityMessage: String?
+    var previewAvailabilityMessage: String?
+    var previewRefreshAvailabilityMessage: String?
+    var finalRenderAvailabilityMessage: String?
+    var finalRenderRefreshAvailabilityMessage: String?
+
+    var showsWorkflowCards: Bool {
+        createdProjectId != nil
+    }
+}
+
 struct MomentsCreateWorkspaceSummary: Equatable {
     var mediaCount = 0
     var sceneCount = 0

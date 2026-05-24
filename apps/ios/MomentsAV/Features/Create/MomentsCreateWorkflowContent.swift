@@ -51,14 +51,16 @@ struct MomentsCreateWorkflowContent: View {
 
     @ViewBuilder
     private var workflowCards: some View {
-        if let createdProjectId = viewModel.createdProjectId {
+        let presentation = viewModel.workflowPresentation
+
+        if let createdProjectId = presentation.createdProjectId {
             MomentsCreateMediaCard(
                 pickerItems: $pickerItems,
                 createdProjectId: createdProjectId,
-                template: viewModel.form.template,
-                summary: viewModel.mediaSummary,
-                canAddMedia: viewModel.canAddMedia,
-                availabilityMessage: viewModel.mediaAvailabilityMessage,
+                template: presentation.template,
+                summary: presentation.mediaSummary,
+                canAddMedia: presentation.canAddMedia,
+                availabilityMessage: presentation.mediaAvailabilityMessage,
                 importPickerItems: viewModel.importPickerItems,
                 removeMedia: viewModel.removeMedia,
                 autoPickStrongMoments: viewModel.autoPickStrongMoments
@@ -66,30 +68,30 @@ struct MomentsCreateWorkflowContent: View {
             .id(MomentsCreateSection.media)
 
             MomentsCreateStoryCard(
-                summary: viewModel.storySummary,
-                canDraftStory: viewModel.canDraftStory,
-                availabilityMessage: viewModel.storyAvailabilityMessage,
+                summary: presentation.storySummary,
+                canDraftStory: presentation.canDraftStory,
+                availabilityMessage: presentation.storyAvailabilityMessage,
                 generateStoryDraft: viewModel.generateStoryDraft
             )
             .id(MomentsCreateSection.story)
 
             MomentsCreatePreviewCard(
-                summary: viewModel.previewSummary,
-                canGeneratePreview: viewModel.canGeneratePreview,
-                canRefreshPreviewStatus: viewModel.canRefreshPreviewStatus,
-                availabilityMessage: viewModel.previewAvailabilityMessage,
-                refreshAvailabilityMessage: viewModel.previewRefreshAvailabilityMessage,
+                summary: presentation.previewSummary,
+                canGeneratePreview: presentation.canGeneratePreview,
+                canRefreshPreviewStatus: presentation.canRefreshPreviewStatus,
+                availabilityMessage: presentation.previewAvailabilityMessage,
+                refreshAvailabilityMessage: presentation.previewRefreshAvailabilityMessage,
                 generatePreview: viewModel.generatePreview,
                 refreshPreviewStatus: viewModel.refreshPreviewStatus
             )
             .id(MomentsCreateSection.preview)
 
             MomentsCreateFinalExportCard(
-                summary: viewModel.finalRenderSummary,
-                canGenerateFinalRender: viewModel.canGenerateFinalRender,
-                canRefreshFinalRenderStatus: viewModel.canRefreshFinalRenderStatus,
-                availabilityMessage: viewModel.finalRenderAvailabilityMessage,
-                refreshAvailabilityMessage: viewModel.finalRenderRefreshAvailabilityMessage,
+                summary: presentation.finalRenderSummary,
+                canGenerateFinalRender: presentation.canGenerateFinalRender,
+                canRefreshFinalRenderStatus: presentation.canRefreshFinalRenderStatus,
+                availabilityMessage: presentation.finalRenderAvailabilityMessage,
+                refreshAvailabilityMessage: presentation.finalRenderRefreshAvailabilityMessage,
                 generateFinalRender: viewModel.generateFinalRender,
                 refreshFinalRenderStatus: viewModel.refreshFinalRenderStatus
             )

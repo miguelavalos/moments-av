@@ -109,6 +109,29 @@ extension MomentsCreateViewModel {
         )
     }
 
+    var workflowPresentation: MomentsCreateWorkflowPresentation {
+        MomentsCreateWorkflowPresentation(
+            createdProjectId: createdProjectId,
+            template: form.template,
+            mediaSummary: mediaSummary,
+            storySummary: storySummary,
+            previewSummary: previewSummary,
+            finalRenderSummary: finalRenderSummary,
+            canAddMedia: canAddMedia,
+            canDraftStory: canDraftStory,
+            canGeneratePreview: canGeneratePreview,
+            canRefreshPreviewStatus: canRefreshPreviewStatus,
+            canGenerateFinalRender: canGenerateFinalRender,
+            canRefreshFinalRenderStatus: canRefreshFinalRenderStatus,
+            mediaAvailabilityMessage: mediaAvailabilityMessage,
+            storyAvailabilityMessage: storyAvailabilityMessage,
+            previewAvailabilityMessage: previewAvailabilityMessage,
+            previewRefreshAvailabilityMessage: previewRefreshAvailabilityMessage,
+            finalRenderAvailabilityMessage: finalRenderAvailabilityMessage,
+            finalRenderRefreshAvailabilityMessage: finalRenderRefreshAvailabilityMessage
+        )
+    }
+
     func spendPlanDescription(for template: MomentTemplate) -> String {
         MomentsCreateFormatting.spendPlanDescription(
             projectCreationWorkflow?.spendPlan(for: template)
