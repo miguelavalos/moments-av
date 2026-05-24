@@ -11,21 +11,21 @@ extension MomentsProjectRemoteClient {
             try await upsertStoryScene(
                 ownerUserId: ownerUserId,
                 projectId: projectId,
-                scene: scene
+                request: .scene(scene)
             )
         }
 
         try await markStoryReady(
             ownerUserId: ownerUserId,
             projectId: projectId,
-            draft: draft
+            request: .draft(draft)
         )
     }
 
     func upsertStoryScene(
         ownerUserId: String,
         projectId: String,
-        scene: MomentsStoryDraftScene
+        request: StoryScenePersistenceRequest
     ) async throws {
         let client = try requireClient()
 
@@ -34,14 +34,14 @@ extension MomentsProjectRemoteClient {
             with: [
                 "ownerUserId": ownerUserId,
                 "projectId": projectId,
-                "sceneIndex": scene.sceneIndex,
-                "mediaAssetIds": convexStringArray(scene.mediaAssetIds),
-                "caption": scene.caption,
-                "narrationText": scene.narrationText,
-                "tone": scene.tone,
-                "musicCue": scene.musicCue,
-                "durationMs": scene.durationMs,
-                "createdBy": "avi"
+                "sceneIndex": request.sceneIndex,
+                "mediaAssetIds": convexStringArray(request.mediaAssetIds),
+                "caption": request.caption,
+                "narrationText": request.narrationText,
+                "tone": request.tone,
+                "musicCue": request.musicCue,
+                "durationMs": request.durationMs,
+                "createdBy": request.createdBy
             ]
         )
     }
@@ -49,7 +49,7 @@ extension MomentsProjectRemoteClient {
     func markStoryReady(
         ownerUserId: String,
         projectId: String,
-        draft: MomentsStoryDraftResponse
+        request: StoryReadyPersistenceRequest
     ) async throws {
         let client = try requireClient()
 
@@ -58,14 +58,10 @@ extension MomentsProjectRemoteClient {
             with: [
                 "ownerUserId": ownerUserId,
                 "projectId": projectId,
-                "workflowRunId": draft.workflowRunId,
-                "moderationStatus": storyModerationStatus(for: draft)
+                "workflowRunId": request.workflowRunId,
+                "moderationStatus": request.moderationStatus
             ]
         )
-    }
-
-    func storyModerationStatus(for draft: MomentsStoryDraftResponse) -> String {
-        draft.moderationStatus == "allowed" ? "approved" : "blocked"
     }
 
     func convexStringArray(_ values: [String]) -> [ConvexEncodable?] {

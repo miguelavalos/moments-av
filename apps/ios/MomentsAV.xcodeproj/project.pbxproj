@@ -22,6 +22,7 @@
 		269B0F42C1D27C1F2933C566 /* MomentsCreateFormatting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F3DF484142F0259AD4DF975 /* MomentsCreateFormatting.swift */; };
 		323AC21761141E67F9629F97 /* MomentsCreateViewModel+Bindings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86DB614E311E14942F24ECE1 /* MomentsCreateViewModel+Bindings.swift */; };
 		326AFC541E3E2098B9642FFB /* MomentsCreateViewModel+AvailabilityMessages.swift in Sources */ = {isa = PBXBuildFile; fileRef = C52B92BACE308EDBF1928101 /* MomentsCreateViewModel+AvailabilityMessages.swift */; };
+		37632D2D966FC3055ED0EC84 /* StoryDraftPersistenceRequestTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6231E7DA03376C09FF55275D /* StoryDraftPersistenceRequestTests.swift */; };
 		3A738DFB5EAFCF8F1BCB3339 /* MomentsProjectRepository+RenderPersistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A5A0F6B8940C254FE844A62 /* MomentsProjectRepository+RenderPersistence.swift */; };
 		3FD3EA6B5E80E695A5E06CFC /* ProjectsListWorkflow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 740E9D476A1647106FBA791A /* ProjectsListWorkflow.swift */; };
 		4172632E981686DEDC63611F /* AccountController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10E6147A66969036F332BBD0 /* AccountController.swift */; };
@@ -38,6 +39,7 @@
 		776B4770444CBB69AAFB86C5 /* RenderResultPersistenceRequestTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C274113F71CB528AC30BBCD /* RenderResultPersistenceRequestTests.swift */; };
 		77E253A164F81BBAF0B8FAB9 /* AppBootstrap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63014B49402C365542A4BC8C /* AppBootstrap.swift */; };
 		77FC9BDCDB8A13E656CC69D4 /* MomentsHomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52C1C5DB2F4807B86E51EC42 /* MomentsHomeViewModel.swift */; };
+		7800A726E6C3DD62DA910D7D /* StoryDraftPersistenceRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D6BBACF9B3682452E9B62DD /* StoryDraftPersistenceRequest.swift */; };
 		7C15F6A1586655E86975DA45 /* MomentsProjectRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE2858214DBF594B0AE3A370 /* MomentsProjectRepositoryTests.swift */; };
 		831ADC7F8E3A3555577C0C69 /* MomentsCreditGate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D5B4813EC6663B146640FDA /* MomentsCreditGate.swift */; };
 		8814AF6BEC7352B7EE0FE76A /* MomentsCreateViewModel+Actions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F53105A7753FF702D5DD150 /* MomentsCreateViewModel+Actions.swift */; };
@@ -134,6 +136,7 @@
 		46F9E4B478FA9855C0F7C120 /* PreviewGenerationWorkflow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewGenerationWorkflow.swift; sourceTree = "<group>"; };
 		52C1C5DB2F4807B86E51EC42 /* MomentsHomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MomentsHomeViewModel.swift; sourceTree = "<group>"; };
 		5C0DC50766C3A816179EF9B4 /* DependencyContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DependencyContainer.swift; sourceTree = "<group>"; };
+		6231E7DA03376C09FF55275D /* StoryDraftPersistenceRequestTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryDraftPersistenceRequestTests.swift; sourceTree = "<group>"; };
 		63014B49402C365542A4BC8C /* AppBootstrap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppBootstrap.swift; sourceTree = "<group>"; };
 		697DF0CC80C622780CA457E7 /* MomentsProjectsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MomentsProjectsViewModel.swift; sourceTree = "<group>"; };
 		709EA2550D7F8CE6F5939328 /* apple */ = {isa = PBXFileReference; lastKnownFileType = folder; name = apple; path = "../../../apps-av/apple"; sourceTree = SOURCE_ROOT; };
@@ -154,6 +157,7 @@
 		85CBF2D20FFD74AFDE6796DA /* MomentsProjectsList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MomentsProjectsList.swift; sourceTree = "<group>"; };
 		86DB614E311E14942F24ECE1 /* MomentsCreateViewModel+Bindings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MomentsCreateViewModel+Bindings.swift"; sourceTree = "<group>"; };
 		8C274113F71CB528AC30BBCD /* RenderResultPersistenceRequestTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenderResultPersistenceRequestTests.swift; sourceTree = "<group>"; };
+		8D6BBACF9B3682452E9B62DD /* StoryDraftPersistenceRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryDraftPersistenceRequest.swift; sourceTree = "<group>"; };
 		9532A67B620453F5D6AA15AC /* MomentsAccountContracts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MomentsAccountContracts.swift; sourceTree = "<group>"; };
 		970E670D19AF0820CA27E580 /* MomentsCreateViewModel+Availability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MomentsCreateViewModel+Availability.swift"; sourceTree = "<group>"; };
 		99A9C8707374F7D6CC879F13 /* MomentsProjectStatusRulesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MomentsProjectStatusRulesTests.swift; sourceTree = "<group>"; };
@@ -273,6 +277,7 @@
 				DE2858214DBF594B0AE3A370 /* MomentsProjectRepositoryTests.swift */,
 				99A9C8707374F7D6CC879F13 /* MomentsProjectStatusRulesTests.swift */,
 				8C274113F71CB528AC30BBCD /* RenderResultPersistenceRequestTests.swift */,
+				6231E7DA03376C09FF55275D /* StoryDraftPersistenceRequestTests.swift */,
 			);
 			path = MomentsAVTests;
 			sourceTree = "<group>";
@@ -345,6 +350,7 @@
 				7EF0E97795065AB5F237585F /* MomentsWorkspaceObserver.swift */,
 				D7EE2C8948A20B2E64304AB7 /* RenderResultPersistenceClient.swift */,
 				2A5E24E4C6C6B3A28DC0972E /* RenderResultPersistenceRequest.swift */,
+				8D6BBACF9B3682452E9B62DD /* StoryDraftPersistenceRequest.swift */,
 			);
 			path = Sync;
 			sourceTree = "<group>";
@@ -762,6 +768,7 @@
 				7C15F6A1586655E86975DA45 /* MomentsProjectRepositoryTests.swift in Sources */,
 				FCE69168C8340D8D18A3335F /* MomentsProjectStatusRulesTests.swift in Sources */,
 				776B4770444CBB69AAFB86C5 /* RenderResultPersistenceRequestTests.swift in Sources */,
+				37632D2D966FC3055ED0EC84 /* StoryDraftPersistenceRequestTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -842,6 +849,7 @@
 				8BCF786A242BEA4E35612C51 /* RenderResultPersistenceClient.swift in Sources */,
 				A695AD8A0CC86EA4FE3C5001 /* RenderResultPersistenceRequest.swift in Sources */,
 				FA885649CCBD1A8623E9A336 /* SignInActionsView.swift in Sources */,
+				7800A726E6C3DD62DA910D7D /* StoryDraftPersistenceRequest.swift in Sources */,
 				A0782CDB809A9AC7C0E5B9BF /* StoryDraftWorkflow.swift in Sources */,
 				ECAA0AA52CD6E66197283D36 /* WorkspaceObservingWorkflow.swift in Sources */,
 			);
