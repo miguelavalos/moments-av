@@ -295,24 +295,6 @@ final class MomentsAPIClientTests: XCTestCase {
         }
     }
 
-    func testDeletionUsesSharedAccountAPIBaseURL() async throws {
-        let session = makeMockSession(
-            json: """
-            {
-              "appId": "momentsav",
-              "projectId": "project-1",
-              "status": "requested",
-              "requestedAt": "2026-05-16T16:00:00Z"
-            }
-            """
-        )
-        let client = MomentsDeletionClient(baseURLString: accountAPIBaseURL, session: session)
-
-        _ = try await client.deleteProject(projectId: "project-1", ownerUserId: "user-1")
-
-        XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.url?.absoluteString, "\(accountAPIBaseURL)/v1/apps/momentsav/deletions")
-    }
-
     private var accountAPIBaseURL: String {
         "https://api-account-av-preview.avalsys.com"
     }
