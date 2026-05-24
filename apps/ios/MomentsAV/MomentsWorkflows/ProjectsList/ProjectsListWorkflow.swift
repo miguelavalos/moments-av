@@ -10,23 +10,20 @@ final class ProjectsListWorkflow: ObservableObject {
     @Published private(set) var isDeletingProject = false
     @Published private(set) var errorMessage: String?
 
-    private let currentUserProvider: any MomentsCurrentUserProviding
-    private let projectListing: any MomentsProjectListing
     private let projectsObserver: any MomentsActiveProjectsObserving
     private let workspaceObserver: any MomentsActiveWorkspaceObserving
-    private var deletionGeneration = 0
+    private let projectDeletionWorkflow: ProjectDeletionWorkflow
+    private var currentOwnerUserId: String?
     private var cancellables = Set<AnyCancellable>()
 
     init(
-        currentUserProvider: any MomentsCurrentUserProviding,
-        projectListing: any MomentsProjectListing,
         projectsObserver: any MomentsActiveProjectsObserving,
-        workspaceObserver: any MomentsActiveWorkspaceObserving
+        workspaceObserver: any MomentsActiveWorkspaceObserving,
+        projectDeletionWorkflow: ProjectDeletionWorkflow
     ) {
-        self.currentUserProvider = currentUserProvider
-        self.projectListing = projectListing
         self.projectsObserver = projectsObserver
         self.workspaceObserver = workspaceObserver
+        self.projectDeletionWorkflow = projectDeletionWorkflow
 
         projectsObserver.projectsPublisher
             .receive(on: DispatchQueue.main)
@@ -39,6 +36,20 @@ final class ProjectsListWorkflow: ObservableObject {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] message in
                 self?.applyProjectListError(message)
+            }
+            .store(in: &cancellables)
+
+        projectDeletionWorkflow.isDeletingProjectPublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] isDeleting in
+                self?.isDeletingProject = isDeleting
+            }
+            .store(in: &cancellables)
+
+        projectDeletionWorkflow.deletionErrorPublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] message in
+                self?.applyProjectDeletionError(message)
             }
             .store(in: &cancellables)
 
@@ -58,6 +69,7 @@ final class ProjectsListWorkflow: ObservableObject {
     }
 
     func observeProjects(ownerUserId: String?) {
+        currentOwnerUserId = ownerUserId
         projectSummary = MomentsProjectListSummary()
         errorMessage = nil
         clearActiveProject()
@@ -96,32 +108,15 @@ final class ProjectsListWorkflow: ObservableObject {
     }
 
     func deleteProject(_ project: MomentDraftProject) async -> Bool {
-        guard !isDeletingProject else { return false }
-        guard let ownerUserId = currentUserProvider.currentUserId else {
-            errorMessage = "Sign in before deleting a project."
-            return false
-        }
-
-        isDeletingProject = true
         errorMessage = nil
-        deletionGeneration += 1
-        let generation = deletionGeneration
+        let didDelete = await projectDeletionWorkflow.deleteProject(project)
+        guard didDelete else { return false }
 
-        do {
-            try await projectListing.deleteProject(ownerUserId: ownerUserId, projectId: project.id)
-            guard deletionGeneration == generation else { return false }
-            if activeProject?.id == project.id {
-                clearActiveProject()
-            }
-            observeProjects(ownerUserId: ownerUserId)
-            isDeletingProject = false
-            return true
-        } catch {
-            guard deletionGeneration == generation else { return false }
-            errorMessage = error.localizedDescription
-            isDeletingProject = false
-            return false
+        if activeProject?.id == project.id {
+            clearActiveProject()
         }
+        observeProjects(ownerUserId: currentOwnerUserId)
+        return true
     }
 
     private func apply(_ projects: [MomentDraftProject]) {
@@ -129,6 +124,11 @@ final class ProjectsListWorkflow: ObservableObject {
     }
 
     private func applyProjectListError(_ message: String?) {
+        guard let message else { return }
+        errorMessage = message
+    }
+
+    private func applyProjectDeletionError(_ message: String?) {
         guard let message else { return }
         errorMessage = message
     }

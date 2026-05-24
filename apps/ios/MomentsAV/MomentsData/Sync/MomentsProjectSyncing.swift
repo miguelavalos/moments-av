@@ -69,6 +69,10 @@ protocol MomentsProjectListing {
         ownerUserId: String,
         projectId: String
     ) throws -> AnyPublisher<MomentProjectWorkspace?, Never>
+}
+
+@MainActor
+protocol MomentsProjectDeleting {
     func deleteProject(ownerUserId: String, projectId: String) async throws
 }
 
@@ -111,5 +115,6 @@ extension MomentsProjectRepository:
     MomentsPreviewResultSaving,
     MomentsFinalRenderResultSaving,
     MomentsProjectListing,
+    MomentsProjectDeleting,
     MomentsProjectsObserving,
     MomentsWorkspaceObserving {}
