@@ -3,19 +3,23 @@ import SwiftUI
 struct MomentsProjectRenderJobsSection: View {
     let renderJobs: [MomentRenderJob]
 
+    private var presentations: [MomentsProjectRenderJobPresentation] {
+        MomentsProjectRenderJobPresentation.sorted(renderJobs)
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
             Text("Render jobs")
                 .font(.subheadline.weight(.semibold))
 
-            if renderJobs.isEmpty {
+            if presentations.isEmpty {
                 MomentsProjectEmptySectionRow(
                     systemImage: "gearshape.2",
                     message: "Preview and final render jobs will appear here."
                 )
             } else {
-                ForEach(renderJobs.sorted { $0.updatedAt > $1.updatedAt }) { renderJob in
-                    MomentsProjectRenderJobRow(renderJob: renderJob)
+                ForEach(presentations) { presentation in
+                    MomentsProjectRenderJobRow(presentation: presentation)
                 }
             }
         }
@@ -25,8 +29,8 @@ struct MomentsProjectRenderJobsSection: View {
 struct MomentsProjectPreviewArtifactSection: View {
     let artifacts: [MomentArtifact]
 
-    private var preview: MomentArtifact? {
-        artifacts.last { $0.kind == "preview" }
+    private var preview: MomentsProjectArtifactPresentation? {
+        MomentsProjectArtifactPresentation.preview(in: artifacts)
     }
 
     var body: some View {
@@ -35,7 +39,7 @@ struct MomentsProjectPreviewArtifactSection: View {
                 .font(.subheadline.weight(.semibold))
 
             if let preview {
-                MomentsProjectArtifactDetail(artifact: preview)
+                MomentsProjectArtifactDetail(presentation: preview)
             } else {
                 MomentsProjectEmptySectionRow(
                     systemImage: "play.rectangle",
@@ -49,8 +53,8 @@ struct MomentsProjectPreviewArtifactSection: View {
 struct MomentsProjectFinalExportSection: View {
     let artifacts: [MomentArtifact]
 
-    private var finalExport: MomentArtifact? {
-        artifacts.last { $0.kind == "final_export" }
+    private var finalExport: MomentsProjectArtifactPresentation? {
+        MomentsProjectArtifactPresentation.finalExport(in: artifacts)
     }
 
     var body: some View {
@@ -59,7 +63,7 @@ struct MomentsProjectFinalExportSection: View {
                 .font(.subheadline.weight(.semibold))
 
             if let finalExport {
-                MomentsProjectArtifactDetail(artifact: finalExport)
+                MomentsProjectArtifactDetail(presentation: finalExport)
             } else {
                 MomentsProjectEmptySectionRow(
                     systemImage: "square.and.arrow.up",
@@ -74,24 +78,28 @@ struct MomentsProjectArtifactRow: View {
     let title: String
     let artifact: MomentArtifact
 
+    private var presentation: MomentsProjectArtifactPresentation {
+        MomentsProjectArtifactPresentation(artifact: artifact)
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(title)
                 .font(.subheadline.weight(.semibold))
-            MomentsProjectArtifactDetail(artifact: artifact)
+            MomentsProjectArtifactDetail(presentation: presentation)
         }
     }
 }
 
 private struct MomentsProjectArtifactDetail: View {
-    let artifact: MomentArtifact
+    let presentation: MomentsProjectArtifactPresentation
 
     var body: some View {
         MomentsProjectDiagnosticCard {
             HStack(alignment: .center, spacing: 8) {
-                MomentsProjectDiagnosticStatusBadge(status: artifact.status)
+                MomentsProjectDiagnosticStatusBadge(status: presentation.status)
 
-                Text(MomentsProjectStatusRules.displayKind(artifact.kind))
+                Text(presentation.kindTitle)
                     .font(.caption.weight(.semibold))
 
                 Spacer(minLength: 0)
@@ -104,17 +112,17 @@ private struct MomentsProjectArtifactDetail: View {
             ) {
                 MomentsProjectDiagnosticMetadataItem(
                     title: "Watermark",
-                    value: artifact.hasWatermark == true ? "Included" : "None"
+                    value: presentation.watermarkTitle
                 )
                 MomentsProjectDiagnosticMetadataItem(
                     title: "Expires",
-                    value: MomentsDateFormatting.formattedDate(milliseconds: artifact.expiresAt)
+                    value: presentation.expiresAtTitle
                 )
             }
 
             MomentsProjectDiagnosticIdentifierRow(
                 title: "Storage key",
-                value: artifact.r2Key,
+                value: presentation.storageKey,
                 lineLimit: 3
             )
         }
@@ -122,14 +130,14 @@ private struct MomentsProjectArtifactDetail: View {
 }
 
 struct MomentsProjectRenderJobRow: View {
-    let renderJob: MomentRenderJob
+    let presentation: MomentsProjectRenderJobPresentation
 
     var body: some View {
         MomentsProjectDiagnosticCard {
             HStack(alignment: .center, spacing: 8) {
-                MomentsProjectDiagnosticStatusBadge(status: renderJob.status)
+                MomentsProjectDiagnosticStatusBadge(status: presentation.status)
 
-                Text(MomentsProjectStatusRules.displayKind(renderJob.kind))
+                Text(presentation.kindTitle)
                     .font(.caption.weight(.semibold))
 
                 Spacer(minLength: 0)
@@ -142,31 +150,31 @@ struct MomentsProjectRenderJobRow: View {
             ) {
                 MomentsProjectDiagnosticMetadataItem(
                     title: "Provider",
-                    value: renderJob.provider ?? "Unknown"
+                    value: presentation.providerTitle
                 )
                 MomentsProjectDiagnosticMetadataItem(
                     title: "Model",
-                    value: renderJob.model ?? "Unknown"
+                    value: presentation.modelTitle
                 )
                 MomentsProjectDiagnosticMetadataItem(
                     title: "Created",
-                    value: MomentsDateFormatting.formattedDate(milliseconds: renderJob.createdAt)
+                    value: presentation.createdAtTitle
                 )
                 MomentsProjectDiagnosticMetadataItem(
                     title: "Updated",
-                    value: MomentsDateFormatting.formattedDate(milliseconds: renderJob.updatedAt)
+                    value: presentation.updatedAtTitle
                 )
             }
 
             MomentsProjectRenderJobErrorBlock(
-                errorCode: renderJob.errorCode,
-                errorMessage: renderJob.errorMessage
+                errorCode: presentation.errorCode,
+                errorMessage: presentation.errorMessage
             )
 
             VStack(alignment: .leading, spacing: 6) {
-                MomentsProjectDiagnosticIdentifierRow(title: "Job ID", value: renderJob.id)
-                MomentsProjectDiagnosticIdentifierRow(title: "Workflow", value: renderJob.workflowRunId)
-                MomentsProjectDiagnosticIdentifierRow(title: "Provider request", value: renderJob.providerRequestId)
+                MomentsProjectDiagnosticIdentifierRow(title: "Job ID", value: presentation.id)
+                MomentsProjectDiagnosticIdentifierRow(title: "Workflow", value: presentation.workflowRunId)
+                MomentsProjectDiagnosticIdentifierRow(title: "Provider request", value: presentation.providerRequestId)
             }
         }
     }
