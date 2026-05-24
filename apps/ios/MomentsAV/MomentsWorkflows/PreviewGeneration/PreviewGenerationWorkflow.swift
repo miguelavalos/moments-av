@@ -18,14 +18,14 @@ final class PreviewGenerationWorkflow: WorkspaceObservingWorkflow {
     init(
         currentUserProvider: any MomentsCurrentUserProviding,
         creditBalanceProvider: any MomentsCreditBalanceProviding,
-        projectRepository: any MomentsPreviewResultSaving,
+        previewResultSaver: any MomentsPreviewResultSaving,
         workspaceObserver: any MomentsActiveWorkspaceObserving,
         previewClient: MomentsPreviewClient,
         statusClient: MomentsRenderStatusClient
     ) {
         self.currentUserProvider = currentUserProvider
         self.creditBalanceProvider = creditBalanceProvider
-        self.previewResultSaver = projectRepository
+        self.previewResultSaver = previewResultSaver
         self.previewClient = previewClient
         self.statusClient = statusClient
         super.init(workspaceObserver: workspaceObserver)

@@ -15,12 +15,12 @@ final class ProjectCreationWorkflow: ObservableObject {
     init(
         currentUserProvider: any MomentsCurrentUserProviding,
         creditBalanceProvider: any MomentsCreditBalanceProviding,
-        projectRepository: any MomentsProjectCreating,
+        projectCreator: any MomentsProjectCreating,
         workspaceObserver: any MomentsActiveWorkspaceObserving
     ) {
         self.currentUserProvider = currentUserProvider
         self.creditBalanceProvider = creditBalanceProvider
-        projectCreator = projectRepository
+        self.projectCreator = projectCreator
         self.workspaceObserver = workspaceObserver
     }
 

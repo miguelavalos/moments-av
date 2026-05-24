@@ -18,14 +18,14 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
     init(
         currentUserProvider: any MomentsCurrentUserProviding,
         creditBalanceProvider: any MomentsCreditBalanceProviding,
-        projectRepository: any MomentsFinalRenderResultSaving,
+        finalRenderResultSaver: any MomentsFinalRenderResultSaving,
         workspaceObserver: any MomentsActiveWorkspaceObserving,
         finalRenderClient: MomentsFinalRenderClient,
         statusClient: MomentsRenderStatusClient
     ) {
         self.currentUserProvider = currentUserProvider
         self.creditBalanceProvider = creditBalanceProvider
-        self.finalRenderResultSaver = projectRepository
+        self.finalRenderResultSaver = finalRenderResultSaver
         self.finalRenderClient = finalRenderClient
         self.statusClient = statusClient
         super.init(workspaceObserver: workspaceObserver)

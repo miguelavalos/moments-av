@@ -13,12 +13,12 @@ final class StoryDraftWorkflow: WorkspaceObservingWorkflow {
 
     init(
         currentUserProvider: any MomentsCurrentUserProviding,
-        projectRepository: any MomentsStoryDraftSaving,
+        storyDraftSaver: any MomentsStoryDraftSaving,
         workspaceObserver: any MomentsActiveWorkspaceObserving,
         storyClient: MomentsStoryClient
     ) {
         self.currentUserProvider = currentUserProvider
-        self.storyDraftSaver = projectRepository
+        self.storyDraftSaver = storyDraftSaver
         self.storyClient = storyClient
         super.init(workspaceObserver: workspaceObserver)
     }

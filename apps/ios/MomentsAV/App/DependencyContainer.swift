@@ -25,37 +25,37 @@ final class MomentsDependencyContainer: ObservableObject {
         self.workspaceObserver = resolvedWorkspaceObserver
         self.projectsListWorkflow = Self.makeProjectsListWorkflow(
             currentUserProvider: accountController,
-            projectRepository: projectRepository
+            projectListing: projectRepository
         )
         self.projectCreationWorkflow = Self.makeProjectCreationWorkflow(
             currentUserProvider: accountController,
             creditBalanceProvider: accountController,
-            projectRepository: projectRepository,
+            projectCreator: projectRepository,
             workspaceObserver: resolvedWorkspaceObserver
         )
         self.mediaUploadWorkflow = Self.makeMediaUploadWorkflow(
             currentUserProvider: accountController,
-            projectRepository: projectRepository,
+            mediaAssetSaver: projectRepository,
             workspaceObserver: resolvedWorkspaceObserver,
             clients: clients
         )
         self.storyDraftWorkflow = Self.makeStoryDraftWorkflow(
             currentUserProvider: accountController,
-            projectRepository: projectRepository,
+            storyDraftSaver: projectRepository,
             workspaceObserver: resolvedWorkspaceObserver,
             clients: clients
         )
         self.previewGenerationWorkflow = Self.makePreviewGenerationWorkflow(
             currentUserProvider: accountController,
             creditBalanceProvider: accountController,
-            projectRepository: projectRepository,
+            previewResultSaver: projectRepository,
             workspaceObserver: resolvedWorkspaceObserver,
             clients: clients
         )
         self.finalRenderWorkflow = Self.makeFinalRenderWorkflow(
             currentUserProvider: accountController,
             creditBalanceProvider: accountController,
-            projectRepository: projectRepository,
+            finalRenderResultSaver: projectRepository,
             workspaceObserver: resolvedWorkspaceObserver,
             clients: clients
         )
@@ -76,37 +76,37 @@ final class MomentsDependencyContainer: ObservableObject {
 private extension MomentsDependencyContainer {
     static func makeProjectsListWorkflow(
         currentUserProvider: any MomentsCurrentUserProviding,
-        projectRepository: any MomentsProjectListing
+        projectListing: any MomentsProjectListing
     ) -> ProjectsListWorkflow {
         ProjectsListWorkflow(
             currentUserProvider: currentUserProvider,
-            projectRepository: projectRepository
+            projectListing: projectListing
         )
     }
 
     static func makeProjectCreationWorkflow(
         currentUserProvider: any MomentsCurrentUserProviding,
         creditBalanceProvider: any MomentsCreditBalanceProviding,
-        projectRepository: any MomentsProjectCreating,
+        projectCreator: any MomentsProjectCreating,
         workspaceObserver: any MomentsActiveWorkspaceObserving
     ) -> ProjectCreationWorkflow {
         ProjectCreationWorkflow(
             currentUserProvider: currentUserProvider,
             creditBalanceProvider: creditBalanceProvider,
-            projectRepository: projectRepository,
+            projectCreator: projectCreator,
             workspaceObserver: workspaceObserver
         )
     }
 
     static func makeMediaUploadWorkflow(
         currentUserProvider: any MomentsCurrentUserProviding,
-        projectRepository: any MomentsMediaAssetSaving,
+        mediaAssetSaver: any MomentsMediaAssetSaving,
         workspaceObserver: any MomentsActiveWorkspaceObserving,
         clients: MomentsWorkflowClients
     ) -> MediaUploadWorkflow {
         MediaUploadWorkflow(
             currentUserProvider: currentUserProvider,
-            projectRepository: projectRepository,
+            mediaAssetSaver: mediaAssetSaver,
             workspaceObserver: workspaceObserver,
             uploadClient: clients.upload
         )
@@ -114,13 +114,13 @@ private extension MomentsDependencyContainer {
 
     static func makeStoryDraftWorkflow(
         currentUserProvider: any MomentsCurrentUserProviding,
-        projectRepository: any MomentsStoryDraftSaving,
+        storyDraftSaver: any MomentsStoryDraftSaving,
         workspaceObserver: any MomentsActiveWorkspaceObserving,
         clients: MomentsWorkflowClients
     ) -> StoryDraftWorkflow {
         StoryDraftWorkflow(
             currentUserProvider: currentUserProvider,
-            projectRepository: projectRepository,
+            storyDraftSaver: storyDraftSaver,
             workspaceObserver: workspaceObserver,
             storyClient: clients.story
         )
@@ -129,14 +129,14 @@ private extension MomentsDependencyContainer {
     static func makePreviewGenerationWorkflow(
         currentUserProvider: any MomentsCurrentUserProviding,
         creditBalanceProvider: any MomentsCreditBalanceProviding,
-        projectRepository: any MomentsPreviewResultSaving,
+        previewResultSaver: any MomentsPreviewResultSaving,
         workspaceObserver: any MomentsActiveWorkspaceObserving,
         clients: MomentsWorkflowClients
     ) -> PreviewGenerationWorkflow {
         PreviewGenerationWorkflow(
             currentUserProvider: currentUserProvider,
             creditBalanceProvider: creditBalanceProvider,
-            projectRepository: projectRepository,
+            previewResultSaver: previewResultSaver,
             workspaceObserver: workspaceObserver,
             previewClient: clients.preview,
             statusClient: clients.renderStatus
@@ -146,14 +146,14 @@ private extension MomentsDependencyContainer {
     static func makeFinalRenderWorkflow(
         currentUserProvider: any MomentsCurrentUserProviding,
         creditBalanceProvider: any MomentsCreditBalanceProviding,
-        projectRepository: any MomentsFinalRenderResultSaving,
+        finalRenderResultSaver: any MomentsFinalRenderResultSaving,
         workspaceObserver: any MomentsActiveWorkspaceObserving,
         clients: MomentsWorkflowClients
     ) -> FinalRenderWorkflow {
         FinalRenderWorkflow(
             currentUserProvider: currentUserProvider,
             creditBalanceProvider: creditBalanceProvider,
-            projectRepository: projectRepository,
+            finalRenderResultSaver: finalRenderResultSaver,
             workspaceObserver: workspaceObserver,
             finalRenderClient: clients.finalRender,
             statusClient: clients.renderStatus

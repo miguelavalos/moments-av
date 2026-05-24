@@ -15,12 +15,12 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
 
     init(
         currentUserProvider: any MomentsCurrentUserProviding,
-        projectRepository: any MomentsMediaAssetSaving,
+        mediaAssetSaver: any MomentsMediaAssetSaving,
         workspaceObserver: any MomentsActiveWorkspaceObserving,
         uploadClient: MomentsUploadClient
     ) {
         self.currentUserProvider = currentUserProvider
-        self.mediaAssetSaver = projectRepository
+        self.mediaAssetSaver = mediaAssetSaver
         self.uploadClient = uploadClient
         super.init(workspaceObserver: workspaceObserver)
     }

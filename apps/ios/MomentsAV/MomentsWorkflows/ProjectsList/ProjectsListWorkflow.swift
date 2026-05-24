@@ -20,10 +20,10 @@ final class ProjectsListWorkflow: ObservableObject {
 
     init(
         currentUserProvider: any MomentsCurrentUserProviding,
-        projectRepository: any MomentsProjectListing
+        projectListing: any MomentsProjectListing
     ) {
         self.currentUserProvider = currentUserProvider
-        projectListing = projectRepository
+        self.projectListing = projectListing
     }
 
     func observeProjects(ownerUserId: String?) {
