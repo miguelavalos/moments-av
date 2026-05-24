@@ -2,15 +2,18 @@ import SwiftUI
 
 struct MomentsProjectWorkspaceHeader: View {
     let workspace: MomentProjectWorkspace
+    private var presentation: MomentsProjectWorkspaceHeaderPresentation {
+        MomentsProjectWorkspaceHeaderPresentation(workspace: workspace)
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
-            Text(workspace.project.title)
+            Text(presentation.title)
                 .font(.subheadline.weight(.semibold))
-            Text("Updated \(MomentsDateFormatting.formattedDate(milliseconds: workspace.project.updatedAt))")
+            Text(presentation.updatedAtTitle)
                 .font(.caption)
                 .foregroundStyle(.secondary)
-            Text("Media \(workspace.mediaAssets.count) · Scenes \(workspace.storyScenes.count) · Jobs \(workspace.renderJobs.count)")
+            Text(presentation.countsTitle)
                 .font(.caption)
                 .foregroundStyle(.secondary)
         }
