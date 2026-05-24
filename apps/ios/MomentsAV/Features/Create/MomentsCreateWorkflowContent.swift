@@ -131,9 +131,9 @@ private struct MomentsCreateActiveProjectCard: View {
                             .font(.headline)
                             .lineLimit(2)
                             .fixedSize(horizontal: false, vertical: true)
-                        Text(MomentsProjectStatusRules.displayTitle(for: activeProject.status))
+                        Text(MomentsProjectFormatting.statusTitle(activeProject))
                             .font(.subheadline.weight(.semibold))
-                        Text("Updated \(MomentsDateFormatting.formattedDate(milliseconds: activeProject.updatedAt))")
+                        Text(MomentsProjectFormatting.updatedAt(activeProject))
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     }

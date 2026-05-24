@@ -13,10 +13,7 @@ struct MomentsHomeScreen: View {
     }
     private var latestInProgressProjectDetail: String {
         guard let latestInProgressProject else { return "" }
-        let status = MomentsProjectStatusRules.displayTitle(for: latestInProgressProject.status)
-        let updated = MomentsDateFormatting.formattedDate(milliseconds: latestInProgressProject.updatedAt)
-        let previewUsage = "\(Int(latestInProgressProject.previewCount))/\(Int(latestInProgressProject.previewLimit)) previews"
-        return "\(latestInProgressProject.title) · \(status) · Updated \(updated) · \(previewUsage)"
+        return MomentsProjectFormatting.compactDetail(for: latestInProgressProject, includeTitle: true)
     }
 
     init(
@@ -75,8 +72,7 @@ struct MomentsHomeScreen: View {
                     if let latestProject = projectSummary.latestProject {
                         MomentsHomeLatestProjectRow(
                             title: latestProject.title,
-                            status: MomentsProjectStatusRules.displayTitle(for: latestProject.status),
-                            updatedAt: latestProject.updatedAt,
+                            detail: MomentsProjectFormatting.compactDetail(for: latestProject),
                             openProject: { selectTab(.projects) }
                         )
                     } else if viewModel.isSignedIn {
@@ -171,8 +167,7 @@ private struct MomentsHomeSectionHeader: View {
 
 private struct MomentsHomeLatestProjectRow: View {
     let title: String
-    let status: String?
-    let updatedAt: Double?
+    let detail: String
     let openProject: () -> Void
 
     var body: some View {
@@ -190,7 +185,7 @@ private struct MomentsHomeLatestProjectRow: View {
                     Text(title)
                         .font(.subheadline.weight(.semibold))
                         .lineLimit(2)
-                    Text(detailText)
+                    Text(detail)
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
@@ -207,14 +202,6 @@ private struct MomentsHomeLatestProjectRow: View {
         .buttonStyle(.plain)
     }
 
-    private var detailText: String {
-        [status, formattedUpdatedAt].compactMap { $0 }.joined(separator: " · ")
-    }
-
-    private var formattedUpdatedAt: String? {
-        guard let updatedAt else { return nil }
-        return "Updated \(MomentsDateFormatting.formattedDate(milliseconds: updatedAt))"
-    }
 }
 
 private struct MomentsHomeEmptyProjectRow: View {

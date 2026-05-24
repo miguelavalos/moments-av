@@ -19,7 +19,7 @@ struct MomentsCreatePreviewCard: View {
                     .foregroundStyle(.secondary)
 
                 if let activeProject = summary.activeProject {
-                    Text("Previews \(Int(activeProject.previewCount))/\(Int(activeProject.previewLimit))")
+                    Text(MomentsProjectFormatting.previewUsage(activeProject))
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }

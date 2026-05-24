@@ -71,16 +71,16 @@ struct MomentsProjectsList: View {
                     HStack(spacing: 8) {
                         MomentsProjectListMetadata(
                             systemImage: "clock",
-                            text: MomentsDateFormatting.formattedDate(milliseconds: project.updatedAt)
+                            text: MomentsProjectFormatting.updatedAt(project)
                         )
                         MomentsProjectListMetadata(
                             systemImage: "play.rectangle",
-                            text: "\(Int(project.previewCount))/\(Int(project.previewLimit)) previews"
+                            text: MomentsProjectFormatting.previewUsage(project)
                         )
                     }
 
                     HStack(spacing: 8) {
-                        Text(MomentsProjectStatusRules.displayTitle(for: project.status))
+                        Text(MomentsProjectFormatting.statusTitle(project))
                             .font(.caption2.weight(.semibold))
                             .foregroundStyle(MomentsTheme.brandPalette.accent)
                         Text("\(Int(project.creditCost)) credits")
