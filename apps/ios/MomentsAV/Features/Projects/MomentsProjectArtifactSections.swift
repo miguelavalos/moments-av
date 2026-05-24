@@ -3,23 +3,23 @@ import SwiftUI
 struct MomentsProjectRenderJobsSection: View {
     let renderJobs: [MomentRenderJob]
 
-    private var presentations: [MomentsProjectRenderJobPresentation] {
-        MomentsProjectRenderJobPresentation.sorted(renderJobs)
+    private var presentation: MomentsProjectRenderJobsSectionPresentation {
+        MomentsProjectRenderJobsSectionPresentation(renderJobs: renderJobs)
     }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text("Render jobs")
+            Text(presentation.title)
                 .font(.subheadline.weight(.semibold))
 
-            if presentations.isEmpty {
+            if presentation.jobs.isEmpty {
                 MomentsProjectEmptySectionRow(
-                    systemImage: "gearshape.2",
-                    message: "Preview and final render jobs will appear here."
+                    systemImage: presentation.emptySystemImage,
+                    message: presentation.emptyMessage
                 )
             } else {
-                ForEach(presentations) { presentation in
-                    MomentsProjectRenderJobRow(presentation: presentation)
+                ForEach(presentation.jobs) { job in
+                    MomentsProjectRenderJobRow(presentation: job)
                 }
             }
         }
@@ -29,21 +29,21 @@ struct MomentsProjectRenderJobsSection: View {
 struct MomentsProjectPreviewArtifactSection: View {
     let artifacts: [MomentArtifact]
 
-    private var preview: MomentsProjectArtifactPresentation? {
-        MomentsProjectArtifactPresentation.preview(in: artifacts)
+    private var presentation: MomentsProjectArtifactSectionPresentation {
+        MomentsProjectArtifactSectionPresentation.preview(artifacts: artifacts)
     }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text("Preview")
+            Text(presentation.title)
                 .font(.subheadline.weight(.semibold))
 
-            if let preview {
-                MomentsProjectArtifactDetail(presentation: preview)
+            if let artifact = presentation.artifact {
+                MomentsProjectArtifactDetail(presentation: artifact)
             } else {
                 MomentsProjectEmptySectionRow(
-                    systemImage: "play.rectangle",
-                    message: "Generate a preview after the story draft is ready."
+                    systemImage: presentation.emptySystemImage,
+                    message: presentation.emptyMessage
                 )
             }
         }
@@ -53,21 +53,21 @@ struct MomentsProjectPreviewArtifactSection: View {
 struct MomentsProjectFinalExportSection: View {
     let artifacts: [MomentArtifact]
 
-    private var finalExport: MomentsProjectArtifactPresentation? {
-        MomentsProjectArtifactPresentation.finalExport(in: artifacts)
+    private var presentation: MomentsProjectArtifactSectionPresentation {
+        MomentsProjectArtifactSectionPresentation.finalExport(artifacts: artifacts)
     }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text("Final export")
+            Text(presentation.title)
                 .font(.subheadline.weight(.semibold))
 
-            if let finalExport {
-                MomentsProjectArtifactDetail(presentation: finalExport)
+            if let artifact = presentation.artifact {
+                MomentsProjectArtifactDetail(presentation: artifact)
             } else {
                 MomentsProjectEmptySectionRow(
-                    systemImage: "square.and.arrow.up",
-                    message: "Render the final export after approving a preview."
+                    systemImage: presentation.emptySystemImage,
+                    message: presentation.emptyMessage
                 )
             }
         }

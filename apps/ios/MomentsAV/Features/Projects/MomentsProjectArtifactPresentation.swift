@@ -1,5 +1,41 @@
 import Foundation
 
+struct MomentsProjectRenderJobsSectionPresentation: Equatable {
+    let title = "Render jobs"
+    let emptySystemImage = "gearshape.2"
+    let emptyMessage = "Preview and final render jobs will appear here."
+    let jobs: [MomentsProjectRenderJobPresentation]
+
+    init(renderJobs: [MomentRenderJob]) {
+        jobs = MomentsProjectRenderJobPresentation.sorted(renderJobs)
+    }
+}
+
+struct MomentsProjectArtifactSectionPresentation: Equatable {
+    let title: String
+    let emptySystemImage: String
+    let emptyMessage: String
+    let artifact: MomentsProjectArtifactPresentation?
+
+    static func preview(artifacts: [MomentArtifact]) -> MomentsProjectArtifactSectionPresentation {
+        MomentsProjectArtifactSectionPresentation(
+            title: "Preview",
+            emptySystemImage: "play.rectangle",
+            emptyMessage: "Generate a preview after the story draft is ready.",
+            artifact: MomentsProjectArtifactPresentation.preview(in: artifacts)
+        )
+    }
+
+    static func finalExport(artifacts: [MomentArtifact]) -> MomentsProjectArtifactSectionPresentation {
+        MomentsProjectArtifactSectionPresentation(
+            title: "Final export",
+            emptySystemImage: "square.and.arrow.up",
+            emptyMessage: "Render the final export after approving a preview.",
+            artifact: MomentsProjectArtifactPresentation.finalExport(in: artifacts)
+        )
+    }
+}
+
 struct MomentsProjectArtifactPresentation: Equatable {
     let status: String
     let kindTitle: String
