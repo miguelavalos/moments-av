@@ -5,14 +5,20 @@ struct MomentsHomeScreen: View {
     @EnvironmentObject private var viewModel: MomentsHomeViewModel
 
     let selectTab: (MomentsRootTab) -> Void
+    let continueProject: (MomentDraftProject) -> Void
     let signInActions: AnyView
     private var projectSummary: MomentsProjectListSummary { viewModel.projectSummary }
+    private var latestInProgressProject: MomentDraftProject? {
+        projectSummary.groups.inProgress.first
+    }
 
     init(
         selectTab: @escaping (MomentsRootTab) -> Void,
+        continueProject: @escaping (MomentDraftProject) -> Void,
         signInActions: AnyView
     ) {
         self.selectTab = selectTab
+        self.continueProject = continueProject
         self.signInActions = signInActions
     }
 
@@ -91,11 +97,22 @@ struct MomentsHomeScreen: View {
                     )
 
                     VStack(spacing: 10) {
+                        if let latestInProgressProject {
+                            MomentsHomeActionRow(
+                                title: "Continue latest project",
+                                detail: "\(latestInProgressProject.title) is ready to review in Create.",
+                                systemImage: "arrow.right.circle",
+                                isProminent: true
+                            ) {
+                                continueProject(latestInProgressProject)
+                            }
+                        }
+
                         MomentsHomeActionRow(
                             title: "Create a moment",
                             detail: "Pick the occasion, add media, draft the story, then render.",
                             systemImage: "plus.app",
-                            isProminent: true,
+                            isProminent: latestInProgressProject == nil,
                             isDisabled: !viewModel.isSignedIn
                         ) {
                             selectTab(.create)

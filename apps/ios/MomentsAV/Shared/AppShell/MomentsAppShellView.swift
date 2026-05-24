@@ -29,6 +29,10 @@ struct MomentsAppShellView: View {
         case .home:
             MomentsHomeScreen(
                 selectTab: { selectedTab = $0 },
+                continueProject: { project in
+                    createViewModel.continueProject(project, focus: .review)
+                    selectedTab = .create
+                },
                 signInActions: AnyView(SignInActionsView(authenticationController: accountController))
             )
         case .create:
