@@ -192,6 +192,88 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         XCTAssertEqual(presentation.availabilityMessage, "Ready.")
     }
 
+    func testPreviewPresentationFormatsUsageActionsAndArtifactState() {
+        let presentation = MomentsCreatePreviewPresentation(
+            summary: MomentsCreatePreviewSummary(
+                activeProject: makeProject(id: "project-1"),
+                latestPreview: makeArtifact(id: "preview-1", kind: "preview"),
+                latestPreviewJob: makeRenderJob(id: "preview-job", kind: "preview", status: "running"),
+                isGenerating: true,
+                isRefreshingStatus: true,
+                statusMessage: "Generating."
+            ),
+            canGeneratePreview: true,
+            canRefreshPreviewStatus: true,
+            availabilityMessage: "Generate preview.",
+            refreshAvailabilityMessage: "Refresh preview."
+        )
+
+        XCTAssertEqual(presentation.usageTitle, "0/3 previews")
+        XCTAssertEqual(presentation.previewArtifactMessage, "Includes a subtle Moments AV mark.")
+        XCTAssertEqual(presentation.refreshButtonTitle, "Refreshing preview status...")
+        XCTAssertEqual(presentation.generateButtonTitle, "Generating preview...")
+        XCTAssertEqual(presentation.emptyMessage, "Story is ready. Generate a preview to review the result.")
+        XCTAssertFalse(presentation.showsEmptyState)
+        XCTAssertTrue(presentation.canGeneratePreview)
+        XCTAssertTrue(presentation.canRefreshPreviewStatus)
+        XCTAssertEqual(presentation.availabilityMessage, "Generate preview.")
+        XCTAssertEqual(presentation.refreshAvailabilityMessage, "Refresh preview.")
+    }
+
+    func testPreviewPresentationFormatsUnavailableEmptyState() {
+        let presentation = MomentsCreatePreviewPresentation(
+            summary: MomentsCreatePreviewSummary(),
+            canGeneratePreview: false
+        )
+
+        XCTAssertNil(presentation.usageTitle)
+        XCTAssertNil(presentation.previewArtifactMessage)
+        XCTAssertEqual(presentation.refreshButtonTitle, "Refresh preview status")
+        XCTAssertEqual(presentation.generateButtonTitle, "Generate preview")
+        XCTAssertEqual(presentation.emptyMessage, "Generate a story draft before creating a preview.")
+        XCTAssertTrue(presentation.showsEmptyState)
+    }
+
+    func testFinalRenderPresentationFormatsCreditActionsAndExportState() {
+        let presentation = MomentsCreateFinalRenderPresentation(
+            summary: MomentsCreateFinalRenderSummary(
+                creditCost: 2,
+                finalExport: makeArtifact(id: "final-1", kind: "final_export"),
+                latestFinalJob: makeRenderJob(id: "final-job", kind: "final_render", status: "running"),
+                isGenerating: true,
+                isRefreshingStatus: true,
+                statusMessage: "Rendering."
+            ),
+            canGenerateFinalRender: true,
+            canRefreshFinalRenderStatus: true,
+            availabilityMessage: "Render final.",
+            refreshAvailabilityMessage: "Refresh final."
+        )
+
+        XCTAssertEqual(presentation.creditTitle, "2 credits")
+        XCTAssertEqual(presentation.refreshButtonTitle, "Refreshing final status...")
+        XCTAssertEqual(presentation.generateButtonTitle, "Rendering final...")
+        XCTAssertEqual(presentation.emptyMessage, "Preview is ready. Render the final export when approved.")
+        XCTAssertFalse(presentation.showsEmptyState)
+        XCTAssertTrue(presentation.canGenerateFinalRender)
+        XCTAssertTrue(presentation.canRefreshFinalRenderStatus)
+        XCTAssertEqual(presentation.availabilityMessage, "Render final.")
+        XCTAssertEqual(presentation.refreshAvailabilityMessage, "Refresh final.")
+    }
+
+    func testFinalRenderPresentationFormatsUnavailableEmptyState() {
+        let presentation = MomentsCreateFinalRenderPresentation(
+            summary: MomentsCreateFinalRenderSummary(creditCost: 3),
+            canGenerateFinalRender: false
+        )
+
+        XCTAssertEqual(presentation.creditTitle, "3 credits")
+        XCTAssertEqual(presentation.refreshButtonTitle, "Refresh final status")
+        XCTAssertEqual(presentation.generateButtonTitle, "Render final")
+        XCTAssertEqual(presentation.emptyMessage, "Generate a preview before rendering the final export.")
+        XCTAssertTrue(presentation.showsEmptyState)
+    }
+
     private func makeProject(id: String) -> MomentDraftProject {
         MomentDraftProject(
             id: id,

@@ -70,22 +70,26 @@ struct MomentsCreateWorkflowContent: View {
             .id(MomentsCreateSection.story)
 
             MomentsCreatePreviewCard(
-                summary: presentation.previewSummary,
-                canGeneratePreview: presentation.canGeneratePreview,
-                canRefreshPreviewStatus: presentation.canRefreshPreviewStatus,
-                availabilityMessage: presentation.previewAvailabilityMessage,
-                refreshAvailabilityMessage: presentation.previewRefreshAvailabilityMessage,
+                presentation: MomentsCreatePreviewPresentation(
+                    summary: presentation.previewSummary,
+                    canGeneratePreview: presentation.canGeneratePreview,
+                    canRefreshPreviewStatus: presentation.canRefreshPreviewStatus,
+                    availabilityMessage: presentation.previewAvailabilityMessage,
+                    refreshAvailabilityMessage: presentation.previewRefreshAvailabilityMessage
+                ),
                 generatePreview: viewModel.generatePreview,
                 refreshPreviewStatus: viewModel.refreshPreviewStatus
             )
             .id(MomentsCreateSection.preview)
 
             MomentsCreateFinalExportCard(
-                summary: presentation.finalRenderSummary,
-                canGenerateFinalRender: presentation.canGenerateFinalRender,
-                canRefreshFinalRenderStatus: presentation.canRefreshFinalRenderStatus,
-                availabilityMessage: presentation.finalRenderAvailabilityMessage,
-                refreshAvailabilityMessage: presentation.finalRenderRefreshAvailabilityMessage,
+                presentation: MomentsCreateFinalRenderPresentation(
+                    summary: presentation.finalRenderSummary,
+                    canGenerateFinalRender: presentation.canGenerateFinalRender,
+                    canRefreshFinalRenderStatus: presentation.canRefreshFinalRenderStatus,
+                    availabilityMessage: presentation.finalRenderAvailabilityMessage,
+                    refreshAvailabilityMessage: presentation.finalRenderRefreshAvailabilityMessage
+                ),
                 generateFinalRender: viewModel.generateFinalRender,
                 refreshFinalRenderStatus: viewModel.refreshFinalRenderStatus
             )

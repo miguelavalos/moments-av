@@ -2,11 +2,7 @@ import AVSettingsFoundation
 import SwiftUI
 
 struct MomentsCreatePreviewCard: View {
-    let summary: MomentsCreatePreviewSummary
-    let canGeneratePreview: Bool
-    let canRefreshPreviewStatus: Bool
-    let availabilityMessage: String?
-    let refreshAvailabilityMessage: String?
+    let presentation: MomentsCreatePreviewPresentation
     let generatePreview: () -> Void
     let refreshPreviewStatus: () -> Void
 
@@ -18,55 +14,53 @@ struct MomentsCreatePreviewCard: View {
                 Text("Generate a preview after the story is ready, then review status before committing the final export.")
                     .foregroundStyle(.secondary)
 
-                if let activeProject = summary.activeProject {
-                    Text(MomentsProjectFormatting.previewUsage(activeProject))
+                if let usageTitle = presentation.usageTitle {
+                    Text(usageTitle)
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
 
-                if let latestPreview = summary.latestPreview {
+                if presentation.summary.latestPreview != nil {
                     Label("Preview ready", systemImage: "play.rectangle")
-                    Text(latestPreview.hasWatermark == true ? "Includes a subtle Moments AV mark." : "Preview artifact is available.")
+                    Text(presentation.previewArtifactMessage ?? "")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
 
-                if let latestPreviewJob = summary.latestPreviewJob {
+                if let latestPreviewJob = presentation.summary.latestPreviewJob {
                     MomentsCreateRenderJobStatusRow(renderJob: latestPreviewJob)
 
                     Button(action: refreshPreviewStatus) {
-                        Text(summary.isRefreshingStatus ? "Refreshing preview status..." : "Refresh preview status")
+                        Text(presentation.refreshButtonTitle)
                             .frame(maxWidth: .infinity)
                     }
                     .buttonStyle(.bordered)
-                    .disabled(!canRefreshPreviewStatus)
+                    .disabled(!presentation.canRefreshPreviewStatus)
 
-                    if let refreshAvailabilityMessage {
+                    if let refreshAvailabilityMessage = presentation.refreshAvailabilityMessage {
                         MomentsCreateAvailabilityMessage(message: refreshAvailabilityMessage)
                     }
                 }
 
-                if summary.latestPreview == nil && summary.latestPreviewJob == nil {
+                if presentation.showsEmptyState {
                     MomentsCreateEmptySectionRow(
                         systemImage: "play.rectangle",
-                        message: canGeneratePreview
-                            ? "Story is ready. Generate a preview to review the result."
-                            : "Generate a story draft before creating a preview."
+                        message: presentation.emptyMessage
                     )
                 }
 
                 Button(action: generatePreview) {
-                    Text(summary.isGenerating ? "Generating preview..." : "Generate preview")
+                    Text(presentation.generateButtonTitle)
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.borderedProminent)
-                .disabled(!canGeneratePreview || summary.isGenerating)
+                .disabled(!presentation.canGeneratePreview || presentation.summary.isGenerating)
 
-                if let availabilityMessage {
+                if let availabilityMessage = presentation.availabilityMessage {
                     MomentsCreateAvailabilityMessage(message: availabilityMessage)
                 }
 
-                if let previewStatusMessage = summary.statusMessage {
+                if let previewStatusMessage = presentation.summary.statusMessage {
                     Text(previewStatusMessage)
                         .font(.caption)
                         .foregroundStyle(.secondary)
@@ -77,11 +71,7 @@ struct MomentsCreatePreviewCard: View {
 }
 
 struct MomentsCreateFinalExportCard: View {
-    let summary: MomentsCreateFinalRenderSummary
-    let canGenerateFinalRender: Bool
-    let canRefreshFinalRenderStatus: Bool
-    let availabilityMessage: String?
-    let refreshAvailabilityMessage: String?
+    let presentation: MomentsCreateFinalRenderPresentation
     let generateFinalRender: () -> Void
     let refreshFinalRenderStatus: () -> Void
 
@@ -93,11 +83,11 @@ struct MomentsCreateFinalExportCard: View {
                 Text("Final render commits credits after a usable export is delivered.")
                     .foregroundStyle(.secondary)
 
-                Text("\(summary.creditCost) credits")
+                Text(presentation.creditTitle)
                     .font(.caption)
                     .foregroundStyle(.secondary)
 
-                if let finalExport = summary.finalExport {
+                if let finalExport = presentation.summary.finalExport {
                     Label("Export ready", systemImage: "square.and.arrow.up")
                     Text(finalExport.r2Key)
                         .font(.caption)
@@ -105,42 +95,40 @@ struct MomentsCreateFinalExportCard: View {
                         .textSelection(.enabled)
                 }
 
-                if let latestFinalJob = summary.latestFinalJob {
+                if let latestFinalJob = presentation.summary.latestFinalJob {
                     MomentsCreateRenderJobStatusRow(renderJob: latestFinalJob)
 
                     Button(action: refreshFinalRenderStatus) {
-                        Text(summary.isRefreshingStatus ? "Refreshing final status..." : "Refresh final status")
+                        Text(presentation.refreshButtonTitle)
                             .frame(maxWidth: .infinity)
                     }
                     .buttonStyle(.bordered)
-                    .disabled(!canRefreshFinalRenderStatus)
+                    .disabled(!presentation.canRefreshFinalRenderStatus)
 
-                    if let refreshAvailabilityMessage {
+                    if let refreshAvailabilityMessage = presentation.refreshAvailabilityMessage {
                         MomentsCreateAvailabilityMessage(message: refreshAvailabilityMessage)
                     }
                 }
 
-                if summary.finalExport == nil && summary.latestFinalJob == nil {
+                if presentation.showsEmptyState {
                     MomentsCreateEmptySectionRow(
                         systemImage: "square.and.arrow.up",
-                        message: canGenerateFinalRender
-                            ? "Preview is ready. Render the final export when approved."
-                            : "Generate a preview before rendering the final export."
+                        message: presentation.emptyMessage
                     )
                 }
 
                 Button(action: generateFinalRender) {
-                    Text(summary.isGenerating ? "Rendering final..." : "Render final")
+                    Text(presentation.generateButtonTitle)
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.borderedProminent)
-                .disabled(!canGenerateFinalRender || summary.isGenerating)
+                .disabled(!presentation.canGenerateFinalRender || presentation.summary.isGenerating)
 
-                if let availabilityMessage {
+                if let availabilityMessage = presentation.availabilityMessage {
                     MomentsCreateAvailabilityMessage(message: availabilityMessage)
                 }
 
-                if let finalRenderStatusMessage = summary.statusMessage {
+                if let finalRenderStatusMessage = presentation.summary.statusMessage {
                     Text(finalRenderStatusMessage)
                         .font(.caption)
                         .foregroundStyle(.secondary)
