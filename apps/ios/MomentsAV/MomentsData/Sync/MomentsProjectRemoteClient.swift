@@ -83,15 +83,9 @@ struct MomentsProjectRemoteClient {
 
         return client
     }
+}
 
-    func storyModerationStatus(for draft: MomentsStoryDraftResponse) -> String {
-        draft.moderationStatus == "allowed" ? "approved" : "blocked"
-    }
-
-    func convexStringArray(_ values: [String]) -> [ConvexEncodable?] {
-        values.map { $0 as ConvexEncodable }
-    }
-
+extension MomentsProjectRemoteClient {
     func milliseconds(from date: Date) -> Double {
         date.timeIntervalSince1970 * 1000
     }

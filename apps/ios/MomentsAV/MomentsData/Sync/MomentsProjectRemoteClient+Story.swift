@@ -1,3 +1,4 @@
+@preconcurrency import ConvexMobile
 import Foundation
 
 extension MomentsProjectRemoteClient {
@@ -61,5 +62,13 @@ extension MomentsProjectRemoteClient {
                 "moderationStatus": storyModerationStatus(for: draft)
             ]
         )
+    }
+
+    func storyModerationStatus(for draft: MomentsStoryDraftResponse) -> String {
+        draft.moderationStatus == "allowed" ? "approved" : "blocked"
+    }
+
+    func convexStringArray(_ values: [String]) -> [ConvexEncodable?] {
+        values.map { $0 as ConvexEncodable }
     }
 }
