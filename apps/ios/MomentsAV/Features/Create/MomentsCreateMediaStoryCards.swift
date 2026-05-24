@@ -5,57 +5,49 @@ import SwiftUI
 struct MomentsCreateMediaCard: View {
     @Binding var pickerItems: [PhotosPickerItem]
 
-    let createdProjectId: String
-    let template: MomentTemplate
-    let summary: MomentsCreateMediaSummary
-    let canAddMedia: Bool
-    let availabilityMessage: String?
+    let presentation: MomentsCreateMediaPresentation
     let importPickerItems: ([PhotosPickerItem]) -> Void
     let removeMedia: (MomentsSelectedMedia) -> Void
     let autoPickStrongMoments: () -> Void
-
-    private var remainingSlots: Int {
-        summary.remainingSlots(template: template)
-    }
 
     var body: some View {
         AVSettingsCard {
             VStack(alignment: .leading, spacing: 14) {
                 Text("Media")
                     .font(.headline)
-                Text("Project \(createdProjectId)")
+                Text("Project \(presentation.createdProjectId)")
                     .font(.caption)
                     .foregroundStyle(.secondary)
 
                 PhotosPicker(
                     selection: $pickerItems,
-                    maxSelectionCount: remainingSlots,
+                    maxSelectionCount: presentation.remainingSlots,
                     matching: .any(of: [.images, .videos])
                 ) {
-                    Label(summary.isImporting ? "Importing media..." : "Add Photos or Clips", systemImage: "photo.badge.plus")
+                    Label(presentation.pickerTitle, systemImage: "photo.badge.plus")
                 }
-                .disabled(!canAddMedia)
+                .disabled(!presentation.canAddMedia)
                 .onChange(of: pickerItems) { _, newItems in
                     importPickerItems(newItems)
                     pickerItems = []
                 }
 
-                if let availabilityMessage {
+                if let availabilityMessage = presentation.availabilityMessage {
                     MomentsCreateAvailabilityMessage(message: availabilityMessage)
                 }
 
-                Text("Selected \(summary.selectedCount)/\(template.mediaRange)")
+                Text(presentation.selectedCountTitle)
                     .font(.caption)
                     .foregroundStyle(.secondary)
 
-                Text(mediaSelectionMessage)
+                Text(presentation.selectionMessage)
                     .font(.caption)
                     .foregroundStyle(.secondary)
 
                 newImportSelection
                 syncedMedia
 
-                if let mediaStatusMessage = summary.statusMessage {
+                if let mediaStatusMessage = presentation.summary.statusMessage {
                     Text(mediaStatusMessage)
                         .font(.caption)
                         .foregroundStyle(.secondary)
@@ -64,22 +56,14 @@ struct MomentsCreateMediaCard: View {
         }
     }
 
-    private var mediaSelectionMessage: String {
-        MomentsMediaRules.selectionMessage(
-            MomentsMediaRules.availability(template: template, selectedCount: summary.selectedCount),
-            tooFewMessage: { "Add \($0) more synced media assets." },
-            tooManyMessage: { "Remove \($0) synced media assets." }
-        )
-    }
-
     @ViewBuilder
     private var newImportSelection: some View {
-        if !summary.selectedMedia.isEmpty {
+        if !presentation.summary.selectedMedia.isEmpty {
             VStack(alignment: .leading, spacing: 8) {
                 Text("New import selection")
                     .font(.subheadline.weight(.semibold))
 
-                ForEach(summary.selectedMedia) { media in
+                ForEach(presentation.summary.selectedMedia) { media in
                     MomentsCreateMediaRow(media: media) {
                         removeMedia(media)
                     }
@@ -94,12 +78,12 @@ struct MomentsCreateMediaCard: View {
 
     @ViewBuilder
     private var syncedMedia: some View {
-        if !summary.syncedMediaAssets.isEmpty {
+        if !presentation.syncedMediaAssets.isEmpty {
             VStack(alignment: .leading, spacing: 8) {
                 Text("Synced media")
                     .font(.subheadline.weight(.semibold))
 
-                ForEach(summary.syncedMediaAssets.sorted { $0.sortOrder < $1.sortOrder }) { media in
+                ForEach(presentation.syncedMediaAssets) { media in
                     MomentsCreateSyncedMediaRow(media: media)
                 }
             }
@@ -108,9 +92,7 @@ struct MomentsCreateMediaCard: View {
 }
 
 struct MomentsCreateStoryCard: View {
-    let summary: MomentsCreateStorySummary
-    let canDraftStory: Bool
-    let availabilityMessage: String?
+    let presentation: MomentsCreateStoryPresentation
     let generateStoryDraft: () -> Void
 
     var body: some View {
@@ -124,17 +106,17 @@ struct MomentsCreateStoryCard: View {
                 storyScenes
 
                 Button(action: generateStoryDraft) {
-                    Text(summary.isDrafting ? "Drafting story..." : "Ask Avi for story draft")
+                    Text(presentation.draftButtonTitle)
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.borderedProminent)
-                .disabled(!canDraftStory || summary.isDrafting)
+                .disabled(!presentation.canDraftStory || presentation.summary.isDrafting)
 
-                if let availabilityMessage {
+                if let availabilityMessage = presentation.availabilityMessage {
                     MomentsCreateAvailabilityMessage(message: availabilityMessage)
                 }
 
-                if let storyStatusMessage = summary.statusMessage {
+                if let storyStatusMessage = presentation.summary.statusMessage {
                     Text(storyStatusMessage)
                         .font(.caption)
                         .foregroundStyle(.secondary)
@@ -145,16 +127,16 @@ struct MomentsCreateStoryCard: View {
 
     @ViewBuilder
     private var storyScenes: some View {
-        if !summary.savedScenes.isEmpty {
-            ForEach(summary.savedScenes.sorted { $0.sceneIndex < $1.sceneIndex }) { scene in
+        if !presentation.savedScenes.isEmpty {
+            ForEach(presentation.savedScenes) { scene in
                 MomentsCreateStorySceneRow(
                     index: Int(scene.sceneIndex),
                     caption: scene.caption,
                     narration: scene.narrationText ?? ""
                 )
             }
-        } else if !summary.generatedScenes.isEmpty {
-            ForEach(summary.generatedScenes) { scene in
+        } else if !presentation.summary.generatedScenes.isEmpty {
+            ForEach(presentation.summary.generatedScenes) { scene in
                 MomentsCreateStorySceneRow(
                     index: scene.sceneIndex,
                     caption: scene.caption,
@@ -164,9 +146,7 @@ struct MomentsCreateStoryCard: View {
         } else {
             MomentsCreateEmptySectionRow(
                 systemImage: "text.bubble",
-                message: canDraftStory
-                    ? "Avi can draft the first story from the synced media."
-                    : "Add enough synced media before generating a story draft."
+                message: presentation.emptyMessage
             )
         }
     }

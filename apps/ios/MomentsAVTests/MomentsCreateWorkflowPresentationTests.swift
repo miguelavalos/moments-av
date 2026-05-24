@@ -143,6 +143,55 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         XCTAssertEqual(presentation.finalRenderRefreshAvailabilityMessage, "Refresh final.")
     }
 
+    func testMediaPresentationFormatsSelectionAndSortsSyncedMedia() {
+        let presentation = MomentsCreateMediaPresentation(
+            createdProjectId: "project-1",
+            template: .birthdayMessage,
+            summary: MomentsCreateMediaSummary(
+                selectedMedia: [makeSelectedMedia(id: "00000000-0000-0000-0000-000000000001")],
+                syncedMediaAssets: [
+                    makeMediaAsset(id: "second", sortOrder: 1),
+                    makeMediaAsset(id: "first", sortOrder: 0)
+                ],
+                isImporting: true,
+                statusMessage: "Importing."
+            ),
+            canAddMedia: true,
+            availabilityMessage: "Add media."
+        )
+
+        XCTAssertEqual(presentation.createdProjectId, "project-1")
+        XCTAssertEqual(presentation.pickerTitle, "Importing media...")
+        XCTAssertEqual(presentation.remainingSlots, 19)
+        XCTAssertEqual(presentation.selectedCountTitle, "Selected 1/3-20 photos or clips")
+        XCTAssertEqual(presentation.selectionMessage, "Add 2 more synced media assets.")
+        XCTAssertEqual(presentation.syncedMediaAssets.map(\.id), ["first", "second"])
+        XCTAssertTrue(presentation.canAddMedia)
+        XCTAssertEqual(presentation.availabilityMessage, "Add media.")
+    }
+
+    func testStoryPresentationFormatsDraftStateAndSortsSavedScenes() {
+        let presentation = MomentsCreateStoryPresentation(
+            summary: MomentsCreateStorySummary(
+                savedScenes: [
+                    makeScene(id: "scene-2", sceneIndex: 1),
+                    makeScene(id: "scene-1", sceneIndex: 0)
+                ],
+                generatedScenes: [],
+                isDrafting: true,
+                statusMessage: "Drafting."
+            ),
+            canDraftStory: true,
+            availabilityMessage: "Ready."
+        )
+
+        XCTAssertEqual(presentation.draftButtonTitle, "Drafting story...")
+        XCTAssertEqual(presentation.emptyMessage, "Avi can draft the first story from the synced media.")
+        XCTAssertEqual(presentation.savedScenes.map(\.id), ["scene-1", "scene-2"])
+        XCTAssertTrue(presentation.canDraftStory)
+        XCTAssertEqual(presentation.availabilityMessage, "Ready.")
+    }
+
     private func makeProject(id: String) -> MomentDraftProject {
         MomentDraftProject(
             id: id,
@@ -161,13 +210,13 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         )
     }
 
-    private func makeMediaAsset(id: String) -> MomentMediaAsset {
+    private func makeMediaAsset(id: String, sortOrder: Double = 0) -> MomentMediaAsset {
         MomentMediaAsset(
             id: id,
             platformMediaAssetId: "platform-\(id)",
             uploadId: "upload-\(id)",
             kind: "image",
-            sortOrder: 0,
+            sortOrder: sortOrder,
             selected: true,
             moderationStatus: "approved",
             uploadedAt: nil,
@@ -175,10 +224,25 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         )
     }
 
-    private func makeScene(id: String) -> MomentStoryScene {
+    private func makeSelectedMedia(id: String) -> MomentsSelectedMedia {
+        MomentsSelectedMedia(
+            id: UUID(uuidString: id)!,
+            sourceLocalIdentifier: id,
+            originalFilename: "\(id).jpg",
+            contentType: "image/jpeg",
+            kind: "image",
+            byteSize: 4,
+            sha256: "abcd",
+            data: Data([1, 2, 3, 4]),
+            sortOrder: 0,
+            selected: true
+        )
+    }
+
+    private func makeScene(id: String, sceneIndex: Double = 0) -> MomentStoryScene {
         MomentStoryScene(
             id: id,
-            sceneIndex: 0,
+            sceneIndex: sceneIndex,
             mediaAssetIds: [],
             caption: "Opening",
             narrationText: nil,

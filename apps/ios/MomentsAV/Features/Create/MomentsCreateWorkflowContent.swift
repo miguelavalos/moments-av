@@ -46,11 +46,13 @@ struct MomentsCreateWorkflowContent: View {
         if let createdProjectId = presentation.createdProjectId {
             MomentsCreateMediaCard(
                 pickerItems: $pickerItems,
-                createdProjectId: createdProjectId,
-                template: presentation.template,
-                summary: presentation.mediaSummary,
-                canAddMedia: presentation.canAddMedia,
-                availabilityMessage: presentation.mediaAvailabilityMessage,
+                presentation: MomentsCreateMediaPresentation(
+                    createdProjectId: createdProjectId,
+                    template: presentation.template,
+                    summary: presentation.mediaSummary,
+                    canAddMedia: presentation.canAddMedia,
+                    availabilityMessage: presentation.mediaAvailabilityMessage
+                ),
                 importPickerItems: viewModel.importPickerItems,
                 removeMedia: viewModel.removeMedia,
                 autoPickStrongMoments: viewModel.autoPickStrongMoments
@@ -58,9 +60,11 @@ struct MomentsCreateWorkflowContent: View {
             .id(MomentsCreateSection.media)
 
             MomentsCreateStoryCard(
-                summary: presentation.storySummary,
-                canDraftStory: presentation.canDraftStory,
-                availabilityMessage: presentation.storyAvailabilityMessage,
+                presentation: MomentsCreateStoryPresentation(
+                    summary: presentation.storySummary,
+                    canDraftStory: presentation.canDraftStory,
+                    availabilityMessage: presentation.storyAvailabilityMessage
+                ),
                 generateStoryDraft: viewModel.generateStoryDraft
             )
             .id(MomentsCreateSection.story)
