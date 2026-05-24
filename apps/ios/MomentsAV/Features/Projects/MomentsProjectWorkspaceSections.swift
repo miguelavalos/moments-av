@@ -3,19 +3,23 @@ import SwiftUI
 struct MomentsProjectMediaSection: View {
     let mediaAssets: [MomentMediaAsset]
 
+    private var presentations: [MomentsProjectMediaAssetPresentation] {
+        MomentsProjectMediaAssetPresentation.sorted(mediaAssets)
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
             Text("Media")
                 .font(.subheadline.weight(.semibold))
 
-            if mediaAssets.isEmpty {
+            if presentations.isEmpty {
                 MomentsProjectEmptySectionRow(
                     systemImage: "photo.badge.plus",
                     message: "Add photos or clips from Create to unlock story drafting."
                 )
             } else {
-                ForEach(mediaAssets.sorted { $0.sortOrder < $1.sortOrder }) { media in
-                    MomentsProjectMediaAssetRow(media: media)
+                ForEach(presentations) { presentation in
+                    MomentsProjectMediaAssetRow(presentation: presentation)
                 }
             }
         }
@@ -25,19 +29,23 @@ struct MomentsProjectMediaSection: View {
 struct MomentsProjectStorySection: View {
     let storyScenes: [MomentStoryScene]
 
+    private var presentations: [MomentsProjectStoryScenePresentation] {
+        MomentsProjectStoryScenePresentation.sorted(storyScenes)
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
             Text("Story")
                 .font(.subheadline.weight(.semibold))
 
-            if storyScenes.isEmpty {
+            if presentations.isEmpty {
                 MomentsProjectEmptySectionRow(
                     systemImage: "text.bubble",
                     message: "Generate a story draft after the project has enough media."
                 )
             } else {
-                ForEach(storyScenes.sorted { $0.sceneIndex < $1.sceneIndex }) { scene in
-                    MomentsProjectStorySceneRow(scene: scene)
+                ForEach(presentations) { presentation in
+                    MomentsProjectStorySceneRow(presentation: presentation)
                 }
             }
         }
@@ -68,18 +76,18 @@ struct MomentsProjectEmptySectionRow: View {
 }
 
 struct MomentsProjectMediaAssetRow: View {
-    let media: MomentMediaAsset
+    let presentation: MomentsProjectMediaAssetPresentation
 
     var body: some View {
         HStack(alignment: .top, spacing: 10) {
-            Image(systemName: media.kind == "video" ? "video" : "photo")
+            Image(systemName: presentation.systemImage)
                 .foregroundStyle(.secondary)
                 .frame(width: 18)
 
             VStack(alignment: .leading, spacing: 3) {
-                Text("\(MomentsProjectStatusRules.displayKind(media.kind)) \(Int(media.sortOrder) + 1)")
+                Text(presentation.title)
                     .font(.caption.weight(.semibold))
-                Text(MomentsProjectFormatting.mediaAssetDetail(media))
+                Text(presentation.detail)
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
@@ -90,14 +98,14 @@ struct MomentsProjectMediaAssetRow: View {
 }
 
 struct MomentsProjectStorySceneRow: View {
-    let scene: MomentStoryScene
+    let presentation: MomentsProjectStoryScenePresentation
 
     var body: some View {
         VStack(alignment: .leading, spacing: 3) {
-            Text("Scene \(Int(scene.sceneIndex) + 1)")
+            Text(presentation.title)
                 .font(.caption.weight(.semibold))
                 .foregroundStyle(.secondary)
-            Text(scene.caption)
+            Text(presentation.caption)
                 .font(.caption)
         }
     }
