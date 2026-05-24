@@ -45,33 +45,53 @@ struct MomentsProjectRemoteClient {
     }
 
     func createDraftProject(ownerUserId: String, form: MomentDraftForm) async throws -> String {
+        try await createDraftProject(
+            ownerUserId: ownerUserId,
+            request: .draft(form)
+        )
+    }
+
+    func createDraftProject(
+        ownerUserId: String,
+        request: DraftProjectCreationRequest
+    ) async throws -> String {
         let client = try requireClient()
 
         return try await client.mutation(
             "moments:createDraftProject",
             with: [
                 "ownerUserId": ownerUserId,
-                "template": form.template.id.rawValue,
-                "title": form.title,
-                "tone": form.tone.rawValue,
-                "tempo": form.tempo.rawValue,
-                "occasion": form.occasion,
-                "details": form.details
+                "template": request.template,
+                "title": request.title,
+                "tone": request.tone,
+                "tempo": request.tempo,
+                "occasion": request.occasion,
+                "details": request.details
             ]
         )
     }
 
     func deleteProjectTree(ownerUserId: String, projectId: String) async throws {
+        try await deleteProjectTree(
+            ownerUserId: ownerUserId,
+            request: .userRequested(projectId: projectId)
+        )
+    }
+
+    func deleteProjectTree(
+        ownerUserId: String,
+        request: ProjectDeletionRequest
+    ) async throws {
         let client = try requireClient()
 
         let _: String? = try await client.mutation(
             "moments:deleteProject",
             with: [
                 "ownerUserId": ownerUserId,
-                "projectId": projectId,
-                "deleteSourceMedia": true,
-                "deleteGeneratedArtifacts": true,
-                "reason": "user request"
+                "projectId": request.projectId,
+                "deleteSourceMedia": request.deleteSourceMedia,
+                "deleteGeneratedArtifacts": request.deleteGeneratedArtifacts,
+                "reason": request.reason
             ]
         )
     }
