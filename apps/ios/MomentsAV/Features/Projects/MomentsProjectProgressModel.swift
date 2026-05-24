@@ -1,4 +1,4 @@
-import SwiftUI
+import Foundation
 
 struct MomentsProjectProgressModel {
     let phases: [MomentsProjectProgressPhase]
@@ -116,12 +116,4 @@ enum MomentsProjectProgressState: Equatable {
         }
     }
 
-    var tint: Color {
-        switch self {
-        case .complete: MomentsTheme.brandPalette.accent
-        case .active: .secondary
-        case .waiting: .secondary.opacity(0.7)
-        case .failed: .red
-        }
-    }
 }

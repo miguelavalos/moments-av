@@ -47,3 +47,14 @@ private struct MomentsProjectProgressRow: View {
         .frame(maxWidth: .infinity, alignment: .topLeading)
     }
 }
+
+private extension MomentsProjectProgressState {
+    var tint: Color {
+        switch self {
+        case .complete: MomentsTheme.brandPalette.accent
+        case .active: .secondary
+        case .waiting: .secondary.opacity(0.7)
+        case .failed: .red
+        }
+    }
+}
