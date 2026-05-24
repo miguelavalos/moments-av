@@ -26,6 +26,14 @@ struct MomentsProjectListSummary: Equatable {
         !projects.isEmpty
     }
 
+    var latestInProgressProject: MomentDraftProject? {
+        groups.inProgress.first
+    }
+
+    var latestInProgressContinuationRequest: MomentsProjectContinuationRequest? {
+        latestInProgressProject.map { MomentsProjectContinuationRequest(project: $0) }
+    }
+
     static func make(from projects: [MomentDraftProject]) -> MomentsProjectListSummary {
         MomentsProjectListSummary(
             projects: projects,

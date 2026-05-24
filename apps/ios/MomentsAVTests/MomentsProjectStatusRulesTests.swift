@@ -44,6 +44,19 @@ final class MomentsProjectStatusRulesTests: XCTestCase {
         XCTAssertTrue(summary.hasProjects)
     }
 
+    func testListSummaryExposesLatestInProgressContinuationRequest() {
+        let olderDraft = makeProject(id: "older-draft", status: "draft_created", updatedAt: 10)
+        let newestFinished = makeProject(id: "newest-finished", status: "completed", updatedAt: 30)
+        let latestDraft = makeProject(id: "latest-draft", status: "story_ready", updatedAt: 20)
+
+        let summary = MomentsProjectListSummary.make(from: [olderDraft, newestFinished, latestDraft])
+
+        XCTAssertEqual(summary.latestProject?.id, "newest-finished")
+        XCTAssertEqual(summary.latestInProgressProject?.id, "latest-draft")
+        XCTAssertEqual(summary.latestInProgressContinuationRequest?.project.id, "latest-draft")
+        XCTAssertEqual(summary.latestInProgressContinuationRequest?.focus, .review)
+    }
+
     func testEmptyListSummaryHasNoProjects() {
         let summary = MomentsProjectListSummary.make(from: [])
 
@@ -51,6 +64,8 @@ final class MomentsProjectStatusRulesTests: XCTestCase {
         XCTAssertEqual(summary.inProgressCount, 0)
         XCTAssertEqual(summary.finishedCount, 0)
         XCTAssertNil(summary.latestProject)
+        XCTAssertNil(summary.latestInProgressProject)
+        XCTAssertNil(summary.latestInProgressContinuationRequest)
         XCTAssertFalse(summary.hasProjects)
     }
 

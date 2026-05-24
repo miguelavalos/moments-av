@@ -8,8 +8,9 @@ struct MomentsHomeScreen: View {
     let continueProject: (MomentsProjectContinuationRequest) -> Void
     let signInActions: AnyView
     private var projectSummary: MomentsProjectListSummary { viewModel.projectSummary }
-    private var latestInProgressProject: MomentDraftProject? {
-        projectSummary.groups.inProgress.first
+    private var latestInProgressProject: MomentDraftProject? { projectSummary.latestInProgressProject }
+    private var latestInProgressContinuationRequest: MomentsProjectContinuationRequest? {
+        projectSummary.latestInProgressContinuationRequest
     }
     private var latestInProgressProjectDetail: String {
         guard let latestInProgressProject else { return "" }
@@ -107,7 +108,9 @@ struct MomentsHomeScreen: View {
                                 systemImage: "arrow.right.circle",
                                 isProminent: true
                             ) {
-                                continueProject(MomentsProjectContinuationRequest(project: latestInProgressProject))
+                                if let latestInProgressContinuationRequest {
+                                    continueProject(latestInProgressContinuationRequest)
+                                }
                             }
                         }
 
