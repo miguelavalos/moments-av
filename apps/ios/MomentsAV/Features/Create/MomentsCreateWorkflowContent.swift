@@ -33,17 +33,7 @@ struct MomentsCreateWorkflowContent: View {
             form: $viewModel.form,
             templateSelection: templateSelection,
             templates: viewModel.templates,
-            isDraftLocked: viewModel.isDraftLocked,
-            isCreatingDraft: viewModel.isCreatingDraft,
-            canCreateDraft: viewModel.canCreateDraft,
-            availabilityMessage: viewModel.draftAvailabilityMessage,
-            createdProjectId: viewModel.createdProjectId,
-            isContinuingProject: viewModel.isContinuingProject,
-            canStartAnotherProject: viewModel.canStartAnotherProject,
-            draftErrorMessage: viewModel.draftErrorMessage,
-            workspaceSummary: viewModel.workspaceSummary,
-            canAfford: viewModel.canAfford,
-            spendPlanDescription: viewModel.spendPlanDescription,
+            presentation: viewModel.draftSetupPresentation,
             createDraft: viewModel.createDraft,
             startAnotherProject: viewModel.startAnotherProject
         )

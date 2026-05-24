@@ -5,17 +5,7 @@ struct MomentsCreateDraftSetupCard: View {
     @Binding var form: MomentDraftForm
     let templateSelection: Binding<MomentTemplateID>
     let templates: [MomentTemplate]
-    let isDraftLocked: Bool
-    let isCreatingDraft: Bool
-    let canCreateDraft: Bool
-    let availabilityMessage: String?
-    let createdProjectId: String?
-    let isContinuingProject: Bool
-    let canStartAnotherProject: Bool
-    let draftErrorMessage: String?
-    let workspaceSummary: MomentsCreateWorkspaceSummary
-    let canAfford: (MomentTemplate) -> Bool
-    let spendPlanDescription: (MomentTemplate) -> String
+    let presentation: MomentsCreateDraftSetupPresentation
     let createDraft: () -> Void
     let startAnotherProject: () -> Void
 
@@ -30,62 +20,58 @@ struct MomentsCreateDraftSetupCard: View {
                         Text(template.title).tag(template.id)
                     }
                 }
-                .disabled(isDraftLocked)
+                .disabled(presentation.isDraftLocked)
 
                 TextField("Occasion", text: $form.occasion)
-                    .disabled(isDraftLocked)
+                    .disabled(presentation.isDraftLocked)
                 TextField("Who is this for?", text: $form.recipient)
-                    .disabled(isDraftLocked)
+                    .disabled(presentation.isDraftLocked)
 
                 Picker("Tone", selection: $form.tone) {
                     ForEach(MomentDraftTone.allCases) { tone in
                         Text(tone.title).tag(tone)
                     }
                 }
-                .disabled(isDraftLocked)
+                .disabled(presentation.isDraftLocked)
 
                 Picker("Tempo", selection: $form.tempo) {
                     ForEach(MomentDraftTempo.allCases) { tempo in
                         Text(tempo.title).tag(tempo)
                     }
                 }
-                .disabled(isDraftLocked)
+                .disabled(presentation.isDraftLocked)
 
                 TextField("Details for Avi", text: $form.details, axis: .vertical)
                     .lineLimit(3...5)
-                    .disabled(isDraftLocked)
+                    .disabled(presentation.isDraftLocked)
 
                 Divider()
 
-                MomentsCreateTemplateSummary(
-                    template: form.template,
-                    canAfford: canAfford(form.template),
-                    spendPlanDescription: spendPlanDescription(form.template)
-                )
+                MomentsCreateTemplateSummary(presentation: presentation.templateSummary)
 
                 Button(action: createDraft) {
-                    Text(isCreatingDraft ? "Creating draft..." : "Create draft")
+                    Text(presentation.createDraftTitle)
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.borderedProminent)
-                .disabled(!canCreateDraft || isCreatingDraft)
+                .disabled(!presentation.canCreateDraft || presentation.isCreatingDraft)
 
-                if let availabilityMessage {
+                if let availabilityMessage = presentation.availabilityMessage {
                     MomentsCreateAvailabilityMessage(message: availabilityMessage)
                 }
 
-                if let createdProjectId {
-                    Text("\(activeProjectLabel): \(createdProjectId)")
+                if let createdProjectId = presentation.createdProjectId {
+                    Text("\(presentation.activeProjectLabel): \(createdProjectId)")
                         .font(.caption)
                         .foregroundStyle(.secondary)
-                    Text(activeProjectDetail)
+                    Text(presentation.activeProjectDetail)
                         .font(.caption)
                         .foregroundStyle(.secondary)
 
                     Divider()
 
                     MomentsCreateWorkspaceProgress(
-                        summary: workspaceSummary,
+                        summary: presentation.workspaceSummary,
                         minimumMediaCount: form.template.minimumAssets,
                     )
 
@@ -94,10 +80,10 @@ struct MomentsCreateDraftSetupCard: View {
                             .frame(maxWidth: .infinity)
                     }
                     .buttonStyle(.bordered)
-                    .disabled(!canStartAnotherProject)
+                    .disabled(!presentation.canStartAnotherProject)
                 }
 
-                if let draftErrorMessage {
+                if let draftErrorMessage = presentation.draftErrorMessage {
                     Text(draftErrorMessage)
                         .font(.caption)
                         .foregroundStyle(.red)
@@ -105,42 +91,30 @@ struct MomentsCreateDraftSetupCard: View {
             }
         }
     }
-
-    private var activeProjectLabel: String {
-        isContinuingProject ? "Continuing project" : "Draft created"
-    }
-
-    private var activeProjectDetail: String {
-        isContinuingProject
-            ? "Create is attached to this existing project."
-            : "Draft setup is locked for this project."
-    }
 }
 
 struct MomentsCreateTemplateSummary: View {
-    let template: MomentTemplate
-    let canAfford: Bool
-    let spendPlanDescription: String
+    let presentation: MomentsCreateTemplateSummaryPresentation
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack(alignment: .top) {
                 VStack(alignment: .leading, spacing: 8) {
-                    Text(template.title)
+                    Text(presentation.template.title)
                         .font(.headline)
-                    Text(template.summary)
+                    Text(presentation.template.summary)
                         .foregroundStyle(.secondary)
-                    Text("\(template.duration) · \(template.mediaRange)")
+                    Text(presentation.metadataTitle)
                         .font(.caption)
                         .foregroundStyle(.secondary)
-                    Text(spendPlanDescription)
+                    Text(presentation.spendPlanDescription)
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
                 Spacer()
-                Text("\(template.creditCost) cr")
+                Text(presentation.creditTitle)
                     .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(canAfford ? .green : .secondary)
+                    .foregroundStyle(presentation.canAfford ? .green : .secondary)
             }
         }
     }

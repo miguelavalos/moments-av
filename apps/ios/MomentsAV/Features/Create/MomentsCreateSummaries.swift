@@ -25,6 +25,51 @@ struct MomentsCreateWorkflowPresentation: Equatable {
     }
 }
 
+struct MomentsCreateDraftSetupPresentation: Equatable {
+    var templateSummary: MomentsCreateTemplateSummaryPresentation
+    var isDraftLocked = false
+    var isCreatingDraft = false
+    var canCreateDraft = false
+    var availabilityMessage: String?
+    var createdProjectId: String?
+    var isContinuingProject = false
+    var canStartAnotherProject = false
+    var draftErrorMessage: String?
+    var workspaceSummary: MomentsCreateWorkspaceSummary
+
+    var createDraftTitle: String {
+        isCreatingDraft ? "Creating draft..." : "Create draft"
+    }
+
+    var activeProjectLabel: String {
+        isContinuingProject ? "Continuing project" : "Draft created"
+    }
+
+    var activeProjectDetail: String {
+        isContinuingProject
+            ? "Create is attached to this existing project."
+            : "Draft setup is locked for this project."
+    }
+
+    var showsActiveProject: Bool {
+        createdProjectId != nil
+    }
+}
+
+struct MomentsCreateTemplateSummaryPresentation: Equatable {
+    var template: MomentTemplate
+    var canAfford = false
+    var spendPlanDescription: String
+
+    var creditTitle: String {
+        "\(template.creditCost) cr"
+    }
+
+    var metadataTitle: String {
+        "\(template.duration) · \(template.mediaRange)"
+    }
+}
+
 struct MomentsCreateWorkspaceSummary: Equatable {
     var mediaCount = 0
     var sceneCount = 0

@@ -2,6 +2,58 @@ import XCTest
 @testable import MomentsAV
 
 final class MomentsCreateWorkflowPresentationTests: XCTestCase {
+    func testDraftSetupPresentationFormatsIdleDraftState() {
+        let presentation = MomentsCreateDraftSetupPresentation(
+            templateSummary: MomentsCreateTemplateSummaryPresentation(
+                template: .birthdayMessage,
+                canAfford: true,
+                spendPlanDescription: "Uses 2 monthly credits."
+            ),
+            canCreateDraft: true,
+            workspaceSummary: MomentsCreateWorkspaceSummary()
+        )
+
+        XCTAssertEqual(presentation.createDraftTitle, "Create draft")
+        XCTAssertFalse(presentation.showsActiveProject)
+        XCTAssertEqual(presentation.templateSummary.creditTitle, "2 cr")
+        XCTAssertEqual(presentation.templateSummary.metadataTitle, "\(MomentTemplate.birthdayMessage.duration) · \(MomentTemplate.birthdayMessage.mediaRange)")
+    }
+
+    func testDraftSetupPresentationFormatsActiveContinuingProjectState() {
+        let presentation = MomentsCreateDraftSetupPresentation(
+            templateSummary: MomentsCreateTemplateSummaryPresentation(
+                template: .partyRecap,
+                canAfford: false,
+                spendPlanDescription: "Buy credits to continue."
+            ),
+            isDraftLocked: true,
+            isCreatingDraft: true,
+            canCreateDraft: false,
+            availabilityMessage: "Draft is locked.",
+            createdProjectId: "project-1",
+            isContinuingProject: true,
+            canStartAnotherProject: true,
+            draftErrorMessage: "Draft failed.",
+            workspaceSummary: MomentsCreateWorkspaceSummary(mediaCount: 2, sceneCount: 1)
+        )
+
+        XCTAssertEqual(presentation.createDraftTitle, "Creating draft...")
+        XCTAssertEqual(presentation.activeProjectLabel, "Continuing project")
+        XCTAssertEqual(presentation.activeProjectDetail, "Create is attached to this existing project.")
+        XCTAssertTrue(presentation.showsActiveProject)
+        XCTAssertTrue(presentation.isDraftLocked)
+        XCTAssertTrue(presentation.isCreatingDraft)
+        XCTAssertFalse(presentation.canCreateDraft)
+        XCTAssertEqual(presentation.availabilityMessage, "Draft is locked.")
+        XCTAssertEqual(presentation.createdProjectId, "project-1")
+        XCTAssertTrue(presentation.canStartAnotherProject)
+        XCTAssertEqual(presentation.draftErrorMessage, "Draft failed.")
+        XCTAssertEqual(presentation.workspaceSummary.mediaCount, 2)
+        XCTAssertEqual(presentation.workspaceSummary.sceneCount, 1)
+        XCTAssertFalse(presentation.templateSummary.canAfford)
+        XCTAssertEqual(presentation.templateSummary.creditTitle, "3 cr")
+    }
+
     func testWorkflowPresentationHidesWorkflowCardsWithoutProject() {
         let presentation = MomentsCreateWorkflowPresentation(
             createdProjectId: nil,

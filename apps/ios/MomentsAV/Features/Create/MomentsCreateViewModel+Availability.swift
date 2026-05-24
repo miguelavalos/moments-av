@@ -132,6 +132,25 @@ extension MomentsCreateViewModel {
         )
     }
 
+    var draftSetupPresentation: MomentsCreateDraftSetupPresentation {
+        MomentsCreateDraftSetupPresentation(
+            templateSummary: MomentsCreateTemplateSummaryPresentation(
+                template: form.template,
+                canAfford: canAfford(form.template),
+                spendPlanDescription: spendPlanDescription(for: form.template)
+            ),
+            isDraftLocked: isDraftLocked,
+            isCreatingDraft: isCreatingDraft,
+            canCreateDraft: canCreateDraft,
+            availabilityMessage: draftAvailabilityMessage,
+            createdProjectId: createdProjectId,
+            isContinuingProject: isContinuingProject,
+            canStartAnotherProject: canStartAnotherProject,
+            draftErrorMessage: draftErrorMessage,
+            workspaceSummary: workspaceSummary
+        )
+    }
+
     func spendPlanDescription(for template: MomentTemplate) -> String {
         MomentsCreateFormatting.spendPlanDescription(
             projectCreationWorkflow?.spendPlan(for: template)
