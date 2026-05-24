@@ -42,58 +42,6 @@ struct MomentsProjectRepository {
         )
     }
 
-    func savePreviewResult(
-        ownerUserId: String,
-        projectId: String,
-        preview: MomentsPreviewResponse,
-        template: MomentTemplate
-    ) async throws {
-        try await saveRenderResult(
-            ownerUserId: ownerUserId,
-            projectId: projectId,
-            request: RenderResultPersistenceRequest(
-                renderKind: "preview",
-                artifactKind: "preview",
-                workflowRunId: preview.workflowRunId,
-                creditReservationId: nil,
-                provider: preview.provider,
-                model: preview.model,
-                providerRequestId: preview.renderJobId,
-                r2Key: preview.r2Key,
-                durationSeconds: template.durationSeconds,
-                creditCost: 0,
-                hasWatermark: preview.hasWatermark,
-                status: preview.status
-            )
-        )
-    }
-
-    func saveFinalRenderResult(
-        ownerUserId: String,
-        projectId: String,
-        finalRender: MomentsFinalRenderResponse,
-        template: MomentTemplate
-    ) async throws {
-        try await saveRenderResult(
-            ownerUserId: ownerUserId,
-            projectId: projectId,
-            request: RenderResultPersistenceRequest(
-                renderKind: "final",
-                artifactKind: "final_export",
-                workflowRunId: finalRender.workflowRunId,
-                creditReservationId: finalRender.reservationId,
-                provider: finalRender.provider,
-                model: finalRender.model,
-                providerRequestId: finalRender.renderJobId,
-                r2Key: finalRender.r2Key,
-                durationSeconds: template.durationSeconds,
-                creditCost: finalRender.creditsCommitted,
-                hasWatermark: false,
-                status: finalRender.status
-            )
-        )
-    }
-
     func updateRenderJobStatus(
         ownerUserId: String,
         renderJobId: String,
