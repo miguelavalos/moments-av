@@ -154,15 +154,90 @@ private struct MomentsProjectArtifactDetail: View {
     let artifact: MomentArtifact
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text(artifact.r2Key)
-                .font(.caption)
-                .foregroundStyle(.secondary)
-                .textSelection(.enabled)
-            Text(MomentsProjectFormatting.artifactDetail(artifact))
-                .font(.caption)
-                .foregroundStyle(.secondary)
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(alignment: .center, spacing: 8) {
+                MomentsProjectArtifactStatusBadge(status: artifact.status)
+
+                Text(MomentsProjectStatusRules.displayKind(artifact.kind))
+                    .font(.caption.weight(.semibold))
+
+                Spacer(minLength: 0)
+            }
+
+            LazyVGrid(
+                columns: [GridItem(.flexible()), GridItem(.flexible())],
+                alignment: .leading,
+                spacing: 8
+            ) {
+                MomentsProjectArtifactMetadataItem(
+                    title: "Watermark",
+                    value: artifact.hasWatermark == true ? "Included" : "None"
+                )
+                MomentsProjectArtifactMetadataItem(
+                    title: "Expires",
+                    value: MomentsDateFormatting.formattedDate(milliseconds: artifact.expiresAt)
+                )
+            }
+
+            VStack(alignment: .leading, spacing: 3) {
+                Text("Storage key")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(.secondary)
+                Text(artifact.r2Key)
+                    .font(.caption.monospaced())
+                    .foregroundStyle(.secondary)
+                    .textSelection(.enabled)
+                    .lineLimit(3)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
         }
+        .frame(maxWidth: .infinity, alignment: .topLeading)
+        .padding(10)
+        .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 8))
+    }
+}
+
+private struct MomentsProjectArtifactStatusBadge: View {
+    let status: String
+
+    var body: some View {
+        Text(MomentsProjectStatusRules.displayTitle(for: status))
+            .font(.caption2.weight(.semibold))
+            .padding(.horizontal, 8)
+            .padding(.vertical, 4)
+            .background(statusColor.opacity(0.14), in: Capsule())
+            .foregroundStyle(statusColor)
+    }
+
+    private var statusColor: Color {
+        switch status {
+        case "available", "completed":
+            .green
+        case "failed", "error", "blocked":
+            .red
+        case "processing", "queued", "rendering":
+            .orange
+        default:
+            .secondary
+        }
+    }
+}
+
+private struct MomentsProjectArtifactMetadataItem: View {
+    let title: String
+    let value: String
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Text(title)
+                .font(.caption2.weight(.semibold))
+                .foregroundStyle(.secondary)
+            Text(value)
+                .font(.caption.weight(.semibold))
+                .lineLimit(2)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .frame(maxWidth: .infinity, alignment: .topLeading)
     }
 }
 
