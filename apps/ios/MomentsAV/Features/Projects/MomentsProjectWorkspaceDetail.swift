@@ -12,6 +12,7 @@ struct MomentsProjectWorkspaceDetail: View {
                 .font(.headline)
 
             header
+            MomentsProjectNextActionRow(action: MomentsProjectStatusRules.nextAction(for: workspace))
             MomentsProjectWorkspaceSummary(workspace: workspace)
             MomentsProjectProgressSection(workspace: workspace)
 
@@ -58,6 +59,33 @@ struct MomentsProjectWorkspaceDetail: View {
         }
         .buttonStyle(.bordered)
         .disabled(isDeletingProject)
+    }
+}
+
+private struct MomentsProjectNextActionRow: View {
+    let action: MomentsProjectNextAction
+
+    var body: some View {
+        HStack(alignment: .top, spacing: 10) {
+            Image(systemName: action.systemImage)
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(MomentsTheme.brandPalette.accent)
+                .frame(width: 22)
+
+            VStack(alignment: .leading, spacing: 3) {
+                Text(action.title)
+                    .font(.caption.weight(.semibold))
+                Text(action.message)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+
+            Spacer(minLength: 0)
+        }
+        .frame(maxWidth: .infinity, alignment: .topLeading)
+        .padding(10)
+        .background(MomentsTheme.brandPalette.accent.opacity(0.08), in: RoundedRectangle(cornerRadius: 8))
     }
 }
 

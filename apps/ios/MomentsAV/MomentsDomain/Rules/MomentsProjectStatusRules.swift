@@ -35,6 +35,12 @@ struct MomentsProjectListSummary: Equatable {
     }
 }
 
+struct MomentsProjectNextAction: Equatable {
+    let title: String
+    let message: String
+    let systemImage: String
+}
+
 extension MomentsProjectGroups: Equatable {
     init() {
         self.init(inProgress: [], finished: [])
@@ -51,9 +57,11 @@ enum MomentsProjectStatusRules {
     }
 
     static func group(_ projects: [MomentDraftProject]) -> MomentsProjectGroups {
-        MomentsProjectGroups(
-            inProgress: projects.filter { !isFinished($0) },
-            finished: projects.filter(isFinished)
+        let sortedProjects = projects.sortedByLatestUpdate()
+
+        return MomentsProjectGroups(
+            inProgress: sortedProjects.filter { !isFinished($0) },
+            finished: sortedProjects.filter(isFinished)
         )
     }
 
@@ -67,5 +75,77 @@ enum MomentsProjectStatusRules {
         kind
             .replacingOccurrences(of: "_", with: " ")
             .capitalized
+    }
+
+    static func nextAction(for workspace: MomentProjectWorkspace) -> MomentsProjectNextAction {
+        if let failedJob = workspace.renderJobs.latest(where: { isFailureStatus($0.status) }) {
+            return MomentsProjectNextAction(
+                title: "Review render issue",
+                message: "\(displayKind(failedJob.kind)) failed. Return to Create and refresh or retry the render.",
+                systemImage: "exclamationmark.triangle"
+            )
+        }
+
+        if workspace.mediaAssets.isEmpty {
+            return MomentsProjectNextAction(
+                title: "Add media",
+                message: "Continue in Create and add photos or clips before generating the story.",
+                systemImage: "photo.badge.plus"
+            )
+        }
+
+        if workspace.storyScenes.isEmpty {
+            return MomentsProjectNextAction(
+                title: "Generate story",
+                message: "Continue in Create and ask Avi to draft the story scenes.",
+                systemImage: "text.bubble"
+            )
+        }
+
+        if !workspace.artifacts.containsAvailable(kind: "preview") {
+            return MomentsProjectNextAction(
+                title: "Generate preview",
+                message: "Create a preview to check pacing before spending credits on the final export.",
+                systemImage: "play.rectangle"
+            )
+        }
+
+        if !workspace.artifacts.containsAvailable(kind: "final_export") {
+            return MomentsProjectNextAction(
+                title: "Render final export",
+                message: "Preview is ready. Continue in Create to generate the final export.",
+                systemImage: "square.and.arrow.up"
+            )
+        }
+
+        return MomentsProjectNextAction(
+            title: "Finished",
+            message: "Final export is available.",
+            systemImage: "checkmark.circle"
+        )
+    }
+
+    private static func isFailureStatus(_ status: String) -> Bool {
+        ["failed", "error", "blocked"].contains(status)
+    }
+}
+
+private extension [MomentDraftProject] {
+    func sortedByLatestUpdate() -> [MomentDraftProject] {
+        sorted { $0.updatedAt > $1.updatedAt }
+    }
+}
+
+private extension [MomentRenderJob] {
+    func latest(where predicate: (MomentRenderJob) -> Bool) -> MomentRenderJob? {
+        filter(predicate)
+            .sorted { $0.updatedAt < $1.updatedAt }
+            .last
+    }
+}
+
+private extension [MomentArtifact] {
+    func containsAvailable(kind: String) -> Bool {
+        contains { $0.kind == kind && $0.status == "available" }
     }
 }
