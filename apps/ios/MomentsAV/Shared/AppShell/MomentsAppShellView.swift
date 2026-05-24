@@ -29,8 +29,8 @@ struct MomentsAppShellView: View {
         case .home:
             MomentsHomeScreen(
                 selectTab: { selectedTab = $0 },
-                continueProject: { project in
-                    createViewModel.continueProject(project, focus: .review)
+                continueProject: { request in
+                    createViewModel.continueProject(request.project, focus: request.focus)
                     selectedTab = .create
                 },
                 signInActions: AnyView(SignInActionsView(authenticationController: accountController))
@@ -38,8 +38,8 @@ struct MomentsAppShellView: View {
         case .create:
             MomentsCreateScreen()
         case .projects:
-            MomentsProjectsScreen { project, focus in
-                createViewModel.continueProject(project, focus: focus)
+            MomentsProjectsScreen { request in
+                createViewModel.continueProject(request.project, focus: request.focus)
                 selectedTab = .create
             }
         case .avi:

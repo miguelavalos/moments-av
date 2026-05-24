@@ -51,6 +51,16 @@ struct MomentsProjectNextAction: Equatable {
     let continuationFocus: MomentsProjectContinuationFocus
 }
 
+struct MomentsProjectContinuationRequest: Equatable {
+    let project: MomentDraftProject
+    let focus: MomentsProjectContinuationFocus
+
+    init(project: MomentDraftProject, focus: MomentsProjectContinuationFocus = .review) {
+        self.project = project
+        self.focus = focus
+    }
+}
+
 extension MomentsProjectGroups: Equatable {
     init() {
         self.init(inProgress: [], finished: [])

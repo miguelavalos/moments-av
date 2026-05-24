@@ -5,7 +5,7 @@ struct MomentsHomeScreen: View {
     @EnvironmentObject private var viewModel: MomentsHomeViewModel
 
     let selectTab: (MomentsRootTab) -> Void
-    let continueProject: (MomentDraftProject) -> Void
+    let continueProject: (MomentsProjectContinuationRequest) -> Void
     let signInActions: AnyView
     private var projectSummary: MomentsProjectListSummary { viewModel.projectSummary }
     private var latestInProgressProject: MomentDraftProject? {
@@ -18,7 +18,7 @@ struct MomentsHomeScreen: View {
 
     init(
         selectTab: @escaping (MomentsRootTab) -> Void,
-        continueProject: @escaping (MomentDraftProject) -> Void,
+        continueProject: @escaping (MomentsProjectContinuationRequest) -> Void,
         signInActions: AnyView
     ) {
         self.selectTab = selectTab
@@ -107,7 +107,7 @@ struct MomentsHomeScreen: View {
                                 systemImage: "arrow.right.circle",
                                 isProminent: true
                             ) {
-                                continueProject(latestInProgressProject)
+                                continueProject(MomentsProjectContinuationRequest(project: latestInProgressProject))
                             }
                         }
 
