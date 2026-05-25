@@ -31,49 +31,49 @@ final class MomentsDependencyContainer: ObservableObject {
         let resolvedWorkspaceObserver = workspaceObserver ?? MomentsWorkspaceObserver(projectRepository: projectRepository)
         self.projectsObserver = resolvedProjectsObserver
         self.workspaceObserver = resolvedWorkspaceObserver
-        self.projectDeletionWorkflow = Self.makeProjectDeletionWorkflow(
+        self.projectDeletionWorkflow = ProjectDeletionWorkflow(
             currentUserProvider: accountController,
             projectDeleter: projectRepository
         )
-        self.projectWorkspaceSelectionWorkflow = Self.makeProjectWorkspaceSelectionWorkflow(
-            workspaceObserver: resolvedWorkspaceObserver
-        )
-        self.projectsListWorkflow = Self.makeProjectsListWorkflow(
+        self.projectWorkspaceSelectionWorkflow = ProjectWorkspaceSelectionWorkflow(workspaceObserver: resolvedWorkspaceObserver)
+        self.projectsListWorkflow = ProjectsListWorkflow(
             projectsObserver: resolvedProjectsObserver,
             workspaceSelectionWorkflow: projectWorkspaceSelectionWorkflow,
             projectDeletionWorkflow: projectDeletionWorkflow
         )
-        self.projectCreationWorkflow = Self.makeProjectCreationWorkflow(
+        self.projectCreationWorkflow = ProjectCreationWorkflow(
             currentUserProvider: accountController,
             creditBalanceProvider: accountController,
             projectCreator: projectRepository,
             workspaceObserver: resolvedWorkspaceObserver
         )
-        self.mediaUploadWorkflow = Self.makeMediaUploadWorkflow(
+        self.mediaUploadWorkflow = MediaUploadWorkflow(
             currentUserProvider: accountController,
             mediaAssetSaver: projectRepository,
             workspaceObserver: resolvedWorkspaceObserver,
-            clients: clients
+            uploadClient: clients.upload
         )
-        self.storyDraftWorkflow = Self.makeStoryDraftWorkflow(
+        self.storyDraftWorkflow = StoryDraftWorkflow(
             currentUserProvider: accountController,
             storyDraftSaver: projectRepository,
             workspaceObserver: resolvedWorkspaceObserver,
-            clients: clients
+            storyClient: clients.story
         )
-        self.previewGenerationWorkflow = Self.makePreviewGenerationWorkflow(
+        self.previewGenerationWorkflow = PreviewGenerationWorkflow(
             currentUserProvider: accountController,
             creditBalanceProvider: accountController,
             previewResultSaver: projectRepository,
             workspaceObserver: resolvedWorkspaceObserver,
-            clients: clients
+            previewClient: clients.preview,
+            statusClient: clients.renderStatus
         )
-        self.finalRenderWorkflow = Self.makeFinalRenderWorkflow(
+        self.finalRenderWorkflow = FinalRenderWorkflow(
             currentUserProvider: accountController,
             creditBalanceProvider: accountController,
             finalRenderResultSaver: projectRepository,
             workspaceObserver: resolvedWorkspaceObserver,
-            clients: clients
+            finalRenderClient: clients.finalRender,
+            statusClient: clients.renderStatus
         )
         self.homeViewModel = MomentsHomeViewModel()
         self.createViewModel = MomentsCreateViewModel()
@@ -93,110 +93,6 @@ final class MomentsDependencyContainer: ObservableObject {
 }
 
 private extension MomentsDependencyContainer {
-    static func makeProjectsListWorkflow(
-        projectsObserver: any MomentsActiveProjectsObserving,
-        workspaceSelectionWorkflow: ProjectWorkspaceSelectionWorkflow,
-        projectDeletionWorkflow: ProjectDeletionWorkflow
-    ) -> ProjectsListWorkflow {
-        ProjectsListWorkflow(
-            projectsObserver: projectsObserver,
-            workspaceSelectionWorkflow: workspaceSelectionWorkflow,
-            projectDeletionWorkflow: projectDeletionWorkflow
-        )
-    }
-
-    static func makeProjectWorkspaceSelectionWorkflow(
-        workspaceObserver: any MomentsActiveWorkspaceObserving
-    ) -> ProjectWorkspaceSelectionWorkflow {
-        ProjectWorkspaceSelectionWorkflow(workspaceObserver: workspaceObserver)
-    }
-
-    static func makeProjectDeletionWorkflow(
-        currentUserProvider: any MomentsCurrentUserProviding,
-        projectDeleter: any MomentsProjectDeleting
-    ) -> ProjectDeletionWorkflow {
-        ProjectDeletionWorkflow(
-            currentUserProvider: currentUserProvider,
-            projectDeleter: projectDeleter
-        )
-    }
-
-    static func makeProjectCreationWorkflow(
-        currentUserProvider: any MomentsCurrentUserProviding,
-        creditBalanceProvider: any MomentsCreditBalanceProviding,
-        projectCreator: any MomentsProjectCreating,
-        workspaceObserver: any MomentsActiveWorkspaceObserving
-    ) -> ProjectCreationWorkflow {
-        ProjectCreationWorkflow(
-            currentUserProvider: currentUserProvider,
-            creditBalanceProvider: creditBalanceProvider,
-            projectCreator: projectCreator,
-            workspaceObserver: workspaceObserver
-        )
-    }
-
-    static func makeMediaUploadWorkflow(
-        currentUserProvider: any MomentsCurrentUserProviding,
-        mediaAssetSaver: any MomentsMediaAssetSaving,
-        workspaceObserver: any MomentsActiveWorkspaceObserving,
-        clients: MomentsWorkflowClients
-    ) -> MediaUploadWorkflow {
-        MediaUploadWorkflow(
-            currentUserProvider: currentUserProvider,
-            mediaAssetSaver: mediaAssetSaver,
-            workspaceObserver: workspaceObserver,
-            uploadClient: clients.upload
-        )
-    }
-
-    static func makeStoryDraftWorkflow(
-        currentUserProvider: any MomentsCurrentUserProviding,
-        storyDraftSaver: any MomentsStoryDraftSaving,
-        workspaceObserver: any MomentsActiveWorkspaceObserving,
-        clients: MomentsWorkflowClients
-    ) -> StoryDraftWorkflow {
-        StoryDraftWorkflow(
-            currentUserProvider: currentUserProvider,
-            storyDraftSaver: storyDraftSaver,
-            workspaceObserver: workspaceObserver,
-            storyClient: clients.story
-        )
-    }
-
-    static func makePreviewGenerationWorkflow(
-        currentUserProvider: any MomentsCurrentUserProviding,
-        creditBalanceProvider: any MomentsCreditBalanceProviding,
-        previewResultSaver: any MomentsPreviewResultSaving,
-        workspaceObserver: any MomentsActiveWorkspaceObserving,
-        clients: MomentsWorkflowClients
-    ) -> PreviewGenerationWorkflow {
-        PreviewGenerationWorkflow(
-            currentUserProvider: currentUserProvider,
-            creditBalanceProvider: creditBalanceProvider,
-            previewResultSaver: previewResultSaver,
-            workspaceObserver: workspaceObserver,
-            previewClient: clients.preview,
-            statusClient: clients.renderStatus
-        )
-    }
-
-    static func makeFinalRenderWorkflow(
-        currentUserProvider: any MomentsCurrentUserProviding,
-        creditBalanceProvider: any MomentsCreditBalanceProviding,
-        finalRenderResultSaver: any MomentsFinalRenderResultSaving,
-        workspaceObserver: any MomentsActiveWorkspaceObserving,
-        clients: MomentsWorkflowClients
-    ) -> FinalRenderWorkflow {
-        FinalRenderWorkflow(
-            currentUserProvider: currentUserProvider,
-            creditBalanceProvider: creditBalanceProvider,
-            finalRenderResultSaver: finalRenderResultSaver,
-            workspaceObserver: workspaceObserver,
-            finalRenderClient: clients.finalRender,
-            statusClient: clients.renderStatus
-        )
-    }
-
     func bindViewModels() {
         homeViewModel.bind(to: projectsListWorkflow)
         homeViewModel.bind(accountStateProvider: accountController)
