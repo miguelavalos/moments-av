@@ -21,19 +21,19 @@ struct MomentsCreateWorkspaceProgress: View {
                 .font(.subheadline.weight(.semibold))
             MomentsCreateProgressRow(
                 title: "Media",
-                detail: "\(summary.mediaCount) synced",
+                detail: summary.mediaDetail,
                 isComplete: summary.mediaCount >= minimumMediaCount,
                 systemImage: "photo.on.rectangle"
             )
             MomentsCreateProgressRow(
                 title: "Story",
-                detail: "\(summary.sceneCount) scenes",
+                detail: summary.storyDetail,
                 isComplete: summary.sceneCount > 0,
                 systemImage: "text.bubble"
             )
             MomentsCreateProgressRow(
                 title: "Preview",
-                detail: summary.hasPreviewArtifact ? "Ready" : "\(summary.renderJobCount) render jobs",
+                detail: summary.previewDetail,
                 isComplete: summary.hasPreviewArtifact,
                 systemImage: "play.rectangle"
             )

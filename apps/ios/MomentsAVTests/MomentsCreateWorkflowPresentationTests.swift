@@ -170,6 +170,21 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         XCTAssertEqual(presentation.availabilityMessage, "Add media.")
     }
 
+    func testMediaPresentationUsesSingularMissingMediaCopy() {
+        let presentation = MomentsCreateMediaPresentation(
+            activeProjectId: "project-1",
+            template: .birthdayMessage,
+            summary: MomentsCreateMediaSummary(
+                selectedMedia: [
+                    makeSelectedMedia(id: "00000000-0000-0000-0000-000000000001"),
+                    makeSelectedMedia(id: "00000000-0000-0000-0000-000000000002")
+                ]
+            )
+        )
+
+        XCTAssertEqual(presentation.selectionMessage, "Add 1 more synced media asset.")
+    }
+
     func testStoryPresentationFormatsDraftStateAndSortsSavedScenes() {
         let presentation = MomentsCreateStoryPresentation(
             summary: MomentsCreateStorySummary(
@@ -272,6 +287,28 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         XCTAssertEqual(presentation.generateButtonTitle, "Render final")
         XCTAssertEqual(presentation.emptyMessage, "Generate a preview before rendering the final export.")
         XCTAssertTrue(presentation.showsEmptyState)
+    }
+
+    func testFinalRenderPresentationUsesSingularCreditCopy() {
+        let presentation = MomentsCreateFinalRenderPresentation(
+            summary: MomentsCreateFinalRenderSummary(creditCost: 1)
+        )
+
+        XCTAssertEqual(presentation.creditTitle, "1 credit")
+    }
+
+    func testWorkspaceSummaryFormatsProgressDetails() {
+        let summary = MomentsCreateWorkspaceSummary(
+            mediaCount: 2,
+            sceneCount: 1,
+            renderJobCount: 1,
+            hasPreviewArtifact: false,
+            hasFinalExport: false
+        )
+
+        XCTAssertEqual(summary.mediaDetail, "2 synced")
+        XCTAssertEqual(summary.storyDetail, "1 scene")
+        XCTAssertEqual(summary.previewDetail, "1 render job")
     }
 
     private func makeProject(id: String) -> MomentDraftProject {

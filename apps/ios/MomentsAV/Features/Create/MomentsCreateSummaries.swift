@@ -92,13 +92,17 @@ struct MomentsCreateMediaPresentation: Equatable {
     var selectionMessage: String {
         MomentsMediaRules.selectionMessage(
             MomentsMediaRules.availability(template: template, selectedCount: summary.selectedCount),
-            tooFewMessage: { "Add \($0) more synced media assets." },
-            tooManyMessage: { "Remove \($0) synced media assets." }
+            tooFewMessage: { "Add \($0) more synced \(Self.mediaAssetLabel($0))." },
+            tooManyMessage: { "Remove \($0) synced \(Self.mediaAssetLabel($0))." }
         )
     }
 
     var syncedMediaAssets: [MomentMediaAsset] {
         summary.syncedMediaAssets.sorted { $0.sortOrder < $1.sortOrder }
+    }
+
+    private static func mediaAssetLabel(_ count: Int) -> String {
+        count == 1 ? "media asset" : "media assets"
     }
 }
 
@@ -169,7 +173,7 @@ struct MomentsCreateFinalRenderPresentation: Equatable {
     var refreshAvailabilityMessage: String?
 
     var creditTitle: String {
-        "\(summary.creditCost) credits"
+        "\(summary.creditCost) \(summary.creditCost == 1 ? "credit" : "credits")"
     }
 
     var refreshButtonTitle: String {
@@ -198,6 +202,18 @@ struct MomentsCreateWorkspaceSummary: Equatable {
     var hasPreviewArtifact = false
     var hasFinalExport = false
 
+    var mediaDetail: String {
+        "\(mediaCount) synced"
+    }
+
+    var storyDetail: String {
+        Self.countTitle(sceneCount, singular: "scene", plural: "scenes")
+    }
+
+    var previewDetail: String {
+        hasPreviewArtifact ? "Ready" : Self.countTitle(renderJobCount, singular: "render job", plural: "render jobs")
+    }
+
     static func make(
         workspace: MomentProjectWorkspace?,
         latestPreview: MomentArtifact?,
@@ -210,6 +226,10 @@ struct MomentsCreateWorkspaceSummary: Equatable {
             hasPreviewArtifact: latestPreview != nil,
             hasFinalExport: finalExport != nil
         )
+    }
+
+    private static func countTitle(_ count: Int, singular: String, plural: String) -> String {
+        "\(count) \(count == 1 ? singular : plural)"
     }
 }
 
