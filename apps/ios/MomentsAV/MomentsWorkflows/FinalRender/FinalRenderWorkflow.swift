@@ -79,21 +79,15 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
         statusMessage = "Avi is preparing the final export."
 
         do {
-            let finalRender = try await finalRenderClient.generateFinalRender(
-                projectId: projectId,
-                ownerUserId: ownerUserId,
-                template: template
-            )
-            guard isCurrent(generation) else { return }
-            try await finalRenderResultSaver.saveFinalRenderResult(
+            statusMessage = try await FinalRenderGenerationRun.perform(
                 ownerUserId: ownerUserId,
                 projectId: projectId,
-                finalRender: finalRender,
-                template: template
+                template: template,
+                finalRenderClient: finalRenderClient,
+                finalRenderResultSaver: finalRenderResultSaver,
+                workspaceObserver: workspaceObserver,
+                shouldContinue: { isCurrent(generation) }
             )
-            guard isCurrent(generation) else { return }
-            workspaceObserver.observeWorkspace(ownerUserId: ownerUserId, projectId: projectId)
-            statusMessage = "Export ready. Credits were committed for the delivered render."
         } catch {
             guard isCurrent(generation) else { return }
             statusMessage = error.localizedDescription

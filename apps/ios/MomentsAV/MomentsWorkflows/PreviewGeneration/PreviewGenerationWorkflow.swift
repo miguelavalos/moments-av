@@ -81,22 +81,16 @@ final class PreviewGenerationWorkflow: WorkspaceObservingWorkflow {
         statusMessage = "Avi is preparing a preview."
 
         do {
-            let preview = try await previewClient.generatePreview(
-                projectId: projectId,
+            statusMessage = try await PreviewGenerationRun.perform(
                 ownerUserId: ownerUserId,
+                projectId: projectId,
+                project: project,
                 template: template,
-                previewIndex: Int(project.previewCount) + 1
+                previewClient: previewClient,
+                previewResultSaver: previewResultSaver,
+                workspaceObserver: workspaceObserver,
+                shouldContinue: { isCurrent(generation) }
             )
-            guard isCurrent(generation) else { return }
-            try await previewResultSaver.savePreviewResult(
-                ownerUserId: ownerUserId,
-                projectId: projectId,
-                preview: preview,
-                template: template
-            )
-            guard isCurrent(generation) else { return }
-            workspaceObserver.observeWorkspace(ownerUserId: ownerUserId, projectId: projectId)
-            statusMessage = "Preview ready. You can still refine the story before final render."
         } catch {
             guard isCurrent(generation) else { return }
             statusMessage = error.localizedDescription
