@@ -27,20 +27,13 @@ struct MomentsCreatePreviewCard: View {
                         .foregroundStyle(.secondary)
                 }
 
-                if let latestPreviewJob = presentation.summary.latestPreviewJob {
-                    MomentsCreateRenderJobStatusRow(renderJob: latestPreviewJob)
-
-                    Button(action: refreshPreviewStatus) {
-                        Text(presentation.refreshButtonTitle)
-                            .frame(maxWidth: .infinity)
-                    }
-                    .buttonStyle(.bordered)
-                    .disabled(!presentation.canRefreshPreviewStatus)
-
-                    if let refreshAvailabilityMessage = presentation.refreshAvailabilityMessage {
-                        MomentsCreateAvailabilityMessage(message: refreshAvailabilityMessage)
-                    }
-                }
+                MomentsCreateRefreshableRenderJobSection(
+                    renderJob: presentation.summary.latestPreviewJob,
+                    refreshButtonTitle: presentation.refreshButtonTitle,
+                    canRefresh: presentation.canRefreshPreviewStatus,
+                    refreshAvailabilityMessage: presentation.refreshAvailabilityMessage,
+                    refreshStatus: refreshPreviewStatus
+                )
 
                 if presentation.showsEmptyState {
                     MomentsCreateEmptySectionRow(
@@ -95,20 +88,13 @@ struct MomentsCreateFinalExportCard: View {
                         .textSelection(.enabled)
                 }
 
-                if let latestFinalJob = presentation.summary.latestFinalJob {
-                    MomentsCreateRenderJobStatusRow(renderJob: latestFinalJob)
-
-                    Button(action: refreshFinalRenderStatus) {
-                        Text(presentation.refreshButtonTitle)
-                            .frame(maxWidth: .infinity)
-                    }
-                    .buttonStyle(.bordered)
-                    .disabled(!presentation.canRefreshFinalRenderStatus)
-
-                    if let refreshAvailabilityMessage = presentation.refreshAvailabilityMessage {
-                        MomentsCreateAvailabilityMessage(message: refreshAvailabilityMessage)
-                    }
-                }
+                MomentsCreateRefreshableRenderJobSection(
+                    renderJob: presentation.summary.latestFinalJob,
+                    refreshButtonTitle: presentation.refreshButtonTitle,
+                    canRefresh: presentation.canRefreshFinalRenderStatus,
+                    refreshAvailabilityMessage: presentation.refreshAvailabilityMessage,
+                    refreshStatus: refreshFinalRenderStatus
+                )
 
                 if presentation.showsEmptyState {
                     MomentsCreateEmptySectionRow(
@@ -133,6 +119,32 @@ struct MomentsCreateFinalExportCard: View {
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
+            }
+        }
+    }
+}
+
+private struct MomentsCreateRefreshableRenderJobSection: View {
+    let renderJob: MomentRenderJob?
+    let refreshButtonTitle: String
+    let canRefresh: Bool
+    let refreshAvailabilityMessage: String?
+    let refreshStatus: () -> Void
+
+    @ViewBuilder
+    var body: some View {
+        if let renderJob {
+            MomentsCreateRenderJobStatusRow(renderJob: renderJob)
+
+            Button(action: refreshStatus) {
+                Text(refreshButtonTitle)
+                    .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(.bordered)
+            .disabled(!canRefresh)
+
+            if let refreshAvailabilityMessage {
+                MomentsCreateAvailabilityMessage(message: refreshAvailabilityMessage)
             }
         }
     }

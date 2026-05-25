@@ -15,35 +15,12 @@ struct MomentsCreateDraftSetupCard: View {
                 Text("Draft setup")
                     .font(.headline)
 
-                Picker("Template", selection: templateSelection) {
-                    ForEach(templates) { template in
-                        Text(template.title).tag(template.id)
-                    }
-                }
-                .disabled(presentation.isDraftLocked)
-
-                TextField("Occasion", text: $form.occasion)
-                    .disabled(presentation.isDraftLocked)
-                TextField("Who is this for?", text: $form.recipient)
-                    .disabled(presentation.isDraftLocked)
-
-                Picker("Tone", selection: $form.tone) {
-                    ForEach(MomentDraftTone.allCases) { tone in
-                        Text(tone.title).tag(tone)
-                    }
-                }
-                .disabled(presentation.isDraftLocked)
-
-                Picker("Tempo", selection: $form.tempo) {
-                    ForEach(MomentDraftTempo.allCases) { tempo in
-                        Text(tempo.title).tag(tempo)
-                    }
-                }
-                .disabled(presentation.isDraftLocked)
-
-                TextField("Details for Avi", text: $form.details, axis: .vertical)
-                    .lineLimit(3...5)
-                    .disabled(presentation.isDraftLocked)
+                MomentsCreateDraftFormFields(
+                    form: $form,
+                    templateSelection: templateSelection,
+                    templates: templates,
+                    isDraftLocked: presentation.isDraftLocked
+                )
 
                 Divider()
 
@@ -60,28 +37,11 @@ struct MomentsCreateDraftSetupCard: View {
                     MomentsCreateAvailabilityMessage(message: availabilityMessage)
                 }
 
-                if let activeProjectId = presentation.activeProjectId {
-                    Text("\(presentation.activeProjectLabel): \(activeProjectId)")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                    Text(presentation.activeProjectDetail)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-
-                    Divider()
-
-                    MomentsCreateWorkspaceProgress(
-                        summary: presentation.workspaceSummary,
-                        minimumMediaCount: form.template.minimumAssets,
-                    )
-
-                    Button(action: startAnotherProject) {
-                        Label("Start another project", systemImage: "plus.circle")
-                            .frame(maxWidth: .infinity)
-                    }
-                    .buttonStyle(.bordered)
-                    .disabled(!presentation.canStartAnotherProject)
-                }
+                MomentsCreateActiveDraftSection(
+                    presentation: presentation,
+                    minimumMediaCount: form.template.minimumAssets,
+                    startAnotherProject: startAnotherProject
+                )
 
                 if let draftErrorMessage = presentation.draftErrorMessage {
                     Text(draftErrorMessage)
@@ -89,6 +49,77 @@ struct MomentsCreateDraftSetupCard: View {
                         .foregroundStyle(.red)
                 }
             }
+        }
+    }
+}
+
+private struct MomentsCreateDraftFormFields: View {
+    @Binding var form: MomentDraftForm
+    let templateSelection: Binding<MomentTemplateID>
+    let templates: [MomentTemplate]
+    let isDraftLocked: Bool
+
+    var body: some View {
+        Picker("Template", selection: templateSelection) {
+            ForEach(templates) { template in
+                Text(template.title).tag(template.id)
+            }
+        }
+        .disabled(isDraftLocked)
+
+        TextField("Occasion", text: $form.occasion)
+            .disabled(isDraftLocked)
+        TextField("Who is this for?", text: $form.recipient)
+            .disabled(isDraftLocked)
+
+        Picker("Tone", selection: $form.tone) {
+            ForEach(MomentDraftTone.allCases) { tone in
+                Text(tone.title).tag(tone)
+            }
+        }
+        .disabled(isDraftLocked)
+
+        Picker("Tempo", selection: $form.tempo) {
+            ForEach(MomentDraftTempo.allCases) { tempo in
+                Text(tempo.title).tag(tempo)
+            }
+        }
+        .disabled(isDraftLocked)
+
+        TextField("Details for Avi", text: $form.details, axis: .vertical)
+            .lineLimit(3...5)
+            .disabled(isDraftLocked)
+    }
+}
+
+private struct MomentsCreateActiveDraftSection: View {
+    let presentation: MomentsCreateDraftSetupPresentation
+    let minimumMediaCount: Int
+    let startAnotherProject: () -> Void
+
+    @ViewBuilder
+    var body: some View {
+        if let activeProjectId = presentation.activeProjectId {
+            Text("\(presentation.activeProjectLabel): \(activeProjectId)")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+            Text(presentation.activeProjectDetail)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+
+            Divider()
+
+            MomentsCreateWorkspaceProgress(
+                summary: presentation.workspaceSummary,
+                minimumMediaCount: minimumMediaCount
+            )
+
+            Button(action: startAnotherProject) {
+                Label("Start another project", systemImage: "plus.circle")
+                    .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(.bordered)
+            .disabled(!presentation.canStartAnotherProject)
         }
     }
 }
