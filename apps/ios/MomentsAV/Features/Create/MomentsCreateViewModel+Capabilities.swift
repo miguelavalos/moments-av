@@ -1,6 +1,10 @@
 extension MomentsCreateViewModel {
     func canAfford(_ template: MomentTemplate) -> Bool {
-        projectCreationWorkflow?.canAfford(template) ?? false
+        if MomentsUITestEnvironment.current.createFixture == "full" {
+            return MomentsCreditGate.canAfford(template, balance: balance)
+        }
+
+        return projectCreationWorkflow?.canAfford(template) ?? false
     }
 
     var canCreateDraft: Bool {
@@ -64,12 +68,18 @@ extension MomentsCreateViewModel {
             template: form.template,
             previewRefreshAvailability: previewRefreshAvailability,
             finalRenderRefreshAvailability: finalRenderRefreshAvailability,
-            latestPreview: latestPreview
+            latestPreview: effectiveLatestPreview
         )
     }
 
     func spendPlanDescription(for template: MomentTemplate) -> String {
-        MomentsCreateFormatting.spendPlanDescription(
+        if MomentsUITestEnvironment.current.createFixture == "full" {
+            return MomentsCreateFormatting.spendPlanDescription(
+                MomentsCreditGate.spendPlan(for: template.creditCost, balance: balance)
+            )
+        }
+
+        return MomentsCreateFormatting.spendPlanDescription(
             projectCreationWorkflow?.spendPlan(for: template)
         )
     }

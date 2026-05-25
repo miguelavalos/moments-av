@@ -41,7 +41,11 @@ final class MomentsCreateViewModel: ObservableObject {
     var cancellables = Set<AnyCancellable>()
 
     var activeProject: MomentDraftProject? {
-        activeWorkspace?.project
+        if usesFullUITestFixture {
+            return MomentsCreateUITestFixtures.project
+        }
+
+        return activeWorkspace?.project
     }
 
     var activeProjectId: String? {
@@ -112,6 +116,72 @@ final class MomentsCreateViewModel: ObservableObject {
         continuationFocusHint = nil
     }
 
+    func applyUITestFullWorkflowFixture() {
+        guard MomentsUITestEnvironment.current.createFixture == "full" else { return }
+
+        let workspace = MomentsCreateUITestFixtures.workspace
+        let template = templates.first(where: { $0.id == workspace.project.template }) ?? MomentTemplate.birthdayMessage
+        form = MomentDraftForm(
+            template: template,
+            occasion: workspace.project.occasion ?? "Birthday",
+            recipient: "Ava",
+            tone: MomentDraftTone(rawValue: workspace.project.tone ?? "") ?? .warm,
+            tempo: MomentDraftTempo(rawValue: workspace.project.tempo ?? "") ?? .balanced,
+            details: workspace.project.details ?? ""
+        )
+        isSignedIn = true
+        balance = MomentsCreateUITestFixtures.balance
+        isContinuingProject = true
+        workflowActiveProjectId = workspace.project.id
+        draftErrorMessage = nil
+        selectedMedia = MomentsCreateUITestFixtures.selectedMedia
+        mediaStatusMessage = "3 assets synced. Avi selected the strongest opening order."
+        savedScenes = workspace.storyScenes
+        generatedScenes = []
+        storyStatusMessage = "Story draft ready for preview."
+        activeWorkspace = workspace
+        latestPreview = workspace.latestArtifact(kind: "preview")
+        latestPreviewJob = workspace.latestRenderJob(kind: "preview")
+        previewStatusMessage = "Preview is available with watermark."
+        finalExport = workspace.latestArtifact(kind: "final")
+        latestFinalJob = workspace.latestRenderJob(kind: "final")
+        finalRenderStatusMessage = "Final export is ready."
+        pendingFocus = .review
+        continuationFocusHint = .review
+    }
+
+    var effectiveActiveWorkspace: MomentProjectWorkspace? {
+        usesFullUITestFixture ? MomentsCreateUITestFixtures.workspace : activeWorkspace
+    }
+
+    var effectiveSelectedMedia: [MomentsSelectedMedia] {
+        usesFullUITestFixture ? MomentsCreateUITestFixtures.selectedMedia : selectedMedia
+    }
+
+    var effectiveSavedScenes: [MomentStoryScene] {
+        effectiveActiveWorkspace?.storyScenes ?? savedScenes
+    }
+
+    var effectiveLatestPreview: MomentArtifact? {
+        effectiveActiveWorkspace?.latestArtifact(kind: "preview") ?? latestPreview
+    }
+
+    var effectiveLatestPreviewJob: MomentRenderJob? {
+        effectiveActiveWorkspace?.latestRenderJob(kind: "preview") ?? latestPreviewJob
+    }
+
+    var effectiveFinalExport: MomentArtifact? {
+        effectiveActiveWorkspace?.latestArtifact(kind: "final") ?? finalExport
+    }
+
+    var effectiveLatestFinalJob: MomentRenderJob? {
+        effectiveActiveWorkspace?.latestRenderJob(kind: "final") ?? latestFinalJob
+    }
+
+    var usesFullUITestFixture: Bool {
+        MomentsUITestEnvironment.current.createFixture == "full"
+    }
+
     func resetActiveProject(force: Bool) {
         cancelOperations()
         isContinuingProject = false
@@ -136,18 +206,21 @@ extension MomentsCreateViewModel {
     }
 
     func applyProjectCreationState(_ state: MomentsCreateProjectCreationState) {
+        guard !usesFullUITestFixture else { return }
         isCreatingDraft = state.isCreatingDraft
         workflowActiveProjectId = state.activeProjectId
         draftErrorMessage = state.draftErrorMessage
     }
 
     func applyMediaUploadState(_ state: MomentsCreateMediaUploadState) {
+        guard !usesFullUITestFixture else { return }
         selectedMedia = state.selectedMedia
         mediaStatusMessage = state.statusMessage
         isImportingMedia = state.isImporting
     }
 
     func applyStoryDraftState(_ state: MomentsCreateStoryDraftState) {
+        guard !usesFullUITestFixture else { return }
         savedScenes = state.savedScenes
         generatedScenes = state.generatedScenes
         storyStatusMessage = state.statusMessage
@@ -155,6 +228,7 @@ extension MomentsCreateViewModel {
     }
 
     func applyPreviewGenerationState(_ state: MomentsCreatePreviewGenerationState) {
+        guard !usesFullUITestFixture else { return }
         activeWorkspace = state.activeWorkspace
         latestPreview = state.latestPreview
         latestPreviewJob = state.latestPreviewJob
@@ -164,6 +238,7 @@ extension MomentsCreateViewModel {
     }
 
     func applyFinalRenderState(_ state: MomentsCreateFinalRenderState) {
+        guard !usesFullUITestFixture else { return }
         finalExport = state.finalExport
         latestFinalJob = state.latestFinalJob
         finalRenderStatusMessage = state.statusMessage

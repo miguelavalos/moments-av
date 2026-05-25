@@ -3,6 +3,7 @@ import Foundation
 struct MomentsHomePresentation {
     let accountTitle: String
     let accountDetail: String
+    let aviBriefDetail: String
     let projectStatusDetail: String
     let createAction: MomentsHomeAction
     let reviewProjectsAction: MomentsHomeAction
@@ -28,6 +29,7 @@ struct MomentsHomePresentation {
         return MomentsHomePresentation(
             accountTitle: isSignedIn ? "Account connected" : "Account required",
             accountDetail: accountDetail(isSignedIn: isSignedIn, displayName: displayName),
+            aviBriefDetail: aviBriefDetail(isSignedIn: isSignedIn, projectSummary: projectSummary),
             projectStatusDetail: projectStatusDetail(projectSummary: projectSummary),
             createAction: MomentsHomeAction(
                 title: "Create a moment",
@@ -68,6 +70,22 @@ struct MomentsHomePresentation {
         }
 
         return "No synced projects yet."
+    }
+
+    private static func aviBriefDetail(isSignedIn: Bool, projectSummary: MomentsProjectListSummary) -> String {
+        guard isSignedIn else {
+            return "Sign in to let Avi guide drafts, previews, renders, and credits from one account."
+        }
+
+        if let latestProject = projectSummary.latestInProgressProject {
+            return "Avi can help continue \(latestProject.title) from the next unfinished step."
+        }
+
+        if projectSummary.hasProjects {
+            return "Avi can review your synced projects and help decide the next preview or final render."
+        }
+
+        return "Avi can help plan the first memory video before you add media."
     }
 
     private static func projectLabel(_ count: Int) -> String {

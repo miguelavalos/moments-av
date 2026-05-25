@@ -9,32 +9,34 @@ enum MomentsRootTab: String, CaseIterable, Identifiable {
 
     var id: String { rawValue }
 
-    var shellTab: AVAppShellTab<String> {
+    static let footerTabs: [MomentsRootTab] = [.home, .create, .projects]
+
+    var shellTab: AVAppShellTab<MomentsRootTab> {
         switch self {
         case .home:
             AVAppShellTab(
-                id: rawValue,
+                id: self,
                 title: "Home",
-                systemImage: "house",
+                systemImage: "house.fill",
                 accessibilityIdentifier: "moments.tab.home"
             )
         case .create:
             AVAppShellTab(
-                id: rawValue,
+                id: self,
                 title: "Create",
-                systemImage: "plus.app",
+                systemImage: "plus.app.fill",
                 accessibilityIdentifier: "moments.tab.create"
             )
         case .projects:
             AVAppShellTab(
-                id: rawValue,
+                id: self,
                 title: "Projects",
-                systemImage: "rectangle.stack",
+                systemImage: "rectangle.stack.fill",
                 accessibilityIdentifier: "moments.tab.projects"
             )
         case .avi:
             AVAppShellTab(
-                id: rawValue,
+                id: self,
                 title: "Avi",
                 systemImage: "sparkles",
                 accessibilityIdentifier: "moments.tab.avi"

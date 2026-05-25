@@ -1,3 +1,4 @@
+import AVAppShellFoundation
 import SwiftUI
 
 struct MomentsProjectRenderJobsSection: View {
@@ -9,8 +10,7 @@ struct MomentsProjectRenderJobsSection: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text(presentation.title)
-                .font(.subheadline.weight(.semibold))
+            AVAppShellSectionHeader(title: presentation.title)
 
             if presentation.jobs.isEmpty {
                 MomentsProjectEmptySectionRow(
@@ -35,8 +35,7 @@ struct MomentsProjectPreviewArtifactSection: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text(presentation.title)
-                .font(.subheadline.weight(.semibold))
+            AVAppShellSectionHeader(title: presentation.title)
 
             if let artifact = presentation.artifact {
                 MomentsProjectArtifactDetail(presentation: artifact)
@@ -59,8 +58,7 @@ struct MomentsProjectFinalExportSection: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text(presentation.title)
-                .font(.subheadline.weight(.semibold))
+            AVAppShellSectionHeader(title: presentation.title)
 
             if let artifact = presentation.artifact {
                 MomentsProjectArtifactDetail(presentation: artifact)

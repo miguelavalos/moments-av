@@ -30,11 +30,15 @@ struct DefaultAVAccountService: AVAccountService {
     )
 
     var isAvailable: Bool {
-        accountService.isAvailable
+        if Self.uiTestAccountUser != nil { return true }
+        return accountService.isAvailable
     }
 
     var currentUser: AccountAVUser? {
-        accountService.currentUser
+        if let uiTestAccountUser = Self.uiTestAccountUser {
+            return uiTestAccountUser
+        }
+        return accountService.currentUser
     }
 
     func signInWithApple() async throws {
@@ -48,7 +52,18 @@ struct DefaultAVAccountService: AVAccountService {
     }
 
     func signOut() async throws {
+        if Self.uiTestAccountUser != nil { return }
         guard isAvailable else { return }
         try await accountService.signOut()
+    }
+
+    private static var uiTestAccountUser: AccountAVUser? {
+        guard MomentsUITestEnvironment.current.hasAccountOverride else { return nil }
+
+        return AccountAVUser(
+            id: MomentsUITestEnvironment.accountUserId,
+            displayName: MomentsUITestEnvironment.accountUserDisplayName,
+            emailAddress: MomentsUITestEnvironment.accountUserEmailAddress
+        )
     }
 }

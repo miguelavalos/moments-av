@@ -1,3 +1,4 @@
+import AVAppShellFoundation
 import SwiftUI
 
 struct MomentsCreateRefreshableRenderJobSection: View {
@@ -20,7 +21,7 @@ struct MomentsCreateRefreshableRenderJobSection: View {
             .disabled(!canRefresh)
 
             if let refreshAvailabilityMessage {
-                MomentsCreateAvailabilityMessage(message: refreshAvailabilityMessage)
+                AVAppShellInlineMessage(message: refreshAvailabilityMessage)
             }
         }
     }

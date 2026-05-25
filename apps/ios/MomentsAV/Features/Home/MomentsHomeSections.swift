@@ -1,4 +1,4 @@
-import AVSettingsFoundation
+import AVAppShellFoundation
 import SwiftUI
 
 struct MomentsHomeAccountCard: View {
@@ -9,30 +9,34 @@ struct MomentsHomeAccountCard: View {
     let signInActions: AnyView
 
     var body: some View {
-        AVSettingsCard {
-            MomentsHomeSectionHeader(
-                title: presentation.accountTitle,
-                detail: presentation.accountDetail
-            )
-
+        AVAppShellDashboardSection(
+            title: presentation.accountTitle,
+            detail: presentation.accountDetail
+        ) {
             if isSignedIn {
-                HStack(spacing: 10) {
-                    MomentsHomeMetricTile(
-                        title: "Spendable",
-                        value: "\(creditBalance.spendable)",
-                        systemImage: "creditcard"
-                    )
-                    MomentsHomeMetricTile(
-                        title: "Projects",
-                        value: "\(projectSummary.projectCount)",
-                        systemImage: "rectangle.stack"
-                    )
-                }
+                AVAppShellMetricStrip(metrics: accountMetrics)
                 MomentsHomeCreditBreakdown(balance: creditBalance)
             } else {
                 signInActions
             }
         }
+    }
+
+    private var accountMetrics: [AVAppShellMetric] {
+        [
+            AVAppShellMetric(
+                id: "spendable",
+                title: "Spendable",
+                value: "\(creditBalance.spendable)",
+                systemImage: "creditcard"
+            ),
+            AVAppShellMetric(
+                id: "projects",
+                title: "Projects",
+                value: "\(projectSummary.projectCount)",
+                systemImage: "rectangle.stack"
+            )
+        ]
     }
 }
 
@@ -43,12 +47,10 @@ struct MomentsHomeProjectStatusCard: View {
     let openProjects: () -> Void
 
     var body: some View {
-        AVSettingsCard {
-            MomentsHomeSectionHeader(
-                title: "Project status",
-                detail: presentation.projectStatusDetail
-            )
-
+        AVAppShellDashboardSection(
+            title: "Project status",
+            detail: presentation.projectStatusDetail
+        ) {
             if let latestProject = projectSummary.latestProject {
                 MomentsHomeLatestProjectRow(
                     title: latestProject.title,
@@ -59,19 +61,25 @@ struct MomentsHomeProjectStatusCard: View {
                 MomentsHomeEmptyProjectRow()
             }
 
-            HStack(spacing: 10) {
-                MomentsHomeMetricTile(
-                    title: "In progress",
-                    value: "\(projectSummary.inProgressCount)",
-                    systemImage: "clock"
-                )
-                MomentsHomeMetricTile(
-                    title: "Finished",
-                    value: "\(projectSummary.finishedCount)",
-                    systemImage: "checkmark.circle"
-                )
-            }
+            AVAppShellMetricStrip(metrics: projectMetrics)
         }
+    }
+
+    private var projectMetrics: [AVAppShellMetric] {
+        [
+            AVAppShellMetric(
+                id: "in-progress",
+                title: "In progress",
+                value: "\(projectSummary.inProgressCount)",
+                systemImage: "clock"
+            ),
+            AVAppShellMetric(
+                id: "finished",
+                title: "Finished",
+                value: "\(projectSummary.finishedCount)",
+                systemImage: "checkmark.circle"
+            )
+        ]
     }
 }
 
@@ -81,33 +89,43 @@ struct MomentsHomeNextActionsCard: View {
     let selectTab: (MomentsRootTab) -> Void
 
     var body: some View {
-        AVSettingsCard {
-            MomentsHomeSectionHeader(
-                title: "Next actions",
-                detail: "Move between creation, project review, and Avi guidance without leaving the new shell."
-            )
-
+        AVAppShellDashboardSection(
+            title: "Next actions",
+            detail: "Move between creation, project review, and Avi guidance without leaving the new shell."
+        ) {
             VStack(spacing: 10) {
                 if let latestInProgressAction = presentation.latestInProgressAction {
-                    MomentsHomeActionRow(
+                    homeActionRow(
                         action: latestInProgressAction,
                         perform: continueLatestProject
                     )
                 }
 
-                MomentsHomeActionRow(action: presentation.createAction) {
+                homeActionRow(action: presentation.createAction) {
                     selectTab(.create)
                 }
 
-                MomentsHomeActionRow(action: presentation.reviewProjectsAction) {
+                homeActionRow(action: presentation.reviewProjectsAction) {
                     selectTab(.projects)
                 }
 
-                MomentsHomeActionRow(action: presentation.aviGuidanceAction) {
+                homeActionRow(action: presentation.aviGuidanceAction) {
                     selectTab(.avi)
                 }
             }
         }
+    }
+
+    private func homeActionRow(action: MomentsHomeAction, perform: @escaping () -> Void) -> some View {
+        AVAppShellActionRow(
+            title: action.title,
+            detail: action.detail,
+            systemImage: action.systemImage,
+            isProminent: action.isProminent,
+            isDisabled: action.isDisabled,
+            accessibilityIdentifier: "moments.home.action.\(action.title.lowercased().replacingOccurrences(of: " ", with: "."))",
+            action: perform
+        )
     }
 
     private func continueLatestProject() {

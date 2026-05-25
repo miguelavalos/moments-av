@@ -1,4 +1,4 @@
-import AVSettingsFoundation
+import AVAppShellFoundation
 import SwiftUI
 
 struct MomentsCreateDraftSetupCard: View {
@@ -10,10 +10,12 @@ struct MomentsCreateDraftSetupCard: View {
     let startAnotherProject: () -> Void
 
     var body: some View {
-        AVSettingsCard {
+        AVAppShellCard {
             VStack(alignment: .leading, spacing: 14) {
-                Text("Draft setup")
-                    .font(.headline)
+                AVAppShellContentHeader(
+                    title: "Draft setup",
+                    detail: "Name the memory, choose the format, and prepare the project draft."
+                )
 
                 MomentsCreateDraftFormFields(
                     form: $form,
@@ -26,15 +28,15 @@ struct MomentsCreateDraftSetupCard: View {
 
                 MomentsCreateTemplateSummary(presentation: presentation.templateSummary)
 
-                Button(action: createDraft) {
-                    Text(presentation.createDraftTitle)
-                        .frame(maxWidth: .infinity)
-                }
-                .buttonStyle(.borderedProminent)
-                .disabled(!presentation.canCreateDraft || presentation.isCreatingDraft)
+                AVAppShellPrimaryButton(
+                    presentation.createDraftTitle,
+                    systemImage: "plus.app.fill",
+                    isDisabled: !presentation.canCreateDraft || presentation.isCreatingDraft,
+                    action: createDraft
+                )
 
                 if let availabilityMessage = presentation.availabilityMessage {
-                    MomentsCreateAvailabilityMessage(message: availabilityMessage)
+                    AVAppShellInlineMessage(message: availabilityMessage)
                 }
 
                 MomentsCreateActiveDraftSection(

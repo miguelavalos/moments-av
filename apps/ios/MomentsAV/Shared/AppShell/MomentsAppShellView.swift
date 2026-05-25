@@ -1,4 +1,6 @@
+import AVAppShellFoundation
 import AVBrandFoundation
+import AVSettingsFoundation
 import SwiftUI
 
 struct MomentsAppShellView: View {
@@ -6,45 +8,81 @@ struct MomentsAppShellView: View {
     @EnvironmentObject private var accountController: AccountController
     @EnvironmentObject private var createViewModel: MomentsCreateViewModel
     @EnvironmentObject private var aviViewModel: MomentsAviViewModel
+    @Environment(\.avCommonAppExperience) private var appExperience
+    @State private var chromeItem: AVAppShellChromeItem?
 
     var body: some View {
-        TabView(selection: $selectedTab) {
-            ForEach(MomentsRootTab.allCases) { tab in
+        AVAppShellConfiguredScaffold(
+            selectedTabID: selectedTab,
+            tabs: MomentsRootTab.footerTabs.map(\.shellTab),
+            assistantID: .avi,
+            assistant: footerAssistant,
+            hasAssistantActiveContext: selectedTab != .avi && aviViewModel.projectSummary.inProgressCount > 0,
+            footerConfiguration: appExperience.footerConfiguration,
+            onSelectTab: { tab in
+                chromeItem = nil
+                selectedTab = tab
+            },
+            onSelectAssistant: {
+                chromeItem = nil
+                selectedTab = .avi
+            },
+            content: {
                 NavigationStack {
-                    screen(for: tab)
+                    screen(for: selectedTab)
                 }
-                .tabItem {
-                    Label(tab.shellTab.title, systemImage: tab.shellTab.systemImage)
-                }
-                .tag(tab)
+                .safeAreaPadding(.bottom, 96)
+            },
+            footerPlayer: {
+                EmptyView()
             }
-        }
-        .tint(MomentsTheme.brandPalette.accent)
-        .background(AVBrandColor.canvas.ignoresSafeArea())
+        )
+    }
+
+    private var footerAssistant: AVAppShellConfiguredAssistant {
+        AVAppShellConfiguredAssistant(
+            experience: appExperience,
+            accessibilityIdentifier: "moments.tab.avi"
+        )
     }
 
     @ViewBuilder
     private func screen(for tab: MomentsRootTab) -> some View {
-        switch tab {
-        case .home:
-            MomentsHomeScreen(
-                selectTab: { selectedTab = $0 },
-                continueProject: { request in
-                    createViewModel.continueProject(request.project, focus: request.focus)
-                    selectedTab = .create
-                },
-                signInActions: AnyView(SignInActionsView(authenticationController: accountController))
+        if let chromeItem {
+            MomentsProfileScreen(
+                mode: chromeItem,
+                openSettings: { self.chromeItem = .settings },
+                openAccount: { self.chromeItem = .account }
             )
-        case .create:
-            MomentsCreateScreen()
-        case .projects:
-            MomentsProjectsScreen { request in
-                createViewModel.continueProject(request.project, focus: request.focus)
-                selectedTab = .create
+        } else {
+            switch tab {
+            case .home:
+                MomentsHomeScreen(
+                    openSettings: { chromeItem = .settings },
+                    openAccount: { chromeItem = .account },
+                    selectTab: { selectedTab = $0 },
+                    continueProject: { request in
+                        createViewModel.continueProject(request.project, focus: request.focus)
+                        selectedTab = .create
+                    },
+                    signInActions: AnyView(SignInActionsView(authenticationController: accountController))
+                )
+            case .create:
+                MomentsCreateScreen()
+            case .projects:
+                MomentsProjectsScreen(
+                    continueProject: { request in
+                        createViewModel.continueProject(request.project, focus: request.focus)
+                        selectedTab = .create
+                    },
+                    startProject: {
+                        selectedTab = .create
+                    }
+                )
+            case .avi:
+                MomentsAviScreen { selectedTab = $0 }
+                    .environmentObject(aviViewModel)
             }
-        case .avi:
-            MomentsAviScreen { selectedTab = $0 }
-                .environmentObject(aviViewModel)
         }
     }
 }

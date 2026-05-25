@@ -1,3 +1,4 @@
+import AVAppShellFoundation
 import SwiftUI
 
 struct MomentsProjectMediaSection: View {
@@ -9,8 +10,7 @@ struct MomentsProjectMediaSection: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text(presentation.title)
-                .font(.subheadline.weight(.semibold))
+            AVAppShellSectionHeader(title: presentation.title)
 
             if presentation.mediaAssets.isEmpty {
                 MomentsProjectEmptySectionRow(
@@ -35,8 +35,7 @@ struct MomentsProjectStorySection: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text(presentation.title)
-                .font(.subheadline.weight(.semibold))
+            AVAppShellSectionHeader(title: presentation.title)
 
             if presentation.storyScenes.isEmpty {
                 MomentsProjectEmptySectionRow(
@@ -57,21 +56,7 @@ struct MomentsProjectEmptySectionRow: View {
     let message: String
 
     var body: some View {
-        HStack(alignment: .top, spacing: 10) {
-            Image(systemName: systemImage)
-                .font(.caption)
-                .foregroundStyle(.secondary)
-                .frame(width: 18)
-
-            Text(message)
-                .font(.caption)
-                .foregroundStyle(.secondary)
-                .fixedSize(horizontal: false, vertical: true)
-
-            Spacer(minLength: 0)
-        }
-        .frame(maxWidth: .infinity, alignment: .topLeading)
-        .padding(.vertical, 2)
+        AVAppShellInlineMessage(message: message, systemImage: systemImage)
     }
 }
 
@@ -79,21 +64,11 @@ struct MomentsProjectMediaAssetRow: View {
     let presentation: MomentsProjectMediaAssetPresentation
 
     var body: some View {
-        HStack(alignment: .top, spacing: 10) {
-            Image(systemName: presentation.systemImage)
-                .foregroundStyle(.secondary)
-                .frame(width: 18)
-
-            VStack(alignment: .leading, spacing: 3) {
-                Text(presentation.title)
-                    .font(.caption.weight(.semibold))
-                Text(presentation.detail)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
-
-            Spacer()
-        }
+        AVAppShellInfoRow(
+            title: presentation.title,
+            detail: presentation.detail,
+            systemImage: presentation.systemImage
+        )
     }
 }
 
@@ -101,12 +76,10 @@ struct MomentsProjectStorySceneRow: View {
     let presentation: MomentsProjectStoryScenePresentation
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 3) {
-            Text(presentation.title)
-                .font(.caption.weight(.semibold))
-                .foregroundStyle(.secondary)
-            Text(presentation.caption)
-                .font(.caption)
-        }
+        AVAppShellInfoRow(
+            title: presentation.caption,
+            detail: presentation.title,
+            systemImage: "rectangle.stack.fill"
+        )
     }
 }

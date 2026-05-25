@@ -1,3 +1,4 @@
+import AVAppShellFoundation
 import SwiftUI
 
 struct MomentsProjectsListGroup: View {
@@ -6,10 +7,7 @@ struct MomentsProjectsListGroup: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            HStack {
-                Text(group.title)
-                    .font(.subheadline.weight(.semibold))
-                Spacer()
+            AVAppShellSectionHeader(title: group.title) {
                 Text("\(group.count)")
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(.secondary)
@@ -23,4 +21,3 @@ struct MomentsProjectsListGroup: View {
         }
     }
 }
-

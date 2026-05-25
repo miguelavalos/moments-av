@@ -1,4 +1,4 @@
-import AVSettingsFoundation
+import AVAppShellFoundation
 import SwiftUI
 
 struct MomentsCreateStoryCard: View {
@@ -6,24 +6,24 @@ struct MomentsCreateStoryCard: View {
     let generateStoryDraft: () -> Void
 
     var body: some View {
-        AVSettingsCard {
+        AVAppShellCard {
             VStack(alignment: .leading, spacing: 14) {
-                Text("Story")
-                    .font(.headline)
-                Text("Generate the first Avi story draft from the media already attached to the project.")
-                    .foregroundStyle(.secondary)
+                AVAppShellContentHeader(
+                    title: "Story",
+                    detail: "Generate the first Avi story draft from the media already attached to the project."
+                )
 
                 MomentsCreateStoryScenesSection(presentation: presentation)
 
-                Button(action: generateStoryDraft) {
-                    Text(presentation.draftButtonTitle)
-                        .frame(maxWidth: .infinity)
-                }
-                .buttonStyle(.borderedProminent)
-                .disabled(!presentation.canDraftStory || presentation.summary.isDrafting)
+                AVAppShellPrimaryButton(
+                    presentation.draftButtonTitle,
+                    systemImage: "text.bubble.fill",
+                    isDisabled: !presentation.canDraftStory || presentation.summary.isDrafting,
+                    action: generateStoryDraft
+                )
 
                 if let availabilityMessage = presentation.availabilityMessage {
-                    MomentsCreateAvailabilityMessage(message: availabilityMessage)
+                    AVAppShellInlineMessage(message: availabilityMessage)
                 }
 
                 if let storyStatusMessage = presentation.summary.statusMessage {

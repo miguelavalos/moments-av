@@ -1,3 +1,4 @@
+import AVBrandFoundation
 import SwiftUI
 
 struct MomentsCreateDraftFormFields: View {
@@ -6,35 +7,240 @@ struct MomentsCreateDraftFormFields: View {
     let templates: [MomentTemplate]
     let isDraftLocked: Bool
 
+    private var selectedTemplateTitle: String {
+        templates.first(where: { $0.id == templateSelection.wrappedValue })?.title ?? "Choose template"
+    }
+
     var body: some View {
-        Picker("Template", selection: templateSelection) {
-            ForEach(templates) { template in
-                Text(template.title).tag(template.id)
+        VStack(spacing: AVBrandSpacing.sm) {
+            MomentsCreateMenuField(
+                title: "Template",
+                value: selectedTemplateTitle,
+                systemImage: "sparkles.rectangle.stack",
+                isDisabled: isDraftLocked
+            ) {
+                ForEach(templates) { template in
+                    Button(template.title) {
+                        templateSelection.wrappedValue = template.id
+                    }
+                }
             }
-        }
-        .disabled(isDraftLocked)
+            .accessibilityIdentifier("moments.create.template")
 
-        TextField("Occasion", text: $form.occasion)
-            .disabled(isDraftLocked)
-        TextField("Who is this for?", text: $form.recipient)
-            .disabled(isDraftLocked)
+            MomentsCreateTextFieldRow(
+                title: "Occasion",
+                placeholder: "Birthday, trip, launch...",
+                systemImage: "calendar",
+                text: $form.occasion,
+                isDisabled: isDraftLocked
+            )
+            .accessibilityIdentifier("moments.create.occasion")
 
-        Picker("Tone", selection: $form.tone) {
-            ForEach(MomentDraftTone.allCases) { tone in
-                Text(tone.title).tag(tone)
+            MomentsCreateTextFieldRow(
+                title: "Recipient",
+                placeholder: "Who is this for?",
+                systemImage: "person.crop.circle",
+                text: $form.recipient,
+                isDisabled: isDraftLocked
+            )
+            .accessibilityIdentifier("moments.create.recipient")
+
+            HStack(spacing: AVBrandSpacing.sm) {
+                MomentsCreateMenuField(
+                    title: "Tone",
+                    value: form.tone.title,
+                    systemImage: "quote.bubble.fill",
+                    isDisabled: isDraftLocked
+                ) {
+                    ForEach(MomentDraftTone.allCases) { tone in
+                        Button(tone.title) {
+                            form.tone = tone
+                        }
+                    }
+                }
+                .accessibilityIdentifier("moments.create.tone")
+
+                MomentsCreateMenuField(
+                    title: "Tempo",
+                    value: form.tempo.title,
+                    systemImage: "metronome.fill",
+                    isDisabled: isDraftLocked
+                ) {
+                    ForEach(MomentDraftTempo.allCases) { tempo in
+                        Button(tempo.title) {
+                            form.tempo = tempo
+                        }
+                    }
+                }
+                .accessibilityIdentifier("moments.create.tempo")
             }
-        }
-        .disabled(isDraftLocked)
 
-        Picker("Tempo", selection: $form.tempo) {
-            ForEach(MomentDraftTempo.allCases) { tempo in
-                Text(tempo.title).tag(tempo)
+            MomentsCreateMultilineFieldRow(
+                title: "Details for Avi",
+                placeholder: "Add names, inside jokes, scenes to emphasize, or anything to avoid.",
+                systemImage: "wand.and.stars",
+                text: $form.details,
+                isDisabled: isDraftLocked
+            )
+            .accessibilityIdentifier("moments.create.details")
+        }
+    }
+}
+
+private struct MomentsCreateMenuField<MenuContent: View>: View {
+    @Environment(\.avBrandPalette) private var brandPalette
+
+    let title: String
+    let value: String
+    let systemImage: String
+    let isDisabled: Bool
+    let menuContent: MenuContent
+
+    init(
+        title: String,
+        value: String,
+        systemImage: String,
+        isDisabled: Bool,
+        @ViewBuilder menuContent: () -> MenuContent
+    ) {
+        self.title = title
+        self.value = value
+        self.systemImage = systemImage
+        self.isDisabled = isDisabled
+        self.menuContent = menuContent()
+    }
+
+    var body: some View {
+        Menu {
+            menuContent
+        } label: {
+            HStack(spacing: AVBrandSpacing.sm) {
+                MomentsCreateFieldIcon(systemImage: systemImage)
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(title)
+                        .font(.system(size: 11, weight: .black))
+                        .foregroundStyle(AVBrandColor.textSecondary)
+                        .textCase(.uppercase)
+                        .lineLimit(1)
+
+                    Text(value)
+                        .font(AVBrandTypography.bodyStrong)
+                        .foregroundStyle(AVBrandColor.textPrimary)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.82)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+                Image(systemName: "chevron.down")
+                    .font(.system(size: 11, weight: .bold))
+                    .foregroundStyle(AVBrandColor.textSecondary.opacity(0.72))
             }
+            .padding(AVBrandSpacing.md)
+            .frame(maxWidth: .infinity, minHeight: 62, alignment: .leading)
+            .background(MomentsCreateFieldBackground())
         }
-        .disabled(isDraftLocked)
+        .buttonStyle(.plain)
+        .tint(brandPalette.accent)
+        .disabled(isDisabled)
+        .opacity(isDisabled ? 0.62 : 1)
+    }
+}
 
-        TextField("Details for Avi", text: $form.details, axis: .vertical)
-            .lineLimit(3...5)
-            .disabled(isDraftLocked)
+private struct MomentsCreateTextFieldRow: View {
+    let title: String
+    let placeholder: String
+    let systemImage: String
+    @Binding var text: String
+    let isDisabled: Bool
+
+    var body: some View {
+        HStack(spacing: AVBrandSpacing.sm) {
+            MomentsCreateFieldIcon(systemImage: systemImage)
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title)
+                    .font(.system(size: 11, weight: .black))
+                    .foregroundStyle(AVBrandColor.textSecondary)
+                    .textCase(.uppercase)
+                    .lineLimit(1)
+
+                TextField(placeholder, text: $text)
+                    .font(AVBrandTypography.bodyStrong)
+                    .foregroundStyle(AVBrandColor.textPrimary)
+                    .textInputAutocapitalization(.words)
+                    .submitLabel(.next)
+                    .disabled(isDisabled)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .padding(AVBrandSpacing.md)
+        .frame(maxWidth: .infinity, minHeight: 62, alignment: .leading)
+        .background(MomentsCreateFieldBackground())
+        .opacity(isDisabled ? 0.62 : 1)
+    }
+}
+
+private struct MomentsCreateMultilineFieldRow: View {
+    let title: String
+    let placeholder: String
+    let systemImage: String
+    @Binding var text: String
+    let isDisabled: Bool
+
+    var body: some View {
+        HStack(alignment: .top, spacing: AVBrandSpacing.sm) {
+            MomentsCreateFieldIcon(systemImage: systemImage)
+                .padding(.top, 1)
+
+            VStack(alignment: .leading, spacing: AVBrandSpacing.xxs) {
+                Text(title)
+                    .font(.system(size: 11, weight: .black))
+                    .foregroundStyle(AVBrandColor.textSecondary)
+                    .textCase(.uppercase)
+                    .lineLimit(1)
+
+                TextField(placeholder, text: $text, axis: .vertical)
+                    .font(AVBrandTypography.body)
+                    .foregroundStyle(AVBrandColor.textPrimary)
+                    .lineLimit(3...5)
+                    .textInputAutocapitalization(.sentences)
+                    .submitLabel(.done)
+                    .disabled(isDisabled)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .padding(AVBrandSpacing.md)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(MomentsCreateFieldBackground())
+        .opacity(isDisabled ? 0.62 : 1)
+    }
+}
+
+private struct MomentsCreateFieldIcon: View {
+    @Environment(\.avBrandPalette) private var brandPalette
+
+    let systemImage: String
+
+    var body: some View {
+        Image(systemName: systemImage)
+            .font(.system(size: 15, weight: .semibold))
+            .foregroundStyle(brandPalette.accent)
+            .frame(width: 28, height: 28)
+            .background(
+                brandPalette.accent.opacity(0.12),
+                in: RoundedRectangle(cornerRadius: AVBrandRadius.xs, style: .continuous)
+            )
+    }
+}
+
+private struct MomentsCreateFieldBackground: View {
+    var body: some View {
+        RoundedRectangle(cornerRadius: AVBrandRadius.xs, style: .continuous)
+            .fill(AVBrandColor.cardSurface.opacity(0.72))
+            .overlay {
+                RoundedRectangle(cornerRadius: AVBrandRadius.xs, style: .continuous)
+                    .stroke(AVBrandColor.borderSubtle.opacity(0.5), lineWidth: 1)
+            }
     }
 }

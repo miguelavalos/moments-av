@@ -1,10 +1,11 @@
-import AVSettingsFoundation
+import AVAppShellFoundation
 import SwiftUI
 
 struct MomentsProjectsScreen: View {
     @EnvironmentObject private var viewModel: MomentsProjectsViewModel
     @State private var projectPendingDeletion: MomentDraftProject?
     let continueProject: (MomentsProjectContinuationRequest) -> Void
+    let startProject: () -> Void
     private var presentation: MomentsProjectsPresentation {
         MomentsProjectsPresentation.make(
             isSignedIn: viewModel.isSignedIn,
@@ -13,12 +14,23 @@ struct MomentsProjectsScreen: View {
         )
     }
 
-    init(continueProject: @escaping (MomentsProjectContinuationRequest) -> Void = { _ in }) {
+    init(
+        continueProject: @escaping (MomentsProjectContinuationRequest) -> Void = { _ in },
+        startProject: @escaping () -> Void = {}
+    ) {
         self.continueProject = continueProject
+        self.startProject = startProject
     }
 
     var body: some View {
-        ScrollView {
+        AVAppShellScrollableScreenScaffold {
+            MomentsTheme.shellBackground
+        } content: {
+            AVAppShellScreenHeader(
+                title: "Projects",
+                subtitle: "Continue in-progress memories or review finished exports."
+            )
+
             MomentsProjectsCard(
                 presentation: presentation,
                 projectSummary: viewModel.projectSummary,
@@ -29,14 +41,12 @@ struct MomentsProjectsScreen: View {
                 statusMessage: viewModel.statusMessage,
                 selectProject: viewModel.selectProject,
                 continueProject: continueProject,
+                startProject: startProject,
                 requestDeleteProject: { project in
                     projectPendingDeletion = project
                 }
             )
-            .padding(20)
         }
-        .background(MomentsTheme.canvas.ignoresSafeArea())
-        .navigationTitle("Projects")
         .confirmationDialog(
             "Delete project?",
             isPresented: deletionConfirmationPresented,

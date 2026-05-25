@@ -1,17 +1,16 @@
-import AVSettingsFoundation
+import AVAppShellFoundation
 import SwiftUI
 
 struct MomentsCreateIntroCard: View {
     let isSignedIn: Bool
 
     var body: some View {
-        AVSettingsCard {
-            Text("Create")
-                .font(.headline)
-            Text("Build a private memory video from draft setup through media, story, preview, and final export.")
-                .foregroundStyle(.secondary)
-            Text(isSignedIn ? "Ready to create projects." : "Login is required before creating projects.")
-                .font(.subheadline.weight(.semibold))
+        AVAppShellCard {
+            AVAppShellContentHeader(
+                title: "Create",
+                detail: "Build a private memory video from draft setup through media, story, preview, and final export."
+            )
+            AVStatusPill(title: isSignedIn ? "Ready" : "Login required", isUppercased: false)
         }
     }
 }
@@ -21,27 +20,13 @@ struct MomentsCreateActiveProjectCard: View {
 
     var body: some View {
         if let activeProject {
-            AVSettingsCard {
-                HStack(alignment: .top, spacing: 12) {
-                    Image(systemName: "rectangle.stack")
-                        .font(.title3)
-                        .foregroundStyle(MomentsTheme.brandPalette.accent)
-                        .frame(width: 28)
-
-                    VStack(alignment: .leading, spacing: 5) {
-                        Text(activeProject.title)
-                            .font(.headline)
-                            .lineLimit(2)
-                            .fixedSize(horizontal: false, vertical: true)
-                        Text(MomentsProjectFormatting.statusTitle(activeProject))
-                            .font(.subheadline.weight(.semibold))
-                        Text(MomentsProjectFormatting.updatedAt(activeProject))
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
-
-                    Spacer(minLength: 0)
-                }
+            AVAppShellCard {
+                AVAppShellInfoRow(
+                    title: activeProject.title,
+                    detail: MomentsProjectFormatting.updatedAt(activeProject),
+                    systemImage: "rectangle.stack",
+                    eyebrow: MomentsProjectFormatting.statusTitle(activeProject)
+                )
             }
         }
     }
@@ -53,24 +38,12 @@ struct MomentsCreateContinuationHintCard: View {
 
     var body: some View {
         if let focus {
-            AVSettingsCard {
-                HStack(alignment: .top, spacing: 12) {
-                    Image(systemName: focus.systemImage)
-                        .font(.title3)
-                        .foregroundStyle(MomentsTheme.brandPalette.accent)
-                        .frame(width: 28)
-
-                    VStack(alignment: .leading, spacing: 5) {
-                        Text(focus.title)
-                            .font(.headline)
-                        Text(focus.message)
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
-                            .fixedSize(horizontal: false, vertical: true)
-                    }
-
-                    Spacer(minLength: 0)
-
+            AVAppShellCard {
+                AVAppShellInfoRow(
+                    title: focus.title,
+                    detail: focus.message,
+                    systemImage: focus.systemImage
+                ) {
                     Button(action: dismiss) {
                         Image(systemName: "xmark.circle.fill")
                             .font(.title3)
@@ -88,14 +61,16 @@ struct MomentsCreateCreditsCard: View {
     let balance: MomentsCreditBalance
 
     var body: some View {
-        AVSettingsCard {
-            Text("Spendable credits")
-                .font(.headline)
-            Text("\(balance.spendable)")
-                .font(.title2.weight(.semibold))
-            Text("Monthly: \(balance.proMonthly) · Promo: \(balance.promotional) · Purchased: \(balance.purchased)")
-                .font(.caption)
-                .foregroundStyle(.secondary)
+        AVAppShellCard {
+            AVAppShellContentHeader(
+                title: "Spendable credits",
+                detail: "Credits available for previews and final exports."
+            )
+            AVAppShellInfoRow(
+                title: "\(balance.spendable) credits",
+                detail: "Monthly: \(balance.proMonthly) · Promo: \(balance.promotional) · Purchased: \(balance.purchased)",
+                systemImage: "creditcard"
+            )
         }
     }
 }

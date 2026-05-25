@@ -60,6 +60,12 @@ final class MomentsDependencyContainer: ObservableObject {
         projectsListWorkflow.observeProjects(ownerUserId: ownerUserId)
         projectsViewModel.clearSelection()
         createViewModel.clearSessionState()
+        applyUITestFixturesIfNeeded()
+    }
+
+    func applyUITestFixturesIfNeeded() {
+        guard MomentsUITestEnvironment.current.createFixture == "full" else { return }
+        createViewModel.applyUITestFullWorkflowFixture()
     }
 }
 

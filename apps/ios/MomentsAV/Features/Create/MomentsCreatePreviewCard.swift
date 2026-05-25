@@ -1,4 +1,4 @@
-import AVSettingsFoundation
+import AVAppShellFoundation
 import SwiftUI
 
 struct MomentsCreatePreviewCard: View {
@@ -7,12 +7,12 @@ struct MomentsCreatePreviewCard: View {
     let refreshPreviewStatus: () -> Void
 
     var body: some View {
-        AVSettingsCard {
+        AVAppShellCard {
             VStack(alignment: .leading, spacing: 14) {
-                Text("Preview")
-                    .font(.headline)
-                Text("Generate a preview after the story is ready, then review status before committing the final export.")
-                    .foregroundStyle(.secondary)
+                AVAppShellContentHeader(
+                    title: "Preview",
+                    detail: "Generate a preview after the story is ready, then review status before committing the final export."
+                )
 
                 if let usageTitle = presentation.usageTitle {
                     Text(usageTitle)
@@ -20,11 +20,13 @@ struct MomentsCreatePreviewCard: View {
                         .foregroundStyle(.secondary)
                 }
 
-                if presentation.summary.latestPreview != nil {
-                    Label("Preview ready", systemImage: "play.rectangle")
-                    Text(presentation.previewArtifactMessage ?? "")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+                if let latestPreview = presentation.summary.latestPreview {
+                    MomentsCreateArtifactStatusCard(
+                        title: "Preview ready",
+                        systemImage: "play.rectangle",
+                        artifact: latestPreview,
+                        detail: presentation.previewArtifactMessage
+                    )
                 }
 
                 MomentsCreateRefreshableRenderJobSection(
@@ -42,15 +44,15 @@ struct MomentsCreatePreviewCard: View {
                     )
                 }
 
-                Button(action: generatePreview) {
-                    Text(presentation.generateButtonTitle)
-                        .frame(maxWidth: .infinity)
-                }
-                .buttonStyle(.borderedProminent)
-                .disabled(!presentation.canGeneratePreview || presentation.summary.isGenerating)
+                AVAppShellPrimaryButton(
+                    presentation.generateButtonTitle,
+                    systemImage: "play.rectangle.fill",
+                    isDisabled: !presentation.canGeneratePreview || presentation.summary.isGenerating,
+                    action: generatePreview
+                )
 
-                if let availabilityMessage = presentation.availabilityMessage {
-                    MomentsCreateAvailabilityMessage(message: availabilityMessage)
+                if presentation.showsEmptyState, let availabilityMessage = presentation.availabilityMessage {
+                    AVAppShellInlineMessage(message: availabilityMessage)
                 }
 
                 if let previewStatusMessage = presentation.summary.statusMessage {

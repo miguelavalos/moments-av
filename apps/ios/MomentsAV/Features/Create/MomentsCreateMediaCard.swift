@@ -1,4 +1,4 @@
-import AVSettingsFoundation
+import AVAppShellFoundation
 import PhotosUI
 import SwiftUI
 
@@ -11,13 +11,12 @@ struct MomentsCreateMediaCard: View {
     let autoPickStrongMoments: () -> Void
 
     var body: some View {
-        AVSettingsCard {
+        AVAppShellCard {
             VStack(alignment: .leading, spacing: 14) {
-                Text("Media")
-                    .font(.headline)
-                Text("Project \(presentation.activeProjectId)")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                AVAppShellContentHeader(
+                    title: "Media",
+                    detail: "Project \(presentation.activeProjectId)"
+                )
 
                 PhotosPicker(
                     selection: $pickerItems,
@@ -33,7 +32,7 @@ struct MomentsCreateMediaCard: View {
                 }
 
                 if let availabilityMessage = presentation.availabilityMessage {
-                    MomentsCreateAvailabilityMessage(message: availabilityMessage)
+                    AVAppShellInlineMessage(message: availabilityMessage)
                 }
 
                 Text(presentation.selectedCountTitle)
@@ -70,8 +69,7 @@ private struct MomentsCreateNewImportSelection: View {
     var body: some View {
         if !selectedMedia.isEmpty {
             VStack(alignment: .leading, spacing: 8) {
-                Text("New import selection")
-                    .font(.subheadline.weight(.semibold))
+                AVAppShellSectionHeader(title: "New import selection")
 
                 ForEach(selectedMedia) { media in
                     MomentsCreateMediaRow(media: media) {
@@ -94,8 +92,7 @@ private struct MomentsCreateSyncedMediaSection: View {
     var body: some View {
         if !mediaAssets.isEmpty {
             VStack(alignment: .leading, spacing: 8) {
-                Text("Synced media")
-                    .font(.subheadline.weight(.semibold))
+                AVAppShellSectionHeader(title: "Synced media")
 
                 ForEach(mediaAssets) { media in
                     MomentsCreateSyncedMediaRow(media: media)

@@ -6,7 +6,7 @@ struct MomentsProjectStatusMarker: View {
     var body: some View {
         Image(systemName: row.statusSystemImage)
             .font(.subheadline)
-            .foregroundStyle(row.isFinished ? MomentsTheme.brandPalette.accent : .secondary)
+            .foregroundStyle(row.isFinished ? MomentsTheme.highlight : .secondary)
             .frame(width: 20)
     }
 }

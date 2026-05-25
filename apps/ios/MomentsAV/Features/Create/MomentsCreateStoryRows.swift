@@ -1,3 +1,4 @@
+import AVAppShellFoundation
 import SwiftUI
 
 struct MomentsCreateStorySceneRow: View {
@@ -6,15 +7,11 @@ struct MomentsCreateStorySceneRow: View {
     let narration: String
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            Text("Scene \(index + 1)")
-                .font(.caption.weight(.semibold))
-                .foregroundStyle(.secondary)
-            Text(caption)
-                .font(.subheadline.weight(.medium))
-            Text(narration)
-                .font(.caption)
-                .foregroundStyle(.secondary)
-        }
+        AVAppShellInfoRow(
+            title: caption,
+            detail: narration,
+            systemImage: "rectangle.stack.fill",
+            eyebrow: "Scene \(index + 1)"
+        )
     }
 }

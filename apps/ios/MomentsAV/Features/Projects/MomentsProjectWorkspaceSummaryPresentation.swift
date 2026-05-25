@@ -1,7 +1,19 @@
+import AVAppShellFoundation
 import Foundation
 
 struct MomentsProjectWorkspaceSummaryPresentation: Equatable {
     let tiles: [MomentsProjectSummaryTilePresentation]
+
+    var metrics: [AVAppShellMetric] {
+        tiles.map {
+            AVAppShellMetric(
+                id: $0.id,
+                title: $0.title,
+                value: $0.value,
+                systemImage: $0.systemImage
+            )
+        }
+    }
 
     init(workspace: MomentProjectWorkspace) {
         let latestPreview = workspace.latestArtifact(kind: "preview")
@@ -50,4 +62,3 @@ struct MomentsProjectSummaryTilePresentation: Identifiable, Equatable {
 
     var id: String { title }
 }
-

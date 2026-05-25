@@ -23,7 +23,7 @@ extension MomentsCreateViewModel {
             isStoryDrafting: storyDraftWorkflow?.isDrafting ?? false,
             isStoryDraftAvailable: storyDraftWorkflow != nil,
             isStoryDraftConfigured: storyDraftWorkflow?.isConfigured ?? false,
-            mediaAssets: activeWorkspace?.mediaAssets,
+            mediaAssets: effectiveActiveWorkspace?.mediaAssets,
             template: form.template
         )
     }
@@ -53,7 +53,7 @@ extension MomentsCreateViewModel {
             project: activeProject,
             template: form.template,
             balance: balance,
-            latestPreview: latestPreview
+            latestPreview: effectiveLatestPreview
         )
     }
 
@@ -68,7 +68,7 @@ extension MomentsCreateViewModel {
     var previewRefreshAvailability: RenderJobStatusRefreshAvailability {
         MomentsCreateRefreshAvailabilityFactory.preview(
             projectId: activeProjectId,
-            job: latestPreviewJob,
+            job: effectiveLatestPreviewJob,
             isAvailable: previewGenerationWorkflow != nil,
             isConfigured: previewGenerationWorkflow?.isConfigured ?? false,
             isRefreshing: previewGenerationWorkflow?.isRefreshingStatus ?? false
@@ -78,7 +78,7 @@ extension MomentsCreateViewModel {
     var finalRenderRefreshAvailability: RenderJobStatusRefreshAvailability {
         MomentsCreateRefreshAvailabilityFactory.finalRender(
             projectId: activeProjectId,
-            job: latestFinalJob,
+            job: effectiveLatestFinalJob,
             isAvailable: finalRenderWorkflow != nil,
             isConfigured: finalRenderWorkflow?.isConfigured ?? false,
             isRefreshing: finalRenderWorkflow?.isRefreshingStatus ?? false

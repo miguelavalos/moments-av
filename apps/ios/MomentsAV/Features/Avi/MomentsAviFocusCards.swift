@@ -1,5 +1,4 @@
 import AVAviFoundation
-import AVSettingsFoundation
 import SwiftUI
 
 struct MomentsAviCurrentFocusCard: View {
@@ -10,10 +9,11 @@ struct MomentsAviCurrentFocusCard: View {
     let creditBalance: MomentsCreditBalance
 
     var body: some View {
-        AVSettingsCard {
-            Text("Current focus")
-                .font(.headline)
-            MomentsAviInfoRow(
+        AVAviGuidanceCard(
+            title: "Current focus",
+            detail: "Avi watches the active workflow, project mix, and available credits."
+        ) {
+            AVAviInfoRow(
                 title: workflowFocusTitle,
                 detail: workflowFocusMessage,
                 systemImage: workflowFocusSystemImage
@@ -44,9 +44,10 @@ struct MomentsAviCreditGuidanceCard: View {
     let message: String
 
     var body: some View {
-        AVSettingsCard {
-            Text("Credit guidance")
-                .font(.headline)
+        AVAviGuidanceCard(
+            title: "Credit guidance",
+            detail: "Credits are consumed in a predictable order before final export."
+        ) {
             HStack(spacing: 10) {
                 AVAviStatPill(title: "First", value: "Monthly", systemImage: "calendar")
                 AVAviStatPill(title: "Then", value: "Bonus", systemImage: "gift")

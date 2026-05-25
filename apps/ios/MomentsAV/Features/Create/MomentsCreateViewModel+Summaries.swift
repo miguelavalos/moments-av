@@ -1,16 +1,16 @@
 extension MomentsCreateViewModel {
     var workspaceSummary: MomentsCreateWorkspaceSummary {
         MomentsCreateWorkspaceSummary.make(
-            workspace: activeWorkspace,
-            latestPreview: latestPreview,
-            finalExport: finalExport
+            workspace: effectiveActiveWorkspace,
+            latestPreview: effectiveLatestPreview,
+            finalExport: effectiveFinalExport
         )
     }
 
     var mediaSummary: MomentsCreateMediaSummary {
         MomentsCreateMediaSummary(
-            selectedMedia: selectedMedia,
-            syncedMediaAssets: activeWorkspace?.mediaAssets ?? [],
+            selectedMedia: effectiveSelectedMedia,
+            syncedMediaAssets: effectiveActiveWorkspace?.mediaAssets ?? [],
             isImporting: isImportingMedia,
             statusMessage: mediaStatusMessage
         )
@@ -18,7 +18,7 @@ extension MomentsCreateViewModel {
 
     var storySummary: MomentsCreateStorySummary {
         MomentsCreateStorySummary(
-            savedScenes: savedScenes,
+            savedScenes: effectiveSavedScenes,
             generatedScenes: generatedScenes,
             isDrafting: isDraftingStory,
             statusMessage: storyStatusMessage
@@ -28,8 +28,8 @@ extension MomentsCreateViewModel {
     var previewSummary: MomentsCreatePreviewSummary {
         MomentsCreatePreviewSummary(
             activeProject: activeProject,
-            latestPreview: latestPreview,
-            latestPreviewJob: latestPreviewJob,
+            latestPreview: effectiveLatestPreview,
+            latestPreviewJob: effectiveLatestPreviewJob,
             isGenerating: isGeneratingPreview,
             isRefreshingStatus: isRefreshingPreviewStatus,
             statusMessage: previewStatusMessage
@@ -39,8 +39,8 @@ extension MomentsCreateViewModel {
     var finalRenderSummary: MomentsCreateFinalRenderSummary {
         MomentsCreateFinalRenderSummary(
             creditCost: form.template.creditCost,
-            finalExport: finalExport,
-            latestFinalJob: latestFinalJob,
+            finalExport: effectiveFinalExport,
+            latestFinalJob: effectiveLatestFinalJob,
             isGenerating: isGeneratingFinalRender,
             isRefreshingStatus: isRefreshingFinalRenderStatus,
             statusMessage: finalRenderStatusMessage

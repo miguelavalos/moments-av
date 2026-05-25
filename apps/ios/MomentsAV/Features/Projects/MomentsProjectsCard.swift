@@ -1,4 +1,4 @@
-import AVSettingsFoundation
+import AVAppShellFoundation
 import SwiftUI
 
 struct MomentsProjectsCard: View {
@@ -11,16 +11,19 @@ struct MomentsProjectsCard: View {
     let statusMessage: String?
     let selectProject: (MomentDraftProject) -> Void
     let continueProject: (MomentsProjectContinuationRequest) -> Void
+    let startProject: () -> Void
     let requestDeleteProject: (MomentDraftProject) -> Void
 
     var body: some View {
-        AVSettingsCard {
-            Text("Projects")
-                .font(.headline)
-
+        AVAppShellCard {
             switch presentation.availability {
-            case let .signedOut(unavailable), let .empty(unavailable):
+            case let .signedOut(unavailable):
                 MomentsProjectsUnavailableState(presentation: unavailable)
+            case let .empty(unavailable):
+                MomentsProjectsEmptyState(
+                    presentation: unavailable,
+                    startProject: startProject
+                )
             case .available:
                 MomentsProjectsList(
                     projectSummary: projectSummary,

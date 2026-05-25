@@ -1,10 +1,11 @@
+import AVAppShellFoundation
 import SwiftUI
 
 struct MomentsProjectArtifactDetail: View {
     let presentation: MomentsProjectArtifactPresentation
 
     var body: some View {
-        MomentsProjectDiagnosticCard {
+        AVAppShellMetadataCard {
             HStack(alignment: .center, spacing: 8) {
                 MomentsProjectDiagnosticStatusBadge(status: presentation.status)
 
@@ -19,17 +20,17 @@ struct MomentsProjectArtifactDetail: View {
                 alignment: .leading,
                 spacing: 8
             ) {
-                MomentsProjectDiagnosticMetadataItem(
+                AVAppShellMetadataItem(
                     title: "Watermark",
                     value: presentation.watermarkTitle
                 )
-                MomentsProjectDiagnosticMetadataItem(
+                AVAppShellMetadataItem(
                     title: "Expires",
                     value: presentation.expiresAtTitle
                 )
             }
 
-            MomentsProjectDiagnosticIdentifierRow(
+            AVAppShellIdentifierRow(
                 title: "Storage key",
                 value: presentation.storageKey,
                 lineLimit: 3
@@ -42,7 +43,7 @@ struct MomentsProjectRenderJobRow: View {
     let presentation: MomentsProjectRenderJobPresentation
 
     var body: some View {
-        MomentsProjectDiagnosticCard {
+        AVAppShellMetadataCard {
             HStack(alignment: .center, spacing: 8) {
                 MomentsProjectDiagnosticStatusBadge(status: presentation.status)
 
@@ -57,19 +58,19 @@ struct MomentsProjectRenderJobRow: View {
                 alignment: .leading,
                 spacing: 8
             ) {
-                MomentsProjectDiagnosticMetadataItem(
+                AVAppShellMetadataItem(
                     title: "Provider",
                     value: presentation.providerTitle
                 )
-                MomentsProjectDiagnosticMetadataItem(
+                AVAppShellMetadataItem(
                     title: "Model",
                     value: presentation.modelTitle
                 )
-                MomentsProjectDiagnosticMetadataItem(
+                AVAppShellMetadataItem(
                     title: "Created",
                     value: presentation.createdAtTitle
                 )
-                MomentsProjectDiagnosticMetadataItem(
+                AVAppShellMetadataItem(
                     title: "Updated",
                     value: presentation.updatedAtTitle
                 )
@@ -81,9 +82,9 @@ struct MomentsProjectRenderJobRow: View {
             )
 
             VStack(alignment: .leading, spacing: 6) {
-                MomentsProjectDiagnosticIdentifierRow(title: "Job ID", value: presentation.id)
-                MomentsProjectDiagnosticIdentifierRow(title: "Workflow", value: presentation.workflowRunId)
-                MomentsProjectDiagnosticIdentifierRow(title: "Provider request", value: presentation.providerRequestId)
+                AVAppShellIdentifierRow(title: "Job ID", value: presentation.id)
+                AVAppShellIdentifierRow(title: "Workflow", value: presentation.workflowRunId)
+                AVAppShellIdentifierRow(title: "Provider request", value: presentation.providerRequestId)
             }
         }
     }

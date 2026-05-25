@@ -1,3 +1,4 @@
+import AVAppShellFoundation
 import PhotosUI
 import SwiftUI
 
@@ -9,6 +10,7 @@ struct MomentsCreateScreen: View {
         ScrollViewReader { proxy in
             ScrollView {
                 MomentsCreateWorkflowContent(viewModel: viewModel, pickerItems: $pickerItems)
+                    .avShellScreenContentPadding(horizontal: 0, top: 0)
             }
             .onChange(of: viewModel.pendingFocus) { _, focus in
                 guard let focus else { return }
@@ -23,8 +25,8 @@ struct MomentsCreateScreen: View {
                 scrollToPendingFocus(focus, proxy: proxy)
             }
         }
-        .background(MomentsTheme.canvas.ignoresSafeArea())
-        .navigationTitle("Create")
+        .background(MomentsTheme.shellBackground.ignoresSafeArea())
+        .avShellScreenScrollBehavior()
     }
 
     private func scrollToPendingFocus(_ focus: MomentsProjectContinuationFocus, proxy: ScrollViewProxy) {

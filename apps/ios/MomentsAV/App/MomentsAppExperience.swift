@@ -1,0 +1,63 @@
+import AVBrandFoundation
+import AVSettingsFoundation
+import Foundation
+
+enum MomentsAppExperience {
+    private static let appIdentity = AVAppIdentity(
+        displayName: "Moments AV",
+        assistantName: "Avi",
+        accountName: "Account AV"
+    )
+
+    @MainActor
+    static var experience: AVCommonAppExperience {
+        AVCommonAppExperience(
+            identity: appIdentity,
+            legalLinks: legalLinks,
+            brandPalette: MomentsTheme.brandPalette,
+            visualAssets: visualAssets,
+            splashTagline: "Private memory films",
+            onboardingTitle: "Create private memory films with Avi",
+            onboardingSubtitle: "Sign in to create story drafts, previews, and final renders from your selected media.",
+            onboardingPrimaryTitle: "Continue",
+            onboardingBackgroundStart: .init(red: 0.97, green: 0.94, blue: 0.86),
+            onboardingBackgroundMid: AVBrandColor.neutral50,
+            onboardingBackgroundEnd: .init(red: 0.9, green: 0.93, blue: 0.89)
+        )
+    }
+
+    static var identity: AVAppIdentity {
+        appIdentity
+    }
+
+    static var visualAssets: AVCommonAppVisualAssets {
+        AVCommonAppVisualAssets(
+            headerLogoName: "MomentsAVLogo",
+            splashLogoName: "MomentsAVLogo",
+            splashHeroName: "MomentsSplashHero",
+            onboardingBrandName: "MomentsAVLogo",
+            onboardingHeroName: "MomentsOnboardingHero",
+            onboardingCTACompanionName: "AviOnboardingCTA",
+            onboardingAuthPanelCompanionName: "AviLoginSheetPeek",
+            footerAssistantName: "AviFooterIcon"
+        )
+    }
+
+    @MainActor
+    static var legalLinks: AVAppLegalLinks {
+        AVAppLegalLinks(
+            supportURL: AppConfig.supportURL,
+            privacyURL: AppConfig.privacyPolicyURL,
+            termsURL: AppConfig.termsURL,
+            accountDeletionURL: AppConfig.accountDeletionURL
+        )
+    }
+
+    static var settingsSubtitle: String {
+        "Manage \(identity.shortName), credits, project privacy, and support links."
+    }
+
+    static var accountSubtitle: String {
+        "Manage sign-in, \(identity.accountName) identity, credits, and account safety."
+    }
+}

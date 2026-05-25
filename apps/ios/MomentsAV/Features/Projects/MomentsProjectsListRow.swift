@@ -24,7 +24,7 @@ struct MomentsProjectsListRow: View {
                     HStack(spacing: 8) {
                         Text(row.statusTitle)
                             .font(.caption2.weight(.semibold))
-                            .foregroundStyle(MomentsTheme.brandPalette.accent)
+                            .foregroundStyle(MomentsTheme.highlight)
                         Text(row.creditCostTitle)
                             .font(.caption2.weight(.semibold))
                             .foregroundStyle(.secondary)
@@ -34,7 +34,7 @@ struct MomentsProjectsListRow: View {
                 Spacer()
 
                 Image(systemName: row.accessorySystemImage)
-                    .foregroundStyle(row.isSelected ? MomentsTheme.brandPalette.accent : .secondary)
+                    .foregroundStyle(row.isSelected ? MomentsTheme.highlight : .secondary)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.vertical, 4)

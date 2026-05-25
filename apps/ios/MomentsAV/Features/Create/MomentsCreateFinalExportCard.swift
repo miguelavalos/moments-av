@@ -1,4 +1,4 @@
-import AVSettingsFoundation
+import AVAppShellFoundation
 import SwiftUI
 
 struct MomentsCreateFinalExportCard: View {
@@ -7,23 +7,24 @@ struct MomentsCreateFinalExportCard: View {
     let refreshFinalRenderStatus: () -> Void
 
     var body: some View {
-        AVSettingsCard {
+        AVAppShellCard {
             VStack(alignment: .leading, spacing: 14) {
-                Text("Final export")
-                    .font(.headline)
-                Text("Final render commits credits after a usable export is delivered.")
-                    .foregroundStyle(.secondary)
+                AVAppShellContentHeader(
+                    title: "Final export",
+                    detail: "Final render commits credits after a usable export is delivered."
+                )
 
                 Text(presentation.creditTitle)
                     .font(.caption)
                     .foregroundStyle(.secondary)
 
                 if let finalExport = presentation.summary.finalExport {
-                    Label("Export ready", systemImage: "square.and.arrow.up")
-                    Text(finalExport.r2Key)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                        .textSelection(.enabled)
+                    MomentsCreateArtifactStatusCard(
+                        title: "Export ready",
+                        systemImage: "square.and.arrow.up",
+                        artifact: finalExport,
+                        detail: nil
+                    )
                 }
 
                 MomentsCreateRefreshableRenderJobSection(
@@ -41,15 +42,15 @@ struct MomentsCreateFinalExportCard: View {
                     )
                 }
 
-                Button(action: generateFinalRender) {
-                    Text(presentation.generateButtonTitle)
-                        .frame(maxWidth: .infinity)
-                }
-                .buttonStyle(.borderedProminent)
-                .disabled(!presentation.canGenerateFinalRender || presentation.summary.isGenerating)
+                AVAppShellPrimaryButton(
+                    presentation.generateButtonTitle,
+                    systemImage: "square.and.arrow.up.fill",
+                    isDisabled: !presentation.canGenerateFinalRender || presentation.summary.isGenerating,
+                    action: generateFinalRender
+                )
 
-                if let availabilityMessage = presentation.availabilityMessage {
-                    MomentsCreateAvailabilityMessage(message: availabilityMessage)
+                if presentation.showsEmptyState, let availabilityMessage = presentation.availabilityMessage {
+                    AVAppShellInlineMessage(message: availabilityMessage)
                 }
 
                 if let finalRenderStatusMessage = presentation.summary.statusMessage {
