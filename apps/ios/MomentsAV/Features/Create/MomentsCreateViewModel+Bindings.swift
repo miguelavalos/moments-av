@@ -2,7 +2,23 @@ import Combine
 import Foundation
 
 extension MomentsCreateViewModel {
-    func bindAccount(_ accountStateProvider: any MomentsAccountStateProviding) {
+    func bindWorkflowState(
+        accountStateProvider: any MomentsAccountStateProviding,
+        projectCreationWorkflow: ProjectCreationWorkflow,
+        mediaUploadWorkflow: MediaUploadWorkflow,
+        storyDraftWorkflow: StoryDraftWorkflow,
+        previewGenerationWorkflow: PreviewGenerationWorkflow,
+        finalRenderWorkflow: FinalRenderWorkflow
+    ) {
+        bindAccount(accountStateProvider)
+        bindProjectCreation(projectCreationWorkflow)
+        bindMediaUpload(mediaUploadWorkflow)
+        bindStoryDraft(storyDraftWorkflow)
+        bindPreviewGeneration(previewGenerationWorkflow)
+        bindFinalRender(finalRenderWorkflow)
+    }
+
+    private func bindAccount(_ accountStateProvider: any MomentsAccountStateProviding) {
         Publishers.CombineLatest(
             accountStateProvider.isSignedInPublisher,
             accountStateProvider.creditBalancePublisher
@@ -16,7 +32,7 @@ extension MomentsCreateViewModel {
             .store(in: &cancellables)
     }
 
-    func bindProjectCreation(_ workflow: ProjectCreationWorkflow) {
+    private func bindProjectCreation(_ workflow: ProjectCreationWorkflow) {
         Publishers.CombineLatest3(
             workflow.$isCreatingDraft,
             workflow.$activeProjectId,
@@ -35,7 +51,7 @@ extension MomentsCreateViewModel {
             .store(in: &cancellables)
     }
 
-    func bindMediaUpload(_ workflow: MediaUploadWorkflow) {
+    private func bindMediaUpload(_ workflow: MediaUploadWorkflow) {
         Publishers.CombineLatest3(
             workflow.$selectedMedia,
             workflow.$statusMessage,
@@ -54,7 +70,7 @@ extension MomentsCreateViewModel {
             .store(in: &cancellables)
     }
 
-    func bindStoryDraft(_ workflow: StoryDraftWorkflow) {
+    private func bindStoryDraft(_ workflow: StoryDraftWorkflow) {
         Publishers.CombineLatest4(
             workflow.$activeWorkspace.map { $0?.storyScenes ?? [] },
             workflow.$generatedDraft.map { $0?.scenes ?? [] },
@@ -75,7 +91,7 @@ extension MomentsCreateViewModel {
             .store(in: &cancellables)
     }
 
-    func bindPreviewGeneration(_ workflow: PreviewGenerationWorkflow) {
+    private func bindPreviewGeneration(_ workflow: PreviewGenerationWorkflow) {
         Publishers.CombineLatest(
             Publishers.CombineLatest4(
                 workflow.$activeWorkspace,
@@ -106,7 +122,7 @@ extension MomentsCreateViewModel {
             .store(in: &cancellables)
     }
 
-    func bindFinalRender(_ workflow: FinalRenderWorkflow) {
+    private func bindFinalRender(_ workflow: FinalRenderWorkflow) {
         Publishers.CombineLatest(
             Publishers.CombineLatest3(
                 workflow.$finalExport,

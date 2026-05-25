@@ -66,12 +66,14 @@ final class MomentsCreateViewModel: ObservableObject {
         form = MomentDraftForm(template: projectCreationWorkflow.launchTemplates[0])
         cancellables.removeAll()
 
-        bindAccount(accountStateProvider)
-        bindProjectCreation(projectCreationWorkflow)
-        bindMediaUpload(mediaUploadWorkflow)
-        bindStoryDraft(storyDraftWorkflow)
-        bindPreviewGeneration(previewGenerationWorkflow)
-        bindFinalRender(finalRenderWorkflow)
+        bindWorkflowState(
+            accountStateProvider: accountStateProvider,
+            projectCreationWorkflow: projectCreationWorkflow,
+            mediaUploadWorkflow: mediaUploadWorkflow,
+            storyDraftWorkflow: storyDraftWorkflow,
+            previewGenerationWorkflow: previewGenerationWorkflow,
+            finalRenderWorkflow: finalRenderWorkflow
+        )
     }
 
     func selectTemplate(id: MomentTemplateID) {
