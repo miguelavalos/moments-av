@@ -164,12 +164,8 @@ enum MomentDraftRules {
         case .missingOccasion:
             return "Complete the occasion before creating a draft."
         case .insufficientCredits(let missingCount):
-            return "Add \(missingCount) more \(creditLabel(missingCount)) for this template."
+            return "Add \(missingCount) more \(MomentsCreditCopy.noun(missingCount)) for this template."
         }
-    }
-
-    private static func creditLabel(_ count: Int) -> String {
-        count == 1 ? "credit" : "credits"
     }
 }
 

@@ -173,7 +173,7 @@ struct MomentsCreateFinalRenderPresentation: Equatable {
     var refreshAvailabilityMessage: String?
 
     var creditTitle: String {
-        "\(summary.creditCost) \(summary.creditCost == 1 ? "credit" : "credits")"
+        MomentsCreditCopy.countTitle(summary.creditCost)
     }
 
     var refreshButtonTitle: String {

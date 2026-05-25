@@ -41,7 +41,7 @@ extension MomentsCreateViewModel {
                 balance: balance
             ),
             missingProjectMessage: "Wait for the project workspace to sync before generating a preview.",
-            insufficientCreditsMessage: "Add \(missingCredits) more \(creditLabel(missingCredits)) before generating a preview."
+            insufficientCreditsMessage: "Add \(missingCredits) more \(MomentsCreditCopy.noun(missingCredits)) before generating a preview."
         )
     }
 
@@ -62,7 +62,7 @@ extension MomentsCreateViewModel {
                 latestPreview: latestPreview
             ),
             missingProjectMessage: "Wait for the project workspace to sync before rendering the final export.",
-            insufficientCreditsMessage: "Add \(missingCredits) more \(creditLabel(missingCredits)) before final render."
+            insufficientCreditsMessage: "Add \(missingCredits) more \(MomentsCreditCopy.noun(missingCredits)) before final render."
         )
     }
 
@@ -72,10 +72,6 @@ extension MomentsCreateViewModel {
 
     private var missingCredits: Int {
         max(form.template.creditCost - balance.spendable, 0)
-    }
-
-    private func creditLabel(_ count: Int) -> String {
-        count == 1 ? "credit" : "credits"
     }
 
     var draftFormAvailability: MomentDraftRules.Availability {
