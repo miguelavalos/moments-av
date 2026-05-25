@@ -5,14 +5,66 @@ import XCTest
 @MainActor
 final class MomentsAviViewModelTests: XCTestCase {
     func testSignedOutGuidanceAsksForAuthentication() {
-        let viewModel = MomentsAviViewModel()
+        let presentation = MomentsAviPresentation.make(
+            isSignedIn: false,
+            projectSummary: MomentsProjectListSummary(),
+            creditBalance: .empty
+        )
 
-        XCTAssertEqual(viewModel.workflowFocusTitle, "Sign in first")
-        XCTAssertTrue(viewModel.workflowFocusMessage.contains("after sign in"))
-        XCTAssertEqual(viewModel.creditGuidanceMessage, "Credits appear here after sign in.")
+        XCTAssertEqual(presentation.workflowFocusTitle, "Sign in first")
+        XCTAssertTrue(presentation.workflowFocusMessage.contains("after sign in"))
+        XCTAssertEqual(presentation.creditGuidanceMessage, "Credits appear here after sign in.")
     }
 
     func testActiveProjectsDriveWorkflowFocus() {
+        let presentation = MomentsAviPresentation.make(
+            isSignedIn: true,
+            projectSummary: MomentsProjectListSummary.make(from: [
+                makeProject(id: "active-1", status: "story_ready", updatedAt: 20),
+                makeProject(id: "done-1", status: "completed", updatedAt: 10)
+            ]),
+            creditBalance: .empty
+        )
+
+        XCTAssertEqual(presentation.workflowFocusTitle, "Review active work")
+        XCTAssertTrue(presentation.workflowFocusMessage.contains("1 project in progress"))
+        XCTAssertEqual(presentation.workflowFocusSystemImage, "clock.badge.checkmark")
+    }
+
+    func testCreditGuidanceUsesSpendableBalance() {
+        let presentation = MomentsAviPresentation.make(
+            isSignedIn: true,
+            projectSummary: MomentsProjectListSummary(),
+            creditBalance: MomentsCreditBalance(proMonthly: 2, promotional: 1, purchased: 3)
+        )
+
+        XCTAssertTrue(presentation.creditGuidanceMessage.contains("6 credits are spendable"))
+    }
+
+    func testCreditGuidanceUsesSingularSpendableCredit() {
+        let presentation = MomentsAviPresentation.make(
+            isSignedIn: true,
+            projectSummary: MomentsProjectListSummary(),
+            creditBalance: MomentsCreditBalance(proMonthly: 1, promotional: 0, purchased: 0)
+        )
+
+        XCTAssertTrue(presentation.creditGuidanceMessage.contains("1 credit is spendable"))
+    }
+
+    func testZeroCreditsExplainFinalExportRequirement() {
+        let presentation = MomentsAviPresentation.make(
+            isSignedIn: true,
+            projectSummary: MomentsProjectListSummary(),
+            creditBalance: .empty
+        )
+
+        XCTAssertEqual(
+            presentation.creditGuidanceMessage,
+            "No spendable credits are available. Final exports require credits after preview review."
+        )
+    }
+
+    func testViewModelExposesPresentationFromBoundState() {
         let summaryProvider = AviProjectSummaryProvider()
         let accountProvider = AviAccountStateProvider()
         let viewModel = MomentsAviViewModel()
@@ -20,56 +72,17 @@ final class MomentsAviViewModelTests: XCTestCase {
         viewModel.bind(accountStateProvider: accountProvider)
 
         accountProvider.isSignedIn.send(true)
-        summaryProvider.summary.send(
-            MomentsProjectListSummary.make(from: [
-                makeProject(id: "active-1", status: "story_ready", updatedAt: 20),
-                makeProject(id: "done-1", status: "completed", updatedAt: 10)
-            ])
-        )
-
-        XCTAssertEqual(viewModel.workflowFocusTitle, "Review active work")
-        XCTAssertTrue(viewModel.workflowFocusMessage.contains("1 project in progress"))
-        XCTAssertEqual(viewModel.workflowFocusSystemImage, "clock.badge.checkmark")
-    }
-
-    func testCreditGuidanceUsesSpendableBalance() {
-        let accountProvider = AviAccountStateProvider()
-        let viewModel = MomentsAviViewModel()
-        viewModel.bind(accountStateProvider: accountProvider)
-
-        accountProvider.isSignedIn.send(true)
-        accountProvider.creditBalance.send(
-            MomentsCreditBalance(proMonthly: 2, promotional: 1, purchased: 3)
-        )
-
-        XCTAssertTrue(viewModel.creditGuidanceMessage.contains("6 credits are spendable"))
-    }
-
-    func testCreditGuidanceUsesSingularSpendableCredit() {
-        let accountProvider = AviAccountStateProvider()
-        let viewModel = MomentsAviViewModel()
-        viewModel.bind(accountStateProvider: accountProvider)
-
-        accountProvider.isSignedIn.send(true)
         accountProvider.creditBalance.send(
             MomentsCreditBalance(proMonthly: 1, promotional: 0, purchased: 0)
         )
-
-        XCTAssertTrue(viewModel.creditGuidanceMessage.contains("1 credit is spendable"))
-    }
-
-    func testZeroCreditsExplainFinalExportRequirement() {
-        let accountProvider = AviAccountStateProvider()
-        let viewModel = MomentsAviViewModel()
-        viewModel.bind(accountStateProvider: accountProvider)
-
-        accountProvider.isSignedIn.send(true)
-        accountProvider.creditBalance.send(.empty)
-
-        XCTAssertEqual(
-            viewModel.creditGuidanceMessage,
-            "No spendable credits are available. Final exports require credits after preview review."
+        summaryProvider.summary.send(
+            MomentsProjectListSummary.make(from: [
+                makeProject(id: "active-1", status: "story_ready", updatedAt: 20)
+            ])
         )
+
+        XCTAssertEqual(viewModel.presentation.workflowFocusTitle, "Review active work")
+        XCTAssertTrue(viewModel.presentation.creditGuidanceMessage.contains("1 credit is spendable"))
     }
 
     private func makeProject(id: String, status: String, updatedAt: Double) -> MomentDraftProject {

@@ -4,6 +4,9 @@ import SwiftUI
 struct MomentsAviScreen: View {
     let selectTab: (MomentsRootTab) -> Void
     @EnvironmentObject private var viewModel: MomentsAviViewModel
+    private var presentation: MomentsAviPresentation {
+        viewModel.presentation
+    }
 
     var body: some View {
         ScrollView {
@@ -24,14 +27,14 @@ struct MomentsAviScreen: View {
                 }
 
                 MomentsAviCurrentFocusCard(
-                    workflowFocusTitle: viewModel.workflowFocusTitle,
-                    workflowFocusMessage: viewModel.workflowFocusMessage,
-                    workflowFocusSystemImage: viewModel.workflowFocusSystemImage,
+                    workflowFocusTitle: presentation.workflowFocusTitle,
+                    workflowFocusMessage: presentation.workflowFocusMessage,
+                    workflowFocusSystemImage: presentation.workflowFocusSystemImage,
                     projectSummary: viewModel.projectSummary,
                     creditBalance: viewModel.creditBalance
                 )
 
-                MomentsAviCreditGuidanceCard(message: viewModel.creditGuidanceMessage)
+                MomentsAviCreditGuidanceCard(message: presentation.creditGuidanceMessage)
 
                 MomentsAviHelpCard()
 
