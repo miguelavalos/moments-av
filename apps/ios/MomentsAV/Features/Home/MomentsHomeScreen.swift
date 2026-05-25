@@ -34,97 +34,26 @@ struct MomentsHomeScreen: View {
                     subtitle: "Private memory videos guided by Avi, with simple project tracking from draft to final export."
                 )
 
-                AVSettingsCard {
-                    MomentsHomeSectionHeader(
-                        title: presentation.accountTitle,
-                        detail: presentation.accountDetail
-                    )
+                MomentsHomeAccountCard(
+                    isSignedIn: viewModel.isSignedIn,
+                    creditBalance: viewModel.creditBalance,
+                    projectSummary: projectSummary,
+                    presentation: presentation,
+                    signInActions: signInActions
+                )
 
-                    if viewModel.isSignedIn {
-                        HStack(spacing: 10) {
-                            MomentsHomeMetricTile(
-                                title: "Spendable",
-                                value: "\(viewModel.creditBalance.spendable)",
-                                systemImage: "creditcard"
-                            )
-                            MomentsHomeMetricTile(
-                                title: "Projects",
-                                value: "\(projectSummary.projectCount)",
-                                systemImage: "rectangle.stack"
-                            )
-                        }
-                        MomentsHomeCreditBreakdown(balance: viewModel.creditBalance)
-                    } else {
-                        signInActions
-                    }
-                }
+                MomentsHomeProjectStatusCard(
+                    isSignedIn: viewModel.isSignedIn,
+                    projectSummary: projectSummary,
+                    presentation: presentation,
+                    openProjects: { selectTab(.projects) }
+                )
 
-                AVSettingsCard {
-                    MomentsHomeSectionHeader(
-                        title: "Project status",
-                        detail: presentation.projectStatusDetail
-                    )
-
-                    if let latestProject = projectSummary.latestProject {
-                        MomentsHomeLatestProjectRow(
-                            title: latestProject.title,
-                            detail: MomentsProjectFormatting.compactDetail(for: latestProject),
-                            openProject: { selectTab(.projects) }
-                        )
-                    } else if viewModel.isSignedIn {
-                        MomentsHomeEmptyProjectRow()
-                    }
-
-                    HStack(spacing: 10) {
-                        MomentsHomeMetricTile(
-                            title: "In progress",
-                            value: "\(projectSummary.inProgressCount)",
-                            systemImage: "clock"
-                        )
-                        MomentsHomeMetricTile(
-                            title: "Finished",
-                            value: "\(projectSummary.finishedCount)",
-                            systemImage: "checkmark.circle"
-                        )
-                    }
-                }
-
-                AVSettingsCard {
-                    MomentsHomeSectionHeader(
-                        title: "Next actions",
-                        detail: "Move between creation, project review, and Avi guidance without leaving the new shell."
-                    )
-
-                    VStack(spacing: 10) {
-                        if let latestInProgressAction = presentation.latestInProgressAction {
-                            MomentsHomeActionRow(
-                                action: latestInProgressAction
-                            ) {
-                                if let latestInProgressContinuationRequest = presentation.latestInProgressContinuationRequest {
-                                    continueProject(latestInProgressContinuationRequest)
-                                }
-                            }
-                        }
-
-                        MomentsHomeActionRow(
-                            action: presentation.createAction
-                        ) {
-                            selectTab(.create)
-                        }
-
-                        MomentsHomeActionRow(
-                            action: presentation.reviewProjectsAction
-                        ) {
-                            selectTab(.projects)
-                        }
-
-                        MomentsHomeActionRow(
-                            action: presentation.aviGuidanceAction
-                        ) {
-                            selectTab(.avi)
-                        }
-                    }
-                }
+                MomentsHomeNextActionsCard(
+                    presentation: presentation,
+                    continueProject: continueProject,
+                    selectTab: selectTab
+                )
             }
             .padding(20)
         }

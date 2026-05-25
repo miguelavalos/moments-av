@@ -160,6 +160,7 @@
 		F22AD4773CA782864A41F061 /* ProjectsListWorkflowContracts.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7439C24DA6983D6189D523 /* ProjectsListWorkflowContracts.swift */; };
 		F24D5CE719D8EA6E2B10706A /* MomentsAPIClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F4A958E6478D1BB9E3AC0ED /* MomentsAPIClientTests.swift */; };
 		F2AB598B7469B8ACBBF77A09 /* MomentsHomeScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA91CE95210B8440BE4FFC6D /* MomentsHomeScreen.swift */; };
+		F69D49231E22A25C99EF1D2F /* MomentsHomeSections.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BF8E97BB52E90642F57F422 /* MomentsHomeSections.swift */; };
 		F766ED805618E195CB124AAE /* MomentsPreviewClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = C14466814D074B3DD522279B /* MomentsPreviewClient.swift */; };
 		F881943571FC8E5F9E24B5AB /* AVAccountService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E264058E912DF3DABCEB033A /* AVAccountService.swift */; };
 		FA885649CCBD1A8623E9A336 /* SignInActionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F40B297B509410C2BB5D8E2 /* SignInActionsView.swift */; };
@@ -186,6 +187,7 @@
 		0507817D341A3F34A164BB72 /* MomentsProjectWorkspaceChrome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MomentsProjectWorkspaceChrome.swift; sourceTree = "<group>"; };
 		0691DD3A76302EEAFBF621E8 /* MomentsProjectsListSummaryRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MomentsProjectsListSummaryRow.swift; sourceTree = "<group>"; };
 		0A5E100611E4E7D5B9339969 /* MomentsCreateWorkflowContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MomentsCreateWorkflowContent.swift; sourceTree = "<group>"; };
+		0BF8E97BB52E90642F57F422 /* MomentsHomeSections.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MomentsHomeSections.swift; sourceTree = "<group>"; };
 		10E6147A66969036F332BBD0 /* AccountController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountController.swift; sourceTree = "<group>"; };
 		10F64901CE28DED5F8FBD3C8 /* MomentsAviFocusCards.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MomentsAviFocusCards.swift; sourceTree = "<group>"; };
 		11A5237CD029624E93149F89 /* MomentsMediaModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MomentsMediaModels.swift; sourceTree = "<group>"; };
@@ -440,6 +442,7 @@
 				92C2A3976172F6C58E7DAF58 /* MomentsHomePresentation.swift */,
 				FC1636F4CD65CD994337E3B4 /* MomentsHomeProjectComponents.swift */,
 				EA91CE95210B8440BE4FFC6D /* MomentsHomeScreen.swift */,
+				0BF8E97BB52E90642F57F422 /* MomentsHomeSections.swift */,
 				4B46FE009D4AEE202684A852 /* MomentsHomeSharedComponents.swift */,
 				52C1C5DB2F4807B86E51EC42 /* MomentsHomeViewModel.swift */,
 			);
@@ -1079,6 +1082,7 @@
 				CFC9ACA769A293340CDA5B9D /* MomentsHomePresentation.swift in Sources */,
 				7724D30C18E2762EC0B260DC /* MomentsHomeProjectComponents.swift in Sources */,
 				F2AB598B7469B8ACBBF77A09 /* MomentsHomeScreen.swift in Sources */,
+				F69D49231E22A25C99EF1D2F /* MomentsHomeSections.swift in Sources */,
 				171C9E54A278978C7B73BB5E /* MomentsHomeSharedComponents.swift in Sources */,
 				77FC9BDCDB8A13E656CC69D4 /* MomentsHomeViewModel.swift in Sources */,
 				8EC4B01F49D46F3FC3253FB6 /* MomentsMediaModels.swift in Sources */,
