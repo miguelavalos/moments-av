@@ -5,24 +5,34 @@ import SwiftUI
 struct MomentsAuthOnboardingView: View {
     @Binding var authOptionsArePresented: Bool
     @ObservedObject var accountController: AccountController
+    let onSkip: () -> Void
 
     var body: some View {
         AVAuthConfiguredOnboardingScreen(
             authOptionsArePresented: $authOptionsArePresented,
-            primaryAction: {
-                withAnimation(.spring(response: 0.34, dampingFraction: 0.88)) {
-                    authOptionsArePresented = true
-                }
-            },
+            primaryAction: accountController.isAccountAvailable ? showAuthOptions : onSkip,
+            secondaryAction: onSkip,
+            brandWidth: 160,
+            ctaCompanionOffset: CGSize(width: -2, height: -112),
             authPanel: {
-                MomentsAuthOptionsPanel(accountController: accountController)
+                MomentsAuthOptionsPanel(
+                    accountController: accountController,
+                    onSkip: onSkip
+                )
             }
         )
+    }
+
+    private func showAuthOptions() {
+        withAnimation(.spring(response: 0.34, dampingFraction: 0.88)) {
+            authOptionsArePresented = true
+        }
     }
 }
 
 private struct MomentsAuthOptionsPanel: View {
     @ObservedObject var accountController: AccountController
+    let onSkip: () -> Void
     @Environment(\.avCommonAppExperience) private var appExperience
 
     var body: some View {
@@ -31,21 +41,26 @@ private struct MomentsAuthOptionsPanel: View {
             subtitle: "Projects, credits, previews, and final exports stay attached to your account.",
             legalConsentText: legalConsentText,
             unavailableMessage: unavailableMessage,
+            skipTitle: "Skip",
+            appleTitle: "Continue with Apple",
+            googleTitle: "Continue with Google",
             isBusy: accountController.isBusy,
             isAvailable: accountController.isAccountAvailable,
             appleAccessibilityIdentifier: "moments.onboarding.auth.apple",
             googleAccessibilityIdentifier: "moments.onboarding.auth.google",
             onApple: accountController.signInWithApple,
-            onGoogle: accountController.signInWithGoogle
+            onGoogle: accountController.signInWithGoogle,
+            onSkip: onSkip
         ) {
             AVAuthConfiguredCompanionArtwork(
                 placement: .authPanel,
-                imageWidth: 112,
-                imageHeight: 112,
-                frameWidth: 124,
-                frameHeight: 128
+                imageWidth: 126,
+                imageHeight: 126,
+                frameWidth: 140,
+                frameHeight: 110,
+                imageOffset: CGSize(width: 0, height: -5),
+                groundShadowColor: nil
             )
-                .frame(width: 140, height: 110)
                 .offset(x: -44, y: -91)
                 .allowsHitTesting(false)
         }

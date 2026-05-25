@@ -5,6 +5,7 @@ struct MomentsAppBootstrapView: View {
     @StateObject private var dependencies = MomentsDependencyContainer()
     @State private var selectedTab: MomentsRootTab = .home
     @State private var authOptionsArePresented = false
+    @State private var authenticationWasSkipped = false
     @State private var didApplyLaunchTab = false
 
     private let launchContext = MomentsLaunchContext.current
@@ -14,12 +15,13 @@ struct MomentsAppBootstrapView: View {
 
     var body: some View {
         Group {
-            if dependencies.accountController.isSignedIn {
+            if dependencies.accountController.isSignedIn || authenticationWasSkipped {
                 MomentsAppShellView(selectedTab: $selectedTab)
             } else {
                 MomentsAuthOnboardingView(
                     authOptionsArePresented: $authOptionsArePresented,
-                    accountController: dependencies.accountController
+                    accountController: dependencies.accountController,
+                    onSkip: skipAuthentication
                 )
             }
         }
@@ -48,6 +50,11 @@ struct MomentsAppBootstrapView: View {
         didApplyLaunchTab = true
         guard let preferredTab = launchContext.preferredTab else { return }
         selectedTab = MomentsRootTab(preferredTab)
+    }
+
+    private func skipAuthentication() {
+        authOptionsArePresented = false
+        authenticationWasSkipped = true
     }
 }
 

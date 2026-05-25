@@ -17,9 +17,11 @@ enum MomentsAppExperience {
             brandPalette: MomentsTheme.brandPalette,
             visualAssets: visualAssets,
             splashTagline: "Private memory films",
+            splashStatus: "Preparing your studio",
             onboardingTitle: "Create private memory films with Avi",
             onboardingSubtitle: "Sign in to create story drafts, previews, and final renders from your selected media.",
-            onboardingPrimaryTitle: "Continue",
+            onboardingPrimaryTitle: "Sign in",
+            onboardingSecondaryTitle: "Skip",
             onboardingBackgroundStart: .init(red: 0.97, green: 0.94, blue: 0.86),
             onboardingBackgroundMid: AVBrandColor.neutral50,
             onboardingBackgroundEnd: .init(red: 0.9, green: 0.93, blue: 0.89)
