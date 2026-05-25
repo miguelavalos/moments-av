@@ -80,6 +80,21 @@ final class MomentsCreditGateTests: XCTestCase {
         XCTAssertFalse(form.canCreateDraft)
     }
 
+    func testDraftAvailabilityMessageUsesSingularMissingCredit() {
+        var form = MomentDraftForm(template: .birthdayMessage)
+        form.occasion = "Birthday"
+
+        let availability = MomentDraftRules.availability(
+            form: form,
+            balance: MomentsCreditBalance(proMonthly: 1, promotional: 0, purchased: 0)
+        )
+
+        XCTAssertEqual(
+            MomentDraftRules.availabilityMessage(availability),
+            "Add 1 more credit for this template."
+        )
+    }
+
     func testMediaRulesEnforceTemplateMinimumsAndMaximums() {
         XCTAssertFalse(MomentsMediaRules.canStartPreview(template: .birthdayMessage, selectedCount: 2))
         XCTAssertTrue(MomentsMediaRules.canStartPreview(template: .birthdayMessage, selectedCount: 3))

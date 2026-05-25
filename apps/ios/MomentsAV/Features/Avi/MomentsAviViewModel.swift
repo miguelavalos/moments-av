@@ -41,7 +41,7 @@ final class MomentsAviViewModel: ObservableObject {
         guard creditBalance.spendable > 0 else {
             return "No spendable credits are available. Final exports require credits after preview review."
         }
-        return "\(creditBalance.spendable) credits are spendable for final exports. Monthly credits are used before promotional and purchased credits."
+        return "\(creditBalance.spendable) \(creditLabel) \(creditBalance.spendable == 1 ? "is" : "are") spendable for final exports. Monthly credits are used before promotional and purchased credits."
     }
 
     func bind(to summaryProvider: any MomentsProjectSummaryProviding) {
@@ -71,5 +71,9 @@ final class MomentsAviViewModel: ObservableObject {
 
     private var inProgressProjectLabel: String {
         projectSummary.inProgressCount == 1 ? "project" : "projects"
+    }
+
+    private var creditLabel: String {
+        creditBalance.spendable == 1 ? "credit" : "credits"
     }
 }

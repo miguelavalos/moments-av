@@ -45,6 +45,19 @@ final class MomentsAviViewModelTests: XCTestCase {
         XCTAssertTrue(viewModel.creditGuidanceMessage.contains("6 credits are spendable"))
     }
 
+    func testCreditGuidanceUsesSingularSpendableCredit() {
+        let accountProvider = AviAccountStateProvider()
+        let viewModel = MomentsAviViewModel()
+        viewModel.bind(accountStateProvider: accountProvider)
+
+        accountProvider.isSignedIn.send(true)
+        accountProvider.creditBalance.send(
+            MomentsCreditBalance(proMonthly: 1, promotional: 0, purchased: 0)
+        )
+
+        XCTAssertTrue(viewModel.creditGuidanceMessage.contains("1 credit is spendable"))
+    }
+
     func testZeroCreditsExplainFinalExportRequirement() {
         let accountProvider = AviAccountStateProvider()
         let viewModel = MomentsAviViewModel()
