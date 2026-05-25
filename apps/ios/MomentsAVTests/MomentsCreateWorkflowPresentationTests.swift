@@ -298,6 +298,13 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
     }
 
     func testAvailabilityCopyUsesSingularAndPluralCreditMessages() {
+        XCTAssertEqual(MomentsCreateAvailabilityCopy.draftSignInRequired, "Sign in before creating a draft.")
+        XCTAssertEqual(MomentsCreateAvailabilityCopy.mediaTemplateFull, "Remove media before adding more to this template.")
+        XCTAssertEqual(MomentsCreateAvailabilityCopy.storyMissingMedia, "Wait for synced media before drafting.")
+        XCTAssertEqual(
+            MomentsCreateAvailabilityCopy.finalRenderMissingWorkspace,
+            "Wait for the project workspace to sync before rendering the final export."
+        )
         XCTAssertEqual(
             MomentsCreateAvailabilityCopy.previewInsufficientCredits(missingCredits: 1),
             "Add 1 more credit before generating a preview."
@@ -306,6 +313,26 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
             MomentsCreateAvailabilityCopy.finalRenderInsufficientCredits(missingCredits: 2),
             "Add 2 more credits before final render."
         )
+    }
+
+    func testRefreshAvailabilityFactoryFormatsPreviewAndFinalMessages() {
+        let preview = MomentsCreateRefreshAvailabilityFactory.preview(
+            projectId: nil,
+            job: nil,
+            isAvailable: false,
+            isConfigured: false,
+            isRefreshing: false
+        )
+        let finalRender = MomentsCreateRefreshAvailabilityFactory.finalRender(
+            projectId: "project-1",
+            job: nil,
+            isAvailable: true,
+            isConfigured: true,
+            isRefreshing: false
+        )
+
+        XCTAssertEqual(preview.message, "Open a project before refreshing preview status.")
+        XCTAssertEqual(finalRender.message, "No final render job is available yet.")
     }
 
     func testWorkspaceSummaryFormatsProgressDetails() {

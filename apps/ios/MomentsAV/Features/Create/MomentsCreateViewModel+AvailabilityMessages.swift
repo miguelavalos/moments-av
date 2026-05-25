@@ -1,46 +1,46 @@
 extension MomentsCreateViewModel {
     var draftAvailabilityMessage: String? {
         if isDraftLocked { return nil }
-        if !isSignedIn { return "Sign in before creating a draft." }
-        if !(projectCreationWorkflow?.isConfigured ?? false) { return "Project sync is not configured for this build." }
+        if !isSignedIn { return MomentsCreateAvailabilityCopy.draftSignInRequired }
+        if !(projectCreationWorkflow?.isConfigured ?? false) { return MomentsCreateAvailabilityCopy.projectSyncNotConfigured }
         return MomentDraftRules.availabilityMessage(draftFormAvailability)
     }
 
     var mediaAvailabilityMessage: String? {
-        if activeProjectId == nil { return "Create or continue a draft before adding media." }
+        if activeProjectId == nil { return MomentsCreateAvailabilityCopy.mediaMissingProject }
         if isImportingMedia { return nil }
-        if !(mediaUploadWorkflow?.isConfigured ?? false) { return "Media upload is not configured for this build." }
-        if mediaRemainingSlots == 0 { return "Remove media before adding more to this template." }
+        if !(mediaUploadWorkflow?.isConfigured ?? false) { return MomentsCreateAvailabilityCopy.mediaUploadNotConfigured }
+        if mediaRemainingSlots == 0 { return MomentsCreateAvailabilityCopy.mediaTemplateFull }
         return nil
     }
 
     var storyAvailabilityMessage: String? {
-        guard activeProjectId != nil else { return "Create or continue a draft before generating a story." }
-        guard let storyDraftWorkflow else { return "Story drafting is not available yet." }
+        guard activeProjectId != nil else { return MomentsCreateAvailabilityCopy.storyMissingProject }
+        guard let storyDraftWorkflow else { return MomentsCreateAvailabilityCopy.storyUnavailable }
         if storyDraftWorkflow.isDrafting { return nil }
-        if !storyDraftWorkflow.isConfigured { return "Story drafting is not configured for this build." }
+        if !storyDraftWorkflow.isConfigured { return MomentsCreateAvailabilityCopy.storyNotConfigured }
 
         return MomentsStoryDraftRules.availabilityMessage(
             MomentsStoryDraftRules.availability(
                 mediaAssets: activeWorkspace?.mediaAssets,
                 template: form.template
             ),
-            missingMediaMessage: "Wait for synced media before drafting."
+            missingMediaMessage: MomentsCreateAvailabilityCopy.storyMissingMedia
         )
     }
 
     var previewAvailabilityMessage: String? {
-        guard activeProjectId != nil else { return "Create or continue a draft before generating a preview." }
-        guard let previewGenerationWorkflow else { return "Preview generation is not available yet." }
+        guard activeProjectId != nil else { return MomentsCreateAvailabilityCopy.previewMissingProject }
+        guard let previewGenerationWorkflow else { return MomentsCreateAvailabilityCopy.previewUnavailable }
         if previewGenerationWorkflow.isGenerating { return nil }
-        if !previewGenerationWorkflow.isConfigured { return "Preview generation is not configured for this build." }
+        if !previewGenerationWorkflow.isConfigured { return MomentsCreateAvailabilityCopy.previewNotConfigured }
         return MomentsPreviewRules.availabilityMessage(
             MomentsPreviewRules.availability(
                 project: activeProject,
                 template: form.template,
                 balance: balance
             ),
-            missingProjectMessage: "Wait for the project workspace to sync before generating a preview.",
+            missingProjectMessage: MomentsCreateAvailabilityCopy.previewMissingWorkspace,
             insufficientCreditsMessage: MomentsCreateAvailabilityCopy.previewInsufficientCredits(
                 missingCredits: missingCredits
             )
@@ -52,10 +52,10 @@ extension MomentsCreateViewModel {
     }
 
     var finalRenderAvailabilityMessage: String? {
-        guard activeProjectId != nil else { return "Create or continue a draft before rendering the final export." }
-        guard let finalRenderWorkflow else { return "Final rendering is not available yet." }
+        guard activeProjectId != nil else { return MomentsCreateAvailabilityCopy.finalRenderMissingProject }
+        guard let finalRenderWorkflow else { return MomentsCreateAvailabilityCopy.finalRenderUnavailable }
         if finalRenderWorkflow.isGenerating { return nil }
-        if !finalRenderWorkflow.isConfigured { return "Final rendering is not configured for this build." }
+        if !finalRenderWorkflow.isConfigured { return MomentsCreateAvailabilityCopy.finalRenderNotConfigured }
         return MomentsFinalRenderRules.availabilityMessage(
             MomentsFinalRenderRules.availability(
                 project: activeProject,
@@ -63,7 +63,7 @@ extension MomentsCreateViewModel {
                 balance: balance,
                 latestPreview: latestPreview
             ),
-            missingProjectMessage: "Wait for the project workspace to sync before rendering the final export.",
+            missingProjectMessage: MomentsCreateAvailabilityCopy.finalRenderMissingWorkspace,
             insufficientCreditsMessage: MomentsCreateAvailabilityCopy.finalRenderInsufficientCredits(
                 missingCredits: missingCredits
             )
@@ -83,32 +83,22 @@ extension MomentsCreateViewModel {
     }
 
     var previewRefreshAvailability: RenderJobStatusRefreshAvailability {
-        RenderJobStatusRefreshAvailability(
+        MomentsCreateRefreshAvailabilityFactory.preview(
             projectId: activeProjectId,
             job: latestPreviewJob,
             isAvailable: previewGenerationWorkflow != nil,
             isConfigured: previewGenerationWorkflow?.isConfigured ?? false,
-            isRefreshing: previewGenerationWorkflow?.isRefreshingStatus ?? false,
-            unavailableMessage: "Preview status refresh is not available yet.",
-            notConfiguredMessage: "Preview status refresh is not configured for this build.",
-            missingProjectMessage: "Open a project before refreshing preview status.",
-            missingJobMessage: "No preview render job is available yet.",
-            missingProviderRequestMessage: "Preview status is missing its provider request id."
+            isRefreshing: previewGenerationWorkflow?.isRefreshingStatus ?? false
         )
     }
 
     var finalRenderRefreshAvailability: RenderJobStatusRefreshAvailability {
-        RenderJobStatusRefreshAvailability(
+        MomentsCreateRefreshAvailabilityFactory.finalRender(
             projectId: activeProjectId,
             job: latestFinalJob,
             isAvailable: finalRenderWorkflow != nil,
             isConfigured: finalRenderWorkflow?.isConfigured ?? false,
-            isRefreshing: finalRenderWorkflow?.isRefreshingStatus ?? false,
-            unavailableMessage: "Final status refresh is not available yet.",
-            notConfiguredMessage: "Final status refresh is not configured for this build.",
-            missingProjectMessage: "Open a project before refreshing final status.",
-            missingJobMessage: "No final render job is available yet.",
-            missingProviderRequestMessage: "Final render status is missing its provider request id."
+            isRefreshing: finalRenderWorkflow?.isRefreshingStatus ?? false
         )
     }
 }
