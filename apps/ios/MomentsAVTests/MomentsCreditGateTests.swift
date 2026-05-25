@@ -95,6 +95,36 @@ final class MomentsCreditGateTests: XCTestCase {
         )
     }
 
+    func testContinuingDraftFormUsesProjectFieldsAndFallbacks() {
+        let project = MomentDraftProject(
+            id: "project-1",
+            template: .birthdayMessage,
+            status: "draft",
+            title: "Birthday",
+            tone: "cinematic",
+            tempo: "not-a-tempo",
+            occasion: "Anniversary",
+            details: "Use the beach clips.",
+            durationSeconds: 30,
+            creditCost: 2,
+            previewCount: 0,
+            previewLimit: 3,
+            updatedAt: 0
+        )
+
+        let form = MomentDraftForm.continuing(
+            project: project,
+            templates: MomentTemplate.launchTemplates
+        )
+
+        XCTAssertEqual(form?.template.id, .birthdayMessage)
+        XCTAssertEqual(form?.occasion, "Anniversary")
+        XCTAssertEqual(form?.recipient, "")
+        XCTAssertEqual(form?.tone, .cinematic)
+        XCTAssertEqual(form?.tempo, .balanced)
+        XCTAssertEqual(form?.details, "Use the beach clips.")
+    }
+
     func testMediaRulesEnforceTemplateMinimumsAndMaximums() {
         XCTAssertFalse(MomentsMediaRules.canStartPreview(template: .birthdayMessage, selectedCount: 2))
         XCTAssertTrue(MomentsMediaRules.canStartPreview(template: .birthdayMessage, selectedCount: 3))

@@ -95,15 +95,8 @@ final class MomentsCreateViewModel: ObservableObject {
         pendingFocus = focus
         continuationFocusHint = focus
 
-        if let template = templates.first(where: { $0.id == project.template }) {
-            form = MomentDraftForm(
-                template: template,
-                occasion: project.occasion ?? "",
-                recipient: "",
-                tone: MomentDraftTone(rawValue: project.tone ?? "") ?? .warm,
-                tempo: MomentDraftTempo(rawValue: project.tempo ?? "") ?? .balanced,
-                details: project.details ?? ""
-            )
+        if let continuedForm = MomentDraftForm.continuing(project: project, templates: templates) {
+            form = continuedForm
         }
 
         projectCreationWorkflow?.continueProject(project)

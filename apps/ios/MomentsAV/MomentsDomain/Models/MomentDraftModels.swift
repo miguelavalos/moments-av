@@ -110,6 +110,24 @@ struct MomentDraftForm: Equatable {
     var canCreateDraft: Bool {
         !occasion.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
+
+    static func continuing(
+        project: MomentDraftProject,
+        templates: [MomentTemplate]
+    ) -> MomentDraftForm? {
+        guard let template = templates.first(where: { $0.id == project.template }) else {
+            return nil
+        }
+
+        return MomentDraftForm(
+            template: template,
+            occasion: project.occasion ?? "",
+            recipient: "",
+            tone: MomentDraftTone(rawValue: project.tone ?? "") ?? .warm,
+            tempo: MomentDraftTempo(rawValue: project.tempo ?? "") ?? .balanced,
+            details: project.details ?? ""
+        )
+    }
 }
 
 enum MomentDraftRules {
