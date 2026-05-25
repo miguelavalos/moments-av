@@ -73,20 +73,3 @@ struct MomentsProjectFinalExportSection: View {
         }
     }
 }
-
-struct MomentsProjectArtifactRow: View {
-    let title: String
-    let artifact: MomentArtifact
-
-    private var presentation: MomentsProjectArtifactPresentation {
-        MomentsProjectArtifactPresentation(artifact: artifact)
-    }
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text(title)
-                .font(.subheadline.weight(.semibold))
-            MomentsProjectArtifactDetail(presentation: presentation)
-        }
-    }
-}

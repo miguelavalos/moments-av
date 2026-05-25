@@ -2,9 +2,10 @@ import SwiftUI
 
 struct MomentsAppBootstrapView: View {
     @StateObject private var dependencies = MomentsDependencyContainer()
+    @State private var selectedTab: MomentsRootTab = .home
 
     var body: some View {
-        MomentsRootView()
+        MomentsAppShellView(selectedTab: $selectedTab)
             .environmentObject(dependencies.accountController)
             .environmentObject(dependencies.projectsListWorkflow)
             .environmentObject(dependencies.homeViewModel)
