@@ -37,8 +37,8 @@ final class MomentsCreateViewModel: ObservableObject {
     private(set) var storyDraftWorkflow: StoryDraftWorkflow?
     private(set) var previewGenerationWorkflow: PreviewGenerationWorkflow?
     private(set) var finalRenderWorkflow: FinalRenderWorkflow?
+    let operationRunner = MomentsCreateOperationRunner()
     var cancellables = Set<AnyCancellable>()
-    var operationTasks: [UUID: Task<Void, Never>] = [:]
 
     var activeProject: MomentDraftProject? {
         activeWorkspace?.project
