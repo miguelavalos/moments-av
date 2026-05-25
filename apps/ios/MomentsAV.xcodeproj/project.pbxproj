@@ -20,6 +20,7 @@
 		16F34450E19A84DC651DF14C /* MomentsCreateViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECBADBB3819B395520C2017A /* MomentsCreateViewModel.swift */; };
 		171C9E54A278978C7B73BB5E /* MomentsHomeSharedComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B46FE009D4AEE202684A852 /* MomentsHomeSharedComponents.swift */; };
 		1A85918F8DA43A54A313F540 /* MomentsStoryModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 155E90DF7702618A8DD13FE4 /* MomentsStoryModels.swift */; };
+		1B6BF1F494D05E3A3E8D5906 /* MediaUploadPersistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFFB3E4DABA5AABF4548FBF3 /* MediaUploadPersistence.swift */; };
 		1B882B00611FB9FB32DA438A /* FinalRenderWorkflow.swift in Sources */ = {isa = PBXBuildFile; fileRef = E647DF5F625AD53A678EDF46 /* FinalRenderWorkflow.swift */; };
 		1C50765994951A8F7BC8AAA9 /* ConvexMobile in Frameworks */ = {isa = PBXBuildFile; productRef = E55ADAAE01D91D0E794079EB /* ConvexMobile */; };
 		1E9A2FA71ACB2D2483F46204 /* AVAviFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 872F5AD50A6C12BF2797777C /* AVAviFoundation */; };
@@ -117,6 +118,7 @@
 		9ED5A923F06B180E1A769DA6 /* MomentsProjectsListGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F9F5EDCD164ECF53EB417AE /* MomentsProjectsListGroup.swift */; };
 		A0782CDB809A9AC7C0E5B9BF /* StoryDraftWorkflow.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0B4DF9B7BE802FE507B39D4 /* StoryDraftWorkflow.swift */; };
 		A695AD8A0CC86EA4FE3C5001 /* RenderResultPersistenceRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A5E24E4C6C6B3A28DC0972E /* RenderResultPersistenceRequest.swift */; };
+		A755EC0907BD79D950425B62 /* MediaPickerImport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 613F3F2E5F4D47A559131F9C /* MediaPickerImport.swift */; };
 		ABCF528CD415EA2D9AE35EC2 /* MomentsProjectsListMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3EAD2E36DA6CA3D2689F6C7 /* MomentsProjectsListMetadata.swift */; };
 		AE97A23F224DD8775B340A33 /* MomentsProjectsListSummaryRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0691DD3A76302EEAFBF621E8 /* MomentsProjectsListSummaryRow.swift */; };
 		AEBDEFABA1261671A0B306B4 /* MomentsCreditGateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12D095393477FF611CAA3D1C /* MomentsCreditGateTests.swift */; };
@@ -254,6 +256,7 @@
 		5A37741D19DFB2B2E764B5A1 /* MomentsCreateTemplateSummary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MomentsCreateTemplateSummary.swift; sourceTree = "<group>"; };
 		5BE0AD37C2065C0ABDDBD3AB /* MomentProjectWorkspaceLookups.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MomentProjectWorkspaceLookups.swift; sourceTree = "<group>"; };
 		5C0DC50766C3A816179EF9B4 /* DependencyContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DependencyContainer.swift; sourceTree = "<group>"; };
+		613F3F2E5F4D47A559131F9C /* MediaPickerImport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaPickerImport.swift; sourceTree = "<group>"; };
 		6231E7DA03376C09FF55275D /* StoryDraftPersistenceRequestTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryDraftPersistenceRequestTests.swift; sourceTree = "<group>"; };
 		62961F98769B28186D5A006A /* MomentsProjectsListSummaryPill.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MomentsProjectsListSummaryPill.swift; sourceTree = "<group>"; };
 		63014B49402C365542A4BC8C /* AppBootstrap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppBootstrap.swift; sourceTree = "<group>"; };
@@ -338,6 +341,7 @@
 		CC6D9CE7C5DBEA7F318EC348 /* ProjectMutationRequests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectMutationRequests.swift; sourceTree = "<group>"; };
 		CC7439C24DA6983D6189D523 /* ProjectsListWorkflowContracts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectsListWorkflowContracts.swift; sourceTree = "<group>"; };
 		CEE55209053233A76EFA5E5C /* MomentsProjectWorkspaceDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MomentsProjectWorkspaceDetail.swift; sourceTree = "<group>"; };
+		CFFB3E4DABA5AABF4548FBF3 /* MediaUploadPersistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaUploadPersistence.swift; sourceTree = "<group>"; };
 		D394F9F4DC5643DC1B0C3A05 /* MomentsProjectArtifactRows.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MomentsProjectArtifactRows.swift; sourceTree = "<group>"; };
 		D3EAD2E36DA6CA3D2689F6C7 /* MomentsProjectsListMetadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MomentsProjectsListMetadata.swift; sourceTree = "<group>"; };
 		D519F474EF006F821EC6A79E /* MomentsCreatePreviewCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MomentsCreatePreviewCard.swift; sourceTree = "<group>"; };
@@ -838,6 +842,8 @@
 		DF9D7D4D4695ED2062298D96 /* MediaUpload */ = {
 			isa = PBXGroup;
 			children = (
+				613F3F2E5F4D47A559131F9C /* MediaPickerImport.swift */,
+				CFFB3E4DABA5AABF4548FBF3 /* MediaUploadPersistence.swift */,
 				E99AC551B87036E5FC19BF7A /* MediaUploadWorkflow.swift */,
 			);
 			path = MediaUpload;
@@ -1063,6 +1069,8 @@
 				15525C8EDBD55F89B1F69894 /* DependencyContainer.swift in Sources */,
 				1B882B00611FB9FB32DA438A /* FinalRenderWorkflow.swift in Sources */,
 				8DBE8BC23939E8B17FE48408 /* MediaAssetPersistenceRequest.swift in Sources */,
+				A755EC0907BD79D950425B62 /* MediaPickerImport.swift in Sources */,
+				1B6BF1F494D05E3A3E8D5906 /* MediaUploadPersistence.swift in Sources */,
 				FF7DBAD95F65FACF38D7ADFE /* MediaUploadWorkflow.swift in Sources */,
 				BC9053E1EC793366ECC1222B /* MomentArtifact.swift in Sources */,
 				B7BAA3C1ADDD8C9889A88076 /* MomentDraftFormModels.swift in Sources */,

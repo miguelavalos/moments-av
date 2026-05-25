@@ -57,50 +57,28 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
         statusMessage = nil
 
         do {
-            var imported: [MomentsSelectedMedia] = []
-
-            for (offset, item) in items.prefix(remainingSlots).enumerated() {
-                let media = try await uploadClient.loadMedia(
-                    from: item,
-                    sortOrder: selectedMedia.count + offset
-                )
-                imported.append(media)
-            }
+            let imported = try await MediaPickerImport.load(
+                items: items,
+                limit: remainingSlots,
+                startingSortOrder: selectedMedia.count,
+                uploadClient: uploadClient
+            )
 
             guard isCurrent(generation) else { return }
             selectedMedia.append(contentsOf: imported)
             normalizeOrder()
 
-            var savedCount = 0
-            var storageBlocked = false
-
-            for media in imported {
-                let prepared = try await uploadClient.prepareUpload(
-                    projectId: projectId,
-                    ownerUserId: ownerUserId,
-                    media: media
-                )
-
-                do {
-                    try await uploadClient.upload(media: media, preparedUpload: prepared)
-                } catch MomentsUploadError.signedUploadUnavailable {
-                    storageBlocked = true
-                }
-
-                try await mediaAssetSaver.saveMediaAsset(
-                    ownerUserId: ownerUserId,
-                    projectId: projectId,
-                    media: media,
-                    preparedUpload: prepared
-                )
-                guard isCurrent(generation) else { return }
-                savedCount += 1
-            }
+            let persistenceResult = try await MediaUploadPersistence.save(
+                imported: imported,
+                ownerUserId: ownerUserId,
+                projectId: projectId,
+                uploadClient: uploadClient,
+                mediaAssetSaver: mediaAssetSaver,
+                shouldContinue: { isCurrent(generation) }
+            )
 
             workspaceObserver.observeWorkspace(ownerUserId: ownerUserId, projectId: projectId)
-            statusMessage = storageBlocked
-                ? "Saved \(savedCount) media records. Signed storage upload is not enabled for this build."
-                : "Saved \(savedCount) media records."
+            statusMessage = persistenceResult.statusMessage
         } catch {
             guard isCurrent(generation) else { return }
             statusMessage = error.localizedDescription
