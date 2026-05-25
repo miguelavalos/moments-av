@@ -42,7 +42,6 @@ protocol MomentsRenderJobStatusUpdating {
 
 @MainActor
 protocol MomentsPreviewResultSaving: MomentsRenderJobStatusUpdating {
-    var isConfigured: Bool { get }
     func savePreviewResult(
         ownerUserId: String,
         projectId: String,
@@ -53,7 +52,6 @@ protocol MomentsPreviewResultSaving: MomentsRenderJobStatusUpdating {
 
 @MainActor
 protocol MomentsFinalRenderResultSaving: MomentsRenderJobStatusUpdating {
-    var isConfigured: Bool { get }
     func saveFinalRenderResult(
         ownerUserId: String,
         projectId: String,
