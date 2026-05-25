@@ -50,7 +50,29 @@ final class MomentsProjectWorkspacePresentationTests: XCTestCase {
 
         XCTAssertEqual(presentation.title, "Family Weekend")
         XCTAssertEqual(presentation.updatedAtTitle, "Updated \(MomentsDateFormatting.formattedDate(milliseconds: 1_781_592_000_000))")
-        XCTAssertEqual(presentation.countsTitle, "Media 1 · Scenes 1 · Jobs 1")
+        XCTAssertEqual(presentation.countsTitle, "1 media item · 1 scene · 1 job")
+    }
+
+    func testWorkspaceHeaderPresentationFormatsPluralCounts() {
+        let presentation = MomentsProjectWorkspaceHeaderPresentation(
+            workspace: makeWorkspace(
+                project: makeProject(title: "Family Weekend"),
+                mediaAssets: [
+                    makeMediaAsset(id: "media-1", kind: "image", sortOrder: 0, selected: true, moderationStatus: "approved"),
+                    makeMediaAsset(id: "media-2", kind: "video", sortOrder: 1, selected: false, moderationStatus: "pending")
+                ],
+                storyScenes: [
+                    makeScene(id: "scene-1", sceneIndex: 0, caption: "Opening"),
+                    makeScene(id: "scene-2", sceneIndex: 1, caption: "Middle")
+                ],
+                renderJobs: [
+                    makeRenderJob(id: "job-1", kind: "preview", status: "running", updatedAt: 20),
+                    makeRenderJob(id: "job-2", kind: "final_render", status: "queued", updatedAt: 30)
+                ]
+            )
+        )
+
+        XCTAssertEqual(presentation.countsTitle, "2 media items · 2 scenes · 2 jobs")
     }
 
     func testWorkspaceSummaryPresentationFormatsStatusArtifactsAndLatestJob() {

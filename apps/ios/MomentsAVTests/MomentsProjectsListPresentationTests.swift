@@ -65,6 +65,15 @@ final class MomentsProjectsListPresentationTests: XCTestCase {
         XCTAssertEqual(row.accessorySystemImage, "chevron.right.circle")
     }
 
+    func testRowPresentationUsesSingularCreditCopy() {
+        let row = MomentsProjectsListRowPresentation(
+            project: makeProject(id: "one-credit", status: "draft_created", creditCost: 1),
+            isSelected: false
+        )
+
+        XCTAssertEqual(row.creditCostTitle, "1 credit")
+    }
+
     private func makeProject(
         id: String,
         status: String,

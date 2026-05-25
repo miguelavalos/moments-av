@@ -89,9 +89,14 @@ struct MomentsProjectsListRowPresentation: Identifiable, Equatable {
             )
         ]
         self.statusTitle = MomentsProjectFormatting.statusTitle(project)
-        self.creditCostTitle = "\(Int(project.creditCost)) credits"
+        self.creditCostTitle = Self.creditCostTitle(project.creditCost)
         self.accessorySystemImage = isSelected ? "chevron.up.circle.fill" : "chevron.right.circle"
         self.isSelected = isSelected
+    }
+
+    private static func creditCostTitle(_ creditCost: Double) -> String {
+        let count = Int(creditCost)
+        return "\(count) \(count == 1 ? "credit" : "credits")"
     }
 }
 
