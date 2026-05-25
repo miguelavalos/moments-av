@@ -19,7 +19,20 @@ struct MomentsProjectsScreen: View {
 
     var body: some View {
         ScrollView {
-            projectsCard
+            MomentsProjectsCard(
+                presentation: presentation,
+                projectSummary: viewModel.projectSummary,
+                selectedProjectId: viewModel.selectedProjectId,
+                isLoadingProjectWorkspace: viewModel.isLoadingProjectWorkspace,
+                activeWorkspace: viewModel.activeWorkspace,
+                isDeletingProject: viewModel.isDeletingProject,
+                statusMessage: viewModel.statusMessage,
+                selectProject: viewModel.selectProject,
+                continueProject: continueProject,
+                requestDeleteProject: { project in
+                    projectPendingDeletion = project
+                }
+            )
             .padding(20)
         }
         .background(MomentsTheme.canvas.ignoresSafeArea())
@@ -30,64 +43,13 @@ struct MomentsProjectsScreen: View {
             titleVisibility: .visible
         ) {
             Button("Delete Project", role: .destructive) {
-                if let projectPendingDeletion {
-                    viewModel.deleteProject(projectPendingDeletion)
-                }
-                projectPendingDeletion = nil
+                confirmProjectDeletion()
             }
             Button("Cancel", role: .cancel) {
-                projectPendingDeletion = nil
+                cancelProjectDeletion()
             }
         } message: {
             Text(presentation.deletionMessage)
-        }
-    }
-
-    private var projectsCard: some View {
-        AVSettingsCard {
-            Text("Projects")
-                .font(.headline)
-
-            switch presentation.availability {
-            case let .signedOut(unavailable), let .empty(unavailable):
-                MomentsProjectsUnavailableState(presentation: unavailable)
-            case .available:
-                MomentsProjectsList(
-                    projectSummary: viewModel.projectSummary,
-                    selectedProjectId: viewModel.selectedProjectId
-                ) { project in
-                    viewModel.selectProject(project)
-                }
-                selectedProjectDetail
-                statusMessage
-            }
-        }
-    }
-
-    @ViewBuilder
-    private var selectedProjectDetail: some View {
-        if viewModel.isLoadingProjectWorkspace {
-            Divider()
-                .padding(.vertical, 8)
-            MomentsProjectLoadingDetail()
-        } else if let workspace = viewModel.activeWorkspace, viewModel.selectedProjectId == workspace.project.id {
-            Divider()
-                .padding(.vertical, 8)
-            MomentsProjectWorkspaceDetail(
-                workspace: workspace,
-                isDeletingProject: viewModel.isDeletingProject,
-                continueProject: continueProject,
-                requestDeleteProject: { project in
-                    projectPendingDeletion = project
-                }
-            )
-        }
-    }
-
-    @ViewBuilder
-    private var statusMessage: some View {
-        if let statusMessage = viewModel.statusMessage {
-            MomentsProjectsStatusMessage(message: statusMessage)
         }
     }
 
@@ -100,6 +62,83 @@ struct MomentsProjectsScreen: View {
                 }
             }
         )
+    }
+
+    private func confirmProjectDeletion() {
+        if let projectPendingDeletion {
+            viewModel.deleteProject(projectPendingDeletion)
+        }
+        projectPendingDeletion = nil
+    }
+
+    private func cancelProjectDeletion() {
+        projectPendingDeletion = nil
+    }
+}
+
+private struct MomentsProjectsCard: View {
+    let presentation: MomentsProjectsPresentation
+    let projectSummary: MomentsProjectListSummary
+    let selectedProjectId: String?
+    let isLoadingProjectWorkspace: Bool
+    let activeWorkspace: MomentProjectWorkspace?
+    let isDeletingProject: Bool
+    let statusMessage: String?
+    let selectProject: (MomentDraftProject) -> Void
+    let continueProject: (MomentsProjectContinuationRequest) -> Void
+    let requestDeleteProject: (MomentDraftProject) -> Void
+
+    var body: some View {
+        AVSettingsCard {
+            Text("Projects")
+                .font(.headline)
+
+            switch presentation.availability {
+            case let .signedOut(unavailable), let .empty(unavailable):
+                MomentsProjectsUnavailableState(presentation: unavailable)
+            case .available:
+                MomentsProjectsList(
+                    projectSummary: projectSummary,
+                    selectedProjectId: selectedProjectId,
+                    selectProject: selectProject
+                )
+                MomentsProjectsSelectedDetail(
+                    selectedProjectId: selectedProjectId,
+                    isLoadingProjectWorkspace: isLoadingProjectWorkspace,
+                    activeWorkspace: activeWorkspace,
+                    isDeletingProject: isDeletingProject,
+                    continueProject: continueProject,
+                    requestDeleteProject: requestDeleteProject
+                )
+                MomentsProjectsStatusMessage(message: statusMessage)
+            }
+        }
+    }
+}
+
+private struct MomentsProjectsSelectedDetail: View {
+    let selectedProjectId: String?
+    let isLoadingProjectWorkspace: Bool
+    let activeWorkspace: MomentProjectWorkspace?
+    let isDeletingProject: Bool
+    let continueProject: (MomentsProjectContinuationRequest) -> Void
+    let requestDeleteProject: (MomentDraftProject) -> Void
+
+    var body: some View {
+        if isLoadingProjectWorkspace {
+            Divider()
+                .padding(.vertical, 8)
+            MomentsProjectLoadingDetail()
+        } else if let activeWorkspace, selectedProjectId == activeWorkspace.project.id {
+            Divider()
+                .padding(.vertical, 8)
+            MomentsProjectWorkspaceDetail(
+                workspace: activeWorkspace,
+                isDeletingProject: isDeletingProject,
+                continueProject: continueProject,
+                requestDeleteProject: requestDeleteProject
+            )
+        }
     }
 }
 
@@ -128,17 +167,19 @@ private struct MomentsProjectsUnavailableState: View {
 }
 
 private struct MomentsProjectsStatusMessage: View {
-    let message: String
+    let message: String?
 
     var body: some View {
-        HStack(alignment: .top, spacing: 8) {
-            Image(systemName: "info.circle")
-                .foregroundStyle(.secondary)
-            Text(message)
-                .font(.caption)
-                .foregroundStyle(.secondary)
-                .fixedSize(horizontal: false, vertical: true)
+        if let message {
+            HStack(alignment: .top, spacing: 8) {
+                Image(systemName: "info.circle")
+                    .foregroundStyle(.secondary)
+                Text(message)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            .padding(.top, 2)
         }
-        .padding(.top, 2)
     }
 }
