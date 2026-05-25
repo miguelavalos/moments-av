@@ -1,5 +1,15 @@
 import Foundation
 
+enum MomentsCreateAvailabilityCopy {
+    static func previewInsufficientCredits(missingCredits: Int) -> String {
+        "Add \(missingCredits) more \(MomentsCreditCopy.noun(missingCredits)) before generating a preview."
+    }
+
+    static func finalRenderInsufficientCredits(missingCredits: Int) -> String {
+        "Add \(missingCredits) more \(MomentsCreditCopy.noun(missingCredits)) before final render."
+    }
+}
+
 struct MomentsCreateWorkflowPresentation: Equatable {
     var activeProjectId: String?
     var template: MomentTemplate

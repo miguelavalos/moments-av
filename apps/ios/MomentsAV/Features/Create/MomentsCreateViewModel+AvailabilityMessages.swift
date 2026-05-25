@@ -41,7 +41,9 @@ extension MomentsCreateViewModel {
                 balance: balance
             ),
             missingProjectMessage: "Wait for the project workspace to sync before generating a preview.",
-            insufficientCreditsMessage: "Add \(missingCredits) more \(MomentsCreditCopy.noun(missingCredits)) before generating a preview."
+            insufficientCreditsMessage: MomentsCreateAvailabilityCopy.previewInsufficientCredits(
+                missingCredits: missingCredits
+            )
         )
     }
 
@@ -62,7 +64,9 @@ extension MomentsCreateViewModel {
                 latestPreview: latestPreview
             ),
             missingProjectMessage: "Wait for the project workspace to sync before rendering the final export.",
-            insufficientCreditsMessage: "Add \(missingCredits) more \(MomentsCreditCopy.noun(missingCredits)) before final render."
+            insufficientCreditsMessage: MomentsCreateAvailabilityCopy.finalRenderInsufficientCredits(
+                missingCredits: missingCredits
+            )
         )
     }
 

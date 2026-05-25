@@ -297,6 +297,17 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         XCTAssertEqual(presentation.creditTitle, "1 credit")
     }
 
+    func testAvailabilityCopyUsesSingularAndPluralCreditMessages() {
+        XCTAssertEqual(
+            MomentsCreateAvailabilityCopy.previewInsufficientCredits(missingCredits: 1),
+            "Add 1 more credit before generating a preview."
+        )
+        XCTAssertEqual(
+            MomentsCreateAvailabilityCopy.finalRenderInsufficientCredits(missingCredits: 2),
+            "Add 2 more credits before final render."
+        )
+    }
+
     func testWorkspaceSummaryFormatsProgressDetails() {
         let summary = MomentsCreateWorkspaceSummary(
             mediaCount: 2,
