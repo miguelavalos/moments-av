@@ -1,49 +1,42 @@
 extension MomentsCreateViewModel {
     var draftAvailabilityMessage: String? {
-        if isDraftLocked { return nil }
-        if !isSignedIn { return MomentsCreateAvailabilityCopy.draftSignInRequired }
-        if !(projectCreationWorkflow?.isConfigured ?? false) { return MomentsCreateAvailabilityCopy.projectSyncNotConfigured }
-        return MomentDraftRules.availabilityMessage(draftFormAvailability)
+        MomentsCreateAvailabilityMessageFactory.draft(
+            isDraftLocked: isDraftLocked,
+            isSignedIn: isSignedIn,
+            isProjectCreationConfigured: projectCreationWorkflow?.isConfigured ?? false,
+            draftFormAvailability: draftFormAvailability
+        )
     }
 
     var mediaAvailabilityMessage: String? {
-        if activeProjectId == nil { return MomentsCreateAvailabilityCopy.mediaMissingProject }
-        if isImportingMedia { return nil }
-        if !(mediaUploadWorkflow?.isConfigured ?? false) { return MomentsCreateAvailabilityCopy.mediaUploadNotConfigured }
-        if mediaRemainingSlots == 0 { return MomentsCreateAvailabilityCopy.mediaTemplateFull }
-        return nil
+        MomentsCreateAvailabilityMessageFactory.media(
+            activeProjectId: activeProjectId,
+            isImportingMedia: isImportingMedia,
+            isMediaUploadConfigured: mediaUploadWorkflow?.isConfigured ?? false,
+            mediaRemainingSlots: mediaRemainingSlots
+        )
     }
 
     var storyAvailabilityMessage: String? {
-        guard activeProjectId != nil else { return MomentsCreateAvailabilityCopy.storyMissingProject }
-        guard let storyDraftWorkflow else { return MomentsCreateAvailabilityCopy.storyUnavailable }
-        if storyDraftWorkflow.isDrafting { return nil }
-        if !storyDraftWorkflow.isConfigured { return MomentsCreateAvailabilityCopy.storyNotConfigured }
-
-        return MomentsStoryDraftRules.availabilityMessage(
-            MomentsStoryDraftRules.availability(
-                mediaAssets: activeWorkspace?.mediaAssets,
-                template: form.template
-            ),
-            missingMediaMessage: MomentsCreateAvailabilityCopy.storyMissingMedia
+        MomentsCreateAvailabilityMessageFactory.story(
+            activeProjectId: activeProjectId,
+            isStoryDrafting: storyDraftWorkflow?.isDrafting ?? false,
+            isStoryDraftAvailable: storyDraftWorkflow != nil,
+            isStoryDraftConfigured: storyDraftWorkflow?.isConfigured ?? false,
+            mediaAssets: activeWorkspace?.mediaAssets,
+            template: form.template
         )
     }
 
     var previewAvailabilityMessage: String? {
-        guard activeProjectId != nil else { return MomentsCreateAvailabilityCopy.previewMissingProject }
-        guard let previewGenerationWorkflow else { return MomentsCreateAvailabilityCopy.previewUnavailable }
-        if previewGenerationWorkflow.isGenerating { return nil }
-        if !previewGenerationWorkflow.isConfigured { return MomentsCreateAvailabilityCopy.previewNotConfigured }
-        return MomentsPreviewRules.availabilityMessage(
-            MomentsPreviewRules.availability(
-                project: activeProject,
-                template: form.template,
-                balance: balance
-            ),
-            missingProjectMessage: MomentsCreateAvailabilityCopy.previewMissingWorkspace,
-            insufficientCreditsMessage: MomentsCreateAvailabilityCopy.previewInsufficientCredits(
-                missingCredits: missingCredits
-            )
+        MomentsCreateAvailabilityMessageFactory.preview(
+            activeProjectId: activeProjectId,
+            isPreviewGenerationAvailable: previewGenerationWorkflow != nil,
+            isPreviewGenerating: previewGenerationWorkflow?.isGenerating ?? false,
+            isPreviewGenerationConfigured: previewGenerationWorkflow?.isConfigured ?? false,
+            project: activeProject,
+            template: form.template,
+            balance: balance
         )
     }
 
@@ -52,30 +45,20 @@ extension MomentsCreateViewModel {
     }
 
     var finalRenderAvailabilityMessage: String? {
-        guard activeProjectId != nil else { return MomentsCreateAvailabilityCopy.finalRenderMissingProject }
-        guard let finalRenderWorkflow else { return MomentsCreateAvailabilityCopy.finalRenderUnavailable }
-        if finalRenderWorkflow.isGenerating { return nil }
-        if !finalRenderWorkflow.isConfigured { return MomentsCreateAvailabilityCopy.finalRenderNotConfigured }
-        return MomentsFinalRenderRules.availabilityMessage(
-            MomentsFinalRenderRules.availability(
-                project: activeProject,
-                template: form.template,
-                balance: balance,
-                latestPreview: latestPreview
-            ),
-            missingProjectMessage: MomentsCreateAvailabilityCopy.finalRenderMissingWorkspace,
-            insufficientCreditsMessage: MomentsCreateAvailabilityCopy.finalRenderInsufficientCredits(
-                missingCredits: missingCredits
-            )
+        MomentsCreateAvailabilityMessageFactory.finalRender(
+            activeProjectId: activeProjectId,
+            isFinalRenderAvailable: finalRenderWorkflow != nil,
+            isFinalRenderGenerating: finalRenderWorkflow?.isGenerating ?? false,
+            isFinalRenderConfigured: finalRenderWorkflow?.isConfigured ?? false,
+            project: activeProject,
+            template: form.template,
+            balance: balance,
+            latestPreview: latestPreview
         )
     }
 
     var finalRenderRefreshAvailabilityMessage: String? {
         finalRenderRefreshAvailability.message
-    }
-
-    private var missingCredits: Int {
-        max(form.template.creditCost - balance.spendable, 0)
     }
 
     var draftFormAvailability: MomentDraftRules.Availability {

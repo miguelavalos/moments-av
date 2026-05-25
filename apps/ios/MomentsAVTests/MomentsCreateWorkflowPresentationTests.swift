@@ -370,6 +370,90 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         )
     }
 
+    func testAvailabilityMessageFactoryFormatsMediaStates() {
+        XCTAssertEqual(
+            MomentsCreateAvailabilityMessageFactory.media(
+                activeProjectId: nil,
+                isImportingMedia: false,
+                isMediaUploadConfigured: true,
+                mediaRemainingSlots: 2
+            ),
+            MomentsCreateAvailabilityCopy.mediaMissingProject
+        )
+        XCTAssertNil(
+            MomentsCreateAvailabilityMessageFactory.media(
+                activeProjectId: "project-1",
+                isImportingMedia: true,
+                isMediaUploadConfigured: false,
+                mediaRemainingSlots: 0
+            )
+        )
+        XCTAssertEqual(
+            MomentsCreateAvailabilityMessageFactory.media(
+                activeProjectId: "project-1",
+                isImportingMedia: false,
+                isMediaUploadConfigured: true,
+                mediaRemainingSlots: 0
+            ),
+            MomentsCreateAvailabilityCopy.mediaTemplateFull
+        )
+    }
+
+    func testAvailabilityMessageFactoryFormatsStoryStates() {
+        XCTAssertEqual(
+            MomentsCreateAvailabilityMessageFactory.story(
+                activeProjectId: "project-1",
+                isStoryDrafting: false,
+                isStoryDraftAvailable: true,
+                isStoryDraftConfigured: true,
+                mediaAssets: [],
+                template: .birthdayMessage
+            ),
+            "Add 3 more synced media assets before drafting."
+        )
+        XCTAssertNil(
+            MomentsCreateAvailabilityMessageFactory.story(
+                activeProjectId: "project-1",
+                isStoryDrafting: true,
+                isStoryDraftAvailable: true,
+                isStoryDraftConfigured: false,
+                mediaAssets: [],
+                template: .birthdayMessage
+            )
+        )
+    }
+
+    func testAvailabilityMessageFactoryFormatsPreviewCreditStates() {
+        XCTAssertEqual(
+            MomentsCreateAvailabilityMessageFactory.preview(
+                activeProjectId: "project-1",
+                isPreviewGenerationAvailable: true,
+                isPreviewGenerating: false,
+                isPreviewGenerationConfigured: true,
+                project: makeProject(id: "project-1"),
+                template: .birthdayMessage,
+                balance: .empty
+            ),
+            "Add 2 more credits before generating a preview."
+        )
+    }
+
+    func testAvailabilityMessageFactoryFormatsFinalRenderPreviewRequirement() {
+        XCTAssertEqual(
+            MomentsCreateAvailabilityMessageFactory.finalRender(
+                activeProjectId: "project-1",
+                isFinalRenderAvailable: true,
+                isFinalRenderGenerating: false,
+                isFinalRenderConfigured: true,
+                project: makeProject(id: "project-1"),
+                template: .birthdayMessage,
+                balance: MomentsCreditBalance(proMonthly: 4, promotional: 0, purchased: 0),
+                latestPreview: nil
+            ),
+            "Generate a preview before rendering the final export."
+        )
+    }
+
     func testRefreshAvailabilityFactoryFormatsPreviewAndFinalMessages() {
         let preview = MomentsCreateRefreshAvailabilityFactory.preview(
             projectId: nil,
