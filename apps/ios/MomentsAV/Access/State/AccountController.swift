@@ -31,15 +31,15 @@ final class AccountController: ObservableObject {
         }
     }
 
-    func signInWithApple() {
-        startAuthTask { [self] in
-            try await self.service.signInWithApple()
+    func signInWithApple() async throws {
+        try await runAuthOperation {
+            try await service.signInWithApple()
         }
     }
 
-    func signInWithGoogle() {
-        startAuthTask { [self] in
-            try await self.service.signInWithGoogle()
+    func signInWithGoogle() async throws {
+        try await runAuthOperation {
+            try await service.signInWithGoogle()
         }
     }
 
@@ -50,18 +50,27 @@ final class AccountController: ObservableObject {
     }
 
     private func startAuthTask(_ operation: @escaping () async throws -> Void) {
+        Task {
+            do {
+                try await runAuthOperation(operation)
+            } catch {
+                // Interactive sign-in surfaces report their own errors.
+            }
+        }
+    }
+
+    private func runAuthOperation(_ operation: () async throws -> Void) async throws {
         guard !isBusy else { return }
         isBusy = true
         errorMessage = nil
+        defer { isBusy = false }
 
-        Task {
-            do {
-                try await operation()
-                refresh()
-            } catch {
-                errorMessage = error.localizedDescription
-            }
-            isBusy = false
+        do {
+            try await operation()
+            refresh()
+        } catch {
+            errorMessage = error.localizedDescription
+            throw error
         }
     }
 }

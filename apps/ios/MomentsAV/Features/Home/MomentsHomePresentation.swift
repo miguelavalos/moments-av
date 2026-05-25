@@ -47,8 +47,8 @@ struct MomentsHomePresentation {
                 isDisabled: !isSignedIn
             ),
             aviGuidanceAction: MomentsHomeAction(
-                title: "Ask Avi for guidance",
-                detail: "Use Avi for media, story, preview, render, and credit guidance.",
+                title: "Get project guidance",
+                detail: "Review media, story, preview, render, and credit decisions.",
                 systemImage: "sparkles"
             ),
             latestInProgressAction: latestInProgressAction,
@@ -74,18 +74,18 @@ struct MomentsHomePresentation {
 
     private static func aviBriefDetail(isSignedIn: Bool, projectSummary: MomentsProjectListSummary) -> String {
         guard isSignedIn else {
-            return "Sign in to let Avi guide drafts, previews, renders, and credits from one account."
+            return "Sign in to create projects, track previews, manage renders, and keep credits with your account."
         }
 
         if let latestProject = projectSummary.latestInProgressProject {
-            return "Avi can help continue \(latestProject.title) from the next unfinished step."
+            return "Continue \(latestProject.title) from the next unfinished step."
         }
 
         if projectSummary.hasProjects {
-            return "Avi can review your synced projects and help decide the next preview or final render."
+            return "Review synced projects and decide the next preview or final render."
         }
 
-        return "Avi can help plan the first memory video before you add media."
+        return "Plan the first memory film before adding media."
     }
 
     private static func projectLabel(_ count: Int) -> String {

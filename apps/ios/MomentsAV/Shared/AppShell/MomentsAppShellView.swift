@@ -5,6 +5,8 @@ import SwiftUI
 
 struct MomentsAppShellView: View {
     @Binding var selectedTab: MomentsRootTab
+    let startSignInFlow: () -> Void
+
     @EnvironmentObject private var accountController: AccountController
     @EnvironmentObject private var createViewModel: MomentsCreateViewModel
     @EnvironmentObject private var aviViewModel: MomentsAviViewModel
@@ -52,7 +54,8 @@ struct MomentsAppShellView: View {
             MomentsProfileScreen(
                 mode: chromeItem,
                 openSettings: { self.chromeItem = .settings },
-                openAccount: { self.chromeItem = .account }
+                openAccount: { self.chromeItem = .account },
+                startSignInFlow: startSignInFlow
             )
         } else {
             switch tab {
@@ -64,8 +67,7 @@ struct MomentsAppShellView: View {
                     continueProject: { request in
                         createViewModel.continueProject(request.project, focus: request.focus)
                         selectedTab = .create
-                    },
-                    signInActions: AnyView(SignInActionsView(authenticationController: accountController))
+                    }
                 )
             case .create:
                 MomentsCreateScreen()

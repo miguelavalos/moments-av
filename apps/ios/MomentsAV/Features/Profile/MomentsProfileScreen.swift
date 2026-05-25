@@ -1,4 +1,5 @@
 import AVAppShellFoundation
+import AVBrandFoundation
 import AVSettingsFoundation
 import SwiftUI
 
@@ -6,8 +7,11 @@ struct MomentsProfileScreen: View {
     let mode: AVAppShellChromeItem
     let openSettings: () -> Void
     let openAccount: () -> Void
+    let startSignInFlow: () -> Void
 
     @EnvironmentObject private var accountController: AccountController
+    @EnvironmentObject private var languageController: MomentsAppLanguageController
+    @EnvironmentObject private var themeController: MomentsAppThemeController
     @Environment(\.avCommonAppExperience) private var appExperience
     @Environment(\.openURL) private var openURL
 
@@ -35,196 +39,331 @@ struct MomentsProfileScreen: View {
     }
 
     private var screenTitle: String {
-        profileCopy.title(for: profileSurface)
-    }
-
-    private var screenSubtitle: String {
-        profileCopy.subtitle(for: profileSurface)
-    }
-
-    private var profileSurface: AVSettingsProfileSurface {
         switch mode {
         case .settings:
-            .settings
+            localized("profile.settingsScreen.title")
         case .account:
-            .account
+            localized("profile.accountScreen.title")
         }
     }
 
-    private var profileCopy: AVSettingsProfileCopy {
-        AVSettingsProfileCopy(
-            identity: appExperience.identity,
-            accountDetail: "sign-in, \(appExperience.identity.accountName) identity, credits, and account safety"
-        )
-    }
-
-    private var accountName: String {
-        accountController.user?.displayName ?? accountController.user?.emailAddress ?? "Not signed in"
-    }
-
-    private var accountDetail: String {
-        accountController.user?.emailAddress
-            ?? accountController.user?.id
-            ?? "Sign in is required before creating and rendering Moments AV projects."
-    }
-
-    private var productItems: [AVSettingsInfoSectionItem] {
-        [
-            AVSettingsInfoSectionItem(
-                id: "product",
-                systemImage: "sparkles.tv.fill",
-                title: "Product",
-                detail: "\(appExperience.identity.shortName) creates private memory videos from draft to final export."
-            ),
-            AVSettingsInfoSectionItem(
-                id: "create",
-                systemImage: "plus.app.fill",
-                title: "Create flow",
-                detail: "Draft setup, media selection, story generation, preview, and final render stay in one guided workflow."
-            ),
-            AVSettingsInfoSectionItem(
-                id: "projects",
-                systemImage: "rectangle.stack.fill",
-                title: "Projects",
-                detail: "Projects are grouped as in progress or finished so active work and final exports stay easy to review."
-            )
-        ]
-    }
-
-    private var creditsItems: [AVSettingsInfoSectionItem] {
-        [
-            AVSettingsInfoSectionItem(
-                id: "monthly",
-                systemImage: "creditcard.fill",
-                title: "Monthly credits",
-                detail: MomentsCreditCopy.countTitle(accountController.creditBalance.proMonthly)
-            ),
-            AVSettingsInfoSectionItem(
-                id: "promotional",
-                systemImage: "gift.fill",
-                title: "Bonus credits",
-                detail: MomentsCreditCopy.countTitle(accountController.creditBalance.promotional)
-            ),
-            AVSettingsInfoSectionItem(
-                id: "paid",
-                systemImage: "bolt.circle.fill",
-                title: "Standalone credits",
-                detail: MomentsCreditCopy.countTitle(accountController.creditBalance.purchased)
-            )
-        ]
-    }
-
-    private var privacyItems: [AVSettingsInfoSectionItem] {
-        [
-            AVSettingsInfoSectionItem(
-                id: "account",
-                systemImage: "person.crop.circle.badge.checkmark",
-                title: "Account required",
-                detail: "Projects, credits, previews, and final renders stay attached to your signed-in \(appExperience.identity.accountName) account."
-            ),
-            AVSettingsInfoSectionItem(
-                id: "privacy",
-                systemImage: "lock.shield.fill",
-                title: "Private workspace",
-                detail: "Moments AV is built around personal media, project artifacts, and account-tied rendering history."
-            ),
-            AVSettingsInfoSectionItem(
-                id: "avi",
-                systemImage: "sparkles",
-                title: "Avi guidance",
-                detail: "Avi gives workflow guidance for story drafts, previews, final renders, and project review."
-            )
-        ]
-    }
-
-    private var accountItems: [AVSettingsInfoSectionItem] {
-        [
-            AVSettingsInfoSectionItem(
-                id: "identity",
-                systemImage: "person.crop.circle.fill",
-                title: "Identity",
-                detail: accountName
-            ),
-            AVSettingsInfoSectionItem(
-                id: "credits",
-                systemImage: "bolt.circle.fill",
-                title: "Spendable credits",
-                detail: MomentsCreditCopy.countTitle(accountController.creditBalance.spendable)
-            ),
-            AVSettingsInfoSectionItem(
-                id: "account-provider",
-                systemImage: "person.text.rectangle.fill",
-                title: appExperience.identity.accountName,
-                detail: accountController.isSignedIn ? "Connected to this device." : "Sign in before creating Moments AV projects."
-            )
-        ]
+    private var screenSubtitle: String {
+        switch mode {
+        case .settings:
+            localized("profile.settingsScreen.subtitle")
+        case .account:
+            localized("profile.accountScreen.subtitle")
+        }
     }
 
     @ViewBuilder
     private var settingsContent: some View {
-        AVSettingsConfiguredSettingsContent(
-            sections: settingsSections,
-            helpLegalContent: helpLegalContent,
-            openURL: { url in openURL(url) }
-        )
+        appPreferencesCard
+        onThisDeviceCard
+        helpAndLegalCard
     }
 
     @ViewBuilder
     private var accountContent: some View {
-        AVSettingsConfiguredAccountContent(
-            isSignedIn: accountController.isSignedIn,
-            signedInTitle: "Moments account connected",
-            signedOutTitle: "Moments account required",
-            detail: accountDetail,
-            overviewItems: accountItems,
-            sections: accountSections,
-            signOutDetail: "Stop using this \(appExperience.identity.accountName) account on this device.",
-            onSignOut: accountController.signOut
-        ) {
-            SignInActionsView(authenticationController: accountController)
+        accountCard
+        momentsProCard
+        if accountController.isSignedIn {
+            accountSafetyCard
         }
     }
 
-    private var settingsSections: [AVSettingsConfiguredInfoSection] {
-        [
-            AVSettingsConfiguredInfoSection(
-                id: "about",
-                title: "About Moments AV",
-                subtitle: "Product workflow basics for private memory videos.",
-                items: productItems
-            ),
-            AVSettingsConfiguredInfoSection(
-                id: "credits",
-                title: "Credits and renders",
-                subtitle: "Final exports use monthly subscription credits first, then bonus and standalone credits.",
-                items: creditsItems
-            ),
-            AVSettingsConfiguredInfoSection(
-                id: "privacy",
-                title: "Privacy and guidance",
-                subtitle: "Account, media, and Avi behavior for the Moments workflow.",
-                items: privacyItems
+    private var appPreferencesCard: some View {
+        AVSettingsSectionCard(
+            title: localized("profile.preferences.title"),
+            subtitle: localized("profile.preferences.subtitle")
+        ) {
+            AVSettingsInfoRow(
+                systemImage: "globe",
+                title: localized("profile.preferences.language.title"),
+                detail: localized("profile.preferences.language.detail")
             )
-        ]
+
+            languageSelector
+
+            AVSettingsInfoRow(
+                systemImage: "circle.lefthalf.filled",
+                title: localized("profile.preferences.theme.title"),
+                detail: localized("profile.preferences.theme.detail")
+            )
+
+            themeSelector
+        }
     }
 
-    private var accountSections: [AVSettingsConfiguredInfoSection] {
-        [
-            AVSettingsConfiguredInfoSection(
-                id: "credits",
-                title: "Credit balance",
-                subtitle: "Spendable balance across subscription, bonus, and standalone credits.",
-                items: creditsItems
-            )
-        ]
+    private var onThisDeviceCard: some View {
+        AVSettingsSectionCard(
+            title: localized("profile.local.title"),
+            subtitle: localized("profile.local.subtitle")
+        ) {
+            VStack(alignment: .leading, spacing: 12) {
+                AVSettingsInfoRow(
+                    systemImage: "folder",
+                    title: localized("profile.local.projects.title"),
+                    detail: localized("profile.local.projects.detail")
+                )
+                AVSettingsInfoRow(
+                    systemImage: "photo.on.rectangle.angled",
+                    title: localized("profile.local.media.title"),
+                    detail: localized("profile.local.media.detail")
+                )
+                AVSettingsInfoRow(
+                    systemImage: "sparkles.rectangle.stack",
+                    title: localized("profile.local.artifacts.title"),
+                    detail: localized("profile.local.artifacts.detail")
+                )
+            }
+        }
     }
 
-    private var helpLegalContent: AVSettingsConfiguredHelpLegalContent {
-        AVSettingsConfiguredHelpLegalContent(
-            identity: appExperience.identity,
-            legalLinks: appExperience.legalLinks,
-            privacyDetail: "Review how Moments AV handles account, media, project, and render data.",
-            termsDetail: "Review the terms that apply to Moments AV."
+    private var helpAndLegalCard: some View {
+        AVSettingsHelpLegalSection(
+            title: localized("profile.help.title"),
+            subtitle: localized("profile.help.subtitle"),
+            openSourceTitle: localized("profile.help.opensource.title"),
+            openSourceDetail: localized("profile.help.opensource.detail"),
+            sourceCodeURL: AppConfig.openSourceURL,
+            sourceCodeTitle: localized("profile.help.sourceCode.title"),
+            sourceCodeDetail: localized("profile.help.sourceCode.detail"),
+            legalLinks: settingsLegalLinks,
+            supportTitle: localized("profile.help.support.title"),
+            supportDetail: localized("profile.help.support.detail"),
+            privacyTitle: localized("profile.help.privacy.title"),
+            privacyDetail: localized("profile.help.privacy.detail"),
+            termsTitle: localized("profile.help.terms.title"),
+            termsDetail: localized("profile.help.terms.detail"),
+            accountDeletionTitle: "",
+            accountDeletionDetail: "",
+            openURL: { url in openURL(url) }
         )
+    }
+
+    private var accountCard: some View {
+        AVSettingsSectionCard(
+            title: localized("profile.account.title"),
+            subtitle: accountIdentityDetail
+        ) {
+            Divider()
+                .overlay(AVBrandColor.borderSubtle)
+
+            VStack(alignment: .leading, spacing: 12) {
+                AVSettingsInfoRow(
+                    systemImage: "person.crop.circle",
+                    title: localized("profile.summary.account.title"),
+                    detail: sessionDetail
+                )
+                if accountController.isSignedIn, let emailAddress = accountController.user?.emailAddress {
+                    AVSettingsInfoRow(
+                        systemImage: "envelope",
+                        title: localized("profile.account.email.title"),
+                        detail: emailAddress
+                    )
+                }
+                AVSettingsInfoRow(
+                    systemImage: "sparkles.rectangle.stack",
+                    title: localized("profile.summary.plan.title"),
+                    detail: accessDetail
+                )
+            }
+
+            accountActionButton
+        }
+    }
+
+    private var momentsProCard: some View {
+        AVSettingsSectionCard(
+            title: localized("profile.pro.title"),
+            subtitle: momentsProSubtitle
+        ) {
+            VStack(alignment: .leading, spacing: 12) {
+                AVSettingsInfoRow(
+                    systemImage: "heart.text.square",
+                    title: localized("profile.pro.library.title"),
+                    detail: localized("profile.pro.library.detail")
+                )
+                AVSettingsInfoRow(
+                    systemImage: "icloud",
+                    title: localized("profile.pro.sync.title"),
+                    detail: localized("profile.pro.sync.detail")
+                )
+                AVSettingsInfoRow(
+                    systemImage: "sparkles",
+                    title: localized("profile.pro.avi.title"),
+                    detail: localized("profile.pro.avi.detail")
+                )
+            }
+
+            if accountController.isSignedIn {
+                AVSettingsButton(
+                    title: localized("profile.pro.manage"),
+                    style: .secondary,
+                    action: { openURL(URL(string: "https://apps.apple.com/account/subscriptions")!) }
+                )
+            }
+        }
+        .accessibilityIdentifier("profile.pro.card")
+    }
+
+    private var accountSafetyCard: some View {
+        AVSettingsSectionCard(
+            title: localized("profile.safety.title"),
+            subtitle: localized("profile.safety.subtitle"),
+            spacing: 12
+        ) {
+            AVSettingsActionRow(
+                systemImage: "exclamationmark.shield",
+                title: localized("profile.safety.delete.title"),
+                detail: localized("profile.safety.delete.detail"),
+                action: { openURL(appExperience.legalLinks.accountDeletionURL ?? AppConfig.accountDeletionURL) }
+            )
+            .accessibilityIdentifier("profile.safety.delete")
+        }
+    }
+
+    @ViewBuilder
+    private var accountActionButton: some View {
+        if accountController.isSignedIn {
+            AVSettingsButton(
+                title: localized("profile.actions.signOut"),
+                style: .secondary,
+                action: accountController.signOut
+            )
+            .accessibilityIdentifier("profile.account.signOut")
+        } else {
+            AVSettingsButton(
+                title: accountController.isAccountAvailable
+                    ? localized("profile.account.connect")
+                    : localized("profile.account.connectUnavailable"),
+                style: .primary,
+                action: startSignInFlow
+            )
+            .disabled(!accountController.isAccountAvailable)
+            .accessibilityIdentifier("profile.account.signIn")
+        }
+    }
+
+    private var languageSelector: some View {
+        Menu {
+            ForEach(MomentsAppLanguage.allCases) { language in
+                Button {
+                    languageController.select(language)
+                } label: {
+                    if languageController.currentLanguage == language {
+                        Label {
+                            Text("\(language.displayName) (\(language.autonym))")
+                        } icon: {
+                            Image(systemName: "checkmark")
+                        }
+                    } else {
+                        Text("\(language.displayName) (\(language.autonym))")
+                    }
+                }
+            }
+        } label: {
+            HStack(spacing: 12) {
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(languageController.currentLanguage.displayName)
+                        .font(.system(size: 15, weight: .semibold))
+                        .foregroundStyle(AVBrandColor.textPrimary)
+
+                    Text(languageController.currentLanguage.autonym)
+                        .font(.system(size: 12, weight: .medium))
+                        .foregroundStyle(AVBrandColor.textSecondary)
+                }
+
+                Spacer()
+
+                Image(systemName: "chevron.up.chevron.down")
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundStyle(MomentsTheme.highlight)
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 14)
+            .background(
+                RoundedRectangle(cornerRadius: 18, style: .continuous)
+                    .fill(AVBrandColor.mutedSurface)
+            )
+            .overlay {
+                RoundedRectangle(cornerRadius: 18, style: .continuous)
+                    .stroke(AVBrandColor.borderSubtle, lineWidth: 1)
+            }
+        }
+    }
+
+    private var themeSelector: some View {
+        HStack(spacing: 10) {
+            ForEach(MomentsAppTheme.allCases) { theme in
+                AVSettingsOptionButton(
+                    title: themeLabel(for: theme),
+                    systemImage: themeSymbol(for: theme),
+                    isSelected: themeController.currentTheme == theme,
+                    action: { themeController.select(theme) }
+                )
+            }
+        }
+    }
+
+    private var accountIdentityDetail: String {
+        if accountController.isSignedIn {
+            return accountController.user?.emailAddress
+                ?? accountController.user?.id
+                ?? "Connected to \(appExperience.identity.accountName)."
+        }
+        return localized("profile.account.identity.guest")
+    }
+
+    private var sessionDetail: String {
+        if accountController.isSignedIn {
+            return accountController.user?.displayName
+                ?? accountController.user?.emailAddress
+                ?? "Signed in on this device."
+        }
+        return localized("profile.summary.account.detail.guest")
+    }
+
+    private var accessDetail: String {
+        if accountController.isSignedIn {
+            return "\(MomentsCreditCopy.countTitle(accountController.creditBalance.spendable)) available"
+        }
+        return localized("profile.summary.plan.detail.guest")
+    }
+
+    private var momentsProSubtitle: String {
+        if accountController.isSignedIn {
+            return localized("profile.pro.subtitle.free")
+        }
+        return localized("profile.pro.subtitle.guest")
+    }
+
+    private var settingsLegalLinks: AVAppLegalLinks {
+        AVAppLegalLinks(
+            supportURL: appExperience.legalLinks.supportURL,
+            privacyURL: appExperience.legalLinks.privacyURL,
+            termsURL: appExperience.legalLinks.termsURL
+        )
+    }
+
+    private func themeLabel(for theme: MomentsAppTheme) -> String {
+        switch theme {
+        case .system: localized("profile.preferences.theme.system")
+        case .light: localized("profile.preferences.theme.light")
+        case .dark: localized("profile.preferences.theme.dark")
+        }
+    }
+
+    private func themeSymbol(for theme: MomentsAppTheme) -> String {
+        switch theme {
+        case .system: "iphone"
+        case .light: "sun.max"
+        case .dark: "moon"
+        }
+    }
+
+    private func localized(_ key: String) -> String {
+        MomentsL10n.string(key)
     }
 }

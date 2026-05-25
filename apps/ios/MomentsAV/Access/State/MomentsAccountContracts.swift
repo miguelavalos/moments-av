@@ -24,6 +24,6 @@ protocol MomentsAuthenticationControlling: AnyObject {
     var isAuthenticationBusy: Bool { get }
     var isAuthenticationAvailable: Bool { get }
 
-    func signInWithApple()
-    func signInWithGoogle()
+    func signInWithApple() async throws
+    func signInWithGoogle() async throws
 }

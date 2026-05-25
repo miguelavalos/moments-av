@@ -4,6 +4,7 @@ import SwiftUI
 
 struct MomentsAviScreen: View {
     let selectTab: (MomentsRootTab) -> Void
+    @Environment(\.avCommonAppExperience) private var appExperience
     @EnvironmentObject private var viewModel: MomentsAviViewModel
 
     private var presentation: MomentsAviPresentation {
@@ -12,9 +13,9 @@ struct MomentsAviScreen: View {
 
     private var landingContent: AVAviLandingContent {
         AVAviLandingContent(
-            eyebrow: "Moments guidance",
-            title: "Avi keeps videos moving",
-            detail: "Use Avi as a focused guide for creating story drafts, checking previews, managing credits, and reviewing project status.",
+            eyebrow: "Moments guide",
+            title: "Keep projects moving",
+            detail: "Check draft structure, preview readiness, render status, and credit decisions before the final export.",
             chips: [
                 AVAviLandingChip(title: "Draft", systemImage: "text.quote"),
                 AVAviLandingChip(title: "Preview", systemImage: "play.rectangle"),
@@ -25,13 +26,22 @@ struct MomentsAviScreen: View {
     }
 
     var body: some View {
-        AVConfiguredAviGuidanceScreen(
+        AVAviGuidanceScreenScaffold(
+            identity: appExperience.identity,
             summary: "Guidance for story drafts, previews, final renders, and project review.",
             status: "Guide",
             headerAccessibilityIdentifier: "moments.avi.header",
             landingContent: landingContent,
             backgroundStyle: AnyShapeStyle(MomentsTheme.shellBackground)
         ) {
+            EmptyView()
+        } heroAvatar: {
+            Image("AviFullBody")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 82, height: 82)
+                .accessibilityLabel("Avi")
+        } content: {
             MomentsAviGuidanceContent(
                 presentation: presentation,
                 projectSummary: viewModel.projectSummary,

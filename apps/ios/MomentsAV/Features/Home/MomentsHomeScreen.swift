@@ -9,7 +9,6 @@ struct MomentsHomeScreen: View {
     let openAccount: () -> Void
     let selectTab: (MomentsRootTab) -> Void
     let continueProject: (MomentsProjectContinuationRequest) -> Void
-    let signInActions: AnyView
     private var projectSummary: MomentsProjectListSummary { viewModel.projectSummary }
     private var presentation: MomentsHomePresentation {
         MomentsHomePresentation.make(
@@ -23,14 +22,12 @@ struct MomentsHomeScreen: View {
         openSettings: @escaping () -> Void,
         openAccount: @escaping () -> Void,
         selectTab: @escaping (MomentsRootTab) -> Void,
-        continueProject: @escaping (MomentsProjectContinuationRequest) -> Void,
-        signInActions: AnyView
+        continueProject: @escaping (MomentsProjectContinuationRequest) -> Void
     ) {
         self.openSettings = openSettings
         self.openAccount = openAccount
         self.selectTab = selectTab
         self.continueProject = continueProject
-        self.signInActions = signInActions
     }
 
     var body: some View {
@@ -39,7 +36,7 @@ struct MomentsHomeScreen: View {
         } content: {
             AVAppShellHomeHeader(
                 title: "Moments AV",
-                subtitle: "Private memory videos guided by Avi, with simple project tracking from draft to final export."
+                subtitle: "Create private memory films from selected media, then track every project from draft to final export."
             ) {
                 AVAppShellConfiguredBrandHeader(
                     activeItem: nil,
@@ -55,13 +52,13 @@ struct MomentsHomeScreen: View {
                 )
             }
 
-            MomentsHomeAccountCard(
-                isSignedIn: viewModel.isSignedIn,
-                creditBalance: viewModel.creditBalance,
-                projectSummary: projectSummary,
-                presentation: presentation,
-                signInActions: signInActions
-            )
+            if viewModel.isSignedIn {
+                MomentsHomeAccountCard(
+                    creditBalance: viewModel.creditBalance,
+                    projectSummary: projectSummary,
+                    presentation: presentation
+                )
+            }
 
             MomentsHomeProjectStatusCard(
                 isSignedIn: viewModel.isSignedIn,

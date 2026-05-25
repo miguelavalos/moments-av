@@ -3,15 +3,43 @@ import SwiftUI
 
 struct SignInActionsView<AuthenticationController>: View where AuthenticationController: ObservableObject & MomentsAuthenticationControlling {
     @ObservedObject var authenticationController: AuthenticationController
+    @StateObject private var signInCoordinator = AVAuthSignInCoordinator()
 
     var body: some View {
         AVSettingsSignInActions(
-            isBusy: authenticationController.isAuthenticationBusy,
+            isBusy: signInCoordinator.activeProvider != nil || authenticationController.isAuthenticationBusy,
+            activeProvider: signInCoordinator.activeProvider,
             isAvailable: authenticationController.isAuthenticationAvailable,
             appleAccessibilityIdentifier: "moments.auth.apple",
             googleAccessibilityIdentifier: "moments.auth.google",
-            onApple: authenticationController.signInWithApple,
-            onGoogle: authenticationController.signInWithGoogle
+            onApple: startAppleSignIn,
+            onGoogle: startGoogleSignIn
+        )
+        .alert("Unable to continue", isPresented: $signInCoordinator.isShowingError) {
+            Button("Close", role: .cancel) {}
+        } message: {
+            Text(signInCoordinator.errorMessage)
+        }
+        .onDisappear {
+            signInCoordinator.cancel()
+        }
+    }
+
+    private func startAppleSignIn() {
+        signInCoordinator.start(
+            provider: .apple,
+            isAvailable: authenticationController.isAuthenticationAvailable,
+            unavailableMessage: "Account services are unavailable right now.",
+            operation: authenticationController.signInWithApple
+        )
+    }
+
+    private func startGoogleSignIn() {
+        signInCoordinator.start(
+            provider: .google,
+            isAvailable: authenticationController.isAuthenticationAvailable,
+            unavailableMessage: "Account services are unavailable right now.",
+            operation: authenticationController.signInWithGoogle
         )
     }
 }

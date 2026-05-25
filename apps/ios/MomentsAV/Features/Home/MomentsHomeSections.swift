@@ -2,23 +2,17 @@ import AVAppShellFoundation
 import SwiftUI
 
 struct MomentsHomeAccountCard: View {
-    let isSignedIn: Bool
     let creditBalance: MomentsCreditBalance
     let projectSummary: MomentsProjectListSummary
     let presentation: MomentsHomePresentation
-    let signInActions: AnyView
 
     var body: some View {
         AVAppShellDashboardSection(
             title: presentation.accountTitle,
             detail: presentation.accountDetail
         ) {
-            if isSignedIn {
-                AVAppShellMetricStrip(metrics: accountMetrics)
-                MomentsHomeCreditBreakdown(balance: creditBalance)
-            } else {
-                signInActions
-            }
+            AVAppShellMetricStrip(metrics: accountMetrics)
+            MomentsHomeCreditBreakdown(balance: creditBalance)
         }
     }
 
@@ -91,7 +85,7 @@ struct MomentsHomeNextActionsCard: View {
     var body: some View {
         AVAppShellDashboardSection(
             title: "Next actions",
-            detail: "Move between creation, project review, and Avi guidance without leaving the new shell."
+            detail: "Start a memory film, review project progress, or open guidance when a project needs a decision."
         ) {
             VStack(spacing: 10) {
                 if let latestInProgressAction = presentation.latestInProgressAction {

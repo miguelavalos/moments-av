@@ -68,6 +68,7 @@ targets:
         product: ConvexMobile
     settings:
       base:
+        CODE_SIGN_ENTITLEMENTS: MomentsAV/App/MomentsAV.entitlements
         CODE_SIGN_STYLE: Automatic
         DEVELOPMENT_TEAM: "$(AVALSYS_APPLE_DEVELOPMENT_TEAM)"
         ENABLE_DEBUG_DYLIB: NO

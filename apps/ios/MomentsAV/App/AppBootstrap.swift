@@ -7,6 +7,7 @@ struct MomentsAppBootstrapView: View {
     @State private var authOptionsArePresented = false
     @State private var authenticationWasSkipped = false
     @State private var didApplyLaunchTab = false
+    @State private var postAuthenticationSplashIsPresented = false
 
     private let launchContext = MomentsLaunchContext.current
     private var splashPolicy: AVSplashTransitionPolicy {
@@ -16,17 +17,30 @@ struct MomentsAppBootstrapView: View {
     var body: some View {
         Group {
             if dependencies.accountController.isSignedIn || authenticationWasSkipped {
-                MomentsAppShellView(selectedTab: $selectedTab)
+                MomentsAppShellView(
+                    selectedTab: $selectedTab,
+                    startSignInFlow: startSignInFlow
+                )
+                .id(dependencies.accountController.isSignedIn ? "signed-in-shell" : "skipped-auth-shell")
+                .avSplashTransition(policy: splashPolicy) {
+                    MomentsAVSplashView()
+                }
+                .overlay {
+                    if postAuthenticationSplashIsPresented {
+                        MomentsAVSplashView()
+                            .transition(.opacity)
+                            .zIndex(2)
+                    }
+                }
             } else {
                 MomentsAuthOnboardingView(
                     authOptionsArePresented: $authOptionsArePresented,
-                    accountController: dependencies.accountController,
+                    accountIsAvailable: dependencies.accountController.isAccountAvailable,
+                    onContinueWithApple: startAppleSignIn,
+                    onContinueWithGoogle: startGoogleSignIn,
                     onSkip: skipAuthentication
                 )
             }
-        }
-        .avSplashTransition(policy: splashPolicy) {
-            MomentsAVSplashView()
         }
         .environmentObject(dependencies.accountController)
         .environmentObject(dependencies.projectsListWorkflow)
@@ -54,7 +68,34 @@ struct MomentsAppBootstrapView: View {
 
     private func skipAuthentication() {
         authOptionsArePresented = false
+        postAuthenticationSplashIsPresented = true
         authenticationWasSkipped = true
+        Task {
+            try? await Task.sleep(for: splashPolicy.displayDuration)
+            await MainActor.run {
+                withAnimation(splashPolicy.dismissAnimation) {
+                    postAuthenticationSplashIsPresented = false
+                }
+            }
+        }
+    }
+
+    private func startSignInFlow() {
+        postAuthenticationSplashIsPresented = false
+        authenticationWasSkipped = false
+        authOptionsArePresented = true
+    }
+
+    private func startAppleSignIn() async throws {
+        try await dependencies.accountController.signInWithApple()
+        authenticationWasSkipped = false
+        authOptionsArePresented = false
+    }
+
+    private func startGoogleSignIn() async throws {
+        try await dependencies.accountController.signInWithGoogle()
+        authenticationWasSkipped = false
+        authOptionsArePresented = false
     }
 }
 

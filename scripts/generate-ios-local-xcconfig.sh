@@ -141,11 +141,6 @@ escape_xcconfig_value() {
   printf '%s' "$1" | sed 's#/#$(XCCONFIG_SLASH)#g'
 }
 
-bundle_identifier="com.avalsys.momentsav.dev"
-if [ "$env_name" = "prod" ]; then
-  bundle_identifier="com.avalsys.momentsav"
-fi
-
 moments_convex_url="$(read_required_config MOMENTSAV_CONVEX_URL)"
 account_api_base_url="$(read_required_config ACCOUNTAV_API_BASE_URL)"
 account_publishable_key="$(read_required_config ACCOUNTAV_PUBLISHABLE_KEY)"
@@ -175,7 +170,6 @@ content="$(cat <<EOF
 // Do not edit manually. Regenerate when switching environments.
 XCCONFIG_SLASH = /
 MOMENTSAV_CONFIG_ENVIRONMENT = $env_name
-PRODUCT_BUNDLE_IDENTIFIER = $bundle_identifier
 AVALSYS_APPLE_DEVELOPMENT_TEAM = $development_team
 ACCOUNTAV_PUBLISHABLE_KEY = $account_publishable_key
 ACCOUNTAV_API_BASE_URL = $(escape_xcconfig_value "$account_api_base_url")

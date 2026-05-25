@@ -35,6 +35,10 @@ enum AppConfig {
         configuredURL(for: "ACCOUNTAV_DELETE_ACCOUNT_URL", fallback: "https://account.avalsys.com/account/delete")
     }
 
+    static var openSourceURL: URL {
+        configuredURL(for: "MOMENTSAV_OPEN_SOURCE_URL", fallback: "https://github.com/avalsys/moments-av")
+    }
+
     static func configureAVAccountIfPossible() {
         AccountAVClerk.configureIfPossible(publishableKey: avAccountKey)
     }
