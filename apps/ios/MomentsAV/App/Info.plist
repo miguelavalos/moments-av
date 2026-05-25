@@ -44,9 +44,9 @@
   <key>UILaunchScreen</key>
   <dict>
     <key>UIColorName</key>
-    <string>BrandPaper</string>
+    <string>LaunchBackground</string>
     <key>UIImageName</key>
-    <string>MomentsAVLogo</string>
+    <string>LaunchIcon</string>
   </dict>
   <key>UISupportedInterfaceOrientations</key>
   <array>
