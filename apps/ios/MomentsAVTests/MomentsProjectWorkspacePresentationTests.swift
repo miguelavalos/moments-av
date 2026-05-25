@@ -193,6 +193,28 @@ final class MomentsProjectWorkspacePresentationTests: XCTestCase {
         XCTAssertEqual(presentations[1].title, "Scene 2")
     }
 
+    func testWorkspaceLookupsFindLatestArtifactAndRenderJob() {
+        let workspace = makeWorkspace(
+            project: makeProject(),
+            renderJobs: [
+                makeRenderJob(id: "final", kind: "final", status: "queued", updatedAt: 30),
+                makeRenderJob(id: "preview-old", kind: "preview", status: "queued", updatedAt: 10),
+                makeRenderJob(id: "preview-new", kind: "preview", status: "running", updatedAt: 20)
+            ],
+            artifacts: [
+                makeArtifact(id: "preview-expired", kind: "preview", status: "expired"),
+                makeArtifact(id: "final-export", kind: "final_export", status: "available"),
+                makeArtifact(id: "preview-ready", kind: "preview", status: "available")
+            ]
+        )
+
+        XCTAssertEqual(workspace.latestArtifact(kind: "preview")?.id, "preview-ready")
+        XCTAssertEqual(workspace.latestRenderJob(kind: "preview")?.id, "preview-new")
+        XCTAssertEqual(workspace.latestRenderJob()?.id, "final")
+        XCTAssertTrue(workspace.hasAvailableArtifact(kind: "final_export"))
+        XCTAssertFalse(workspace.hasAvailableArtifact(kind: "thumbnail"))
+    }
+
     private func makeMediaAsset(
         id: String,
         kind: String,

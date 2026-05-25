@@ -38,9 +38,9 @@ struct MomentsProjectWorkspaceSummaryPresentation: Equatable {
     let tiles: [MomentsProjectSummaryTilePresentation]
 
     init(workspace: MomentProjectWorkspace) {
-        let latestPreview = workspace.artifacts.last { $0.kind == "preview" }
-        let finalExport = workspace.artifacts.last { $0.kind == "final_export" }
-        let latestRenderJob = workspace.renderJobs.sorted { $0.updatedAt < $1.updatedAt }.last
+        let latestPreview = workspace.latestArtifact(kind: "preview")
+        let finalExport = workspace.latestArtifact(kind: "final_export")
+        let latestRenderJob = workspace.latestRenderJob()
 
         tiles = [
             MomentsProjectSummaryTilePresentation(

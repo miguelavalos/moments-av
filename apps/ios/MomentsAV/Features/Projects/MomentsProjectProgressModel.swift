@@ -39,14 +39,11 @@ struct MomentsProjectProgressModel {
     }
 
     private static func renderDetail(workspace: MomentProjectWorkspace, kind: String, fallback: String) -> String {
-        if let artifact = workspace.artifacts.last(where: { $0.kind == artifactKind(for: kind) }) {
+        if let artifact = workspace.latestArtifact(kind: artifactKind(for: kind)) {
             return MomentsProjectStatusRules.displayTitle(for: artifact.status)
         }
 
-        guard let job = workspace.renderJobs
-            .filter({ $0.kind == kind })
-            .sorted(by: { $0.updatedAt < $1.updatedAt })
-            .last else {
+        guard let job = workspace.latestRenderJob(kind: kind) else {
             return fallback
         }
 
@@ -58,14 +55,11 @@ struct MomentsProjectProgressModel {
         kind: String,
         artifactKind: String
     ) -> MomentsProjectProgressState {
-        if workspace.artifacts.contains(where: { $0.kind == artifactKind && $0.status == "available" }) {
+        if workspace.hasAvailableArtifact(kind: artifactKind) {
             return .complete
         }
 
-        guard let job = workspace.renderJobs
-            .filter({ $0.kind == kind })
-            .sorted(by: { $0.updatedAt < $1.updatedAt })
-            .last else {
+        guard let job = workspace.latestRenderJob(kind: kind) else {
             return .waiting
         }
 

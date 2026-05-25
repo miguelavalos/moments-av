@@ -32,11 +32,8 @@ final class PreviewGenerationWorkflow: WorkspaceObservingWorkflow {
     }
 
     override func workspaceDidChange(_ workspace: MomentProjectWorkspace?) {
-        latestPreview = workspace?.artifacts.last(where: { $0.kind == "preview" })
-        latestPreviewJob = workspace?.renderJobs
-            .filter { $0.kind == "preview" }
-            .sorted { $0.updatedAt < $1.updatedAt }
-            .last
+        latestPreview = workspace?.latestArtifact(kind: "preview")
+        latestPreviewJob = workspace?.latestRenderJob(kind: "preview")
     }
 
     var isConfigured: Bool {

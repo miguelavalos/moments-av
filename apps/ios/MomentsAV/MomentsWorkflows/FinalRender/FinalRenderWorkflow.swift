@@ -32,11 +32,8 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
     }
 
     override func workspaceDidChange(_ workspace: MomentProjectWorkspace?) {
-        finalExport = workspace?.artifacts.last(where: { $0.kind == "final_export" })
-        latestFinalJob = workspace?.renderJobs
-            .filter { $0.kind == "final" }
-            .sorted { $0.updatedAt < $1.updatedAt }
-            .last
+        finalExport = workspace?.latestArtifact(kind: "final_export")
+        latestFinalJob = workspace?.latestRenderJob(kind: "final")
     }
 
     var isConfigured: Bool {
@@ -70,7 +67,7 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
             project: activeWorkspace?.project,
             template: template,
             balance: creditBalanceProvider.currentCreditBalance,
-            latestPreview: activeWorkspace?.artifacts.last(where: { $0.kind == "preview" })
+            latestPreview: activeWorkspace?.latestArtifact(kind: "preview")
         )
         guard availability.canGenerate else {
             statusMessage = generateBlockMessage(availability)
