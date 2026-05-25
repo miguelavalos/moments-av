@@ -29,36 +29,43 @@ extension MomentsCreateViewModel {
     }
 
     var canAddMedia: Bool {
-        activeProjectId != nil
-            && !isImportingMedia
-            && (mediaUploadWorkflow?.isConfigured ?? false)
-            && mediaRemainingSlots > 0
+        workflowCapability.canAddMedia
     }
 
     var canDraftStory: Bool {
-        guard let storyDraftWorkflow, activeProjectId != nil else { return false }
-        return storyDraftWorkflow.canDraft(template: form.template)
+        workflowCapability.canDraftStory
     }
 
     var canGeneratePreview: Bool {
-        guard let previewGenerationWorkflow, activeProjectId != nil else { return false }
-        return previewGenerationWorkflow.canGenerate(template: form.template)
+        workflowCapability.canGeneratePreview
     }
 
     var canRefreshPreviewStatus: Bool {
-        previewRefreshAvailability.canRefresh
+        workflowCapability.canRefreshPreviewStatus
     }
 
     var canGenerateFinalRender: Bool {
-        guard let finalRenderWorkflow, activeProjectId != nil else { return false }
-        return finalRenderWorkflow.canGenerate(
-            template: form.template,
-            latestPreview: latestPreview
-        )
+        workflowCapability.canGenerateFinalRender
     }
 
     var canRefreshFinalRenderStatus: Bool {
-        finalRenderRefreshAvailability.canRefresh
+        workflowCapability.canRefreshFinalRenderStatus
+    }
+
+    var workflowCapability: MomentsCreateWorkflowCapability {
+        MomentsCreateWorkflowCapabilityFactory.make(
+            activeProjectId: activeProjectId,
+            isImportingMedia: isImportingMedia,
+            isMediaUploadConfigured: mediaUploadWorkflow?.isConfigured ?? false,
+            mediaRemainingSlots: mediaRemainingSlots,
+            storyDraftWorkflow: storyDraftWorkflow,
+            previewGenerationWorkflow: previewGenerationWorkflow,
+            finalRenderWorkflow: finalRenderWorkflow,
+            template: form.template,
+            previewRefreshAvailability: previewRefreshAvailability,
+            finalRenderRefreshAvailability: finalRenderRefreshAvailability,
+            latestPreview: latestPreview
+        )
     }
 
     var workspaceSummary: MomentsCreateWorkspaceSummary {

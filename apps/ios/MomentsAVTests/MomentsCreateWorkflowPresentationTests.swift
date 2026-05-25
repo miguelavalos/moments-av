@@ -1,6 +1,7 @@
 import XCTest
 @testable import MomentsAV
 
+@MainActor
 final class MomentsCreateWorkflowPresentationTests: XCTestCase {
     func testDraftSetupPresentationFormatsIdleDraftState() {
         let presentation = MomentsCreateDraftSetupPresentation(
@@ -226,6 +227,61 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         XCTAssertEqual(availability.previewRefreshMessage, "Preview refresh")
         XCTAssertEqual(availability.finalRenderMessage, "Final")
         XCTAssertEqual(availability.finalRenderRefreshMessage, "Final refresh")
+    }
+
+    func testWorkflowCapabilityFactoryFormatsMediaAndRefreshCapabilities() {
+        let capability = MomentsCreateWorkflowCapabilityFactory.make(
+            activeProjectId: "project-1",
+            isImportingMedia: false,
+            isMediaUploadConfigured: true,
+            mediaRemainingSlots: 2,
+            storyDraftWorkflow: nil,
+            previewGenerationWorkflow: nil,
+            finalRenderWorkflow: nil,
+            template: .birthdayMessage,
+            previewRefreshAvailability: makeRefreshAvailability(canRefresh: true),
+            finalRenderRefreshAvailability: makeRefreshAvailability(canRefresh: false),
+            latestPreview: nil
+        )
+
+        XCTAssertTrue(capability.canAddMedia)
+        XCTAssertFalse(capability.canDraftStory)
+        XCTAssertFalse(capability.canGeneratePreview)
+        XCTAssertTrue(capability.canRefreshPreviewStatus)
+        XCTAssertFalse(capability.canGenerateFinalRender)
+        XCTAssertFalse(capability.canRefreshFinalRenderStatus)
+    }
+
+    func testWorkflowCapabilityFactoryBlocksMediaWithoutSlotsOrProject() {
+        let withoutSlots = MomentsCreateWorkflowCapabilityFactory.make(
+            activeProjectId: "project-1",
+            isImportingMedia: false,
+            isMediaUploadConfigured: true,
+            mediaRemainingSlots: 0,
+            storyDraftWorkflow: nil,
+            previewGenerationWorkflow: nil,
+            finalRenderWorkflow: nil,
+            template: .birthdayMessage,
+            previewRefreshAvailability: makeRefreshAvailability(canRefresh: false),
+            finalRenderRefreshAvailability: makeRefreshAvailability(canRefresh: false),
+            latestPreview: nil
+        )
+        let withoutProject = MomentsCreateWorkflowCapabilityFactory.make(
+            activeProjectId: nil,
+            isImportingMedia: false,
+            isMediaUploadConfigured: true,
+            mediaRemainingSlots: 2,
+            storyDraftWorkflow: nil,
+            previewGenerationWorkflow: nil,
+            finalRenderWorkflow: nil,
+            template: .birthdayMessage,
+            previewRefreshAvailability: makeRefreshAvailability(canRefresh: false),
+            finalRenderRefreshAvailability: makeRefreshAvailability(canRefresh: false),
+            latestPreview: nil
+        )
+
+        XCTAssertFalse(withoutSlots.canAddMedia)
+        XCTAssertFalse(withoutProject.canAddMedia)
     }
 
     func testMediaPresentationFormatsSelectionAndSortsSyncedMedia() {
@@ -603,6 +659,21 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
             errorMessage: nil,
             createdAt: 9,
             updatedAt: 10
+        )
+    }
+
+    private func makeRefreshAvailability(canRefresh: Bool) -> RenderJobStatusRefreshAvailability {
+        RenderJobStatusRefreshAvailability(
+            projectId: canRefresh ? "project-1" : nil,
+            job: canRefresh ? makeRenderJob(id: "job-1", kind: "preview", status: "running") : nil,
+            isAvailable: canRefresh,
+            isConfigured: canRefresh,
+            isRefreshing: false,
+            unavailableMessage: "Unavailable.",
+            notConfiguredMessage: "Not configured.",
+            missingProjectMessage: "Missing project.",
+            missingJobMessage: "Missing job.",
+            missingProviderRequestMessage: "Missing request."
         )
     }
 }
