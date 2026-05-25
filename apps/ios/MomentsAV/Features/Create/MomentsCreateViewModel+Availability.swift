@@ -11,7 +11,7 @@ extension MomentsCreateViewModel {
     }
 
     var isDraftLocked: Bool {
-        createdProjectId != nil
+        activeProjectId != nil
     }
 
     var isBusy: Bool {
@@ -25,23 +25,23 @@ extension MomentsCreateViewModel {
     }
 
     var canStartAnotherProject: Bool {
-        createdProjectId != nil && !isBusy
+        activeProjectId != nil && !isBusy
     }
 
     var canAddMedia: Bool {
-        createdProjectId != nil
+        activeProjectId != nil
             && !isImportingMedia
             && (mediaUploadWorkflow?.isConfigured ?? false)
             && mediaRemainingSlots > 0
     }
 
     var canDraftStory: Bool {
-        guard let storyDraftWorkflow, createdProjectId != nil else { return false }
+        guard let storyDraftWorkflow, activeProjectId != nil else { return false }
         return storyDraftWorkflow.canDraft(template: form.template)
     }
 
     var canGeneratePreview: Bool {
-        guard let previewGenerationWorkflow, createdProjectId != nil else { return false }
+        guard let previewGenerationWorkflow, activeProjectId != nil else { return false }
         return previewGenerationWorkflow.canGenerate(template: form.template)
     }
 
@@ -50,7 +50,7 @@ extension MomentsCreateViewModel {
     }
 
     var canGenerateFinalRender: Bool {
-        guard let finalRenderWorkflow, createdProjectId != nil else { return false }
+        guard let finalRenderWorkflow, activeProjectId != nil else { return false }
         return finalRenderWorkflow.canGenerate(
             template: form.template,
             latestPreview: latestPreview

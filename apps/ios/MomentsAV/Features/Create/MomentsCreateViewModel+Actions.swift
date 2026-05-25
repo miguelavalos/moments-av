@@ -20,14 +20,14 @@ extension MomentsCreateViewModel {
     }
 
     func importPickerItems(_ items: [PhotosPickerItem]) {
-        guard canAddMedia, let mediaUploadWorkflow, let createdProjectId else { return }
+        guard canAddMedia, let mediaUploadWorkflow, let activeProjectId else { return }
         let template = form.template
 
         runOperation {
             await mediaUploadWorkflow.importPickerItems(
                 items,
                 template: template,
-                projectId: createdProjectId
+                projectId: activeProjectId
             )
         }
     }
@@ -41,24 +41,24 @@ extension MomentsCreateViewModel {
     }
 
     func generateStoryDraft() {
-        guard canDraftStory, let storyDraftWorkflow, let createdProjectId else { return }
+        guard canDraftStory, let storyDraftWorkflow, let activeProjectId else { return }
         let form = form
 
         runOperation {
             await storyDraftWorkflow.generateDraft(
-                projectId: createdProjectId,
+                projectId: activeProjectId,
                 form: form
             )
         }
     }
 
     func generatePreview() {
-        guard canGeneratePreview, let previewGenerationWorkflow, let createdProjectId else { return }
+        guard canGeneratePreview, let previewGenerationWorkflow, let activeProjectId else { return }
         let template = form.template
 
         runOperation {
             await previewGenerationWorkflow.generatePreview(
-                projectId: createdProjectId,
+                projectId: activeProjectId,
                 template: template
             )
         }
@@ -73,12 +73,12 @@ extension MomentsCreateViewModel {
     }
 
     func generateFinalRender() {
-        guard canGenerateFinalRender, let finalRenderWorkflow, let createdProjectId else { return }
+        guard canGenerateFinalRender, let finalRenderWorkflow, let activeProjectId else { return }
         let template = form.template
 
         runOperation {
             await finalRenderWorkflow.generateFinalRender(
-                projectId: createdProjectId,
+                projectId: activeProjectId,
                 template: template
             )
         }

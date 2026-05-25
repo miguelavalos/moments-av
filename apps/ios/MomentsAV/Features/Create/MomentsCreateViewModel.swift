@@ -44,6 +44,10 @@ final class MomentsCreateViewModel: ObservableObject {
         activeWorkspace?.project
     }
 
+    var activeProjectId: String? {
+        activeProject?.id ?? createdProjectId
+    }
+
     func bind(
         accountStateProvider: any MomentsAccountStateProviding,
         projectCreationWorkflow: ProjectCreationWorkflow,
