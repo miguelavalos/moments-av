@@ -17,7 +17,7 @@ final class MomentsDependencyContainer: ObservableObject {
     let createViewModel: MomentsCreateViewModel
     let projectsViewModel: MomentsProjectsViewModel
     let aviViewModel: MomentsAviViewModel
-    private var observedOwnerUserId: String??
+    private var observedOwnerUserId: ObservedOwnerUserId = .unobserved
 
     init(
         accountController: AccountController = AccountController(),
@@ -54,10 +54,16 @@ final class MomentsDependencyContainer: ObservableObject {
     }
 
     func handleAccountChange(ownerUserId: String?) {
-        guard observedOwnerUserId != .some(ownerUserId) else { return }
-        observedOwnerUserId = .some(ownerUserId)
+        let nextObservedOwnerUserId = ObservedOwnerUserId.observed(ownerUserId)
+        guard observedOwnerUserId != nextObservedOwnerUserId else { return }
+        observedOwnerUserId = nextObservedOwnerUserId
         projectsListWorkflow.observeProjects(ownerUserId: ownerUserId)
         projectsViewModel.clearSelection()
         createViewModel.clearSessionState()
     }
+}
+
+private enum ObservedOwnerUserId: Equatable {
+    case unobserved
+    case observed(String?)
 }
