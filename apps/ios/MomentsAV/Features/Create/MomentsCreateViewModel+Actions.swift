@@ -20,14 +20,13 @@ extension MomentsCreateViewModel {
     }
 
     func importPickerItems(_ items: [PhotosPickerItem]) {
-        guard canAddMedia, let mediaUploadWorkflow, let activeProjectId else { return }
-        let template = form.template
+        guard canAddMedia, let mediaUploadWorkflow, let context = activeTemplateContext else { return }
 
         runOperation {
             await mediaUploadWorkflow.importPickerItems(
                 items,
-                template: template,
-                projectId: activeProjectId
+                template: context.template,
+                projectId: context.projectId
             )
         }
     }
@@ -41,25 +40,23 @@ extension MomentsCreateViewModel {
     }
 
     func generateStoryDraft() {
-        guard canDraftStory, let storyDraftWorkflow, let activeProjectId else { return }
-        let form = form
+        guard canDraftStory, let storyDraftWorkflow, let context = activeFormContext else { return }
 
         runOperation {
             await storyDraftWorkflow.generateDraft(
-                projectId: activeProjectId,
-                form: form
+                projectId: context.projectId,
+                form: context.form
             )
         }
     }
 
     func generatePreview() {
-        guard canGeneratePreview, let previewGenerationWorkflow, let activeProjectId else { return }
-        let template = form.template
+        guard canGeneratePreview, let previewGenerationWorkflow, let context = activeTemplateContext else { return }
 
         runOperation {
             await previewGenerationWorkflow.generatePreview(
-                projectId: activeProjectId,
-                template: template
+                projectId: context.projectId,
+                template: context.template
             )
         }
     }
@@ -73,13 +70,12 @@ extension MomentsCreateViewModel {
     }
 
     func generateFinalRender() {
-        guard canGenerateFinalRender, let finalRenderWorkflow, let activeProjectId else { return }
-        let template = form.template
+        guard canGenerateFinalRender, let finalRenderWorkflow, let context = activeTemplateContext else { return }
 
         runOperation {
             await finalRenderWorkflow.generateFinalRender(
-                projectId: activeProjectId,
-                template: template
+                projectId: context.projectId,
+                template: context.template
             )
         }
     }
@@ -90,5 +86,15 @@ extension MomentsCreateViewModel {
         runOperation {
             await finalRenderWorkflow.refreshStatus()
         }
+    }
+
+    private var activeTemplateContext: (projectId: String, template: MomentTemplate)? {
+        guard let activeProjectId else { return nil }
+        return (activeProjectId, form.template)
+    }
+
+    private var activeFormContext: (projectId: String, form: MomentDraftForm)? {
+        guard let activeProjectId else { return nil }
+        return (activeProjectId, form)
     }
 }
