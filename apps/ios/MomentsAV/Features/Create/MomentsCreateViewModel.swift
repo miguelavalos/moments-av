@@ -19,7 +19,6 @@ final class MomentsCreateViewModel: ObservableObject {
     @Published private(set) var storyStatusMessage: String?
     @Published private(set) var isDraftingStory = false
     @Published private(set) var activeWorkspace: MomentProjectWorkspace?
-    @Published private(set) var activeProject: MomentDraftProject?
     @Published private(set) var latestPreview: MomentArtifact?
     @Published private(set) var latestPreviewJob: MomentRenderJob?
     @Published private(set) var previewStatusMessage: String?
@@ -40,6 +39,10 @@ final class MomentsCreateViewModel: ObservableObject {
     private(set) var finalRenderWorkflow: FinalRenderWorkflow?
     var cancellables = Set<AnyCancellable>()
     var operationTasks: [UUID: Task<Void, Never>] = [:]
+
+    var activeProject: MomentDraftProject? {
+        activeWorkspace?.project
+    }
 
     func bind(
         accountStateProvider: any MomentsAccountStateProviding,
@@ -154,7 +157,6 @@ extension MomentsCreateViewModel {
 
     func applyPreviewGenerationState(_ state: MomentsCreatePreviewGenerationState) {
         activeWorkspace = state.activeWorkspace
-        activeProject = state.activeWorkspace?.project
         latestPreview = state.latestPreview
         latestPreviewJob = state.latestPreviewJob
         previewStatusMessage = state.statusMessage
