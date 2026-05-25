@@ -16,6 +16,7 @@ final class MomentsProjectsViewModel: ObservableObject {
     private var workflow: (any MomentsProjectsViewing)?
     private var workflowCancellables = Set<AnyCancellable>()
     private var accountCancellables = Set<AnyCancellable>()
+    private var deletionTask: Task<Void, Never>?
 
     func bind(to workflow: any MomentsProjectsViewing) {
         self.workflow = workflow
@@ -96,6 +97,8 @@ final class MomentsProjectsViewModel: ObservableObject {
     }
 
     func clearSelection() {
+        deletionTask?.cancel()
+        deletionTask = nil
         selectedProjectId = nil
         statusMessage = nil
         workflow?.clearProjectWorkspace()
@@ -104,12 +107,15 @@ final class MomentsProjectsViewModel: ObservableObject {
     func deleteProject(_ project: MomentDraftProject) {
         guard let workflow else { return }
 
-        Task {
+        deletionTask?.cancel()
+        deletionTask = Task { [weak self] in
             let didDelete = await workflow.deleteProject(project)
+            guard !Task.isCancelled else { return }
             if didDelete {
-                selectedProjectId = nil
-                statusMessage = "Project deleted."
+                self?.selectedProjectId = nil
+                self?.statusMessage = "Project deleted."
             }
+            self?.deletionTask = nil
         }
     }
 }
