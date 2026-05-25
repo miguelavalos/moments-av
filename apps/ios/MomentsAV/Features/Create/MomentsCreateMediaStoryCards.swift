@@ -44,47 +44,17 @@ struct MomentsCreateMediaCard: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
 
-                newImportSelection
-                syncedMedia
+                MomentsCreateNewImportSelection(
+                    selectedMedia: presentation.summary.selectedMedia,
+                    removeMedia: removeMedia,
+                    autoPickStrongMoments: autoPickStrongMoments
+                )
+                MomentsCreateSyncedMediaSection(mediaAssets: presentation.syncedMediaAssets)
 
                 if let mediaStatusMessage = presentation.summary.statusMessage {
                     Text(mediaStatusMessage)
                         .font(.caption)
                         .foregroundStyle(.secondary)
-                }
-            }
-        }
-    }
-
-    @ViewBuilder
-    private var newImportSelection: some View {
-        if !presentation.summary.selectedMedia.isEmpty {
-            VStack(alignment: .leading, spacing: 8) {
-                Text("New import selection")
-                    .font(.subheadline.weight(.semibold))
-
-                ForEach(presentation.summary.selectedMedia) { media in
-                    MomentsCreateMediaRow(media: media) {
-                        removeMedia(media)
-                    }
-                }
-
-                Button(action: autoPickStrongMoments) {
-                    Label("Avi Suggests Order", systemImage: "sparkles")
-                }
-            }
-        }
-    }
-
-    @ViewBuilder
-    private var syncedMedia: some View {
-        if !presentation.syncedMediaAssets.isEmpty {
-            VStack(alignment: .leading, spacing: 8) {
-                Text("Synced media")
-                    .font(.subheadline.weight(.semibold))
-
-                ForEach(presentation.syncedMediaAssets) { media in
-                    MomentsCreateSyncedMediaRow(media: media)
                 }
             }
         }
@@ -103,7 +73,7 @@ struct MomentsCreateStoryCard: View {
                 Text("Generate the first Avi story draft from the media already attached to the project.")
                     .foregroundStyle(.secondary)
 
-                storyScenes
+                MomentsCreateStoryScenesSection(presentation: presentation)
 
                 Button(action: generateStoryDraft) {
                     Text(presentation.draftButtonTitle)
@@ -124,9 +94,56 @@ struct MomentsCreateStoryCard: View {
             }
         }
     }
+}
+
+private struct MomentsCreateNewImportSelection: View {
+    let selectedMedia: [MomentsSelectedMedia]
+    let removeMedia: (MomentsSelectedMedia) -> Void
+    let autoPickStrongMoments: () -> Void
 
     @ViewBuilder
-    private var storyScenes: some View {
+    var body: some View {
+        if !selectedMedia.isEmpty {
+            VStack(alignment: .leading, spacing: 8) {
+                Text("New import selection")
+                    .font(.subheadline.weight(.semibold))
+
+                ForEach(selectedMedia) { media in
+                    MomentsCreateMediaRow(media: media) {
+                        removeMedia(media)
+                    }
+                }
+
+                Button(action: autoPickStrongMoments) {
+                    Label("Avi Suggests Order", systemImage: "sparkles")
+                }
+            }
+        }
+    }
+}
+
+private struct MomentsCreateSyncedMediaSection: View {
+    let mediaAssets: [MomentMediaAsset]
+
+    @ViewBuilder
+    var body: some View {
+        if !mediaAssets.isEmpty {
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Synced media")
+                    .font(.subheadline.weight(.semibold))
+
+                ForEach(mediaAssets) { media in
+                    MomentsCreateSyncedMediaRow(media: media)
+                }
+            }
+        }
+    }
+}
+
+private struct MomentsCreateStoryScenesSection: View {
+    let presentation: MomentsCreateStoryPresentation
+
+    var body: some View {
         if !presentation.savedScenes.isEmpty {
             ForEach(presentation.savedScenes) { scene in
                 MomentsCreateStorySceneRow(

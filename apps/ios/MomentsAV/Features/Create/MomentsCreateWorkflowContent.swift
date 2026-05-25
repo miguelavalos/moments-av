@@ -16,7 +16,18 @@ struct MomentsCreateWorkflowContent: View {
             )
             MomentsCreateCreditsCard(balance: viewModel.balance)
             draftSetupCard
-            workflowCards
+            MomentsCreateWorkflowCards(
+                presentation: viewModel.workflowPresentation,
+                pickerItems: $pickerItems,
+                importPickerItems: viewModel.importPickerItems,
+                removeMedia: viewModel.removeMedia,
+                autoPickStrongMoments: viewModel.autoPickStrongMoments,
+                generateStoryDraft: viewModel.generateStoryDraft,
+                generatePreview: viewModel.generatePreview,
+                refreshPreviewStatus: viewModel.refreshPreviewStatus,
+                generateFinalRender: viewModel.generateFinalRender,
+                refreshFinalRenderStatus: viewModel.refreshFinalRenderStatus
+            )
         }
         .padding(20)
     }
@@ -38,11 +49,22 @@ struct MomentsCreateWorkflowContent: View {
             startAnotherProject: viewModel.startAnotherProject
         )
     }
+}
+
+private struct MomentsCreateWorkflowCards: View {
+    let presentation: MomentsCreateWorkflowPresentation
+    @Binding var pickerItems: [PhotosPickerItem]
+    let importPickerItems: ([PhotosPickerItem]) -> Void
+    let removeMedia: (MomentsSelectedMedia) -> Void
+    let autoPickStrongMoments: () -> Void
+    let generateStoryDraft: () -> Void
+    let generatePreview: () -> Void
+    let refreshPreviewStatus: () -> Void
+    let generateFinalRender: () -> Void
+    let refreshFinalRenderStatus: () -> Void
 
     @ViewBuilder
-    private var workflowCards: some View {
-        let presentation = viewModel.workflowPresentation
-
+    var body: some View {
         if let activeProjectId = presentation.activeProjectId {
             MomentsCreateMediaCard(
                 pickerItems: $pickerItems,
@@ -53,9 +75,9 @@ struct MomentsCreateWorkflowContent: View {
                     canAddMedia: presentation.canAddMedia,
                     availabilityMessage: presentation.mediaAvailabilityMessage
                 ),
-                importPickerItems: viewModel.importPickerItems,
-                removeMedia: viewModel.removeMedia,
-                autoPickStrongMoments: viewModel.autoPickStrongMoments
+                importPickerItems: importPickerItems,
+                removeMedia: removeMedia,
+                autoPickStrongMoments: autoPickStrongMoments
             )
             .id(MomentsCreateSection.media)
 
@@ -65,7 +87,7 @@ struct MomentsCreateWorkflowContent: View {
                     canDraftStory: presentation.canDraftStory,
                     availabilityMessage: presentation.storyAvailabilityMessage
                 ),
-                generateStoryDraft: viewModel.generateStoryDraft
+                generateStoryDraft: generateStoryDraft
             )
             .id(MomentsCreateSection.story)
 
@@ -77,8 +99,8 @@ struct MomentsCreateWorkflowContent: View {
                     availabilityMessage: presentation.previewAvailabilityMessage,
                     refreshAvailabilityMessage: presentation.previewRefreshAvailabilityMessage
                 ),
-                generatePreview: viewModel.generatePreview,
-                refreshPreviewStatus: viewModel.refreshPreviewStatus
+                generatePreview: generatePreview,
+                refreshPreviewStatus: refreshPreviewStatus
             )
             .id(MomentsCreateSection.preview)
 
@@ -90,8 +112,8 @@ struct MomentsCreateWorkflowContent: View {
                     availabilityMessage: presentation.finalRenderAvailabilityMessage,
                     refreshAvailabilityMessage: presentation.finalRenderRefreshAvailabilityMessage
                 ),
-                generateFinalRender: viewModel.generateFinalRender,
-                refreshFinalRenderStatus: viewModel.refreshFinalRenderStatus
+                generateFinalRender: generateFinalRender,
+                refreshFinalRenderStatus: refreshFinalRenderStatus
             )
             .id(MomentsCreateSection.finalRender)
         }
