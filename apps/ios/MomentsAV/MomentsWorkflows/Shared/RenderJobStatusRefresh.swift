@@ -30,6 +30,33 @@ struct RenderJobStatusRefresh {
         )
     }
 
+    static func perform(
+        ownerUserId: String,
+        projectId: String?,
+        job: MomentRenderJob?,
+        messages: RenderJobStatusRefreshMessages,
+        statusClient: MomentsRenderStatusClient,
+        statusUpdater: any MomentsRenderJobStatusUpdating,
+        workspaceObserver: any MomentsActiveWorkspaceObserving,
+        shouldContinue: () -> Bool
+    ) async throws -> String {
+        let refresh = try make(
+            projectId: projectId,
+            job: job,
+            missingProjectMessage: messages.missingProject,
+            missingJobMessage: messages.missingJob,
+            missingProviderRequestMessage: messages.missingProviderRequest
+        )
+        try await refresh.updateStatus(
+            ownerUserId: ownerUserId,
+            statusClient: statusClient,
+            statusUpdater: statusUpdater,
+            shouldContinue: shouldContinue
+        )
+        workspaceObserver.observeWorkspace(ownerUserId: ownerUserId, projectId: refresh.projectId)
+        return messages.success
+    }
+
     func updateStatus(
         ownerUserId: String,
         statusClient: MomentsRenderStatusClient,

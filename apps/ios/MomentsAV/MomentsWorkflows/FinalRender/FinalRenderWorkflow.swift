@@ -105,20 +105,7 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
 
     func refreshStatus() async {
         guard let ownerUserId = currentUserProvider.currentUserId else {
-            statusMessage = "Sign in before refreshing final render status."
-            return
-        }
-        let refresh: RenderJobStatusRefresh
-        do {
-            refresh = try RenderJobStatusRefresh.make(
-                projectId: activeWorkspace?.project.id,
-                job: latestFinalJob,
-                missingProjectMessage: "Open a project before refreshing final status.",
-                missingJobMessage: "No final render job is available yet.",
-                missingProviderRequestMessage: "Final render status is missing its provider request id."
-            )
-        } catch {
-            statusMessage = error.localizedDescription
+            statusMessage = refreshMessages.signIn
             return
         }
 
@@ -127,14 +114,16 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
         statusMessage = nil
 
         do {
-            try await refresh.updateStatus(
+            statusMessage = try await RenderJobStatusRefresh.perform(
                 ownerUserId: ownerUserId,
+                projectId: activeWorkspace?.project.id,
+                job: latestFinalJob,
+                messages: refreshMessages,
                 statusClient: statusClient,
                 statusUpdater: finalRenderResultSaver,
+                workspaceObserver: workspaceObserver,
                 shouldContinue: { isCurrent(generation) }
             )
-            workspaceObserver.observeWorkspace(ownerUserId: ownerUserId, projectId: refresh.projectId)
-            statusMessage = "Final render status updated."
         } catch {
             guard isCurrent(generation) else { return }
             statusMessage = error.localizedDescription
@@ -165,5 +154,15 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
             missingProjectMessage: "Create or continue a draft before rendering the final export.",
             insufficientCreditsMessage: "Add credits before final render."
         ) ?? "Final export is not ready to render."
+    }
+
+    private var refreshMessages: RenderJobStatusRefreshMessages {
+        RenderJobStatusRefreshMessages(
+            signIn: "Sign in before refreshing final render status.",
+            missingProject: "Open a project before refreshing final status.",
+            missingJob: "No final render job is available yet.",
+            missingProviderRequest: "Final render status is missing its provider request id.",
+            success: "Final render status updated."
+        )
     }
 }

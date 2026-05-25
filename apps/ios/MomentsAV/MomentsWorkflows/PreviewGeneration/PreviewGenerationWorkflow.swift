@@ -108,20 +108,7 @@ final class PreviewGenerationWorkflow: WorkspaceObservingWorkflow {
 
     func refreshStatus() async {
         guard let ownerUserId = currentUserProvider.currentUserId else {
-            statusMessage = "Sign in before refreshing preview status."
-            return
-        }
-        let refresh: RenderJobStatusRefresh
-        do {
-            refresh = try RenderJobStatusRefresh.make(
-                projectId: activeWorkspace?.project.id,
-                job: latestPreviewJob,
-                missingProjectMessage: "Open a project before refreshing preview status.",
-                missingJobMessage: "No preview render job is available yet.",
-                missingProviderRequestMessage: "Preview status is missing its provider request id."
-            )
-        } catch {
-            statusMessage = error.localizedDescription
+            statusMessage = refreshMessages.signIn
             return
         }
 
@@ -130,14 +117,16 @@ final class PreviewGenerationWorkflow: WorkspaceObservingWorkflow {
         statusMessage = nil
 
         do {
-            try await refresh.updateStatus(
+            statusMessage = try await RenderJobStatusRefresh.perform(
                 ownerUserId: ownerUserId,
+                projectId: activeWorkspace?.project.id,
+                job: latestPreviewJob,
+                messages: refreshMessages,
                 statusClient: statusClient,
                 statusUpdater: previewResultSaver,
+                workspaceObserver: workspaceObserver,
                 shouldContinue: { isCurrent(generation) }
             )
-            workspaceObserver.observeWorkspace(ownerUserId: ownerUserId, projectId: refresh.projectId)
-            statusMessage = "Preview status updated."
         } catch {
             guard isCurrent(generation) else { return }
             statusMessage = error.localizedDescription
@@ -168,5 +157,15 @@ final class PreviewGenerationWorkflow: WorkspaceObservingWorkflow {
             missingProjectMessage: "Create the draft and story before generating a preview.",
             insufficientCreditsMessage: "Add credits before generating a preview."
         ) ?? "Preview is not ready to generate."
+    }
+
+    private var refreshMessages: RenderJobStatusRefreshMessages {
+        RenderJobStatusRefreshMessages(
+            signIn: "Sign in before refreshing preview status.",
+            missingProject: "Open a project before refreshing preview status.",
+            missingJob: "No preview render job is available yet.",
+            missingProviderRequest: "Preview status is missing its provider request id.",
+            success: "Preview status updated."
+        )
     }
 }
