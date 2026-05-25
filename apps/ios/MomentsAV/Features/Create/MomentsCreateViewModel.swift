@@ -9,7 +9,7 @@ final class MomentsCreateViewModel: ObservableObject {
     @Published var form = MomentDraftForm(template: MomentTemplate.launchTemplates[0])
     @Published private(set) var isCreatingDraft = false
     @Published private(set) var isContinuingProject = false
-    @Published private(set) var createdProjectId: String?
+    @Published private(set) var workflowActiveProjectId: String?
     @Published private(set) var draftErrorMessage: String?
     @Published private(set) var selectedMedia: [MomentsSelectedMedia] = []
     @Published private(set) var mediaStatusMessage: String?
@@ -45,7 +45,7 @@ final class MomentsCreateViewModel: ObservableObject {
     }
 
     var activeProjectId: String? {
-        activeProject?.id ?? createdProjectId
+        activeProject?.id ?? workflowActiveProjectId
     }
 
     func bind(
@@ -142,7 +142,7 @@ extension MomentsCreateViewModel {
 
     func applyProjectCreationState(_ state: MomentsCreateProjectCreationState) {
         isCreatingDraft = state.isCreatingDraft
-        createdProjectId = state.createdProjectId
+        workflowActiveProjectId = state.activeProjectId
         draftErrorMessage = state.draftErrorMessage
     }
 

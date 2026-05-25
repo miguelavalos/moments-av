@@ -3,7 +3,7 @@ import Foundation
 @MainActor
 final class ProjectCreationWorkflow: ObservableObject {
     @Published private(set) var isCreatingDraft = false
-    @Published private(set) var createdProjectId: String?
+    @Published private(set) var activeProjectId: String?
     @Published private(set) var errorMessage: String?
 
     private let currentUserProvider: any MomentsCurrentUserProviding
@@ -64,7 +64,7 @@ final class ProjectCreationWorkflow: ObservableObject {
         do {
             let projectId = try await projectCreator.createDraft(ownerUserId: ownerUserId, form: form)
             guard isCurrent(generation) else { return nil }
-            createdProjectId = projectId
+            activeProjectId = projectId
             workspaceObserver.observeWorkspace(ownerUserId: ownerUserId, projectId: projectId)
             isCreatingDraft = false
             return projectId
@@ -84,7 +84,7 @@ final class ProjectCreationWorkflow: ObservableObject {
 
         resetGeneration += 1
         isCreatingDraft = false
-        createdProjectId = project.id
+        activeProjectId = project.id
         errorMessage = nil
         workspaceObserver.observeWorkspace(ownerUserId: ownerUserId, projectId: project.id)
     }
@@ -93,7 +93,7 @@ final class ProjectCreationWorkflow: ObservableObject {
         guard force || !isCreatingDraft else { return }
         resetGeneration += 1
         isCreatingDraft = false
-        createdProjectId = nil
+        activeProjectId = nil
         errorMessage = nil
         workspaceObserver.clearWorkspace()
     }
