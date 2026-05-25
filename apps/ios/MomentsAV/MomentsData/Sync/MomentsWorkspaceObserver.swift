@@ -59,6 +59,10 @@ final class MomentsWorkspaceObserver: ObservableObject {
         activeWorkspace = nil
         errorMessage = nil
     }
+
+    deinit {
+        activeWorkspaceTask?.cancel()
+    }
 }
 
 extension MomentsWorkspaceObserver: MomentsActiveWorkspaceObserving {}
