@@ -8,7 +8,7 @@ class WorkspaceObservingWorkflow: ObservableObject {
     let workspaceObserver: any MomentsActiveWorkspaceObserving
 
     private var cancellables = Set<AnyCancellable>()
-    private var workflowGeneration = 0
+    private var workflowGeneration = WorkflowGeneration()
 
     init(workspaceObserver: any MomentsActiveWorkspaceObserving) {
         self.workspaceObserver = workspaceObserver
@@ -28,15 +28,15 @@ class WorkspaceObservingWorkflow: ObservableObject {
     func workspaceDidChange(_ workspace: MomentProjectWorkspace?) {}
 
     func beginWorkflowGeneration() -> Int {
-        workflowGeneration
+        workflowGeneration.begin()
     }
 
     func isCurrentWorkflowGeneration(_ generation: Int) -> Bool {
-        generation == workflowGeneration
+        workflowGeneration.isCurrent(generation)
     }
 
     func advanceWorkflowGeneration() {
-        workflowGeneration += 1
+        workflowGeneration.advance()
     }
 
     private func updateActiveWorkspace(_ workspace: MomentProjectWorkspace?) {

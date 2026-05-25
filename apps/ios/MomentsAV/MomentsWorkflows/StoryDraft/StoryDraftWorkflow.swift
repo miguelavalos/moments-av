@@ -9,7 +9,6 @@ final class StoryDraftWorkflow: WorkspaceObservingWorkflow {
     private let currentUserProvider: any MomentsCurrentUserProviding
     private let storyDraftSaver: any MomentsStoryDraftSaving
     private let storyClient: MomentsStoryClient
-    private var resetGeneration = 0
 
     init(
         currentUserProvider: any MomentsCurrentUserProviding,
@@ -60,7 +59,7 @@ final class StoryDraftWorkflow: WorkspaceObservingWorkflow {
             return
         }
 
-        let generation = resetGeneration
+        let generation = beginWorkflowGeneration()
         isDrafting = true
         statusMessage = nil
 
@@ -71,36 +70,32 @@ final class StoryDraftWorkflow: WorkspaceObservingWorkflow {
                 form: form,
                 mediaAssets: mediaAssets
             )
-            guard isCurrent(generation) else { return }
+            guard isCurrentWorkflowGeneration(generation) else { return }
             generatedDraft = draft
             try await storyDraftSaver.saveStoryDraft(
                 ownerUserId: ownerUserId,
                 projectId: projectId,
                 draft: draft
             )
-            guard isCurrent(generation) else { return }
+            guard isCurrentWorkflowGeneration(generation) else { return }
             workspaceObserver.observeWorkspace(ownerUserId: ownerUserId, projectId: projectId)
             statusMessage = draft.helperCopy
         } catch {
-            guard isCurrent(generation) else { return }
+            guard isCurrentWorkflowGeneration(generation) else { return }
             statusMessage = error.localizedDescription
         }
 
-        guard isCurrent(generation) else { return }
+        guard isCurrentWorkflowGeneration(generation) else { return }
         isDrafting = false
     }
 
     func reset(force: Bool = false) {
         guard force || !isDrafting else { return }
-        resetGeneration += 1
+        advanceWorkflowGeneration()
         isDrafting = false
         clearActiveWorkspace()
         generatedDraft = nil
         statusMessage = nil
-    }
-
-    private func isCurrent(_ generation: Int) -> Bool {
-        generation == resetGeneration
     }
 
     private func generateBlockMessage(_ availability: MomentsStoryDraftRules.Availability) -> String {

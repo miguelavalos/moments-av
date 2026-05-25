@@ -10,7 +10,7 @@ final class ProjectCreationWorkflow: ObservableObject {
     private let creditBalanceProvider: any MomentsCreditBalanceProviding
     private let projectCreator: any MomentsProjectCreating
     private let workspaceObserver: any MomentsActiveWorkspaceObserving
-    private var resetGeneration = 0
+    private var workflowGeneration = WorkflowGeneration()
 
     init(
         currentUserProvider: any MomentsCurrentUserProviding,
@@ -57,19 +57,19 @@ final class ProjectCreationWorkflow: ObservableObject {
             return nil
         }
 
-        let generation = resetGeneration
+        let generation = workflowGeneration.begin()
         isCreatingDraft = true
         errorMessage = nil
 
         do {
             let projectId = try await projectCreator.createDraft(ownerUserId: ownerUserId, form: form)
-            guard isCurrent(generation) else { return nil }
+            guard workflowGeneration.isCurrent(generation) else { return nil }
             activeProjectId = projectId
             workspaceObserver.observeWorkspace(ownerUserId: ownerUserId, projectId: projectId)
             isCreatingDraft = false
             return projectId
         } catch {
-            guard isCurrent(generation) else { return nil }
+            guard workflowGeneration.isCurrent(generation) else { return nil }
             errorMessage = error.localizedDescription
             isCreatingDraft = false
             return nil
@@ -82,7 +82,7 @@ final class ProjectCreationWorkflow: ObservableObject {
             return
         }
 
-        resetGeneration += 1
+        workflowGeneration.advance()
         isCreatingDraft = false
         activeProjectId = project.id
         errorMessage = nil
@@ -91,15 +91,11 @@ final class ProjectCreationWorkflow: ObservableObject {
 
     func resetDraft(force: Bool = false) {
         guard force || !isCreatingDraft else { return }
-        resetGeneration += 1
+        workflowGeneration.advance()
         isCreatingDraft = false
         activeProjectId = nil
         errorMessage = nil
         workspaceObserver.clearWorkspace()
-    }
-
-    private func isCurrent(_ generation: Int) -> Bool {
-        generation == resetGeneration
     }
 
     private func createDraftBlockMessage(_ availability: MomentDraftRules.Availability) -> String {
