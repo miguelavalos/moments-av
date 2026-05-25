@@ -198,6 +198,36 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         XCTAssertEqual(presentation.finalRenderRefreshAvailabilityMessage, "Refresh final.")
     }
 
+    func testWorkflowAvailabilityBuilderCarriesCapabilitiesAndMessages() {
+        let availability = MomentsCreateWorkflowAvailability.make(
+            canAddMedia: true,
+            canDraftStory: false,
+            canGeneratePreview: true,
+            canRefreshPreviewStatus: false,
+            canGenerateFinalRender: true,
+            canRefreshFinalRenderStatus: false,
+            mediaMessage: "Media",
+            storyMessage: "Story",
+            previewMessage: "Preview",
+            previewRefreshMessage: "Preview refresh",
+            finalRenderMessage: "Final",
+            finalRenderRefreshMessage: "Final refresh"
+        )
+
+        XCTAssertTrue(availability.canAddMedia)
+        XCTAssertFalse(availability.canDraftStory)
+        XCTAssertTrue(availability.canGeneratePreview)
+        XCTAssertFalse(availability.canRefreshPreviewStatus)
+        XCTAssertTrue(availability.canGenerateFinalRender)
+        XCTAssertFalse(availability.canRefreshFinalRenderStatus)
+        XCTAssertEqual(availability.mediaMessage, "Media")
+        XCTAssertEqual(availability.storyMessage, "Story")
+        XCTAssertEqual(availability.previewMessage, "Preview")
+        XCTAssertEqual(availability.previewRefreshMessage, "Preview refresh")
+        XCTAssertEqual(availability.finalRenderMessage, "Final")
+        XCTAssertEqual(availability.finalRenderRefreshMessage, "Final refresh")
+    }
+
     func testMediaPresentationFormatsSelectionAndSortsSyncedMedia() {
         let presentation = MomentsCreateMediaPresentation(
             activeProjectId: "project-1",

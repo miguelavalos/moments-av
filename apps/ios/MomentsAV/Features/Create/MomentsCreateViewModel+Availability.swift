@@ -122,7 +122,7 @@ extension MomentsCreateViewModel {
     }
 
     var workflowAvailability: MomentsCreateWorkflowAvailability {
-        MomentsCreateWorkflowAvailability(
+        MomentsCreateWorkflowAvailability.make(
             canAddMedia: canAddMedia,
             canDraftStory: canDraftStory,
             canGeneratePreview: canGeneratePreview,
