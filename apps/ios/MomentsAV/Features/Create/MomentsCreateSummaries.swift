@@ -1,7 +1,7 @@
 import Foundation
 
 struct MomentsCreateWorkflowPresentation: Equatable {
-    var createdProjectId: String?
+    var activeProjectId: String?
     var template: MomentTemplate
     var mediaSummary: MomentsCreateMediaSummary
     var storySummary: MomentsCreateStorySummary
@@ -21,7 +21,7 @@ struct MomentsCreateWorkflowPresentation: Equatable {
     var finalRenderRefreshAvailabilityMessage: String?
 
     var showsWorkflowCards: Bool {
-        createdProjectId != nil
+        activeProjectId != nil
     }
 }
 
@@ -31,7 +31,7 @@ struct MomentsCreateDraftSetupPresentation: Equatable {
     var isCreatingDraft = false
     var canCreateDraft = false
     var availabilityMessage: String?
-    var createdProjectId: String?
+    var activeProjectId: String?
     var isContinuingProject = false
     var canStartAnotherProject = false
     var draftErrorMessage: String?
@@ -52,7 +52,7 @@ struct MomentsCreateDraftSetupPresentation: Equatable {
     }
 
     var showsActiveProject: Bool {
-        createdProjectId != nil
+        activeProjectId != nil
     }
 }
 
@@ -71,7 +71,7 @@ struct MomentsCreateTemplateSummaryPresentation: Equatable {
 }
 
 struct MomentsCreateMediaPresentation: Equatable {
-    var createdProjectId: String
+    var activeProjectId: String
     var template: MomentTemplate
     var summary: MomentsCreateMediaSummary
     var canAddMedia = false

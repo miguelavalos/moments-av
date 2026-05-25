@@ -15,7 +15,7 @@ struct MomentsCreateMediaCard: View {
             VStack(alignment: .leading, spacing: 14) {
                 Text("Media")
                     .font(.headline)
-                Text("Project \(presentation.createdProjectId)")
+                Text("Project \(presentation.activeProjectId)")
                     .font(.caption)
                     .foregroundStyle(.secondary)
 

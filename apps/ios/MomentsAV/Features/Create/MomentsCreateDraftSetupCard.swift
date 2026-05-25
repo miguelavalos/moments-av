@@ -60,8 +60,8 @@ struct MomentsCreateDraftSetupCard: View {
                     MomentsCreateAvailabilityMessage(message: availabilityMessage)
                 }
 
-                if let createdProjectId = presentation.createdProjectId {
-                    Text("\(presentation.activeProjectLabel): \(createdProjectId)")
+                if let activeProjectId = presentation.activeProjectId {
+                    Text("\(presentation.activeProjectLabel): \(activeProjectId)")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                     Text(presentation.activeProjectDetail)

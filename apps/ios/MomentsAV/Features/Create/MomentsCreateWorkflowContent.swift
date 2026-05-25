@@ -43,11 +43,11 @@ struct MomentsCreateWorkflowContent: View {
     private var workflowCards: some View {
         let presentation = viewModel.workflowPresentation
 
-        if let createdProjectId = presentation.createdProjectId {
+        if let activeProjectId = presentation.activeProjectId {
             MomentsCreateMediaCard(
                 pickerItems: $pickerItems,
                 presentation: MomentsCreateMediaPresentation(
-                    createdProjectId: createdProjectId,
+                    activeProjectId: activeProjectId,
                     template: presentation.template,
                     summary: presentation.mediaSummary,
                     canAddMedia: presentation.canAddMedia,

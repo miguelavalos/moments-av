@@ -30,7 +30,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
             isCreatingDraft: true,
             canCreateDraft: false,
             availabilityMessage: "Draft is locked.",
-            createdProjectId: "project-1",
+            activeProjectId: "project-1",
             isContinuingProject: true,
             canStartAnotherProject: true,
             draftErrorMessage: "Draft failed.",
@@ -45,7 +45,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         XCTAssertTrue(presentation.isCreatingDraft)
         XCTAssertFalse(presentation.canCreateDraft)
         XCTAssertEqual(presentation.availabilityMessage, "Draft is locked.")
-        XCTAssertEqual(presentation.createdProjectId, "project-1")
+        XCTAssertEqual(presentation.activeProjectId, "project-1")
         XCTAssertTrue(presentation.canStartAnotherProject)
         XCTAssertEqual(presentation.draftErrorMessage, "Draft failed.")
         XCTAssertEqual(presentation.workspaceSummary.mediaCount, 2)
@@ -56,7 +56,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
 
     func testWorkflowPresentationHidesWorkflowCardsWithoutProject() {
         let presentation = MomentsCreateWorkflowPresentation(
-            createdProjectId: nil,
+            activeProjectId: nil,
             template: .birthdayMessage,
             mediaSummary: MomentsCreateMediaSummary(),
             storySummary: MomentsCreateStorySummary(),
@@ -102,7 +102,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         )
 
         let presentation = MomentsCreateWorkflowPresentation(
-            createdProjectId: "project-1",
+            activeProjectId: "project-1",
             template: .birthdayMessage,
             mediaSummary: mediaSummary,
             storySummary: storySummary,
@@ -123,7 +123,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         )
 
         XCTAssertTrue(presentation.showsWorkflowCards)
-        XCTAssertEqual(presentation.createdProjectId, "project-1")
+        XCTAssertEqual(presentation.activeProjectId, "project-1")
         XCTAssertEqual(presentation.template, .birthdayMessage)
         XCTAssertEqual(presentation.mediaSummary, mediaSummary)
         XCTAssertEqual(presentation.storySummary, storySummary)
@@ -145,7 +145,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
 
     func testMediaPresentationFormatsSelectionAndSortsSyncedMedia() {
         let presentation = MomentsCreateMediaPresentation(
-            createdProjectId: "project-1",
+            activeProjectId: "project-1",
             template: .birthdayMessage,
             summary: MomentsCreateMediaSummary(
                 selectedMedia: [makeSelectedMedia(id: "00000000-0000-0000-0000-000000000001")],
@@ -160,7 +160,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
             availabilityMessage: "Add media."
         )
 
-        XCTAssertEqual(presentation.createdProjectId, "project-1")
+        XCTAssertEqual(presentation.activeProjectId, "project-1")
         XCTAssertEqual(presentation.pickerTitle, "Importing media...")
         XCTAssertEqual(presentation.remainingSlots, 19)
         XCTAssertEqual(presentation.selectedCountTitle, "Selected 1/3-20 photos or clips")
