@@ -28,7 +28,8 @@ final class MomentsAviViewModelTests: XCTestCase {
         )
 
         XCTAssertEqual(viewModel.workflowFocusTitle, "Review active work")
-        XCTAssertTrue(viewModel.workflowFocusMessage.contains("1 projects in progress"))
+        XCTAssertTrue(viewModel.workflowFocusMessage.contains("1 project in progress"))
+        XCTAssertEqual(viewModel.workflowFocusSystemImage, "clock.badge.checkmark")
     }
 
     func testCreditGuidanceUsesSpendableBalance() {

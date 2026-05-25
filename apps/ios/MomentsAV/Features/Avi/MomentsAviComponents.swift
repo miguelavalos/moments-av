@@ -38,6 +38,7 @@ struct MomentsAviPreparationCard: View {
 struct MomentsAviCurrentFocusCard: View {
     let workflowFocusTitle: String
     let workflowFocusMessage: String
+    let workflowFocusSystemImage: String
     let projectSummary: MomentsProjectListSummary
     let creditBalance: MomentsCreditBalance
 
@@ -48,7 +49,7 @@ struct MomentsAviCurrentFocusCard: View {
             MomentsAviInfoRow(
                 title: workflowFocusTitle,
                 detail: workflowFocusMessage,
-                systemImage: projectSummary.inProgressCount > 0 ? "clock.badge.checkmark" : "sparkles"
+                systemImage: workflowFocusSystemImage
             )
 
             HStack(spacing: 10) {

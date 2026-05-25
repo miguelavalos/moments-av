@@ -26,6 +26,7 @@ struct MomentsAviScreen: View {
                 MomentsAviCurrentFocusCard(
                     workflowFocusTitle: viewModel.workflowFocusTitle,
                     workflowFocusMessage: viewModel.workflowFocusMessage,
+                    workflowFocusSystemImage: viewModel.workflowFocusSystemImage,
                     projectSummary: viewModel.projectSummary,
                     creditBalance: viewModel.creditBalance
                 )
