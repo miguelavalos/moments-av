@@ -13,7 +13,6 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
     private let finalRenderResultSaver: any MomentsFinalRenderResultSaving
     private let finalRenderClient: MomentsFinalRenderClient
     private let statusClient: MomentsRenderStatusClient
-    private var resetGeneration = 0
 
     init(
         currentUserProvider: any MomentsCurrentUserProviding,
@@ -74,7 +73,7 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
             return
         }
 
-        let generation = resetGeneration
+        let generation = beginWorkflowGeneration()
         isGenerating = true
         statusMessage = "Avi is preparing the final export."
 
@@ -86,14 +85,14 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
                 finalRenderClient: finalRenderClient,
                 finalRenderResultSaver: finalRenderResultSaver,
                 workspaceObserver: workspaceObserver,
-                shouldContinue: { isCurrent(generation) }
+                shouldContinue: { isCurrentWorkflowGeneration(generation) }
             )
         } catch {
-            guard isCurrent(generation) else { return }
+            guard isCurrentWorkflowGeneration(generation) else { return }
             statusMessage = error.localizedDescription
         }
 
-        guard isCurrent(generation) else { return }
+        guard isCurrentWorkflowGeneration(generation) else { return }
         isGenerating = false
     }
 
@@ -103,7 +102,7 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
             return
         }
 
-        let generation = resetGeneration
+        let generation = beginWorkflowGeneration()
         isRefreshingStatus = true
         statusMessage = nil
 
@@ -116,30 +115,26 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
                 statusClient: statusClient,
                 statusUpdater: finalRenderResultSaver,
                 workspaceObserver: workspaceObserver,
-                shouldContinue: { isCurrent(generation) }
+                shouldContinue: { isCurrentWorkflowGeneration(generation) }
             )
         } catch {
-            guard isCurrent(generation) else { return }
+            guard isCurrentWorkflowGeneration(generation) else { return }
             statusMessage = error.localizedDescription
         }
 
-        guard isCurrent(generation) else { return }
+        guard isCurrentWorkflowGeneration(generation) else { return }
         isRefreshingStatus = false
     }
 
     func reset(force: Bool = false) {
         guard force || (!isGenerating && !isRefreshingStatus) else { return }
-        resetGeneration += 1
+        advanceWorkflowGeneration()
         isGenerating = false
         isRefreshingStatus = false
         clearActiveWorkspace()
         finalExport = nil
         latestFinalJob = nil
         statusMessage = nil
-    }
-
-    private func isCurrent(_ generation: Int) -> Bool {
-        generation == resetGeneration
     }
 
     private func generateBlockMessage(_ availability: MomentsFinalRenderRules.Availability) -> String {

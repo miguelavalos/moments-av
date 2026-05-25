@@ -13,7 +13,6 @@ final class PreviewGenerationWorkflow: WorkspaceObservingWorkflow {
     private let previewResultSaver: any MomentsPreviewResultSaving
     private let previewClient: MomentsPreviewClient
     private let statusClient: MomentsRenderStatusClient
-    private var resetGeneration = 0
 
     init(
         currentUserProvider: any MomentsCurrentUserProviding,
@@ -76,7 +75,7 @@ final class PreviewGenerationWorkflow: WorkspaceObservingWorkflow {
             return
         }
 
-        let generation = resetGeneration
+        let generation = beginWorkflowGeneration()
         isGenerating = true
         statusMessage = "Avi is preparing a preview."
 
@@ -89,14 +88,14 @@ final class PreviewGenerationWorkflow: WorkspaceObservingWorkflow {
                 previewClient: previewClient,
                 previewResultSaver: previewResultSaver,
                 workspaceObserver: workspaceObserver,
-                shouldContinue: { isCurrent(generation) }
+                shouldContinue: { isCurrentWorkflowGeneration(generation) }
             )
         } catch {
-            guard isCurrent(generation) else { return }
+            guard isCurrentWorkflowGeneration(generation) else { return }
             statusMessage = error.localizedDescription
         }
 
-        guard isCurrent(generation) else { return }
+        guard isCurrentWorkflowGeneration(generation) else { return }
         isGenerating = false
     }
 
@@ -106,7 +105,7 @@ final class PreviewGenerationWorkflow: WorkspaceObservingWorkflow {
             return
         }
 
-        let generation = resetGeneration
+        let generation = beginWorkflowGeneration()
         isRefreshingStatus = true
         statusMessage = nil
 
@@ -119,30 +118,26 @@ final class PreviewGenerationWorkflow: WorkspaceObservingWorkflow {
                 statusClient: statusClient,
                 statusUpdater: previewResultSaver,
                 workspaceObserver: workspaceObserver,
-                shouldContinue: { isCurrent(generation) }
+                shouldContinue: { isCurrentWorkflowGeneration(generation) }
             )
         } catch {
-            guard isCurrent(generation) else { return }
+            guard isCurrentWorkflowGeneration(generation) else { return }
             statusMessage = error.localizedDescription
         }
 
-        guard isCurrent(generation) else { return }
+        guard isCurrentWorkflowGeneration(generation) else { return }
         isRefreshingStatus = false
     }
 
     func reset(force: Bool = false) {
         guard force || (!isGenerating && !isRefreshingStatus) else { return }
-        resetGeneration += 1
+        advanceWorkflowGeneration()
         isGenerating = false
         isRefreshingStatus = false
         clearActiveWorkspace()
         latestPreview = nil
         latestPreviewJob = nil
         statusMessage = nil
-    }
-
-    private func isCurrent(_ generation: Int) -> Bool {
-        generation == resetGeneration
     }
 
     private func generateBlockMessage(_ availability: MomentsPreviewRules.Availability) -> String {
