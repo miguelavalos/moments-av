@@ -4,9 +4,6 @@ import Foundation
 @MainActor
 final class ProjectsListWorkflow: ObservableObject {
     @Published private(set) var projectSummary = MomentsProjectListSummary()
-    @Published private(set) var activeProject: MomentDraftProject?
-    @Published private(set) var activeWorkspace: MomentProjectWorkspace?
-    @Published private(set) var isLoadingProjectWorkspace = false
     @Published private(set) var isDeletingProject = false
     @Published private(set) var errorMessage: String?
 
@@ -53,27 +50,6 @@ final class ProjectsListWorkflow: ObservableObject {
             }
             .store(in: &cancellables)
 
-        workspaceSelectionWorkflow.activeProjectPublisher
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] project in
-                self?.activeProject = project
-            }
-            .store(in: &cancellables)
-
-        workspaceSelectionWorkflow.activeWorkspacePublisher
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] workspace in
-                self?.activeWorkspace = workspace
-            }
-            .store(in: &cancellables)
-
-        workspaceSelectionWorkflow.isLoadingProjectWorkspacePublisher
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] isLoading in
-                self?.isLoadingProjectWorkspace = isLoading
-            }
-            .store(in: &cancellables)
-
         workspaceSelectionWorkflow.workspaceErrorPublisher
             .receive(on: DispatchQueue.main)
             .sink { [weak self] message in
@@ -109,7 +85,7 @@ final class ProjectsListWorkflow: ObservableObject {
         let didDelete = await projectDeletionWorkflow.deleteProject(project)
         guard didDelete else { return false }
 
-        if activeProject?.id == project.id {
+        if workspaceSelectionWorkflow.activeProject?.id == project.id {
             clearActiveProject()
         }
         observeProjects(ownerUserId: currentOwnerUserId)
@@ -141,15 +117,15 @@ extension ProjectsListWorkflow: MomentsProjectsViewing {
     }
 
     var activeProjectPublisher: AnyPublisher<MomentDraftProject?, Never> {
-        $activeProject.eraseToAnyPublisher()
+        workspaceSelectionWorkflow.activeProjectPublisher
     }
 
     var activeWorkspacePublisher: AnyPublisher<MomentProjectWorkspace?, Never> {
-        $activeWorkspace.eraseToAnyPublisher()
+        workspaceSelectionWorkflow.activeWorkspacePublisher
     }
 
     var isLoadingProjectWorkspacePublisher: AnyPublisher<Bool, Never> {
-        $isLoadingProjectWorkspace.eraseToAnyPublisher()
+        workspaceSelectionWorkflow.isLoadingProjectWorkspacePublisher
     }
 
     var isDeletingProjectPublisher: AnyPublisher<Bool, Never> {
