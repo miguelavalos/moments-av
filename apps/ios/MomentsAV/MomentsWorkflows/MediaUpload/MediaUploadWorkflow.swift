@@ -11,7 +11,6 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
     private let currentUserProvider: any MomentsCurrentUserProviding
     private let mediaAssetSaver: any MomentsMediaAssetSaving
     private let uploadClient: MomentsUploadClient
-    private var resetGeneration = 0
 
     init(
         currentUserProvider: any MomentsCurrentUserProviding,
@@ -52,7 +51,7 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
             return
         }
 
-        let generation = resetGeneration
+        let generation = beginWorkflowGeneration()
         isImporting = true
         statusMessage = nil
 
@@ -60,11 +59,10 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
             let imported = try await MediaPickerImport.load(
                 items: items,
                 limit: remainingSlots,
-                startingSortOrder: selectedMedia.count,
-                uploadClient: uploadClient
+                startingSortOrder: selectedMedia.count
             )
 
-            guard isCurrent(generation) else { return }
+            guard isCurrentWorkflowGeneration(generation) else { return }
             selectedMedia.append(contentsOf: imported)
             normalizeOrder()
 
@@ -74,17 +72,17 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
                 projectId: projectId,
                 uploadClient: uploadClient,
                 mediaAssetSaver: mediaAssetSaver,
-                shouldContinue: { isCurrent(generation) }
+                shouldContinue: { isCurrentWorkflowGeneration(generation) }
             )
 
             workspaceObserver.observeWorkspace(ownerUserId: ownerUserId, projectId: projectId)
             statusMessage = persistenceResult.statusMessage
         } catch {
-            guard isCurrent(generation) else { return }
+            guard isCurrentWorkflowGeneration(generation) else { return }
             statusMessage = error.localizedDescription
         }
 
-        guard isCurrent(generation) else { return }
+        guard isCurrentWorkflowGeneration(generation) else { return }
         isImporting = false
     }
 
@@ -105,7 +103,7 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
 
     func reset(force: Bool = false) {
         guard force || !isImporting else { return }
-        resetGeneration += 1
+        advanceWorkflowGeneration()
         isImporting = false
         selectedMedia = []
         statusMessage = nil
@@ -123,9 +121,5 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
             localMedia: selectedMedia,
             syncedMedia: activeWorkspace?.mediaAssets ?? []
         )
-    }
-
-    private func isCurrent(_ generation: Int) -> Bool {
-        generation == resetGeneration
     }
 }
