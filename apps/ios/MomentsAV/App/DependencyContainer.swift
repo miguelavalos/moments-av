@@ -31,50 +31,21 @@ final class MomentsDependencyContainer: ObservableObject {
         let resolvedWorkspaceObserver = workspaceObserver ?? MomentsWorkspaceObserver(projectRepository: projectRepository)
         self.projectsObserver = resolvedProjectsObserver
         self.workspaceObserver = resolvedWorkspaceObserver
-        self.projectDeletionWorkflow = ProjectDeletionWorkflow(
-            currentUserProvider: accountController,
-            projectDeleter: projectRepository
-        )
-        self.projectWorkspaceSelectionWorkflow = ProjectWorkspaceSelectionWorkflow(workspaceObserver: resolvedWorkspaceObserver)
-        self.projectsListWorkflow = ProjectsListWorkflow(
+        let workflows = MomentsWorkflowBundle(
+            accountController: accountController,
+            projectRepository: projectRepository,
             projectsObserver: resolvedProjectsObserver,
-            workspaceSelectionWorkflow: projectWorkspaceSelectionWorkflow,
-            projectDeletionWorkflow: projectDeletionWorkflow
-        )
-        self.projectCreationWorkflow = ProjectCreationWorkflow(
-            currentUserProvider: accountController,
-            creditBalanceProvider: accountController,
-            projectCreator: projectRepository,
-            workspaceObserver: resolvedWorkspaceObserver
-        )
-        self.mediaUploadWorkflow = MediaUploadWorkflow(
-            currentUserProvider: accountController,
-            mediaAssetSaver: projectRepository,
             workspaceObserver: resolvedWorkspaceObserver,
-            uploadClient: clients.upload
+            clients: clients
         )
-        self.storyDraftWorkflow = StoryDraftWorkflow(
-            currentUserProvider: accountController,
-            storyDraftSaver: projectRepository,
-            workspaceObserver: resolvedWorkspaceObserver,
-            storyClient: clients.story
-        )
-        self.previewGenerationWorkflow = PreviewGenerationWorkflow(
-            currentUserProvider: accountController,
-            creditBalanceProvider: accountController,
-            previewResultSaver: projectRepository,
-            workspaceObserver: resolvedWorkspaceObserver,
-            previewClient: clients.preview,
-            statusClient: clients.renderStatus
-        )
-        self.finalRenderWorkflow = FinalRenderWorkflow(
-            currentUserProvider: accountController,
-            creditBalanceProvider: accountController,
-            finalRenderResultSaver: projectRepository,
-            workspaceObserver: resolvedWorkspaceObserver,
-            finalRenderClient: clients.finalRender,
-            statusClient: clients.renderStatus
-        )
+        self.projectDeletionWorkflow = workflows.projectDeletion
+        self.projectWorkspaceSelectionWorkflow = workflows.projectWorkspaceSelection
+        self.projectsListWorkflow = workflows.projectsList
+        self.projectCreationWorkflow = workflows.projectCreation
+        self.mediaUploadWorkflow = workflows.mediaUpload
+        self.storyDraftWorkflow = workflows.storyDraft
+        self.previewGenerationWorkflow = workflows.previewGeneration
+        self.finalRenderWorkflow = workflows.finalRender
         self.homeViewModel = MomentsHomeViewModel()
         self.createViewModel = MomentsCreateViewModel()
         self.projectsViewModel = MomentsProjectsViewModel()
@@ -108,21 +79,5 @@ private extension MomentsDependencyContainer {
         projectsViewModel.bind(accountStateProvider: accountController)
         aviViewModel.bind(to: projectsListWorkflow)
         aviViewModel.bind(accountStateProvider: accountController)
-    }
-}
-
-private struct MomentsWorkflowClients {
-    let upload: MomentsUploadClient
-    let story: MomentsStoryClient
-    let preview: MomentsPreviewClient
-    let finalRender: MomentsFinalRenderClient
-    let renderStatus: MomentsRenderStatusClient
-
-    init(baseURLString: String) {
-        upload = MomentsUploadClient(baseURLString: baseURLString)
-        story = MomentsStoryClient(baseURLString: baseURLString)
-        preview = MomentsPreviewClient(baseURLString: baseURLString)
-        finalRender = MomentsFinalRenderClient(baseURLString: baseURLString)
-        renderStatus = MomentsRenderStatusClient(baseURLString: baseURLString)
     }
 }
