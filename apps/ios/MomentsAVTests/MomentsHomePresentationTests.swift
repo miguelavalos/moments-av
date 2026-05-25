@@ -77,6 +77,25 @@ final class MomentsHomePresentationTests: XCTestCase {
         )
     }
 
+    func testSingleProjectUsesSingularProjectCopy() {
+        let presentation = MomentsHomePresentation.make(
+            isSignedIn: true,
+            displayName: nil,
+            projectSummary: MomentsProjectListSummary.make(from: [
+                makeProject(id: "one", status: "draft_created", updatedAt: 10)
+            ])
+        )
+
+        XCTAssertEqual(
+            presentation.projectStatusDetail,
+            "1 synced project tracked across the current account."
+        )
+        XCTAssertEqual(
+            presentation.reviewProjectsAction.detail,
+            "Open 1 synced project with preview and final status."
+        )
+    }
+
     private func makeProject(id: String, status: String, updatedAt: Double) -> MomentDraftProject {
         MomentDraftProject(
             id: id,

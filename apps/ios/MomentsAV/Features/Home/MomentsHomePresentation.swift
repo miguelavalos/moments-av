@@ -39,7 +39,7 @@ struct MomentsHomePresentation {
             reviewProjectsAction: MomentsHomeAction(
                 title: "Review projects",
                 detail: projectSummary.hasProjects
-                    ? "Open \(projectSummary.projectCount) synced projects with preview and final status."
+                    ? "Open \(projectSummary.projectCount) synced \(projectLabel(projectSummary.projectCount)) with preview and final status."
                     : "Project workspace details will appear after the first synced draft.",
                 systemImage: "rectangle.stack",
                 isDisabled: !isSignedIn
@@ -64,9 +64,13 @@ struct MomentsHomePresentation {
 
     private static func projectStatusDetail(projectSummary: MomentsProjectListSummary) -> String {
         if projectSummary.hasProjects {
-            return "\(projectSummary.projectCount) synced projects tracked across the current account."
+            return "\(projectSummary.projectCount) synced \(projectLabel(projectSummary.projectCount)) tracked across the current account."
         }
 
         return "No synced projects yet."
+    }
+
+    private static func projectLabel(_ count: Int) -> String {
+        count == 1 ? "project" : "projects"
     }
 }
