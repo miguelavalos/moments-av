@@ -14,7 +14,7 @@ struct MomentsCreateScreen: View {
                 guard let focus else { return }
                 scrollToPendingFocus(focus, proxy: proxy)
             }
-            .onChange(of: viewModel.createdProjectId) { _, _ in
+            .onChange(of: viewModel.activeProjectId) { _, _ in
                 guard let focus = viewModel.pendingFocus else { return }
                 scrollToPendingFocus(focus, proxy: proxy)
             }
@@ -44,7 +44,7 @@ struct MomentsCreateScreen: View {
         case .review:
             viewModel.activeProject != nil
         case .media, .story, .preview, .finalRender:
-            viewModel.createdProjectId != nil
+            viewModel.activeProjectId != nil
         }
     }
 }

@@ -111,7 +111,7 @@ extension MomentsCreateViewModel {
 
     var workflowPresentation: MomentsCreateWorkflowPresentation {
         MomentsCreateWorkflowPresentation(
-            createdProjectId: createdProjectId,
+            createdProjectId: activeProjectId,
             template: form.template,
             mediaSummary: mediaSummary,
             storySummary: storySummary,
@@ -143,7 +143,7 @@ extension MomentsCreateViewModel {
             isCreatingDraft: isCreatingDraft,
             canCreateDraft: canCreateDraft,
             availabilityMessage: draftAvailabilityMessage,
-            createdProjectId: createdProjectId,
+            createdProjectId: activeProjectId,
             isContinuingProject: isContinuingProject,
             canStartAnotherProject: canStartAnotherProject,
             draftErrorMessage: draftErrorMessage,
