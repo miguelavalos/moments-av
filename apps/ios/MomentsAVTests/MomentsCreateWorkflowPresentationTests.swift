@@ -92,24 +92,24 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
     }
 
     func testWorkflowPresentationCarriesWorkflowStateForActiveProject() {
-        let preview = makeArtifact(id: "preview-1", kind: "preview")
-        let finalExport = makeArtifact(id: "final-1", kind: "final_export")
-        let latestPreviewJob = makeRenderJob(id: "preview-job", kind: "preview", status: "running")
-        let latestFinalJob = makeRenderJob(id: "final-job", kind: "final_render", status: "queued")
+        let preview = MomentsCreateTestFixtures.makeArtifact(id: "preview-1", kind: "preview")
+        let finalExport = MomentsCreateTestFixtures.makeArtifact(id: "final-1", kind: "final_export")
+        let latestPreviewJob = MomentsCreateTestFixtures.makeRenderJob(id: "preview-job", kind: "preview", status: "running")
+        let latestFinalJob = MomentsCreateTestFixtures.makeRenderJob(id: "final-job", kind: "final_render", status: "queued")
         let mediaSummary = MomentsCreateMediaSummary(
             selectedMedia: [],
-            syncedMediaAssets: [makeMediaAsset(id: "media-1")],
+            syncedMediaAssets: [MomentsCreateTestFixtures.makeMediaAsset(id: "media-1")],
             isImporting: true,
             statusMessage: "Importing media."
         )
         let storySummary = MomentsCreateStorySummary(
-            savedScenes: [makeScene(id: "scene-1")],
+            savedScenes: [MomentsCreateTestFixtures.makeScene(id: "scene-1")],
             generatedScenes: [],
             isDrafting: true,
             statusMessage: "Drafting story."
         )
         let previewSummary = MomentsCreatePreviewSummary(
-            activeProject: makeProject(id: "project-1"),
+            activeProject: MomentsCreateTestFixtures.makeProject(id: "project-1"),
             latestPreview: preview,
             latestPreviewJob: latestPreviewJob,
             isGenerating: true,
@@ -199,100 +199,15 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         XCTAssertEqual(presentation.finalRenderRefreshAvailabilityMessage, "Refresh final.")
     }
 
-    func testWorkflowAvailabilityBuilderCarriesCapabilitiesAndMessages() {
-        let availability = MomentsCreateWorkflowAvailability.make(
-            canAddMedia: true,
-            canDraftStory: false,
-            canGeneratePreview: true,
-            canRefreshPreviewStatus: false,
-            canGenerateFinalRender: true,
-            canRefreshFinalRenderStatus: false,
-            mediaMessage: "Media",
-            storyMessage: "Story",
-            previewMessage: "Preview",
-            previewRefreshMessage: "Preview refresh",
-            finalRenderMessage: "Final",
-            finalRenderRefreshMessage: "Final refresh"
-        )
-
-        XCTAssertTrue(availability.canAddMedia)
-        XCTAssertFalse(availability.canDraftStory)
-        XCTAssertTrue(availability.canGeneratePreview)
-        XCTAssertFalse(availability.canRefreshPreviewStatus)
-        XCTAssertTrue(availability.canGenerateFinalRender)
-        XCTAssertFalse(availability.canRefreshFinalRenderStatus)
-        XCTAssertEqual(availability.mediaMessage, "Media")
-        XCTAssertEqual(availability.storyMessage, "Story")
-        XCTAssertEqual(availability.previewMessage, "Preview")
-        XCTAssertEqual(availability.previewRefreshMessage, "Preview refresh")
-        XCTAssertEqual(availability.finalRenderMessage, "Final")
-        XCTAssertEqual(availability.finalRenderRefreshMessage, "Final refresh")
-    }
-
-    func testWorkflowCapabilityFactoryFormatsMediaAndRefreshCapabilities() {
-        let capability = MomentsCreateWorkflowCapabilityFactory.make(
-            activeProjectId: "project-1",
-            isImportingMedia: false,
-            isMediaUploadConfigured: true,
-            mediaRemainingSlots: 2,
-            storyDraftWorkflow: nil,
-            previewGenerationWorkflow: nil,
-            finalRenderWorkflow: nil,
-            template: .birthdayMessage,
-            previewRefreshAvailability: makeRefreshAvailability(canRefresh: true),
-            finalRenderRefreshAvailability: makeRefreshAvailability(canRefresh: false),
-            latestPreview: nil
-        )
-
-        XCTAssertTrue(capability.canAddMedia)
-        XCTAssertFalse(capability.canDraftStory)
-        XCTAssertFalse(capability.canGeneratePreview)
-        XCTAssertTrue(capability.canRefreshPreviewStatus)
-        XCTAssertFalse(capability.canGenerateFinalRender)
-        XCTAssertFalse(capability.canRefreshFinalRenderStatus)
-    }
-
-    func testWorkflowCapabilityFactoryBlocksMediaWithoutSlotsOrProject() {
-        let withoutSlots = MomentsCreateWorkflowCapabilityFactory.make(
-            activeProjectId: "project-1",
-            isImportingMedia: false,
-            isMediaUploadConfigured: true,
-            mediaRemainingSlots: 0,
-            storyDraftWorkflow: nil,
-            previewGenerationWorkflow: nil,
-            finalRenderWorkflow: nil,
-            template: .birthdayMessage,
-            previewRefreshAvailability: makeRefreshAvailability(canRefresh: false),
-            finalRenderRefreshAvailability: makeRefreshAvailability(canRefresh: false),
-            latestPreview: nil
-        )
-        let withoutProject = MomentsCreateWorkflowCapabilityFactory.make(
-            activeProjectId: nil,
-            isImportingMedia: false,
-            isMediaUploadConfigured: true,
-            mediaRemainingSlots: 2,
-            storyDraftWorkflow: nil,
-            previewGenerationWorkflow: nil,
-            finalRenderWorkflow: nil,
-            template: .birthdayMessage,
-            previewRefreshAvailability: makeRefreshAvailability(canRefresh: false),
-            finalRenderRefreshAvailability: makeRefreshAvailability(canRefresh: false),
-            latestPreview: nil
-        )
-
-        XCTAssertFalse(withoutSlots.canAddMedia)
-        XCTAssertFalse(withoutProject.canAddMedia)
-    }
-
     func testMediaPresentationFormatsSelectionAndSortsSyncedMedia() {
         let presentation = MomentsCreateMediaPresentation(
             activeProjectId: "project-1",
             template: .birthdayMessage,
             summary: MomentsCreateMediaSummary(
-                selectedMedia: [makeSelectedMedia(id: "00000000-0000-0000-0000-000000000001")],
+                selectedMedia: [MomentsCreateTestFixtures.makeSelectedMedia(id: "00000000-0000-0000-0000-000000000001")],
                 syncedMediaAssets: [
-                    makeMediaAsset(id: "second", sortOrder: 1),
-                    makeMediaAsset(id: "first", sortOrder: 0)
+                    MomentsCreateTestFixtures.makeMediaAsset(id: "second", sortOrder: 1),
+                    MomentsCreateTestFixtures.makeMediaAsset(id: "first", sortOrder: 0)
                 ],
                 isImporting: true,
                 statusMessage: "Importing."
@@ -317,8 +232,8 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
             template: .birthdayMessage,
             summary: MomentsCreateMediaSummary(
                 selectedMedia: [
-                    makeSelectedMedia(id: "00000000-0000-0000-0000-000000000001"),
-                    makeSelectedMedia(id: "00000000-0000-0000-0000-000000000002")
+                    MomentsCreateTestFixtures.makeSelectedMedia(id: "00000000-0000-0000-0000-000000000001"),
+                    MomentsCreateTestFixtures.makeSelectedMedia(id: "00000000-0000-0000-0000-000000000002")
                 ]
             )
         )
@@ -330,8 +245,8 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         let presentation = MomentsCreateStoryPresentation(
             summary: MomentsCreateStorySummary(
                 savedScenes: [
-                    makeScene(id: "scene-2", sceneIndex: 1),
-                    makeScene(id: "scene-1", sceneIndex: 0)
+                    MomentsCreateTestFixtures.makeScene(id: "scene-2", sceneIndex: 1),
+                    MomentsCreateTestFixtures.makeScene(id: "scene-1", sceneIndex: 0)
                 ],
                 generatedScenes: [],
                 isDrafting: true,
@@ -351,9 +266,9 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
     func testPreviewPresentationFormatsUsageActionsAndArtifactState() {
         let presentation = MomentsCreatePreviewPresentation(
             summary: MomentsCreatePreviewSummary(
-                activeProject: makeProject(id: "project-1"),
-                latestPreview: makeArtifact(id: "preview-1", kind: "preview"),
-                latestPreviewJob: makeRenderJob(id: "preview-job", kind: "preview", status: "running"),
+                activeProject: MomentsCreateTestFixtures.makeProject(id: "project-1"),
+                latestPreview: MomentsCreateTestFixtures.makeArtifact(id: "preview-1", kind: "preview"),
+                latestPreviewJob: MomentsCreateTestFixtures.makeRenderJob(id: "preview-job", kind: "preview", status: "running"),
                 isGenerating: true,
                 isRefreshingStatus: true,
                 statusMessage: "Generating."
@@ -394,8 +309,8 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         let presentation = MomentsCreateFinalRenderPresentation(
             summary: MomentsCreateFinalRenderSummary(
                 creditCost: 2,
-                finalExport: makeArtifact(id: "final-1", kind: "final_export"),
-                latestFinalJob: makeRenderJob(id: "final-job", kind: "final_render", status: "running"),
+                finalExport: MomentsCreateTestFixtures.makeArtifact(id: "final-1", kind: "final_export"),
+                latestFinalJob: MomentsCreateTestFixtures.makeRenderJob(id: "final-job", kind: "final_render", status: "running"),
                 isGenerating: true,
                 isRefreshingStatus: true,
                 statusMessage: "Rendering."
@@ -438,128 +353,6 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         XCTAssertEqual(presentation.creditTitle, "1 credit")
     }
 
-    func testAvailabilityCopyUsesSingularAndPluralCreditMessages() {
-        XCTAssertEqual(MomentsCreateAvailabilityCopy.draftSignInRequired, "Sign in before creating a draft.")
-        XCTAssertEqual(MomentsCreateAvailabilityCopy.mediaTemplateFull, "Remove media before adding more to this template.")
-        XCTAssertEqual(MomentsCreateAvailabilityCopy.storyMissingMedia, "Wait for synced media before drafting.")
-        XCTAssertEqual(
-            MomentsCreateAvailabilityCopy.finalRenderMissingWorkspace,
-            "Wait for the project workspace to sync before rendering the final export."
-        )
-        XCTAssertEqual(
-            MomentsCreateAvailabilityCopy.previewInsufficientCredits(missingCredits: 1),
-            "Add 1 more credit before generating a preview."
-        )
-        XCTAssertEqual(
-            MomentsCreateAvailabilityCopy.finalRenderInsufficientCredits(missingCredits: 2),
-            "Add 2 more credits before final render."
-        )
-    }
-
-    func testAvailabilityMessageFactoryFormatsMediaStates() {
-        XCTAssertEqual(
-            MomentsCreateAvailabilityMessageFactory.media(
-                activeProjectId: nil,
-                isImportingMedia: false,
-                isMediaUploadConfigured: true,
-                mediaRemainingSlots: 2
-            ),
-            MomentsCreateAvailabilityCopy.mediaMissingProject
-        )
-        XCTAssertNil(
-            MomentsCreateAvailabilityMessageFactory.media(
-                activeProjectId: "project-1",
-                isImportingMedia: true,
-                isMediaUploadConfigured: false,
-                mediaRemainingSlots: 0
-            )
-        )
-        XCTAssertEqual(
-            MomentsCreateAvailabilityMessageFactory.media(
-                activeProjectId: "project-1",
-                isImportingMedia: false,
-                isMediaUploadConfigured: true,
-                mediaRemainingSlots: 0
-            ),
-            MomentsCreateAvailabilityCopy.mediaTemplateFull
-        )
-    }
-
-    func testAvailabilityMessageFactoryFormatsStoryStates() {
-        XCTAssertEqual(
-            MomentsCreateAvailabilityMessageFactory.story(
-                activeProjectId: "project-1",
-                isStoryDrafting: false,
-                isStoryDraftAvailable: true,
-                isStoryDraftConfigured: true,
-                mediaAssets: [],
-                template: .birthdayMessage
-            ),
-            "Add 3 more synced media assets before drafting."
-        )
-        XCTAssertNil(
-            MomentsCreateAvailabilityMessageFactory.story(
-                activeProjectId: "project-1",
-                isStoryDrafting: true,
-                isStoryDraftAvailable: true,
-                isStoryDraftConfigured: false,
-                mediaAssets: [],
-                template: .birthdayMessage
-            )
-        )
-    }
-
-    func testAvailabilityMessageFactoryFormatsPreviewCreditStates() {
-        XCTAssertEqual(
-            MomentsCreateAvailabilityMessageFactory.preview(
-                activeProjectId: "project-1",
-                isPreviewGenerationAvailable: true,
-                isPreviewGenerating: false,
-                isPreviewGenerationConfigured: true,
-                project: makeProject(id: "project-1"),
-                template: .birthdayMessage,
-                balance: .empty
-            ),
-            "Add 2 more credits before generating a preview."
-        )
-    }
-
-    func testAvailabilityMessageFactoryFormatsFinalRenderPreviewRequirement() {
-        XCTAssertEqual(
-            MomentsCreateAvailabilityMessageFactory.finalRender(
-                activeProjectId: "project-1",
-                isFinalRenderAvailable: true,
-                isFinalRenderGenerating: false,
-                isFinalRenderConfigured: true,
-                project: makeProject(id: "project-1"),
-                template: .birthdayMessage,
-                balance: MomentsCreditBalance(proMonthly: 4, promotional: 0, purchased: 0),
-                latestPreview: nil
-            ),
-            "Generate a preview before rendering the final export."
-        )
-    }
-
-    func testRefreshAvailabilityFactoryFormatsPreviewAndFinalMessages() {
-        let preview = MomentsCreateRefreshAvailabilityFactory.preview(
-            projectId: nil,
-            job: nil,
-            isAvailable: false,
-            isConfigured: false,
-            isRefreshing: false
-        )
-        let finalRender = MomentsCreateRefreshAvailabilityFactory.finalRender(
-            projectId: "project-1",
-            job: nil,
-            isAvailable: true,
-            isConfigured: true,
-            isRefreshing: false
-        )
-
-        XCTAssertEqual(preview.message, "Open a project before refreshing preview status.")
-        XCTAssertEqual(finalRender.message, "No final render job is available yet.")
-    }
-
     func testWorkspaceSummaryFormatsProgressDetails() {
         let summary = MomentsCreateWorkspaceSummary(
             mediaCount: 2,
@@ -574,106 +367,4 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         XCTAssertEqual(summary.previewDetail, "1 render job")
     }
 
-    private func makeProject(id: String) -> MomentDraftProject {
-        MomentDraftProject(
-            id: id,
-            template: .birthdayMessage,
-            status: "draft_created",
-            title: "Family Weekend",
-            tone: nil,
-            tempo: nil,
-            occasion: nil,
-            details: nil,
-            durationSeconds: 30,
-            creditCost: 2,
-            previewCount: 0,
-            previewLimit: 3,
-            updatedAt: 10
-        )
-    }
-
-    private func makeMediaAsset(id: String, sortOrder: Double = 0) -> MomentMediaAsset {
-        MomentMediaAsset(
-            id: id,
-            platformMediaAssetId: "platform-\(id)",
-            uploadId: "upload-\(id)",
-            kind: "image",
-            sortOrder: sortOrder,
-            selected: true,
-            moderationStatus: "approved",
-            uploadedAt: nil,
-            sourceExpiresAt: nil
-        )
-    }
-
-    private func makeSelectedMedia(id: String) -> MomentsSelectedMedia {
-        MomentsSelectedMedia(
-            id: UUID(uuidString: id)!,
-            sourceLocalIdentifier: id,
-            originalFilename: "\(id).jpg",
-            contentType: "image/jpeg",
-            kind: "image",
-            byteSize: 4,
-            sha256: "abcd",
-            data: Data([1, 2, 3, 4]),
-            sortOrder: 0,
-            selected: true
-        )
-    }
-
-    private func makeScene(id: String, sceneIndex: Double = 0) -> MomentStoryScene {
-        MomentStoryScene(
-            id: id,
-            sceneIndex: sceneIndex,
-            mediaAssetIds: [],
-            caption: "Opening",
-            narrationText: nil,
-            tone: nil,
-            musicCue: nil,
-            durationMs: 3_000,
-            createdBy: "avi"
-        )
-    }
-
-    private func makeArtifact(id: String, kind: String) -> MomentArtifact {
-        MomentArtifact(
-            id: id,
-            kind: kind,
-            r2Key: "momentsav/\(id).mp4",
-            status: "available",
-            hasWatermark: kind == "preview",
-            expiresAt: 1_781_592_000_000
-        )
-    }
-
-    private func makeRenderJob(id: String, kind: String, status: String) -> MomentRenderJob {
-        MomentRenderJob(
-            id: id,
-            kind: kind,
-            status: status,
-            workflowRunId: "workflow-\(id)",
-            provider: "mock-provider",
-            model: "mock-model",
-            providerRequestId: "request-\(id)",
-            errorCode: nil,
-            errorMessage: nil,
-            createdAt: 9,
-            updatedAt: 10
-        )
-    }
-
-    private func makeRefreshAvailability(canRefresh: Bool) -> RenderJobStatusRefreshAvailability {
-        RenderJobStatusRefreshAvailability(
-            projectId: canRefresh ? "project-1" : nil,
-            job: canRefresh ? makeRenderJob(id: "job-1", kind: "preview", status: "running") : nil,
-            isAvailable: canRefresh,
-            isConfigured: canRefresh,
-            isRefreshing: false,
-            unavailableMessage: "Unavailable.",
-            notConfiguredMessage: "Not configured.",
-            missingProjectMessage: "Missing project.",
-            missingJobMessage: "Missing job.",
-            missingProviderRequestMessage: "Missing request."
-        )
-    }
 }
