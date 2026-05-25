@@ -95,6 +95,37 @@ struct MomentsCreateWorkflowPresentation: Equatable {
     var showsWorkflowCards: Bool {
         activeProjectId != nil
     }
+
+    static func make(
+        activeProjectId: String?,
+        template: MomentTemplate,
+        mediaSummary: MomentsCreateMediaSummary,
+        storySummary: MomentsCreateStorySummary,
+        previewSummary: MomentsCreatePreviewSummary,
+        finalRenderSummary: MomentsCreateFinalRenderSummary,
+        availability: MomentsCreateWorkflowAvailability
+    ) -> MomentsCreateWorkflowPresentation {
+        MomentsCreateWorkflowPresentation(
+            activeProjectId: activeProjectId,
+            template: template,
+            mediaSummary: mediaSummary,
+            storySummary: storySummary,
+            previewSummary: previewSummary,
+            finalRenderSummary: finalRenderSummary,
+            canAddMedia: availability.canAddMedia,
+            canDraftStory: availability.canDraftStory,
+            canGeneratePreview: availability.canGeneratePreview,
+            canRefreshPreviewStatus: availability.canRefreshPreviewStatus,
+            canGenerateFinalRender: availability.canGenerateFinalRender,
+            canRefreshFinalRenderStatus: availability.canRefreshFinalRenderStatus,
+            mediaAvailabilityMessage: availability.mediaMessage,
+            storyAvailabilityMessage: availability.storyMessage,
+            previewAvailabilityMessage: availability.previewMessage,
+            previewRefreshAvailabilityMessage: availability.previewRefreshMessage,
+            finalRenderAvailabilityMessage: availability.finalRenderMessage,
+            finalRenderRefreshAvailabilityMessage: availability.finalRenderRefreshMessage
+        )
+    }
 }
 
 struct MomentsCreateDraftSetupPresentation: Equatable {
@@ -126,6 +157,53 @@ struct MomentsCreateDraftSetupPresentation: Equatable {
     var showsActiveProject: Bool {
         activeProjectId != nil
     }
+
+    static func make(
+        template: MomentTemplate,
+        canAfford: Bool,
+        spendPlanDescription: String,
+        isDraftLocked: Bool,
+        isCreatingDraft: Bool,
+        canCreateDraft: Bool,
+        availabilityMessage: String?,
+        activeProjectId: String?,
+        isContinuingProject: Bool,
+        canStartAnotherProject: Bool,
+        draftErrorMessage: String?,
+        workspaceSummary: MomentsCreateWorkspaceSummary
+    ) -> MomentsCreateDraftSetupPresentation {
+        MomentsCreateDraftSetupPresentation(
+            templateSummary: MomentsCreateTemplateSummaryPresentation(
+                template: template,
+                canAfford: canAfford,
+                spendPlanDescription: spendPlanDescription
+            ),
+            isDraftLocked: isDraftLocked,
+            isCreatingDraft: isCreatingDraft,
+            canCreateDraft: canCreateDraft,
+            availabilityMessage: availabilityMessage,
+            activeProjectId: activeProjectId,
+            isContinuingProject: isContinuingProject,
+            canStartAnotherProject: canStartAnotherProject,
+            draftErrorMessage: draftErrorMessage,
+            workspaceSummary: workspaceSummary
+        )
+    }
+}
+
+struct MomentsCreateWorkflowAvailability: Equatable {
+    var canAddMedia = false
+    var canDraftStory = false
+    var canGeneratePreview = false
+    var canRefreshPreviewStatus = false
+    var canGenerateFinalRender = false
+    var canRefreshFinalRenderStatus = false
+    var mediaMessage: String?
+    var storyMessage: String?
+    var previewMessage: String?
+    var previewRefreshMessage: String?
+    var finalRenderMessage: String?
+    var finalRenderRefreshMessage: String?
 }
 
 struct MomentsCreateTemplateSummaryPresentation: Equatable {

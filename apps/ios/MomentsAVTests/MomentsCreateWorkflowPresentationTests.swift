@@ -54,6 +54,29 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         XCTAssertEqual(presentation.templateSummary.creditTitle, "3 cr")
     }
 
+    func testDraftSetupPresentationBuilderCreatesTemplateSummary() {
+        let presentation = MomentsCreateDraftSetupPresentation.make(
+            template: .partyRecap,
+            canAfford: false,
+            spendPlanDescription: "Need credits.",
+            isDraftLocked: true,
+            isCreatingDraft: false,
+            canCreateDraft: false,
+            availabilityMessage: "Locked.",
+            activeProjectId: "project-1",
+            isContinuingProject: true,
+            canStartAnotherProject: true,
+            draftErrorMessage: nil,
+            workspaceSummary: MomentsCreateWorkspaceSummary(mediaCount: 1)
+        )
+
+        XCTAssertEqual(presentation.templateSummary.template, .partyRecap)
+        XCTAssertFalse(presentation.templateSummary.canAfford)
+        XCTAssertEqual(presentation.templateSummary.spendPlanDescription, "Need credits.")
+        XCTAssertEqual(presentation.activeProjectId, "project-1")
+        XCTAssertEqual(presentation.workspaceSummary.mediaCount, 1)
+    }
+
     func testWorkflowPresentationHidesWorkflowCardsWithoutProject() {
         let presentation = MomentsCreateWorkflowPresentation(
             activeProjectId: nil,
@@ -140,6 +163,38 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         XCTAssertEqual(presentation.previewAvailabilityMessage, "Generate preview.")
         XCTAssertEqual(presentation.previewRefreshAvailabilityMessage, "Refresh preview.")
         XCTAssertEqual(presentation.finalRenderAvailabilityMessage, "Generate final.")
+        XCTAssertEqual(presentation.finalRenderRefreshAvailabilityMessage, "Refresh final.")
+    }
+
+    func testWorkflowPresentationBuilderAppliesAvailabilityState() {
+        let presentation = MomentsCreateWorkflowPresentation.make(
+            activeProjectId: "project-1",
+            template: .birthdayMessage,
+            mediaSummary: MomentsCreateMediaSummary(),
+            storySummary: MomentsCreateStorySummary(),
+            previewSummary: MomentsCreatePreviewSummary(),
+            finalRenderSummary: MomentsCreateFinalRenderSummary(),
+            availability: MomentsCreateWorkflowAvailability(
+                canAddMedia: true,
+                canDraftStory: false,
+                canGeneratePreview: true,
+                canRefreshPreviewStatus: false,
+                canGenerateFinalRender: true,
+                canRefreshFinalRenderStatus: false,
+                mediaMessage: nil,
+                storyMessage: "Draft story.",
+                previewMessage: nil,
+                previewRefreshMessage: "Refresh preview.",
+                finalRenderMessage: nil,
+                finalRenderRefreshMessage: "Refresh final."
+            )
+        )
+
+        XCTAssertTrue(presentation.canAddMedia)
+        XCTAssertFalse(presentation.canDraftStory)
+        XCTAssertTrue(presentation.canGeneratePreview)
+        XCTAssertEqual(presentation.storyAvailabilityMessage, "Draft story.")
+        XCTAssertEqual(presentation.previewRefreshAvailabilityMessage, "Refresh preview.")
         XCTAssertEqual(presentation.finalRenderRefreshAvailabilityMessage, "Refresh final.")
     }
 

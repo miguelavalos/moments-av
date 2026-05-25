@@ -110,35 +110,39 @@ extension MomentsCreateViewModel {
     }
 
     var workflowPresentation: MomentsCreateWorkflowPresentation {
-        MomentsCreateWorkflowPresentation(
+        MomentsCreateWorkflowPresentation.make(
             activeProjectId: activeProjectId,
             template: form.template,
             mediaSummary: mediaSummary,
             storySummary: storySummary,
             previewSummary: previewSummary,
             finalRenderSummary: finalRenderSummary,
+            availability: workflowAvailability
+        )
+    }
+
+    var workflowAvailability: MomentsCreateWorkflowAvailability {
+        MomentsCreateWorkflowAvailability(
             canAddMedia: canAddMedia,
             canDraftStory: canDraftStory,
             canGeneratePreview: canGeneratePreview,
             canRefreshPreviewStatus: canRefreshPreviewStatus,
             canGenerateFinalRender: canGenerateFinalRender,
             canRefreshFinalRenderStatus: canRefreshFinalRenderStatus,
-            mediaAvailabilityMessage: mediaAvailabilityMessage,
-            storyAvailabilityMessage: storyAvailabilityMessage,
-            previewAvailabilityMessage: previewAvailabilityMessage,
-            previewRefreshAvailabilityMessage: previewRefreshAvailabilityMessage,
-            finalRenderAvailabilityMessage: finalRenderAvailabilityMessage,
-            finalRenderRefreshAvailabilityMessage: finalRenderRefreshAvailabilityMessage
+            mediaMessage: mediaAvailabilityMessage,
+            storyMessage: storyAvailabilityMessage,
+            previewMessage: previewAvailabilityMessage,
+            previewRefreshMessage: previewRefreshAvailabilityMessage,
+            finalRenderMessage: finalRenderAvailabilityMessage,
+            finalRenderRefreshMessage: finalRenderRefreshAvailabilityMessage
         )
     }
 
     var draftSetupPresentation: MomentsCreateDraftSetupPresentation {
-        MomentsCreateDraftSetupPresentation(
-            templateSummary: MomentsCreateTemplateSummaryPresentation(
-                template: form.template,
-                canAfford: canAfford(form.template),
-                spendPlanDescription: spendPlanDescription(for: form.template)
-            ),
+        MomentsCreateDraftSetupPresentation.make(
+            template: form.template,
+            canAfford: canAfford(form.template),
+            spendPlanDescription: spendPlanDescription(for: form.template),
             isDraftLocked: isDraftLocked,
             isCreatingDraft: isCreatingDraft,
             canCreateDraft: canCreateDraft,
