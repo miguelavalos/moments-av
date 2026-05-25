@@ -46,12 +46,11 @@ final class MomentsDependencyContainer: ObservableObject {
         self.storyDraftWorkflow = workflows.storyDraft
         self.previewGenerationWorkflow = workflows.previewGeneration
         self.finalRenderWorkflow = workflows.finalRender
-        self.homeViewModel = MomentsHomeViewModel()
-        self.createViewModel = MomentsCreateViewModel()
-        self.projectsViewModel = MomentsProjectsViewModel()
-        self.aviViewModel = MomentsAviViewModel()
-
-        bindViewModels()
+        let viewModels = MomentsViewModelBundle(accountController: accountController, workflows: workflows)
+        self.homeViewModel = viewModels.home
+        self.createViewModel = viewModels.create
+        self.projectsViewModel = viewModels.projects
+        self.aviViewModel = viewModels.avi
     }
 
     func handleAccountChange(ownerUserId: String?) {
@@ -60,24 +59,5 @@ final class MomentsDependencyContainer: ObservableObject {
         projectsListWorkflow.observeProjects(ownerUserId: ownerUserId)
         projectsViewModel.clearSelection()
         createViewModel.clearSessionState()
-    }
-}
-
-private extension MomentsDependencyContainer {
-    func bindViewModels() {
-        homeViewModel.bind(to: projectsListWorkflow)
-        homeViewModel.bind(accountStateProvider: accountController)
-        createViewModel.bind(
-            accountStateProvider: accountController,
-            projectCreationWorkflow: projectCreationWorkflow,
-            mediaUploadWorkflow: mediaUploadWorkflow,
-            storyDraftWorkflow: storyDraftWorkflow,
-            previewGenerationWorkflow: previewGenerationWorkflow,
-            finalRenderWorkflow: finalRenderWorkflow
-        )
-        projectsViewModel.bind(to: projectsListWorkflow)
-        projectsViewModel.bind(accountStateProvider: accountController)
-        aviViewModel.bind(to: projectsListWorkflow)
-        aviViewModel.bind(accountStateProvider: accountController)
     }
 }
