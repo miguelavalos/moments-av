@@ -63,15 +63,6 @@ protocol MomentsFinalRenderResultSaving: MomentsRenderJobStatusUpdating {
 }
 
 @MainActor
-protocol MomentsProjectListing {
-    func observeProjects(ownerUserId: String) throws -> AnyPublisher<[MomentDraftProject], Never>
-    func observeProjectWorkspace(
-        ownerUserId: String,
-        projectId: String
-    ) throws -> AnyPublisher<MomentProjectWorkspace?, Never>
-}
-
-@MainActor
 protocol MomentsProjectDeleting {
     func deleteProject(ownerUserId: String, projectId: String) async throws
 }
@@ -114,7 +105,6 @@ extension MomentsProjectRepository:
     MomentsRenderJobStatusUpdating,
     MomentsPreviewResultSaving,
     MomentsFinalRenderResultSaving,
-    MomentsProjectListing,
     MomentsProjectDeleting,
     MomentsProjectsObserving,
     MomentsWorkspaceObserving {}
