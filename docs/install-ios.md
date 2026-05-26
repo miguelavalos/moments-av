@@ -58,6 +58,9 @@ apps/ios/Config/Local.xcconfig
 
 It is intentionally gitignored and must not be committed.
 
+For the production variable contract, Clerk expectations, and signed Account AV
+smoke flow, see [Production runtime config](production-config.md).
+
 Validate the effective build settings before running the app:
 
 ```bash

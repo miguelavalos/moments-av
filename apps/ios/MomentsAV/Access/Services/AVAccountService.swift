@@ -6,6 +6,7 @@ protocol AVAccountService {
     var isAvailable: Bool { get }
     var currentUser: AccountAVUser? { get }
 
+    func getToken() async throws -> String?
     func signInWithApple() async throws
     func signInWithGoogle() async throws
     func signOut() async throws
@@ -39,6 +40,13 @@ struct DefaultAVAccountService: AVAccountService {
             return uiTestAccountUser
         }
         return accountService.currentUser
+    }
+
+    func getToken() async throws -> String? {
+        if Self.uiTestAccountUser != nil {
+            return nil
+        }
+        return try await accountService.getToken()
     }
 
     func signInWithApple() async throws {

@@ -2,6 +2,7 @@ import AVLaunchFoundation
 import SwiftUI
 
 struct MomentsAppBootstrapView: View {
+    @Environment(\.scenePhase) private var scenePhase
     @StateObject private var dependencies = MomentsDependencyContainer()
     @State private var selectedTab: MomentsRootTab = .home
     @State private var authOptionsArePresented = false
@@ -54,6 +55,10 @@ struct MomentsAppBootstrapView: View {
             await Task.yield()
             dependencies.applyUITestFixturesIfNeeded()
         }
+        .task(id: scenePhase) {
+            guard scenePhase == .active else { return }
+            await dependencies.accountController.syncFromAccountProvider()
+        }
         .onReceive(dependencies.accountController.currentUserIdPublisher) { ownerUserId in
             dependencies.handleAccountChange(ownerUserId: ownerUserId)
         }
@@ -88,12 +93,14 @@ struct MomentsAppBootstrapView: View {
 
     private func startAppleSignIn() async throws {
         try await dependencies.accountController.signInWithApple()
+        await dependencies.accountController.syncFromAccountProvider()
         authenticationWasSkipped = false
         authOptionsArePresented = false
     }
 
     private func startGoogleSignIn() async throws {
         try await dependencies.accountController.signInWithGoogle()
+        await dependencies.accountController.syncFromAccountProvider()
         authenticationWasSkipped = false
         authOptionsArePresented = false
     }

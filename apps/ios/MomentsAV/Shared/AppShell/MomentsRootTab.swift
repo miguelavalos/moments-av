@@ -6,6 +6,7 @@ enum MomentsRootTab: String, CaseIterable, Identifiable {
     case create
     case projects
     case avi
+    case profile
 
     var id: String { rawValue }
 
@@ -34,7 +35,7 @@ enum MomentsRootTab: String, CaseIterable, Identifiable {
                 systemImage: "rectangle.stack.fill",
                 accessibilityIdentifier: "moments.tab.projects"
             )
-        case .avi:
+        case .avi, .profile:
             AVAppShellTab(
                 id: self,
                 title: "Avi",

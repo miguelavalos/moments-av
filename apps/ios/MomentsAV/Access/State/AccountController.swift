@@ -31,6 +31,21 @@ final class AccountController: ObservableObject {
         }
     }
 
+    func syncFromAccountProvider() async {
+        user = service.currentUser
+        if user == nil {
+            do {
+                _ = try await service.getToken()
+                user = service.currentUser
+            } catch {
+                errorMessage = error.localizedDescription
+            }
+        }
+        if user == nil {
+            creditBalance = .empty
+        }
+    }
+
     func signInWithApple() async throws {
         try await runAuthOperation {
             try await service.signInWithApple()
@@ -67,7 +82,7 @@ final class AccountController: ObservableObject {
 
         do {
             try await operation()
-            refresh()
+            await syncFromAccountProvider()
         } catch {
             errorMessage = error.localizedDescription
             throw error

@@ -5,6 +5,8 @@ state, credit gating, template draft creation, media metadata, story draft,
 preview generation, final render/export, and project deletion flows.
 
 For full local setup, see [../../docs/install-ios.md](../../docs/install-ios.md).
+For production runtime variables and Clerk/Account AV validation, see
+[../../docs/production-config.md](../../docs/production-config.md).
 
 The app uses the sibling public `account-av` package for Account AV sign-in.
 `ACCOUNTAV_PUBLISHABLE_KEY` is intentionally blank in committed configs; set it

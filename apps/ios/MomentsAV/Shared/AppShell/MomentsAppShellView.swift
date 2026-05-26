@@ -15,7 +15,7 @@ struct MomentsAppShellView: View {
 
     var body: some View {
         AVAppShellConfiguredScaffold(
-            selectedTabID: selectedTab,
+            selectedTabID: footerSelectedTab,
             tabs: MomentsRootTab.footerTabs.map(\.shellTab),
             assistantID: .avi,
             assistant: footerAssistant,
@@ -84,7 +84,13 @@ struct MomentsAppShellView: View {
             case .avi:
                 MomentsAviScreen { selectedTab = $0 }
                     .environmentObject(aviViewModel)
+            case .profile:
+                EmptyView()
             }
         }
+    }
+
+    private var footerSelectedTab: MomentsRootTab {
+        chromeItem == nil ? selectedTab : .profile
     }
 }
