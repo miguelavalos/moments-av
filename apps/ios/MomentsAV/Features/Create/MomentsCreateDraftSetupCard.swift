@@ -5,6 +5,8 @@ import SwiftUI
 
 struct MomentsCreateDraftSetupCard: View {
     @Binding var form: MomentDraftForm
+    @State private var showsOptions = false
+    @State private var showsProjectSheet = false
     let selectedStyle: MomentCreationStyle
     let styles: [MomentCreationStyle]
     let selectedMusicPreset: MomentMusicPreset
@@ -18,13 +20,15 @@ struct MomentsCreateDraftSetupCard: View {
     let selectStyle: (MomentCreationStyle) -> Void
     let selectMusicPreset: (MomentMusicPreset) -> Void
     let createDraft: () -> Void
-    let startAnotherProject: () -> Void
+    let discardDraft: () -> Void
     let startSignInFlow: () -> Void
     let openCredits: () -> Void
 
     @ViewBuilder
     var body: some View {
-        if !presentation.isDraftLocked, newProjectStep == .status {
+        if presentation.isDraftLocked {
+            lockedProjectContent
+        } else if newProjectStep == .status {
             VStack(alignment: .leading, spacing: AVBrandSpacing.lg) {
                 MomentsCreateNewProjectStatus(
                     isSignedIn: isSignedIn,
@@ -32,30 +36,35 @@ struct MomentsCreateDraftSetupCard: View {
                     selectedStyle: selectedStyle,
                     guidance: aviGuidance,
                     canBeginNewProject: canBeginNewProject,
-                    beginNewProject: beginNewProject,
+                    beginNewProject: {
+                        beginNewProject()
+                        showsProjectSheet = true
+                    },
                     startSignInFlow: startSignInFlow,
                     openCredits: openCredits
                 )
 
                 activeDraftAndErrorContent
             }
+            .sheet(isPresented: $showsProjectSheet) {
+                styleStep
+                    .padding(20)
+                    .presentationDetents([.large])
+                    .presentationDragIndicator(.visible)
+            }
         } else {
             AVAppShellCard {
                 VStack(alignment: .leading, spacing: 16) {
-                    if presentation.isDraftLocked {
-                        lockedProjectContent
-                    } else {
-                        switch newProjectStep {
-                        case .status:
-                            EmptyView()
-                        case .style:
-                            styleStep
-                        case .summary:
-                            summaryStep
-                        }
+                    switch newProjectStep {
+                    case .status:
+                        EmptyView()
+                    case .style:
+                        styleStep
+                    case .summary:
+                        styleStep
                     }
 
-                    activeDraftAndErrorContent
+                    errorContent
                 }
             }
         }
@@ -73,24 +82,63 @@ struct MomentsCreateDraftSetupCard: View {
     }
 
     private var lockedProjectContent: some View {
-        VStack(alignment: .leading, spacing: 14) {
-            AVAppShellContentHeader(
-                title: "Project in progress",
-                detail: aviGuidance.message
+        VStack(alignment: .leading, spacing: 12) {
+            MomentsCreateProjectHubHeader(
+                guidance: aviGuidance,
+                style: selectedStyle,
+                selectedMusicPreset: selectedMusicPreset
             )
 
-            MomentsCreateStyleSummaryRow(style: selectedStyle, selectedMusicPreset: selectedMusicPreset)
+            Button {
+                showsOptions = true
+            } label: {
+                HStack(spacing: 10) {
+                    Label("Options", systemImage: "slider.horizontal.3")
+                        .font(.system(size: 14, weight: .black))
+                    Spacer()
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 13, weight: .black))
+                }
+                .foregroundStyle(AVBrandColor.textPrimary)
+                .padding(.vertical, 4)
+            }
+            .buttonStyle(.plain)
+            .sheet(isPresented: $showsOptions) {
+                MomentsCreateQuickCustomizeSection(
+                    form: $form,
+                    selectedStyle: selectedStyle,
+                    selectedMusicPreset: selectedMusicPreset,
+                    selectMusicPreset: selectMusicPreset,
+                    isLocked: false
+                )
+                .padding(20)
+                .presentationDetents([.medium])
+                .presentationDragIndicator(.visible)
+            }
         }
     }
 
     private var activeDraftAndErrorContent: some View {
         VStack(alignment: .leading, spacing: 16) {
-            MomentsCreateActiveDraftSection(
-                presentation: presentation,
-                minimumMediaCount: form.template.minimumAssets,
-                startAnotherProject: startAnotherProject
-            )
+            if presentation.showsActiveProject {
+                Button(action: discardDraft) {
+                    Label("Discard draft", systemImage: "trash")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.bordered)
+                .disabled(!presentation.canStartAnotherProject)
+            }
 
+            if let draftErrorMessage = presentation.draftErrorMessage {
+                Text(draftErrorMessage)
+                    .font(.caption)
+                    .foregroundStyle(.red)
+            }
+        }
+    }
+
+    private var errorContent: some View {
+        Group {
             if let draftErrorMessage = presentation.draftErrorMessage {
                 Text(draftErrorMessage)
                     .font(.caption)
@@ -102,8 +150,8 @@ struct MomentsCreateDraftSetupCard: View {
     private var styleStep: some View {
         VStack(alignment: .leading, spacing: 16) {
             MomentsCreateStepHeader(
-                stepTitle: "Step 1 of 2",
-                title: "Choose a style",
+                stepTitle: "Choose a theme",
+                title: "Pick the feeling",
                 detail: aviGuidance.message
             )
 
@@ -111,45 +159,14 @@ struct MomentsCreateDraftSetupCard: View {
                 styles: styles,
                 selectedStyle: selectedStyle,
                 isLocked: presentation.isDraftLocked,
-                selectStyle: selectStyle
+                selectStyle: {
+                    selectStyle($0)
+                    showsProjectSheet = false
+                }
             )
         }
     }
 
-    private var summaryStep: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            MomentsCreateStepHeader(
-                stepTitle: "Step 2 of 2",
-                title: "Review and create",
-                detail: aviGuidance.message
-            )
-
-            MomentsCreateStyleSummaryRow(
-                style: selectedStyle,
-                selectedMusicPreset: selectedMusicPreset,
-                editStyle: editStyle
-            )
-
-            MomentsCreateQuickCustomizeSection(
-                form: $form,
-                selectedStyle: selectedStyle,
-                selectedMusicPreset: selectedMusicPreset,
-                selectMusicPreset: selectMusicPreset,
-                isLocked: presentation.isDraftLocked
-            )
-
-            AVAppShellPrimaryButton(
-                presentation.createDraftTitle,
-                systemImage: "photo.badge.plus",
-                isDisabled: !presentation.canCreateDraft || presentation.isCreatingDraft,
-                action: createDraft
-            )
-
-            if let availabilityMessage = presentation.availabilityMessage {
-                AVAppShellInlineMessage(message: availabilityMessage)
-            }
-        }
-    }
 }
 
 private struct MomentsCreateNewProjectStatus: View {
@@ -239,8 +256,8 @@ private struct MomentsCreateNewProjectActionBlock: View {
             if isSignedIn {
                 if balance.spendable > 0 {
                     AVAppShellPrimaryButton(
-                        "Start new project",
-                        systemImage: "plus.app.fill",
+                        "Add photos or clips",
+                        systemImage: "photo.badge.plus",
                         isDisabled: !canBeginNewProject,
                         action: beginNewProject
                     )
@@ -251,7 +268,7 @@ private struct MomentsCreateNewProjectActionBlock: View {
                         isDisabled: false,
                         action: openCredits
                     )
-                    AVAppShellInlineMessage(message: "Choose Pro, buy credits, or claim a promotion to start this video.")
+                    AVAppShellInlineMessage(message: "Choose Pro, buy credits, or claim a promotion to create this video.")
                 }
             } else {
                 AVAppShellPrimaryButton(
@@ -298,9 +315,9 @@ private extension MomentsCreateAviGuidance {
         case .warning:
             return "Get credits"
         case .happy, .celebrate:
-            return "Start new project"
+            return "Create video"
         case .focused:
-            return "Review project"
+            return "Keep going"
         case .curious:
             return "Sign in first"
         case .thinking:
@@ -426,6 +443,40 @@ private struct MomentsCreateStepHeader: View {
             AVStatusPill(title: stepTitle, isUppercased: false)
             AVAppShellContentHeader(title: title, detail: detail)
         }
+    }
+}
+
+private struct MomentsCreateProjectHubHeader: View {
+    let guidance: MomentsCreateAviGuidance
+    let style: MomentCreationStyle
+    let selectedMusicPreset: MomentMusicPreset
+
+    var body: some View {
+        HStack(alignment: .center, spacing: 18) {
+            MomentsCreateAviFullBodyGuideImage(guidance: guidance)
+                .frame(width: 96, height: 96)
+
+            VStack(alignment: .leading, spacing: 6) {
+                Text("Next: add media")
+                    .font(.system(size: 12, weight: .black))
+                    .foregroundStyle(AVBrandColor.accent)
+                    .textCase(.uppercase)
+
+                Text(guidance.message)
+                    .font(.system(size: 16, weight: .black))
+                    .foregroundStyle(AVBrandColor.textPrimary)
+                    .lineLimit(2)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                Text("\(style.title) · \(style.durationSeconds)s · \(style.creditCost) credit · \(selectedMusicPreset.title)")
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundStyle(AVBrandColor.textSecondary)
+                    .lineLimit(2)
+            }
+
+            Spacer(minLength: 0)
+        }
+        .accessibilityElement(children: .combine)
     }
 }
 
@@ -587,12 +638,12 @@ private struct MomentsCreateQuickCustomizeSection: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack(alignment: .firstTextBaseline) {
                 VStack(alignment: .leading, spacing: 3) {
-                    Text("Ready fast")
+                    Text("Optional details")
                         .font(.system(size: 12, weight: .black))
                         .foregroundStyle(AVBrandColor.textSecondary)
                         .textCase(.uppercase)
 
-                    Text("\(selectedStyle.durationSeconds)s · \(selectedStyle.creditCost) credit · 3-12 photos recommended")
+                    Text("\(selectedStyle.durationSeconds)s · \(selectedStyle.creditCost) credit · add more now or later")
                         .font(AVBrandTypography.bodyStrong)
                         .foregroundStyle(AVBrandColor.textPrimary)
                         .lineLimit(2)
@@ -605,7 +656,7 @@ private struct MomentsCreateQuickCustomizeSection: View {
             }
 
             MomentsCreateMultilineFieldRow(
-                title: "Añade una nota",
+                title: "Note for Avi",
                 placeholder: "Cumple de Ana, viaje a Lisboa, para mamá...",
                 systemImage: "text.bubble.fill",
                 text: $form.details,

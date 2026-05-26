@@ -42,7 +42,9 @@ struct MomentDraftForm: Equatable {
 
     var title: String {
         let trimmedRecipient = recipient.trimmingCharacters(in: .whitespacesAndNewlines)
-        return trimmedRecipient.isEmpty ? template.title : "\(template.title) for \(trimmedRecipient)"
+        let trimmedOccasion = occasion.trimmingCharacters(in: .whitespacesAndNewlines)
+        let projectTitle = trimmedOccasion.isEmpty ? template.title : trimmedOccasion
+        return trimmedRecipient.isEmpty ? projectTitle : "\(projectTitle) for \(trimmedRecipient)"
     }
 
     var canCreateDraft: Bool {
@@ -100,7 +102,7 @@ enum MomentDraftRules {
         case nil:
             return nil
         case .missingOccasion:
-            return "Complete the occasion before creating a draft."
+            return "Complete the occasion before starting a project."
         case .insufficientCredits(let missingCount):
             return "Add \(missingCount) more \(MomentsCreditCopy.noun(missingCount)) for this template."
         }

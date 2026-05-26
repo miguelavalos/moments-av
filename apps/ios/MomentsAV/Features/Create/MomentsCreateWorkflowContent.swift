@@ -9,8 +9,6 @@ struct MomentsCreateWorkflowContent: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 18) {
-            MomentsCreateActiveProjectCard(activeProject: viewModel.activeProject)
-                .id(MomentsCreateSection.review)
             MomentsCreateContinuationHintCard(
                 focus: viewModel.continuationFocusHint,
                 dismiss: viewModel.clearContinuationFocusHint
@@ -22,6 +20,7 @@ struct MomentsCreateWorkflowContent: View {
                 importPickerItems: viewModel.importPickerItems,
                 removeMedia: viewModel.removeMedia,
                 autoPickStrongMoments: viewModel.autoPickStrongMoments,
+                openPickerRequest: viewModel.mediaPickerOpenRequest,
                 generateStoryDraft: viewModel.generateStoryDraft,
                 generatePreview: viewModel.generatePreview,
                 refreshPreviewStatus: viewModel.refreshPreviewStatus,
@@ -43,12 +42,12 @@ struct MomentsCreateWorkflowContent: View {
             isSignedIn: viewModel.isSignedIn,
             balance: viewModel.balance,
             canBeginNewProject: viewModel.canBeginNewProject,
-            beginNewProject: viewModel.beginNewProject,
+            beginNewProject: { viewModel.beginNewProject() },
             editStyle: viewModel.editNewProjectStyle,
             selectStyle: viewModel.selectCreationStyle,
             selectMusicPreset: viewModel.selectMusicPreset,
             createDraft: viewModel.createDraft,
-            startAnotherProject: viewModel.startAnotherProject,
+            discardDraft: viewModel.discardDraft,
             startSignInFlow: startSignInFlow,
             openCredits: openCredits
         )
@@ -61,6 +60,7 @@ private struct MomentsCreateWorkflowCards: View {
     let importPickerItems: ([PhotosPickerItem]) -> Void
     let removeMedia: (MomentsSelectedMedia) -> Void
     let autoPickStrongMoments: () -> Void
+    let openPickerRequest: Int
     let generateStoryDraft: () -> Void
     let generatePreview: () -> Void
     let refreshPreviewStatus: () -> Void
@@ -69,57 +69,64 @@ private struct MomentsCreateWorkflowCards: View {
 
     @ViewBuilder
     var body: some View {
-        if let activeProjectId = presentation.activeProjectId {
-            MomentsCreateMediaCard(
-                pickerItems: $pickerItems,
-                presentation: MomentsCreateMediaPresentation(
-                    activeProjectId: activeProjectId,
-                    template: presentation.template,
-                    summary: presentation.mediaSummary,
-                    canAddMedia: presentation.canAddMedia,
-                    availabilityMessage: presentation.mediaAvailabilityMessage
-                ),
-                importPickerItems: importPickerItems,
-                removeMedia: removeMedia,
-                autoPickStrongMoments: autoPickStrongMoments
-            )
-            .id(MomentsCreateSection.media)
+        if presentation.showsWorkflowCards {
+            switch presentation.currentStage {
+            case .media:
+                MomentsCreateMediaCard(
+                    pickerItems: $pickerItems,
+                    openPickerRequest: openPickerRequest,
+                    presentation: MomentsCreateMediaPresentation(
+                        activeProjectId: presentation.activeProjectId,
+                        template: presentation.template,
+                        summary: presentation.mediaSummary,
+                        canAddMedia: presentation.canAddMedia,
+                        availabilityMessage: presentation.mediaAvailabilityMessage
+                    ),
+                    importPickerItems: importPickerItems,
+                    removeMedia: removeMedia,
+                    autoPickStrongMoments: autoPickStrongMoments
+                )
+                .id(MomentsCreateSection.media)
 
-            MomentsCreateStoryCard(
-                presentation: MomentsCreateStoryPresentation(
-                    summary: presentation.storySummary,
-                    canDraftStory: presentation.canDraftStory,
-                    availabilityMessage: presentation.storyAvailabilityMessage
-                ),
-                generateStoryDraft: generateStoryDraft
-            )
-            .id(MomentsCreateSection.story)
+            case .story:
+                MomentsCreateStoryCard(
+                    presentation: MomentsCreateStoryPresentation(
+                        summary: presentation.storySummary,
+                        canDraftStory: presentation.canDraftStory,
+                        availabilityMessage: presentation.storyAvailabilityMessage
+                    ),
+                    generateStoryDraft: generateStoryDraft
+                )
+                .id(MomentsCreateSection.story)
 
-            MomentsCreatePreviewCard(
-                presentation: MomentsCreatePreviewPresentation(
-                    summary: presentation.previewSummary,
-                    canGeneratePreview: presentation.canGeneratePreview,
-                    canRefreshPreviewStatus: presentation.canRefreshPreviewStatus,
-                    availabilityMessage: presentation.previewAvailabilityMessage,
-                    refreshAvailabilityMessage: presentation.previewRefreshAvailabilityMessage
-                ),
-                generatePreview: generatePreview,
-                refreshPreviewStatus: refreshPreviewStatus
-            )
-            .id(MomentsCreateSection.preview)
+            case .preview:
+                MomentsCreatePreviewCard(
+                    presentation: MomentsCreatePreviewPresentation(
+                        summary: presentation.previewSummary,
+                        canGeneratePreview: presentation.canGeneratePreview,
+                        canRefreshPreviewStatus: presentation.canRefreshPreviewStatus,
+                        availabilityMessage: presentation.previewAvailabilityMessage,
+                        refreshAvailabilityMessage: presentation.previewRefreshAvailabilityMessage
+                    ),
+                    generatePreview: generatePreview,
+                    refreshPreviewStatus: refreshPreviewStatus
+                )
+                .id(MomentsCreateSection.preview)
 
-            MomentsCreateFinalExportCard(
-                presentation: MomentsCreateFinalRenderPresentation(
-                    summary: presentation.finalRenderSummary,
-                    canGenerateFinalRender: presentation.canGenerateFinalRender,
-                    canRefreshFinalRenderStatus: presentation.canRefreshFinalRenderStatus,
-                    availabilityMessage: presentation.finalRenderAvailabilityMessage,
-                    refreshAvailabilityMessage: presentation.finalRenderRefreshAvailabilityMessage
-                ),
-                generateFinalRender: generateFinalRender,
-                refreshFinalRenderStatus: refreshFinalRenderStatus
-            )
-            .id(MomentsCreateSection.finalRender)
+            case .finalVideo:
+                MomentsCreateFinalExportCard(
+                    presentation: MomentsCreateFinalRenderPresentation(
+                        summary: presentation.finalRenderSummary,
+                        canGenerateFinalRender: presentation.canGenerateFinalRender,
+                        canRefreshFinalRenderStatus: presentation.canRefreshFinalRenderStatus,
+                        availabilityMessage: presentation.finalRenderAvailabilityMessage,
+                        refreshAvailabilityMessage: presentation.finalRenderRefreshAvailabilityMessage
+                    ),
+                    generateFinalRender: generateFinalRender,
+                    refreshFinalRenderStatus: refreshFinalRenderStatus
+                )
+                .id(MomentsCreateSection.finalRender)
+            }
         }
     }
 }

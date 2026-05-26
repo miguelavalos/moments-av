@@ -25,21 +25,17 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
     }
 
     var isConfigured: Bool {
-        mediaAssetSaver.isConfigured && uploadClient.isConfigured
+        true
     }
 
     func importPickerItems(
         _ items: [PhotosPickerItem],
         template: MomentTemplate,
-        projectId: String
+        projectId: String?
     ) async {
         guard !items.isEmpty else { return }
-        guard let ownerUserId = currentUserProvider.currentUserId else {
+        guard currentUserProvider.currentUserId != nil else {
             statusMessage = "Sign in before adding media."
-            return
-        }
-        guard isConfigured else {
-            statusMessage = "Media upload is not configured for this build."
             return
         }
         let remainingSlots = MomentsMediaRules.remainingSlots(
@@ -65,18 +61,7 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
             guard isCurrentWorkflowGeneration(generation) else { return }
             selectedMedia.append(contentsOf: imported)
             normalizeOrder()
-
-            let persistenceResult = try await MediaUploadPersistence.save(
-                imported: imported,
-                ownerUserId: ownerUserId,
-                projectId: projectId,
-                uploadClient: uploadClient,
-                mediaAssetSaver: mediaAssetSaver,
-                shouldContinue: { isCurrentWorkflowGeneration(generation) }
-            )
-
-            workspaceObserver.observeWorkspace(ownerUserId: ownerUserId, projectId: projectId)
-            statusMessage = persistenceResult.statusMessage
+            statusMessage = "Media added locally. It will upload when you prepare the final video."
         } catch {
             guard isCurrentWorkflowGeneration(generation) else { return }
             statusMessage = error.localizedDescription

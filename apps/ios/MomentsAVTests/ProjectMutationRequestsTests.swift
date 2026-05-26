@@ -13,20 +13,21 @@ final class ProjectMutationRequestsTests: XCTestCase {
         let request = DraftProjectCreationRequest.draft(form)
 
         XCTAssertEqual(request.template, "party_recap")
-        XCTAssertEqual(request.title, "Event Recap for Ava")
+        XCTAssertEqual(request.title, "Graduation for Ava")
         XCTAssertEqual(request.tone, "cinematic")
         XCTAssertEqual(request.tempo, "upbeat")
         XCTAssertEqual(request.occasion, "Graduation")
         XCTAssertEqual(request.details, "Use the beach photos first.")
     }
 
-    func testDraftCreationRequestUsesTemplateTitleWhenRecipientIsEmpty() {
+    func testDraftCreationRequestUsesOccasionWhenRecipientIsEmpty() {
         var form = MomentDraftForm(template: .softRoast)
+        form.occasion = "Team dinner"
         form.recipient = "  "
 
         let request = DraftProjectCreationRequest.draft(form)
 
-        XCTAssertEqual(request.title, "Soft Roast")
+        XCTAssertEqual(request.title, "Team dinner")
     }
 
     func testProjectDeletionRequestDeletesProjectTreeForUserRequest() {

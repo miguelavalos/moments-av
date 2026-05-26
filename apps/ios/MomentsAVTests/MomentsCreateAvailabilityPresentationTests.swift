@@ -89,7 +89,7 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
     }
 
     func testAvailabilityCopyUsesSingularAndPluralCreditMessages() {
-        XCTAssertEqual(MomentsCreateAvailabilityCopy.draftSignInRequired, "Sign in before creating a draft.")
+        XCTAssertEqual(MomentsCreateAvailabilityCopy.draftSignInRequired, "Sign in before starting a project.")
         XCTAssertEqual(MomentsCreateAvailabilityCopy.mediaTemplateFull, "Remove media before adding more to this template.")
         XCTAssertEqual(MomentsCreateAvailabilityCopy.storyMissingMedia, "Wait for synced media before drafting.")
         XCTAssertEqual(

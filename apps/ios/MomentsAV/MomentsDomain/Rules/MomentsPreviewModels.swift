@@ -79,7 +79,7 @@ enum MomentsPreviewRules {
         case .insufficientCredits:
             return insufficientCreditsMessage
         case .storyNotReady:
-            return "Generate a story draft before creating a preview."
+            return "Generate a story before creating a preview."
         }
     }
 }

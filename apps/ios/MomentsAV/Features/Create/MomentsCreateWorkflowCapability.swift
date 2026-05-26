@@ -4,6 +4,7 @@ import Foundation
 enum MomentsCreateWorkflowCapabilityFactory {
     static func make(
         activeProjectId: String?,
+        hasMomentWorkspace: Bool,
         isImportingMedia: Bool,
         isMediaUploadConfigured: Bool,
         mediaRemainingSlots: Int,
@@ -13,19 +14,21 @@ enum MomentsCreateWorkflowCapabilityFactory {
         template: MomentTemplate,
         previewRefreshAvailability: RenderJobStatusRefreshAvailability,
         finalRenderRefreshAvailability: RenderJobStatusRefreshAvailability,
-        latestPreview: MomentArtifact?
+        latestPreview: MomentArtifact?,
+        selectedMediaCount: Int
     ) -> MomentsCreateWorkflowCapability {
         MomentsCreateWorkflowCapability(
             canAddMedia: canAddMedia(
-                activeProjectId: activeProjectId,
+                hasMomentWorkspace: hasMomentWorkspace,
                 isImportingMedia: isImportingMedia,
                 isMediaUploadConfigured: isMediaUploadConfigured,
                 mediaRemainingSlots: mediaRemainingSlots
             ),
             canDraftStory: canDraftStory(
-                activeProjectId: activeProjectId,
+                hasMomentWorkspace: hasMomentWorkspace,
                 storyDraftWorkflow: storyDraftWorkflow,
-                template: template
+                template: template,
+                selectedMediaCount: selectedMediaCount
             ),
             canGeneratePreview: canGeneratePreview(
                 activeProjectId: activeProjectId,
@@ -44,24 +47,27 @@ enum MomentsCreateWorkflowCapabilityFactory {
     }
 
     private static func canAddMedia(
-        activeProjectId: String?,
+        hasMomentWorkspace: Bool,
         isImportingMedia: Bool,
         isMediaUploadConfigured: Bool,
         mediaRemainingSlots: Int
     ) -> Bool {
-        activeProjectId != nil
+        hasMomentWorkspace
             && !isImportingMedia
             && isMediaUploadConfigured
             && mediaRemainingSlots > 0
     }
 
     private static func canDraftStory(
-        activeProjectId: String?,
+        hasMomentWorkspace: Bool,
         storyDraftWorkflow: StoryDraftWorkflow?,
-        template: MomentTemplate
+        template: MomentTemplate,
+        selectedMediaCount: Int
     ) -> Bool {
-        guard let storyDraftWorkflow, activeProjectId != nil else { return false }
-        return storyDraftWorkflow.canDraft(template: template)
+        guard let storyDraftWorkflow, hasMomentWorkspace else { return false }
+        return storyDraftWorkflow.isConfigured
+            && !storyDraftWorkflow.isDrafting
+            && MomentsMediaRules.availability(template: template, selectedCount: selectedMediaCount).canUseSelection
     }
 
     private static func canGeneratePreview(

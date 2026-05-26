@@ -10,7 +10,7 @@ extension MomentsCreateViewModel {
 
     var mediaAvailabilityMessage: String? {
         MomentsCreateAvailabilityMessageFactory.media(
-            activeProjectId: activeProjectId,
+            hasMomentWorkspace: hasMomentWorkspace,
             isImportingMedia: isImportingMedia,
             isMediaUploadConfigured: mediaUploadWorkflow?.isConfigured ?? false,
             mediaRemainingSlots: mediaRemainingSlots
@@ -19,11 +19,12 @@ extension MomentsCreateViewModel {
 
     var storyAvailabilityMessage: String? {
         MomentsCreateAvailabilityMessageFactory.story(
-            activeProjectId: activeProjectId,
+            hasMomentWorkspace: hasMomentWorkspace,
             isStoryDrafting: storyDraftWorkflow?.isDrafting ?? false,
             isStoryDraftAvailable: storyDraftWorkflow != nil,
             isStoryDraftConfigured: storyDraftWorkflow?.isConfigured ?? false,
             mediaAssets: effectiveActiveWorkspace?.mediaAssets,
+            selectedMediaCount: mediaSelectedCount,
             template: form.template
         )
     }

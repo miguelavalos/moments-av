@@ -9,6 +9,7 @@ final class ProjectCreationWorkflow: ObservableObject {
     private let currentUserProvider: any MomentsCurrentUserProviding
     private let creditBalanceProvider: any MomentsCreditBalanceProviding
     private let projectCreator: any MomentsProjectCreating
+    private let projectDeleter: any MomentsProjectDeleting
     private let workspaceObserver: any MomentsActiveWorkspaceObserving
     private var workflowGeneration = WorkflowGeneration()
 
@@ -16,11 +17,13 @@ final class ProjectCreationWorkflow: ObservableObject {
         currentUserProvider: any MomentsCurrentUserProviding,
         creditBalanceProvider: any MomentsCreditBalanceProviding,
         projectCreator: any MomentsProjectCreating,
+        projectDeleter: any MomentsProjectDeleting,
         workspaceObserver: any MomentsActiveWorkspaceObserving
     ) {
         self.currentUserProvider = currentUserProvider
         self.creditBalanceProvider = creditBalanceProvider
         self.projectCreator = projectCreator
+        self.projectDeleter = projectDeleter
         self.workspaceObserver = workspaceObserver
     }
 
@@ -47,7 +50,7 @@ final class ProjectCreationWorkflow: ObservableObject {
     func createDraft(form: MomentDraftForm) async -> String? {
         guard !isCreatingDraft else { return nil }
         guard let ownerUserId = currentUserProvider.currentUserId else {
-            errorMessage = "Sign in before creating a draft."
+            errorMessage = "Sign in before starting a project."
             return nil
         }
 
@@ -96,6 +99,33 @@ final class ProjectCreationWorkflow: ObservableObject {
         activeProjectId = nil
         errorMessage = nil
         workspaceObserver.clearWorkspace()
+    }
+
+    func discardActiveDraft() async -> Bool {
+        guard !isCreatingDraft else { return false }
+        guard let ownerUserId = currentUserProvider.currentUserId else {
+            errorMessage = "Sign in before discarding a project."
+            return false
+        }
+        guard let activeProjectId else { return true }
+
+        let generation = workflowGeneration.begin()
+        isCreatingDraft = true
+        errorMessage = nil
+
+        do {
+            try await projectDeleter.deleteProject(ownerUserId: ownerUserId, projectId: activeProjectId)
+            guard workflowGeneration.isCurrent(generation) else { return false }
+            isCreatingDraft = false
+            self.activeProjectId = nil
+            workspaceObserver.clearWorkspace()
+            return true
+        } catch {
+            guard workflowGeneration.isCurrent(generation) else { return false }
+            errorMessage = error.localizedDescription
+            isCreatingDraft = false
+            return false
+        }
     }
 
     private func createDraftBlockMessage(_ availability: MomentDraftRules.Availability) -> String {

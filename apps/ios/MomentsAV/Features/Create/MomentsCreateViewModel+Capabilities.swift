@@ -65,6 +65,7 @@ extension MomentsCreateViewModel {
     var workflowCapability: MomentsCreateWorkflowCapability {
         MomentsCreateWorkflowCapabilityFactory.make(
             activeProjectId: activeProjectId,
+            hasMomentWorkspace: hasMomentWorkspace,
             isImportingMedia: isImportingMedia,
             isMediaUploadConfigured: mediaUploadWorkflow?.isConfigured ?? false,
             mediaRemainingSlots: mediaRemainingSlots,
@@ -74,7 +75,8 @@ extension MomentsCreateViewModel {
             template: form.template,
             previewRefreshAvailability: previewRefreshAvailability,
             finalRenderRefreshAvailability: finalRenderRefreshAvailability,
-            latestPreview: effectiveLatestPreview
+            latestPreview: effectiveLatestPreview,
+            selectedMediaCount: mediaSelectedCount
         )
     }
 

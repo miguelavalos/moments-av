@@ -8,7 +8,7 @@ struct MomentsCreateWorkspaceSummary: Equatable {
     var hasFinalExport = false
 
     var mediaDetail: String {
-        "\(mediaCount) synced"
+        "\(mediaCount) added"
     }
 
     var storyDetail: String {
@@ -16,7 +16,7 @@ struct MomentsCreateWorkspaceSummary: Equatable {
     }
 
     var previewDetail: String {
-        hasPreviewArtifact ? "Ready" : Self.countTitle(renderJobCount, singular: "render job", plural: "render jobs")
+        hasPreviewArtifact ? "Ready" : "Not made yet"
     }
 
     static func make(

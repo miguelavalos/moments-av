@@ -140,7 +140,7 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
     private func generateBlockMessage(_ availability: MomentsFinalRenderRules.Availability) -> String {
         MomentsFinalRenderRules.availabilityMessage(
             availability,
-            missingProjectMessage: "Create or continue a draft before rendering the final export.",
+            missingProjectMessage: "Start or continue a project before rendering the final export.",
             insufficientCreditsMessage: "Add credits before final render."
         ) ?? "Final export is not ready to render."
     }

@@ -3,9 +3,14 @@ import PhotosUI
 import SwiftUI
 
 extension MomentsCreateViewModel {
-    func beginNewProject() {
+    func beginNewProject(openMediaPicker: Bool = true) {
         guard canBeginNewProject else { return }
-        newProjectStep = .style
+        prepareNewDraftCreation()
+        isLocalMomentStarted = true
+        pendingFocus = .media
+        if openMediaPicker {
+            mediaPickerOpenRequest += 1
+        }
     }
 
     func editNewProjectStyle() {
@@ -15,34 +20,46 @@ extension MomentsCreateViewModel {
 
     func editNewProjectSummary() {
         guard !isDraftLocked else { return }
-        newProjectStep = .summary
+        newProjectStep = .style
     }
 
     func createDraft() {
+        createDraft(openMediaPicker: false)
+    }
+
+    func createDraft(openMediaPicker: Bool) {
         guard canCreateDraft, let projectCreationWorkflow else { return }
         let form = form
         prepareNewDraftCreation()
-        newProjectStep = .summary
 
         runOperation {
-            _ = await projectCreationWorkflow.createDraft(form: form)
+            let projectId = await projectCreationWorkflow.createDraft(form: form)
+            if projectId != nil, openMediaPicker {
+                self.mediaPickerOpenRequest += 1
+            }
         }
     }
 
-    func startAnotherProject() {
-        guard canStartAnotherProject else { return }
+    func discardDraft() {
+        guard canStartAnotherProject, let projectCreationWorkflow else { return }
 
-        resetActiveProject(force: false)
+        runOperation {
+            let discarded = await projectCreationWorkflow.discardActiveDraft()
+            if discarded {
+                self.resetActiveProject(force: true)
+            }
+        }
     }
 
     func importPickerItems(_ items: [PhotosPickerItem]) {
-        guard canAddMedia, let mediaUploadWorkflow, let context = activeTemplateContext else { return }
+        guard canAddMedia, let mediaUploadWorkflow else { return }
+        let template = form.template
 
         runOperation {
             await mediaUploadWorkflow.importPickerItems(
                 items,
-                template: context.template,
-                projectId: context.projectId
+                template: template,
+                projectId: self.activeProjectId
             )
         }
     }
@@ -56,12 +73,29 @@ extension MomentsCreateViewModel {
     }
 
     func generateStoryDraft() {
-        guard canDraftStory, let storyDraftWorkflow, let context = activeFormContext else { return }
+        guard canDraftStory, let storyDraftWorkflow else { return }
+        let form = form
+        let selectedMedia = selectedMedia
 
         runOperation {
+            let projectId: String?
+            if let activeProjectId = self.activeProjectId {
+                projectId = activeProjectId
+            } else if let projectCreationWorkflow = self.projectCreationWorkflow {
+                projectId = await projectCreationWorkflow.createDraft(form: form)
+                if projectId != nil {
+                    self.isLocalMomentStarted = false
+                }
+            } else {
+                projectId = nil
+            }
+
+            guard let projectId else { return }
+
             await storyDraftWorkflow.generateDraft(
-                projectId: context.projectId,
-                form: context.form
+                projectId: projectId,
+                form: form,
+                selectedMedia: selectedMedia
             )
         }
     }

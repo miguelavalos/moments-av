@@ -32,6 +32,7 @@ struct MomentsWorkflowBundle {
             currentUserProvider: accountController,
             creditBalanceProvider: accountController,
             projectCreator: projectRepository,
+            projectDeleter: projectRepository,
             workspaceObserver: workspaceObserver
         )
         mediaUpload = MediaUploadWorkflow(

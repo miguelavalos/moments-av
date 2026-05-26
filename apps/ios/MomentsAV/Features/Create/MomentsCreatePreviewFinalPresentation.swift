@@ -31,7 +31,7 @@ struct MomentsCreatePreviewPresentation: Equatable {
     var emptyMessage: String {
         canGeneratePreview
             ? "Story is ready. Generate a preview to review the result."
-            : "Generate a story draft before creating a preview."
+            : "Generate a story before creating a preview."
     }
 
     var showsEmptyState: Bool {
@@ -51,17 +51,17 @@ struct MomentsCreateFinalRenderPresentation: Equatable {
     }
 
     var refreshButtonTitle: String {
-        summary.isRefreshingStatus ? "Refreshing final status..." : "Refresh final status"
+        summary.isRefreshingStatus ? "Refreshing final video..." : "Refresh final video"
     }
 
     var generateButtonTitle: String {
-        summary.isGenerating ? "Rendering final..." : "Render final"
+        summary.isGenerating ? "Creating final video..." : "Create final video"
     }
 
     var emptyMessage: String {
         canGenerateFinalRender
-            ? "Preview is ready. Render the final export when approved."
-            : "Generate a preview before rendering the final export."
+            ? "The story plan is ready. Create the final video when you are ready."
+            : "Prepare the story before creating the final video."
     }
 
     var showsEmptyState: Bool {

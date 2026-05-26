@@ -14,7 +14,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
             workspaceSummary: MomentsCreateWorkspaceSummary()
         )
 
-        XCTAssertEqual(presentation.createDraftTitle, "Create draft")
+        XCTAssertEqual(presentation.createDraftTitle, "Continue to media")
         XCTAssertFalse(presentation.showsActiveProject)
         XCTAssertEqual(presentation.templateSummary.creditTitle, "1 cr")
         XCTAssertEqual(presentation.templateSummary.metadataTitle, "\(MomentTemplate.birthdayMessage.duration) · \(MomentTemplate.birthdayMessage.mediaRange)")
@@ -38,7 +38,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
             workspaceSummary: MomentsCreateWorkspaceSummary(mediaCount: 2, sceneCount: 1)
         )
 
-        XCTAssertEqual(presentation.createDraftTitle, "Creating draft...")
+        XCTAssertEqual(presentation.createDraftTitle, "Starting project...")
         XCTAssertEqual(presentation.activeProjectLabel, "Continuing project")
         XCTAssertEqual(presentation.activeProjectDetail, "Create is attached to this existing project.")
         XCTAssertTrue(presentation.showsActiveProject)

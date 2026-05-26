@@ -38,7 +38,8 @@ final class StoryDraftWorkflow: WorkspaceObservingWorkflow {
 
     func generateDraft(
         projectId: String,
-        form: MomentDraftForm
+        form: MomentDraftForm,
+        selectedMedia: [MomentsSelectedMedia]
     ) async {
         guard let ownerUserId = currentUserProvider.currentUserId else {
             statusMessage = "Sign in before drafting the story."
@@ -49,12 +50,12 @@ final class StoryDraftWorkflow: WorkspaceObservingWorkflow {
             return
         }
 
-        let mediaAssets = activeWorkspace?.mediaAssets
-        let availability = MomentsStoryDraftRules.availability(
-            mediaAssets: mediaAssets,
-            template: form.template
+        let media = storyMedia(from: selectedMedia, fallbackMediaAssets: activeWorkspace?.mediaAssets)
+        let availability = MomentsMediaRules.availability(
+            template: form.template,
+            selectedCount: media.filter(\.selected).count
         )
-        guard availability.canDraft, let mediaAssets else {
+        guard availability.canUseSelection else {
             statusMessage = generateBlockMessage(availability)
             return
         }
@@ -68,7 +69,7 @@ final class StoryDraftWorkflow: WorkspaceObservingWorkflow {
                 projectId: projectId,
                 ownerUserId: ownerUserId,
                 form: form,
-                mediaAssets: mediaAssets
+                selectedMedia: media
             )
             guard isCurrentWorkflowGeneration(generation) else { return }
             generatedDraft = draft
@@ -98,10 +99,49 @@ final class StoryDraftWorkflow: WorkspaceObservingWorkflow {
         statusMessage = nil
     }
 
-    private func generateBlockMessage(_ availability: MomentsStoryDraftRules.Availability) -> String {
-        MomentsStoryDraftRules.availabilityMessage(
-            availability,
-            missingMediaMessage: "Add media before asking Avi for a story draft."
-        ) ?? "Story draft is not ready to generate."
+    private func storyMedia(
+        from selectedMedia: [MomentsSelectedMedia],
+        fallbackMediaAssets: [MomentMediaAsset]?
+    ) -> [MomentsStoryDraftMedia] {
+        if !selectedMedia.isEmpty {
+            return selectedMedia
+                .filter(\.selected)
+                .sorted { $0.sortOrder < $1.sortOrder }
+                .map {
+                    MomentsStoryDraftMedia(
+                        mediaAssetId: $0.id.uuidString,
+                        mediaKind: $0.kind,
+                        sortOrder: $0.sortOrder,
+                        selected: $0.selected,
+                        moderationStatus: "pending"
+                    )
+                }
+        }
+
+        return (fallbackMediaAssets ?? [])
+            .filter(\.selected)
+            .sorted { $0.sortOrder < $1.sortOrder }
+            .map {
+                MomentsStoryDraftMedia(
+                    mediaAssetId: $0.id,
+                    mediaKind: $0.kind,
+                    sortOrder: Int($0.sortOrder),
+                    selected: $0.selected,
+                    moderationStatus: $0.moderationStatus
+                )
+            }
+    }
+
+    private func generateBlockMessage(_ availability: MomentsMediaRules.Availability) -> String {
+        switch availability.blockReason {
+        case nil:
+            return "Story plan is ready."
+        case .tooFewSelected(let missingCount):
+            let label = missingCount == 1 ? "photo or clip" : "photos or clips"
+            return "Add \(missingCount) more \(label) before preparing the story."
+        case .tooManySelected(let extraCount):
+            let label = extraCount == 1 ? "photo or clip" : "photos or clips"
+            return "Remove \(extraCount) \(label) before preparing the story."
+        }
     }
 }

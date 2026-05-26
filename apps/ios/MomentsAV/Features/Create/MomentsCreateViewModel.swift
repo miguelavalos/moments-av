@@ -13,6 +13,7 @@ final class MomentsCreateViewModel: ObservableObject {
     @Published var form = MomentDraftForm(template: MomentTemplate.launchTemplates[0])
     @Published private(set) var isCreatingDraft = false
     @Published private(set) var isContinuingProject = false
+    @Published var isLocalMomentStarted = false
     @Published private(set) var workflowActiveProjectId: String?
     @Published private(set) var draftErrorMessage: String?
     @Published private(set) var selectedMedia: [MomentsSelectedMedia] = []
@@ -33,8 +34,9 @@ final class MomentsCreateViewModel: ObservableObject {
     @Published private(set) var finalRenderStatusMessage: String?
     @Published private(set) var isGeneratingFinalRender = false
     @Published private(set) var isRefreshingFinalRenderStatus = false
-    @Published private(set) var pendingFocus: MomentsProjectContinuationFocus?
+    @Published var pendingFocus: MomentsProjectContinuationFocus?
     @Published private(set) var continuationFocusHint: MomentsProjectContinuationFocus?
+    @Published var mediaPickerOpenRequest = 0
 
     private(set) var projectCreationWorkflow: ProjectCreationWorkflow?
     private(set) var mediaUploadWorkflow: MediaUploadWorkflow?
@@ -54,6 +56,10 @@ final class MomentsCreateViewModel: ObservableObject {
 
     var activeProjectId: String? {
         activeProject?.id ?? workflowActiveProjectId
+    }
+
+    var hasMomentWorkspace: Bool {
+        activeProjectId != nil || isLocalMomentStarted
     }
 
     func bind(
@@ -101,7 +107,7 @@ final class MomentsCreateViewModel: ObservableObject {
         applyStyleDefaults(style)
 
         if newProjectStep == .style {
-            newProjectStep = .summary
+            beginNewProject()
         }
     }
 
@@ -117,11 +123,13 @@ final class MomentsCreateViewModel: ObservableObject {
     func prepareNewDraftCreation() {
         isContinuingProject = false
         continuationFocusHint = nil
+        isLocalMomentStarted = false
     }
 
     func continueProject(_ project: MomentDraftProject, focus: MomentsProjectContinuationFocus = .review) {
         cancelOperations()
         isContinuingProject = true
+        isLocalMomentStarted = false
         pendingFocus = focus
         continuationFocusHint = focus
 
@@ -209,6 +217,7 @@ final class MomentsCreateViewModel: ObservableObject {
     func resetActiveProject(force: Bool) {
         cancelOperations()
         isContinuingProject = false
+        isLocalMomentStarted = false
         pendingFocus = nil
         continuationFocusHint = nil
         projectCreationWorkflow?.resetDraft(force: force)
@@ -248,9 +257,15 @@ extension MomentsCreateViewModel {
 
     func applyProjectCreationState(_ state: MomentsCreateProjectCreationState) {
         guard !usesFullUITestFixture else { return }
+        let previousActiveProjectId = workflowActiveProjectId
         isCreatingDraft = state.isCreatingDraft
         workflowActiveProjectId = state.activeProjectId
         draftErrorMessage = state.draftErrorMessage
+
+        if previousActiveProjectId == nil, state.activeProjectId != nil {
+            pendingFocus = .media
+            continuationFocusHint = nil
+        }
     }
 
     func applyMediaUploadState(_ state: MomentsCreateMediaUploadState) {
@@ -271,6 +286,7 @@ extension MomentsCreateViewModel {
     func applyPreviewGenerationState(_ state: MomentsCreatePreviewGenerationState) {
         guard !usesFullUITestFixture else { return }
         activeWorkspace = state.activeWorkspace
+        syncFormWithActiveWorkspace(state.activeWorkspace)
         latestPreview = state.latestPreview
         latestPreviewJob = state.latestPreviewJob
         previewStatusMessage = state.statusMessage
@@ -285,5 +301,17 @@ extension MomentsCreateViewModel {
         finalRenderStatusMessage = state.statusMessage
         isGeneratingFinalRender = state.isGenerating
         isRefreshingFinalRenderStatus = state.isRefreshingStatus
+    }
+
+    private func syncFormWithActiveWorkspace(_ workspace: MomentProjectWorkspace?) {
+        guard let project = workspace?.project else { return }
+        guard project.id == activeProjectId else { return }
+        guard let continuedForm = MomentDraftForm.continuing(project: project, templates: templates) else { return }
+
+        form = continuedForm
+        if let continuedStyle = creationStyles.first(where: { $0.template.id == continuedForm.template.id }) {
+            selectedCreationStyle = continuedStyle
+            selectedMusicPreset = continuedStyle.allowedMusic.first(where: { $0 == continuedStyle.defaultMusic }) ?? continuedStyle.defaultMusic
+        }
     }
 }

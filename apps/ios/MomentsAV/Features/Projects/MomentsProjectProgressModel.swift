@@ -6,7 +6,7 @@ struct MomentsProjectProgressModel {
     init(workspace: MomentProjectWorkspace) {
         phases = [
             MomentsProjectProgressPhase(
-                title: "Draft",
+                title: "Project",
                 detail: MomentsProjectStatusRules.displayTitle(for: workspace.project.status),
                 systemImage: "doc.text",
                 state: .complete

@@ -11,7 +11,7 @@ struct MomentsCreatePreviewCard: View {
             VStack(alignment: .leading, spacing: 14) {
                 AVAppShellContentHeader(
                     title: "Preview",
-                    detail: "Generate a preview after the story is ready, then review status before committing the final export."
+                    detail: "Create a quick preview before making the final video."
                 )
 
                 if let usageTitle = presentation.usageTitle {

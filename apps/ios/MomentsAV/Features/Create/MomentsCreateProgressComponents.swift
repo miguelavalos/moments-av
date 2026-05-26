@@ -9,7 +9,7 @@ struct MomentsCreateWorkspaceProgress: View {
         VStack(alignment: .leading, spacing: 10) {
             AVAppShellSectionHeader(title: "Workspace progress")
             AVAppShellProgressRow(
-                title: "Media",
+                title: "Photos and clips",
                 detail: summary.mediaDetail,
                 systemImage: "photo.on.rectangle",
                 isComplete: summary.mediaCount >= minimumMediaCount,
@@ -27,8 +27,8 @@ struct MomentsCreateWorkspaceProgress: View {
                 isComplete: summary.hasPreviewArtifact,
             )
             AVAppShellProgressRow(
-                title: "Final export",
-                detail: summary.hasFinalExport ? "Ready" : "Not rendered",
+                title: "Final video",
+                detail: summary.hasFinalExport ? "Ready" : "Not made yet",
                 systemImage: "square.and.arrow.up",
                 isComplete: summary.hasFinalExport,
             )

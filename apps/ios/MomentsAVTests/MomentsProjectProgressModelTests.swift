@@ -5,7 +5,7 @@ final class MomentsProjectProgressModelTests: XCTestCase {
     func testEmptyWorkspaceMarksDraftCompleteAndRemainingStepsWaiting() {
         let model = MomentsProjectProgressModel(workspace: makeWorkspace())
 
-        XCTAssertEqual(model.phases.map(\.title), ["Draft", "Media", "Story", "Preview", "Final"])
+        XCTAssertEqual(model.phases.map(\.title), ["Project", "Media", "Story", "Preview", "Final"])
         XCTAssertEqual(model.phases.map(\.state), [.complete, .waiting, .waiting, .waiting, .waiting])
         XCTAssertEqual(model.phases.map(\.detail), [
             "Draft Created",

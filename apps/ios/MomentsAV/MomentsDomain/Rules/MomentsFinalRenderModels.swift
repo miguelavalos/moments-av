@@ -31,9 +31,8 @@ struct MomentsFinalRenderResponse: Decodable, Equatable {
 enum MomentsFinalRenderRules {
     enum BlockReason {
         case missingProject
-        case missingPreview
         case insufficientCredits
-        case previewNotReady
+        case storyNotReady
     }
 
     struct Availability {
@@ -64,14 +63,11 @@ enum MomentsFinalRenderRules {
         guard let project else {
             return Availability(canGenerate: false, blockReason: .missingProject)
         }
-        if latestPreview == nil {
-            return Availability(canGenerate: false, blockReason: .missingPreview)
-        }
         if !MomentsCreditGate.canAfford(template, balance: balance) {
             return Availability(canGenerate: false, blockReason: .insufficientCredits)
         }
-        if project.status != "preview_ready" && project.status != "export_ready" {
-            return Availability(canGenerate: false, blockReason: .previewNotReady)
+        if project.status != "story_ready" && project.status != "preview_ready" && project.status != "export_ready" {
+            return Availability(canGenerate: false, blockReason: .storyNotReady)
         }
         return Availability(canGenerate: true, blockReason: nil)
     }
@@ -86,12 +82,10 @@ enum MomentsFinalRenderRules {
             return nil
         case .missingProject:
             return missingProjectMessage
-        case .missingPreview:
-            return "Generate a preview before rendering the final export."
         case .insufficientCredits:
             return insufficientCreditsMessage
-        case .previewNotReady:
-            return "Wait for a ready preview before rendering the final export."
+        case .storyNotReady:
+            return "Prepare the story before creating the final video."
         }
     }
 }

@@ -14,17 +14,6 @@ struct MomentsStoryClient {
         form: MomentDraftForm,
         mediaAssets: [MomentMediaAsset]
     ) async throws -> MomentsStoryDraftResponse {
-        guard let baseURL = URL(string: baseURLString.trimmingCharacters(in: .whitespacesAndNewlines)) else {
-            throw MomentsStoryError.apiNotConfigured
-        }
-
-        let endpoint = baseURL
-            .appendingPathComponent("v1")
-            .appendingPathComponent("apps")
-            .appendingPathComponent("momentsav")
-            .appendingPathComponent("story")
-            .appendingPathComponent("drafts")
-
         let selectedMedia = mediaAssets
             .filter(\.selected)
             .sorted { left, right in left.sortOrder < right.sortOrder }
@@ -37,6 +26,32 @@ struct MomentsStoryClient {
                     moderationStatus: $0.moderationStatus
                 )
             }
+
+        return try await generateDraft(
+            projectId: projectId,
+            ownerUserId: ownerUserId,
+            form: form,
+            selectedMedia: selectedMedia
+        )
+    }
+
+    func generateDraft(
+        projectId: String,
+        ownerUserId: String,
+        form: MomentDraftForm,
+        selectedMedia: [MomentsStoryDraftMedia]
+    ) async throws -> MomentsStoryDraftResponse {
+        guard let baseURL = URL(string: baseURLString.trimmingCharacters(in: .whitespacesAndNewlines)) else {
+            throw MomentsStoryError.apiNotConfigured
+        }
+
+        let endpoint = baseURL
+            .appendingPathComponent("v1")
+            .appendingPathComponent("apps")
+            .appendingPathComponent("momentsav")
+            .appendingPathComponent("story")
+            .appendingPathComponent("drafts")
+
         let requestBody = MomentsStoryDraftRequest(
             projectId: projectId,
             template: form.template.id.rawValue,

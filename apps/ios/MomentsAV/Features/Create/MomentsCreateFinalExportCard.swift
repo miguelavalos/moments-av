@@ -10,8 +10,8 @@ struct MomentsCreateFinalExportCard: View {
         AVAppShellCard {
             VStack(alignment: .leading, spacing: 14) {
                 AVAppShellContentHeader(
-                    title: "Final export",
-                    detail: "Final render commits credits after a usable export is delivered."
+                    title: "Final video",
+                    detail: "Create the finished video file. This uses 1 credit."
                 )
 
                 Text(presentation.creditTitle)

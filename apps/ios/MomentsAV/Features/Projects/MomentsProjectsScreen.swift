@@ -26,11 +26,6 @@ struct MomentsProjectsScreen: View {
         AVAppShellScrollableScreenScaffold {
             MomentsTheme.shellBackground
         } content: {
-            AVAppShellScreenHeader(
-                title: "Projects",
-                subtitle: "Continue in-progress memories or review finished exports."
-            )
-
             MomentsProjectsCard(
                 presentation: presentation,
                 projectSummary: viewModel.projectSummary,

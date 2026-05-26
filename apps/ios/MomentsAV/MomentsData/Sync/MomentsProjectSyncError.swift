@@ -10,7 +10,7 @@ enum MomentsProjectSyncError: LocalizedError {
         case .notConfigured:
             "Project sync is not configured for this build."
         case .invalidForm:
-            "Add the occasion before creating a draft."
+            "Add the occasion before starting a project."
         case .missingRenderJob:
             "The backend did not return a render job for this request."
         }

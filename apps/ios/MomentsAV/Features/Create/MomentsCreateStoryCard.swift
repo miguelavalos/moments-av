@@ -9,8 +9,8 @@ struct MomentsCreateStoryCard: View {
         AVAppShellCard {
             VStack(alignment: .leading, spacing: 14) {
                 AVAppShellContentHeader(
-                    title: "Story",
-                    detail: "Generate the first Avi story draft from the media already attached to the project."
+                    title: "Story plan",
+                    detail: "Prepare the structure before creating the final video."
                 )
 
                 MomentsCreateStoryScenesSection(presentation: presentation)

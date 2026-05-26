@@ -1,7 +1,7 @@
 import Foundation
 
 struct MomentsCreateMediaPresentation: Equatable {
-    var activeProjectId: String
+    var activeProjectId: String?
     var template: MomentTemplate
     var summary: MomentsCreateMediaSummary
     var canAddMedia = false
@@ -12,7 +12,7 @@ struct MomentsCreateMediaPresentation: Equatable {
     }
 
     var pickerTitle: String {
-        summary.isImporting ? "Importing media..." : "Add Photos or Clips"
+        summary.isImporting ? "Adding media..." : "Add Photos or Clips"
     }
 
     var selectedCountTitle: String {
@@ -22,8 +22,9 @@ struct MomentsCreateMediaPresentation: Equatable {
     var selectionMessage: String {
         MomentsMediaRules.selectionMessage(
             MomentsMediaRules.availability(template: template, selectedCount: summary.selectedCount),
-            tooFewMessage: { "Add \($0) more synced \(Self.mediaAssetLabel($0))." },
-            tooManyMessage: { "Remove \($0) synced \(Self.mediaAssetLabel($0))." }
+            readyMessage: "Ready for story.",
+            tooFewMessage: { "Add \($0) more \(Self.mediaAssetLabel($0))." },
+            tooManyMessage: { "Remove \($0) \(Self.mediaAssetLabel($0))." }
         )
     }
 
@@ -32,7 +33,7 @@ struct MomentsCreateMediaPresentation: Equatable {
     }
 
     private static func mediaAssetLabel(_ count: Int) -> String {
-        count == 1 ? "media asset" : "media assets"
+        count == 1 ? "photo or clip" : "photos or clips"
     }
 }
 
@@ -42,13 +43,13 @@ struct MomentsCreateStoryPresentation: Equatable {
     var availabilityMessage: String?
 
     var draftButtonTitle: String {
-        summary.isDrafting ? "Drafting story..." : "Ask Avi for story draft"
+        summary.isDrafting ? "Preparing story..." : "Prepare story"
     }
 
     var emptyMessage: String {
         canDraftStory
-            ? "Avi can draft the first story from the synced media."
-            : "Add enough synced media before generating a story draft."
+            ? "Avi can prepare a story plan from your photos and clips."
+            : "Add enough photos or clips before preparing the story."
     }
 
     var savedScenes: [MomentStoryScene] {

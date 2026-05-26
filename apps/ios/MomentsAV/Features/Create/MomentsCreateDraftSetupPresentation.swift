@@ -13,17 +13,17 @@ struct MomentsCreateDraftSetupPresentation: Equatable {
     var workspaceSummary: MomentsCreateWorkspaceSummary
 
     var createDraftTitle: String {
-        isCreatingDraft ? "Creating draft..." : "Create draft"
+        isCreatingDraft ? "Starting project..." : "Use this theme"
     }
 
     var activeProjectLabel: String {
-        isContinuingProject ? "Continuing project" : "Draft created"
+        isContinuingProject ? "Continuing project" : "Project ready"
     }
 
     var activeProjectDetail: String {
         isContinuingProject
             ? "Create is attached to this existing project."
-            : "Draft setup is locked for this project."
+            : "Add photos or clips next, then Avi can shape the story."
     }
 
     var showsActiveProject: Bool {

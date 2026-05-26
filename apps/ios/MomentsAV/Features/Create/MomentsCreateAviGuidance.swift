@@ -38,7 +38,7 @@ enum MomentsCreateAviGuidanceResolver {
         if isDraftLocked {
             return MomentsCreateAviGuidance(
                 emotion: .focused,
-                message: "Project started. Keep moving through media, story, preview, and final video.",
+                message: "\(selectedStyle.title) is ready. Add photos or clips.",
                 actionTitle: nil,
                 reaction: .affirm
             )
@@ -66,21 +66,21 @@ enum MomentsCreateAviGuidanceResolver {
         case .status:
             return MomentsCreateAviGuidance(
                 emotion: .happy,
-                message: "You are ready. Start with a style and I will shape the video from there.",
+                message: "Add photos or clips. Avi will prepare the first story.",
                 actionTitle: "Start project",
                 reaction: .positive
             )
         case .style:
             return MomentsCreateAviGuidance(
                 emotion: .curious,
-                message: "Choose the feeling of the video. The style guides the story, pace, and music.",
+                message: "Choose a theme. Moments AV will open your workspace right after.",
                 actionTitle: nil,
                 reaction: .selection
             )
         case .summary:
             return MomentsCreateAviGuidance(
                 emotion: .focused,
-                message: "\(selectedStyle.title) is ready. You can create now or add one small detail.",
+                message: "\(selectedStyle.title) is set. Add photos or clips next.",
                 actionTitle: nil,
                 reaction: .affirm
             )

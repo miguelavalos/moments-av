@@ -295,6 +295,36 @@ final class MomentsAPIClientTests: XCTestCase {
         }
     }
 
+    func testCreditBalanceUsesBackendBucketsAndBearerToken() async throws {
+        let session = makeMockSession(
+            json: """
+            {
+              "appId": "momentsav",
+              "userId": "user-1",
+              "spendableCredits": 10,
+              "reservedCredits": 0,
+              "proMonthlyCredits": 0,
+              "promotionalGrantedCredits": 10,
+              "purchasedCredits": 0,
+              "hasProFeatures": true,
+              "proSource": "promo",
+              "proExpiresAt": "2026-06-25T00:00:00.000Z",
+              "canStartProject": true,
+              "minimumRenderCredits": 1,
+              "generatedAt": "2026-05-26T10:00:00.000Z"
+            }
+            """
+        )
+        let client = MomentsCreditBalanceClient(baseURLString: accountAPIBaseURL, session: session)
+
+        let balance = try await client.fetchBalance(bearerToken: "token-1")
+
+        XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.url?.absoluteString, "\(accountAPIBaseURL)/v1/apps/momentsav/credits/balance")
+        XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.httpMethod, "GET")
+        XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.value(forHTTPHeaderField: "Authorization"), "Bearer token-1")
+        XCTAssertEqual(balance, MomentsCreditBalance(proMonthly: 0, promotional: 10, purchased: 0))
+    }
+
     private var accountAPIBaseURL: String {
         "https://api-account-av-preview.avalsys.com"
     }

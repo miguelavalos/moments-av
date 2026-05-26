@@ -2,6 +2,7 @@ import Foundation
 
 struct MomentsCreateWorkflowPresentation: Equatable {
     var activeProjectId: String?
+    var hasMomentWorkspace = false
     var template: MomentTemplate
     var mediaSummary: MomentsCreateMediaSummary
     var storySummary: MomentsCreateStorySummary
@@ -21,11 +22,32 @@ struct MomentsCreateWorkflowPresentation: Equatable {
     var finalRenderRefreshAvailabilityMessage: String?
 
     var showsWorkflowCards: Bool {
-        activeProjectId != nil
+        hasMomentWorkspace
+    }
+
+    var currentStage: MomentsCreateCurrentStage {
+        if finalRenderSummary.finalExport != nil {
+            return .finalVideo
+        }
+
+        if previewSummary.latestPreview != nil || previewSummary.latestPreviewJob != nil {
+            return .finalVideo
+        }
+
+        if !storySummary.savedScenes.isEmpty || !storySummary.generatedScenes.isEmpty {
+            return .finalVideo
+        }
+
+        if canDraftStory {
+            return .story
+        }
+
+        return .media
     }
 
     static func make(
         activeProjectId: String?,
+        hasMomentWorkspace: Bool,
         template: MomentTemplate,
         mediaSummary: MomentsCreateMediaSummary,
         storySummary: MomentsCreateStorySummary,
@@ -35,6 +57,7 @@ struct MomentsCreateWorkflowPresentation: Equatable {
     ) -> MomentsCreateWorkflowPresentation {
         MomentsCreateWorkflowPresentation(
             activeProjectId: activeProjectId,
+            hasMomentWorkspace: hasMomentWorkspace,
             template: template,
             mediaSummary: mediaSummary,
             storySummary: storySummary,
@@ -54,4 +77,11 @@ struct MomentsCreateWorkflowPresentation: Equatable {
             finalRenderRefreshAvailabilityMessage: availability.finalRenderRefreshMessage
         )
     }
+}
+
+enum MomentsCreateCurrentStage: Equatable {
+    case media
+    case story
+    case preview
+    case finalVideo
 }

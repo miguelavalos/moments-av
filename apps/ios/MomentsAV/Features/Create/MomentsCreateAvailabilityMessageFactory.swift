@@ -14,12 +14,12 @@ enum MomentsCreateAvailabilityMessageFactory {
     }
 
     static func media(
-        activeProjectId: String?,
+        hasMomentWorkspace: Bool,
         isImportingMedia: Bool,
         isMediaUploadConfigured: Bool,
         mediaRemainingSlots: Int
     ) -> String? {
-        if activeProjectId == nil { return MomentsCreateAvailabilityCopy.mediaMissingProject }
+        if !hasMomentWorkspace { return MomentsCreateAvailabilityCopy.mediaMissingProject }
         if isImportingMedia { return nil }
         if !isMediaUploadConfigured { return MomentsCreateAvailabilityCopy.mediaUploadNotConfigured }
         if mediaRemainingSlots == 0 { return MomentsCreateAvailabilityCopy.mediaTemplateFull }
@@ -27,17 +27,32 @@ enum MomentsCreateAvailabilityMessageFactory {
     }
 
     static func story(
-        activeProjectId: String?,
+        hasMomentWorkspace: Bool,
         isStoryDrafting: Bool,
         isStoryDraftAvailable: Bool,
         isStoryDraftConfigured: Bool,
         mediaAssets: [MomentMediaAsset]?,
+        selectedMediaCount: Int,
         template: MomentTemplate
     ) -> String? {
-        guard activeProjectId != nil else { return MomentsCreateAvailabilityCopy.storyMissingProject }
+        guard hasMomentWorkspace else { return MomentsCreateAvailabilityCopy.storyMissingProject }
         guard isStoryDraftAvailable else { return MomentsCreateAvailabilityCopy.storyUnavailable }
         if isStoryDrafting { return nil }
         if !isStoryDraftConfigured { return MomentsCreateAvailabilityCopy.storyNotConfigured }
+
+        if selectedMediaCount > 0 {
+            let availability = MomentsMediaRules.availability(template: template, selectedCount: selectedMediaCount)
+            guard !availability.canUseSelection else { return nil }
+            return MomentsMediaRules.selectionMessage(
+                availability,
+                tooFewMessage: { missingCount in
+                    missingCount == 1 ? "Add 1 more photo or clip." : "Add \(missingCount) more photos or clips."
+                },
+                tooManyMessage: { extraCount in
+                    extraCount == 1 ? "Remove 1 photo or clip." : "Remove \(extraCount) photos or clips."
+                }
+            )
+        }
 
         return MomentsStoryDraftRules.availabilityMessage(
             MomentsStoryDraftRules.availability(

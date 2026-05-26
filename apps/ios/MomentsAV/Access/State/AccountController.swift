@@ -10,9 +10,14 @@ final class AccountController: ObservableObject {
     @Published var errorMessage: String?
 
     private let service: AVAccountService
+    private let balanceClient: MomentsCreditBalanceClient
 
-    init(service: AVAccountService = DefaultAVAccountService()) {
+    init(
+        service: AVAccountService = DefaultAVAccountService(),
+        balanceClient: MomentsCreditBalanceClient? = nil
+    ) {
         self.service = service
+        self.balanceClient = balanceClient ?? MomentsCreditBalanceClient(baseURLString: AppConfig.momentsAPIBaseURL)
         refresh()
     }
 
@@ -28,6 +33,8 @@ final class AccountController: ObservableObject {
         user = service.currentUser
         if user == nil {
             creditBalance = .empty
+        } else {
+            Task { await refreshCreditBalance() }
         }
     }
 
@@ -43,6 +50,8 @@ final class AccountController: ObservableObject {
         }
         if user == nil {
             creditBalance = .empty
+        } else {
+            await refreshCreditBalance()
         }
     }
 
@@ -73,6 +82,20 @@ final class AccountController: ObservableObject {
         creditBalance.promotional += 1
     }
 
+    func refreshCreditBalance() async {
+        guard let user else {
+            creditBalance = .empty
+            return
+        }
+
+        do {
+            let token = try await service.getToken() ?? user.id
+            creditBalance = try await balanceClient.fetchBalance(bearerToken: token)
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+    }
+
     private func startAuthTask(_ operation: @escaping () async throws -> Void) {
         Task {
             do {
@@ -97,6 +120,43 @@ final class AccountController: ObservableObject {
             throw error
         }
     }
+}
+
+struct MomentsCreditBalanceClient {
+    var baseURLString: String
+    var session: URLSession = .shared
+
+    func fetchBalance(bearerToken: String) async throws -> MomentsCreditBalance {
+        guard let url = URL(string: "\(baseURLString)/v1/apps/momentsav/credits/balance") else {
+            throw MomentsAPIError(code: "invalid_moments_api_url", message: "Moments AV API URL is not configured.")
+        }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.setValue("Bearer \(bearerToken)", forHTTPHeaderField: "Authorization")
+
+        let (data, response) = try await session.data(for: request)
+        if let httpResponse = response as? HTTPURLResponse, !(200..<300).contains(httpResponse.statusCode) {
+            throw MomentsAPIError.decode(
+                from: data,
+                fallbackCode: "moments_credit_balance_failed",
+                fallbackMessage: "Moments AV credit balance could not be loaded."
+            )
+        }
+
+        let decoded = try JSONDecoder().decode(MomentsCreditBalanceResponse.self, from: data)
+        return MomentsCreditBalance(
+            proMonthly: decoded.proMonthlyCredits,
+            promotional: decoded.promotionalGrantedCredits,
+            purchased: decoded.purchasedCredits
+        )
+    }
+}
+
+private struct MomentsCreditBalanceResponse: Decodable {
+    let proMonthlyCredits: Int
+    let promotionalGrantedCredits: Int
+    let purchasedCredits: Int
 }
 
 extension AccountController: MomentsCurrentUserProviding, MomentsCreditBalanceProviding, MomentsAccountStateProviding, MomentsAuthenticationControlling {
