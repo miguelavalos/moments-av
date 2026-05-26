@@ -29,7 +29,7 @@ struct MomentsAppBootstrapView: View {
             } else {
                 MomentsAppShellView(
                     selectedTab: $selectedTab,
-                    startSignInFlow: startSignInFlow
+                    startSignInFlow: { startSignInFlow(showAuthOptions: true) }
                 )
                 .id(dependencies.accountController.isSignedIn ? "signed-in-shell" : "skipped-auth-shell")
                 .avSplashTransition(policy: splashPolicy) {
@@ -91,11 +91,11 @@ struct MomentsAppBootstrapView: View {
         }
     }
 
-    private func startSignInFlow() {
+    private func startSignInFlow(showAuthOptions: Bool = false) {
         postAuthenticationSplashIsPresented = false
         authenticationWasSkipped = false
         isShowingAccountOnboarding = true
-        authOptionsArePresented = true
+        authOptionsArePresented = showAuthOptions
     }
 
     private func startAppleSignIn() async throws {

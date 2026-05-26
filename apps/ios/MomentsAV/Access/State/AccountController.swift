@@ -61,6 +61,8 @@ final class AccountController: ObservableObject {
     func signOut() {
         startAuthTask { [self] in
             try await self.service.signOut()
+            self.user = nil
+            self.creditBalance = .empty
         }
     }
 
