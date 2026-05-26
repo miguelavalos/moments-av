@@ -5,11 +5,18 @@ import SwiftUI
 struct MomentsCreateScreen: View {
     @EnvironmentObject private var viewModel: MomentsCreateViewModel
     @State private var pickerItems: [PhotosPickerItem] = []
+    let startSignInFlow: () -> Void
+    let openCredits: () -> Void
 
     var body: some View {
         ScrollViewReader { proxy in
             ScrollView {
-                MomentsCreateWorkflowContent(viewModel: viewModel, pickerItems: $pickerItems)
+                MomentsCreateWorkflowContent(
+                    viewModel: viewModel,
+                    pickerItems: $pickerItems,
+                    startSignInFlow: startSignInFlow,
+                    openCredits: openCredits
+                )
                     .avShellScreenContentPadding(horizontal: 0, top: 0)
             }
             .onChange(of: viewModel.pendingFocus) { _, focus in

@@ -7,6 +7,9 @@ iOS app for first App Store publication.
 
 - [install-ios.md](install-ios.md): local iOS setup, XcodeGen, runtime config,
   tests, production config checks, and public config hygiene.
+- [monetization-and-credits.md](monetization-and-credits.md): product direction
+  for Pro Monthly, credit packs, promo codes, RevenueCat/App Store setup, and
+  the credit/access separation.
 
 ## First Publication
 

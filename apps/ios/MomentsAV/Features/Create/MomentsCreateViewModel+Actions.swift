@@ -3,10 +3,26 @@ import PhotosUI
 import SwiftUI
 
 extension MomentsCreateViewModel {
+    func beginNewProject() {
+        guard canBeginNewProject else { return }
+        newProjectStep = .style
+    }
+
+    func editNewProjectStyle() {
+        guard !isDraftLocked else { return }
+        newProjectStep = .style
+    }
+
+    func editNewProjectSummary() {
+        guard !isDraftLocked else { return }
+        newProjectStep = .summary
+    }
+
     func createDraft() {
         guard canCreateDraft, let projectCreationWorkflow else { return }
         let form = form
         prepareNewDraftCreation()
+        newProjectStep = .summary
 
         runOperation {
             _ = await projectCreationWorkflow.createDraft(form: form)

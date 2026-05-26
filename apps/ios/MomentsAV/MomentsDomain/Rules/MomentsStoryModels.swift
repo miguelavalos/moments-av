@@ -99,7 +99,8 @@ enum MomentsStoryDraftRules {
         case .missingMedia:
             return missingMediaMessage
         case .tooFewSelectedMedia(let missingCount):
-            return "Add \(missingCount) more synced media assets before drafting."
+            let label = missingCount == 1 ? "media asset" : "media assets"
+            return "Add \(missingCount) more synced \(label) before drafting."
         case .tooManySelectedMedia(let extraCount):
             return "Remove \(extraCount) synced media assets before drafting."
         }

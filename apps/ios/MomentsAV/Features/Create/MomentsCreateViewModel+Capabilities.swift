@@ -14,6 +14,12 @@ extension MomentsCreateViewModel {
             && draftFormAvailability.canCreateDraft
     }
 
+    var canBeginNewProject: Bool {
+        !isDraftLocked
+            && isSignedIn
+            && canAfford(selectedCreationStyle.template)
+    }
+
     var isDraftLocked: Bool {
         activeProjectId != nil
     }

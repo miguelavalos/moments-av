@@ -1,3 +1,4 @@
+import AVAviFoundation
 import AVAppShellFoundation
 import AVSettingsFoundation
 import SwiftUI
@@ -44,12 +45,19 @@ struct MomentsHomeScreen: View {
                     openAccount: openAccount
                 )
             } content: {
-                AVConfiguredAviHomeBriefCard(
+                AVAviHomeBriefCard(
+                    identity: appExperience.identity,
                     detail: presentation.aviBriefDetail,
                     actionAccessibilityLabel: "Open Avi guidance",
                     accessibilityIdentifier: "moments.home.aviBrief.open",
                     openAvi: { selectTab(.avi) }
-                )
+                ) {
+                    Image("AviFullBody")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 54, height: 68)
+                        .accessibilityHidden(true)
+                }
             }
 
             if viewModel.isSignedIn {
@@ -74,4 +82,6 @@ struct MomentsHomeScreen: View {
             )
         }
     }
+
+    @Environment(\.avCommonAppExperience) private var appExperience
 }

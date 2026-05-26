@@ -4,17 +4,17 @@ import SwiftUI
 struct MomentsCreateWorkflowContent: View {
     @ObservedObject var viewModel: MomentsCreateViewModel
     @Binding var pickerItems: [PhotosPickerItem]
+    let startSignInFlow: () -> Void
+    let openCredits: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 18) {
-            MomentsCreateIntroCard(isSignedIn: viewModel.isSignedIn)
             MomentsCreateActiveProjectCard(activeProject: viewModel.activeProject)
                 .id(MomentsCreateSection.review)
             MomentsCreateContinuationHintCard(
                 focus: viewModel.continuationFocusHint,
                 dismiss: viewModel.clearContinuationFocusHint
             )
-            MomentsCreateCreditsCard(balance: viewModel.balance)
             draftSetupCard
             MomentsCreateWorkflowCards(
                 presentation: viewModel.workflowPresentation,
@@ -32,21 +32,25 @@ struct MomentsCreateWorkflowContent: View {
         .padding(20)
     }
 
-    private var templateSelection: Binding<MomentTemplateID> {
-        Binding(
-            get: { viewModel.form.template.id },
-            set: { viewModel.selectTemplate(id: $0) }
-        )
-    }
-
     private var draftSetupCard: some View {
         MomentsCreateDraftSetupCard(
             form: $viewModel.form,
-            templateSelection: templateSelection,
-            templates: viewModel.templates,
+            selectedStyle: viewModel.selectedCreationStyle,
+            styles: viewModel.creationStyles,
+            selectedMusicPreset: viewModel.selectedMusicPreset,
             presentation: viewModel.draftSetupPresentation,
+            newProjectStep: viewModel.newProjectStep,
+            isSignedIn: viewModel.isSignedIn,
+            balance: viewModel.balance,
+            canBeginNewProject: viewModel.canBeginNewProject,
+            beginNewProject: viewModel.beginNewProject,
+            editStyle: viewModel.editNewProjectStyle,
+            selectStyle: viewModel.selectCreationStyle,
+            selectMusicPreset: viewModel.selectMusicPreset,
             createDraft: viewModel.createDraft,
-            startAnotherProject: viewModel.startAnotherProject
+            startAnotherProject: viewModel.startAnotherProject,
+            startSignInFlow: startSignInFlow,
+            openCredits: openCredits
         )
     }
 }

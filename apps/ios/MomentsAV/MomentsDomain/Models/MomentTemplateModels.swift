@@ -27,31 +27,31 @@ struct MomentTemplate: Identifiable, Equatable {
 
     static let birthdayMessage = MomentTemplate(
         id: .birthdayMessage,
-        title: "Birthday Message",
-        durationSeconds: 30,
-        creditCost: 2,
-        minimumAssets: 3,
-        maximumAssets: 20,
-        summary: "A warm greeting built from selected memories and captions."
+        title: "Celebration",
+        durationSeconds: 15,
+        creditCost: 1,
+        minimumAssets: 1,
+        maximumAssets: 12,
+        summary: "A warm, elegant memory video from selected photos."
     )
 
     static let partyRecap = MomentTemplate(
         id: .partyRecap,
-        title: "Party Recap",
-        durationSeconds: 45,
-        creditCost: 3,
-        minimumAssets: 6,
-        maximumAssets: 40,
-        summary: "A quick montage for gatherings, trips, and shared celebrations."
+        title: "Event Recap",
+        durationSeconds: 15,
+        creditCost: 1,
+        minimumAssets: 1,
+        maximumAssets: 12,
+        summary: "A faster, more rhythmic recap for shared moments."
     )
 
     static let softRoast = MomentTemplate(
         id: .softRoast,
         title: "Soft Roast",
-        durationSeconds: 30,
-        creditCost: 2,
-        minimumAssets: 3,
-        maximumAssets: 20,
+        durationSeconds: 15,
+        creditCost: 1,
+        minimumAssets: 1,
+        maximumAssets: 12,
         summary: "Light, affectionate humor for people who are in on the joke."
     )
 

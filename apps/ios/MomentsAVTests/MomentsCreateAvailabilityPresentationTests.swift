@@ -145,7 +145,7 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
                 mediaAssets: [],
                 template: .birthdayMessage
             ),
-            "Add 3 more synced media assets before drafting."
+            "Add 1 more synced media asset before drafting."
         )
         XCTAssertNil(
             MomentsCreateAvailabilityMessageFactory.story(
@@ -170,7 +170,7 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
                 template: .birthdayMessage,
                 balance: .empty
             ),
-            "Add 2 more credits before generating a preview."
+            "Add 1 more credit before generating a preview."
         )
     }
 

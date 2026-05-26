@@ -181,7 +181,7 @@ private struct MomentsCreateTextFieldRow: View {
     }
 }
 
-private struct MomentsCreateMultilineFieldRow: View {
+struct MomentsCreateMultilineFieldRow: View {
     let title: String
     let placeholder: String
     let systemImage: String

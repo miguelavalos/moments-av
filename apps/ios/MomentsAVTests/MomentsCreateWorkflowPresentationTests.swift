@@ -8,7 +8,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
             templateSummary: MomentsCreateTemplateSummaryPresentation(
                 template: .birthdayMessage,
                 canAfford: true,
-                spendPlanDescription: "Uses 2 monthly credits."
+                spendPlanDescription: "Uses 1 monthly credit."
             ),
             canCreateDraft: true,
             workspaceSummary: MomentsCreateWorkspaceSummary()
@@ -16,7 +16,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
 
         XCTAssertEqual(presentation.createDraftTitle, "Create draft")
         XCTAssertFalse(presentation.showsActiveProject)
-        XCTAssertEqual(presentation.templateSummary.creditTitle, "2 cr")
+        XCTAssertEqual(presentation.templateSummary.creditTitle, "1 cr")
         XCTAssertEqual(presentation.templateSummary.metadataTitle, "\(MomentTemplate.birthdayMessage.duration) · \(MomentTemplate.birthdayMessage.mediaRange)")
     }
 
@@ -52,7 +52,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         XCTAssertEqual(presentation.workspaceSummary.mediaCount, 2)
         XCTAssertEqual(presentation.workspaceSummary.sceneCount, 1)
         XCTAssertFalse(presentation.templateSummary.canAfford)
-        XCTAssertEqual(presentation.templateSummary.creditTitle, "3 cr")
+        XCTAssertEqual(presentation.templateSummary.creditTitle, "1 cr")
     }
 
     func testDraftSetupPresentationBuilderCreatesTemplateSummary() {
@@ -218,9 +218,9 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
 
         XCTAssertEqual(presentation.activeProjectId, "project-1")
         XCTAssertEqual(presentation.pickerTitle, "Importing media...")
-        XCTAssertEqual(presentation.remainingSlots, 19)
-        XCTAssertEqual(presentation.selectedCountTitle, "Selected 1/3-20 photos or clips")
-        XCTAssertEqual(presentation.selectionMessage, "Add 2 more synced media assets.")
+        XCTAssertEqual(presentation.remainingSlots, 11)
+        XCTAssertEqual(presentation.selectedCountTitle, "Selected 1/1-12 photos or clips")
+        XCTAssertEqual(presentation.selectionMessage, "Ready for Avi review.")
         XCTAssertEqual(presentation.syncedMediaAssets.map(\.id), ["first", "second"])
         XCTAssertTrue(presentation.canAddMedia)
         XCTAssertEqual(presentation.availabilityMessage, "Add media.")
@@ -238,7 +238,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
             )
         )
 
-        XCTAssertEqual(presentation.selectionMessage, "Add 1 more synced media asset.")
+        XCTAssertEqual(presentation.selectionMessage, "Ready for Avi review.")
     }
 
     func testStoryPresentationFormatsDraftStateAndSortsSavedScenes() {

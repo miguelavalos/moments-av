@@ -64,6 +64,8 @@ targets:
         product: AVSettingsFoundation
       - package: AppsAV
         product: AVAviFoundation
+      - package: AppsAV
+        product: AVPaywallFoundation
       - package: ConvexMobile
         product: ConvexMobile
     settings:

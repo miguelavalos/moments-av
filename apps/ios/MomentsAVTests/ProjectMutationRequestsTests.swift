@@ -13,7 +13,7 @@ final class ProjectMutationRequestsTests: XCTestCase {
         let request = DraftProjectCreationRequest.draft(form)
 
         XCTAssertEqual(request.template, "party_recap")
-        XCTAssertEqual(request.title, "Party Recap for Ava")
+        XCTAssertEqual(request.title, "Event Recap for Ava")
         XCTAssertEqual(request.tone, "cinematic")
         XCTAssertEqual(request.tempo, "upbeat")
         XCTAssertEqual(request.occasion, "Graduation")

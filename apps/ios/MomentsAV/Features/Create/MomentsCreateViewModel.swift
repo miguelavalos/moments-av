@@ -6,6 +6,10 @@ final class MomentsCreateViewModel: ObservableObject {
     @Published private(set) var isSignedIn = false
     @Published private(set) var balance = MomentsCreditBalance.empty
     @Published private(set) var templates = MomentTemplate.launchTemplates
+    @Published private(set) var creationStyles = MomentCreationStyle.launchStyles
+    @Published var newProjectStep: MomentsCreateNewProjectStep = .status
+    @Published var selectedCreationStyle = MomentCreationStyle.launchStyles[0]
+    @Published var selectedMusicPreset = MomentCreationStyle.launchStyles[0].defaultMusic
     @Published var form = MomentDraftForm(template: MomentTemplate.launchTemplates[0])
     @Published private(set) var isCreatingDraft = false
     @Published private(set) var isContinuingProject = false
@@ -67,7 +71,11 @@ final class MomentsCreateViewModel: ObservableObject {
         self.previewGenerationWorkflow = previewGenerationWorkflow
         self.finalRenderWorkflow = finalRenderWorkflow
         templates = projectCreationWorkflow.launchTemplates
+        creationStyles = MomentCreationStyle.launchStyles
+        selectedCreationStyle = MomentCreationStyle.launchStyles[0]
+        selectedMusicPreset = selectedCreationStyle.defaultMusic
         form = MomentDraftForm(template: projectCreationWorkflow.launchTemplates[0])
+        applyStyleDefaults(selectedCreationStyle)
         cancellables.removeAll()
 
         bindWorkflowState(
@@ -84,6 +92,22 @@ final class MomentsCreateViewModel: ObservableObject {
         guard !isDraftLocked else { return }
         guard let template = templates.first(where: { $0.id == id }) else { return }
         form.template = template
+    }
+
+    func selectCreationStyle(_ style: MomentCreationStyle) {
+        guard !isDraftLocked, style.isEnabled else { return }
+        selectedCreationStyle = style
+        selectedMusicPreset = style.defaultMusic
+        applyStyleDefaults(style)
+
+        if newProjectStep == .style {
+            newProjectStep = .summary
+        }
+    }
+
+    func selectMusicPreset(_ preset: MomentMusicPreset) {
+        guard selectedCreationStyle.allowedMusic.contains(preset) else { return }
+        selectedMusicPreset = preset
     }
 
     func clearSessionState() {
@@ -196,7 +220,24 @@ final class MomentsCreateViewModel: ObservableObject {
         if let firstTemplate = templates.first {
             form = MomentDraftForm(template: firstTemplate)
         }
+        selectedCreationStyle = creationStyles.first ?? MomentCreationStyle.launchStyles[0]
+        selectedMusicPreset = selectedCreationStyle.defaultMusic
+        applyStyleDefaults(selectedCreationStyle)
+        newProjectStep = .status
     }
+
+    private func applyStyleDefaults(_ style: MomentCreationStyle) {
+        form.template = style.template
+        form.occasion = style.title
+        form.tone = style.tone
+        form.tempo = style.tempo
+    }
+}
+
+enum MomentsCreateNewProjectStep: Equatable {
+    case status
+    case style
+    case summary
 }
 
 extension MomentsCreateViewModel {

@@ -66,6 +66,13 @@ final class AccountController: ObservableObject {
         }
     }
 
+    func claimPromotionCode(_ code: String) {
+        let normalizedCode = code.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard isSignedIn, !normalizedCode.isEmpty else { return }
+
+        creditBalance.promotional += 1
+    }
+
     private func startAuthTask(_ operation: @escaping () async throws -> Void) {
         Task {
             do {

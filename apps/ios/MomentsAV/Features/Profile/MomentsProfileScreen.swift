@@ -7,6 +7,7 @@ struct MomentsProfileScreen: View {
     let mode: AVAppShellChromeItem
     let openSettings: () -> Void
     let openAccount: () -> Void
+    let openCredits: () -> Void
     let startSignInFlow: () -> Void
 
     @EnvironmentObject private var accountController: AccountController
@@ -66,6 +67,9 @@ struct MomentsProfileScreen: View {
     @ViewBuilder
     private var accountContent: some View {
         accountCard
+        if accountController.isSignedIn {
+            creditsCard
+        }
         momentsProCard
         if accountController.isSignedIn {
             accountSafetyCard
@@ -171,6 +175,38 @@ struct MomentsProfileScreen: View {
             }
 
             accountActionButton
+        }
+    }
+
+    private var creditsCard: some View {
+        AVSettingsSectionCard(
+            title: "Credits",
+            subtitle: "\(MomentsCreditCopy.countTitle(accountController.creditBalance.spendable)) available"
+        ) {
+            VStack(alignment: .leading, spacing: 12) {
+                AVSettingsInfoRow(
+                    systemImage: "sparkles.rectangle.stack",
+                    title: "Monthly",
+                    detail: "\(accountController.creditBalance.proMonthly) Pro credits"
+                )
+                AVSettingsInfoRow(
+                    systemImage: "gift",
+                    title: "Promo",
+                    detail: "\(accountController.creditBalance.promotional) claimed credits"
+                )
+                AVSettingsInfoRow(
+                    systemImage: "creditcard",
+                    title: "Purchased",
+                    detail: "\(accountController.creditBalance.purchased) extra credits"
+                )
+            }
+
+            AVSettingsButton(
+                title: "Get more credits",
+                style: .primary,
+                action: openCredits
+            )
+            .accessibilityIdentifier("profile.credits.open")
         }
     }
 

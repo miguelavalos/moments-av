@@ -12,6 +12,7 @@ struct MomentsAppShellView: View {
     @EnvironmentObject private var aviViewModel: MomentsAviViewModel
     @Environment(\.avCommonAppExperience) private var appExperience
     @State private var chromeItem: AVAppShellChromeItem?
+    @State private var creditsPaywallIsPresented = false
 
     var body: some View {
         AVAppShellConfiguredScaffold(
@@ -39,6 +40,15 @@ struct MomentsAppShellView: View {
                 EmptyView()
             }
         )
+        .sheet(isPresented: $creditsPaywallIsPresented) {
+            MomentsCreditsPaywallView(
+                balance: accountController.creditBalance,
+                isSignedIn: accountController.isSignedIn,
+                startSignInFlow: startSignInFlow,
+                claimPromotionCode: accountController.claimPromotionCode,
+                dismiss: { creditsPaywallIsPresented = false }
+            )
+        }
     }
 
     private var footerAssistant: AVAppShellConfiguredAssistant {
@@ -55,6 +65,7 @@ struct MomentsAppShellView: View {
                 mode: chromeItem,
                 openSettings: { self.chromeItem = .settings },
                 openAccount: { self.chromeItem = .account },
+                openCredits: openCredits,
                 startSignInFlow: startSignInFlow
             )
         } else {
@@ -70,7 +81,10 @@ struct MomentsAppShellView: View {
                     }
                 )
             case .create:
-                MomentsCreateScreen()
+                MomentsCreateScreen(
+                    startSignInFlow: startSignInFlow,
+                    openCredits: openCredits
+                )
             case .projects:
                 MomentsProjectsScreen(
                     continueProject: { request in
@@ -88,6 +102,15 @@ struct MomentsAppShellView: View {
                 EmptyView()
             }
         }
+    }
+
+    private func openCredits() {
+        guard accountController.isSignedIn else {
+            startSignInFlow()
+            return
+        }
+
+        creditsPaywallIsPresented = true
     }
 
     private var footerSelectedTab: MomentsRootTab {
