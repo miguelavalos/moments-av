@@ -7,6 +7,7 @@ struct MomentsAppBootstrapView: View {
     @State private var selectedTab: MomentsRootTab = .home
     @State private var authOptionsArePresented = false
     @State private var authenticationWasSkipped = false
+    @State private var isShowingAccountOnboarding = true
     @State private var didApplyLaunchTab = false
     @State private var postAuthenticationSplashIsPresented = false
 
@@ -17,7 +18,15 @@ struct MomentsAppBootstrapView: View {
 
     var body: some View {
         Group {
-            if dependencies.accountController.isSignedIn || authenticationWasSkipped {
+            if shouldShowOnboarding {
+                MomentsAuthOnboardingView(
+                    authOptionsArePresented: $authOptionsArePresented,
+                    accountIsAvailable: dependencies.accountController.isAccountAvailable,
+                    onContinueWithApple: startAppleSignIn,
+                    onContinueWithGoogle: startGoogleSignIn,
+                    onSkip: skipAuthentication
+                )
+            } else {
                 MomentsAppShellView(
                     selectedTab: $selectedTab,
                     startSignInFlow: startSignInFlow
@@ -33,14 +42,6 @@ struct MomentsAppBootstrapView: View {
                             .zIndex(2)
                     }
                 }
-            } else {
-                MomentsAuthOnboardingView(
-                    authOptionsArePresented: $authOptionsArePresented,
-                    accountIsAvailable: dependencies.accountController.isAccountAvailable,
-                    onContinueWithApple: startAppleSignIn,
-                    onContinueWithGoogle: startGoogleSignIn,
-                    onSkip: skipAuthentication
-                )
             }
         }
         .environmentObject(dependencies.accountController)
@@ -64,6 +65,10 @@ struct MomentsAppBootstrapView: View {
         }
     }
 
+    private var shouldShowOnboarding: Bool {
+        !dependencies.accountController.isSignedIn && !authenticationWasSkipped && isShowingAccountOnboarding
+    }
+
     private func applyLaunchTabIfNeeded() {
         guard !didApplyLaunchTab else { return }
         didApplyLaunchTab = true
@@ -73,6 +78,7 @@ struct MomentsAppBootstrapView: View {
 
     private func skipAuthentication() {
         authOptionsArePresented = false
+        isShowingAccountOnboarding = false
         postAuthenticationSplashIsPresented = true
         authenticationWasSkipped = true
         Task {
@@ -88,6 +94,7 @@ struct MomentsAppBootstrapView: View {
     private func startSignInFlow() {
         postAuthenticationSplashIsPresented = false
         authenticationWasSkipped = false
+        isShowingAccountOnboarding = true
         authOptionsArePresented = true
     }
 
@@ -95,6 +102,7 @@ struct MomentsAppBootstrapView: View {
         try await dependencies.accountController.signInWithApple()
         await dependencies.accountController.syncFromAccountProvider()
         authenticationWasSkipped = false
+        isShowingAccountOnboarding = false
         authOptionsArePresented = false
     }
 
@@ -102,6 +110,7 @@ struct MomentsAppBootstrapView: View {
         try await dependencies.accountController.signInWithGoogle()
         await dependencies.accountController.syncFromAccountProvider()
         authenticationWasSkipped = false
+        isShowingAccountOnboarding = false
         authOptionsArePresented = false
     }
 }
