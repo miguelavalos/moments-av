@@ -7,54 +7,20 @@ struct MomentsCreateScreen: View {
     @State private var pickerItems: [PhotosPickerItem] = []
     let startSignInFlow: () -> Void
     let openCredits: () -> Void
+    let cancelCreation: () -> Void
 
     var body: some View {
-        ScrollViewReader { proxy in
-            ScrollView {
-                MomentsCreateWorkflowContent(
-                    viewModel: viewModel,
-                    pickerItems: $pickerItems,
-                    startSignInFlow: startSignInFlow,
-                    openCredits: openCredits
-                )
-                    .avShellScreenContentPadding(horizontal: 0, top: 0)
-            }
-            .onChange(of: viewModel.pendingFocus) { _, focus in
-                guard let focus else { return }
-                scrollToPendingFocus(focus, proxy: proxy)
-            }
-            .onChange(of: viewModel.activeProjectId) { _, _ in
-                guard let focus = viewModel.pendingFocus else { return }
-                scrollToPendingFocus(focus, proxy: proxy)
-            }
-            .onChange(of: viewModel.activeProject?.id) { _, _ in
-                guard let focus = viewModel.pendingFocus else { return }
-                scrollToPendingFocus(focus, proxy: proxy)
-            }
-        }
+        MomentsCreateWorkflowContent(
+            viewModel: viewModel,
+            pickerItems: $pickerItems,
+            startSignInFlow: startSignInFlow,
+            openCredits: openCredits,
+            cancelCreation: cancelCreation
+        )
         .background(MomentsTheme.shellBackground.ignoresSafeArea())
-        .avShellScreenScrollBehavior()
-    }
-
-    private func scrollToPendingFocus(_ focus: MomentsProjectContinuationFocus, proxy: ScrollViewProxy) {
-        guard canScroll(to: focus) else { return }
-
-        Task { @MainActor in
-            await Task.yield()
-            withAnimation(.snappy) {
-                proxy.scrollTo(MomentsCreateSection(focus: focus), anchor: .top)
-            }
-            viewModel.consumePendingFocus()
-        }
-    }
-
-    private func canScroll(to focus: MomentsProjectContinuationFocus) -> Bool {
-        switch focus {
-        case .review:
-            viewModel.activeProject != nil
-        case .media, .story, .preview, .finalRender:
-            viewModel.activeProjectId != nil
-        }
+        .safeAreaPadding(.horizontal, 20)
+        .safeAreaPadding(.top, 12)
+        .safeAreaPadding(.bottom, 82)
     }
 }
 

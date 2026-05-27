@@ -3,34 +3,63 @@ import SwiftUI
 
 struct MomentsHomeAccountCard: View {
     let creditBalance: MomentsCreditBalance
-    let projectSummary: MomentsProjectListSummary
-    let presentation: MomentsHomePresentation
+    let openCredits: () -> Void
 
     var body: some View {
         AVAppShellDashboardSection(
-            title: presentation.accountTitle,
-            detail: presentation.accountDetail
+            title: "Credits",
+            detail: creditDetail
         ) {
-            AVAppShellMetricStrip(metrics: accountMetrics)
+            AVAppShellMetricStrip(metrics: creditMetrics)
             MomentsHomeCreditBreakdown(balance: creditBalance)
+            AVAppShellActionRow(
+                title: creditBalance.spendable > 0 ? "Manage credits" : "Get credits",
+                detail: creditBalance.spendable > 0 ? "Review monthly, promo, and purchased credits." : "Add credits before creating your next memory film.",
+                systemImage: creditBalance.spendable > 0 ? "creditcard.fill" : "plus.circle.fill",
+                isProminent: creditBalance.spendable == 0,
+                accessibilityIdentifier: "moments.home.credits.open",
+                action: openCredits
+            )
         }
     }
 
-    private var accountMetrics: [AVAppShellMetric] {
+    private var creditMetrics: [AVAppShellMetric] {
         [
             AVAppShellMetric(
                 id: "spendable",
-                title: "Spendable",
+                title: "Available",
                 value: "\(creditBalance.spendable)",
                 systemImage: "creditcard"
-            ),
-            AVAppShellMetric(
-                id: "projects",
-                title: "Projects",
-                value: "\(projectSummary.projectCount)",
-                systemImage: "rectangle.stack"
             )
         ]
+    }
+
+    private var creditDetail: String {
+        if creditBalance.spendable == 0 {
+            return "No credits available yet."
+        }
+
+        return "Ready to spend on private memory films."
+    }
+}
+
+struct MomentsHomeSignInCard: View {
+    let startSignInFlow: () -> Void
+
+    var body: some View {
+        AVAppShellDashboardSection(
+            title: "Sign in to use Moments",
+            detail: "Projects, credits, media, previews, and final exports need an account."
+        ) {
+            AVAppShellActionRow(
+                title: "Sign in",
+                detail: "Connect your account before creating or managing Moments.",
+                systemImage: "person.crop.circle.fill",
+                isProminent: true,
+                accessibilityIdentifier: "moments.home.signin",
+                action: startSignInFlow
+            )
+        }
     }
 }
 
@@ -80,6 +109,7 @@ struct MomentsHomeProjectStatusCard: View {
 struct MomentsHomeNextActionsCard: View {
     let presentation: MomentsHomePresentation
     let continueProject: (MomentsProjectContinuationRequest) -> Void
+    let startMoment: () -> Void
     let selectTab: (MomentsRootTab) -> Void
 
     var body: some View {
@@ -95,9 +125,7 @@ struct MomentsHomeNextActionsCard: View {
                     )
                 }
 
-                homeActionRow(action: presentation.createAction) {
-                    selectTab(.create)
-                }
+                homeActionRow(action: presentation.createAction, perform: startMoment)
 
                 homeActionRow(action: presentation.reviewProjectsAction) {
                     selectTab(.projects)

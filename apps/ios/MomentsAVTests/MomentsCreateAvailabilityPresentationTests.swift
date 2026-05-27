@@ -36,6 +36,7 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
     func testWorkflowCapabilityFactoryFormatsMediaAndRefreshCapabilities() {
         let capability = MomentsCreateWorkflowCapabilityFactory.make(
             activeProjectId: "project-1",
+            hasMomentWorkspace: true,
             isImportingMedia: false,
             isMediaUploadConfigured: true,
             mediaRemainingSlots: 2,
@@ -45,7 +46,8 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
             template: .birthdayMessage,
             previewRefreshAvailability: MomentsCreateTestFixtures.makeRefreshAvailability(canRefresh: true),
             finalRenderRefreshAvailability: MomentsCreateTestFixtures.makeRefreshAvailability(canRefresh: false),
-            latestPreview: nil
+            latestPreview: nil,
+            selectedMediaCount: 0
         )
 
         XCTAssertTrue(capability.canAddMedia)
@@ -59,6 +61,7 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
     func testWorkflowCapabilityFactoryBlocksMediaWithoutSlotsOrProject() {
         let withoutSlots = MomentsCreateWorkflowCapabilityFactory.make(
             activeProjectId: "project-1",
+            hasMomentWorkspace: true,
             isImportingMedia: false,
             isMediaUploadConfigured: true,
             mediaRemainingSlots: 0,
@@ -68,10 +71,12 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
             template: .birthdayMessage,
             previewRefreshAvailability: MomentsCreateTestFixtures.makeRefreshAvailability(canRefresh: false),
             finalRenderRefreshAvailability: MomentsCreateTestFixtures.makeRefreshAvailability(canRefresh: false),
-            latestPreview: nil
+            latestPreview: nil,
+            selectedMediaCount: 0
         )
         let withoutProject = MomentsCreateWorkflowCapabilityFactory.make(
             activeProjectId: nil,
+            hasMomentWorkspace: false,
             isImportingMedia: false,
             isMediaUploadConfigured: true,
             mediaRemainingSlots: 2,
@@ -81,7 +86,8 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
             template: .birthdayMessage,
             previewRefreshAvailability: MomentsCreateTestFixtures.makeRefreshAvailability(canRefresh: false),
             finalRenderRefreshAvailability: MomentsCreateTestFixtures.makeRefreshAvailability(canRefresh: false),
-            latestPreview: nil
+            latestPreview: nil,
+            selectedMediaCount: 0
         )
 
         XCTAssertFalse(withoutSlots.canAddMedia)
@@ -90,8 +96,8 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
 
     func testAvailabilityCopyUsesSingularAndPluralCreditMessages() {
         XCTAssertEqual(MomentsCreateAvailabilityCopy.draftSignInRequired, "Sign in before starting a project.")
-        XCTAssertEqual(MomentsCreateAvailabilityCopy.mediaTemplateFull, "Remove media before adding more to this template.")
-        XCTAssertEqual(MomentsCreateAvailabilityCopy.storyMissingMedia, "Wait for synced media before drafting.")
+        XCTAssertEqual(MomentsCreateAvailabilityCopy.mediaTemplateFull, "Avi has enough media for this video.")
+        XCTAssertEqual(MomentsCreateAvailabilityCopy.storyMissingMedia, "Add photos or clips before preview.")
         XCTAssertEqual(
             MomentsCreateAvailabilityCopy.finalRenderMissingWorkspace,
             "Wait for the project workspace to sync before rendering the final export."
@@ -109,7 +115,7 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
     func testAvailabilityMessageFactoryFormatsMediaStates() {
         XCTAssertEqual(
             MomentsCreateAvailabilityMessageFactory.media(
-                activeProjectId: nil,
+                hasMomentWorkspace: false,
                 isImportingMedia: false,
                 isMediaUploadConfigured: true,
                 mediaRemainingSlots: 2
@@ -118,7 +124,7 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
         )
         XCTAssertNil(
             MomentsCreateAvailabilityMessageFactory.media(
-                activeProjectId: "project-1",
+                hasMomentWorkspace: true,
                 isImportingMedia: true,
                 isMediaUploadConfigured: false,
                 mediaRemainingSlots: 0
@@ -126,7 +132,7 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
         )
         XCTAssertEqual(
             MomentsCreateAvailabilityMessageFactory.media(
-                activeProjectId: "project-1",
+                hasMomentWorkspace: true,
                 isImportingMedia: false,
                 isMediaUploadConfigured: true,
                 mediaRemainingSlots: 0
@@ -138,22 +144,24 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
     func testAvailabilityMessageFactoryFormatsStoryStates() {
         XCTAssertEqual(
             MomentsCreateAvailabilityMessageFactory.story(
-                activeProjectId: "project-1",
+                hasMomentWorkspace: true,
                 isStoryDrafting: false,
                 isStoryDraftAvailable: true,
                 isStoryDraftConfigured: true,
                 mediaAssets: [],
+                selectedMediaCount: 0,
                 template: .birthdayMessage
             ),
-            "Add 1 more synced media asset before drafting."
+            "Add 1 more photo or clip before generating a story."
         )
         XCTAssertNil(
             MomentsCreateAvailabilityMessageFactory.story(
-                activeProjectId: "project-1",
+                hasMomentWorkspace: true,
                 isStoryDrafting: true,
                 isStoryDraftAvailable: true,
                 isStoryDraftConfigured: false,
                 mediaAssets: [],
+                selectedMediaCount: 0,
                 template: .birthdayMessage
             )
         )
@@ -186,7 +194,7 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
                 balance: MomentsCreditBalance(proMonthly: 4, promotional: 0, purchased: 0),
                 latestPreview: nil
             ),
-            "Generate a preview before rendering the final export."
+            "Prepare the story before creating the final video."
         )
     }
 

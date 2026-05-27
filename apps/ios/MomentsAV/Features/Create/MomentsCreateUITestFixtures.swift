@@ -97,6 +97,7 @@ enum MomentsCreateUITestFixtures {
             byteSize: kind == "video" ? 8_800_000 : 2_400_000,
             sha256: "ui-test-\(id)",
             data: Data([1, 2, 3, 4]),
+            capturedAt: nil,
             sortOrder: Int(sortOrder),
             selected: true
         )

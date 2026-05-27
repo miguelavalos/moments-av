@@ -14,7 +14,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
             workspaceSummary: MomentsCreateWorkspaceSummary()
         )
 
-        XCTAssertEqual(presentation.createDraftTitle, "Continue to media")
+        XCTAssertEqual(presentation.createDraftTitle, "Use this theme")
         XCTAssertFalse(presentation.showsActiveProject)
         XCTAssertEqual(presentation.templateSummary.creditTitle, "1 cr")
         XCTAssertEqual(presentation.templateSummary.metadataTitle, "\(MomentTemplate.birthdayMessage.duration) · \(MomentTemplate.birthdayMessage.mediaRange)")
@@ -127,6 +127,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
 
         let presentation = MomentsCreateWorkflowPresentation(
             activeProjectId: "project-1",
+            hasMomentWorkspace: true,
             template: .birthdayMessage,
             mediaSummary: mediaSummary,
             storySummary: storySummary,
@@ -170,6 +171,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
     func testWorkflowPresentationBuilderAppliesAvailabilityState() {
         let presentation = MomentsCreateWorkflowPresentation.make(
             activeProjectId: "project-1",
+            hasMomentWorkspace: true,
             template: .birthdayMessage,
             mediaSummary: MomentsCreateMediaSummary(),
             storySummary: MomentsCreateStorySummary(),
@@ -217,10 +219,10 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         )
 
         XCTAssertEqual(presentation.activeProjectId, "project-1")
-        XCTAssertEqual(presentation.pickerTitle, "Importing media...")
-        XCTAssertEqual(presentation.remainingSlots, 11)
-        XCTAssertEqual(presentation.selectedCountTitle, "Selected 1/1-12 photos or clips")
-        XCTAssertEqual(presentation.selectionMessage, "Ready for Avi review.")
+        XCTAssertEqual(presentation.pickerTitle, "Adding media...")
+        XCTAssertEqual(presentation.remainingSlots, 59)
+        XCTAssertEqual(presentation.selectedCountTitle, "1 selected")
+        XCTAssertEqual(presentation.selectionMessage, "")
         XCTAssertEqual(presentation.syncedMediaAssets.map(\.id), ["first", "second"])
         XCTAssertTrue(presentation.canAddMedia)
         XCTAssertEqual(presentation.availabilityMessage, "Add media.")
@@ -238,7 +240,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
             )
         )
 
-        XCTAssertEqual(presentation.selectionMessage, "Ready for Avi review.")
+        XCTAssertEqual(presentation.selectionMessage, "")
     }
 
     func testStoryPresentationFormatsDraftStateAndSortsSavedScenes() {
@@ -256,8 +258,8 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
             availabilityMessage: "Ready."
         )
 
-        XCTAssertEqual(presentation.draftButtonTitle, "Drafting story...")
-        XCTAssertEqual(presentation.emptyMessage, "Avi can draft the first story from the synced media.")
+        XCTAssertEqual(presentation.draftButtonTitle, "Preparing story...")
+        XCTAssertEqual(presentation.emptyMessage, "Avi can prepare a story plan from your photos and clips.")
         XCTAssertEqual(presentation.savedScenes.map(\.id), ["scene-1", "scene-2"])
         XCTAssertTrue(presentation.canDraftStory)
         XCTAssertEqual(presentation.availabilityMessage, "Ready.")
@@ -301,7 +303,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         XCTAssertNil(presentation.previewArtifactMessage)
         XCTAssertEqual(presentation.refreshButtonTitle, "Refresh preview status")
         XCTAssertEqual(presentation.generateButtonTitle, "Generate preview")
-        XCTAssertEqual(presentation.emptyMessage, "Generate a story draft before creating a preview.")
+        XCTAssertEqual(presentation.emptyMessage, "Generate a story before creating a preview.")
         XCTAssertTrue(presentation.showsEmptyState)
     }
 
@@ -322,9 +324,9 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         )
 
         XCTAssertEqual(presentation.creditTitle, "2 credits")
-        XCTAssertEqual(presentation.refreshButtonTitle, "Refreshing final status...")
-        XCTAssertEqual(presentation.generateButtonTitle, "Rendering final...")
-        XCTAssertEqual(presentation.emptyMessage, "Preview is ready. Render the final export when approved.")
+        XCTAssertEqual(presentation.refreshButtonTitle, "Refreshing final video...")
+        XCTAssertEqual(presentation.generateButtonTitle, "Creating final video...")
+        XCTAssertEqual(presentation.emptyMessage, "The story plan is ready. Create the final video when you are ready.")
         XCTAssertFalse(presentation.showsEmptyState)
         XCTAssertTrue(presentation.canGenerateFinalRender)
         XCTAssertTrue(presentation.canRefreshFinalRenderStatus)
@@ -339,9 +341,9 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         )
 
         XCTAssertEqual(presentation.creditTitle, "3 credits")
-        XCTAssertEqual(presentation.refreshButtonTitle, "Refresh final status")
-        XCTAssertEqual(presentation.generateButtonTitle, "Render final")
-        XCTAssertEqual(presentation.emptyMessage, "Generate a preview before rendering the final export.")
+        XCTAssertEqual(presentation.refreshButtonTitle, "Refresh final video")
+        XCTAssertEqual(presentation.generateButtonTitle, "Create final video")
+        XCTAssertEqual(presentation.emptyMessage, "Prepare the story before creating the final video.")
         XCTAssertTrue(presentation.showsEmptyState)
     }
 
@@ -362,9 +364,9 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
             hasFinalExport: false
         )
 
-        XCTAssertEqual(summary.mediaDetail, "2 synced")
+        XCTAssertEqual(summary.mediaDetail, "2 added")
         XCTAssertEqual(summary.storyDetail, "1 scene")
-        XCTAssertEqual(summary.previewDetail, "1 render job")
+        XCTAssertEqual(summary.previewDetail, "Not made yet")
     }
 
 }

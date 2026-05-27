@@ -1,9 +1,12 @@
 import AVAviFoundation
+import AVAppShellFoundation
 import AVSettingsFoundation
 import SwiftUI
 
 struct MomentsAviScreen: View {
     let selectTab: (MomentsRootTab) -> Void
+    let startMoment: () -> Void
+    let startSignInFlow: () -> Void
     @Environment(\.avCommonAppExperience) private var appExperience
     @EnvironmentObject private var viewModel: MomentsAviViewModel
 
@@ -46,6 +49,9 @@ struct MomentsAviScreen: View {
                 presentation: presentation,
                 projectSummary: viewModel.projectSummary,
                 creditBalance: viewModel.creditBalance,
+                isSignedIn: viewModel.isSignedIn,
+                startSignInFlow: startSignInFlow,
+                startMoment: startMoment,
                 selectTab: selectTab
             )
         }
@@ -56,12 +62,17 @@ private struct MomentsAviGuidanceContent: View {
     let presentation: MomentsAviPresentation
     let projectSummary: MomentsProjectListSummary
     let creditBalance: MomentsCreditBalance
+    let isSignedIn: Bool
+    let startSignInFlow: () -> Void
+    let startMoment: () -> Void
     let selectTab: (MomentsRootTab) -> Void
 
     var body: some View {
-        MomentsAviPreparationCard {
-            selectTab(.create)
+        if !isSignedIn {
+            MomentsAviSignInCard(startSignInFlow: startSignInFlow)
         }
+
+        MomentsAviPreparationCard(openCreate: startMoment)
 
         MomentsAviCurrentFocusCard(
             workflowFocusTitle: presentation.workflowFocusTitle,
@@ -77,6 +88,30 @@ private struct MomentsAviGuidanceContent: View {
 
         MomentsAviProjectGuidanceCard {
             selectTab(.projects)
+        }
+    }
+}
+
+private struct MomentsAviSignInCard: View {
+    let startSignInFlow: () -> Void
+
+    var body: some View {
+        AVAppShellCard {
+            VStack(alignment: .leading, spacing: 12) {
+                AVAppShellContentHeader(
+                    title: "Sign in to use Avi",
+                    detail: "Avi needs your account to see credits, projects, drafts, previews, and final exports."
+                )
+
+                AVAppShellActionRow(
+                    title: "Sign in",
+                    detail: "Connect your account and unlock project guidance.",
+                    systemImage: "person.crop.circle.fill",
+                    isProminent: true,
+                    accessibilityIdentifier: "moments.avi.signin",
+                    action: startSignInFlow
+                )
+            }
         }
     }
 }

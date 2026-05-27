@@ -24,7 +24,7 @@ Sources checked on 2026-05-20:
 - Avoid duplicate words across app name, subtitle, and keywords.
 - Use user-search language, not internal implementation terms.
 - Do not mention unshipped roadmap features, unlimited generation, open-ended
-  Avi chat, autonomous editing, or unsupported subscriptions.
+  Avi chat, autonomous editing, or unsupported access claims.
 - Keep privacy, credits, account deletion, and provider availability consistent
   with the app, screenshots, App Privacy inventory, and review notes.
 
@@ -101,7 +101,7 @@ What you can do:
 
 Before using this description:
 
-- [ ] Confirm whether paid credits, subscriptions, or credit packs are live.
+- [ ] Confirm the credit/access surface visible in the submitted build.
 - [ ] Confirm final provider availability during App Review.
 - [ ] Confirm public Privacy Policy and App Privacy answers support the privacy
   language.
@@ -124,7 +124,7 @@ Avoid captions that mention:
 - open-ended chat;
 - instant final delivery;
 - unconfirmed retention or deletion timing;
-- subscriptions, paid plans, or offers not live in the submitted build.
+- access modes, plans, or offers not live in the submitted build.
 
 ## Localization TODO
 

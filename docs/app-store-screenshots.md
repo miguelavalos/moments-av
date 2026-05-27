@@ -91,8 +91,8 @@ Use short captions that describe shipped workflows:
 Avoid:
 
 - Claims about unlimited generation.
-- Claims about subscriptions or paid credit packs unless live in the submitted
-  build and App Store Connect.
+- Claims about access modes, plans, or offers unless live in the submitted build
+  and approved in App Store Connect.
 - Competitor names or third-party brand names.
 - Claims that all media is deleted instantly unless the production retention
   policy confirms it.

@@ -36,15 +36,15 @@ final class MomentsMediaRulesTests: XCTestCase {
     func testRemainingSlotsNeverReturnsNegativeCount() {
         XCTAssertEqual(
             MomentsMediaRules.remainingSlots(template: .birthdayMessage, selectedCount: 11),
-            1
+            49
         )
         XCTAssertEqual(
             MomentsMediaRules.remainingSlots(template: .birthdayMessage, selectedCount: 12),
-            0
+            48
         )
         XCTAssertEqual(
             MomentsMediaRules.remainingSlots(template: .birthdayMessage, selectedCount: 13),
-            0
+            47
         )
     }
 
@@ -58,6 +58,7 @@ final class MomentsMediaRulesTests: XCTestCase {
             byteSize: 4,
             sha256: "abcd",
             data: Data([1, 2, 3, 4]),
+            capturedAt: nil,
             sortOrder: 0,
             selected: selected
         )

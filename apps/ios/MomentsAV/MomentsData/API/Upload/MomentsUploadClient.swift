@@ -83,6 +83,7 @@ enum MomentsUploadError: LocalizedError {
     case prepareFailed
     case signedUploadUnavailable
     case uploadFailed
+    case photoLibraryAccessDenied
 
     var errorDescription: String? {
         switch self {
@@ -91,6 +92,7 @@ enum MomentsUploadError: LocalizedError {
         case .prepareFailed: "Upload preparation failed."
         case .signedUploadUnavailable: "Signed upload storage is not enabled for this build."
         case .uploadFailed: "Media upload failed."
+        case .photoLibraryAccessDenied: "Allow Photos access to import recent photos."
         }
     }
 }

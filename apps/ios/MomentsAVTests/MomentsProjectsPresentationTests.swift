@@ -13,9 +13,9 @@ final class MomentsProjectsPresentationTests: XCTestCase {
             presentation.availability,
             .signedOut(
                 MomentsProjectsUnavailablePresentation(
-                    systemImage: "person.crop.circle.badge.exclamationmark",
-                    title: "Sign in required",
-                    message: "Project history loads after your account is connected."
+                    systemImage: "person.crop.circle.fill",
+                    title: "Sign in to make Moments",
+                    message: "Your drafts, previews, and final videos will appear here once your account is connected."
                 )
             )
         )
@@ -34,7 +34,7 @@ final class MomentsProjectsPresentationTests: XCTestCase {
                 MomentsProjectsUnavailablePresentation(
                     systemImage: "rectangle.stack.badge.plus",
                     title: "No projects yet",
-                    message: "Create a moment first, then drafts, previews, and final exports will appear here."
+                    message: "Local creations appear in Create. Projects will appear here after the first preview starts."
                 )
             )
         )

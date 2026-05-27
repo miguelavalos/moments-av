@@ -35,6 +35,8 @@
 	<string>$(MOMENTSAV_TERMS_URL)</string>
 	<key>ACCOUNTAV_DELETE_ACCOUNT_URL</key>
 	<string>$(ACCOUNTAV_DELETE_ACCOUNT_URL)</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Moments AV can import recent photos when you choose to build a memory video from your library.</string>
   <key>CFBundleInfoDictionaryVersion</key>
   <string>6.0</string>
   <key>CFBundleName</key>

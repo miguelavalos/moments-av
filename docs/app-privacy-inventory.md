@@ -44,13 +44,13 @@ the public Privacy Policy.
   reservation IDs.
 - Linked to user: yes.
 - Used for tracking: no.
-- Purpose: enforce preview/final-render eligibility and account billing rules.
+- Purpose: enforce preview/final-render eligibility and account access rules.
 - User-visible control: Account and creation flow show credit state.
 - Sign-out behavior: hidden from the signed-out app.
-- Account deletion behavior: TODO confirm Account AV credit/billing retention.
+- Account deletion behavior: TODO confirm Account AV credit/access retention.
 - Retention: TODO confirm production backend retention.
 - App Privacy category: Purchases or Other Data, depending on final App Store
-  Connect interpretation and whether paid credit purchase is live.
+  Connect interpretation and the exact submitted build.
 - Notes: Metadata and screenshots must not imply unlimited generation.
 
 ### Selected User Media
@@ -205,8 +205,7 @@ These are draft technical inputs only:
 - Data not collected: precise location, contacts, health, calendar, microphone,
   camera capture, advertising identifiers, browsing history, financial
   information, unless a future submitted build adds them.
-- Purchases: TODO, depends on whether first submission includes paid credits,
-  subscriptions, or only credit display.
+- Purchases: TODO, depends on the exact submitted build.
 - Contact information: TODO, depends on Account AV auth method and support flow.
 - User content: selected photos/clips, draft text, generated previews/exports.
 - Identifiers: Account AV/Clerk user/session identifiers.
@@ -220,7 +219,7 @@ Before entering App Store Connect answers:
 1. Inspect the exact archived build, not only `main`.
 2. Confirm Account AV production auth methods and deletion behavior.
 3. Confirm backend storage, object storage, Convex, and log retention.
-4. Confirm whether paid credits/subscriptions are live in the submitted build.
+4. Confirm the credit/access surface visible in the submitted build.
 5. Confirm third-party SDK privacy manifests and App Store processing warnings.
 6. Confirm the public Privacy Policy matches this inventory.
 7. Confirm screenshots and review notes do not expose private user data or

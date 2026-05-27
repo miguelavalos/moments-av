@@ -1,4 +1,5 @@
 import AVAppShellFoundation
+import AVBrandFoundation
 import SwiftUI
 
 struct MomentsCreateIntroCard: View {
@@ -72,6 +73,48 @@ struct MomentsCreateCreditsCard: View {
                 systemImage: "creditcard"
             )
         }
+    }
+}
+
+struct MomentsCurrentCreationCard: View {
+    let selectedCount: Int
+    let continueCreation: () -> Void
+
+    var body: some View {
+        Button(action: continueCreation) {
+            AVAppShellCard {
+                HStack(spacing: 12) {
+                    Image(systemName: "film.stack")
+                        .font(.system(size: 18, weight: .bold))
+                        .foregroundStyle(AVBrandColor.accent)
+                        .frame(width: 38, height: 38)
+                        .background(AVBrandColor.accent.opacity(0.10), in: Circle())
+
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text("Continue current Moment")
+                            .font(.system(size: 14, weight: .black))
+                            .foregroundStyle(AVBrandColor.textPrimary)
+                        Text(detail)
+                            .font(.caption)
+                            .foregroundStyle(AVBrandColor.textSecondary)
+                            .lineLimit(1)
+                    }
+
+                    Spacer(minLength: 0)
+
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 12, weight: .bold))
+                        .foregroundStyle(AVBrandColor.textSecondary)
+                }
+            }
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var detail: String {
+        selectedCount == 0
+            ? "Local creation. Add media before preview."
+            : "Local creation · \(selectedCount) \(selectedCount == 1 ? "item" : "items") selected."
     }
 }
 

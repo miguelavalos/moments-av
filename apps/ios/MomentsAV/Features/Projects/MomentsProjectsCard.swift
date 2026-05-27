@@ -6,6 +6,7 @@ struct MomentsProjectsCard: View {
     @State private var selectedMode: MomentsHubMode = .draft
 
     let presentation: MomentsProjectsPresentation
+    let balance: MomentsCreditBalance
     let projectSummary: MomentsProjectListSummary
     let selectedProjectId: String?
     let isLoadingProjectWorkspace: Bool
@@ -15,24 +16,30 @@ struct MomentsProjectsCard: View {
     let selectProject: (MomentDraftProject) -> Void
     let continueProject: (MomentsProjectContinuationRequest) -> Void
     let startProject: () -> Void
+    let startSignInFlow: () -> Void
+    let openCredits: () -> Void
     let requestDeleteProject: (MomentDraftProject) -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
             MomentsHubAviBlock(projectSummary: projectSummary)
-            MomentsHubModePicker(selectedMode: $selectedMode)
 
             switch presentation.availability {
             case let .signedOut(unavailable):
-                AVAppShellCard {
-                    MomentsProjectsUnavailableState(presentation: unavailable)
-                }
+                MomentsHubSignedOutState(
+                    unavailable: unavailable,
+                    startSignInFlow: startSignInFlow
+                )
             case let .empty(unavailable):
+                MomentsHubCreditStatus(balance: balance, openCredits: openCredits)
+                MomentsHubModePicker(selectedMode: $selectedMode)
                 MomentsHubEmptyContent(
                     selectedMode: selectedMode,
                     unavailable: unavailable
                 )
             case .available:
+                MomentsHubCreditStatus(balance: balance, openCredits: openCredits)
+                MomentsHubModePicker(selectedMode: $selectedMode)
                 switch selectedMode {
                 case .projects:
                     MomentsHubFinishedBlock(
@@ -49,6 +56,58 @@ struct MomentsProjectsCard: View {
                 MomentsProjectsStatusMessage(message: statusMessage)
             }
         }
+    }
+}
+
+private struct MomentsHubCreditStatus: View {
+    let balance: MomentsCreditBalance
+    let openCredits: () -> Void
+
+    var body: some View {
+        AVAppShellCard {
+            HStack(alignment: .center, spacing: 12) {
+                Image(systemName: balance.spendable > 0 ? "creditcard.fill" : "exclamationmark.circle.fill")
+                    .font(.system(size: 18, weight: .bold))
+                    .foregroundStyle(balance.spendable > 0 ? AVBrandColor.accent : AVBrandColor.textSecondary)
+                    .frame(width: 28, height: 28)
+
+                VStack(alignment: .leading, spacing: 3) {
+                    Text("\(MomentsCreditCopy.countTitle(balance.spendable)) available")
+                        .font(.system(size: 15, weight: .black))
+                        .foregroundStyle(AVBrandColor.textPrimary)
+
+                    Text("Monthly \(balance.proMonthly) · Promo \(balance.promotional) · Purchased \(balance.purchased)")
+                        .font(AVBrandTypography.captionStrong)
+                        .foregroundStyle(AVBrandColor.textSecondary)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.82)
+                }
+
+                Spacer(minLength: 8)
+
+                Button(action: openCredits) {
+                    Label(balance.spendable > 0 ? "Manage" : "Get", systemImage: "plus.circle.fill")
+                        .font(.system(size: 13, weight: .black))
+                }
+                .buttonStyle(.bordered)
+            }
+        }
+    }
+}
+
+private struct MomentsHubSignedOutState: View {
+    let unavailable: MomentsProjectsUnavailablePresentation
+    let startSignInFlow: () -> Void
+
+    var body: some View {
+        MomentsHubEmptyState(
+            systemImage: unavailable.systemImage,
+            title: unavailable.title,
+            message: unavailable.message,
+            actionTitle: "Sign in",
+            actionSystemImage: "person.crop.circle.fill",
+            action: startSignInFlow
+        )
     }
 }
 

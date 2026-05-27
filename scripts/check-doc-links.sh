@@ -36,6 +36,10 @@ check_target() {
 }
 
 while IFS= read -r source_file; do
+  if [ ! -e "$source_file" ]; then
+    continue
+  fi
+
   while IFS= read -r target; do
     check_target "$source_file" "$target"
   done < <(

@@ -20,10 +20,10 @@ platform, OS version, and reproduction steps when available.
 
 Do not use public issues for vulnerabilities. Follow [`SECURITY.md`](SECURITY.md).
 
-## Account And Purchases
+## Account Support
 
-For public repo issues, do not include purchase receipts, account identifiers,
-access tokens, screenshots containing account data, or personal contact details.
+For public repo issues, do not include receipts, account identifiers, access
+tokens, screenshots containing account data, or personal contact details.
 
 Use the in-app Account tab or the public support URL for account-specific
 support. Account deletion is handled through Account AV:

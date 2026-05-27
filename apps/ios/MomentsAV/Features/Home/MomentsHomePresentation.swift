@@ -33,7 +33,7 @@ struct MomentsHomePresentation {
             projectStatusDetail: projectStatusDetail(projectSummary: projectSummary),
             createAction: MomentsHomeAction(
                 title: "Create a moment",
-                detail: "Pick the occasion, add media, draft the story, then render.",
+                detail: "Choose media and let Avi prepare the first preview.",
                 systemImage: "plus.app",
                 isProminent: latestInProgressProject == nil,
                 isDisabled: !isSignedIn
@@ -42,7 +42,7 @@ struct MomentsHomePresentation {
                 title: "Review projects",
                 detail: projectSummary.hasProjects
                     ? "Open \(projectSummary.projectCount) synced \(projectLabel(projectSummary.projectCount)) with preview and final status."
-                    : "Project workspace details will appear after the first synced draft.",
+                    : "Synced projects appear after the first preview starts.",
                 systemImage: "rectangle.stack",
                 isDisabled: !isSignedIn
             ),

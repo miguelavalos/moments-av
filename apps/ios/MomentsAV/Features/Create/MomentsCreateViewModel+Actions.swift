@@ -64,8 +64,28 @@ extension MomentsCreateViewModel {
         }
     }
 
+    func importLatestPhotos() {
+        guard canAddMedia, let mediaUploadWorkflow else { return }
+        let template = form.template
+
+        runOperation {
+            await mediaUploadWorkflow.importLatestPhotos(
+                template: template,
+                projectId: self.activeProjectId
+            )
+        }
+    }
+
     func removeMedia(_ media: MomentsSelectedMedia) {
         mediaUploadWorkflow?.remove(media)
+    }
+
+    func moveMedia(_ media: MomentsSelectedMedia, before target: MomentsSelectedMedia) {
+        mediaUploadWorkflow?.move(media, before: target)
+    }
+
+    func reorderMedia(_ media: [MomentsSelectedMedia]) {
+        mediaUploadWorkflow?.reorder(media)
     }
 
     func autoPickStrongMoments() {
@@ -107,6 +127,45 @@ extension MomentsCreateViewModel {
             await previewGenerationWorkflow.generatePreview(
                 projectId: context.projectId,
                 template: context.template
+            )
+        }
+    }
+
+    func preparePreview() {
+        if canGeneratePreview {
+            generatePreview()
+            return
+        }
+
+        guard canDraftStory, let storyDraftWorkflow else { return }
+        let form = form
+        let selectedMedia = selectedMedia
+
+        runOperation {
+            let projectId: String?
+            if let activeProjectId = self.activeProjectId {
+                projectId = activeProjectId
+            } else if let projectCreationWorkflow = self.projectCreationWorkflow {
+                projectId = await projectCreationWorkflow.createDraft(form: form)
+                if projectId != nil {
+                    self.isLocalMomentStarted = false
+                }
+            } else {
+                projectId = nil
+            }
+
+            guard let projectId else { return }
+
+            await storyDraftWorkflow.generateDraft(
+                projectId: projectId,
+                form: form,
+                selectedMedia: selectedMedia
+            )
+
+            guard let previewGenerationWorkflow = self.previewGenerationWorkflow else { return }
+            await previewGenerationWorkflow.generatePreview(
+                projectId: projectId,
+                template: form.template
             )
         }
     }

@@ -6,9 +6,9 @@ struct MediaUploadPersistenceResult: Equatable {
 
     var statusMessage: String {
         if storageBlocked {
-            return "Saved \(savedCount) media records. Signed storage upload is not enabled for this build."
+            return "\(savedCount) item\(savedCount == 1 ? "" : "s") added to this Moment."
         }
-        return "Saved \(savedCount) media records."
+        return "\(savedCount) item\(savedCount == 1 ? "" : "s") added to this Moment."
     }
 }
 

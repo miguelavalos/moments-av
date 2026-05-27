@@ -34,7 +34,7 @@ final class MomentsHomePresentationTests: XCTestCase {
         XCTAssertFalse(presentation.createAction.isDisabled)
         XCTAssertEqual(
             presentation.reviewProjectsAction.detail,
-            "Project workspace details will appear after the first synced draft."
+            "Synced projects appear after the first preview starts."
         )
     }
 

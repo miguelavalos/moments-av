@@ -25,6 +25,14 @@ struct MomentsCreateWorkflowPresentation: Equatable {
         hasMomentWorkspace
     }
 
+    var showsMediaFirstWorkspace: Bool {
+        hasMomentWorkspace
+            || mediaSummary.selectedCount > 0
+            || !mediaSummary.syncedMediaAssets.isEmpty
+            || previewSummary.latestPreview != nil
+            || finalRenderSummary.finalExport != nil
+    }
+
     var currentStage: MomentsCreateCurrentStage {
         if finalRenderSummary.finalExport != nil {
             return .finalVideo

@@ -15,6 +15,8 @@ struct MomentsAppShellView: View {
     @State private var chromeItem: AVAppShellChromeItem?
     @State private var creditsPaywallIsPresented = false
     @State private var newMomentPickerItems: [PhotosPickerItem] = []
+    @State private var navigationPath = NavigationPath()
+    @State private var navigationStackResetID = UUID()
 
     var body: some View {
         AVAppShellConfiguredScaffold(
@@ -22,21 +24,26 @@ struct MomentsAppShellView: View {
             tabs: MomentsRootTab.footerTabs.map(\.shellTab),
             assistantID: .avi,
             assistant: footerAssistant,
-            hasAssistantActiveContext: selectedTab != .avi && aviViewModel.projectSummary.inProgressCount > 0,
+            hasAssistantActiveContext: selectedTab != .avi && hasAviActiveContext,
             footerConfiguration: appExperience.footerConfiguration,
             onSelectTab: { tab in
                 chromeItem = nil
-                selectedTab = tab
+                selectRootTab(tab)
             },
             onSelectAssistant: {
                 chromeItem = nil
-                selectedTab = .avi
+                if createViewModel.hasMomentWorkspace {
+                    selectRootTab(.create)
+                } else {
+                    selectRootTab(.avi)
+                }
             },
             content: {
-                NavigationStack {
+                NavigationStack(path: $navigationPath) {
                     screen(for: selectedTab)
                 }
-                .safeAreaPadding(.bottom, 96)
+                .id(navigationStackResetID)
+                .safeAreaPadding(.bottom, selectedTab == .create ? 132 : 96)
             },
             footerPlayer: {
                 EmptyView()
@@ -44,11 +51,9 @@ struct MomentsAppShellView: View {
         )
         .overlay(alignment: .bottomTrailing) {
             if showsNewMomentFloatingAction {
-                PhotosPicker(
-                    selection: $newMomentPickerItems,
-                    maxSelectionCount: createViewModel.form.template.maximumAssets,
-                    matching: .any(of: [.images, .videos])
-                ) {
+                Button {
+                    startOrContinueMoment()
+                } label: {
                     Image(systemName: "plus")
                         .font(.system(size: 22, weight: .black))
                         .foregroundStyle(AVBrandColor.textInverse)
@@ -63,13 +68,6 @@ struct MomentsAppShellView: View {
                 .accessibilityLabel("New Moment")
                 .padding(.trailing, 28)
                 .padding(.bottom, 104)
-                .onChange(of: newMomentPickerItems) { _, newItems in
-                    guard !newItems.isEmpty else { return }
-                    createViewModel.beginNewProject(openMediaPicker: false)
-                    createViewModel.importPickerItems(newItems)
-                    newMomentPickerItems = []
-                    selectedTab = .create
-                }
             }
         }
         .sheet(isPresented: $creditsPaywallIsPresented) {
@@ -86,7 +84,8 @@ struct MomentsAppShellView: View {
     private var footerAssistant: AVAppShellConfiguredAssistant {
         AVAppShellConfiguredAssistant(
             experience: appExperience,
-            accessibilityIdentifier: "moments.tab.avi"
+            accessibilityIdentifier: "moments.tab.avi",
+            activeContextSystemImage: "video.fill"
         )
     }
 
@@ -106,30 +105,40 @@ struct MomentsAppShellView: View {
                 MomentsHomeScreen(
                     openSettings: { chromeItem = .settings },
                     openAccount: { chromeItem = .account },
-                    selectTab: { selectedTab = $0 },
+                    startSignInFlow: startSignInFlow,
+                    openCredits: openCredits,
+                    selectTab: selectRootTab,
+                    startMoment: startOrContinueMoment,
                     continueProject: { request in
                         createViewModel.continueProject(request.project, focus: request.focus)
-                        selectedTab = .create
+                        selectRootTab(.create)
                     }
                 )
             case .create:
                 MomentsCreateScreen(
                     startSignInFlow: startSignInFlow,
-                    openCredits: openCredits
+                    openCredits: openCredits,
+                    cancelCreation: cancelCreation
                 )
             case .projects:
                 MomentsProjectsScreen(
+                    balance: accountController.creditBalance,
                     continueProject: { request in
                         createViewModel.continueProject(request.project, focus: request.focus)
                         selectedTab = .create
                     },
                     startProject: {
-                        createViewModel.beginNewProject()
-                        selectedTab = .create
-                    }
+                        startOrContinueMoment()
+                    },
+                    startSignInFlow: startSignInFlow,
+                    openCredits: openCredits
                 )
             case .avi:
-                MomentsAviScreen { selectedTab = $0 }
+                MomentsAviScreen(
+                    selectTab: selectRootTab,
+                    startMoment: startOrContinueMoment,
+                    startSignInFlow: startSignInFlow
+                )
                     .environmentObject(aviViewModel)
             case .profile:
                 EmptyView()
@@ -147,10 +156,37 @@ struct MomentsAppShellView: View {
     }
 
     private var footerSelectedTab: MomentsRootTab {
-        chromeItem == nil ? selectedTab : .profile
+        guard chromeItem == nil else { return .profile }
+        return selectedTab == .create ? .projects : selectedTab
     }
 
     private var showsNewMomentFloatingAction: Bool {
-        chromeItem == nil && selectedTab == .projects
+        chromeItem == nil
+            && selectedTab == .projects
+            && createViewModel.canBeginNewProject
+            && !createViewModel.hasMomentWorkspace
+    }
+
+    private var hasAviActiveContext: Bool {
+        createViewModel.hasMomentWorkspace
+            || aviViewModel.projectSummary.inProgressCount > 0
+    }
+
+    private func cancelCreation() {
+        createViewModel.clearSessionState()
+        selectRootTab(.projects)
+    }
+
+    private func startOrContinueMoment() {
+        if !createViewModel.hasMomentWorkspace {
+            createViewModel.beginNewProject(openMediaPicker: true)
+        }
+        selectRootTab(.create)
+    }
+
+    private func selectRootTab(_ tab: MomentsRootTab) {
+        navigationPath = NavigationPath()
+        navigationStackResetID = UUID()
+        selectedTab = tab
     }
 }

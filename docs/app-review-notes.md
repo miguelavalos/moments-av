@@ -110,7 +110,7 @@ Record only true limitations of the submitted build:
 - [ ] Supported device families:
 - [ ] Supported regions:
 - [ ] Supported locales:
-- [ ] Paid credits/subscriptions live in this build: yes/no/TODO
+- [ ] Credit/access surface visible in this build:
 - [ ] Provider generation availability during review:
 - [ ] Any temporary backend limitation:
 

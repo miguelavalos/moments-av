@@ -31,7 +31,7 @@ struct MomentTemplate: Identifiable, Equatable {
         durationSeconds: 15,
         creditCost: 1,
         minimumAssets: 1,
-        maximumAssets: 12,
+        maximumAssets: 60,
         summary: "A warm, elegant memory video from selected photos."
     )
 
@@ -41,7 +41,7 @@ struct MomentTemplate: Identifiable, Equatable {
         durationSeconds: 15,
         creditCost: 1,
         minimumAssets: 1,
-        maximumAssets: 12,
+        maximumAssets: 60,
         summary: "A faster, more rhythmic recap for shared moments."
     )
 
@@ -51,7 +51,7 @@ struct MomentTemplate: Identifiable, Equatable {
         durationSeconds: 15,
         creditCost: 1,
         minimumAssets: 1,
-        maximumAssets: 12,
+        maximumAssets: 60,
         summary: "Light, affectionate humor for people who are in on the joke."
     )
 

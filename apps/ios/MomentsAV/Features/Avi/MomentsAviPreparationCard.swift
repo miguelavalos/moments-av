@@ -6,8 +6,8 @@ struct MomentsAviPreparationCard: View {
 
     var body: some View {
         AVAviGuidanceCard(
-            title: "Before creating",
-            detail: "A little structure keeps story drafts, previews, and final renders cleaner."
+            title: "Create a Moment",
+            detail: "Choose photos or clips and let Avi prepare the first version."
         ) {
             AVAviInfoRow(
                 title: "Choose a focused occasion",
@@ -26,9 +26,9 @@ struct MomentsAviPreparationCard: View {
             )
             AVAviActionInfoRow(
                 title: "Prepare a new video",
-                detail: "Open the create flow when the occasion and media set are ready.",
+                detail: "Start with media, then adjust only what you want before preview.",
                 systemImage: "plus.app",
-                buttonTitle: "Open Create",
+                buttonTitle: "Create Moment",
                 action: openCreate
             )
         }

@@ -19,6 +19,7 @@ final class MomentsCreateViewModel: ObservableObject {
     @Published private(set) var selectedMedia: [MomentsSelectedMedia] = []
     @Published private(set) var mediaStatusMessage: String?
     @Published private(set) var isImportingMedia = false
+    @Published private(set) var autoStyleSuggestion: MomentsMediaAutoStyleSuggestion?
     @Published private(set) var savedScenes: [MomentStoryScene] = []
     @Published private(set) var generatedScenes: [MomentsStoryDraftScene] = []
     @Published private(set) var storyStatusMessage: String?
@@ -45,6 +46,8 @@ final class MomentsCreateViewModel: ObservableObject {
     private(set) var finalRenderWorkflow: FinalRenderWorkflow?
     let operationRunner = MomentsCreateOperationRunner()
     var cancellables = Set<AnyCancellable>()
+    private var autoStyleMediaSignature: String?
+    private var hasUserStyleOverride = false
 
     var activeProject: MomentDraftProject? {
         if usesFullUITestFixture {
@@ -60,6 +63,10 @@ final class MomentsCreateViewModel: ObservableObject {
 
     var hasMomentWorkspace: Bool {
         activeProjectId != nil || isLocalMomentStarted
+    }
+
+    var hasLocalMomentWorkspace: Bool {
+        activeProjectId == nil && isLocalMomentStarted
     }
 
     func bind(
@@ -101,9 +108,12 @@ final class MomentsCreateViewModel: ObservableObject {
     }
 
     func selectCreationStyle(_ style: MomentCreationStyle) {
-        guard !isDraftLocked, style.isEnabled else { return }
+        guard style.isEnabled else { return }
+        guard canEditCreationOptions else { return }
         selectedCreationStyle = style
         selectedMusicPreset = style.defaultMusic
+        autoStyleSuggestion = nil
+        hasUserStyleOverride = true
         applyStyleDefaults(style)
 
         if newProjectStep == .style {
@@ -113,6 +123,8 @@ final class MomentsCreateViewModel: ObservableObject {
 
     func selectMusicPreset(_ preset: MomentMusicPreset) {
         guard selectedCreationStyle.allowedMusic.contains(preset) else { return }
+        autoStyleSuggestion = nil
+        hasUserStyleOverride = true
         selectedMusicPreset = preset
     }
 
@@ -146,6 +158,10 @@ final class MomentsCreateViewModel: ObservableObject {
 
     func clearContinuationFocusHint() {
         continuationFocusHint = nil
+    }
+
+    func consumeMediaPickerOpenRequest() {
+        mediaPickerOpenRequest = 0
     }
 
     func applyUITestFullWorkflowFixture() {
@@ -206,6 +222,17 @@ final class MomentsCreateViewModel: ObservableObject {
         effectiveActiveWorkspace?.latestArtifact(kind: "final") ?? finalExport
     }
 
+    private var canEditCreationOptions: Bool {
+        if isBusy { return false }
+        if effectiveLatestPreview != nil || effectiveLatestPreviewJob != nil {
+            return false
+        }
+        if effectiveFinalExport != nil || latestFinalJob != nil {
+            return false
+        }
+        return true
+    }
+
     var effectiveLatestFinalJob: MomentRenderJob? {
         effectiveActiveWorkspace?.latestRenderJob(kind: "final") ?? latestFinalJob
     }
@@ -231,6 +258,9 @@ final class MomentsCreateViewModel: ObservableObject {
         }
         selectedCreationStyle = creationStyles.first ?? MomentCreationStyle.launchStyles[0]
         selectedMusicPreset = selectedCreationStyle.defaultMusic
+        autoStyleSuggestion = nil
+        autoStyleMediaSignature = nil
+        hasUserStyleOverride = false
         applyStyleDefaults(selectedCreationStyle)
         newProjectStep = .status
     }
@@ -273,6 +303,7 @@ extension MomentsCreateViewModel {
         selectedMedia = state.selectedMedia
         mediaStatusMessage = state.statusMessage
         isImportingMedia = state.isImporting
+        updateAutoStyleSuggestion(for: state.selectedMedia)
     }
 
     func applyStoryDraftState(_ state: MomentsCreateStoryDraftState) {
@@ -313,5 +344,35 @@ extension MomentsCreateViewModel {
             selectedCreationStyle = continuedStyle
             selectedMusicPreset = continuedStyle.allowedMusic.first(where: { $0 == continuedStyle.defaultMusic }) ?? continuedStyle.defaultMusic
         }
+    }
+
+    private func updateAutoStyleSuggestion(for media: [MomentsSelectedMedia]) {
+        guard canEditCreationOptions else { return }
+        let signature = mediaSignature(media)
+        guard signature != autoStyleMediaSignature else { return }
+        autoStyleMediaSignature = signature
+        guard !hasUserStyleOverride else { return }
+        guard let suggestion = MomentsMediaAutoStyleSuggester.suggest(
+            media: media,
+            styles: creationStyles
+        ) else {
+            autoStyleSuggestion = nil
+            return
+        }
+        guard let suggestedStyle = creationStyles.first(where: { $0.id == suggestion.styleID && $0.isEnabled }) else {
+            autoStyleSuggestion = nil
+            return
+        }
+
+        autoStyleSuggestion = suggestion
+        selectedCreationStyle = suggestedStyle
+        selectedMusicPreset = suggestion.musicPreset
+        applyStyleDefaults(suggestedStyle)
+    }
+
+    private func mediaSignature(_ media: [MomentsSelectedMedia]) -> String {
+        media
+            .map { "\($0.id.uuidString):\($0.sha256):\($0.sortOrder)" }
+            .joined(separator: "|")
     }
 }

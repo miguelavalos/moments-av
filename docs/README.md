@@ -7,9 +7,6 @@ iOS app for first App Store publication.
 
 - [install-ios.md](install-ios.md): local iOS setup, XcodeGen, runtime config,
   tests, production config checks, and public config hygiene.
-- [monetization-and-credits.md](monetization-and-credits.md): product direction
-  for Pro Monthly, credit packs, promo codes, RevenueCat/App Store setup, and
-  the credit/access separation.
 
 ## First Publication
 
@@ -43,5 +40,5 @@ assets are ready.
 ## Private Context
 
 This public repo intentionally excludes credentials, provider configuration,
-internal operations, private backend details, and final App Store Connect
-handoff values such as demo account passwords.
+internal operations, private backend details, sensitive internal planning, and
+final App Store Connect handoff values such as demo account passwords.

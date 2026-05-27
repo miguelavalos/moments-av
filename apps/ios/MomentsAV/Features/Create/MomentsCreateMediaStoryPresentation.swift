@@ -16,15 +16,15 @@ struct MomentsCreateMediaPresentation: Equatable {
     }
 
     var selectedCountTitle: String {
-        "Selected \(summary.selectedCount)/\(template.mediaRange)"
+        "\(summary.selectedCount) selected"
     }
 
     var selectionMessage: String {
         MomentsMediaRules.selectionMessage(
             MomentsMediaRules.availability(template: template, selectedCount: summary.selectedCount),
-            readyMessage: "Ready for story.",
+            readyMessage: "",
             tooFewMessage: { "Add \($0) more \(Self.mediaAssetLabel($0))." },
-            tooManyMessage: { "Remove \($0) \(Self.mediaAssetLabel($0))." }
+            tooManyMessage: { _ in "Avi will use the strongest moments first." }
         )
     }
 

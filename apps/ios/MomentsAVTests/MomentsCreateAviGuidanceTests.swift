@@ -43,7 +43,7 @@ final class MomentsCreateAviGuidanceTests: XCTestCase {
         )
 
         XCTAssertEqual(guidance.emotion, .happy)
-        XCTAssertEqual(guidance.message, "You are ready. Start with a style and I will shape the video from there.")
+        XCTAssertEqual(guidance.message, "Add photos or clips. Avi will prepare the first story.")
         XCTAssertEqual(guidance.actionTitle, "Start project")
     }
 
@@ -59,7 +59,7 @@ final class MomentsCreateAviGuidanceTests: XCTestCase {
         )
 
         XCTAssertEqual(guidance.emotion, .focused)
-        XCTAssertEqual(guidance.message, "\(style.title) is ready. You can create now or add one small detail.")
+        XCTAssertEqual(guidance.message, "\(style.title) is set. Add photos or clips next.")
         XCTAssertNil(guidance.actionTitle)
     }
 }

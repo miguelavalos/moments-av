@@ -11,13 +11,16 @@ final class AccountController: ObservableObject {
 
     private let service: AVAccountService
     private let balanceClient: MomentsCreditBalanceClient
+    private let promoCodeClient: MomentsPromoCodeClient
 
     init(
         service: AVAccountService = DefaultAVAccountService(),
-        balanceClient: MomentsCreditBalanceClient? = nil
+        balanceClient: MomentsCreditBalanceClient? = nil,
+        promoCodeClient: MomentsPromoCodeClient? = nil
     ) {
         self.service = service
         self.balanceClient = balanceClient ?? MomentsCreditBalanceClient(baseURLString: AppConfig.momentsAPIBaseURL)
+        self.promoCodeClient = promoCodeClient ?? MomentsPromoCodeClient(baseURLString: AppConfig.momentsAPIBaseURL)
         refresh()
     }
 
@@ -75,11 +78,14 @@ final class AccountController: ObservableObject {
         }
     }
 
-    func claimPromotionCode(_ code: String) {
+    func claimPromotionCode(_ code: String) async throws -> Int {
         let normalizedCode = code.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard isSignedIn, !normalizedCode.isEmpty else { return }
+        guard let user, !normalizedCode.isEmpty else { return 0 }
 
-        creditBalance.promotional += 1
+        let token = try await service.getToken() ?? user.id
+        let response = try await promoCodeClient.redeem(code: normalizedCode, bearerToken: token)
+        creditBalance = response.balance
+        return response.creditsGranted
     }
 
     func refreshCreditBalance() async {
@@ -157,6 +163,65 @@ private struct MomentsCreditBalanceResponse: Decodable {
     let proMonthlyCredits: Int
     let promotionalGrantedCredits: Int
     let purchasedCredits: Int
+}
+
+struct MomentsPromoCodeClient {
+    var baseURLString: String
+    var session: URLSession = .shared
+
+    func redeem(code: String, bearerToken: String) async throws -> MomentsPromoCodeRedemptionResponse {
+        guard let url = URL(string: "\(baseURLString)/v1/apps/momentsav/credits/promotions/redeem") else {
+            throw MomentsAPIError(code: "invalid_moments_api_url", message: "Moments AV API URL is not configured.")
+        }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("Bearer \(bearerToken)", forHTTPHeaderField: "Authorization")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpBody = try JSONEncoder().encode(MomentsPromoCodeRedeemRequest(code: code))
+
+        let (data, response) = try await session.data(for: request)
+        if let httpResponse = response as? HTTPURLResponse, !(200..<300).contains(httpResponse.statusCode) {
+            throw MomentsAPIError.decode(
+                from: data,
+                fallbackCode: "moments_promo_code_redeem_failed",
+                fallbackMessage: "Promo code could not be redeemed."
+            )
+        }
+
+        return try JSONDecoder().decode(MomentsPromoCodeRedemptionResponse.self, from: data)
+    }
+}
+
+private struct MomentsPromoCodeRedeemRequest: Encodable {
+    let code: String
+}
+
+struct MomentsPromoCodeRedemptionResponse: Decodable {
+    let creditsGranted: Int
+    let balance: MomentsCreditBalance
+
+    private enum CodingKeys: String, CodingKey {
+        case creditsGranted
+        case balance
+    }
+
+    private enum BalanceCodingKeys: String, CodingKey {
+        case proMonthlyCredits
+        case promotionalGrantedCredits
+        case purchasedCredits
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        creditsGranted = try container.decode(Int.self, forKey: .creditsGranted)
+        let balanceContainer = try container.nestedContainer(keyedBy: BalanceCodingKeys.self, forKey: .balance)
+        balance = MomentsCreditBalance(
+            proMonthly: try balanceContainer.decode(Int.self, forKey: .proMonthlyCredits),
+            promotional: try balanceContainer.decode(Int.self, forKey: .promotionalGrantedCredits),
+            purchased: try balanceContainer.decode(Int.self, forKey: .purchasedCredits)
+        )
+    }
 }
 
 extension AccountController: MomentsCurrentUserProviding, MomentsCreditBalanceProviding, MomentsAccountStateProviding, MomentsAuthenticationControlling {

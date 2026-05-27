@@ -44,6 +44,7 @@ enum MomentsCreateTestFixtures {
             byteSize: 4,
             sha256: "abcd",
             data: Data([1, 2, 3, 4]),
+            capturedAt: nil,
             sortOrder: 0,
             selected: true
         )

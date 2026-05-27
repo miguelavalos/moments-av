@@ -9,11 +9,13 @@ struct MomentsCreditsPaywallView: View {
     let balance: MomentsCreditBalance
     let isSignedIn: Bool
     let startSignInFlow: () -> Void
-    let claimPromotionCode: (String) -> Void
+    let claimPromotionCode: (String) async throws -> Int
     let dismiss: () -> Void
 
     @State private var promoCode = ""
     @State private var statusMessage: String?
+    @State private var promoStatusMessage: String?
+    @State private var isClaimingPromo = false
 
     var body: some View {
         NavigationStack {
@@ -23,8 +25,9 @@ struct MomentsCreditsPaywallView: View {
                     balanceOverview
 
                     if isSignedIn {
-                        primaryOptions
                         promoClaim
+                        creditPacks
+                        monthlyPlan
                         restoreAndLegal
                     } else {
                         signInRequired
@@ -55,7 +58,7 @@ struct MomentsCreditsPaywallView: View {
             eyebrow: "Create videos",
             title: "Credits for memory videos",
             subtitle: isSignedIn
-                ? "Pro is the simple plan for regular videos. Packs are there when you need extra credits."
+                ? "Add credits or redeem a promo code to create a private memory video."
                 : "Sign in first so credits and purchases stay attached to your account.",
             titleFontSize: 26,
             subtitleFontSize: 13
@@ -91,11 +94,9 @@ struct MomentsCreditsPaywallView: View {
         .shadow(color: AVBrandColor.softShadow.opacity(0.14), radius: 12, y: 6)
     }
 
-    private var primaryOptions: some View {
+    private var creditPacks: some View {
         VStack(spacing: AVBrandSpacing.sm) {
-            MomentsCreditsCompactProductRow(product: .proMonthly, isProminent: true) {
-                startPurchase(.proMonthly)
-            }
+            sectionHeader(title: "Add credits", detail: "Use credit packs when you want to create without a monthly plan.")
 
             HStack(spacing: AVBrandSpacing.sm) {
                 MomentsCreditsPackButton(product: .starterPack) {
@@ -108,8 +109,20 @@ struct MomentsCreditsPaywallView: View {
         }
     }
 
+    private var monthlyPlan: some View {
+        VStack(alignment: .leading, spacing: AVBrandSpacing.sm) {
+            sectionHeader(title: "Monthly plan", detail: "For regular memory videos once subscriptions are enabled.")
+
+            MomentsCreditsCompactProductRow(product: .proMonthly, isProminent: false) {
+                startPurchase(.proMonthly)
+            }
+        }
+    }
+
     private var promoClaim: some View {
         VStack(alignment: .leading, spacing: AVBrandSpacing.sm) {
+            sectionHeader(title: "Promo code", detail: "Redeem tester, campaign, or support credits.")
+
             HStack(spacing: AVBrandSpacing.sm) {
                 Image(systemName: "gift.fill")
                     .font(.system(size: 15, weight: .black))
@@ -124,20 +137,41 @@ struct MomentsCreditsPaywallView: View {
                     .background(AVBrandColor.cardSurface, in: RoundedRectangle(cornerRadius: AVBrandRadius.control, style: .continuous))
 
                 Button(action: claimPromo) {
-                    Image(systemName: "arrow.right")
-                        .font(.system(size: 17, weight: .black))
-                        .foregroundStyle(AVBrandColor.textInverse)
-                        .frame(width: 46, height: 46)
-                        .background(AVBrandColor.accent, in: RoundedRectangle(cornerRadius: AVBrandRadius.control, style: .continuous))
+                    ZStack {
+                        if isClaimingPromo {
+                            ProgressView()
+                                .tint(AVBrandColor.textInverse)
+                        } else {
+                            Image(systemName: "arrow.right")
+                                .font(.system(size: 17, weight: .black))
+                                .foregroundStyle(AVBrandColor.textInverse)
+                        }
+                    }
+                    .frame(width: 46, height: 46)
+                    .background(AVBrandColor.accent, in: RoundedRectangle(cornerRadius: AVBrandRadius.control, style: .continuous))
                 }
-                .disabled(normalizedPromoCode.isEmpty)
+                .disabled(normalizedPromoCode.isEmpty || isClaimingPromo)
                 .accessibilityLabel("Claim promotion")
                 .accessibilityIdentifier("moments.credits.claimPromo")
             }
 
-            Text("Have a promo code? Claim it here.")
+            Text("Try \(demoPromoCode) for this staging build.")
                 .font(AVBrandTypography.captionStrong)
                 .foregroundStyle(AVBrandColor.textSecondary)
+
+            if let promoStatusMessage {
+                HStack(alignment: .firstTextBaseline, spacing: AVBrandSpacing.xs) {
+                    Image(systemName: "info.circle.fill")
+                        .font(.system(size: 12, weight: .bold))
+                        .foregroundStyle(AVBrandColor.textSecondary)
+
+                    Text(promoStatusMessage)
+                        .font(.system(size: 12, weight: .bold, design: .rounded))
+                        .foregroundStyle(AVBrandColor.textSecondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                .padding(.top, 2)
+            }
         }
         .padding(AVBrandSpacing.md)
         .background(AVBrandColor.mutedSurface, in: RoundedRectangle(cornerRadius: AVBrandRadius.card, style: .continuous))
@@ -145,12 +179,15 @@ struct MomentsCreditsPaywallView: View {
 
     private var restoreAndLegal: some View {
         VStack(spacing: AVBrandSpacing.md) {
-            AVPaywallRestoreButton(
-                title: "Restore purchases",
-                accessibilityIdentifier: "moments.credits.restore"
-            ) {
-                statusMessage = "RevenueCat restore will be connected after App Store products are configured."
+            Button {
+                statusMessage = "Restore purchases is not available in this staging build yet."
+            } label: {
+                Text("Restore purchases")
+                    .font(.system(size: 12, weight: .bold, design: .rounded))
+                    .foregroundStyle(AVBrandColor.textSecondary)
             }
+            .buttonStyle(.plain)
+            .accessibilityIdentifier("moments.credits.restore")
 
             AVPaywallLegalLinks(
                 links: [
@@ -164,6 +201,20 @@ struct MomentsCreditsPaywallView: View {
             )
         }
         .frame(maxWidth: .infinity, alignment: .center)
+    }
+
+    private func sectionHeader(title: String, detail: String) -> some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Text(title)
+                .font(.system(size: 14, weight: .black, design: .rounded))
+                .foregroundStyle(AVBrandColor.textPrimary)
+
+            Text(detail)
+                .font(.system(size: 12, weight: .semibold, design: .rounded))
+                .foregroundStyle(AVBrandColor.textSecondary)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 
     private var signInRequired: some View {
@@ -200,6 +251,10 @@ struct MomentsCreditsPaywallView: View {
         return "Final renders use monthly credits first, then promo, then purchased."
     }
 
+    private var demoPromoCode: String {
+        "MOMENTS-DEMO-2026"
+    }
+
     private var normalizedPromoCode: String {
         promoCode.trimmingCharacters(in: .whitespacesAndNewlines)
     }
@@ -207,17 +262,28 @@ struct MomentsCreditsPaywallView: View {
     private func startPurchase(_ product: MomentsCreditPaywallProduct) {
         switch product.kind {
         case .subscription:
-            statusMessage = "Ready for RevenueCat product \(product.id)."
+            statusMessage = "Monthly subscriptions are not available in this staging build yet."
         case .consumableCredits:
-            statusMessage = "Ready for App Store consumable \(product.id)."
+            statusMessage = "Credit purchases are not available in this staging build yet. Use a promo code for testing."
         }
     }
 
     private func claimPromo() {
         guard !normalizedPromoCode.isEmpty else { return }
-        claimPromotionCode(normalizedPromoCode)
-        statusMessage = "Promotion claimed locally. Backend validation comes next."
-        promoCode = ""
+        let code = normalizedPromoCode
+        isClaimingPromo = true
+        promoStatusMessage = nil
+
+        Task {
+            do {
+                let creditsGranted = try await claimPromotionCode(code)
+                promoStatusMessage = "\(creditsGranted) promo \(creditsGranted == 1 ? "credit" : "credits") added."
+                promoCode = ""
+            } catch {
+                promoStatusMessage = error.localizedDescription
+            }
+            isClaimingPromo = false
+        }
     }
 }
 
@@ -237,12 +303,12 @@ private struct MomentsCreditsCompactProductRow: View {
 
                 VStack(alignment: .leading, spacing: 2) {
                     HStack(spacing: AVBrandSpacing.xs) {
-                        Text(product.eyebrow)
+                        Text("Optional")
                             .font(AVBrandTypography.eyebrow)
                             .foregroundStyle(AVBrandColor.accent)
                             .textCase(.uppercase)
 
-                        Text("Best start")
+                        Text("Soon")
                             .font(.system(size: 10, weight: .black, design: .rounded))
                             .foregroundStyle(AVBrandColor.textInverse)
                             .padding(.horizontal, 7)
@@ -264,15 +330,15 @@ private struct MomentsCreditsCompactProductRow: View {
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
 
-                Image(systemName: "arrow.right")
+                Image(systemName: "clock")
                     .font(.system(size: 15, weight: .black))
-                    .foregroundStyle(AVBrandColor.textPrimary)
+                    .foregroundStyle(AVBrandColor.textSecondary)
             }
             .padding(AVBrandSpacing.md)
-            .background(AVBrandColor.accent.opacity(0.08), in: RoundedRectangle(cornerRadius: AVBrandRadius.card, style: .continuous))
+            .background(AVBrandColor.cardSurface, in: RoundedRectangle(cornerRadius: AVBrandRadius.card, style: .continuous))
             .overlay {
                 RoundedRectangle(cornerRadius: AVBrandRadius.card, style: .continuous)
-                    .stroke(AVBrandColor.accent.opacity(0.24), lineWidth: 1)
+                    .stroke(AVBrandColor.borderSubtle.opacity(0.5), lineWidth: 1)
             }
         }
         .buttonStyle(.plain)

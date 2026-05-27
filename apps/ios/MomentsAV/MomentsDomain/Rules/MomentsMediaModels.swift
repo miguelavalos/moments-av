@@ -9,6 +9,7 @@ struct MomentsSelectedMedia: Identifiable, Equatable {
     let byteSize: Int
     let sha256: String
     let data: Data
+    let capturedAt: Date?
     var sortOrder: Int
     var selected: Bool
 

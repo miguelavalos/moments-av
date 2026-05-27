@@ -35,6 +35,7 @@ final class MomentsAPIClientTests: XCTestCase {
             byteSize: 4,
             sha256: "abcd",
             data: Data([1, 2, 3, 4]),
+            capturedAt: nil,
             sortOrder: 0,
             selected: true
         )
@@ -58,6 +59,7 @@ final class MomentsAPIClientTests: XCTestCase {
             byteSize: 4,
             sha256: "abcd",
             data: Data([1, 2, 3, 4]),
+            capturedAt: nil,
             sortOrder: 0,
             selected: true
         )
@@ -323,6 +325,47 @@ final class MomentsAPIClientTests: XCTestCase {
         XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.httpMethod, "GET")
         XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.value(forHTTPHeaderField: "Authorization"), "Bearer token-1")
         XCTAssertEqual(balance, MomentsCreditBalance(proMonthly: 0, promotional: 10, purchased: 0))
+    }
+
+    func testPromoCodeRedeemUsesBackendAndReturnsUpdatedBalance() async throws {
+        let session = makeMockSession(
+            json: """
+            {
+              "appId": "momentsav",
+              "userId": "user-1",
+              "code": "MOMENTS-DEMO-2026",
+              "campaignId": "demo_credit_flow",
+              "creditsGranted": 5,
+              "redemptionId": "promo-redemption-1",
+              "ledgerEntryId": "promo-ledger-1",
+              "balance": {
+                "appId": "momentsav",
+                "userId": "user-1",
+                "spendableCredits": 5,
+                "reservedCredits": 0,
+                "proMonthlyCredits": 0,
+                "promotionalGrantedCredits": 5,
+                "purchasedCredits": 0,
+                "hasProFeatures": false,
+                "proSource": "none",
+                "proExpiresAt": null,
+                "canStartProject": true,
+                "minimumRenderCredits": 1,
+                "generatedAt": "2026-05-27T10:00:00.000Z"
+              },
+              "generatedAt": "2026-05-27T10:00:00.000Z"
+            }
+            """
+        )
+        let client = MomentsPromoCodeClient(baseURLString: accountAPIBaseURL, session: session)
+
+        let response = try await client.redeem(code: "MOMENTS-DEMO-2026", bearerToken: "token-1")
+
+        XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.url?.absoluteString, "\(accountAPIBaseURL)/v1/apps/momentsav/credits/promotions/redeem")
+        XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.httpMethod, "POST")
+        XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.value(forHTTPHeaderField: "Authorization"), "Bearer token-1")
+        XCTAssertEqual(response.creditsGranted, 5)
+        XCTAssertEqual(response.balance, MomentsCreditBalance(proMonthly: 0, promotional: 5, purchased: 0))
     }
 
     private var accountAPIBaseURL: String {

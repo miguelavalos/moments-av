@@ -1,5 +1,7 @@
 import CryptoKit
 import Foundation
+import ImageIO
+import Photos
 import PhotosUI
 import SwiftUI
 import UniformTypeIdentifiers
@@ -23,6 +25,38 @@ enum MediaPickerImport {
         return imported
     }
 
+    static func loadLatestPhotos(
+        limit: Int,
+        startingSortOrder: Int
+    ) async throws -> [MomentsSelectedMedia] {
+        guard limit > 0 else { return [] }
+        let status = await requestPhotoLibraryAccess()
+        guard status == .authorized || status == .limited else {
+            throw MomentsUploadError.photoLibraryAccessDenied
+        }
+
+        let options = PHFetchOptions()
+        options.fetchLimit = limit
+        options.predicate = NSPredicate(format: "mediaType == %d", PHAssetMediaType.image.rawValue)
+        options.sortDescriptors = [
+            NSSortDescriptor(key: "creationDate", ascending: false),
+            NSSortDescriptor(key: "modificationDate", ascending: false)
+        ]
+
+        let assets = PHAsset.fetchAssets(with: options)
+        var imported: [MomentsSelectedMedia] = []
+
+        for index in 0..<assets.count {
+            let media = try await loadPhotoAsset(
+                assets.object(at: index),
+                sortOrder: startingSortOrder + index
+            )
+            imported.append(media)
+        }
+
+        return imported
+    }
+
     private static func loadMedia(from item: PhotosPickerItem, sortOrder: Int) async throws -> MomentsSelectedMedia {
         guard let data = try await item.loadTransferable(type: Data.self) else {
             throw MomentsUploadError.unreadableSelection
@@ -34,17 +68,130 @@ enum MediaPickerImport {
             .map { String(format: "%02x", $0) }
             .joined()
 
+        let asset = photoAsset(for: item)
+        let capturedAt = capturedDate(fromImageData: data) ?? asset?.creationDate
+
         return MomentsSelectedMedia(
             id: UUID(),
             sourceLocalIdentifier: item.itemIdentifier ?? UUID().uuidString,
-            originalFilename: "\(UUID().uuidString).\(kind == "video" ? "mov" : "jpg")",
+            originalFilename: originalFilename(for: asset, fallbackKind: kind),
             contentType: contentType,
             kind: kind,
             byteSize: data.count,
             sha256: digest,
             data: data,
+            capturedAt: capturedAt,
             sortOrder: sortOrder,
             selected: true
         )
     }
+
+    private static func photoAsset(for item: PhotosPickerItem) -> PHAsset? {
+        guard let identifier = item.itemIdentifier else { return nil }
+
+        return PHAsset
+            .fetchAssets(withLocalIdentifiers: [identifier], options: nil)
+            .firstObject
+    }
+
+    private static func originalFilename(for asset: PHAsset?, fallbackKind: String) -> String {
+        guard let asset,
+              let filename = PHAssetResource.assetResources(for: asset).first?.originalFilename,
+              !filename.isEmpty else {
+            return "\(UUID().uuidString).\(fallbackKind == "video" ? "mov" : "jpg")"
+        }
+
+        return filename
+    }
+
+    private static func requestPhotoLibraryAccess() async -> PHAuthorizationStatus {
+        let current = PHPhotoLibrary.authorizationStatus(for: .readWrite)
+        guard current == .notDetermined else { return current }
+        return await PHPhotoLibrary.requestAuthorization(for: .readWrite)
+    }
+
+    private static func loadPhotoAsset(_ asset: PHAsset, sortOrder: Int) async throws -> MomentsSelectedMedia {
+        let (data, filename) = try await imageData(for: asset)
+        let contentType = contentType(for: filename) ?? "image/jpeg"
+        let digest = SHA256.hash(data: data)
+            .map { String(format: "%02x", $0) }
+            .joined()
+
+        return MomentsSelectedMedia(
+            id: UUID(),
+            sourceLocalIdentifier: asset.localIdentifier,
+            originalFilename: filename,
+            contentType: contentType,
+            kind: "photo",
+            byteSize: data.count,
+            sha256: digest,
+            data: data,
+            capturedAt: capturedDate(fromImageData: data) ?? asset.creationDate,
+            sortOrder: sortOrder,
+            selected: true
+        )
+    }
+
+    private static func imageData(for asset: PHAsset) async throws -> (Data, String) {
+        let options = PHImageRequestOptions()
+        options.isNetworkAccessAllowed = true
+        options.version = .current
+        options.deliveryMode = .highQualityFormat
+
+        return try await withCheckedThrowingContinuation { continuation in
+            PHImageManager.default().requestImageDataAndOrientation(
+                for: asset,
+                options: options
+            ) { data, _, _, info in
+                if let error = info?[PHImageErrorKey] as? Error {
+                    continuation.resume(throwing: error)
+                    return
+                }
+
+                guard let data else {
+                    continuation.resume(throwing: MomentsUploadError.unreadableSelection)
+                    return
+                }
+
+                continuation.resume(returning: (data, originalFilename(for: asset, fallbackKind: "photo")))
+            }
+        }
+    }
+
+    private static func contentType(for filename: String) -> String? {
+        let ext = (filename as NSString).pathExtension
+        guard !ext.isEmpty else { return nil }
+        return UTType(filenameExtension: ext)?.preferredMIMEType
+    }
+
+    private static func capturedDate(fromImageData data: Data) -> Date? {
+        guard let source = CGImageSourceCreateWithData(data as CFData, nil),
+              let properties = CGImageSourceCopyPropertiesAtIndex(source, 0, nil) as? [CFString: Any] else {
+            return nil
+        }
+
+        let exif = properties[kCGImagePropertyExifDictionary] as? [CFString: Any]
+        let tiff = properties[kCGImagePropertyTIFFDictionary] as? [CFString: Any]
+
+        let candidates = [
+            exif?[kCGImagePropertyExifDateTimeOriginal] as? String,
+            exif?[kCGImagePropertyExifDateTimeDigitized] as? String,
+            tiff?[kCGImagePropertyTIFFDateTime] as? String
+        ]
+
+        for candidate in candidates.compactMap({ $0 }) {
+            if let date = exifDateFormatter.date(from: candidate) {
+                return date
+            }
+        }
+
+        return nil
+    }
+
+    private static let exifDateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.dateFormat = "yyyy:MM:dd HH:mm:ss"
+        return formatter
+    }()
 }
