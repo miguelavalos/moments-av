@@ -1,3 +1,4 @@
+import AVMediaAnalysisFoundation
 import Foundation
 
 struct MomentsMediaAutoStyleSuggestion: Equatable {
@@ -19,6 +20,12 @@ struct MomentsMediaAutoStyleMetrics: Equatable {
     let datedCount: Int
     let totalBytes: Int
     let sampleCount: Int
+    let analyzedCount: Int
+    let peopleAssetCount: Int
+    let groupAssetCount: Int
+    let sceneryAssetCount: Int
+    let screenshotCount: Int
+    let averageQualityScore: Double
     let estimatedThumbnailKilobytes: Int
     let estimatedVisionUnits: Int
     let estimatedMetadataTokens: Int
@@ -41,6 +48,12 @@ enum MomentsMediaAutoStyleSuggester {
         let filenames = media.map { $0.originalFilename.lowercased() }.joined(separator: " ")
         let totalBytes = media.reduce(0) { $0 + $1.byteSize }
         let sampleCount = min(media.count, 12)
+        let analyses = media.compactMap(\.analysis)
+        let peopleAssetCount = analyses.filter(\.hasPeople).count
+        let groupAssetCount = analyses.filter { $0.sceneRole == .group }.count
+        let sceneryAssetCount = analyses.filter { $0.sceneRole == .scenery }.count
+        let screenshotCount = analyses.filter(\.isLikelyScreenshot).count
+        let averageQualityScore = average(analyses.map(\.qualityScore))
         let metrics = MomentsMediaAutoStyleMetrics(
             mediaCount: media.count,
             photoCount: photoCount,
@@ -48,6 +61,12 @@ enum MomentsMediaAutoStyleSuggester {
             datedCount: datedMedia.count,
             totalBytes: totalBytes,
             sampleCount: sampleCount,
+            analyzedCount: analyses.count,
+            peopleAssetCount: peopleAssetCount,
+            groupAssetCount: groupAssetCount,
+            sceneryAssetCount: sceneryAssetCount,
+            screenshotCount: screenshotCount,
+            averageQualityScore: averageQualityScore,
             estimatedThumbnailKilobytes: sampleCount * 80,
             estimatedVisionUnits: sampleCount,
             estimatedMetadataTokens: media.count * 36
@@ -58,8 +77,16 @@ enum MomentsMediaAutoStyleSuggester {
 
         if containsAny(filenames, keywords: ["birthday", "cumple", "anni", "bday"]) {
             candidate = (.birthday, .warm, 0.72, "Filename hints look like a birthday set.")
+        } else if screenshotCount >= max(2, media.count / 2) {
+            candidate = (.eventRecap, .warm, 0.55, "Screenshots are safest as a simple recap.")
         } else if containsAny(filenames, keywords: ["trip", "travel", "viaje", "calama", "desert", "road", "playa", "mountain"]) {
             candidate = (.travel, .cinematic, 0.70, "Filename hints and media set look travel oriented.")
+        } else if sceneryAssetCount >= max(3, media.count / 2) {
+            candidate = (.travel, .cinematic, 0.68, "Local image analysis sees a scenic set.")
+        } else if groupAssetCount >= max(2, media.count / 3) {
+            candidate = (.familyMoments, .warm, 0.66, "Local image analysis sees several group moments.")
+        } else if peopleAssetCount >= max(2, media.count / 2) && sceneryAssetCount < peopleAssetCount {
+            candidate = (.favoritePeople, .warm, 0.63, "Local image analysis sees people-focused moments.")
         } else if videoCount > 0 && videoCount >= max(1, photoCount / 3) {
             candidate = (.eventRecap, .fun, 0.64, "Several clips suggest a fast event recap.")
         } else if media.count >= 10 && dateSpan > 6 * 60 * 60 {
@@ -91,5 +118,10 @@ enum MomentsMediaAutoStyleSuggester {
 
     private static func containsAny(_ value: String, keywords: [String]) -> Bool {
         keywords.contains { value.contains($0) }
+    }
+
+    private static func average(_ values: [Double]) -> Double {
+        guard !values.isEmpty else { return 0 }
+        return values.reduce(0, +) / Double(values.count)
     }
 }

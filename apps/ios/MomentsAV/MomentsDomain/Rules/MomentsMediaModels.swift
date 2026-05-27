@@ -1,3 +1,4 @@
+import AVMediaAnalysisFoundation
 import Foundation
 
 struct MomentsSelectedMedia: Identifiable, Equatable {
@@ -10,6 +11,7 @@ struct MomentsSelectedMedia: Identifiable, Equatable {
     let sha256: String
     let data: Data
     let capturedAt: Date?
+    var analysis: AVLocalMediaAnalysis? = nil
     var sortOrder: Int
     var selected: Bool
 

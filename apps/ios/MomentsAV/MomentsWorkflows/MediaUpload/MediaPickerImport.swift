@@ -1,3 +1,4 @@
+import AVMediaAnalysisFoundation
 import CryptoKit
 import Foundation
 import ImageIO
@@ -7,6 +8,8 @@ import SwiftUI
 import UniformTypeIdentifiers
 
 enum MediaPickerImport {
+    private static let analyzer = AVVisionLocalMediaAnalyzer()
+
     static func load(
         items: [PhotosPickerItem],
         limit: Int,
@@ -70,17 +73,31 @@ enum MediaPickerImport {
 
         let asset = photoAsset(for: item)
         let capturedAt = capturedDate(fromImageData: data) ?? asset?.creationDate
+        let pixelSize = imagePixelSize(fromImageData: data)
+        let filename = originalFilename(for: asset, fallbackKind: kind)
+        let analysis = await analyzer.analyze(
+            AVLocalMediaInput(
+                data: data,
+                filename: filename,
+                contentType: contentType,
+                kind: kind == "video" ? .video : .photo,
+                capturedAt: capturedAt,
+                pixelWidth: pixelSize?.width,
+                pixelHeight: pixelSize?.height
+            )
+        )
 
         return MomentsSelectedMedia(
             id: UUID(),
             sourceLocalIdentifier: item.itemIdentifier ?? UUID().uuidString,
-            originalFilename: originalFilename(for: asset, fallbackKind: kind),
+            originalFilename: filename,
             contentType: contentType,
             kind: kind,
             byteSize: data.count,
             sha256: digest,
             data: data,
             capturedAt: capturedAt,
+            analysis: analysis,
             sortOrder: sortOrder,
             selected: true
         )
@@ -116,6 +133,18 @@ enum MediaPickerImport {
         let digest = SHA256.hash(data: data)
             .map { String(format: "%02x", $0) }
             .joined()
+        let capturedAt = capturedDate(fromImageData: data) ?? asset.creationDate
+        let analysis = await analyzer.analyze(
+            AVLocalMediaInput(
+                data: data,
+                filename: filename,
+                contentType: contentType,
+                kind: .photo,
+                capturedAt: capturedAt,
+                pixelWidth: asset.pixelWidth,
+                pixelHeight: asset.pixelHeight
+            )
+        )
 
         return MomentsSelectedMedia(
             id: UUID(),
@@ -126,7 +155,8 @@ enum MediaPickerImport {
             byteSize: data.count,
             sha256: digest,
             data: data,
-            capturedAt: capturedDate(fromImageData: data) ?? asset.creationDate,
+            capturedAt: capturedAt,
+            analysis: analysis,
             sortOrder: sortOrder,
             selected: true
         )
@@ -186,6 +216,17 @@ enum MediaPickerImport {
         }
 
         return nil
+    }
+
+    private static func imagePixelSize(fromImageData data: Data) -> (width: Int, height: Int)? {
+        guard let source = CGImageSourceCreateWithData(data as CFData, nil),
+              let properties = CGImageSourceCopyPropertiesAtIndex(source, 0, nil) as? [CFString: Any],
+              let width = properties[kCGImagePropertyPixelWidth] as? Int,
+              let height = properties[kCGImagePropertyPixelHeight] as? Int else {
+            return nil
+        }
+
+        return (width, height)
     }
 
     private static let exifDateFormatter: DateFormatter = {

@@ -96,43 +96,48 @@ private struct MomentsCreateMediaFirstWorkspace: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            MomentsCreateDashboardHeader()
+            if showsInitialImportState {
+                MomentsCreateMediaImportingState()
+            } else {
+                MomentsCreateDashboardHeader()
 
-            MomentsCreateCompactAviGuide(
-                presentation: presentation,
-                openOptions: { showsAviOptions = true }
-            )
+                MomentsCreateCompactAviGuide(
+                    presentation: presentation,
+                    openOptions: { showsAviOptions = true }
+                )
 
-            MomentsCreateMediaCard(
-                pickerItems: $pickerItems,
-                openPickerRequest: openPickerRequest,
-                presentation: mediaPresentation,
-                importPickerItems: importPickerItems,
-                importLatestPhotos: importLatestPhotos,
-                removeMedia: removeMedia,
-                moveMedia: moveMedia,
-                reorderMedia: reorderMedia,
-                autoPickStrongMoments: autoPickStrongMoments,
-                consumeOpenPickerRequest: consumeOpenPickerRequest
-            )
+                MomentsCreateMediaCard(
+                    pickerItems: $pickerItems,
+                    openPickerRequest: openPickerRequest,
+                    presentation: mediaPresentation,
+                    importPickerItems: importPickerItems,
+                    importLatestPhotos: importLatestPhotos,
+                    removeMedia: removeMedia,
+                    moveMedia: moveMedia,
+                    reorderMedia: reorderMedia,
+                    autoPickStrongMoments: autoPickStrongMoments,
+                    consumeOpenPickerRequest: consumeOpenPickerRequest
+                )
 
-            MomentsCreateOptionsSummaryCard(
-                selectedStyle: selectedStyle,
-                selectedMusicPreset: selectedMusicPreset,
-                autoStyleSuggestion: autoStyleSuggestion,
-                openOptions: { showsAviOptions = true }
-            )
+                MomentsCreateOptionsSummaryCard(
+                    selectedStyle: selectedStyle,
+                    selectedMusicPreset: selectedMusicPreset,
+                    autoStyleSuggestion: autoStyleSuggestion,
+                    openOptions: { showsAviOptions = true }
+                )
 
-            MomentsCreatePrimaryActionBar(
-                presentation: presentation,
-                cancelCreation: cancelCreation,
-                generateStoryDraft: generateStoryDraft,
-                generatePreview: generatePreview,
-                refreshPreviewStatus: refreshPreviewStatus,
-                generateFinalRender: generateFinalRender,
-                refreshFinalRenderStatus: refreshFinalRenderStatus
-            )
+                MomentsCreatePrimaryActionBar(
+                    presentation: presentation,
+                    cancelCreation: cancelCreation,
+                    generateStoryDraft: generateStoryDraft,
+                    generatePreview: generatePreview,
+                    refreshPreviewStatus: refreshPreviewStatus,
+                    generateFinalRender: generateFinalRender,
+                    refreshFinalRenderStatus: refreshFinalRenderStatus
+                )
+            }
         }
+        .animation(.spring(response: 0.38, dampingFraction: 0.86), value: showsInitialImportState)
         .safeAreaPadding(.bottom, 28)
         .navigationDestination(isPresented: $showsAviOptions) {
             MomentsCreateAviOptionsSheet(
@@ -159,6 +164,11 @@ private struct MomentsCreateMediaFirstWorkspace: View {
         )
     }
 
+    private var showsInitialImportState: Bool {
+        presentation.mediaSummary.isImporting
+            && presentation.mediaSummary.selectedCount == 0
+            && presentation.mediaSummary.syncedMediaAssets.isEmpty
+    }
 }
 
 private struct MomentsCreateDashboardHeader: View {
@@ -173,6 +183,71 @@ private struct MomentsCreateDashboardHeader: View {
                 .foregroundStyle(AVBrandColor.textSecondary)
                 .lineLimit(2)
         }
+    }
+}
+
+private struct MomentsCreateMediaImportingState: View {
+    @State private var isAnimating = false
+
+    var body: some View {
+        VStack(spacing: 18) {
+            Spacer(minLength: 42)
+
+            ZStack {
+                Circle()
+                    .fill(AVBrandColor.accent.opacity(0.10))
+                    .frame(width: 128, height: 128)
+
+                Circle()
+                    .stroke(AVBrandColor.accent.opacity(0.18), lineWidth: 2)
+                    .frame(width: 156, height: 156)
+                    .scaleEffect(isAnimating ? 1.08 : 0.92)
+                    .opacity(isAnimating ? 0.20 : 0.58)
+
+                Image("AviFullBody")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 86, height: 86)
+                    .offset(y: isAnimating ? -4 : 3)
+
+                Image(systemName: "photo.on.rectangle.angled")
+                    .font(.system(size: 20, weight: .black))
+                    .foregroundStyle(.white)
+                    .frame(width: 42, height: 42)
+                    .background(AVBrandColor.accent, in: Circle())
+                    .offset(x: 54, y: 48)
+                    .shadow(color: AVBrandColor.accent.opacity(0.24), radius: 10, y: 4)
+            }
+
+            VStack(spacing: 8) {
+                Text("Preparing your moments")
+                    .font(.system(size: 22, weight: .black))
+                    .foregroundStyle(AVBrandColor.textPrimary)
+
+                Text("Avi is reading the selection and setting up the first review.")
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundStyle(AVBrandColor.textSecondary)
+                    .multilineTextAlignment(.center)
+                    .lineLimit(2)
+                    .padding(.horizontal, 24)
+            }
+
+            ProgressView()
+                .tint(AVBrandColor.accent)
+                .controlSize(.regular)
+                .padding(.top, 4)
+
+            Spacer(minLength: 120)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .transition(.opacity.combined(with: .scale(scale: 0.98)))
+        .onAppear {
+            withAnimation(.easeInOut(duration: 1.05).repeatForever(autoreverses: true)) {
+                isAnimating = true
+            }
+        }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("Preparing your moments. Avi is reading the selection.")
     }
 }
 

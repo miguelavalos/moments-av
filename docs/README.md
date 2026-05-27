@@ -8,6 +8,25 @@ iOS app for first App Store publication.
 - [install-ios.md](install-ios.md): local iOS setup, XcodeGen, runtime config,
   tests, production config checks, and public config hygiene.
 
+## Current iOS Creation Flow
+
+The signed-in creation flow is media-first:
+
+1. the user starts a Moment and selects photos or clips;
+2. the app shows a short preparing state while local media is imported;
+3. Moments AV stores the in-progress Moment locally until the user cancels or
+   prepares a preview;
+4. the Creation Dashboard summarizes media and options before preview;
+5. media editing and option editing are separate screens that return to the
+   dashboard.
+
+During import, the app runs `AVMediaAnalysisFoundation` from `apps-av/apple` on
+device. The local analyzer does not call backend AI. It produces cheap generic
+signals such as orientation, face count, scene role, screenshot likelihood, and
+quality score. Moments AV uses those signals, plus dates and filename hints, to
+preselect a theme and music default for Avi. Backend AI-assisted story planning
+and rendering remain separate future workflow stages.
+
 ## First Publication
 
 Use these documents in this order:

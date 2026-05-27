@@ -1,4 +1,5 @@
 import Foundation
+import AVMediaAnalysisFoundation
 import XCTest
 @testable import MomentsAV
 
@@ -48,7 +49,38 @@ final class MomentsMediaRulesTests: XCTestCase {
         )
     }
 
-    private func makeLocalMedia(id: String, selected: Bool) -> MomentsSelectedMedia {
+    func testAutoStyleSuggestionUsesLocalSceneryAnalysisForTravel() {
+        let media = (0..<5).map { index in
+            makeLocalMedia(
+                id: "00000000-0000-0000-0000-00000000010\(index)",
+                selected: true,
+                analysis: AVLocalMediaAnalysis(
+                    faceCount: 0,
+                    hasPeople: false,
+                    brightnessScore: 0.62,
+                    sharpnessScore: 0.72,
+                    qualityScore: 0.68,
+                    orientation: .landscape,
+                    sceneRole: .scenery
+                )
+            )
+        }
+
+        let suggestion = MomentsMediaAutoStyleSuggester.suggest(
+            media: media,
+            styles: MomentCreationStyle.launchStyles
+        )
+
+        XCTAssertEqual(suggestion?.styleID, .travel)
+        XCTAssertEqual(suggestion?.musicPreset, .cinematic)
+        XCTAssertEqual(suggestion?.metrics.sceneryAssetCount, 5)
+    }
+
+    private func makeLocalMedia(
+        id: String,
+        selected: Bool,
+        analysis: AVLocalMediaAnalysis? = nil
+    ) -> MomentsSelectedMedia {
         MomentsSelectedMedia(
             id: UUID(uuidString: id)!,
             sourceLocalIdentifier: id,
@@ -59,6 +91,7 @@ final class MomentsMediaRulesTests: XCTestCase {
             sha256: "abcd",
             data: Data([1, 2, 3, 4]),
             capturedAt: nil,
+            analysis: analysis,
             sortOrder: 0,
             selected: selected
         )

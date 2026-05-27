@@ -163,6 +163,7 @@
 		D2FFC8DE345262BEE4BE2FC4 /* MomentsCreditsPaywallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6A0A135EAE67D474B447D6F /* MomentsCreditsPaywallView.swift */; };
 		D440548CBADA41DC4AA04E90 /* MomentsProjectsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 697DF0CC80C622780CA457E7 /* MomentsProjectsViewModel.swift */; };
 		D49C53A9DBDE0D94EEF18DF0 /* AccountAV in Frameworks */ = {isa = PBXBuildFile; productRef = 55C46B29A672949F0C432479 /* AccountAV */; };
+		D4A7B9C1E8F64321A0B5C2D3 /* AVMediaAnalysisFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = D4A7B9C0E8F64321A0B5C2D3 /* AVMediaAnalysisFoundation */; };
 		D6670127C90DD96DA4278612 /* MomentsProjectStatusRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA5F229257DFA3D07B4B346E /* MomentsProjectStatusRules.swift */; };
 		D78234168075F660D293470D /* MomentsCreateViewModel+Summaries.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3DB27C1B5FFDFD33E9CEC /* MomentsCreateViewModel+Summaries.swift */; };
 		DC2BF9E3C675B06C70CBF594 /* MomentsCreateWorkflowSummaries.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF4F102FFB0BAC068C906C39 /* MomentsCreateWorkflowSummaries.swift */; };
@@ -432,6 +433,7 @@
 				8E60BBF3EF4D3E74FD23A20F /* AVSettingsFoundation in Frameworks */,
 				1E9A2FA71ACB2D2483F46204 /* AVAviFoundation in Frameworks */,
 				1C50765994951A8F7BC8AAA9 /* AVPaywallFoundation in Frameworks */,
+				D4A7B9C1E8F64321A0B5C2D3 /* AVMediaAnalysisFoundation in Frameworks */,
 				B3C39D9DCFFBEEEAC41EF540 /* ConvexMobile in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1042,6 +1044,7 @@
 				11B7D51EBE4054790427844A /* AVSettingsFoundation */,
 				872F5AD50A6C12BF2797777C /* AVAviFoundation */,
 				C1452F552A3C79C4B340B355 /* AVPaywallFoundation */,
+				D4A7B9C0E8F64321A0B5C2D3 /* AVMediaAnalysisFoundation */,
 				E55ADAAE01D91D0E794079EB /* ConvexMobile */,
 			);
 			productName = MomentsAV;
@@ -1639,6 +1642,10 @@
 		C1452F552A3C79C4B340B355 /* AVPaywallFoundation */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = AVPaywallFoundation;
+		};
+		D4A7B9C0E8F64321A0B5C2D3 /* AVMediaAnalysisFoundation */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = AVMediaAnalysisFoundation;
 		};
 		E55ADAAE01D91D0E794079EB /* ConvexMobile */ = {
 			isa = XCSwiftPackageProductDependency;
