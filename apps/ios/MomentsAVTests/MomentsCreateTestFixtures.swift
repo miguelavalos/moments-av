@@ -34,15 +34,19 @@ enum MomentsCreateTestFixtures {
         )
     }
 
-    static func makeSelectedMedia(id: String) -> MomentsSelectedMedia {
+    static func makeSelectedMedia(
+        id: String,
+        sourceLocalIdentifier: String? = nil,
+        sha256: String? = nil
+    ) -> MomentsSelectedMedia {
         MomentsSelectedMedia(
             id: UUID(uuidString: id)!,
-            sourceLocalIdentifier: id,
+            sourceLocalIdentifier: sourceLocalIdentifier ?? id,
             originalFilename: "\(id).jpg",
             contentType: "image/jpeg",
             kind: "image",
             byteSize: 4,
-            sha256: "abcd",
+            sha256: sha256 ?? id,
             data: Data([1, 2, 3, 4]),
             capturedAt: nil,
             sortOrder: 0,

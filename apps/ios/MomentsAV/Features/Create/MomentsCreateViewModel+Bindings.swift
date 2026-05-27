@@ -52,18 +52,20 @@ extension MomentsCreateViewModel {
     }
 
     private func bindMediaUpload(_ workflow: MediaUploadWorkflow) {
-        Publishers.CombineLatest3(
+        Publishers.CombineLatest4(
             workflow.$selectedMedia,
             workflow.$statusMessage,
-            workflow.$isImporting
+            workflow.$isImporting,
+            workflow.$importProgress
         )
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] selectedMedia, statusMessage, isImporting in
+            .sink { [weak self] selectedMedia, statusMessage, isImporting, importProgress in
                 self?.applyMediaUploadState(
                     MomentsCreateMediaUploadState(
                         selectedMedia: selectedMedia,
                         statusMessage: statusMessage,
-                        isImporting: isImporting
+                        isImporting: isImporting,
+                        importProgress: importProgress
                     )
                 )
             }

@@ -13,19 +13,34 @@ iOS app for first App Store publication.
 The signed-in creation flow is media-first:
 
 1. the user starts a Moment and selects photos or clips;
-2. the app shows a short preparing state while local media is imported;
-3. Moments AV stores the in-progress Moment locally until the user cancels or
-   prepares a preview;
-4. the Creation Dashboard summarizes media and options before preview;
-5. media editing and option editing are separate screens that return to the
+2. the user can choose individual media or add photos from an exposed Photos
+   collection/album;
+3. the app shows a short preparing state with item progress while local media
+   is imported;
+4. Moments AV stores the in-progress Moment locally until the user cancels or
+   prepares the story;
+5. the Creation Dashboard summarizes media and direction before story
+   preparation;
+6. media editing and Avi direction editing are separate screens that return to the
    dashboard.
 
 During import, the app runs `AVMediaAnalysisFoundation` from `apps-av/apple` on
 device. The local analyzer does not call backend AI. It produces cheap generic
 signals such as orientation, face count, scene role, screenshot likelihood, and
 quality score. Moments AV uses those signals, plus dates and filename hints, to
-preselect a theme and music default for Avi. Backend AI-assisted story planning
-and rendering remain separate future workflow stages.
+preselect a theme and music default for Avi.
+
+The current product direction treats `Prepare story` as a cheap pre-render
+review step, not as a video preview. It should organize the story, style, music,
+pace, and optional user note before any paid video generation. Video creation
+and any future preview/final render provider calls remain separate workflow
+stages with explicit credit gating.
+
+When the user taps `Prepare story`, the app first persists the selected local
+media into the active project, then sends the persisted media IDs to the story
+draft endpoint. This avoids drafting against temporary local identifiers and
+keeps the story plan aligned with the backend project state. Duplicate media
+selected in later imports is skipped automatically.
 
 ## First Publication
 

@@ -15,7 +15,7 @@ final class MomentsProjectsPresentationTests: XCTestCase {
                 MomentsProjectsUnavailablePresentation(
                     systemImage: "person.crop.circle.fill",
                     title: "Sign in to make Moments",
-                    message: "Your drafts, previews, and final videos will appear here once your account is connected."
+                    message: "Your stories and final videos will appear here once your account is connected."
                 )
             )
         )
@@ -34,7 +34,7 @@ final class MomentsProjectsPresentationTests: XCTestCase {
                 MomentsProjectsUnavailablePresentation(
                     systemImage: "rectangle.stack.badge.plus",
                     title: "No projects yet",
-                    message: "Local creations appear in Create. Projects will appear here after the first preview starts."
+                    message: "Local creations appear in Create. Projects will appear here after the story is prepared."
                 )
             )
         )

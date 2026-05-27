@@ -42,6 +42,7 @@ struct MomentsCreateMediaSummary: Equatable {
     var selectedMedia: [MomentsSelectedMedia] = []
     var syncedMediaAssets: [MomentMediaAsset] = []
     var isImporting = false
+    var importProgress: MomentsMediaImportProgress?
     var statusMessage: String?
 
     var selectedCount: Int {
@@ -53,6 +54,21 @@ struct MomentsCreateMediaSummary: Equatable {
 
     func remainingSlots(template: MomentTemplate) -> Int {
         MomentsMediaRules.remainingSlots(template: template, selectedCount: selectedCount)
+    }
+}
+
+struct MomentsMediaImportProgress: Equatable {
+    var completedCount = 0
+    var totalCount = 0
+
+    var fractionCompleted: Double? {
+        guard totalCount > 0 else { return nil }
+        return min(max(Double(completedCount) / Double(totalCount), 0), 1)
+    }
+
+    var title: String {
+        guard totalCount > 0 else { return "Reading media" }
+        return "\(min(completedCount, totalCount)) of \(totalCount)"
     }
 }
 

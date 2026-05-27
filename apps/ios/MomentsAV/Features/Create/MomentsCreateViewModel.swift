@@ -19,6 +19,7 @@ final class MomentsCreateViewModel: ObservableObject {
     @Published private(set) var selectedMedia: [MomentsSelectedMedia] = []
     @Published private(set) var mediaStatusMessage: String?
     @Published private(set) var isImportingMedia = false
+    @Published private(set) var mediaImportProgress: MomentsMediaImportProgress?
     @Published private(set) var autoStyleSuggestion: MomentsMediaAutoStyleSuggestion?
     @Published private(set) var savedScenes: [MomentStoryScene] = []
     @Published private(set) var generatedScenes: [MomentsStoryDraftScene] = []
@@ -112,7 +113,6 @@ final class MomentsCreateViewModel: ObservableObject {
         guard canEditCreationOptions else { return }
         selectedCreationStyle = style
         selectedMusicPreset = style.defaultMusic
-        autoStyleSuggestion = nil
         hasUserStyleOverride = true
         applyStyleDefaults(style)
 
@@ -123,9 +123,18 @@ final class MomentsCreateViewModel: ObservableObject {
 
     func selectMusicPreset(_ preset: MomentMusicPreset) {
         guard selectedCreationStyle.allowedMusic.contains(preset) else { return }
-        autoStyleSuggestion = nil
         hasUserStyleOverride = true
         selectedMusicPreset = preset
+    }
+
+    func useAutoStyleSuggestion() {
+        guard canEditCreationOptions else { return }
+        guard let suggestion = autoStyleSuggestion else { return }
+        guard let suggestedStyle = creationStyles.first(where: { $0.id == suggestion.styleID && $0.isEnabled }) else { return }
+        selectedCreationStyle = suggestedStyle
+        selectedMusicPreset = suggestion.musicPreset
+        hasUserStyleOverride = false
+        applyStyleDefaults(suggestedStyle)
     }
 
     func clearSessionState() {
@@ -303,6 +312,7 @@ extension MomentsCreateViewModel {
         selectedMedia = state.selectedMedia
         mediaStatusMessage = state.statusMessage
         isImportingMedia = state.isImporting
+        mediaImportProgress = state.importProgress
         updateAutoStyleSuggestion(for: state.selectedMedia)
     }
 
@@ -351,7 +361,6 @@ extension MomentsCreateViewModel {
         let signature = mediaSignature(media)
         guard signature != autoStyleMediaSignature else { return }
         autoStyleMediaSignature = signature
-        guard !hasUserStyleOverride else { return }
         guard let suggestion = MomentsMediaAutoStyleSuggester.suggest(
             media: media,
             styles: creationStyles
@@ -365,6 +374,7 @@ extension MomentsCreateViewModel {
         }
 
         autoStyleSuggestion = suggestion
+        guard !hasUserStyleOverride else { return }
         selectedCreationStyle = suggestedStyle
         selectedMusicPreset = suggestion.musicPreset
         applyStyleDefaults(suggestedStyle)

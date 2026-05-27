@@ -33,7 +33,7 @@ struct MomentsHomePresentation {
             projectStatusDetail: projectStatusDetail(projectSummary: projectSummary),
             createAction: MomentsHomeAction(
                 title: "Create a moment",
-                detail: "Choose media and let Avi prepare the first preview.",
+                detail: "Choose media and let Avi prepare the story.",
                 systemImage: "plus.app",
                 isProminent: latestInProgressProject == nil,
                 isDisabled: !isSignedIn
@@ -41,14 +41,14 @@ struct MomentsHomePresentation {
             reviewProjectsAction: MomentsHomeAction(
                 title: "Review projects",
                 detail: projectSummary.hasProjects
-                    ? "Open \(projectSummary.projectCount) synced \(projectLabel(projectSummary.projectCount)) with preview and final status."
-                    : "Synced projects appear after the first preview starts.",
+                    ? "Open \(projectSummary.projectCount) synced \(projectLabel(projectSummary.projectCount)) with story and video status."
+                    : "Synced projects appear after the story is prepared.",
                 systemImage: "rectangle.stack",
                 isDisabled: !isSignedIn
             ),
             aviGuidanceAction: MomentsHomeAction(
                 title: "Get project guidance",
-                detail: "Review media, story, preview, render, and credit decisions.",
+                detail: "Review media, story, video, and credit decisions.",
                 systemImage: "sparkles"
             ),
             latestInProgressAction: latestInProgressAction,
@@ -74,7 +74,7 @@ struct MomentsHomePresentation {
 
     private static func aviBriefDetail(isSignedIn: Bool, projectSummary: MomentsProjectListSummary) -> String {
         guard isSignedIn else {
-            return "Sign in to create projects, track previews, manage renders, and keep credits with your account."
+            return "Sign in to create projects, track videos, manage renders, and keep credits with your account."
         }
 
         if let latestProject = projectSummary.latestInProgressProject {
@@ -82,7 +82,7 @@ struct MomentsHomePresentation {
         }
 
         if projectSummary.hasProjects {
-            return "Review synced projects and decide the next preview or final render."
+            return "Review synced projects and decide the next story or video step."
         }
 
         return "Plan the first memory film before adding media."

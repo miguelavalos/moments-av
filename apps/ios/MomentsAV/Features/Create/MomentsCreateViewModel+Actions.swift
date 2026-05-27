@@ -76,6 +76,19 @@ extension MomentsCreateViewModel {
         }
     }
 
+    func importPhotoAlbum(id albumId: String) {
+        guard canAddMedia, let mediaUploadWorkflow else { return }
+        let template = form.template
+
+        runOperation {
+            await mediaUploadWorkflow.importPhotoAlbum(
+                id: albumId,
+                template: template,
+                projectId: self.activeProjectId
+            )
+        }
+    }
+
     func removeMedia(_ media: MomentsSelectedMedia) {
         mediaUploadWorkflow?.remove(media)
     }
@@ -111,11 +124,14 @@ extension MomentsCreateViewModel {
             }
 
             guard let projectId else { return }
+            let persistedMedia = await self.mediaUploadWorkflow?.persistSelectedMedia(projectId: projectId)
+            guard persistedMedia != nil || selectedMedia.isEmpty else { return }
 
             await storyDraftWorkflow.generateDraft(
                 projectId: projectId,
                 form: form,
-                selectedMedia: selectedMedia
+                selectedMedia: selectedMedia,
+                persistedMedia: persistedMedia
             )
         }
     }
@@ -155,11 +171,14 @@ extension MomentsCreateViewModel {
             }
 
             guard let projectId else { return }
+            let persistedMedia = await self.mediaUploadWorkflow?.persistSelectedMedia(projectId: projectId)
+            guard persistedMedia != nil || selectedMedia.isEmpty else { return }
 
             await storyDraftWorkflow.generateDraft(
                 projectId: projectId,
                 form: form,
-                selectedMedia: selectedMedia
+                selectedMedia: selectedMedia,
+                persistedMedia: persistedMedia
             )
 
             guard let previewGenerationWorkflow = self.previewGenerationWorkflow else { return }

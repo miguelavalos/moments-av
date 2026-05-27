@@ -1,7 +1,8 @@
 import Foundation
 
-struct MediaUploadPersistenceResult: Equatable {
+struct MediaUploadPersistenceResult {
     let savedCount: Int
+    let savedMedia: [MomentsStoryDraftMedia]
     let storageBlocked: Bool
 
     var statusMessage: String {
@@ -23,6 +24,7 @@ enum MediaUploadPersistence {
         shouldContinue: () -> Bool
     ) async throws -> MediaUploadPersistenceResult {
         var savedCount = 0
+        var savedMedia: [MomentsStoryDraftMedia] = []
         var storageBlocked = false
 
         for media in mediaItems {
@@ -44,6 +46,15 @@ enum MediaUploadPersistence {
                 media: media,
                 preparedUpload: prepared
             )
+            savedMedia.append(
+                MomentsStoryDraftMedia(
+                    mediaAssetId: prepared.mediaAssetId,
+                    mediaKind: media.kind,
+                    sortOrder: media.sortOrder,
+                    selected: media.selected,
+                    moderationStatus: "pending"
+                )
+            )
 
             guard shouldContinue() else {
                 throw CancellationError()
@@ -54,6 +65,7 @@ enum MediaUploadPersistence {
 
         return MediaUploadPersistenceResult(
             savedCount: savedCount,
+            savedMedia: savedMedia,
             storageBlocked: storageBlocked
         )
     }

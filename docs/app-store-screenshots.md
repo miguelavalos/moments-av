@@ -30,11 +30,12 @@ Record these values before capture:
 Capture candidates:
 
 - [ ] Signed-out Account AV gate.
-- [ ] Template selection with Birthday Message, Party Recap, and Soft Roast.
-- [ ] Launch readiness checklist with Account AV, credits, media, and Avi.
-- [ ] Media selection after user-selected sample media is attached.
-- [ ] Story draft screen with Avi guidance and realistic draft scenes.
-- [ ] Preview screen showing preview-ready or preview-generation state.
+- [ ] Home with a current in-progress Moment.
+- [ ] Creation Dashboard with empty media state.
+- [ ] Media selection after user-selected sample media or collection photos are attached.
+- [ ] Creation Dashboard with selected media, Avi direction, and Prepare story.
+- [ ] Guide Avi screen showing Direction and Note controls.
+- [ ] Story-ready state before final video creation.
 - [ ] Final render screen showing final-export readiness, not unsupported
   instant delivery.
 - [ ] Projects list with non-private sample project names.
@@ -62,7 +63,8 @@ Optional only if the submitted build fully supports the state:
 - Avi can appear only where the submitted UI actually includes Avi.
 - Captions must not imply open-ended chat, autonomous editing, or background
   cross-app control.
-- Safe claims: guidance, story shaping, preview preparation, export status,
+- Safe claims: guidance, story preparation, media review, direction selection,
+  export status,
   credit explanation, recovery guidance.
 - Unsafe claims: unlimited AI creation, automatic perfect edits, autonomous
   account actions, or unsupported chat.
@@ -83,9 +85,9 @@ Optional only if the submitted build fully supports the state:
 Use short captions that describe shipped workflows:
 
 - Turn selected photos and clips into memory videos.
-- Start with birthday, party, or playful story templates.
-- Let Avi help shape the draft before preview.
-- Preview first, then request the final export.
+- Start from your selected photos and clips.
+- Let Avi prepare the story before video creation.
+- Create the video when the story is ready.
 - Keep credits, projects, and deletion controls visible.
 
 Avoid:

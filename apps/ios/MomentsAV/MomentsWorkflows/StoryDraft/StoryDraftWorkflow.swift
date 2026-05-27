@@ -39,7 +39,8 @@ final class StoryDraftWorkflow: WorkspaceObservingWorkflow {
     func generateDraft(
         projectId: String,
         form: MomentDraftForm,
-        selectedMedia: [MomentsSelectedMedia]
+        selectedMedia: [MomentsSelectedMedia],
+        persistedMedia: [MomentsStoryDraftMedia]? = nil
     ) async {
         guard let ownerUserId = currentUserProvider.currentUserId else {
             statusMessage = "Sign in before drafting the story."
@@ -50,7 +51,7 @@ final class StoryDraftWorkflow: WorkspaceObservingWorkflow {
             return
         }
 
-        let media = storyMedia(from: selectedMedia, fallbackMediaAssets: activeWorkspace?.mediaAssets)
+        let media = persistedMedia ?? storyMedia(from: selectedMedia, fallbackMediaAssets: activeWorkspace?.mediaAssets)
         let availability = MomentsMediaRules.availability(
             template: form.template,
             selectedCount: media.filter(\.selected).count

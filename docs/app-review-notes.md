@@ -32,17 +32,17 @@ Account and sign-in:
 Creation flow:
 - Open Create.
 - Sign in if prompted.
-- Choose a template such as Birthday Message, Party Recap, or Soft Roast.
 - Confirm readiness items for Account AV, credits, media, and Avi workflow.
-- Select approved sample photos or short clips.
-- Ask Avi to draft the story.
-- Generate a preview.
-- Request the final export when the preview is ready.
+- Select approved sample photos or short clips, or add photos from a supported
+  Photos collection.
+- Review the Creation Dashboard.
+- Ask Avi to prepare the story.
+- Create the final video when the story is ready and the credit cost is clear.
 
 Credits:
-- Previews and final exports require spendable Moments AV credits.
+- Final video creation requires spendable Moments AV credits.
 - Final credits are committed only after a usable final export is delivered.
-- Drafts and failed provider runs do not commit final credits.
+- Story preparation and failed provider runs do not commit final credits.
 
 Account deletion and project deletion:
 - Account deletion is available from Account > Delete Account.
@@ -51,7 +51,7 @@ Account deletion and project deletion:
   metadata where available.
 
 Avi:
-- Avi is a guided in-app assistant for onboarding, draft guidance, preview
+- Avi is a guided in-app assistant for onboarding, story preparation,
   preparation, final export status, credits, and recovery guidance.
 - Avi is not presented as open-ended chat or autonomous cross-app control.
 
@@ -78,12 +78,13 @@ Before submission, test these paths on the exact build:
 
 - [ ] Signed-out launch explains Account AV requirement.
 - [ ] Account AV sign-in succeeds with the demo account.
-- [ ] Create tab opens template selection.
-- [ ] Launch readiness checklist is visible before template creation.
+- [ ] Create tab opens the media-first creation flow.
+- [ ] Creation Dashboard is visible after media selection.
 - [ ] Media selection uses Apple Photos picker and only user-selected media.
+- [ ] Collection/album import, when available, asks for confirmation and skips
+  duplicate selected media.
 - [ ] Story draft flow can be reached after media selection.
-- [ ] Preview generation can be reached after story draft readiness.
-- [ ] Final render flow can be reached after preview readiness.
+- [ ] Final video creation can be reached after story readiness.
 - [ ] Projects tab shows submitted demo projects.
 - [ ] Account tab shows support, privacy, terms, and delete-account routes.
 - [ ] Account deletion URL opens correctly.

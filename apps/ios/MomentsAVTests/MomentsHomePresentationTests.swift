@@ -34,7 +34,7 @@ final class MomentsHomePresentationTests: XCTestCase {
         XCTAssertFalse(presentation.createAction.isDisabled)
         XCTAssertEqual(
             presentation.reviewProjectsAction.detail,
-            "Synced projects appear after the first preview starts."
+            "Synced projects appear after the story is prepared."
         )
     }
 
@@ -73,7 +73,7 @@ final class MomentsHomePresentationTests: XCTestCase {
         )
         XCTAssertEqual(
             presentation.reviewProjectsAction.detail,
-            "Open 2 synced projects with preview and final status."
+            "Open 2 synced projects with story and video status."
         )
     }
 
@@ -92,7 +92,7 @@ final class MomentsHomePresentationTests: XCTestCase {
         )
         XCTAssertEqual(
             presentation.reviewProjectsAction.detail,
-            "Open 1 synced project with preview and final status."
+            "Open 1 synced project with story and video status."
         )
     }
 

@@ -41,7 +41,7 @@ Subtitle:
 Turn photos into video stories
 
 Promotional text:
-Create private memory videos from selected photos and short clips. Avi helps shape the story, preview the result, and prepare the final export.
+Create private memory videos from selected photos and short clips. Avi helps prepare the story before you create the video.
 
 Keywords draft:
 birthday,party,recap,slideshow,memories,family,clips,story,maker,private,gift,photos
@@ -87,15 +87,15 @@ keyword field.
 ```text
 Moments AV helps you turn selected photos and short clips into short memory videos for birthdays, parties, and personal moments.
 
-Choose a template, add the media you want to use, and let Avi help shape a simple story draft. Review the draft, generate a preview, and request the final export when you are ready.
+Choose photos or clips, review the simple dashboard, and let Avi prepare the story direction, pacing, and music. Create the video when you are ready.
 
 Moments AV is built around private projects, clear credit use, and account controls through Account AV.
 
 What you can do:
-- Start from Birthday Message, Party Recap, or Soft Roast templates.
-- Select the photos and short clips you want to include.
-- Ask Avi to help shape a story draft before preview.
-- Generate a preview before requesting the final export.
+- Select individual photos and clips, or add photos from supported Photos collections.
+- Review the media and direction before video creation.
+- Ask Avi to prepare the story, mood, pacing, and music.
+- Create the video only when you are ready to spend credits.
 - Keep projects tied to Account AV with support, privacy, terms, and deletion routes available from the app.
 ```
 
@@ -113,8 +113,8 @@ Use only captions that match real screenshots from the release-candidate build.
 
 - `Create memory videos from selected photos and clips`
 - `Start with birthday, party, or playful story templates`
-- `Let Avi help shape the story before preview`
-- `Preview first, then request the final export`
+- `Let Avi prepare the story before video creation`
+- `Review media and direction before spending credits`
 - `Keep credits, projects, and account controls clear`
 
 Avoid captions that mention:

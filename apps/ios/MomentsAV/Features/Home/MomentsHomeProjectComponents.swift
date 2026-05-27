@@ -22,7 +22,7 @@ struct MomentsHomeEmptyProjectRow: View {
     var body: some View {
         AVAppShellInfoRow(
             title: "No projects yet",
-            detail: "Start in Create to sync the first draft, preview, and final export.",
+            detail: "Start in Create to sync the first story and final video.",
             systemImage: "rectangle.stack.badge.plus",
             accessibilityIdentifier: "moments.home.projects.empty"
         )

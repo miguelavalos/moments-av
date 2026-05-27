@@ -23,12 +23,14 @@ struct MomentsCreateWorkflowContent: View {
                     pickerItems: $pickerItems,
                     importPickerItems: viewModel.importPickerItems,
                     importLatestPhotos: viewModel.importLatestPhotos,
+                    importPhotoAlbum: viewModel.importPhotoAlbum,
                     removeMedia: viewModel.removeMedia,
                     moveMedia: viewModel.moveMedia,
                     reorderMedia: viewModel.reorderMedia,
                     autoPickStrongMoments: viewModel.autoPickStrongMoments,
                     selectStyle: viewModel.selectCreationStyle,
                     selectMusicPreset: viewModel.selectMusicPreset,
+                    useAutoStyleSuggestion: viewModel.useAutoStyleSuggestion,
                     openPickerRequest: viewModel.mediaPickerOpenRequest,
                     consumeOpenPickerRequest: viewModel.consumeMediaPickerOpenRequest,
                     cancelCreation: cancelCreation,
@@ -77,12 +79,14 @@ private struct MomentsCreateMediaFirstWorkspace: View {
     @Binding var pickerItems: [PhotosPickerItem]
     let importPickerItems: ([PhotosPickerItem]) -> Void
     let importLatestPhotos: () -> Void
+    let importPhotoAlbum: (String) -> Void
     let removeMedia: (MomentsSelectedMedia) -> Void
     let moveMedia: (MomentsSelectedMedia, MomentsSelectedMedia) -> Void
     let reorderMedia: ([MomentsSelectedMedia]) -> Void
     let autoPickStrongMoments: () -> Void
     let selectStyle: (MomentCreationStyle) -> Void
     let selectMusicPreset: (MomentMusicPreset) -> Void
+    let useAutoStyleSuggestion: () -> Void
     let openPickerRequest: Int
     let consumeOpenPickerRequest: () -> Void
     let cancelCreation: () -> Void
@@ -95,50 +99,55 @@ private struct MomentsCreateMediaFirstWorkspace: View {
     @State private var showsAviOptions = false
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            if showsInitialImportState {
-                MomentsCreateMediaImportingState()
-            } else {
-                MomentsCreateDashboardHeader()
+        ScrollView {
+            VStack(alignment: .leading, spacing: 12) {
+                if showsInitialImportState {
+                    MomentsCreateMediaImportingState(progress: presentation.mediaSummary.importProgress)
+                } else {
+                    MomentsCreateDashboardHeader()
 
-                MomentsCreateCompactAviGuide(
-                    presentation: presentation,
-                    openOptions: { showsAviOptions = true }
-                )
+                    MomentsCreateCompactAviGuide(
+                        presentation: presentation,
+                        openOptions: { showsAviOptions = true }
+                    )
 
-                MomentsCreateMediaCard(
-                    pickerItems: $pickerItems,
-                    openPickerRequest: openPickerRequest,
-                    presentation: mediaPresentation,
-                    importPickerItems: importPickerItems,
-                    importLatestPhotos: importLatestPhotos,
-                    removeMedia: removeMedia,
-                    moveMedia: moveMedia,
-                    reorderMedia: reorderMedia,
-                    autoPickStrongMoments: autoPickStrongMoments,
-                    consumeOpenPickerRequest: consumeOpenPickerRequest
-                )
+                    MomentsCreateMediaCard(
+                        pickerItems: $pickerItems,
+                        openPickerRequest: openPickerRequest,
+                        presentation: mediaPresentation,
+                        importPickerItems: importPickerItems,
+                        importLatestPhotos: importLatestPhotos,
+                        importPhotoAlbum: importPhotoAlbum,
+                        removeMedia: removeMedia,
+                        moveMedia: moveMedia,
+                        reorderMedia: reorderMedia,
+                        autoPickStrongMoments: autoPickStrongMoments,
+                        consumeOpenPickerRequest: consumeOpenPickerRequest
+                    )
 
-                MomentsCreateOptionsSummaryCard(
-                    selectedStyle: selectedStyle,
-                    selectedMusicPreset: selectedMusicPreset,
-                    autoStyleSuggestion: autoStyleSuggestion,
-                    openOptions: { showsAviOptions = true }
-                )
+                    MomentsCreateOptionsSummaryCard(
+                        selectedStyle: selectedStyle,
+                        selectedMusicPreset: selectedMusicPreset,
+                        autoStyleSuggestion: autoStyleSuggestion,
+                        openOptions: { showsAviOptions = true }
+                    )
 
-                MomentsCreatePrimaryActionBar(
-                    presentation: presentation,
-                    cancelCreation: cancelCreation,
-                    generateStoryDraft: generateStoryDraft,
-                    generatePreview: generatePreview,
-                    refreshPreviewStatus: refreshPreviewStatus,
-                    generateFinalRender: generateFinalRender,
-                    refreshFinalRenderStatus: refreshFinalRenderStatus
-                )
+                    MomentsCreatePrimaryActionBar(
+                        presentation: presentation,
+                        cancelCreation: cancelCreation,
+                        generateStoryDraft: generateStoryDraft,
+                        generatePreview: generatePreview,
+                        refreshPreviewStatus: refreshPreviewStatus,
+                        generateFinalRender: generateFinalRender,
+                        refreshFinalRenderStatus: refreshFinalRenderStatus
+                    )
+                }
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.bottom, 172)
         }
+        .scrollIndicators(.hidden)
         .animation(.spring(response: 0.38, dampingFraction: 0.86), value: showsInitialImportState)
-        .safeAreaPadding(.bottom, 28)
         .navigationDestination(isPresented: $showsAviOptions) {
             MomentsCreateAviOptionsSheet(
                 form: $form,
@@ -148,6 +157,7 @@ private struct MomentsCreateMediaFirstWorkspace: View {
                 selectedMusicPreset: selectedMusicPreset,
                 selectStyle: selectStyle,
                 selectMusicPreset: selectMusicPreset,
+                useAutoStyleSuggestion: useAutoStyleSuggestion,
                 autoPickStrongMoments: autoPickStrongMoments,
                 dismiss: { showsAviOptions = false }
             )
@@ -178,7 +188,7 @@ private struct MomentsCreateDashboardHeader: View {
                 .font(.system(size: 22, weight: .black))
                 .foregroundStyle(AVBrandColor.textPrimary)
 
-            Text("Review what Avi prepared, edit only what you want, then preview.")
+            Text("Review what Avi prepared, edit only what you want, then prepare the story.")
                 .font(.system(size: 13, weight: .semibold))
                 .foregroundStyle(AVBrandColor.textSecondary)
                 .lineLimit(2)
@@ -187,6 +197,8 @@ private struct MomentsCreateDashboardHeader: View {
 }
 
 private struct MomentsCreateMediaImportingState: View {
+    let progress: MomentsMediaImportProgress?
+
     @State private var isAnimating = false
 
     var body: some View {
@@ -224,7 +236,7 @@ private struct MomentsCreateMediaImportingState: View {
                     .font(.system(size: 22, weight: .black))
                     .foregroundStyle(AVBrandColor.textPrimary)
 
-                Text("Avi is reading the selection and setting up the first review.")
+                Text(message)
                     .font(.system(size: 14, weight: .semibold))
                     .foregroundStyle(AVBrandColor.textSecondary)
                     .multilineTextAlignment(.center)
@@ -232,10 +244,22 @@ private struct MomentsCreateMediaImportingState: View {
                     .padding(.horizontal, 24)
             }
 
-            ProgressView()
-                .tint(AVBrandColor.accent)
-                .controlSize(.regular)
-                .padding(.top, 4)
+            VStack(spacing: 8) {
+                if let fractionCompleted = progress?.fractionCompleted {
+                    ProgressView(value: fractionCompleted)
+                        .tint(AVBrandColor.accent)
+                        .frame(width: 168)
+                    Text(progress?.title ?? "Reading media")
+                        .font(.caption)
+                        .fontWeight(.black)
+                        .foregroundStyle(AVBrandColor.textSecondary)
+                } else {
+                    ProgressView()
+                        .tint(AVBrandColor.accent)
+                        .controlSize(.regular)
+                }
+            }
+            .padding(.top, 4)
 
             Spacer(minLength: 120)
         }
@@ -247,7 +271,14 @@ private struct MomentsCreateMediaImportingState: View {
             }
         }
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("Preparing your moments. Avi is reading the selection.")
+        .accessibilityLabel("Preparing your moments. \(message)")
+    }
+
+    private var message: String {
+        if let progress, progress.totalCount > 0 {
+            return "Avi is reading \(progress.totalCount) \(progress.totalCount == 1 ? "item" : "items") and setting up your story."
+        }
+        return "Avi is reading the selection and setting up your story."
     }
 }
 
@@ -292,11 +323,11 @@ private struct MomentsCreateOptionsSummaryCard: View {
     }
 
     private var detailText: String {
-        guard let autoStyleSuggestion else {
-            return "Avi can adjust mood, music, rhythm, and the story note before preview."
+        guard autoStyleSuggestion != nil else {
+            return "Avi can adjust mood, music, rhythm, and the story note before creating the video."
         }
 
-        return "Suggested by Avi: \(autoStyleSuggestion.reason)"
+        return "Avi picked a direction for this selection. You can change it before creating the video."
     }
 }
 
@@ -395,7 +426,7 @@ private struct MomentsCreateCompactAviGuide: View {
             return "Avi is creating the preview from your selected moments."
         }
         if presentation.canGeneratePreview {
-            return "Avi has enough to prepare the first preview."
+            return "Avi prepared the story, style, and pacing. Video creation comes next."
         }
         if presentation.mediaSummary.selectedCount > 0 || !presentation.mediaSummary.syncedMediaAssets.isEmpty {
             return "Avi will organize the story and you can fine tune the selection."
@@ -415,13 +446,30 @@ private struct MomentsCreatePrimaryActionBar: View {
 
     var body: some View {
         AVAppShellCard {
-            VStack(alignment: .leading, spacing: 10) {
+            VStack(alignment: .leading, spacing: 16) {
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Story")
+                        .font(.system(size: 13, weight: .black))
+                        .foregroundStyle(AVBrandColor.textPrimary)
+
+                    if let statusMessage {
+                        Label(statusMessage, systemImage: statusIconName)
+                            .font(.system(size: 13, weight: .semibold))
+                            .foregroundStyle(statusColor)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                }
+
                 HStack(spacing: 10) {
                     Button("Cancel", action: cancelCreation)
                         .font(.system(size: 14, weight: .black))
-                        .foregroundStyle(AVBrandColor.textPrimary)
+                        .foregroundStyle(AVBrandColor.textSecondary)
                         .frame(width: 94, height: 42)
-                        .background(AVBrandColor.neutral100, in: Capsule())
+                        .background(AVBrandColor.mutedSurface.opacity(0.62), in: Capsule())
+                        .overlay {
+                            Capsule()
+                                .stroke(AVBrandColor.borderSubtle.opacity(0.65), lineWidth: 1)
+                        }
 
                     Button(action: primaryAction) {
                         Label(buttonTitle, systemImage: buttonIconName)
@@ -442,13 +490,6 @@ private struct MomentsCreatePrimaryActionBar: View {
                         .buttonStyle(MomentsCreateSubtleInlineButtonStyle())
                         .frame(maxWidth: .infinity)
                 }
-
-                if let statusMessage {
-                    Label(statusMessage, systemImage: statusIconName)
-                        .font(.caption)
-                        .foregroundStyle(statusColor)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
             }
         }
     }
@@ -457,7 +498,6 @@ private struct MomentsCreatePrimaryActionBar: View {
         !isBusy
             && (
                 presentation.canGenerateFinalRender
-                    || presentation.canGeneratePreview
                     || presentation.canDraftStory
             )
     }
@@ -466,6 +506,9 @@ private struct MomentsCreatePrimaryActionBar: View {
         if presentation.finalRenderSummary.finalExport != nil {
             return "Final video ready"
         }
+        if presentation.canGenerateFinalRender {
+            return presentation.finalRenderSummary.isGenerating ? "Creating video..." : "Create video · \(creditCostTitle)"
+        }
         if presentation.previewSummary.latestPreview != nil {
             return presentation.finalRenderSummary.isGenerating ? "Creating final..." : "Create final"
         }
@@ -473,9 +516,9 @@ private struct MomentsCreatePrimaryActionBar: View {
             return presentation.previewSummary.isRefreshingStatus ? "Refreshing..." : "Refresh preview"
         }
         if presentation.canGeneratePreview {
-            return presentation.previewSummary.isGenerating ? "Creating preview..." : "Preview"
+            return "Story ready"
         }
-        return presentation.storySummary.isDrafting ? "Avi is preparing..." : "Prepare preview"
+        return presentation.storySummary.isDrafting ? "Avi is preparing..." : "Prepare story"
     }
 
     private var buttonIconName: String {
@@ -488,6 +531,9 @@ private struct MomentsCreatePrimaryActionBar: View {
         if presentation.previewSummary.latestPreviewJob != nil {
             return "arrow.clockwise"
         }
+        if presentation.canGenerateFinalRender {
+            return "video.fill"
+        }
         return "play.rectangle.fill"
     }
 
@@ -495,7 +541,7 @@ private struct MomentsCreatePrimaryActionBar: View {
         if presentation.finalRenderSummary.finalExport != nil {
             return nil
         }
-        if presentation.previewSummary.latestPreview != nil {
+        if presentation.previewSummary.latestPreview != nil || presentation.canGenerateFinalRender {
             return presentation.finalRenderAvailabilityMessage
         }
         if presentation.canGeneratePreview || presentation.previewSummary.latestPreviewJob != nil {
@@ -506,7 +552,7 @@ private struct MomentsCreatePrimaryActionBar: View {
 
     private var statusMessage: String? {
         if presentation.finalRenderSummary.isGenerating {
-            return presentation.finalRenderSummary.statusMessage ?? "Creating final video..."
+            return presentation.finalRenderSummary.statusMessage ?? "Creating video..."
         }
         if presentation.previewSummary.isGenerating {
             return presentation.previewSummary.statusMessage ?? "Creating preview..."
@@ -519,6 +565,9 @@ private struct MomentsCreatePrimaryActionBar: View {
         }
         if presentation.previewSummary.latestPreview != nil {
             return "Preview ready. Review it before final video."
+        }
+        if presentation.canGenerateFinalRender {
+            return "Creating this video uses \(creditCostTitle)."
         }
         if let previewMessage = presentation.previewSummary.statusMessage, !previewMessage.isEmpty {
             return previewMessage
@@ -533,10 +582,10 @@ private struct MomentsCreatePrimaryActionBar: View {
             return availabilityMessage
         }
         if presentation.canGeneratePreview {
-            return "Ready to create the first preview."
+            return "Story ready. Next step: create the video."
         }
         if presentation.canDraftStory {
-            return "Avi will prepare the story, then create the preview."
+            return "Avi will organize the story, style, music, and pacing before video creation."
         }
         return nil
     }
@@ -582,10 +631,12 @@ private struct MomentsCreatePrimaryActionBar: View {
         }
         if presentation.previewSummary.latestPreview != nil {
             generateFinalRender()
+        } else if presentation.canGenerateFinalRender {
+            generateFinalRender()
         } else if presentation.previewSummary.latestPreviewJob != nil {
             refreshPreviewStatus()
         } else if presentation.canGeneratePreview {
-            generatePreview()
+            return
         } else {
             generateStoryDraft()
         }
@@ -593,6 +644,10 @@ private struct MomentsCreatePrimaryActionBar: View {
 
     private func secondaryAction() {
         refreshFinalRenderStatus()
+    }
+
+    private var creditCostTitle: String {
+        MomentsCreditCopy.countTitle(presentation.finalRenderSummary.creditCost)
     }
 }
 
@@ -677,10 +732,10 @@ private struct MomentsCreateLegacyCompactAviGuide: View {
             return "Avi is making the preview from your selected moments."
         }
         if presentation.canGeneratePreview {
-            return "The story plan is ready. Next step: create the preview."
+            return "The story plan is ready. Next step: create the video."
         }
         if presentation.mediaSummary.selectedCount > 0 || !presentation.mediaSummary.syncedMediaAssets.isEmpty {
-            return "Avi uses dates when available, then filename order, then your selection order."
+            return "Avi will shape these moments into a simple story plan."
         }
         return "Pick the moments. Avi will shape the story, mood, and pacing."
     }
@@ -694,70 +749,45 @@ private struct MomentsCreateAviOptionsSheet: View {
     let selectedMusicPreset: MomentMusicPreset
     let selectStyle: (MomentCreationStyle) -> Void
     let selectMusicPreset: (MomentMusicPreset) -> Void
+    let useAutoStyleSuggestion: () -> Void
     let autoPickStrongMoments: () -> Void
     let dismiss: () -> Void
 
     @State private var showsThemeChooser = false
 
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 18) {
-                MomentsCreateEditorPageHeader(
-                    title: "Guide Avi",
-                    dismiss: dismiss
-                )
+        VStack(spacing: 0) {
+            MomentsCreateEditorPageHeader(
+                title: "Guide Avi",
+                dismiss: dismiss
+            )
+            .padding(.horizontal, 20)
+            .padding(.top, 20)
+            .padding(.bottom, 14)
 
-                MomentsCreateOptionsAviPanel()
+            ScrollView {
+                VStack(alignment: .leading, spacing: 14) {
+                    MomentsCreateOptionsAviPanel(
+                        selectedStyle: selectedStyle,
+                        selectedMusicPreset: selectedMusicPreset,
+                        autoStyleSuggestion: autoStyleSuggestion,
+                        useAutoStyleSuggestion: useAutoStyleSuggestion
+                    )
 
-                MomentsCreateSelectedThemeCard(
-                    style: selectedStyle,
-                    autoStyleSuggestion: autoStyleSuggestion,
-                    changeTheme: { showsThemeChooser = true }
-                )
+                    MomentsCreateDirectionCard(
+                        style: selectedStyle,
+                        autoStyleSuggestion: autoStyleSuggestion,
+                        selectedMusicPreset: selectedMusicPreset,
+                        changeTheme: { showsThemeChooser = true },
+                        selectMusicPreset: selectMusicPreset
+                    )
 
-                VStack(alignment: .leading, spacing: 10) {
-                    AVAppShellSectionHeader(title: "Music")
-
-                    HStack(spacing: 8) {
-                        Button {
-                            selectMusicPreset(selectedStyle.defaultMusic)
-                        } label: {
-                            Text("Automatic")
-                                .font(.system(size: 13, weight: .black))
-                                .foregroundStyle(selectedMusicPreset == selectedStyle.defaultMusic ? AVBrandColor.textInverse : AVBrandColor.textPrimary)
-                                .frame(maxWidth: .infinity)
-                                .frame(height: 38)
-                                .background(
-                                    RoundedRectangle(cornerRadius: 8, style: .continuous)
-                                        .fill(selectedMusicPreset == selectedStyle.defaultMusic ? AVBrandColor.ink : AVBrandColor.neutral100)
-                                )
-                        }
-                        .buttonStyle(.plain)
-
-                        ForEach(selectedStyle.allowedMusic.filter { $0 != selectedStyle.defaultMusic }) { preset in
-                            Button {
-                                selectMusicPreset(preset)
-                            } label: {
-                                Text(preset.title)
-                                    .font(.system(size: 13, weight: .black))
-                                    .foregroundStyle(selectedMusicPreset == preset ? AVBrandColor.textInverse : AVBrandColor.textPrimary)
-                                    .frame(maxWidth: .infinity)
-                                    .frame(height: 38)
-                                    .background(
-                                        RoundedRectangle(cornerRadius: 8, style: .continuous)
-                                            .fill(selectedMusicPreset == preset ? AVBrandColor.ink : AVBrandColor.neutral100)
-                                    )
-                            }
-                            .buttonStyle(.plain)
-                        }
-                    }
+                    MomentsCreateAviNoteField(text: $form.details)
                 }
-
-                MomentsCreateAviNoteField(text: $form.details)
+                .padding(.horizontal, 20)
+                .padding(.bottom, 172)
             }
-            .padding(20)
-            .padding(.top, 8)
-            .safeAreaPadding(.bottom, 96)
+            .scrollIndicators(.hidden)
         }
         .background(MomentsTheme.shellBackground.ignoresSafeArea())
         .navigationDestination(isPresented: $showsThemeChooser) {
@@ -774,58 +804,32 @@ private struct MomentsCreateAviOptionsSheet: View {
     }
 }
 
-private struct MomentsCreateOptionsAviPanel: View {
-    var body: some View {
-        AVAppShellCard {
-            HStack(spacing: 12) {
-                Image("AviFullBody")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 42, height: 42)
-                    .padding(4)
-                    .background(AVBrandColor.accent.opacity(0.10), in: Circle())
-                    .accessibilityHidden(true)
-
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Avi direction")
-                        .font(.system(size: 14, weight: .black))
-                        .foregroundStyle(AVBrandColor.textPrimary)
-
-                    Text("Tell Avi what matters most, or leave everything automatic.")
-                        .font(.caption)
-                        .fontWeight(.semibold)
-                        .foregroundStyle(AVBrandColor.textSecondary)
-                        .lineLimit(nil)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
-
-                Spacer(minLength: 0)
-            }
-        }
-    }
-}
-
-private struct MomentsCreateSelectedThemeCard: View {
+private struct MomentsCreateDirectionCard: View {
     let style: MomentCreationStyle
     let autoStyleSuggestion: MomentsMediaAutoStyleSuggestion?
+    let selectedMusicPreset: MomentMusicPreset
     let changeTheme: () -> Void
+    let selectMusicPreset: (MomentMusicPreset) -> Void
 
     var body: some View {
-        Button(action: changeTheme) {
-            AVAppShellCard {
-                VStack(alignment: .leading, spacing: 14) {
-                    HStack(spacing: 10) {
-                        Text("Theme")
-                            .font(.system(size: 13, weight: .black))
-                            .foregroundStyle(AVBrandColor.textPrimary)
+        AVAppShellCard {
+            VStack(alignment: .leading, spacing: 14) {
+                HStack(spacing: 10) {
+                    Text("Direction")
+                        .font(.system(size: 13, weight: .black))
+                        .foregroundStyle(AVBrandColor.textPrimary)
 
-                        Spacer(minLength: 0)
+                    Spacer(minLength: 0)
 
+                    Button(action: changeTheme) {
                         Text("Change")
                             .font(.system(size: 12, weight: .black))
                             .foregroundStyle(AVBrandColor.accent)
                     }
+                    .buttonStyle(.plain)
+                }
 
+                Button(action: changeTheme) {
                     HStack(spacing: 12) {
                         Image(style.assetName)
                             .resizable()
@@ -854,6 +858,10 @@ private struct MomentsCreateSelectedThemeCard: View {
 
                         Spacer(minLength: 4)
                     }
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel("Change direction, \(style.title)")
 
                 HStack(spacing: 8) {
                     MomentsCreateOptionPill(
@@ -867,40 +875,143 @@ private struct MomentsCreateSelectedThemeCard: View {
                     )
                 }
 
-                Text("Avi uses this theme to set the mood, pacing, and default music.")
+                HStack(spacing: 8) {
+                    Button {
+                        selectMusicPreset(style.defaultMusic)
+                    } label: {
+                        Text("Automatic")
+                            .font(.system(size: 13, weight: .black))
+                            .foregroundStyle(selectedMusicPreset == style.defaultMusic ? AVBrandColor.textInverse : AVBrandColor.textPrimary)
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 36)
+                            .background(
+                                RoundedRectangle(cornerRadius: 8, style: .continuous)
+                                    .fill(selectedMusicPreset == style.defaultMusic ? AVBrandColor.ink : AVBrandColor.neutral100)
+                            )
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel("Use automatic music")
+
+                    ForEach(style.allowedMusic.filter { $0 != style.defaultMusic }) { preset in
+                        Button {
+                            selectMusicPreset(preset)
+                        } label: {
+                            Text(preset.title)
+                                .font(.system(size: 13, weight: .black))
+                                .foregroundStyle(selectedMusicPreset == preset ? AVBrandColor.textInverse : AVBrandColor.textPrimary)
+                                .frame(maxWidth: .infinity)
+                                .frame(height: 36)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 8, style: .continuous)
+                                        .fill(selectedMusicPreset == preset ? AVBrandColor.ink : AVBrandColor.neutral100)
+                                )
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+
+                Text("Avi uses this direction to set the mood, pacing, and music.")
                     .font(.caption)
                     .fontWeight(.semibold)
                     .foregroundStyle(AVBrandColor.textSecondary)
                     .lineLimit(nil)
                     .fixedSize(horizontal: false, vertical: true)
-
-                if let autoStyleSuggestion {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Label("Suggested by Avi · \(autoStyleSuggestion.confidenceTitle)", systemImage: "sparkles")
-                            .font(.system(size: 11, weight: .black))
-                            .foregroundStyle(AVBrandColor.accent)
-
-                        Text(autoStyleSuggestion.reason)
-                            .font(.caption2)
-                            .fontWeight(.semibold)
-                            .foregroundStyle(AVBrandColor.textSecondary)
-                            .lineLimit(nil)
-                            .fixedSize(horizontal: false, vertical: true)
-
-                        Text(autoStyleSuggestion.metrics.summary)
-                            .font(.caption2)
-                            .fontWeight(.semibold)
-                            .foregroundStyle(AVBrandColor.textSecondary.opacity(0.72))
-                            .lineLimit(nil)
-                            .fixedSize(horizontal: false, vertical: true)
-                    }
-                    .padding(.top, 2)
-                }
             }
         }
+    }
+}
+
+private struct MomentsCreateOptionsAviPanel: View {
+    let selectedStyle: MomentCreationStyle
+    let selectedMusicPreset: MomentMusicPreset
+    let autoStyleSuggestion: MomentsMediaAutoStyleSuggestion?
+    let useAutoStyleSuggestion: () -> Void
+
+    var body: some View {
+        AVAppShellCard {
+            HStack(spacing: 12) {
+                Image("AviFullBody")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 42, height: 42)
+                    .padding(4)
+                    .background(AVBrandColor.accent.opacity(0.10), in: Circle())
+                    .accessibilityHidden(true)
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Avi direction")
+                        .font(.system(size: 14, weight: .black))
+                        .foregroundStyle(AVBrandColor.textPrimary)
+
+                    Text(message)
+                        .font(.caption)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(AVBrandColor.textSecondary)
+                        .lineLimit(nil)
+                        .fixedSize(horizontal: false, vertical: true)
+
+                    if showsUseAviSuggestion {
+                        Button(action: useAutoStyleSuggestion) {
+                            Label("Use Avi suggestion", systemImage: "sparkles")
+                                .font(.system(size: 12, weight: .black))
+                                .foregroundStyle(AVBrandColor.accent)
+                                .padding(.horizontal, 10)
+                                .padding(.vertical, 7)
+                                .background(AVBrandColor.accent.opacity(0.09), in: Capsule())
+                        }
+                        .buttonStyle(.plain)
+                        .padding(.top, 2)
+                    }
+                }
+
+                Spacer(minLength: 0)
+            }
         }
-        .buttonStyle(.plain)
-        .accessibilityLabel("Change theme, \(style.title)")
+    }
+
+    private var message: String {
+        guard let autoStyleSuggestion else {
+            return "Tell Avi what matters most, or leave everything automatic."
+        }
+
+        if isUsingAviSuggestion {
+            return "Avi picked \(selectedStyle.title.lowercased()) for this selection. You can change the direction or add a note."
+        }
+
+        if isUsingAviDirection {
+            return "Avi picked \(selectedStyle.title.lowercased()) for this selection. You changed the music."
+        }
+
+        let suggestedTitle = suggestedStyleTitle(for: autoStyleSuggestion.styleID)
+        return "You changed the direction to \(selectedStyle.title.lowercased()). Avi originally suggested \(suggestedTitle.lowercased()) for this selection."
+    }
+
+    private var isUsingAviSuggestion: Bool {
+        guard let autoStyleSuggestion else { return false }
+        return selectedStyle.id == autoStyleSuggestion.styleID
+            && selectedMusicPreset == autoStyleSuggestion.musicPreset
+    }
+
+    private var isUsingAviDirection: Bool {
+        guard let autoStyleSuggestion else { return false }
+        return selectedStyle.id == autoStyleSuggestion.styleID
+    }
+
+    private var showsUseAviSuggestion: Bool {
+        autoStyleSuggestion != nil && !isUsingAviSuggestion
+    }
+
+    private func suggestedStyleTitle(for id: MomentCreationStyleID) -> String {
+        switch id {
+        case .celebration: "Celebration"
+        case .eventRecap: "Event Recap"
+        case .travel: "Travel"
+        case .favoritePeople: "Favorite People"
+        case .birthday: "Birthday"
+        case .familyMoments: "Family Moments"
+        case .softRoast: "Soft Roast"
+        case .custom: "Custom"
+        }
     }
 }
 
@@ -908,47 +1019,55 @@ private struct MomentsCreateAviNoteField: View {
     @Binding var text: String
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack(alignment: .center, spacing: 10) {
-                MomentsCreateGuideFieldIcon(systemImage: "text.bubble.fill")
+        AVAppShellCard {
+            VStack(alignment: .leading, spacing: 12) {
+                Text("Note")
+                    .font(.system(size: 13, weight: .black))
+                    .foregroundStyle(AVBrandColor.textPrimary)
 
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("Note for Avi")
-                        .font(.system(size: 11, weight: .black))
-                        .foregroundStyle(AVBrandColor.textSecondary)
-                        .textCase(.uppercase)
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack(alignment: .center, spacing: 10) {
+                        MomentsCreateGuideFieldIcon(systemImage: "text.bubble.fill")
 
-                    Text("Optional direction for the story.")
-                        .font(.caption2)
-                        .fontWeight(.semibold)
-                        .foregroundStyle(AVBrandColor.textSecondary.opacity(0.82))
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Note for Avi")
+                                .font(.system(size: 11, weight: .black))
+                                .foregroundStyle(AVBrandColor.textSecondary)
+                                .textCase(.uppercase)
+
+                            Text("Optional direction for the story.")
+                                .font(.caption2)
+                                .fontWeight(.semibold)
+                                .foregroundStyle(AVBrandColor.textSecondary.opacity(0.82))
+                        }
+
+                        Spacer(minLength: 0)
+
+                        Button {
+                        } label: {
+                            Image(systemName: "mic.fill")
+                                .font(.system(size: 15, weight: .black))
+                                .foregroundStyle(AVBrandColor.accent)
+                                .frame(width: 34, height: 34)
+                                .background(AVBrandColor.accent.opacity(0.10), in: Circle())
+                        }
+                        .buttonStyle(.plain)
+                        .disabled(true)
+                        .accessibilityLabel("Voice note transcription")
+                    }
+
+                    TextField("Tell Avi what to focus on...", text: $text, axis: .vertical)
+                        .font(AVBrandTypography.body)
+                        .foregroundStyle(AVBrandColor.textPrimary)
+                        .lineLimit(2...4)
+                        .textInputAutocapitalization(.sentences)
+                        .submitLabel(.done)
                 }
-
-                Spacer(minLength: 0)
-
-                Button {
-                } label: {
-                    Image(systemName: "mic.fill")
-                        .font(.system(size: 15, weight: .black))
-                        .foregroundStyle(AVBrandColor.accent)
-                        .frame(width: 34, height: 34)
-                        .background(AVBrandColor.accent.opacity(0.10), in: Circle())
-                }
-                .buttonStyle(.plain)
-                .disabled(true)
-                .accessibilityLabel("Voice note transcription")
+                .padding(12)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(MomentsCreateGuideFieldBackground())
             }
-
-            TextField("Tell Avi what to focus on...", text: $text, axis: .vertical)
-                .font(AVBrandTypography.body)
-                .foregroundStyle(AVBrandColor.textPrimary)
-                .lineLimit(3...5)
-                .textInputAutocapitalization(.sentences)
-                .submitLabel(.done)
         }
-        .padding(AVBrandSpacing.md)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(MomentsCreateGuideFieldBackground())
     }
 }
 
@@ -1005,90 +1124,94 @@ private struct MomentsCreateThemeChooserPage: View {
     }
 
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 18) {
-                HStack(spacing: 12) {
-                    Button(action: dismiss) {
-                        Image(systemName: "chevron.left")
-                            .font(.system(size: 17, weight: .black))
-                            .foregroundStyle(AVBrandColor.textPrimary)
-                            .frame(width: 44, height: 44)
-                            .background(AVBrandColor.elevatedSurface.opacity(0.92), in: Circle())
-                            .contentShape(Circle())
-                    }
-                    .accessibilityLabel("Back")
+        VStack(spacing: 0) {
+            MomentsCreateThemeChooserHeader(
+                dismiss: dismiss
+            )
+            .padding(.horizontal, 20)
+            .padding(.top, 20)
+            .padding(.bottom, 14)
 
-                    Spacer(minLength: 8)
+            ScrollView {
+                VStack(alignment: .leading, spacing: 18) {
+                    AVAppShellCard {
+                        HStack(spacing: 12) {
+                            Image("AviFullBody")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 42, height: 42)
+                                .padding(4)
+                                .background(AVBrandColor.accent.opacity(0.10), in: Circle())
+                                .accessibilityHidden(true)
 
-                    Text("Choose theme")
-                        .font(.system(size: 20, weight: .black))
-                        .foregroundStyle(AVBrandColor.textPrimary)
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text("Theme sets the mood")
+                                    .font(.system(size: 14, weight: .black))
+                                    .foregroundStyle(AVBrandColor.textPrimary)
 
-                    Spacer(minLength: 8)
+                                Text("Choose a visual direction. Avi will adjust tone, pacing, and music from it.")
+                                    .font(.caption)
+                                    .fontWeight(.semibold)
+                                    .foregroundStyle(AVBrandColor.textSecondary)
+                                    .lineLimit(2)
+                            }
 
-                    Button(action: applySelection) {
-                        Image(systemName: "checkmark")
-                            .font(.system(size: 17, weight: .black))
-                            .foregroundStyle(AVBrandColor.textInverse)
-                            .frame(width: 44, height: 44)
-                            .background(AVBrandColor.accent, in: Circle())
-                            .contentShape(Circle())
-                    }
-                    .accessibilityLabel("Apply theme")
-                }
-
-                AVAppShellCard {
-                    HStack(spacing: 12) {
-                        Image("AviFullBody")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 42, height: 42)
-                            .padding(4)
-                            .background(AVBrandColor.accent.opacity(0.10), in: Circle())
-                            .accessibilityHidden(true)
-
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text("Theme sets the mood")
-                                .font(.system(size: 14, weight: .black))
-                                .foregroundStyle(AVBrandColor.textPrimary)
-
-                            Text("Choose a visual direction. Avi will adjust tone, pacing, and music from it.")
-                                .font(.caption)
-                                .fontWeight(.semibold)
-                                .foregroundStyle(AVBrandColor.textSecondary)
-                                .lineLimit(2)
+                            Spacer(minLength: 0)
                         }
+                    }
 
-                        Spacer(minLength: 0)
+                    LazyVGrid(columns: columns, spacing: 10) {
+                        ForEach(styles) { style in
+                            MomentsCreateThemeImageTile(
+                                style: style,
+                                isSelected: draftStyleID == style.id,
+                                selectStyle: { applySelection(style) }
+                            )
+                        }
                     }
                 }
-
-                LazyVGrid(columns: columns, spacing: 10) {
-                    ForEach(styles) { style in
-                        MomentsCreateThemeImageTile(
-                            style: style,
-                            isSelected: draftStyleID == style.id,
-                            selectStyle: { draftStyleID = style.id }
-                        )
-                    }
-                }
+                .padding(.horizontal, 20)
+                .padding(.bottom, 20)
+                .safeAreaPadding(.bottom, 96)
             }
-            .padding(20)
-            .padding(.top, 8)
-            .safeAreaPadding(.bottom, 96)
+            .scrollIndicators(.hidden)
         }
         .background(MomentsTheme.shellBackground.ignoresSafeArea())
         .navigationBarBackButtonHidden(true)
         .toolbar(.hidden, for: .navigationBar)
     }
 
-    private func applySelection() {
-        guard let style = styles.first(where: { $0.id == draftStyleID }) else {
-            dismiss()
-            return
-        }
+    private func applySelection(_ style: MomentCreationStyle) {
+        draftStyleID = style.id
         selectStyle(style)
         dismiss()
+    }
+}
+
+private struct MomentsCreateThemeChooserHeader: View {
+    let dismiss: () -> Void
+
+    var body: some View {
+        HStack(spacing: 12) {
+            Button(action: dismiss) {
+                Image(systemName: "chevron.left")
+                    .font(.system(size: 17, weight: .black))
+                    .foregroundStyle(AVBrandColor.textPrimary)
+                    .frame(width: 44, height: 44)
+                    .background(.white.opacity(0.92), in: Circle())
+                    .shadow(color: AVBrandColor.ink.opacity(0.08), radius: 10, x: 0, y: 4)
+                    .contentShape(Circle())
+            }
+            .accessibilityLabel("Back")
+
+            Text("Choose theme")
+                .font(.system(size: 18, weight: .black))
+                .foregroundStyle(AVBrandColor.textPrimary)
+                .frame(maxWidth: .infinity)
+
+            Color.clear
+                .frame(width: 44, height: 44)
+        }
     }
 }
 
@@ -1170,6 +1293,7 @@ private struct MomentsCreateWorkflowCards: View {
     @Binding var pickerItems: [PhotosPickerItem]
     let importPickerItems: ([PhotosPickerItem]) -> Void
     let importLatestPhotos: () -> Void
+    let importPhotoAlbum: (String) -> Void
     let removeMedia: (MomentsSelectedMedia) -> Void
     let moveMedia: (MomentsSelectedMedia, MomentsSelectedMedia) -> Void
     let reorderMedia: ([MomentsSelectedMedia]) -> Void
@@ -1198,6 +1322,7 @@ private struct MomentsCreateWorkflowCards: View {
                     ),
                     importPickerItems: importPickerItems,
                     importLatestPhotos: importLatestPhotos,
+                    importPhotoAlbum: importPhotoAlbum,
                     removeMedia: removeMedia,
                     moveMedia: moveMedia,
                     reorderMedia: reorderMedia,

@@ -1,5 +1,6 @@
 import AVAppShellFoundation
 import AVBrandFoundation
+import Photos
 import PhotosUI
 import SwiftUI
 import UIKit
@@ -7,6 +8,7 @@ import UIKit
 struct MomentsCreateMediaCard: View {
     @Binding var pickerItems: [PhotosPickerItem]
     @State private var showsPhotoPicker = false
+    @State private var showsAlbumPicker = false
     @State private var showsMediaManager = false
     @State private var handledOpenPickerRequest = 0
 
@@ -14,6 +16,7 @@ struct MomentsCreateMediaCard: View {
     let presentation: MomentsCreateMediaPresentation
     let importPickerItems: ([PhotosPickerItem]) -> Void
     let importLatestPhotos: () -> Void
+    let importPhotoAlbum: (String) -> Void
     let removeMedia: (MomentsSelectedMedia) -> Void
     let moveMedia: (MomentsSelectedMedia, MomentsSelectedMedia) -> Void
     let reorderMedia: ([MomentsSelectedMedia]) -> Void
@@ -21,9 +24,8 @@ struct MomentsCreateMediaCard: View {
     let consumeOpenPickerRequest: () -> Void
 
     var body: some View {
-        Button(action: mediaCardAction) {
-            AVAppShellCard {
-                VStack(alignment: .leading, spacing: selectedCount == 0 ? 16 : 12) {
+        AVAppShellCard {
+                VStack(alignment: .leading, spacing: selectedCount == 0 ? 16 : 10) {
                     HStack(spacing: 10) {
                         Text("Media")
                             .font(.system(size: 13, weight: .black))
@@ -64,37 +66,37 @@ struct MomentsCreateMediaCard: View {
                             .lineLimit(nil)
                             .fixedSize(horizontal: false, vertical: true)
 
-                        Label("Choose photos or clips", systemImage: "photo.badge.plus")
-                            .font(.system(size: 14, weight: .black))
-                            .foregroundStyle(AVBrandColor.textPrimary)
-                            .frame(maxWidth: .infinity)
-                            .frame(height: 40)
-                            .background(
-                                RoundedRectangle(cornerRadius: 20, style: .continuous)
-                                    .fill(AVBrandColor.accent.opacity(0.08))
-                            )
-                            .overlay {
-                                RoundedRectangle(cornerRadius: 20, style: .continuous)
-                                    .stroke(AVBrandColor.accent.opacity(0.24), lineWidth: 1)
+                        VStack(spacing: 8) {
+                            Button {
+                                showsPhotoPicker = true
+                            } label: {
+                                MomentsCreateMediaChoiceButtonLabel(
+                                    title: "Choose photos or clips",
+                                    systemImage: "photo.badge.plus",
+                                    isPrimary: true
+                                )
                             }
-                            .accessibilityHidden(true)
-                    } else if let selectedSummaryDetail {
-                        Text("Avi will use these moments for the first preview.")
-                            .font(.system(size: 13, weight: .semibold))
-                            .foregroundStyle(AVBrandColor.textSecondary)
-                            .lineLimit(nil)
-                            .fixedSize(horizontal: false, vertical: true)
-                        Text(selectedSummaryDetail)
-                            .font(.caption)
-                            .foregroundStyle(AVBrandColor.textSecondary.opacity(0.82))
-                            .lineLimit(nil)
-                            .fixedSize(horizontal: false, vertical: true)
+                            .buttonStyle(.plain)
+                            .disabled(!presentation.canAddMedia || presentation.summary.isImporting)
+
+                            Button {
+                                showsAlbumPicker = true
+                            } label: {
+                                MomentsCreateMediaChoiceButtonLabel(
+                                    title: "Add collection photos",
+                                    systemImage: "rectangle.stack.badge.plus",
+                                    isPrimary: false
+                                )
+                            }
+                            .buttonStyle(.plain)
+                            .disabled(!presentation.canAddMedia || presentation.summary.isImporting)
+                        }
                     }
                 }
                 .frame(maxWidth: .infinity, minHeight: cardMinHeight, alignment: .topLeading)
             }
-        }
-        .buttonStyle(.plain)
+        .contentShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+        .onTapGesture(perform: mediaCardAction)
         .photosPicker(
             isPresented: $showsPhotoPicker,
             selection: $pickerItems,
@@ -111,15 +113,29 @@ struct MomentsCreateMediaCard: View {
                 selectedMedia: presentation.summary.selectedMedia,
                 canAddMedia: presentation.canAddMedia,
                 isImporting: presentation.summary.isImporting,
+                importProgress: presentation.summary.importProgress,
                 removeMedia: removeMedia,
                 moveMedia: moveMedia,
                 reorderMedia: reorderMedia,
                 chooseManually: {
                     showsPhotoPicker = true
                 },
+                chooseAlbum: {
+                    showsAlbumPicker = true
+                },
                 importLatestPhotos: importLatestPhotos,
                 smartOrder: autoPickStrongMoments
             )
+        }
+        .sheet(isPresented: $showsAlbumPicker) {
+            MomentsCreateAlbumPickerSheet(
+                remainingSlots: presentation.remainingSlots,
+                selectAlbum: { album in
+                    showsAlbumPicker = false
+                    importPhotoAlbum(album.id)
+                }
+            )
+            .presentationDetents([.medium, .large])
         }
         .onAppear {
             openPickerIfRequested(openPickerRequest)
@@ -169,7 +185,7 @@ struct MomentsCreateMediaCard: View {
 
     private func mediaCardAction() {
         if selectedCount == 0 {
-            showsPhotoPicker = true
+            return
         } else {
             showsMediaManager = true
         }
@@ -180,15 +196,190 @@ struct MomentsCreateMediaCard: View {
     }
 
     private var cardMinHeight: CGFloat {
-        selectedCount == 0 ? 232 : 184
+        selectedCount == 0 ? 232 : 134
+    }
+}
+
+private struct MomentsCreateMediaChoiceButtonLabel: View {
+    let title: String
+    let systemImage: String
+    let isPrimary: Bool
+
+    var body: some View {
+        Label(title, systemImage: systemImage)
+            .font(.system(size: 14, weight: .black))
+            .foregroundStyle(AVBrandColor.textPrimary)
+            .frame(maxWidth: .infinity)
+            .frame(height: 40)
+            .background(
+                RoundedRectangle(cornerRadius: 20, style: .continuous)
+                    .fill(isPrimary ? AVBrandColor.accent.opacity(0.08) : AVBrandColor.neutral100)
+            )
+            .overlay {
+                RoundedRectangle(cornerRadius: 20, style: .continuous)
+                    .stroke(
+                        isPrimary ? AVBrandColor.accent.opacity(0.24) : AVBrandColor.borderSubtle.opacity(0.72),
+                        lineWidth: 1
+                    )
+            }
+    }
+}
+
+private struct MomentsCreateAlbumPickerSheet: View {
+    let remainingSlots: Int
+    let selectAlbum: (MediaPickerImport.PhotoAlbum) -> Void
+
+    @Environment(\.dismiss) private var dismiss
+    @State private var albums: [MediaPickerImport.PhotoAlbum] = []
+    @State private var isLoading = true
+    @State private var errorMessage: String?
+    @State private var albumPendingConfirmation: MediaPickerImport.PhotoAlbum?
+
+    var body: some View {
+        NavigationStack {
+            Group {
+                if isLoading {
+                    ProgressView("Loading albums")
+                        .font(.system(size: 14, weight: .semibold))
+                        .tint(AVBrandColor.accent)
+                } else if let errorMessage {
+                    ContentUnavailableView(
+                        "Albums unavailable",
+                        systemImage: "photo.on.rectangle.angled",
+                        description: Text(errorMessage)
+                    )
+                } else if albums.isEmpty {
+                    ContentUnavailableView(
+                        "No photo collections",
+                        systemImage: "rectangle.stack",
+                        description: Text("Create an album in Photos, use a Photos collection, or choose individual photos and clips.")
+                    )
+                } else {
+                    List(albums) { album in
+                        Button {
+                            albumPendingConfirmation = album
+                        } label: {
+                            HStack(spacing: 12) {
+                                MomentsCreateAlbumCover(album: album)
+
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(album.title)
+                                        .font(.system(size: 15, weight: .black))
+                                        .foregroundStyle(AVBrandColor.textPrimary)
+                                        .lineLimit(1)
+
+                                    Text(albumDetail(album))
+                                        .font(.caption)
+                                        .fontWeight(.semibold)
+                                        .foregroundStyle(AVBrandColor.textSecondary)
+                                }
+
+                                Spacer(minLength: 0)
+                            }
+                            .contentShape(Rectangle())
+                        }
+                        .buttonStyle(.plain)
+                    }
+                    .listStyle(.plain)
+                }
+            }
+            .navigationTitle("Add collection photos")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") {
+                        dismiss()
+                    }
+                }
+            }
+            .task {
+                await loadAlbums()
+            }
+            .confirmationDialog(
+                confirmationTitle,
+                isPresented: Binding(
+                    get: { albumPendingConfirmation != nil },
+                    set: { isPresented in
+                        if !isPresented {
+                            albumPendingConfirmation = nil
+                        }
+                    }
+                ),
+                titleVisibility: .visible,
+                presenting: albumPendingConfirmation
+            ) { album in
+                Button("Add photos") {
+                    albumPendingConfirmation = nil
+                    selectAlbum(album)
+                }
+
+                Button("Cancel", role: .cancel) {
+                    albumPendingConfirmation = nil
+                }
+            } message: { album in
+                Text(confirmationMessage(for: album))
+            }
+        }
     }
 
-    private var selectedSummaryDetail: String? {
-        guard selectedCount > 0 else { return nil }
-        if presentation.summary.isImporting {
-            return "Adding media..."
+    private var confirmationTitle: String {
+        guard let albumPendingConfirmation else {
+            return "Add collection photos?"
         }
-        return "Ready for preview."
+        let importCount = min(albumPendingConfirmation.assetCount, remainingSlots)
+        return "Add up to \(importCount) \(importCount == 1 ? "photo" : "photos")?"
+    }
+
+    private func confirmationMessage(for album: MediaPickerImport.PhotoAlbum) -> String {
+        let importCount = min(album.assetCount, remainingSlots)
+        let photoWord = importCount == 1 ? "photo" : "photos"
+        return "Avi will add up to \(importCount) \(photoWord) from \(album.title) and skip photos already selected."
+    }
+
+    private func albumDetail(_ album: MediaPickerImport.PhotoAlbum) -> String {
+        let importCount = min(album.assetCount, remainingSlots)
+        if album.assetCount > remainingSlots {
+            return "\(album.assetCount) photos · adds first \(importCount)"
+        }
+        return "\(album.assetCount) \(album.assetCount == 1 ? "photo" : "photos")"
+    }
+
+    private func loadAlbums() async {
+        isLoading = true
+        errorMessage = nil
+        do {
+            albums = try await MediaPickerImport.loadPhotoAlbums()
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+        isLoading = false
+    }
+}
+
+private struct MomentsCreateAlbumCover: View {
+    let album: MediaPickerImport.PhotoAlbum
+
+    var body: some View {
+        ZStack {
+            if let coverData = album.coverData,
+               let image = UIImage(data: coverData) {
+                Image(uiImage: image)
+                    .resizable()
+                    .scaledToFill()
+            } else {
+                AVBrandColor.accent.opacity(0.10)
+                Image(systemName: "rectangle.stack.fill")
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundStyle(AVBrandColor.accent)
+            }
+        }
+        .frame(width: 44, height: 44)
+        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+        .overlay {
+            RoundedRectangle(cornerRadius: 8, style: .continuous)
+                .stroke(AVBrandColor.borderSubtle.opacity(0.55), lineWidth: 1)
+        }
+        .accessibilityHidden(true)
     }
 }
 
@@ -242,10 +433,12 @@ private struct MomentsCreateMediaManagerSheet: View {
     let selectedMedia: [MomentsSelectedMedia]
     let canAddMedia: Bool
     let isImporting: Bool
+    let importProgress: MomentsMediaImportProgress?
     let removeMedia: (MomentsSelectedMedia) -> Void
     let moveMedia: (MomentsSelectedMedia, MomentsSelectedMedia) -> Void
     let reorderMedia: ([MomentsSelectedMedia]) -> Void
     let chooseManually: () -> Void
+    let chooseAlbum: () -> Void
     let importLatestPhotos: () -> Void
     let smartOrder: () -> Void
 
@@ -279,50 +472,65 @@ private struct MomentsCreateMediaManagerSheet: View {
     }
 
     private var gridView: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 16) {
-                editHeader
+        VStack(spacing: 0) {
+            editHeader
+                .padding(.horizontal, 20)
+                .padding(.top, 20)
+                .padding(.bottom, 14)
 
-                MomentsCreateEditorAviPanel(
-                    selectedCount: workingMedia.count,
-                    isReordering: false,
-                    canAddMedia: canAddMedia,
-                    isImporting: isImporting,
-                    addMedia: chooseManually,
-                    reorder: startManualReorder,
-                    suggestOrder: suggestAviOrder,
-                    undoAviOrder: undoAviOrder,
-                    hasUndoAviOrder: orderBeforeAviSuggestion != nil
-                )
-
-                if workingMedia.isEmpty {
-                    MomentsCreateMediaEmptyState(
+            ScrollView {
+                VStack(alignment: .leading, spacing: 16) {
+                    MomentsCreateEditorAviPanel(
+                        selectedCount: workingMedia.count,
+                        isReordering: false,
                         canAddMedia: canAddMedia,
                         isImporting: isImporting,
-                        addMedia: chooseManually
+                        addMedia: chooseManually,
+                        chooseAlbum: chooseAlbum,
+                        reorder: startManualReorder,
+                        suggestOrder: suggestAviOrder,
+                        undoAviOrder: undoAviOrder,
+                        hasUndoAviOrder: orderBeforeAviSuggestion != nil
                     )
-                } else {
-                    LazyVGrid(columns: columns, alignment: .center, spacing: 16) {
-                        ForEach(Array(workingMedia.enumerated()), id: \.element.id) { index, media in
-                            MomentsCreateManageableMediaTile(
-                                media: media,
-                                index: index,
-                                zoom: {
-                                    zoomedMedia = media
-                                },
-                                remove: {
-                                    removeMedia(media)
-                                }
-                            )
+
+                    if isImporting {
+                        MomentsCreateMediaImportProgressCard(
+                            selectedCount: workingMedia.count,
+                            progress: importProgress
+                        )
+                    }
+
+                    if workingMedia.isEmpty {
+                        MomentsCreateMediaEmptyState(
+                            canAddMedia: canAddMedia,
+                            isImporting: isImporting,
+                            addMedia: chooseManually
+                        )
+                    } else {
+                        LazyVGrid(columns: columns, alignment: .center, spacing: 16) {
+                            ForEach(Array(workingMedia.enumerated()), id: \.element.id) { index, media in
+                                MomentsCreateManageableMediaTile(
+                                    media: media,
+                                    index: index,
+                                    isImporting: isImporting,
+                                    zoom: {
+                                        zoomedMedia = media
+                                    },
+                                    remove: {
+                                        removeMedia(media)
+                                    }
+                                )
+                            }
                         }
                     }
                 }
+                .padding(.horizontal, 20)
+                .padding(.bottom, 20)
+                .safeAreaPadding(.bottom, 96)
             }
-            .padding(20)
-            .padding(.top, 8)
-            .safeAreaPadding(.bottom, 96)
+            .scrollIndicators(.hidden)
+            .scrollBounceBehavior(.basedOnSize)
         }
-        .scrollBounceBehavior(.basedOnSize)
         .fullScreenCover(item: $zoomedMedia) { media in
             MomentsCreateMediaZoomView(media: media) {
                 zoomedMedia = nil
@@ -335,6 +543,7 @@ private struct MomentsCreateMediaManagerSheet: View {
             reorderHeader
                 .padding(.horizontal, 20)
                 .padding(.top, 20)
+                .padding(.bottom, 14)
 
             List {
                 ForEach(Array(workingMedia.enumerated()), id: \.element.id) { index, media in
@@ -359,7 +568,17 @@ private struct MomentsCreateMediaManagerSheet: View {
 
     private var reorderHeader: some View {
         HStack(spacing: 12) {
-            Spacer(minLength: 44)
+            Button {
+                isReordering = false
+            } label: {
+                Image(systemName: "chevron.left")
+                    .font(.system(size: 17, weight: .black))
+                    .foregroundStyle(AVBrandColor.textPrimary)
+                    .frame(width: 44, height: 44)
+                    .background(.white.opacity(0.92), in: Circle())
+                    .shadow(color: AVBrandColor.ink.opacity(0.08), radius: 10, x: 0, y: 4)
+            }
+            .accessibilityLabel("Back to media editor")
 
             Text("Reorder media")
                 .font(.system(size: 18, weight: .black))
@@ -386,11 +605,13 @@ private struct MomentsCreateMediaManagerSheet: View {
     }
 
     private func startManualReorder() {
+        guard !isImporting else { return }
         orderBeforeAviSuggestion = nil
         isReordering = true
     }
 
     private func suggestAviOrder() {
+        guard !isImporting else { return }
         orderBeforeAviSuggestion = workingMedia
         smartOrder()
     }
@@ -469,9 +690,70 @@ private struct MomentsCreateMediaEmptyState: View {
     }
 }
 
+private struct MomentsCreateMediaImportProgressCard: View {
+    let selectedCount: Int
+    let progress: MomentsMediaImportProgress?
+
+    var body: some View {
+        AVAppShellCard {
+            HStack(spacing: 12) {
+                progressView
+                    .frame(width: 44, height: 32)
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Adding moments")
+                        .font(.system(size: 14, weight: .black))
+                        .foregroundStyle(AVBrandColor.textPrimary)
+
+                    Text(progressMessage)
+                        .font(.caption)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(AVBrandColor.textSecondary)
+                        .lineLimit(2)
+                }
+
+                Spacer(minLength: 0)
+            }
+        }
+        .accessibilityLabel("Adding moments. \(progressMessage)")
+    }
+
+    @ViewBuilder
+    private var progressView: some View {
+        if let fractionCompleted = progress?.fractionCompleted {
+            ZStack {
+                Circle()
+                    .stroke(AVBrandColor.accent.opacity(0.16), lineWidth: 4)
+                Circle()
+                    .trim(from: 0, to: fractionCompleted)
+                    .stroke(AVBrandColor.accent, style: StrokeStyle(lineWidth: 4, lineCap: .round))
+                    .rotationEffect(.degrees(-90))
+                Text(progress?.title.split(separator: " ").first.map(String.init) ?? "")
+                    .font(.system(size: 10, weight: .black))
+                    .foregroundStyle(AVBrandColor.accent)
+            }
+        } else {
+            ProgressView()
+                .controlSize(.regular)
+                .tint(AVBrandColor.accent)
+        }
+    }
+
+    private var progressMessage: String {
+        if let progress, progress.totalCount > 0 {
+            return "Reading \(progress.title) \(progress.totalCount == 1 ? "item" : "items")."
+        }
+        if selectedCount == 0 {
+            return "Avi is reading the selected photos and clips."
+        }
+        return "Keeping your current \(selectedCount) \(selectedCount == 1 ? "item" : "items") while new media is added."
+    }
+}
+
 private struct MomentsCreateManageableMediaTile: View {
     let media: MomentsSelectedMedia
     let index: Int
+    let isImporting: Bool
     let zoom: () -> Void
     let remove: () -> Void
 
@@ -510,6 +792,7 @@ private struct MomentsCreateManageableMediaTile: View {
                 .contentShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
             }
             .buttonStyle(.plain)
+            .disabled(isImporting)
 
             Button(role: .destructive, action: remove) {
                 Image(systemName: "trash.fill")
@@ -519,6 +802,8 @@ private struct MomentsCreateManageableMediaTile: View {
                     .background(.black.opacity(0.62), in: Circle())
             }
             .padding(1)
+            .disabled(isImporting)
+            .opacity(isImporting ? 0.45 : 1)
             .accessibilityLabel("Remove media")
         }
         .accessibilityLabel("\(media.kind.capitalized) \(index + 1)")
@@ -673,6 +958,7 @@ private struct MomentsCreateEditorAviPanel: View {
     let canAddMedia: Bool
     let isImporting: Bool
     let addMedia: () -> Void
+    let chooseAlbum: () -> Void
     let reorder: () -> Void
     let suggestOrder: () -> Void
     let undoAviOrder: () -> Void
@@ -708,6 +994,11 @@ private struct MomentsCreateEditorAviPanel: View {
                         if canAddMedia && !isReordering {
                             Button(action: addMedia) {
                                 Label("Add media", systemImage: "photo.badge.plus")
+                            }
+                            .disabled(isImporting)
+
+                            Button(action: chooseAlbum) {
+                                Label("Add collection photos", systemImage: "rectangle.stack.badge.plus")
                             }
                             .disabled(isImporting)
                         }

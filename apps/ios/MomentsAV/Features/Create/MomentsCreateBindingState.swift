@@ -15,6 +15,7 @@ struct MomentsCreateMediaUploadState {
     let selectedMedia: [MomentsSelectedMedia]
     let statusMessage: String?
     let isImporting: Bool
+    let importProgress: MomentsMediaImportProgress?
 }
 
 struct MomentsCreateStoryDraftState {

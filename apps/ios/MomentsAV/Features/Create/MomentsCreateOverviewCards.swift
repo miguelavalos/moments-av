@@ -9,7 +9,7 @@ struct MomentsCreateIntroCard: View {
         AVAppShellCard {
             AVAppShellContentHeader(
                 title: "Create",
-                detail: "Build a private memory video from draft setup through media, story, preview, and final export."
+                detail: "Build a private memory video from media, story, and final export."
             )
             AVStatusPill(title: isSignedIn ? "Ready" : "Login required", isUppercased: false)
         }
@@ -113,7 +113,7 @@ struct MomentsCurrentCreationCard: View {
 
     private var detail: String {
         selectedCount == 0
-            ? "Local creation. Add media before preview."
+            ? "Local creation. Add media before preparing the story."
             : "Local creation · \(selectedCount) \(selectedCount == 1 ? "item" : "items") selected."
     }
 }

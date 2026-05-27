@@ -12,6 +12,7 @@ extension MomentsCreateViewModel {
             selectedMedia: effectiveSelectedMedia,
             syncedMediaAssets: effectiveActiveWorkspace?.mediaAssets ?? [],
             isImporting: isImportingMedia,
+            importProgress: mediaImportProgress,
             statusMessage: mediaStatusMessage
         )
     }

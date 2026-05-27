@@ -9,7 +9,7 @@ enum MomentsCreateAvailabilityCopy {
     static let storyMissingProject = "Start or continue a project before generating a story."
     static let storyUnavailable = "Story drafting is not available yet."
     static let storyNotConfigured = "Story drafting is not configured for this build."
-    static let storyMissingMedia = "Add photos or clips before preview."
+    static let storyMissingMedia = "Add photos or clips before preparing the story."
     static let previewMissingProject = "Start or continue a project before generating a preview."
     static let previewUnavailable = "Preview generation is not available yet."
     static let previewNotConfigured = "Preview generation is not configured for this build."

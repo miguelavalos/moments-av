@@ -156,25 +156,11 @@ private struct MomentsHomeAviContextCard: View {
         Button(action: action) {
             AVAppShellCard {
                 HStack(spacing: 14) {
-                    ZStack(alignment: .bottomTrailing) {
-                        Image("AviFullBody")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 54, height: 68)
-                            .accessibilityHidden(true)
-
-                        if hasMomentContext {
-                            Image(systemName: "video.fill")
-                                .font(.system(size: 11, weight: .black))
-                                .foregroundStyle(.white)
-                                .frame(width: 24, height: 24)
-                                .background(AVBrandColor.accent, in: Circle())
-                                .overlay {
-                                    Circle()
-                                        .stroke(.white, lineWidth: 2)
-                                }
-                        }
-                    }
+                    Image("AviFullBody")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 54, height: 68)
+                        .accessibilityHidden(true)
 
                     VStack(alignment: .leading, spacing: 5) {
                         Text(title)

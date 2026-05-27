@@ -6,6 +6,7 @@ import SwiftUI
 final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
     @Published private(set) var selectedMedia: [MomentsSelectedMedia] = []
     @Published private(set) var isImporting = false
+    @Published private(set) var importProgress: MomentsMediaImportProgress?
     @Published private(set) var statusMessage: String?
 
     private let currentUserProvider: any MomentsCurrentUserProviding
@@ -48,27 +49,37 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
         }
 
         let generation = beginWorkflowGeneration()
-        isImporting = true
-        statusMessage = nil
+        beginImport(totalCount: min(items.count, remainingSlots))
 
         do {
             let imported = try await MediaPickerImport.load(
                 items: items,
                 limit: remainingSlots,
-                startingSortOrder: selectedMedia.count
+                startingSortOrder: selectedMedia.count,
+                progress: { [weak self] completedCount, totalCount in
+                    self?.updateImportProgress(completedCount: completedCount, totalCount: totalCount)
+                }
             )
 
             guard isCurrentWorkflowGeneration(generation) else { return }
-            selectedMedia.append(contentsOf: imported)
+            let uniqueImported = MomentsMediaDeduplicator.uniqueNewMedia(
+                existing: selectedMedia,
+                imported: imported
+            )
+            selectedMedia.append(contentsOf: uniqueImported)
             sortChronologically()
-            statusMessage = "Media ready. Avi can prepare the preview."
+            statusMessage = importStatusMessage(
+                importedCount: uniqueImported.count,
+                skippedDuplicateCount: imported.count - uniqueImported.count,
+                emptyMessage: "No new media added."
+            )
         } catch {
             guard isCurrentWorkflowGeneration(generation) else { return }
             statusMessage = error.localizedDescription
         }
 
         guard isCurrentWorkflowGeneration(generation) else { return }
-        isImporting = false
+        endImport()
     }
 
     func importLatestPhotos(
@@ -85,26 +96,88 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
         }
 
         let generation = beginWorkflowGeneration()
-        isImporting = true
-        statusMessage = nil
+        beginImport(totalCount: remainingSlots)
 
         do {
             let imported = try await MediaPickerImport.loadLatestPhotos(
                 limit: remainingSlots,
-                startingSortOrder: selectedMedia.count
+                startingSortOrder: selectedMedia.count,
+                progress: { [weak self] completedCount, totalCount in
+                    self?.updateImportProgress(completedCount: completedCount, totalCount: totalCount)
+                }
             )
 
             guard isCurrentWorkflowGeneration(generation) else { return }
-            selectedMedia.append(contentsOf: imported)
+            let uniqueImported = MomentsMediaDeduplicator.uniqueNewMedia(
+                existing: selectedMedia,
+                imported: imported
+            )
+            selectedMedia.append(contentsOf: uniqueImported)
             sortChronologically()
-            statusMessage = imported.isEmpty ? "No recent photos found." : "Latest photos added."
+            statusMessage = importStatusMessage(
+                importedCount: uniqueImported.count,
+                skippedDuplicateCount: imported.count - uniqueImported.count,
+                emptyMessage: "No recent photos found."
+            )
         } catch {
             guard isCurrentWorkflowGeneration(generation) else { return }
             statusMessage = error.localizedDescription
         }
 
         guard isCurrentWorkflowGeneration(generation) else { return }
-        isImporting = false
+        endImport()
+    }
+
+    func importPhotoAlbum(
+        id albumId: String,
+        template: MomentTemplate,
+        projectId: String?
+    ) async {
+        guard currentUserProvider.currentUserId != nil else {
+            statusMessage = "Sign in before adding media."
+            return
+        }
+        let remainingSlots = MomentsMediaRules.remainingSlots(
+            template: template,
+            selectedCount: selectedMediaCount
+        )
+        guard remainingSlots > 0 else {
+            statusMessage = "Avi has enough media for this video."
+            return
+        }
+
+        let generation = beginWorkflowGeneration()
+        beginImport(totalCount: remainingSlots)
+
+        do {
+            let imported = try await MediaPickerImport.loadPhotoAlbum(
+                id: albumId,
+                limit: remainingSlots,
+                startingSortOrder: selectedMedia.count,
+                progress: { [weak self] completedCount, totalCount in
+                    self?.updateImportProgress(completedCount: completedCount, totalCount: totalCount)
+                }
+            )
+
+            guard isCurrentWorkflowGeneration(generation) else { return }
+            let uniqueImported = MomentsMediaDeduplicator.uniqueNewMedia(
+                existing: selectedMedia,
+                imported: imported
+            )
+            selectedMedia.append(contentsOf: uniqueImported)
+            sortChronologically()
+            statusMessage = importStatusMessage(
+                importedCount: uniqueImported.count,
+                skippedDuplicateCount: imported.count - uniqueImported.count,
+                emptyMessage: "No photos found in that album."
+            )
+        } catch {
+            guard isCurrentWorkflowGeneration(generation) else { return }
+            statusMessage = error.localizedDescription
+        }
+
+        guard isCurrentWorkflowGeneration(generation) else { return }
+        endImport()
     }
 
     func remove(_ media: MomentsSelectedMedia) {
@@ -133,13 +206,72 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
         sortChronologically()
     }
 
+    func persistSelectedMedia(projectId: String) async -> [MomentsStoryDraftMedia]? {
+        guard let ownerUserId = currentUserProvider.currentUserId else {
+            statusMessage = "Sign in before preparing the story."
+            return nil
+        }
+        let mediaToSave = selectedMedia
+            .filter(\.selected)
+            .sorted { $0.sortOrder < $1.sortOrder }
+        if mediaToSave.isEmpty {
+            return activeWorkspaceStoryMedia
+        }
+
+        let generation = beginWorkflowGeneration()
+        isImporting = true
+        importProgress = MomentsMediaImportProgress(completedCount: 0, totalCount: mediaToSave.count)
+        statusMessage = "Saving media for the story."
+
+        do {
+            let result = try await MediaUploadPersistence.save(
+                imported: mediaToSave,
+                ownerUserId: ownerUserId,
+                projectId: projectId,
+                uploadClient: uploadClient,
+                mediaAssetSaver: mediaAssetSaver,
+                shouldContinue: { isCurrentWorkflowGeneration(generation) }
+            )
+            guard isCurrentWorkflowGeneration(generation) else { return nil }
+            statusMessage = result.statusMessage
+            isImporting = false
+            importProgress = nil
+            return result.savedMedia
+        } catch {
+            guard isCurrentWorkflowGeneration(generation) else { return nil }
+            statusMessage = error.localizedDescription
+            isImporting = false
+            importProgress = nil
+            return nil
+        }
+    }
+
     func reset(force: Bool = false) {
         guard force || !isImporting else { return }
         advanceWorkflowGeneration()
         isImporting = false
+        importProgress = nil
         selectedMedia = []
         statusMessage = nil
         clearActiveWorkspace()
+    }
+
+    private func beginImport(totalCount: Int) {
+        isImporting = true
+        importProgress = MomentsMediaImportProgress(completedCount: 0, totalCount: max(totalCount, 0))
+        statusMessage = nil
+    }
+
+    private func updateImportProgress(completedCount: Int, totalCount: Int) {
+        importProgress = MomentsMediaImportProgress(
+            completedCount: max(completedCount, 0),
+            totalCount: max(totalCount, completedCount)
+        )
+    }
+
+    private func endImport() {
+        isImporting = false
+        importProgress = nil
     }
 
     private func normalizeOrder() {
@@ -194,11 +326,67 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
         return left.sortOrder < right.sortOrder
     }
 
+    private func importStatusMessage(
+        importedCount: Int,
+        skippedDuplicateCount: Int,
+        emptyMessage: String
+    ) -> String {
+        if importedCount == 0 {
+            return skippedDuplicateCount > 0
+                ? "Those moments were already selected."
+                : emptyMessage
+        }
+
+        if skippedDuplicateCount > 0 {
+            return "Added \(importedCount) \(importedCount == 1 ? "moment" : "moments"). Skipped \(skippedDuplicateCount) already selected."
+        }
+
+        return "Media ready. Avi can prepare the story."
+    }
+
     private var selectedMediaCount: Int {
         MomentsMediaRules.selectedCount(
             localMedia: selectedMedia,
             syncedMedia: activeWorkspace?.mediaAssets ?? []
         )
+    }
+
+    private var activeWorkspaceStoryMedia: [MomentsStoryDraftMedia] {
+        (activeWorkspace?.mediaAssets ?? [])
+            .filter(\.selected)
+            .sorted { $0.sortOrder < $1.sortOrder }
+            .map {
+                MomentsStoryDraftMedia(
+                    mediaAssetId: $0.id,
+                    mediaKind: $0.kind,
+                    sortOrder: Int($0.sortOrder),
+                    selected: $0.selected,
+                    moderationStatus: $0.moderationStatus
+                )
+            }
+    }
+}
+
+enum MomentsMediaDeduplicator {
+    static func uniqueNewMedia(
+        existing: [MomentsSelectedMedia],
+        imported: [MomentsSelectedMedia]
+    ) -> [MomentsSelectedMedia] {
+        var seenSourceIdentifiers = Set(existing.map(\.sourceLocalIdentifier))
+        var seenHashes = Set(existing.map(\.sha256))
+        var unique: [MomentsSelectedMedia] = []
+
+        for media in imported {
+            let sourceIsDuplicate = seenSourceIdentifiers.contains(media.sourceLocalIdentifier)
+            let hashIsDuplicate = seenHashes.contains(media.sha256)
+            guard !sourceIsDuplicate && !hashIsDuplicate else { continue }
+
+            seenSourceIdentifiers.insert(media.sourceLocalIdentifier)
+            seenHashes.insert(media.sha256)
+            unique.append(media)
+        }
+
+        return unique
     }
 }
 

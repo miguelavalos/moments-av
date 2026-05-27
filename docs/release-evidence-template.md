@@ -101,11 +101,10 @@ Run on the exact build family intended for submission.
 
 - [ ] Signed-out launch.
 - [ ] Account AV sign-in with review-safe account.
-- [ ] Template selection.
-- [ ] Launch readiness checklist.
-- [ ] Media selection with approved sample media.
-- [ ] Story draft.
-- [ ] Preview generation or documented preview limitation.
+- [ ] Media-first creation flow.
+- [ ] Media selection with approved sample media or collection photos.
+- [ ] Creation Dashboard review.
+- [ ] Prepare story.
 - [ ] Final render or documented final-render limitation.
 - [ ] Projects list.
 - [ ] Account support, privacy, terms, and deletion links.

@@ -26,7 +26,7 @@ struct MomentsAviPreparationCard: View {
             )
             AVAviActionInfoRow(
                 title: "Prepare a new video",
-                detail: "Start with media, then adjust only what you want before preview.",
+                detail: "Start with media, then adjust only what you want before creating the video.",
                 systemImage: "plus.app",
                 buttonTitle: "Create Moment",
                 action: openCreate
