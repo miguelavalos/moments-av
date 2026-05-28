@@ -94,7 +94,7 @@ Moments AV is built around private projects, clear credit use, and account contr
 What you can do:
 - Select individual photos and clips, or add photos from supported Photos collections.
 - Review the media and direction before video creation.
-- Ask Avi to prepare the story, mood, pacing, and music.
+- Ask Avi to prepare an editable story plan, mood, pacing, and music.
 - Create the video only when you are ready to spend credits.
 - Keep projects tied to Account AV with support, privacy, terms, and deletion routes available from the app.
 ```

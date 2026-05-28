@@ -65,6 +65,7 @@ extension MomentsCreateViewModel {
     var workflowCapability: MomentsCreateWorkflowCapability {
         MomentsCreateWorkflowCapabilityFactory.make(
             activeProjectId: activeProjectId,
+            isSignedIn: isSignedIn,
             hasMomentWorkspace: hasMomentWorkspace,
             isImportingMedia: isImportingMedia,
             isMediaUploadConfigured: mediaUploadWorkflow?.isConfigured ?? false,

@@ -2,6 +2,7 @@ import Foundation
 
 struct MomentsCreateWorkflowPresentation: Equatable {
     var activeProjectId: String?
+    var isSignedIn = false
     var hasMomentWorkspace = false
     var template: MomentTemplate
     var mediaSummary: MomentsCreateMediaSummary
@@ -55,6 +56,7 @@ struct MomentsCreateWorkflowPresentation: Equatable {
 
     static func make(
         activeProjectId: String?,
+        isSignedIn: Bool,
         hasMomentWorkspace: Bool,
         template: MomentTemplate,
         mediaSummary: MomentsCreateMediaSummary,
@@ -65,6 +67,7 @@ struct MomentsCreateWorkflowPresentation: Equatable {
     ) -> MomentsCreateWorkflowPresentation {
         MomentsCreateWorkflowPresentation(
             activeProjectId: activeProjectId,
+            isSignedIn: isSignedIn,
             hasMomentWorkspace: hasMomentWorkspace,
             template: template,
             mediaSummary: mediaSummary,

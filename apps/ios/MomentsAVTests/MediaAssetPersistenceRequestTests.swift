@@ -23,6 +23,7 @@ final class MediaAssetPersistenceRequestTests: XCTestCase {
             mediaAssetId: "asset-1",
             uploadId: "upload-1",
             uploadUrl: URL(string: "https://uploads.example/video.mov")!,
+            completionUrl: nil,
             method: "PUT",
             headers: ["content-type": "video/quicktime"],
             storageKey: "momentsav/user/project/source/video.mov",
@@ -40,7 +41,7 @@ final class MediaAssetPersistenceRequestTests: XCTestCase {
         XCTAssertEqual(request.uploadId, "upload-1")
         XCTAssertEqual(request.kind, "video")
         XCTAssertEqual(request.r2Key, "momentsav/user/project/source/video.mov")
-        XCTAssertEqual(request.sortOrder, 2)
+        XCTAssertEqual(request.sortOrder, 2.0)
         XCTAssertTrue(request.selected)
         XCTAssertEqual(request.moderationStatus, "pending")
         XCTAssertEqual(request.uploadedAt, uploadedAt)

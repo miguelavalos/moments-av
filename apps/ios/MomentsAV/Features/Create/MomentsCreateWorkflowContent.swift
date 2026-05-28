@@ -20,6 +20,7 @@ struct MomentsCreateWorkflowContent: View {
                     styles: viewModel.creationStyles,
                     selectedMusicPreset: viewModel.selectedMusicPreset,
                     presentation: viewModel.workflowPresentation,
+                    isPreparingStory: viewModel.isPreparingStory,
                     pickerItems: $pickerItems,
                     importPickerItems: viewModel.importPickerItems,
                     importLatestPhotos: viewModel.importLatestPhotos,
@@ -34,6 +35,7 @@ struct MomentsCreateWorkflowContent: View {
                     openPickerRequest: viewModel.mediaPickerOpenRequest,
                     consumeOpenPickerRequest: viewModel.consumeMediaPickerOpenRequest,
                     cancelCreation: cancelCreation,
+                    startSignInFlow: startSignInFlow,
                     generateStoryDraft: viewModel.generateStoryDraft,
                     generatePreview: viewModel.preparePreview,
                     refreshPreviewStatus: viewModel.refreshPreviewStatus,
@@ -76,6 +78,7 @@ private struct MomentsCreateMediaFirstWorkspace: View {
     let styles: [MomentCreationStyle]
     let selectedMusicPreset: MomentMusicPreset
     let presentation: MomentsCreateWorkflowPresentation
+    let isPreparingStory: Bool
     @Binding var pickerItems: [PhotosPickerItem]
     let importPickerItems: ([PhotosPickerItem]) -> Void
     let importLatestPhotos: () -> Void
@@ -90,6 +93,7 @@ private struct MomentsCreateMediaFirstWorkspace: View {
     let openPickerRequest: Int
     let consumeOpenPickerRequest: () -> Void
     let cancelCreation: () -> Void
+    let startSignInFlow: () -> Void
     let generateStoryDraft: () -> Void
     let generatePreview: () -> Void
     let refreshPreviewStatus: () -> Void
@@ -101,8 +105,11 @@ private struct MomentsCreateMediaFirstWorkspace: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 12) {
-                if showsInitialImportState {
-                    MomentsCreateMediaImportingState(progress: presentation.mediaSummary.importProgress)
+                if showsPreparationState {
+                    MomentsCreateMediaImportingState(
+                        progress: presentation.mediaSummary.importProgress,
+                        isDraftingStory: presentation.storySummary.isDrafting
+                    )
                 } else {
                     MomentsCreateDashboardHeader()
 
@@ -135,6 +142,7 @@ private struct MomentsCreateMediaFirstWorkspace: View {
                     MomentsCreatePrimaryActionBar(
                         presentation: presentation,
                         cancelCreation: cancelCreation,
+                        startSignInFlow: startSignInFlow,
                         generateStoryDraft: generateStoryDraft,
                         generatePreview: generatePreview,
                         refreshPreviewStatus: refreshPreviewStatus,
@@ -147,7 +155,7 @@ private struct MomentsCreateMediaFirstWorkspace: View {
             .padding(.bottom, 172)
         }
         .scrollIndicators(.hidden)
-        .animation(.spring(response: 0.38, dampingFraction: 0.86), value: showsInitialImportState)
+        .animation(.spring(response: 0.38, dampingFraction: 0.86), value: showsPreparationState)
         .navigationDestination(isPresented: $showsAviOptions) {
             MomentsCreateAviOptionsSheet(
                 form: $form,
@@ -174,10 +182,10 @@ private struct MomentsCreateMediaFirstWorkspace: View {
         )
     }
 
-    private var showsInitialImportState: Bool {
-        presentation.mediaSummary.isImporting
-            && presentation.mediaSummary.selectedCount == 0
-            && presentation.mediaSummary.syncedMediaAssets.isEmpty
+    private var showsPreparationState: Bool {
+        isPreparingStory
+            || presentation.mediaSummary.isImporting
+            || presentation.storySummary.isDrafting
     }
 }
 
@@ -198,6 +206,7 @@ private struct MomentsCreateDashboardHeader: View {
 
 private struct MomentsCreateMediaImportingState: View {
     let progress: MomentsMediaImportProgress?
+    let isDraftingStory: Bool
 
     @State private var isAnimating = false
 
@@ -275,6 +284,10 @@ private struct MomentsCreateMediaImportingState: View {
     }
 
     private var message: String {
+        if isDraftingStory {
+            return "Avi is turning the selection into a clear story plan."
+        }
+
         if let progress, progress.totalCount > 0 {
             return "Avi is reading \(progress.totalCount) \(progress.totalCount == 1 ? "item" : "items") and setting up your story."
         }
@@ -438,6 +451,7 @@ private struct MomentsCreateCompactAviGuide: View {
 private struct MomentsCreatePrimaryActionBar: View {
     let presentation: MomentsCreateWorkflowPresentation
     let cancelCreation: () -> Void
+    let startSignInFlow: () -> Void
     let generateStoryDraft: () -> Void
     let generatePreview: () -> Void
     let refreshPreviewStatus: () -> Void
@@ -457,6 +471,14 @@ private struct MomentsCreatePrimaryActionBar: View {
                             .font(.system(size: 13, weight: .semibold))
                             .foregroundStyle(statusColor)
                             .fixedSize(horizontal: false, vertical: true)
+                    }
+
+                    if let uploadProgress = presentation.mediaSummary.importProgress,
+                       presentation.mediaSummary.isImporting {
+                        ProgressView(value: uploadProgress.fractionCompleted ?? 0)
+                            .tint(AVBrandColor.accent)
+                            .accessibilityLabel("Uploading media")
+                            .accessibilityValue(uploadProgress.title)
                     }
                 }
 
@@ -499,6 +521,7 @@ private struct MomentsCreatePrimaryActionBar: View {
             && (
                 presentation.canGenerateFinalRender
                     || presentation.canDraftStory
+                    || needsSignInForStory
             )
     }
 
@@ -518,6 +541,9 @@ private struct MomentsCreatePrimaryActionBar: View {
         if presentation.canGeneratePreview {
             return "Story ready"
         }
+        if needsSignInForStory {
+            return "Sign in"
+        }
         return presentation.storySummary.isDrafting ? "Avi is preparing..." : "Prepare story"
     }
 
@@ -533,6 +559,9 @@ private struct MomentsCreatePrimaryActionBar: View {
         }
         if presentation.canGenerateFinalRender {
             return "video.fill"
+        }
+        if needsSignInForStory {
+            return "person.crop.circle.badge.checkmark"
         }
         return "play.rectangle.fill"
     }
@@ -584,6 +613,9 @@ private struct MomentsCreatePrimaryActionBar: View {
         if presentation.canGeneratePreview {
             return "Story ready. Next step: create the video."
         }
+        if needsSignInForStory {
+            return presentation.storyAvailabilityMessage
+        }
         if presentation.canDraftStory {
             return "Avi will organize the story, style, music, and pacing before video creation."
         }
@@ -612,6 +644,7 @@ private struct MomentsCreatePrimaryActionBar: View {
 
     private var isBusy: Bool {
         presentation.storySummary.isDrafting
+            || presentation.mediaSummary.isImporting
             || presentation.previewSummary.isGenerating
             || presentation.previewSummary.isRefreshingStatus
             || presentation.finalRenderSummary.isGenerating
@@ -637,6 +670,8 @@ private struct MomentsCreatePrimaryActionBar: View {
             refreshPreviewStatus()
         } else if presentation.canGeneratePreview {
             return
+        } else if needsSignInForStory {
+            startSignInFlow()
         } else {
             generateStoryDraft()
         }
@@ -648,6 +683,12 @@ private struct MomentsCreatePrimaryActionBar: View {
 
     private var creditCostTitle: String {
         MomentsCreditCopy.countTitle(presentation.finalRenderSummary.creditCost)
+    }
+
+    private var needsSignInForStory: Bool {
+        !presentation.isSignedIn
+            && presentation.mediaSummary.selectedCount > 0
+            && !presentation.storySummary.isDrafting
     }
 }
 

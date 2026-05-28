@@ -14,59 +14,125 @@ struct MediaUploadPersistenceResult {
 }
 
 enum MediaUploadPersistence {
+    private static let uploadConcurrencyLimit = 3
+
+    private struct UploadedMedia {
+        let media: MomentsSelectedMedia
+        let preparedUpload: MomentsPreparedUpload
+    }
+
     @MainActor
     static func save(
         imported mediaItems: [MomentsSelectedMedia],
         ownerUserId: String,
+        bearerToken: String,
         projectId: String,
         uploadClient: MomentsUploadClient,
         mediaAssetSaver: any MomentsMediaAssetSaving,
-        shouldContinue: () -> Bool
+        progress: @MainActor @escaping (_ completedCount: Int, _ totalCount: Int) -> Void = { _, _ in },
+        shouldContinue: @MainActor () -> Bool
     ) async throws -> MediaUploadPersistenceResult {
-        var savedCount = 0
-        var savedMedia: [MomentsStoryDraftMedia] = []
-        var storageBlocked = false
-
-        for media in mediaItems {
-            let prepared = try await uploadClient.prepareUpload(
-                projectId: projectId,
-                ownerUserId: ownerUserId,
-                media: media
-            )
-
-            do {
-                try await uploadClient.upload(media: media, preparedUpload: prepared)
-            } catch MomentsUploadError.signedUploadUnavailable {
-                storageBlocked = true
-            }
-
-            try await mediaAssetSaver.saveMediaAsset(
-                ownerUserId: ownerUserId,
-                projectId: projectId,
-                media: media,
-                preparedUpload: prepared
-            )
-            savedMedia.append(
-                MomentsStoryDraftMedia(
-                    mediaAssetId: prepared.mediaAssetId,
-                    mediaKind: media.kind,
-                    sortOrder: media.sortOrder,
-                    selected: media.selected,
-                    moderationStatus: "pending"
-                )
-            )
-
-            guard shouldContinue() else {
-                throw CancellationError()
-            }
-
-            savedCount += 1
+        let totalCount = mediaItems.count
+        guard totalCount > 0 else {
+            return MediaUploadPersistenceResult(savedCount: 0, savedMedia: [], storageBlocked: false)
         }
 
-        return MediaUploadPersistenceResult(
-            savedCount: savedCount,
-            savedMedia: savedMedia,
-            storageBlocked: storageBlocked
+        var completedUploads = 0
+        let uploadedMedia = try await uploadMedia(
+            mediaItems,
+            projectId: projectId,
+            bearerToken: bearerToken,
+            uploadClient: uploadClient,
+            shouldContinue: shouldContinue,
+            progress: { completedCount in
+                completedUploads = completedCount
+                progress(completedCount, totalCount)
+            }
         )
+
+        guard shouldContinue() else {
+            throw CancellationError()
+        }
+
+        let mediaAssetRequests = uploadedMedia.map {
+            MediaAssetPersistenceRequest.asset($0.media, preparedUpload: $0.preparedUpload)
+        }
+        let savedMediaAssetIds = try await mediaAssetSaver.saveMediaAssets(
+            ownerUserId: ownerUserId,
+            projectId: projectId,
+            mediaAssets: mediaAssetRequests
+        )
+
+        return MediaUploadPersistenceResult(
+            savedCount: completedUploads,
+            savedMedia: zip(uploadedMedia, savedMediaAssetIds).map { uploaded, savedMediaAssetId in
+                MomentsStoryDraftMedia(
+                    mediaAssetId: savedMediaAssetId,
+                    mediaKind: uploaded.media.kind,
+                    sortOrder: uploaded.media.sortOrder,
+                    selected: uploaded.media.selected,
+                    moderationStatus: "pending"
+                )
+            },
+            storageBlocked: uploadedMedia.contains { $0.preparedUpload.uploadUrl == nil }
+        )
+    }
+
+    @MainActor
+    private static func uploadMedia(
+        _ mediaItems: [MomentsSelectedMedia],
+        projectId: String,
+        bearerToken: String,
+        uploadClient: MomentsUploadClient,
+        shouldContinue: @MainActor () -> Bool,
+        progress: @MainActor @escaping (_ completedCount: Int) -> Void
+    ) async throws -> [UploadedMedia] {
+        var nextIndex = 0
+        var completedCount = 0
+        var uploadedMedia: [UploadedMedia] = []
+
+        try await withThrowingTaskGroup(of: UploadedMedia.self) { group in
+            func enqueueNextUpload() {
+                guard nextIndex < mediaItems.count else { return }
+                let media = mediaItems[nextIndex]
+                nextIndex += 1
+                group.addTask {
+                    let prepared = try await uploadClient.prepareUpload(
+                        projectId: projectId,
+                        bearerToken: bearerToken,
+                        media: media
+                    )
+
+                    do {
+                        try await uploadClient.upload(
+                            media: media,
+                            preparedUpload: prepared
+                        )
+                    } catch MomentsUploadError.signedUploadUnavailable {
+                        return UploadedMedia(media: media, preparedUpload: prepared)
+                    }
+
+                    return UploadedMedia(media: media, preparedUpload: prepared)
+                }
+            }
+
+            for _ in 0..<min(uploadConcurrencyLimit, mediaItems.count) {
+                enqueueNextUpload()
+            }
+
+            while let uploaded = try await group.next() {
+                guard shouldContinue() else {
+                    group.cancelAll()
+                    throw CancellationError()
+                }
+
+                completedCount += 1
+                uploadedMedia.append(uploaded)
+                progress(completedCount)
+                enqueueNextUpload()
+            }
+        }
+
+        return uploadedMedia.sorted { $0.media.sortOrder < $1.media.sortOrder }
     }
 }

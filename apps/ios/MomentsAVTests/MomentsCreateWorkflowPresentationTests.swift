@@ -171,6 +171,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
     func testWorkflowPresentationBuilderAppliesAvailabilityState() {
         let presentation = MomentsCreateWorkflowPresentation.make(
             activeProjectId: "project-1",
+            isSignedIn: true,
             hasMomentWorkspace: true,
             template: .birthdayMessage,
             mediaSummary: MomentsCreateMediaSummary(),

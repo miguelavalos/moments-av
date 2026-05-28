@@ -9,6 +9,7 @@ final class PreviewGenerationWorkflow: WorkspaceObservingWorkflow {
     @Published private(set) var statusMessage: String?
 
     private let currentUserProvider: any MomentsCurrentUserProviding
+    private let authTokenProvider: any MomentsAuthTokenProviding
     private let creditBalanceProvider: any MomentsCreditBalanceProviding
     private let previewResultSaver: any MomentsPreviewResultSaving
     private let previewClient: MomentsPreviewClient
@@ -16,6 +17,7 @@ final class PreviewGenerationWorkflow: WorkspaceObservingWorkflow {
 
     init(
         currentUserProvider: any MomentsCurrentUserProviding,
+        authTokenProvider: any MomentsAuthTokenProviding,
         creditBalanceProvider: any MomentsCreditBalanceProviding,
         previewResultSaver: any MomentsPreviewResultSaving,
         workspaceObserver: any MomentsActiveWorkspaceObserving,
@@ -23,6 +25,7 @@ final class PreviewGenerationWorkflow: WorkspaceObservingWorkflow {
         statusClient: MomentsRenderStatusClient
     ) {
         self.currentUserProvider = currentUserProvider
+        self.authTokenProvider = authTokenProvider
         self.creditBalanceProvider = creditBalanceProvider
         self.previewResultSaver = previewResultSaver
         self.previewClient = previewClient
@@ -56,6 +59,10 @@ final class PreviewGenerationWorkflow: WorkspaceObservingWorkflow {
             statusMessage = "Sign in before generating a preview."
             return
         }
+        guard let bearerToken = try? await authTokenProvider.currentBearerToken() else {
+            statusMessage = "Sign in again before generating a preview."
+            return
+        }
         guard let project = activeWorkspace?.project else {
             statusMessage = "Create the draft and story before generating a preview."
             return
@@ -82,6 +89,7 @@ final class PreviewGenerationWorkflow: WorkspaceObservingWorkflow {
         do {
             statusMessage = try await PreviewGenerationRun.perform(
                 ownerUserId: ownerUserId,
+                bearerToken: bearerToken,
                 projectId: projectId,
                 project: project,
                 template: template,
@@ -104,6 +112,10 @@ final class PreviewGenerationWorkflow: WorkspaceObservingWorkflow {
             statusMessage = refreshMessages.signIn
             return
         }
+        guard let bearerToken = try? await authTokenProvider.currentBearerToken() else {
+            statusMessage = refreshMessages.signIn
+            return
+        }
 
         let generation = beginWorkflowGeneration()
         isRefreshingStatus = true
@@ -112,6 +124,7 @@ final class PreviewGenerationWorkflow: WorkspaceObservingWorkflow {
         do {
             statusMessage = try await RenderJobStatusRefresh.perform(
                 ownerUserId: ownerUserId,
+                bearerToken: bearerToken,
                 projectId: activeWorkspace?.project.id,
                 job: latestPreviewJob,
                 messages: refreshMessages,

@@ -4,6 +4,7 @@ enum MomentsProjectSyncError: LocalizedError {
     case notConfigured
     case invalidForm
     case missingRenderJob
+    case unexpectedResponse
 
     var errorDescription: String? {
         switch self {
@@ -13,6 +14,8 @@ enum MomentsProjectSyncError: LocalizedError {
             "Add the occasion before starting a project."
         case .missingRenderJob:
             "The backend did not return a render job for this request."
+        case .unexpectedResponse:
+            "The backend response could not be used."
         }
     }
 }

@@ -1,13 +1,13 @@
 import Foundation
 
 struct StoryScenePersistenceRequest {
-    let sceneIndex: Int
+    let sceneIndex: Double
     let mediaAssetIds: [String]
     let caption: String
     let narrationText: String
     let tone: String?
     let musicCue: String?
-    let durationMs: Int
+    let durationMs: Double
     let createdBy: String
 }
 
@@ -19,13 +19,13 @@ struct StoryReadyPersistenceRequest {
 extension StoryScenePersistenceRequest {
     static func scene(_ scene: MomentsStoryDraftScene) -> StoryScenePersistenceRequest {
         StoryScenePersistenceRequest(
-            sceneIndex: scene.sceneIndex,
+            sceneIndex: Double(scene.sceneIndex),
             mediaAssetIds: scene.mediaAssetIds,
             caption: scene.caption,
             narrationText: scene.narrationText,
             tone: scene.tone,
             musicCue: scene.musicCue,
-            durationMs: scene.durationMs,
+            durationMs: Double(scene.durationMs),
             createdBy: "avi"
         )
     }

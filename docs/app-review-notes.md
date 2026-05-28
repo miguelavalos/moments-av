@@ -42,7 +42,9 @@ Creation flow:
 Credits:
 - Final video creation requires spendable Moments AV credits.
 - Final credits are committed only after a usable final export is delivered.
-- Story preparation and failed provider runs do not commit final credits.
+- Story preparation does not commit final credits. If an assisted story provider
+  is unavailable, the app can still prepare an editable story plan from the
+  selected media so the reviewer is not blocked before video creation.
 
 Account deletion and project deletion:
 - Account deletion is available from Account > Delete Account.
@@ -83,7 +85,8 @@ Before submission, test these paths on the exact build:
 - [ ] Media selection uses Apple Photos picker and only user-selected media.
 - [ ] Collection/album import, when available, asks for confirmation and skips
   duplicate selected media.
-- [ ] Story draft flow can be reached after media selection.
+- [ ] Story draft flow can be reached after media selection and reaches the
+  story-ready state even if provider-assisted drafting is unavailable.
 - [ ] Final video creation can be reached after story readiness.
 - [ ] Projects tab shows submitted demo projects.
 - [ ] Account tab shows support, privacy, terms, and delete-account routes.

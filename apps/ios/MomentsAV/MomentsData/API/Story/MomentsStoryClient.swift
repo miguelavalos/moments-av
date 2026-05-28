@@ -11,6 +11,7 @@ struct MomentsStoryClient {
     func generateDraft(
         projectId: String,
         ownerUserId: String,
+        bearerToken: String,
         form: MomentDraftForm,
         mediaAssets: [MomentMediaAsset]
     ) async throws -> MomentsStoryDraftResponse {
@@ -30,6 +31,7 @@ struct MomentsStoryClient {
         return try await generateDraft(
             projectId: projectId,
             ownerUserId: ownerUserId,
+            bearerToken: bearerToken,
             form: form,
             selectedMedia: selectedMedia
         )
@@ -38,6 +40,7 @@ struct MomentsStoryClient {
     func generateDraft(
         projectId: String,
         ownerUserId: String,
+        bearerToken: String,
         form: MomentDraftForm,
         selectedMedia: [MomentsStoryDraftMedia]
     ) async throws -> MomentsStoryDraftResponse {
@@ -66,7 +69,7 @@ struct MomentsStoryClient {
         var request = URLRequest(url: endpoint)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.setValue("Bearer \(ownerUserId)", forHTTPHeaderField: "Authorization")
+        request.setValue("Bearer \(bearerToken)", forHTTPHeaderField: "Authorization")
         request.httpBody = try JSONEncoder().encode(requestBody)
 
         let (data, response) = try await session.data(for: request)

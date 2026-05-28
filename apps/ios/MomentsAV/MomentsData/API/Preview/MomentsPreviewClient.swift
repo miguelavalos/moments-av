@@ -10,7 +10,7 @@ struct MomentsPreviewClient {
 
     func generatePreview(
         projectId: String,
-        ownerUserId: String,
+        bearerToken: String,
         template: MomentTemplate,
         previewIndex: Int
     ) async throws -> MomentsPreviewResponse {
@@ -34,7 +34,7 @@ struct MomentsPreviewClient {
         var request = URLRequest(url: endpoint)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.setValue("Bearer \(ownerUserId)", forHTTPHeaderField: "Authorization")
+        request.setValue("Bearer \(bearerToken)", forHTTPHeaderField: "Authorization")
         request.httpBody = try JSONEncoder().encode(body)
 
         let (data, response) = try await session.data(for: request)

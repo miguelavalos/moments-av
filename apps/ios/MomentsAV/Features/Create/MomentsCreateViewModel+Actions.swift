@@ -109,8 +109,10 @@ extension MomentsCreateViewModel {
         guard canDraftStory, let storyDraftWorkflow else { return }
         let form = form
         let selectedMedia = selectedMedia
+        isPreparingStory = true
 
         runOperation {
+            defer { self.isPreparingStory = false }
             let projectId: String?
             if let activeProjectId = self.activeProjectId {
                 projectId = activeProjectId
@@ -156,8 +158,10 @@ extension MomentsCreateViewModel {
         guard canDraftStory, let storyDraftWorkflow else { return }
         let form = form
         let selectedMedia = selectedMedia
+        isPreparingStory = true
 
         runOperation {
+            defer { self.isPreparingStory = false }
             let projectId: String?
             if let activeProjectId = self.activeProjectId {
                 projectId = activeProjectId

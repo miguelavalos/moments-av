@@ -10,7 +10,7 @@ struct MomentsFinalRenderClient {
 
     func generateFinalRender(
         projectId: String,
-        ownerUserId: String,
+        bearerToken: String,
         template: MomentTemplate
     ) async throws -> MomentsFinalRenderResponse {
         guard let baseURL = URL(string: baseURLString.trimmingCharacters(in: .whitespacesAndNewlines)) else {
@@ -33,7 +33,7 @@ struct MomentsFinalRenderClient {
         var request = URLRequest(url: endpoint)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.setValue("Bearer \(ownerUserId)", forHTTPHeaderField: "Authorization")
+        request.setValue("Bearer \(bearerToken)", forHTTPHeaderField: "Authorization")
         request.httpBody = try JSONEncoder().encode(body)
 
         let (data, response) = try await session.data(for: request)

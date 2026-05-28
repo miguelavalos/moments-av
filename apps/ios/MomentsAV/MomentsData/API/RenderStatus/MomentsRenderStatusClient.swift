@@ -8,7 +8,7 @@ struct MomentsRenderStatusClient {
         URL(string: baseURLString.trimmingCharacters(in: .whitespacesAndNewlines)) != nil
     }
 
-    func fetchStatus(renderJobId: String, ownerUserId: String) async throws -> MomentsRenderStatusResponse {
+    func fetchStatus(renderJobId: String, bearerToken: String) async throws -> MomentsRenderStatusResponse {
         guard let baseURL = URL(string: baseURLString.trimmingCharacters(in: .whitespacesAndNewlines)) else {
             throw MomentsRenderStatusError.apiNotConfigured
         }
@@ -23,7 +23,7 @@ struct MomentsRenderStatusClient {
 
         var request = URLRequest(url: endpoint)
         request.httpMethod = "GET"
-        request.setValue("Bearer \(ownerUserId)", forHTTPHeaderField: "Authorization")
+        request.setValue("Bearer \(bearerToken)", forHTTPHeaderField: "Authorization")
 
         let (data, response) = try await session.data(for: request)
         guard let httpResponse = response as? HTTPURLResponse, 200..<300 ~= httpResponse.statusCode else {

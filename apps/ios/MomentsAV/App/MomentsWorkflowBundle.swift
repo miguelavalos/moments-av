@@ -37,18 +37,21 @@ struct MomentsWorkflowBundle {
         )
         mediaUpload = MediaUploadWorkflow(
             currentUserProvider: accountController,
+            authTokenProvider: accountController,
             mediaAssetSaver: projectRepository,
             workspaceObserver: workspaceObserver,
             uploadClient: clients.upload
         )
         storyDraft = StoryDraftWorkflow(
             currentUserProvider: accountController,
+            authTokenProvider: accountController,
             storyDraftSaver: projectRepository,
             workspaceObserver: workspaceObserver,
             storyClient: clients.story
         )
         previewGeneration = PreviewGenerationWorkflow(
             currentUserProvider: accountController,
+            authTokenProvider: accountController,
             creditBalanceProvider: accountController,
             previewResultSaver: projectRepository,
             workspaceObserver: workspaceObserver,
@@ -57,6 +60,7 @@ struct MomentsWorkflowBundle {
         )
         finalRender = FinalRenderWorkflow(
             currentUserProvider: accountController,
+            authTokenProvider: accountController,
             creditBalanceProvider: accountController,
             finalRenderResultSaver: projectRepository,
             workspaceObserver: workspaceObserver,
@@ -74,10 +78,20 @@ struct MomentsWorkflowClients {
     let renderStatus: MomentsRenderStatusClient
 
     init(baseURLString: String) {
-        upload = MomentsUploadClient(baseURLString: baseURLString)
+        upload = MomentsUploadClient(baseURLString: baseURLString, session: Self.makeUploadSession())
         story = MomentsStoryClient(baseURLString: baseURLString)
         preview = MomentsPreviewClient(baseURLString: baseURLString)
         finalRender = MomentsFinalRenderClient(baseURLString: baseURLString)
         renderStatus = MomentsRenderStatusClient(baseURLString: baseURLString)
+    }
+
+    private static func makeUploadSession() -> URLSession {
+        let configuration = URLSessionConfiguration.ephemeral
+        configuration.httpMaximumConnectionsPerHost = 3
+        configuration.timeoutIntervalForRequest = 45
+        configuration.timeoutIntervalForResource = 90
+        configuration.waitsForConnectivity = false
+        configuration.requestCachePolicy = .reloadIgnoringLocalAndRemoteCacheData
+        return URLSession(configuration: configuration)
     }
 }

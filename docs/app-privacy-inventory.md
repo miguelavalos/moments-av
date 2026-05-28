@@ -59,7 +59,9 @@ the public Privacy Policy.
   selected order, source media references.
 - Collected by: Moments AV media picker and upload flow.
 - Stored where: uploaded to the configured backend/storage only after user
-  selection and project creation.
+  selection and project creation. The preferred runtime path uses
+  short-lived direct-to-R2 upload URLs from the Apps AV API; the API keeps the
+  upload job and project metadata, while R2 stores the binary media.
 - Linked to user: yes.
 - Used for tracking: no.
 - Purpose: create private memory video drafts, previews, and final exports.

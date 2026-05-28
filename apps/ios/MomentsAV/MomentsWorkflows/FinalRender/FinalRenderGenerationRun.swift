@@ -4,6 +4,7 @@ enum FinalRenderGenerationRun {
     @MainActor
     static func perform(
         ownerUserId: String,
+        bearerToken: String,
         projectId: String,
         template: MomentTemplate,
         finalRenderClient: MomentsFinalRenderClient,
@@ -13,7 +14,7 @@ enum FinalRenderGenerationRun {
     ) async throws -> String {
         let finalRender = try await finalRenderClient.generateFinalRender(
             projectId: projectId,
-            ownerUserId: ownerUserId,
+            bearerToken: bearerToken,
             template: template
         )
 

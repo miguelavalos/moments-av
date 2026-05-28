@@ -7,16 +7,19 @@ final class StoryDraftWorkflow: WorkspaceObservingWorkflow {
     @Published private(set) var statusMessage: String?
 
     private let currentUserProvider: any MomentsCurrentUserProviding
+    private let authTokenProvider: any MomentsAuthTokenProviding
     private let storyDraftSaver: any MomentsStoryDraftSaving
     private let storyClient: MomentsStoryClient
 
     init(
         currentUserProvider: any MomentsCurrentUserProviding,
+        authTokenProvider: any MomentsAuthTokenProviding,
         storyDraftSaver: any MomentsStoryDraftSaving,
         workspaceObserver: any MomentsActiveWorkspaceObserving,
         storyClient: MomentsStoryClient
     ) {
         self.currentUserProvider = currentUserProvider
+        self.authTokenProvider = authTokenProvider
         self.storyDraftSaver = storyDraftSaver
         self.storyClient = storyClient
         super.init(workspaceObserver: workspaceObserver)
@@ -46,6 +49,10 @@ final class StoryDraftWorkflow: WorkspaceObservingWorkflow {
             statusMessage = "Sign in before drafting the story."
             return
         }
+        guard let bearerToken = try? await authTokenProvider.currentBearerToken() else {
+            statusMessage = "Sign in again before drafting the story."
+            return
+        }
         guard isConfigured else {
             statusMessage = "Story drafting is not configured yet."
             return
@@ -69,6 +76,7 @@ final class StoryDraftWorkflow: WorkspaceObservingWorkflow {
             let draft = try await storyClient.generateDraft(
                 projectId: projectId,
                 ownerUserId: ownerUserId,
+                bearerToken: bearerToken,
                 form: form,
                 selectedMedia: media
             )
@@ -84,7 +92,7 @@ final class StoryDraftWorkflow: WorkspaceObservingWorkflow {
             statusMessage = draft.helperCopy
         } catch {
             guard isCurrentWorkflowGeneration(generation) else { return }
-            statusMessage = error.localizedDescription
+            statusMessage = "Couldn’t prepare the story. Please try again."
         }
 
         guard isCurrentWorkflowGeneration(generation) else { return }

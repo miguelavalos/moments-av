@@ -25,6 +25,7 @@ final class MomentsCreateViewModel: ObservableObject {
     @Published private(set) var generatedScenes: [MomentsStoryDraftScene] = []
     @Published private(set) var storyStatusMessage: String?
     @Published private(set) var isDraftingStory = false
+    @Published var isPreparingStory = false
     @Published private(set) var activeWorkspace: MomentProjectWorkspace?
     @Published private(set) var latestPreview: MomentArtifact?
     @Published private(set) var latestPreviewJob: MomentRenderJob?

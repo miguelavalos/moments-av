@@ -1,14 +1,15 @@
 import Foundation
 
-struct MomentsUploadClient {
+struct MomentsUploadClient: Sendable {
     var baseURLString: String
     var session: URLSession = .shared
+    var uploadRetryPolicy = MomentsUploadRetryPolicy()
 
     var isConfigured: Bool {
         URL(string: baseURLString.trimmingCharacters(in: .whitespacesAndNewlines)) != nil
     }
 
-    func prepareUpload(projectId: String, ownerUserId: String, media: MomentsSelectedMedia) async throws -> MomentsPreparedUpload {
+    func prepareUpload(projectId: String, bearerToken: String, media: MomentsSelectedMedia) async throws -> MomentsPreparedUpload {
         guard let baseURL = URL(string: baseURLString.trimmingCharacters(in: .whitespacesAndNewlines)) else {
             throw MomentsUploadError.apiNotConfigured
         }
@@ -23,7 +24,7 @@ struct MomentsUploadClient {
         var request = URLRequest(url: endpoint)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.setValue("Bearer \(ownerUserId)", forHTTPHeaderField: "Authorization")
+        request.setValue("Bearer \(bearerToken)", forHTTPHeaderField: "Authorization")
         request.httpBody = try JSONEncoder().encode(MomentsPrepareUploadRequest(projectId: projectId, media: media))
 
         let (data, response) = try await session.data(for: request)
@@ -45,14 +46,91 @@ struct MomentsUploadClient {
 
         var request = URLRequest(url: uploadURL)
         request.httpMethod = preparedUpload.method
+        request.timeoutInterval = 45
+        request.cachePolicy = .reloadIgnoringLocalAndRemoteCacheData
+        request.networkServiceType = .responsiveData
         preparedUpload.headers.forEach { key, value in
             request.setValue(value, forHTTPHeaderField: key)
         }
 
-        let (_, response) = try await session.upload(for: request, from: media.data)
-        guard let httpResponse = response as? HTTPURLResponse, 200..<300 ~= httpResponse.statusCode else {
-            throw MomentsUploadError.uploadFailed
+        try await uploadWithRetry(request: request, data: media.data)
+
+        if let completionUrl = preparedUpload.completionUrl {
+            try await completeUpload(uploadId: preparedUpload.uploadId, completionUrl: completionUrl)
         }
+    }
+
+    private func completeUpload(uploadId: String, completionUrl: URL) async throws {
+        var request = URLRequest(url: completionUrl)
+        request.httpMethod = "POST"
+        request.timeoutInterval = 20
+        request.cachePolicy = .reloadIgnoringLocalAndRemoteCacheData
+
+        let (data, response) = try await session.data(for: request)
+        guard let httpResponse = response as? HTTPURLResponse, 200..<300 ~= httpResponse.statusCode else {
+            throw MomentsAPIError.decode(
+                from: data,
+                fallbackCode: "moments_upload_complete_failed",
+                fallbackMessage: MomentsUploadError.uploadFailed.localizedDescription
+            )
+        }
+    }
+
+    private func uploadWithRetry(request: URLRequest, data: Data) async throws {
+        var attempt = 0
+
+        while true {
+            do {
+                let (responseData, response) = try await session.upload(for: request, from: data)
+                guard let httpResponse = response as? HTTPURLResponse, 200..<300 ~= httpResponse.statusCode else {
+                    throw MomentsAPIError.decode(
+                        from: responseData,
+                        fallbackCode: "moments_upload_failed",
+                        fallbackMessage: MomentsUploadError.uploadFailed.localizedDescription
+                    )
+                }
+                return
+            } catch {
+                guard uploadRetryPolicy.shouldRetry(error: error, attempt: attempt) else {
+                    throw error
+                }
+
+                attempt += 1
+                try await Task.sleep(nanoseconds: uploadRetryPolicy.delayNanoseconds(forAttempt: attempt))
+            }
+        }
+    }
+}
+
+struct MomentsUploadRetryPolicy: Sendable {
+    var maximumRetries = 3
+    var baseDelayNanoseconds: UInt64 = 300_000_000
+
+    func shouldRetry(error: Error, attempt: Int) -> Bool {
+        guard attempt < maximumRetries else { return false }
+
+        if let apiError = error as? MomentsAPIError {
+            return apiError.code == "moments_upload_expired"
+        }
+
+        let nsError = error as NSError
+        guard nsError.domain == NSURLErrorDomain else { return false }
+
+        switch nsError.code {
+        case NSURLErrorNetworkConnectionLost,
+             NSURLErrorTimedOut,
+             NSURLErrorCannotConnectToHost,
+             NSURLErrorCannotFindHost,
+             NSURLErrorDNSLookupFailed,
+             NSURLErrorNotConnectedToInternet:
+            return true
+        default:
+            return false
+        }
+    }
+
+    func delayNanoseconds(forAttempt attempt: Int) -> UInt64 {
+        baseDelayNanoseconds * UInt64(1 << max(attempt - 1, 0))
     }
 }
 

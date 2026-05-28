@@ -19,6 +19,7 @@ extension MomentsCreateViewModel {
 
     var storyAvailabilityMessage: String? {
         MomentsCreateAvailabilityMessageFactory.story(
+            isSignedIn: isSignedIn,
             hasMomentWorkspace: hasMomentWorkspace,
             isStoryDrafting: storyDraftWorkflow?.isDrafting ?? false,
             isStoryDraftAvailable: storyDraftWorkflow != nil,

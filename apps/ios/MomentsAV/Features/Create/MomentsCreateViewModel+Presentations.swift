@@ -2,6 +2,7 @@ extension MomentsCreateViewModel {
     var workflowPresentation: MomentsCreateWorkflowPresentation {
         MomentsCreateWorkflowPresentation.make(
             activeProjectId: activeProjectId,
+            isSignedIn: isSignedIn,
             hasMomentWorkspace: hasMomentWorkspace,
             template: form.template,
             mediaSummary: mediaSummary,

@@ -27,6 +27,7 @@ enum MomentsCreateAvailabilityMessageFactory {
     }
 
     static func story(
+        isSignedIn: Bool,
         hasMomentWorkspace: Bool,
         isStoryDrafting: Bool,
         isStoryDraftAvailable: Bool,
@@ -35,6 +36,7 @@ enum MomentsCreateAvailabilityMessageFactory {
         selectedMediaCount: Int,
         template: MomentTemplate
     ) -> String? {
+        guard isSignedIn else { return MomentsCreateAvailabilityCopy.storySignInRequired }
         guard hasMomentWorkspace else { return MomentsCreateAvailabilityCopy.storyMissingProject }
         guard isStoryDraftAvailable else { return MomentsCreateAvailabilityCopy.storyUnavailable }
         if isStoryDrafting { return nil }

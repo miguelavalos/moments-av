@@ -4,6 +4,7 @@ import Foundation
 enum MomentsCreateWorkflowCapabilityFactory {
     static func make(
         activeProjectId: String?,
+        isSignedIn: Bool,
         hasMomentWorkspace: Bool,
         isImportingMedia: Bool,
         isMediaUploadConfigured: Bool,
@@ -25,6 +26,7 @@ enum MomentsCreateWorkflowCapabilityFactory {
                 mediaRemainingSlots: mediaRemainingSlots
             ),
             canDraftStory: canDraftStory(
+                isSignedIn: isSignedIn,
                 hasMomentWorkspace: hasMomentWorkspace,
                 storyDraftWorkflow: storyDraftWorkflow,
                 template: template,
@@ -59,11 +61,13 @@ enum MomentsCreateWorkflowCapabilityFactory {
     }
 
     private static func canDraftStory(
+        isSignedIn: Bool,
         hasMomentWorkspace: Bool,
         storyDraftWorkflow: StoryDraftWorkflow?,
         template: MomentTemplate,
         selectedMediaCount: Int
     ) -> Bool {
+        guard isSignedIn else { return false }
         guard let storyDraftWorkflow, hasMomentWorkspace else { return false }
         return storyDraftWorkflow.isConfigured
             && !storyDraftWorkflow.isDrafting

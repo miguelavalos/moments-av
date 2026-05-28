@@ -15,7 +15,12 @@ protocol MomentsMediaAssetSaving {
         projectId: String,
         media: MomentsSelectedMedia,
         preparedUpload: MomentsPreparedUpload
-    ) async throws
+    ) async throws -> String
+    func saveMediaAssets(
+        ownerUserId: String,
+        projectId: String,
+        mediaAssets: [MediaAssetPersistenceRequest]
+    ) async throws -> [String]
 }
 
 @MainActor

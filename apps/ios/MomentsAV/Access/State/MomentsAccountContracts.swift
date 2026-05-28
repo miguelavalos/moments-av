@@ -7,6 +7,11 @@ protocol MomentsCurrentUserProviding: AnyObject {
 }
 
 @MainActor
+protocol MomentsAuthTokenProviding: AnyObject {
+    func currentBearerToken() async throws -> String?
+}
+
+@MainActor
 protocol MomentsCreditBalanceProviding: AnyObject {
     var currentCreditBalance: MomentsCreditBalance { get }
 }

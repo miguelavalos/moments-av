@@ -9,6 +9,7 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
     @Published private(set) var statusMessage: String?
 
     private let currentUserProvider: any MomentsCurrentUserProviding
+    private let authTokenProvider: any MomentsAuthTokenProviding
     private let creditBalanceProvider: any MomentsCreditBalanceProviding
     private let finalRenderResultSaver: any MomentsFinalRenderResultSaving
     private let finalRenderClient: MomentsFinalRenderClient
@@ -16,6 +17,7 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
 
     init(
         currentUserProvider: any MomentsCurrentUserProviding,
+        authTokenProvider: any MomentsAuthTokenProviding,
         creditBalanceProvider: any MomentsCreditBalanceProviding,
         finalRenderResultSaver: any MomentsFinalRenderResultSaving,
         workspaceObserver: any MomentsActiveWorkspaceObserving,
@@ -23,6 +25,7 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
         statusClient: MomentsRenderStatusClient
     ) {
         self.currentUserProvider = currentUserProvider
+        self.authTokenProvider = authTokenProvider
         self.creditBalanceProvider = creditBalanceProvider
         self.finalRenderResultSaver = finalRenderResultSaver
         self.finalRenderClient = finalRenderClient
@@ -57,6 +60,10 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
             statusMessage = "Sign in before rendering the final export."
             return
         }
+        guard let bearerToken = try? await authTokenProvider.currentBearerToken() else {
+            statusMessage = "Sign in again before rendering the final export."
+            return
+        }
         guard isConfigured else {
             statusMessage = "Final rendering is not configured for this build."
             return
@@ -80,6 +87,7 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
         do {
             statusMessage = try await FinalRenderGenerationRun.perform(
                 ownerUserId: ownerUserId,
+                bearerToken: bearerToken,
                 projectId: projectId,
                 template: template,
                 finalRenderClient: finalRenderClient,
@@ -101,6 +109,10 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
             statusMessage = refreshMessages.signIn
             return
         }
+        guard let bearerToken = try? await authTokenProvider.currentBearerToken() else {
+            statusMessage = refreshMessages.signIn
+            return
+        }
 
         let generation = beginWorkflowGeneration()
         isRefreshingStatus = true
@@ -109,6 +121,7 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
         do {
             statusMessage = try await RenderJobStatusRefresh.perform(
                 ownerUserId: ownerUserId,
+                bearerToken: bearerToken,
                 projectId: activeWorkspace?.project.id,
                 job: latestFinalJob,
                 messages: refreshMessages,

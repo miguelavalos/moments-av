@@ -36,6 +36,7 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
     func testWorkflowCapabilityFactoryFormatsMediaAndRefreshCapabilities() {
         let capability = MomentsCreateWorkflowCapabilityFactory.make(
             activeProjectId: "project-1",
+            isSignedIn: true,
             hasMomentWorkspace: true,
             isImportingMedia: false,
             isMediaUploadConfigured: true,
@@ -61,6 +62,7 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
     func testWorkflowCapabilityFactoryBlocksMediaWithoutSlotsOrProject() {
         let withoutSlots = MomentsCreateWorkflowCapabilityFactory.make(
             activeProjectId: "project-1",
+            isSignedIn: true,
             hasMomentWorkspace: true,
             isImportingMedia: false,
             isMediaUploadConfigured: true,
@@ -76,6 +78,7 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
         )
         let withoutProject = MomentsCreateWorkflowCapabilityFactory.make(
             activeProjectId: nil,
+            isSignedIn: true,
             hasMomentWorkspace: false,
             isImportingMedia: false,
             isMediaUploadConfigured: true,
@@ -144,6 +147,7 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
     func testAvailabilityMessageFactoryFormatsStoryStates() {
         XCTAssertEqual(
             MomentsCreateAvailabilityMessageFactory.story(
+                isSignedIn: true,
                 hasMomentWorkspace: true,
                 isStoryDrafting: false,
                 isStoryDraftAvailable: true,
@@ -156,6 +160,7 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
         )
         XCTAssertNil(
             MomentsCreateAvailabilityMessageFactory.story(
+                isSignedIn: true,
                 hasMomentWorkspace: true,
                 isStoryDrafting: true,
                 isStoryDraftAvailable: true,

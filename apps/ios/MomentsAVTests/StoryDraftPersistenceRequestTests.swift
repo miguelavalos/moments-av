@@ -17,13 +17,13 @@ final class StoryDraftPersistenceRequestTests: XCTestCase {
 
         let request = StoryScenePersistenceRequest.scene(scene)
 
-        XCTAssertEqual(request.sceneIndex, 1)
+        XCTAssertEqual(request.sceneIndex, 1.0)
         XCTAssertEqual(request.mediaAssetIds, ["media-1", "media-2"])
         XCTAssertEqual(request.caption, "A birthday toast")
         XCTAssertEqual(request.narrationText, "Everyone gathers around the table.")
         XCTAssertEqual(request.tone, "warm")
         XCTAssertEqual(request.musicCue, "soft piano")
-        XCTAssertEqual(request.durationMs, 4_500)
+        XCTAssertEqual(request.durationMs, 4_500.0)
         XCTAssertEqual(request.createdBy, "avi")
     }
 

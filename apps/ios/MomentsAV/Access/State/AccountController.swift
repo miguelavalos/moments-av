@@ -102,6 +102,11 @@ final class AccountController: ObservableObject {
         }
     }
 
+    func currentBearerToken() async throws -> String? {
+        guard let user else { return nil }
+        return try await service.getToken() ?? user.id
+    }
+
     private func startAuthTask(_ operation: @escaping () async throws -> Void) {
         Task {
             do {
@@ -224,7 +229,7 @@ struct MomentsPromoCodeRedemptionResponse: Decodable {
     }
 }
 
-extension AccountController: MomentsCurrentUserProviding, MomentsCreditBalanceProviding, MomentsAccountStateProviding, MomentsAuthenticationControlling {
+extension AccountController: MomentsCurrentUserProviding, MomentsAuthTokenProviding, MomentsCreditBalanceProviding, MomentsAccountStateProviding, MomentsAuthenticationControlling {
     var currentUserId: String? {
         user?.id
     }

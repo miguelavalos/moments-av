@@ -32,6 +32,7 @@ struct RenderJobStatusRefresh {
 
     static func perform(
         ownerUserId: String,
+        bearerToken: String,
         projectId: String?,
         job: MomentRenderJob?,
         messages: RenderJobStatusRefreshMessages,
@@ -49,6 +50,7 @@ struct RenderJobStatusRefresh {
         )
         try await refresh.updateStatus(
             ownerUserId: ownerUserId,
+            bearerToken: bearerToken,
             statusClient: statusClient,
             statusUpdater: statusUpdater,
             shouldContinue: shouldContinue
@@ -59,13 +61,14 @@ struct RenderJobStatusRefresh {
 
     func updateStatus(
         ownerUserId: String,
+        bearerToken: String,
         statusClient: MomentsRenderStatusClient,
         statusUpdater: any MomentsRenderJobStatusUpdating,
         shouldContinue: () -> Bool
     ) async throws {
         let status = try await statusClient.fetchStatus(
             renderJobId: providerRequestId,
-            ownerUserId: ownerUserId
+            bearerToken: bearerToken
         )
         guard shouldContinue() else { throw CancellationError() }
 

@@ -5,7 +5,7 @@ struct MediaAssetPersistenceRequest {
     let uploadId: String
     let kind: String
     let r2Key: String
-    let sortOrder: Int
+    let sortOrder: Double
     let selected: Bool
     let moderationStatus: String
     let uploadedAt: Date
@@ -22,7 +22,7 @@ extension MediaAssetPersistenceRequest {
             uploadId: preparedUpload.uploadId,
             kind: media.kind,
             r2Key: preparedUpload.storageKey,
-            sortOrder: media.sortOrder,
+            sortOrder: Double(media.sortOrder),
             selected: media.selected,
             moderationStatus: "pending",
             uploadedAt: uploadedAt

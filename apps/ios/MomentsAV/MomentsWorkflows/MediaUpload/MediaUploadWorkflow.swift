@@ -10,16 +10,19 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
     @Published private(set) var statusMessage: String?
 
     private let currentUserProvider: any MomentsCurrentUserProviding
+    private let authTokenProvider: any MomentsAuthTokenProviding
     private let mediaAssetSaver: any MomentsMediaAssetSaving
     private let uploadClient: MomentsUploadClient
 
     init(
         currentUserProvider: any MomentsCurrentUserProviding,
+        authTokenProvider: any MomentsAuthTokenProviding,
         mediaAssetSaver: any MomentsMediaAssetSaving,
         workspaceObserver: any MomentsActiveWorkspaceObserving,
         uploadClient: MomentsUploadClient
     ) {
         self.currentUserProvider = currentUserProvider
+        self.authTokenProvider = authTokenProvider
         self.mediaAssetSaver = mediaAssetSaver
         self.uploadClient = uploadClient
         super.init(workspaceObserver: workspaceObserver)
@@ -211,6 +214,10 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
             statusMessage = "Sign in before preparing the story."
             return nil
         }
+        guard let bearerToken = try? await authTokenProvider.currentBearerToken() else {
+            statusMessage = "Sign in again before preparing the story."
+            return nil
+        }
         let mediaToSave = selectedMedia
             .filter(\.selected)
             .sorted { $0.sortOrder < $1.sortOrder }
@@ -221,15 +228,20 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
         let generation = beginWorkflowGeneration()
         isImporting = true
         importProgress = MomentsMediaImportProgress(completedCount: 0, totalCount: mediaToSave.count)
-        statusMessage = "Saving media for the story."
+        statusMessage = "Uploading media for the story."
 
         do {
             let result = try await MediaUploadPersistence.save(
                 imported: mediaToSave,
                 ownerUserId: ownerUserId,
+                bearerToken: bearerToken,
                 projectId: projectId,
                 uploadClient: uploadClient,
                 mediaAssetSaver: mediaAssetSaver,
+                progress: { [weak self] completedCount, totalCount in
+                    self?.updateImportProgress(completedCount: completedCount, totalCount: totalCount)
+                    self?.statusMessage = "Uploading media \(completedCount) of \(totalCount)."
+                },
                 shouldContinue: { isCurrentWorkflowGeneration(generation) }
             )
             guard isCurrentWorkflowGeneration(generation) else { return nil }
@@ -239,7 +251,7 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
             return result.savedMedia
         } catch {
             guard isCurrentWorkflowGeneration(generation) else { return nil }
-            statusMessage = error.localizedDescription
+            statusMessage = "Couldn’t save media for the story. Please try again."
             isImporting = false
             importProgress = nil
             return nil

@@ -4,6 +4,7 @@ enum PreviewGenerationRun {
     @MainActor
     static func perform(
         ownerUserId: String,
+        bearerToken: String,
         projectId: String,
         project: MomentDraftProject,
         template: MomentTemplate,
@@ -14,7 +15,7 @@ enum PreviewGenerationRun {
     ) async throws -> String {
         let preview = try await previewClient.generatePreview(
             projectId: projectId,
-            ownerUserId: ownerUserId,
+            bearerToken: bearerToken,
             template: template,
             previewIndex: Int(project.previewCount) + 1
         )
