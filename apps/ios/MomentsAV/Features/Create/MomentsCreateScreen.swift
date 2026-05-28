@@ -5,6 +5,7 @@ import SwiftUI
 struct MomentsCreateScreen: View {
     @EnvironmentObject private var viewModel: MomentsCreateViewModel
     @State private var pickerItems: [PhotosPickerItem] = []
+    @State private var workflowErrorAlertMessage: String?
     let startSignInFlow: () -> Void
     let openCredits: () -> Void
     let cancelCreation: () -> Void
@@ -32,6 +33,23 @@ struct MomentsCreateScreen: View {
                 isPreparingStory: viewModel.isPreparingStory
             )
             .interactiveDismissDisabled()
+        }
+        .onChange(of: viewModel.workflowErrorAlertMessage) { _, message in
+            workflowErrorAlertMessage = message
+        }
+        .alert("Unable to continue", isPresented: Binding(
+            get: { workflowErrorAlertMessage != nil },
+            set: { isPresented in
+                if !isPresented {
+                    workflowErrorAlertMessage = nil
+                }
+            }
+        )) {
+            Button("OK", role: .cancel) {
+                workflowErrorAlertMessage = nil
+            }
+        } message: {
+            Text(workflowErrorAlertMessage ?? "Please try again.")
         }
     }
 }

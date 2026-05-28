@@ -313,7 +313,7 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
             }
         } catch {
             guard activeWorkspace?.project.id == workspace.project.id else { return }
-            statusMessage = nil
+            statusMessage = "Local media thumbnails are not available on this device. Add media again if you want to edit the selection."
         }
     }
 

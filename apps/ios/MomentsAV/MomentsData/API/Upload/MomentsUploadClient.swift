@@ -4,6 +4,7 @@ struct MomentsUploadClient: Sendable {
     var baseURLString: String
     var session: URLSession = .shared
     var uploadRetryPolicy = MomentsUploadRetryPolicy()
+    var networkRetryPolicy = MomentsNetworkRetryPolicy()
 
     var isConfigured: Bool {
         URL(string: baseURLString.trimmingCharacters(in: .whitespacesAndNewlines)) != nil
@@ -27,7 +28,7 @@ struct MomentsUploadClient: Sendable {
         request.setValue("Bearer \(bearerToken)", forHTTPHeaderField: "Authorization")
         request.httpBody = try JSONEncoder().encode(MomentsPrepareUploadRequest(projectId: projectId, media: media))
 
-        let (data, response) = try await session.data(for: request)
+        let (data, response) = try await retryingData(for: request)
         guard let httpResponse = response as? HTTPURLResponse, 200..<300 ~= httpResponse.statusCode else {
             throw MomentsAPIError.decode(
                 from: data,
@@ -66,7 +67,7 @@ struct MomentsUploadClient: Sendable {
         request.timeoutInterval = 20
         request.cachePolicy = .reloadIgnoringLocalAndRemoteCacheData
 
-        let (data, response) = try await session.data(for: request)
+        let (data, response) = try await retryingData(for: request)
         guard let httpResponse = response as? HTTPURLResponse, 200..<300 ~= httpResponse.statusCode else {
             throw MomentsAPIError.decode(
                 from: data,
@@ -97,6 +98,23 @@ struct MomentsUploadClient: Sendable {
 
                 attempt += 1
                 try await Task.sleep(nanoseconds: uploadRetryPolicy.delayNanoseconds(forAttempt: attempt))
+            }
+        }
+    }
+
+    private func retryingData(for request: URLRequest) async throws -> (Data, URLResponse) {
+        var attempt = 0
+
+        while true {
+            do {
+                return try await session.data(for: request)
+            } catch {
+                guard networkRetryPolicy.shouldRetry(error: error, attempt: attempt) else {
+                    throw error
+                }
+
+                attempt += 1
+                try await Task.sleep(nanoseconds: networkRetryPolicy.delayNanoseconds(forAttempt: attempt))
             }
         }
     }

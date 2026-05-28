@@ -3,6 +3,7 @@ import Foundation
 struct MomentsPreviewClient {
     var baseURLString: String
     var session: URLSession = .shared
+    var retryPolicy = MomentsNetworkRetryPolicy()
 
     var isConfigured: Bool {
         URL(string: baseURLString.trimmingCharacters(in: .whitespacesAndNewlines)) != nil
@@ -37,7 +38,7 @@ struct MomentsPreviewClient {
         request.setValue("Bearer \(bearerToken)", forHTTPHeaderField: "Authorization")
         request.httpBody = try JSONEncoder().encode(body)
 
-        let (data, response) = try await session.data(for: request)
+        let (data, response) = try await retryingData(for: request)
         guard let httpResponse = response as? HTTPURLResponse, 200..<300 ~= httpResponse.statusCode else {
             throw MomentsAPIError.decode(
                 from: data,
@@ -47,6 +48,23 @@ struct MomentsPreviewClient {
         }
 
         return try JSONDecoder().decode(MomentsPreviewResponse.self, from: data)
+    }
+
+    private func retryingData(for request: URLRequest) async throws -> (Data, URLResponse) {
+        var attempt = 0
+
+        while true {
+            do {
+                return try await session.data(for: request)
+            } catch {
+                guard retryPolicy.shouldRetry(error: error, attempt: attempt) else {
+                    throw error
+                }
+
+                attempt += 1
+                try await Task.sleep(nanoseconds: retryPolicy.delayNanoseconds(forAttempt: attempt))
+            }
+        }
     }
 }
 

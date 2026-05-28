@@ -46,6 +46,48 @@ final class MomentsAPIClientTests: XCTestCase {
         XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.value(forHTTPHeaderField: "Authorization"), "Bearer token-1")
     }
 
+    func testPrepareUploadRetriesTransientNetworkLoss() async throws {
+        MomentsURLProtocolMock.failuresBeforeSuccess = 1
+        let session = makeMockSession(
+            json: """
+            {
+              "appId": "momentsav",
+              "projectId": "project-1",
+              "mediaAssetId": "media-1",
+              "uploadId": "upload-1",
+              "uploadUrl": "https://uploads.example.com/media-1",
+              "method": "PUT",
+              "headers": { "content-type": "image/jpeg" },
+              "storageKey": "momentsav/user/project/source/media-1.jpg",
+              "expiresAt": "2026-05-16T17:00:00Z",
+              "generatedAt": "2026-05-16T16:00:00Z"
+            }
+            """
+        )
+        let client = MomentsUploadClient(
+            baseURLString: accountAPIBaseURL,
+            session: session,
+            networkRetryPolicy: MomentsNetworkRetryPolicy(maximumRetries: 1, baseDelayNanoseconds: 1)
+        )
+        let media = MomentsSelectedMedia(
+            id: UUID(uuidString: "00000000-0000-0000-0000-000000000011")!,
+            sourceLocalIdentifier: "local-1",
+            originalFilename: "photo.jpg",
+            contentType: "image/jpeg",
+            kind: "photo",
+            byteSize: 4,
+            sha256: "abcd",
+            data: Data([1, 2, 3, 4]),
+            capturedAt: nil,
+            sortOrder: 0,
+            selected: true
+        )
+
+        _ = try await client.prepareUpload(projectId: "project-1", bearerToken: "token-1", media: media)
+
+        XCTAssertEqual(MomentsURLProtocolMock.requestCount, 2)
+    }
+
     func testUploadUsesPreparedURLAndHeaders() async throws {
         let session = makeMockSession(json: "{}")
         let client = MomentsUploadClient(baseURLString: accountAPIBaseURL, session: session)
@@ -206,6 +248,44 @@ final class MomentsAPIClientTests: XCTestCase {
         XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.value(forHTTPHeaderField: "Authorization"), "Bearer token-1")
     }
 
+    func testStoryDraftRetriesTransientNetworkLoss() async throws {
+        MomentsURLProtocolMock.failuresBeforeSuccess = 1
+        let session = makeMockSession(
+            json: """
+            {
+              "appId": "momentsav",
+              "projectId": "project-1",
+              "workflowRunId": "workflow-1",
+              "status": "ready",
+              "provider": "mock",
+              "model": "mock",
+              "moderationStatus": "allowed",
+              "errorCode": null,
+              "errorMessage": null,
+              "narrationVoice": "avi_clear",
+              "helperCopy": "Ready.",
+              "scenes": [],
+              "generatedAt": "2026-05-16T16:00:00Z"
+            }
+            """
+        )
+        let client = MomentsStoryClient(
+            baseURLString: accountAPIBaseURL,
+            session: session,
+            retryPolicy: MomentsNetworkRetryPolicy(maximumRetries: 1, baseDelayNanoseconds: 1)
+        )
+
+        _ = try await client.generateDraft(
+            projectId: "project-1",
+            ownerUserId: "user-1",
+            bearerToken: "token-1",
+            form: MomentDraftForm(template: .birthdayMessage),
+            mediaAssets: []
+        )
+
+        XCTAssertEqual(MomentsURLProtocolMock.requestCount, 2)
+    }
+
     func testPreviewGenerationUsesSharedAccountAPIBaseURL() async throws {
         let session = makeMockSession(
             json: """
@@ -242,6 +322,45 @@ final class MomentsAPIClientTests: XCTestCase {
         XCTAssertEqual(preview.model, "mock-preview-route")
     }
 
+    func testPreviewGenerationRetriesTransientNetworkLoss() async throws {
+        MomentsURLProtocolMock.failuresBeforeSuccess = 1
+        let session = makeMockSession(
+            json: """
+            {
+              "appId": "momentsav",
+              "projectId": "project-1",
+              "renderJobId": "render-1",
+              "workflowRunId": "workflow-1",
+              "provider": "mock",
+              "model": "mock-preview-route",
+              "artifactId": "artifact-1",
+              "artifactKind": "preview",
+              "status": "completed",
+              "progressPercent": 100,
+              "progressState": "ready",
+              "r2Key": "momentsav/user/project/previews/preview-1.mp4",
+              "expiresAt": "2026-06-16T16:00:00Z",
+              "hasWatermark": true,
+              "generatedAt": "2026-05-16T16:00:00Z"
+            }
+            """
+        )
+        let client = MomentsPreviewClient(
+            baseURLString: accountAPIBaseURL,
+            session: session,
+            retryPolicy: MomentsNetworkRetryPolicy(maximumRetries: 1, baseDelayNanoseconds: 1)
+        )
+
+        _ = try await client.generatePreview(
+            projectId: "project-1",
+            bearerToken: "token-1",
+            template: .birthdayMessage,
+            previewIndex: 0
+        )
+
+        XCTAssertEqual(MomentsURLProtocolMock.requestCount, 2)
+    }
+
     func testPreviewGenerationSurfacesAPIErrorMessage() async throws {
         let session = makeMockSession(
             statusCode: 409,
@@ -269,7 +388,38 @@ final class MomentsAPIClientTests: XCTestCase {
         }
     }
 
-    func testFinalRenderUsesSharedAccountAPIBaseURL() async throws {
+    func testFinalRenderReservationUsesSharedAccountAPIBaseURL() async throws {
+        let session = makeMockSession(
+            json: """
+            {
+              "id": "reservation-1",
+              "appId": "momentsav",
+              "projectId": "project-1",
+              "amount": 2,
+              "status": "reserved",
+              "expiresAt": "2026-06-16T16:00:00Z",
+              "createdAt": "2026-05-16T16:00:00Z",
+              "updatedAt": "2026-05-16T16:00:00Z"
+            }
+            """
+        )
+        let client = MomentsFinalRenderClient(baseURLString: accountAPIBaseURL, session: session)
+
+        let reservation = try await client.reserveFinalRenderCredits(
+            projectId: "project-1",
+            bearerToken: "token-1",
+            template: .birthdayMessage,
+            operationId: "operation-1"
+        )
+
+        XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.url?.absoluteString, "\(accountAPIBaseURL)/v1/apps/momentsav/credits/reservations")
+        XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.httpMethod, "POST")
+        XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.value(forHTTPHeaderField: "Authorization"), "Bearer token-1")
+        XCTAssertEqual(reservation.id, "reservation-1")
+        XCTAssertEqual(reservation.status, "reserved")
+    }
+
+    func testFinalRenderStartWorkflowUsesAsyncEndpoint() async throws {
         let session = makeMockSession(
             json: """
             {
@@ -277,32 +427,26 @@ final class MomentsAPIClientTests: XCTestCase {
               "projectId": "project-1",
               "renderJobId": "render-1",
               "workflowRunId": "workflow-1",
-              "provider": "mock",
-              "model": "mock-final-route",
-              "reservationId": "reservation-1",
-              "artifactId": "artifact-1",
-              "artifactKind": "final_export",
-              "status": "completed",
-              "progressPercent": 100,
-              "r2Key": "momentsav/user/project/final/final-1.mp4",
-              "expiresAt": "2026-06-16T16:00:00Z",
-              "hasWatermark": false,
-              "creditsCommitted": 2,
-              "generatedAt": "2026-05-16T16:00:00Z"
+              "status": "running",
+              "startedAt": "2026-05-16T16:00:00Z"
             }
             """
         )
         let client = MomentsFinalRenderClient(baseURLString: accountAPIBaseURL, session: session)
 
-        let finalRender = try await client.generateFinalRender(
+        let workflow = try await client.startFinalRenderWorkflow(
             projectId: "project-1",
             bearerToken: "token-1",
-            template: .birthdayMessage
+            template: .birthdayMessage,
+            reservationId: "reservation-1",
+            operationId: "operation-1"
         )
 
-        XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.url?.absoluteString, "\(accountAPIBaseURL)/v1/apps/momentsav/final-renders/generate")
-        XCTAssertEqual(finalRender.provider, "mock")
-        XCTAssertEqual(finalRender.model, "mock-final-route")
+        XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.url?.absoluteString, "\(accountAPIBaseURL)/v1/apps/momentsav/workflows/start")
+        XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.httpMethod, "POST")
+        XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.value(forHTTPHeaderField: "Authorization"), "Bearer token-1")
+        XCTAssertEqual(workflow.renderJobId, "render-1")
+        XCTAssertEqual(workflow.status, "running")
     }
 
     func testFinalRenderSurfacesProviderFailureMessage() async throws {
@@ -320,10 +464,12 @@ final class MomentsAPIClientTests: XCTestCase {
         let client = MomentsFinalRenderClient(baseURLString: accountAPIBaseURL, session: session)
 
         do {
-            _ = try await client.generateFinalRender(
+            _ = try await client.startFinalRenderWorkflow(
                 projectId: "project-1",
                 bearerToken: "token-1",
-                template: .birthdayMessage
+                template: .birthdayMessage,
+                reservationId: "reservation-1",
+                operationId: "operation-1"
             )
             XCTFail("Expected API error")
         } catch {
@@ -360,6 +506,37 @@ final class MomentsAPIClientTests: XCTestCase {
         XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.value(forHTTPHeaderField: "Authorization"), "Bearer token-1")
         XCTAssertEqual(status.status, "running")
         XCTAssertEqual(status.progressPercent, 25)
+    }
+
+    func testRenderStatusReconcileUsesAsyncFinalEndpoint() async throws {
+        let session = makeMockSession(
+            json: """
+            {
+              "appId": "momentsav",
+              "projectId": "project-1",
+              "renderJobId": "render-1",
+              "workflowRunId": "workflow-1",
+              "renderKind": "final",
+              "status": "running",
+              "progressPercent": 45,
+              "artifactId": null,
+              "artifactKind": null,
+              "artifactStatus": null,
+              "errorCode": null,
+              "errorMessage": null,
+              "updatedAt": "2026-05-16T16:00:00Z"
+            }
+            """
+        )
+        let client = MomentsRenderStatusClient(baseURLString: accountAPIBaseURL, session: session)
+
+        let status = try await client.reconcileFinalRender(renderJobId: "render-1", bearerToken: "token-1")
+
+        XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.url?.absoluteString, "\(accountAPIBaseURL)/v1/apps/momentsav/renders/render-1/reconcile")
+        XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.httpMethod, "POST")
+        XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.value(forHTTPHeaderField: "Authorization"), "Bearer token-1")
+        XCTAssertEqual(status.renderKind, "final")
+        XCTAssertEqual(status.status, "running")
     }
 
     func testRenderStatusSurfacesAPIErrorMessage() async throws {

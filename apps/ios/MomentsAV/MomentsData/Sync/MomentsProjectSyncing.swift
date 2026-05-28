@@ -58,6 +58,13 @@ protocol MomentsPreviewResultSaving: MomentsRenderJobStatusUpdating {
 
 @MainActor
 protocol MomentsFinalRenderResultSaving: MomentsRenderJobStatusUpdating {
+    func saveStartedFinalRender(
+        ownerUserId: String,
+        projectId: String,
+        reservationId: String,
+        startedWorkflow: MomentsStartWorkflowResponse
+    ) async throws -> String
+
     func saveFinalRenderResult(
         ownerUserId: String,
         projectId: String,
@@ -73,7 +80,7 @@ protocol MomentsProjectDeleting {
 
 @MainActor
 protocol MomentsProjectsObserving {
-    func observeProjects(ownerUserId: String) throws -> AnyPublisher<[MomentDraftProject], Never>
+    func observeProjects(ownerUserId: String) throws -> AnyPublisher<[MomentDraftProject], Error>
 }
 
 @MainActor
@@ -90,7 +97,7 @@ protocol MomentsWorkspaceObserving {
     func observeProjectWorkspace(
         ownerUserId: String,
         projectId: String
-    ) throws -> AnyPublisher<MomentProjectWorkspace?, Never>
+    ) throws -> AnyPublisher<MomentProjectWorkspace?, Error>
 }
 
 @MainActor

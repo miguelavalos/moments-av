@@ -33,8 +33,8 @@ preselect a theme and music default for Avi.
 The current product direction treats `Prepare story` as a cheap pre-render
 review step, not as a video preview. It should organize the story, style, music,
 pace, and optional user note before any paid video generation. Video creation
-and any future preview/final render provider calls remain separate workflow
-stages with explicit credit gating.
+and any future video preview or final render remain separate workflow stages
+with explicit credit gating.
 
 When the user taps `Prepare story`, the app should keep the step lightweight:
 it uses the selected local media, ordering, style, music, and note to prepare a
@@ -52,9 +52,26 @@ prepared scene plan before the paid video action. If the user changes media or
 direction after that review, the app requires a fresh `Prepare story` step before
 enabling video creation. Repeating `Prepare story` with the same local media
 order, theme, music, and note reuses the prepared story state. When the user
-confirms `Create video`, the app starts the paid video creation flow. Users
-should save final videos to Photos or share/export them for durable local
-access.
+confirms `Create video`, the app reserves the required credits and moves the
+Moment into a video-creation progress state. Users should save final videos to
+Photos or share/export them for durable local access.
+
+## Creation Reliability
+
+Creation steps that leave the device should use blocking full-screen progress
+states so the user cannot navigate into an ambiguous draft while work is still
+running. The progress copy should identify the current stage: local import,
+story preparation, media upload, or video creation.
+
+The app should retry transient upload, API, and sync failures before surfacing an
+error. If a step still fails, Moments AV must show a clear user-facing failure
+message or alert, keep the local media selection editable, and allow the user to
+retry or discard the draft intentionally. Errors must not fail silently or leave
+the user on an unchanged screen after tapping a primary action.
+
+Local media remains the source of truth for editing. Remote media created during
+video preparation is only a generation dependency and must not replace local
+Photos assets or cached thumbnails in Dashboard and Edit Media.
 
 ## First Publication
 
@@ -69,7 +86,7 @@ Use these documents in this order:
 4. [app-store-screenshots.md](app-store-screenshots.md): screenshot capture plan,
    sample data rules, Avi rules, and canonical asset gate.
 5. [app-review-notes.md](app-review-notes.md): App Review notes draft, demo
-   account TODOs, reviewer route checks, and provider availability notes.
+   account TODOs, reviewer route checks, and service availability notes.
 6. [release-evidence-template.md](release-evidence-template.md): copyable
    template for recording checks, archive/upload, TestFlight, screenshots, App
    Store Connect fields, and final submission decision.

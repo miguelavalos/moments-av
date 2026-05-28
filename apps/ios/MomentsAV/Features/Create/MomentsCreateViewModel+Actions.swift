@@ -4,7 +4,10 @@ import SwiftUI
 
 extension MomentsCreateViewModel {
     func beginNewProject(openMediaPicker: Bool = true) {
-        guard canBeginNewProject else { return }
+        guard canBeginNewProject else {
+            updateDraftErrorMessage(draftAvailabilityMessage ?? "Start a Moment when the account and credits are ready.")
+            return
+        }
         prepareNewDraftCreation()
         isLocalMomentStarted = true
         pendingFocus = .media
@@ -28,7 +31,10 @@ extension MomentsCreateViewModel {
     }
 
     func createDraft(openMediaPicker: Bool) {
-        guard canCreateDraft, let projectCreationWorkflow else { return }
+        guard canCreateDraft, let projectCreationWorkflow else {
+            updateDraftErrorMessage(draftAvailabilityMessage ?? "Couldn't start this Moment yet.")
+            return
+        }
         let form = form
         prepareNewDraftCreation()
 
@@ -41,18 +47,36 @@ extension MomentsCreateViewModel {
     }
 
     func discardDraft() {
-        guard canStartAnotherProject, let projectCreationWorkflow else { return }
+        guard !isBusy else {
+            updateDraftErrorMessage("Wait for the current step to finish before discarding this draft.")
+            return
+        }
+        guard hasMomentWorkspace || hasRecoverableMomentContext else {
+            updateDraftErrorMessage("There is no active draft to discard.")
+            return
+        }
+        guard let projectCreationWorkflow else {
+            resetActiveProject(force: true)
+            return
+        }
 
         runOperation {
-            let discarded = await projectCreationWorkflow.discardActiveDraft()
+            let discarded = await projectCreationWorkflow.discardActiveDraft(projectId: self.activeProjectId)
             if discarded {
                 self.resetActiveProject(force: true)
+            } else if let message = projectCreationWorkflow.errorMessage {
+                self.updateDraftErrorMessage(message)
+            } else {
+                self.updateDraftErrorMessage("Couldn't discard this draft. Please try again.")
             }
         }
     }
 
     func importPickerItems(_ items: [PhotosPickerItem]) {
-        guard canAddMedia, let mediaUploadWorkflow else { return }
+        guard canAddMedia, let mediaUploadWorkflow else {
+            updateDraftErrorMessage(mediaAvailabilityMessage ?? "Media cannot be added right now.")
+            return
+        }
         let template = form.template
 
         runOperation {
@@ -65,7 +89,10 @@ extension MomentsCreateViewModel {
     }
 
     func importLatestPhotos() {
-        guard canAddMedia, let mediaUploadWorkflow else { return }
+        guard canAddMedia, let mediaUploadWorkflow else {
+            updateDraftErrorMessage(mediaAvailabilityMessage ?? "Media cannot be added right now.")
+            return
+        }
         let template = form.template
 
         runOperation {
@@ -77,7 +104,10 @@ extension MomentsCreateViewModel {
     }
 
     func importPhotoAlbum(id albumId: String) {
-        guard canAddMedia, let mediaUploadWorkflow else { return }
+        guard canAddMedia, let mediaUploadWorkflow else {
+            updateDraftErrorMessage(mediaAvailabilityMessage ?? "Media cannot be added right now.")
+            return
+        }
         let template = form.template
 
         runOperation {
@@ -106,7 +136,10 @@ extension MomentsCreateViewModel {
     }
 
     func generateStoryDraft() {
-        guard canDraftStory, let storyDraftWorkflow else { return }
+        guard canDraftStory, let storyDraftWorkflow else {
+            updateStoryStatusMessage(storyAvailabilityMessage ?? "Story preparation is not ready yet.")
+            return
+        }
         let form = form
         let selectedMedia = selectedMedia
         isPreparingStory = true
@@ -125,7 +158,12 @@ extension MomentsCreateViewModel {
                 projectId = nil
             }
 
-            guard let projectId else { return }
+            guard let projectId else {
+                self.updateStoryStatusMessage(self.draftErrorMessage
+                    ?? "Couldn't start a Moment for this story. Please try again."
+                )
+                return
+            }
             let inputSignature = self.currentStoryInputSignature(projectId: projectId)
 
             if self.storySummary.hasScenes,
@@ -134,10 +172,19 @@ extension MomentsCreateViewModel {
                 return
             }
 
+            let persistedMedia = await self.mediaUploadWorkflow?.persistSelectedMedia(projectId: projectId)
+            guard persistedMedia != nil || selectedMedia.isEmpty else {
+                self.updateStoryStatusMessage(self.mediaStatusMessage
+                    ?? "Couldn't save media for the story. Please try again."
+                )
+                return
+            }
+
             let didPrepareStory = await storyDraftWorkflow.generateDraft(
                 projectId: projectId,
                 form: form,
-                selectedMedia: selectedMedia
+                selectedMedia: selectedMedia,
+                persistedMedia: persistedMedia
             )
             if didPrepareStory {
                 self.lastPreparedStoryInputSignature = inputSignature
@@ -146,7 +193,10 @@ extension MomentsCreateViewModel {
     }
 
     func generatePreview() {
-        guard canGeneratePreview, let previewGenerationWorkflow, let context = activeTemplateContext else { return }
+        guard canGeneratePreview, let previewGenerationWorkflow, let context = activeTemplateContext else {
+            updatePreviewStatusMessage(previewAvailabilityMessage ?? "Preview is not ready yet.")
+            return
+        }
 
         runOperation {
             await previewGenerationWorkflow.generatePreview(
@@ -162,7 +212,10 @@ extension MomentsCreateViewModel {
             return
         }
 
-        guard canDraftStory, let storyDraftWorkflow else { return }
+        guard canDraftStory, let storyDraftWorkflow else {
+            updateStoryStatusMessage(storyAvailabilityMessage ?? "Story preparation is not ready yet.")
+            return
+        }
         let form = form
         let selectedMedia = selectedMedia
         isPreparingStory = true
@@ -181,26 +234,46 @@ extension MomentsCreateViewModel {
                 projectId = nil
             }
 
-            guard let projectId else { return }
+            guard let projectId else {
+                self.updateStoryStatusMessage(self.draftErrorMessage
+                    ?? "Couldn't start a Moment for this story. Please try again."
+                )
+                return
+            }
             let inputSignature = self.currentStoryInputSignature(projectId: projectId)
 
             if self.storySummary.hasScenes,
                self.lastPreparedStoryInputSignature == inputSignature {
                 self.updateStoryStatusMessage("Story plan is already ready.")
             } else {
+                let persistedMedia = await self.mediaUploadWorkflow?.persistSelectedMedia(projectId: projectId)
+                guard persistedMedia != nil || selectedMedia.isEmpty else {
+                    self.updateStoryStatusMessage(self.mediaStatusMessage
+                        ?? "Couldn't save media for the story. Please try again."
+                    )
+                    return
+                }
+
                 let didPrepareStory = await storyDraftWorkflow.generateDraft(
                     projectId: projectId,
                     form: form,
-                    selectedMedia: selectedMedia
+                    selectedMedia: selectedMedia,
+                    persistedMedia: persistedMedia
                 )
                 if didPrepareStory {
                     self.lastPreparedStoryInputSignature = inputSignature
                 }
             }
 
-            guard self.isStoryPreparedForCurrentInput else { return }
+            guard self.isStoryPreparedForCurrentInput else {
+                self.updateStoryStatusMessage("Story preparation did not finish. Please try again.")
+                return
+            }
 
-            guard let previewGenerationWorkflow = self.previewGenerationWorkflow else { return }
+            guard let previewGenerationWorkflow = self.previewGenerationWorkflow else {
+                self.updatePreviewStatusMessage("Preview generation is not configured for this build.")
+                return
+            }
             await previewGenerationWorkflow.generatePreview(
                 projectId: projectId,
                 template: form.template
@@ -209,11 +282,20 @@ extension MomentsCreateViewModel {
     }
 
     func createFinalVideoFromCurrentSelection() {
-        guard let storyDraftWorkflow, let finalRenderWorkflow else { return }
-        guard canGenerateFinalRender || canDraftStory else { return }
+        guard let storyDraftWorkflow, let finalRenderWorkflow else {
+            updateFinalRenderStatusMessage("Video creation is not configured for this build.")
+            return
+        }
+        guard canGenerateFinalRender || canDraftStory || storySummary.hasScenes else {
+            updateFinalRenderStatusMessage(finalRenderAvailabilityMessage
+                ?? storyAvailabilityMessage
+                ?? "Video creation is not ready yet.")
+            return
+        }
         let form = form
         let selectedMedia = selectedMedia
         isPreparingStory = true
+        updateFinalRenderStatusMessage("Preparing video creation.")
 
         runOperation {
             defer { self.isPreparingStory = false }
@@ -229,37 +311,58 @@ extension MomentsCreateViewModel {
                 projectId = nil
             }
 
-            guard let projectId else { return }
+            guard let projectId else {
+                self.updateFinalRenderStatusMessage(self.draftErrorMessage
+                    ?? "Couldn't start a Moment for this video. Please try again."
+                )
+                return
+            }
             let inputSignature = self.currentStoryInputSignature(projectId: projectId)
+
+            let persistedMedia = await self.mediaUploadWorkflow?.persistSelectedMedia(projectId: projectId)
+            guard persistedMedia != nil || selectedMedia.isEmpty else {
+                self.updateFinalRenderStatusMessage(self.mediaStatusMessage
+                    ?? "Couldn't save media for the video. Please try again."
+                )
+                return
+            }
 
             if self.canGenerateFinalRender,
                self.isStoryPreparedForCurrentInput {
-                self.updateStoryStatusMessage(nil)
-            } else if self.storySummary.hasScenes,
-               self.lastPreparedStoryInputSignature == inputSignature {
                 self.updateStoryStatusMessage(nil)
             } else {
                 let didPrepareStory = await storyDraftWorkflow.generateDraft(
                     projectId: projectId,
                     form: form,
-                    selectedMedia: selectedMedia
+                    selectedMedia: selectedMedia,
+                    persistedMedia: persistedMedia
                 )
-                guard didPrepareStory else { return }
+                guard didPrepareStory else {
+                    self.updateFinalRenderStatusMessage(self.storyStatusMessage
+                        ?? "Couldn't prepare the story. Please try again."
+                    )
+                    return
+                }
                 self.lastPreparedStoryInputSignature = inputSignature
             }
 
-            guard self.isStoryPreparedForCurrentInput else { return }
-            let persistedMedia = await self.mediaUploadWorkflow?.persistSelectedMedia(projectId: projectId)
-            guard persistedMedia != nil || selectedMedia.isEmpty else { return }
+            guard self.isStoryPreparedForCurrentInput else {
+                self.updateFinalRenderStatusMessage("Story preparation did not finish. Please try again.")
+                return
+            }
             await finalRenderWorkflow.generateFinalRender(
                 projectId: projectId,
-                template: form.template
+                template: form.template,
+                allowPreparedStory: true
             )
         }
     }
 
     func refreshPreviewStatus() {
-        guard canRefreshPreviewStatus, let previewGenerationWorkflow else { return }
+        guard canRefreshPreviewStatus, let previewGenerationWorkflow else {
+            updatePreviewStatusMessage(previewRefreshAvailabilityMessage ?? "No preview status is available yet.")
+            return
+        }
 
         runOperation {
             await previewGenerationWorkflow.refreshStatus()
@@ -267,7 +370,22 @@ extension MomentsCreateViewModel {
     }
 
     func generateFinalRender() {
-        guard canGenerateFinalRender, let finalRenderWorkflow, let context = activeTemplateContext else { return }
+        guard let finalRenderWorkflow else {
+            updateFinalRenderStatusMessage("Video creation is not available in this build.")
+            return
+        }
+        guard let context = activeTemplateContext else {
+            updateFinalRenderStatusMessage("Couldn't find the current Moment. Please go back and try again.")
+            return
+        }
+        guard canGenerateFinalRender else {
+            updateFinalRenderStatusMessage(
+                finalRenderAvailabilityMessage
+                    ?? storyAvailabilityMessage
+                    ?? "Video creation is not ready yet."
+            )
+            return
+        }
 
         runOperation {
             await finalRenderWorkflow.generateFinalRender(
@@ -278,7 +396,10 @@ extension MomentsCreateViewModel {
     }
 
     func refreshFinalRenderStatus() {
-        guard canRefreshFinalRenderStatus, let finalRenderWorkflow else { return }
+        guard canRefreshFinalRenderStatus, let finalRenderWorkflow else {
+            updateFinalRenderStatusMessage(finalRenderRefreshAvailabilityMessage ?? "No video status is available yet.")
+            return
+        }
 
         runOperation {
             await finalRenderWorkflow.refreshStatus()

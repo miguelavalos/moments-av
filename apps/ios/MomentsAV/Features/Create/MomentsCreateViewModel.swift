@@ -85,6 +85,18 @@ final class MomentsCreateViewModel: ObservableObject {
         activeProjectId == nil && isLocalMomentStarted
     }
 
+    var workflowErrorAlertMessage: String? {
+        [
+            draftErrorMessage,
+            mediaStatusMessage,
+            storyStatusMessage,
+            previewStatusMessage,
+            finalRenderStatusMessage
+        ]
+            .compactMap(\.self)
+            .first(where: Self.isUserFacingErrorMessage)
+    }
+
     func bind(
         accountStateProvider: any MomentsAccountStateProviding,
         projectCreationWorkflow: ProjectCreationWorkflow,
@@ -396,6 +408,18 @@ extension MomentsCreateViewModel {
         storyStatusMessage = message
     }
 
+    func updatePreviewStatusMessage(_ message: String?) {
+        previewStatusMessage = message
+    }
+
+    func updateDraftErrorMessage(_ message: String?) {
+        draftErrorMessage = message
+    }
+
+    func updateFinalRenderStatusMessage(_ message: String?) {
+        finalRenderStatusMessage = message
+    }
+
     func applyPreviewGenerationState(_ state: MomentsCreatePreviewGenerationState) {
         guard !usesFullUITestFixture else { return }
         activeWorkspace = state.activeWorkspace
@@ -456,5 +480,16 @@ extension MomentsCreateViewModel {
         media
             .map { "\($0.id.uuidString):\($0.sha256):\($0.sortOrder)" }
             .joined(separator: "|")
+    }
+
+    private static func isUserFacingErrorMessage(_ message: String) -> Bool {
+        let lowercased = message.lowercased()
+        return lowercased.contains("couldn’t")
+            || lowercased.contains("couldn't")
+            || lowercased.contains("failed")
+            || lowercased.contains("not configured")
+            || lowercased.contains("not available")
+            || lowercased.contains("sign in again")
+            || lowercased.contains("try again")
     }
 }

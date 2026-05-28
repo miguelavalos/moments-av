@@ -4,6 +4,7 @@ import Foundation
 
 struct MomentsProjectRemoteClient {
     private let client: ConvexClient?
+    private let retryPolicy = MomentsNetworkRetryPolicy()
 
     init(deploymentURL: String) {
         let trimmedURL = deploymentURL.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -14,7 +15,7 @@ struct MomentsProjectRemoteClient {
         client != nil
     }
 
-    func observeProjects(ownerUserId: String) throws -> AnyPublisher<[MomentDraftProject], Never> {
+    func observeProjects(ownerUserId: String) throws -> AnyPublisher<[MomentDraftProject], Error> {
         let client = try requireClient()
 
         return client.subscribe(
@@ -22,14 +23,14 @@ struct MomentsProjectRemoteClient {
             with: ["ownerUserId": ownerUserId],
             yielding: [MomentDraftProject].self
         )
-        .replaceError(with: [])
+        .mapError { $0 as Error }
         .eraseToAnyPublisher()
     }
 
     func observeProjectWorkspace(
         ownerUserId: String,
         projectId: String
-    ) throws -> AnyPublisher<MomentProjectWorkspace?, Never> {
+    ) throws -> AnyPublisher<MomentProjectWorkspace?, Error> {
         let client = try requireClient()
 
         return client.subscribe(
@@ -40,7 +41,7 @@ struct MomentsProjectRemoteClient {
             ],
             yielding: MomentProjectWorkspace?.self
         )
-        .replaceError(with: nil)
+        .mapError { $0 as Error }
         .eraseToAnyPublisher()
     }
 
@@ -57,9 +58,10 @@ struct MomentsProjectRemoteClient {
     ) async throws -> String {
         let client = try requireClient()
 
-        return try await client.mutation(
-            "moments:createDraftProject",
-            with: [
+        return try await retryingMutation(
+            client: client,
+            name: "moments:createDraftProject",
+            args: [
                 "ownerUserId": ownerUserId,
                 "template": request.template,
                 "title": request.title,
@@ -84,9 +86,10 @@ struct MomentsProjectRemoteClient {
     ) async throws {
         let client = try requireClient()
 
-        let _: String? = try await client.mutation(
-            "moments:deleteProject",
-            with: [
+        let deletedProjectId: String? = try await retryingMutation(
+            client: client,
+            name: "moments:deleteProject",
+            args: [
                 "ownerUserId": ownerUserId,
                 "projectId": request.projectId,
                 "deleteSourceMedia": request.deleteSourceMedia,
@@ -94,6 +97,10 @@ struct MomentsProjectRemoteClient {
                 "reason": request.reason
             ]
         )
+
+        guard deletedProjectId != nil else {
+            throw MomentsProjectSyncError.unexpectedResponse
+        }
     }
 
     func requireClient() throws -> ConvexClient {
@@ -102,5 +109,15 @@ struct MomentsProjectRemoteClient {
         }
 
         return client
+    }
+
+    func retryingMutation<T: Decodable>(
+        client: ConvexClient,
+        name: String,
+        args: [String: ConvexEncodable?]
+    ) async throws -> T {
+        try await retryPolicy.run {
+            try await client.mutation(name, with: args)
+        }
     }
 }

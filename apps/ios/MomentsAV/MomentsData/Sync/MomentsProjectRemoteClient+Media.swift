@@ -23,9 +23,10 @@ extension MomentsProjectRemoteClient {
     ) async throws -> String {
         let client = try requireClient()
 
-        let savedId: String? = try await client.mutation(
-            "moments:addMediaAsset",
-            with: mediaAssetPayload(request, ownerUserId: ownerUserId, projectId: projectId)
+        let savedId: String? = try await retryingMutation(
+            client: client,
+            name: "moments:addMediaAsset",
+            args: mediaAssetPayload(request, ownerUserId: ownerUserId, projectId: projectId)
         )
         return try requireSavedMediaAssetId(savedId)
     }
@@ -38,9 +39,10 @@ extension MomentsProjectRemoteClient {
         guard !requests.isEmpty else { return [] }
         let client = try requireClient()
 
-        let savedIds: [String]? = try await client.mutation(
-            "moments:addMediaAssets",
-            with: [
+        let savedIds: [String]? = try await retryingMutation(
+            client: client,
+            name: "moments:addMediaAssets",
+            args: [
                 "ownerUserId": ownerUserId,
                 "projectId": projectId,
                 "mediaAssets": requests.map { mediaAssetPayload($0) }

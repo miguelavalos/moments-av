@@ -35,10 +35,19 @@ final class MomentsProjectsObserver: ObservableObject {
             let updates = try projectsObserver.observeProjects(ownerUserId: ownerUserId).values
 
             projectsTask = Task { [weak self] in
-                for await projects in updates {
+                do {
+                    for try await projects in updates {
+                        await MainActor.run {
+                            guard self?.observationGeneration == generation else { return }
+                            self?.projects = projects
+                            self?.errorMessage = nil
+                        }
+                    }
+                } catch {
                     await MainActor.run {
                         guard self?.observationGeneration == generation else { return }
-                        self?.projects = projects
+                        self?.projects = []
+                        self?.errorMessage = error.localizedDescription
                     }
                 }
             }

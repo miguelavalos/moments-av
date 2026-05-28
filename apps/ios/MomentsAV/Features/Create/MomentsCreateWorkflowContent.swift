@@ -647,7 +647,10 @@ private struct MomentsCreateStoryReviewPage: View {
         .alert("Create video?", isPresented: $showsCreateVideoConfirmation) {
             Button("Not now", role: .cancel) {}
             Button("Create video · \(creditCostTitle)") {
-                createVideo()
+                dismiss()
+                Task { @MainActor in
+                    createVideo()
+                }
             }
         } message: {
             Text("This will use \(creditCostTitle). Avi will start creating the final video.")
@@ -895,6 +898,7 @@ private struct MomentsCreatePrimaryActionBar: View {
         }
         return presentation.canGenerateFinalRender
             || presentation.canDraftStory
+            || presentation.storySummary.hasScenes
             || needsSignInForStory
     }
 
@@ -1083,7 +1087,7 @@ private struct MomentsCreatePrimaryActionBar: View {
             }
         } else if presentation.previewSummary.latestPreview != nil {
             generateFinalRender()
-        } else if presentation.canGenerateFinalRender || presentation.canDraftStory {
+        } else if presentation.canGenerateFinalRender || presentation.canDraftStory || presentation.storySummary.hasScenes {
             generateFinalRender()
         } else if presentation.previewSummary.latestPreviewJob != nil {
             refreshPreviewStatus()

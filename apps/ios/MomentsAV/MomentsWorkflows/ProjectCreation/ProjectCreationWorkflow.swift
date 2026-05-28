@@ -101,20 +101,20 @@ final class ProjectCreationWorkflow: ObservableObject {
         workspaceObserver.clearWorkspace()
     }
 
-    func discardActiveDraft() async -> Bool {
+    func discardActiveDraft(projectId projectIdOverride: String? = nil) async -> Bool {
         guard !isCreatingDraft else { return false }
         guard let ownerUserId = currentUserProvider.currentUserId else {
             errorMessage = "Sign in before discarding a project."
             return false
         }
-        guard let activeProjectId else { return true }
+        guard let projectId = projectIdOverride ?? activeProjectId else { return true }
 
         let generation = workflowGeneration.begin()
         isCreatingDraft = true
         errorMessage = nil
 
         do {
-            try await projectDeleter.deleteProject(ownerUserId: ownerUserId, projectId: activeProjectId)
+            try await projectDeleter.deleteProject(ownerUserId: ownerUserId, projectId: projectId)
             guard workflowGeneration.isCurrent(generation) else { return false }
             isCreatingDraft = false
             self.activeProjectId = nil

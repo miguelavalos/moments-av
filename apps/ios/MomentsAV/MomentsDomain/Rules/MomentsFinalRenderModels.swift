@@ -28,6 +28,43 @@ struct MomentsFinalRenderResponse: Decodable, Equatable {
     let generatedAt: String
 }
 
+struct MomentsCreditReservationRequest: Encodable {
+    let appId = "momentsav"
+    let projectId: String
+    let amount: Int
+    let idempotencyKey: String
+}
+
+struct MomentsCreditReservationResponse: Decodable, Equatable {
+    let id: String
+    let appId: String
+    let projectId: String
+    let amount: Int
+    let status: String
+    let expiresAt: String
+    let createdAt: String
+    let updatedAt: String
+}
+
+struct MomentsStartWorkflowRequest: Encodable {
+    let appId = "momentsav"
+    let projectId: String
+    let renderKind: String
+    let template: String
+    let safetyAcknowledged = true
+    let idempotencyKey: String
+    let reservationId: String
+}
+
+struct MomentsStartWorkflowResponse: Decodable, Equatable {
+    let appId: String
+    let projectId: String
+    let renderJobId: String
+    let workflowRunId: String
+    let status: String
+    let startedAt: String
+}
+
 enum MomentsFinalRenderRules {
     enum BlockReason {
         case missingProject

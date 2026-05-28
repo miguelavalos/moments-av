@@ -3,6 +3,7 @@ import Foundation
 struct MomentsRenderStatusClient {
     var baseURLString: String
     var session: URLSession = .shared
+    var retryPolicy = MomentsNetworkRetryPolicy()
 
     var isConfigured: Bool {
         URL(string: baseURLString.trimmingCharacters(in: .whitespacesAndNewlines)) != nil
@@ -25,11 +26,44 @@ struct MomentsRenderStatusClient {
         request.httpMethod = "GET"
         request.setValue("Bearer \(bearerToken)", forHTTPHeaderField: "Authorization")
 
-        let (data, response) = try await session.data(for: request)
+        let (data, response) = try await retryPolicy.run {
+            try await session.data(for: request)
+        }
         guard let httpResponse = response as? HTTPURLResponse, 200..<300 ~= httpResponse.statusCode else {
             throw MomentsAPIError.decode(
                 from: data,
                 fallbackCode: "moments_render_status_failed",
+                fallbackMessage: MomentsRenderStatusError.statusFailed.localizedDescription
+            )
+        }
+
+        return try JSONDecoder().decode(MomentsRenderStatusResponse.self, from: data)
+    }
+
+    func reconcileFinalRender(renderJobId: String, bearerToken: String) async throws -> MomentsRenderStatusResponse {
+        guard let baseURL = URL(string: baseURLString.trimmingCharacters(in: .whitespacesAndNewlines)) else {
+            throw MomentsRenderStatusError.apiNotConfigured
+        }
+
+        let endpoint = baseURL
+            .appendingPathComponent("v1")
+            .appendingPathComponent("apps")
+            .appendingPathComponent("momentsav")
+            .appendingPathComponent("renders")
+            .appendingPathComponent(renderJobId)
+            .appendingPathComponent("reconcile")
+
+        var request = URLRequest(url: endpoint)
+        request.httpMethod = "POST"
+        request.setValue("Bearer \(bearerToken)", forHTTPHeaderField: "Authorization")
+
+        let (data, response) = try await retryPolicy.run {
+            try await session.data(for: request)
+        }
+        guard let httpResponse = response as? HTTPURLResponse, 200..<300 ~= httpResponse.statusCode else {
+            throw MomentsAPIError.decode(
+                from: data,
+                fallbackCode: "moments_render_reconcile_failed",
                 fallbackMessage: MomentsRenderStatusError.statusFailed.localizedDescription
             )
         }

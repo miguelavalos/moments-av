@@ -17,14 +17,14 @@ struct MomentsProjectRepository {
         remoteClient.isConfigured
     }
 
-    func observeProjects(ownerUserId: String) throws -> AnyPublisher<[MomentDraftProject], Never> {
+    func observeProjects(ownerUserId: String) throws -> AnyPublisher<[MomentDraftProject], Error> {
         try remoteClient.observeProjects(ownerUserId: ownerUserId)
     }
 
     func observeProjectWorkspace(
         ownerUserId: String,
         projectId: String
-    ) throws -> AnyPublisher<MomentProjectWorkspace?, Never> {
+    ) throws -> AnyPublisher<MomentProjectWorkspace?, Error> {
         try remoteClient.observeProjectWorkspace(
             ownerUserId: ownerUserId,
             projectId: projectId

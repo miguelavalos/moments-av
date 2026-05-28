@@ -13,9 +13,10 @@ extension MomentsProjectRemoteClient {
     ) async throws -> String {
         let client = try requireClient()
 
-        let renderJobId: String? = try await client.mutation(
-            "moments:createRenderJob",
-            with: [
+        let renderJobId: String? = try await retryingMutation(
+            client: client,
+            name: "moments:createRenderJob",
+            args: [
                 "ownerUserId": ownerUserId,
                 "projectId": projectId,
                 "kind": kind,
@@ -46,9 +47,10 @@ extension MomentsProjectRemoteClient {
     ) async throws {
         let client = try requireClient()
 
-        let _: String? = try await client.mutation(
-            "moments:attachArtifact",
-            with: [
+        let artifactId: String? = try await retryingMutation(
+            client: client,
+            name: "moments:attachArtifact",
+            args: [
                 "ownerUserId": ownerUserId,
                 "projectId": projectId,
                 "renderJobId": renderJobId,
@@ -61,6 +63,10 @@ extension MomentsProjectRemoteClient {
                 "expiresAt": expirationMilliseconds()
             ]
         )
+
+        guard artifactId != nil else {
+            throw MomentsProjectSyncError.unexpectedResponse
+        }
     }
 
     func updateRenderJobStatus(
@@ -72,9 +78,10 @@ extension MomentsProjectRemoteClient {
     ) async throws {
         let client = try requireClient()
 
-        let _: String? = try await client.mutation(
-            "moments:updateRenderJobStatus",
-            with: [
+        let updatedRenderJobId: String? = try await retryingMutation(
+            client: client,
+            name: "moments:updateRenderJobStatus",
+            args: [
                 "ownerUserId": ownerUserId,
                 "renderJobId": renderJobId,
                 "status": status,
@@ -82,5 +89,9 @@ extension MomentsProjectRemoteClient {
                 "errorMessage": errorMessage
             ]
         )
+
+        guard updatedRenderJobId != nil else {
+            throw MomentsProjectSyncError.unexpectedResponse
+        }
     }
 }

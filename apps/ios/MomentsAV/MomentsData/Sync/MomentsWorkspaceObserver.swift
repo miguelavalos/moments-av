@@ -39,10 +39,19 @@ final class MomentsWorkspaceObserver: ObservableObject {
             .values
 
             activeWorkspaceTask = Task { [weak self] in
-                for await workspace in updates {
+                do {
+                    for try await workspace in updates {
+                        await MainActor.run {
+                            guard self?.observationGeneration == generation else { return }
+                            self?.activeWorkspace = workspace
+                            self?.errorMessage = nil
+                        }
+                    }
+                } catch {
                     await MainActor.run {
                         guard self?.observationGeneration == generation else { return }
-                        self?.activeWorkspace = workspace
+                        self?.activeWorkspace = nil
+                        self?.errorMessage = error.localizedDescription
                     }
                 }
             }

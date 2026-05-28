@@ -8,6 +8,8 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
     @Published private(set) var isRefreshingStatus = false
     @Published private(set) var statusMessage: String?
 
+    private var latestFinalJobProjectId: String?
+
     private let currentUserProvider: any MomentsCurrentUserProviding
     private let authTokenProvider: any MomentsAuthTokenProviding
     private let creditBalanceProvider: any MomentsCreditBalanceProviding
@@ -35,7 +37,14 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
 
     override func workspaceDidChange(_ workspace: MomentProjectWorkspace?) {
         finalExport = workspace?.latestArtifact(kind: "final_export")
-        latestFinalJob = workspace?.latestRenderJob(kind: "final")
+        let projectId = workspace?.project.id
+        if let workspaceFinalJob = workspace?.latestRenderJob(kind: "final") {
+            latestFinalJob = workspaceFinalJob
+            latestFinalJobProjectId = projectId
+        } else if projectId == nil || latestFinalJobProjectId != projectId {
+            latestFinalJob = nil
+            latestFinalJobProjectId = projectId
+        }
     }
 
     var isConfigured: Bool {
@@ -55,7 +64,11 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
             && !isGenerating
     }
 
-    func generateFinalRender(projectId: String, template: MomentTemplate) async {
+    func generateFinalRender(
+        projectId: String,
+        template: MomentTemplate,
+        allowPreparedStory: Bool = false
+    ) async {
         guard let ownerUserId = currentUserProvider.currentUserId else {
             statusMessage = "Sign in before rendering the final export."
             return
@@ -69,15 +82,24 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
             return
         }
 
-        let availability = MomentsFinalRenderRules.availability(
-            project: activeWorkspace?.project,
-            template: template,
-            balance: creditBalanceProvider.currentCreditBalance,
-            latestPreview: activeWorkspace?.latestArtifact(kind: "preview")
-        )
-        guard availability.canGenerate else {
-            statusMessage = generateBlockMessage(availability)
-            return
+        if allowPreparedStory {
+            guard MomentsCreditGate.canAfford(template, balance: creditBalanceProvider.currentCreditBalance) else {
+                statusMessage = MomentsCreateAvailabilityCopy.finalRenderInsufficientCredits(
+                    missingCredits: max(0, template.creditCost - creditBalanceProvider.currentCreditBalance.spendable)
+                )
+                return
+            }
+        } else {
+            let availability = MomentsFinalRenderRules.availability(
+                project: activeWorkspace?.project,
+                template: template,
+                balance: creditBalanceProvider.currentCreditBalance,
+                latestPreview: activeWorkspace?.latestArtifact(kind: "preview")
+            )
+            guard availability.canGenerate else {
+                statusMessage = generateBlockMessage(availability)
+                return
+            }
         }
 
         let generation = beginWorkflowGeneration()
@@ -85,7 +107,7 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
         statusMessage = "Avi is preparing the final export."
 
         do {
-            statusMessage = try await FinalRenderGenerationRun.perform(
+            let startedJob = try await FinalRenderGenerationRun.perform(
                 ownerUserId: ownerUserId,
                 bearerToken: bearerToken,
                 projectId: projectId,
@@ -93,11 +115,15 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
                 finalRenderClient: finalRenderClient,
                 finalRenderResultSaver: finalRenderResultSaver,
                 workspaceObserver: workspaceObserver,
+                updateStatus: { statusMessage = $0 },
                 shouldContinue: { isCurrentWorkflowGeneration(generation) }
             )
+            latestFinalJob = startedJob
+            latestFinalJobProjectId = projectId
+            statusMessage = "Avi is creating the video. Refresh to check the latest status."
         } catch {
             guard isCurrentWorkflowGeneration(generation) else { return }
-            statusMessage = error.localizedDescription
+            statusMessage = "Couldn't start video creation. \(error.localizedDescription)"
         }
 
         guard isCurrentWorkflowGeneration(generation) else { return }
@@ -128,6 +154,7 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
                 statusClient: statusClient,
                 statusUpdater: finalRenderResultSaver,
                 workspaceObserver: workspaceObserver,
+                usesProviderReconciliation: true,
                 shouldContinue: { isCurrentWorkflowGeneration(generation) }
             )
         } catch {
@@ -147,6 +174,7 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
         clearActiveWorkspace()
         finalExport = nil
         latestFinalJob = nil
+        latestFinalJobProjectId = nil
         statusMessage = nil
     }
 

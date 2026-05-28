@@ -177,7 +177,7 @@ final class MomentsProjectObserverTests: XCTestCase {
 
 @MainActor
 private final class MockProjectsRepository: MomentsProjectsObserving {
-    private(set) var projectsSubjects: [CurrentValueSubject<[MomentDraftProject], Never>] = []
+    private(set) var projectsSubjects: [CurrentValueSubject<[MomentDraftProject], Error>] = []
     private(set) var observedOwnerUserIds: [String] = []
     private let projectsError: Error?
 
@@ -185,12 +185,12 @@ private final class MockProjectsRepository: MomentsProjectsObserving {
         self.projectsError = projectsError
     }
 
-    func observeProjects(ownerUserId: String) throws -> AnyPublisher<[MomentDraftProject], Never> {
+    func observeProjects(ownerUserId: String) throws -> AnyPublisher<[MomentDraftProject], Error> {
         observedOwnerUserIds.append(ownerUserId)
         if let projectsError {
             throw projectsError
         }
-        let subject = CurrentValueSubject<[MomentDraftProject], Never>([])
+        let subject = CurrentValueSubject<[MomentDraftProject], Error>([])
         projectsSubjects.append(subject)
         return subject.eraseToAnyPublisher()
     }
@@ -202,7 +202,7 @@ private final class MockProjectsRepository: MomentsProjectsObserving {
 
 @MainActor
 private final class MockWorkspaceRepository: MomentsWorkspaceObserving {
-    private(set) var workspaceSubjects: [CurrentValueSubject<MomentProjectWorkspace?, Never>] = []
+    private(set) var workspaceSubjects: [CurrentValueSubject<MomentProjectWorkspace?, Error>] = []
     private(set) var observedRequests: [WorkspaceRequest] = []
     private let workspaceError: Error?
 
@@ -213,12 +213,12 @@ private final class MockWorkspaceRepository: MomentsWorkspaceObserving {
     func observeProjectWorkspace(
         ownerUserId: String,
         projectId: String
-    ) throws -> AnyPublisher<MomentProjectWorkspace?, Never> {
+    ) throws -> AnyPublisher<MomentProjectWorkspace?, Error> {
         observedRequests.append(WorkspaceRequest(ownerUserId: ownerUserId, projectId: projectId))
         if let workspaceError {
             throw workspaceError
         }
-        let subject = CurrentValueSubject<MomentProjectWorkspace?, Never>(nil)
+        let subject = CurrentValueSubject<MomentProjectWorkspace?, Error>(nil)
         workspaceSubjects.append(subject)
         return subject.eraseToAnyPublisher()
     }

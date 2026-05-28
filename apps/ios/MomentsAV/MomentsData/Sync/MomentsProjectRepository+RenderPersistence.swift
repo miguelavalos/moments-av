@@ -1,6 +1,34 @@
 import Foundation
 
 extension MomentsProjectRepository {
+    func saveStartedFinalRender(
+        ownerUserId: String,
+        projectId: String,
+        reservationId: String,
+        startedWorkflow: MomentsStartWorkflowResponse
+    ) async throws -> String {
+        let renderJobId = try await remoteClient.createRenderJob(
+            ownerUserId: ownerUserId,
+            projectId: projectId,
+            kind: "final",
+            workflowRunId: startedWorkflow.workflowRunId,
+            creditReservationId: reservationId,
+            provider: "appsav-api",
+            model: "moments-final-provider-async",
+            providerRequestId: startedWorkflow.renderJobId
+        )
+
+        try await remoteClient.updateRenderJobStatus(
+            ownerUserId: ownerUserId,
+            renderJobId: renderJobId,
+            status: startedWorkflow.status,
+            errorCode: nil,
+            errorMessage: nil
+        )
+
+        return renderJobId
+    }
+
     func savePreviewResult(
         ownerUserId: String,
         projectId: String,

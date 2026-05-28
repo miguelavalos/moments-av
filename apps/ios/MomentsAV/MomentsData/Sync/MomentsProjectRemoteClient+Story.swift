@@ -30,9 +30,10 @@ extension MomentsProjectRemoteClient {
     ) async throws {
         let client = try requireClient()
 
-        let _: String? = try await client.mutation(
-            "moments:upsertStoryScene",
-            with: [
+        let _: String? = try await retryingMutation(
+            client: client,
+            name: "moments:upsertStoryScene",
+            args: [
                 "ownerUserId": ownerUserId,
                 "projectId": projectId,
                 "sceneIndex": request.sceneIndex,
@@ -54,9 +55,10 @@ extension MomentsProjectRemoteClient {
     ) async throws {
         let client = try requireClient()
 
-        let _: String? = try await client.mutation(
-            "moments:markStoryReady",
-            with: [
+        let _: String? = try await retryingMutation(
+            client: client,
+            name: "moments:markStoryReady",
+            args: [
                 "ownerUserId": ownerUserId,
                 "projectId": projectId,
                 "workflowRunId": request.workflowRunId,

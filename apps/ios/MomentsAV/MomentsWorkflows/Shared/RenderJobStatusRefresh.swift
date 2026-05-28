@@ -39,6 +39,7 @@ struct RenderJobStatusRefresh {
         statusClient: MomentsRenderStatusClient,
         statusUpdater: any MomentsRenderJobStatusUpdating,
         workspaceObserver: any MomentsActiveWorkspaceObserving,
+        usesProviderReconciliation: Bool = false,
         shouldContinue: () -> Bool
     ) async throws -> String {
         let refresh = try make(
@@ -53,6 +54,7 @@ struct RenderJobStatusRefresh {
             bearerToken: bearerToken,
             statusClient: statusClient,
             statusUpdater: statusUpdater,
+            usesProviderReconciliation: usesProviderReconciliation,
             shouldContinue: shouldContinue
         )
         workspaceObserver.observeWorkspace(ownerUserId: ownerUserId, projectId: refresh.projectId)
@@ -64,12 +66,20 @@ struct RenderJobStatusRefresh {
         bearerToken: String,
         statusClient: MomentsRenderStatusClient,
         statusUpdater: any MomentsRenderJobStatusUpdating,
+        usesProviderReconciliation: Bool = false,
         shouldContinue: () -> Bool
     ) async throws {
-        let status = try await statusClient.fetchStatus(
-            renderJobId: providerRequestId,
-            bearerToken: bearerToken
-        )
+        let status = if usesProviderReconciliation {
+            try await statusClient.reconcileFinalRender(
+                renderJobId: providerRequestId,
+                bearerToken: bearerToken
+            )
+        } else {
+            try await statusClient.fetchStatus(
+                renderJobId: providerRequestId,
+                bearerToken: bearerToken
+            )
+        }
         guard shouldContinue() else { throw CancellationError() }
 
         try await statusUpdater.updateRenderJobStatus(
