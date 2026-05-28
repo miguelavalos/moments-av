@@ -126,15 +126,22 @@ extension MomentsCreateViewModel {
             }
 
             guard let projectId else { return }
-            let persistedMedia = await self.mediaUploadWorkflow?.persistSelectedMedia(projectId: projectId)
-            guard persistedMedia != nil || selectedMedia.isEmpty else { return }
+            let inputSignature = self.currentStoryInputSignature(projectId: projectId)
 
-            await storyDraftWorkflow.generateDraft(
+            if self.storySummary.hasScenes,
+               self.lastPreparedStoryInputSignature == inputSignature {
+                self.updateStoryStatusMessage("Story plan is already ready.")
+                return
+            }
+
+            let didPrepareStory = await storyDraftWorkflow.generateDraft(
                 projectId: projectId,
                 form: form,
-                selectedMedia: selectedMedia,
-                persistedMedia: persistedMedia
+                selectedMedia: selectedMedia
             )
+            if didPrepareStory {
+                self.lastPreparedStoryInputSignature = inputSignature
+            }
         }
     }
 
@@ -175,18 +182,76 @@ extension MomentsCreateViewModel {
             }
 
             guard let projectId else { return }
-            let persistedMedia = await self.mediaUploadWorkflow?.persistSelectedMedia(projectId: projectId)
-            guard persistedMedia != nil || selectedMedia.isEmpty else { return }
+            let inputSignature = self.currentStoryInputSignature(projectId: projectId)
 
-            await storyDraftWorkflow.generateDraft(
-                projectId: projectId,
-                form: form,
-                selectedMedia: selectedMedia,
-                persistedMedia: persistedMedia
-            )
+            if self.storySummary.hasScenes,
+               self.lastPreparedStoryInputSignature == inputSignature {
+                self.updateStoryStatusMessage("Story plan is already ready.")
+            } else {
+                let didPrepareStory = await storyDraftWorkflow.generateDraft(
+                    projectId: projectId,
+                    form: form,
+                    selectedMedia: selectedMedia
+                )
+                if didPrepareStory {
+                    self.lastPreparedStoryInputSignature = inputSignature
+                }
+            }
+
+            guard self.isStoryPreparedForCurrentInput else { return }
 
             guard let previewGenerationWorkflow = self.previewGenerationWorkflow else { return }
             await previewGenerationWorkflow.generatePreview(
+                projectId: projectId,
+                template: form.template
+            )
+        }
+    }
+
+    func createFinalVideoFromCurrentSelection() {
+        guard let storyDraftWorkflow, let finalRenderWorkflow else { return }
+        guard canGenerateFinalRender || canDraftStory else { return }
+        let form = form
+        let selectedMedia = selectedMedia
+        isPreparingStory = true
+
+        runOperation {
+            defer { self.isPreparingStory = false }
+            let projectId: String?
+            if let activeProjectId = self.activeProjectId {
+                projectId = activeProjectId
+            } else if let projectCreationWorkflow = self.projectCreationWorkflow {
+                projectId = await projectCreationWorkflow.createDraft(form: form)
+                if projectId != nil {
+                    self.isLocalMomentStarted = false
+                }
+            } else {
+                projectId = nil
+            }
+
+            guard let projectId else { return }
+            let inputSignature = self.currentStoryInputSignature(projectId: projectId)
+
+            if self.canGenerateFinalRender,
+               self.isStoryPreparedForCurrentInput {
+                self.updateStoryStatusMessage(nil)
+            } else if self.storySummary.hasScenes,
+               self.lastPreparedStoryInputSignature == inputSignature {
+                self.updateStoryStatusMessage(nil)
+            } else {
+                let didPrepareStory = await storyDraftWorkflow.generateDraft(
+                    projectId: projectId,
+                    form: form,
+                    selectedMedia: selectedMedia
+                )
+                guard didPrepareStory else { return }
+                self.lastPreparedStoryInputSignature = inputSignature
+            }
+
+            guard self.isStoryPreparedForCurrentInput else { return }
+            let persistedMedia = await self.mediaUploadWorkflow?.persistSelectedMedia(projectId: projectId)
+            guard persistedMedia != nil || selectedMedia.isEmpty else { return }
+            await finalRenderWorkflow.generateFinalRender(
                 projectId: projectId,
                 template: form.template
             )

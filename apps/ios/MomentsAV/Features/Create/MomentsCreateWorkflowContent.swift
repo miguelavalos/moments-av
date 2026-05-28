@@ -34,12 +34,12 @@ struct MomentsCreateWorkflowContent: View {
                     useAutoStyleSuggestion: viewModel.useAutoStyleSuggestion,
                     openPickerRequest: viewModel.mediaPickerOpenRequest,
                     consumeOpenPickerRequest: viewModel.consumeMediaPickerOpenRequest,
-                    cancelCreation: cancelCreation,
+                    discardDraft: viewModel.discardDraft,
                     startSignInFlow: startSignInFlow,
                     generateStoryDraft: viewModel.generateStoryDraft,
                     generatePreview: viewModel.preparePreview,
                     refreshPreviewStatus: viewModel.refreshPreviewStatus,
-                    generateFinalRender: viewModel.generateFinalRender,
+                    generateFinalRender: viewModel.createFinalVideoFromCurrentSelection,
                     refreshFinalRenderStatus: viewModel.refreshFinalRenderStatus
                 )
             } else {
@@ -92,7 +92,7 @@ private struct MomentsCreateMediaFirstWorkspace: View {
     let useAutoStyleSuggestion: () -> Void
     let openPickerRequest: Int
     let consumeOpenPickerRequest: () -> Void
-    let cancelCreation: () -> Void
+    let discardDraft: () -> Void
     let startSignInFlow: () -> Void
     let generateStoryDraft: () -> Void
     let generatePreview: () -> Void
@@ -101,61 +101,79 @@ private struct MomentsCreateMediaFirstWorkspace: View {
     let refreshFinalRenderStatus: () -> Void
 
     @State private var showsAviOptions = false
+    @State private var showsStoryReview = false
+    @State private var opensStoryReviewAfterDraft = false
+    @State private var showsCreateVideoConfirmation = false
+    @State private var showsDiscardDraftConfirmation = false
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 12) {
-                if showsPreparationState {
-                    MomentsCreateMediaImportingState(
-                        progress: presentation.mediaSummary.importProgress,
-                        isDraftingStory: presentation.storySummary.isDrafting
-                    )
-                } else {
-                    MomentsCreateDashboardHeader()
+                MomentsCreateDashboardHeader(presentation: presentation)
 
-                    MomentsCreateCompactAviGuide(
-                        presentation: presentation,
-                        openOptions: { showsAviOptions = true }
-                    )
+                MomentsCreateCompactAviGuide(
+                    presentation: presentation,
+                    openOptions: { showsAviOptions = true }
+                )
 
-                    MomentsCreateMediaCard(
-                        pickerItems: $pickerItems,
-                        openPickerRequest: openPickerRequest,
-                        presentation: mediaPresentation,
-                        importPickerItems: importPickerItems,
-                        importLatestPhotos: importLatestPhotos,
-                        importPhotoAlbum: importPhotoAlbum,
-                        removeMedia: removeMedia,
-                        moveMedia: moveMedia,
-                        reorderMedia: reorderMedia,
-                        autoPickStrongMoments: autoPickStrongMoments,
-                        consumeOpenPickerRequest: consumeOpenPickerRequest
-                    )
+                MomentsCreateMediaCard(
+                    pickerItems: $pickerItems,
+                    openPickerRequest: openPickerRequest,
+                    presentation: mediaPresentation,
+                    importPickerItems: importPickerItems,
+                    importLatestPhotos: importLatestPhotos,
+                    importPhotoAlbum: importPhotoAlbum,
+                    removeMedia: removeMedia,
+                    moveMedia: moveMedia,
+                    reorderMedia: reorderMedia,
+                    autoPickStrongMoments: autoPickStrongMoments,
+                    consumeOpenPickerRequest: consumeOpenPickerRequest
+                )
 
-                    MomentsCreateOptionsSummaryCard(
-                        selectedStyle: selectedStyle,
-                        selectedMusicPreset: selectedMusicPreset,
-                        autoStyleSuggestion: autoStyleSuggestion,
-                        openOptions: { showsAviOptions = true }
-                    )
+                MomentsCreateOptionsSummaryCard(
+                    selectedStyle: selectedStyle,
+                    selectedMusicPreset: selectedMusicPreset,
+                    autoStyleSuggestion: autoStyleSuggestion,
+                    openOptions: { showsAviOptions = true }
+                )
 
-                    MomentsCreatePrimaryActionBar(
-                        presentation: presentation,
-                        cancelCreation: cancelCreation,
-                        startSignInFlow: startSignInFlow,
-                        generateStoryDraft: generateStoryDraft,
-                        generatePreview: generatePreview,
-                        refreshPreviewStatus: refreshPreviewStatus,
-                        generateFinalRender: generateFinalRender,
-                        refreshFinalRenderStatus: refreshFinalRenderStatus
-                    )
-                }
+                MomentsCreatePrimaryActionBar(
+                    presentation: presentation,
+                    discardDraft: { showsDiscardDraftConfirmation = true },
+                    startSignInFlow: startSignInFlow,
+                    reviewStoryFirst: reviewStoryFirst,
+                    generatePreview: generatePreview,
+                    refreshPreviewStatus: refreshPreviewStatus,
+                    generateFinalRender: { showsCreateVideoConfirmation = true },
+                    refreshFinalRenderStatus: refreshFinalRenderStatus
+                )
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.bottom, 172)
         }
         .scrollIndicators(.hidden)
-        .animation(.spring(response: 0.38, dampingFraction: 0.86), value: showsPreparationState)
+        .animation(.spring(response: 0.38, dampingFraction: 0.86), value: presentation.storySummary.hasScenes)
+        .onChange(of: presentation.storySummary.hasScenes) { _, hasScenes in
+            guard hasScenes, opensStoryReviewAfterDraft else { return }
+            opensStoryReviewAfterDraft = false
+            showsStoryReview = true
+        }
+        .alert("Create video?", isPresented: $showsCreateVideoConfirmation) {
+            Button("Not now", role: .cancel) {}
+            Button("Create video · \(creditCostTitle)") {
+                generateFinalRender()
+            }
+        } message: {
+            Text("This will use \(creditCostTitle). Avi will start creating the final video.")
+        }
+        .alert("Discard draft?", isPresented: $showsDiscardDraftConfirmation) {
+            Button("Keep draft", role: .cancel) {}
+            Button("Discard draft", role: .destructive) {
+                discardCurrentDraft()
+            }
+        } message: {
+            Text("This removes the current Moment draft, selected media, and story review.")
+        }
         .navigationDestination(isPresented: $showsAviOptions) {
             MomentsCreateAviOptionsSheet(
                 form: $form,
@@ -170,6 +188,14 @@ private struct MomentsCreateMediaFirstWorkspace: View {
                 dismiss: { showsAviOptions = false }
             )
         }
+        .navigationDestination(isPresented: $showsStoryReview) {
+            MomentsCreateStoryReviewPage(
+                presentation: presentation,
+                createVideo: generateFinalRender,
+                discardDraft: discardCurrentDraft,
+                dismiss: { showsStoryReview = false }
+            )
+        }
     }
 
     private var mediaPresentation: MomentsCreateMediaPresentation {
@@ -182,31 +208,59 @@ private struct MomentsCreateMediaFirstWorkspace: View {
         )
     }
 
-    private var showsPreparationState: Bool {
-        isPreparingStory
-            || presentation.mediaSummary.isImporting
-            || presentation.storySummary.isDrafting
+    private func reviewStoryFirst() {
+        guard !presentation.storySummary.hasScenes else {
+            showsStoryReview = true
+            return
+        }
+        opensStoryReviewAfterDraft = true
+        generateStoryDraft()
+    }
+
+    private var creditCostTitle: String {
+        MomentsCreditCopy.countTitle(presentation.finalRenderSummary.creditCost)
+    }
+
+    private func discardCurrentDraft() {
+        showsStoryReview = false
+        showsAviOptions = false
+        discardDraft()
     }
 }
 
 private struct MomentsCreateDashboardHeader: View {
+    let presentation: MomentsCreateWorkflowPresentation
+
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             Text("Creation Dashboard")
                 .font(.system(size: 22, weight: .black))
                 .foregroundStyle(AVBrandColor.textPrimary)
 
-            Text("Review what Avi prepared, edit only what you want, then prepare the story.")
+            Text(subtitle)
                 .font(.system(size: 13, weight: .semibold))
                 .foregroundStyle(AVBrandColor.textSecondary)
                 .lineLimit(2)
         }
     }
+
+    private var subtitle: String {
+        if presentation.finalRenderSummary.finalExport != nil {
+            return "Your final video is ready to review and share."
+        }
+        if presentation.finalRenderSummary.latestFinalJob != nil {
+            return "Avi is creating the video. Refresh to check the latest status."
+        }
+        if presentation.storySummary.hasScenes {
+            return "Avi has a story plan. Create the video when ready."
+        }
+        return "Review what Avi prepared, then create the video when ready."
+    }
 }
 
-private struct MomentsCreateMediaImportingState: View {
-    let progress: MomentsMediaImportProgress?
-    let isDraftingStory: Bool
+struct MomentsCreateBlockingPreparationView: View {
+    let presentation: MomentsCreateWorkflowPresentation
+    let isPreparingStory: Bool
 
     @State private var isAnimating = false
 
@@ -216,11 +270,11 @@ private struct MomentsCreateMediaImportingState: View {
 
             ZStack {
                 Circle()
-                    .fill(AVBrandColor.accent.opacity(0.10))
+                    .fill(mode.tint.opacity(0.10))
                     .frame(width: 128, height: 128)
 
                 Circle()
-                    .stroke(AVBrandColor.accent.opacity(0.18), lineWidth: 2)
+                    .stroke(mode.tint.opacity(0.18), lineWidth: 2)
                     .frame(width: 156, height: 156)
                     .scaleEffect(isAnimating ? 1.08 : 0.92)
                     .opacity(isAnimating ? 0.20 : 0.58)
@@ -231,17 +285,17 @@ private struct MomentsCreateMediaImportingState: View {
                     .frame(width: 86, height: 86)
                     .offset(y: isAnimating ? -4 : 3)
 
-                Image(systemName: "photo.on.rectangle.angled")
+                Image(systemName: mode.iconName)
                     .font(.system(size: 20, weight: .black))
                     .foregroundStyle(.white)
                     .frame(width: 42, height: 42)
-                    .background(AVBrandColor.accent, in: Circle())
+                    .background(mode.tint, in: Circle())
                     .offset(x: 54, y: 48)
-                    .shadow(color: AVBrandColor.accent.opacity(0.24), radius: 10, y: 4)
+                    .shadow(color: mode.tint.opacity(0.24), radius: 10, y: 4)
             }
 
             VStack(spacing: 8) {
-                Text("Preparing your moments")
+                Text(title)
                     .font(.system(size: 22, weight: .black))
                     .foregroundStyle(AVBrandColor.textPrimary)
 
@@ -256,7 +310,7 @@ private struct MomentsCreateMediaImportingState: View {
             VStack(spacing: 8) {
                 if let fractionCompleted = progress?.fractionCompleted {
                     ProgressView(value: fractionCompleted)
-                        .tint(AVBrandColor.accent)
+                        .tint(mode.tint)
                         .frame(width: 168)
                     Text(progress?.title ?? "Reading media")
                         .font(.caption)
@@ -264,7 +318,7 @@ private struct MomentsCreateMediaImportingState: View {
                         .foregroundStyle(AVBrandColor.textSecondary)
                 } else {
                     ProgressView()
-                        .tint(AVBrandColor.accent)
+                        .tint(mode.tint)
                         .controlSize(.regular)
                 }
             }
@@ -273,6 +327,7 @@ private struct MomentsCreateMediaImportingState: View {
             Spacer(minLength: 120)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(MomentsTheme.shellBackground.ignoresSafeArea())
         .transition(.opacity.combined(with: .scale(scale: 0.98)))
         .onAppear {
             withAnimation(.easeInOut(duration: 1.05).repeatForever(autoreverses: true)) {
@@ -280,18 +335,105 @@ private struct MomentsCreateMediaImportingState: View {
             }
         }
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("Preparing your moments. \(message)")
+        .accessibilityLabel("\(title). \(message)")
+    }
+
+    private var title: String {
+        mode.title
     }
 
     private var message: String {
-        if isDraftingStory {
-            return "Avi is turning the selection into a clear story plan."
+        mode.message(itemCount: progress?.totalCount)
+    }
+
+    private var progress: MomentsMediaImportProgress? {
+        presentation.mediaSummary.importProgress
+    }
+
+    private var mode: PreparationMode {
+        if presentation.finalRenderSummary.isGenerating {
+            return .createVideo
+        }
+        if presentation.previewSummary.isGenerating {
+            return .createPreview
+        }
+        if presentation.storySummary.isDrafting {
+            return .prepareStory
+        }
+        if isPreparingStory {
+            return .uploadForVideo
+        }
+        return .importMedia
+    }
+
+    private enum PreparationMode {
+        case importMedia
+        case prepareStory
+        case uploadForVideo
+        case createVideo
+        case createPreview
+
+        var title: String {
+            switch self {
+            case .importMedia:
+                return "Reading your selection"
+            case .prepareStory:
+                return "Preparing your story"
+            case .uploadForVideo:
+                return "Uploading media"
+            case .createVideo:
+                return "Creating your video"
+            case .createPreview:
+                return "Creating your preview"
+            }
         }
 
-        if let progress, progress.totalCount > 0 {
-            return "Avi is reading \(progress.totalCount) \(progress.totalCount == 1 ? "item" : "items") and setting up your story."
+        var iconName: String {
+            switch self {
+            case .importMedia:
+                return "photo.on.rectangle.angled"
+            case .prepareStory:
+                return "list.bullet.rectangle.portrait.fill"
+            case .uploadForVideo:
+                return "icloud.and.arrow.up.fill"
+            case .createVideo:
+                return "video.fill"
+            case .createPreview:
+                return "play.rectangle.fill"
+            }
         }
-        return "Avi is reading the selection and setting up your story."
+
+        var tint: Color {
+            switch self {
+            case .importMedia, .prepareStory:
+                return AVBrandColor.accent
+            case .uploadForVideo:
+                return AVBrandColor.textSecondary
+            case .createVideo, .createPreview:
+                return AVBrandColor.textPrimary
+            }
+        }
+
+        func message(itemCount: Int?) -> String {
+            switch self {
+            case .importMedia:
+                if let itemCount, itemCount > 0 {
+                    return "Avi is reading \(itemCount) \(itemCount == 1 ? "item" : "items") and setting up the first review."
+                }
+                return "Avi is reading the selection and setting up the first review."
+            case .prepareStory:
+                return "Avi is organizing the selected moments into a simple video plan."
+            case .uploadForVideo:
+                if let itemCount, itemCount > 0 {
+                    return "Sending \(itemCount) \(itemCount == 1 ? "item" : "items") needed for final video creation."
+                }
+                return "Sending the selected media needed for final video creation."
+            case .createVideo:
+                return "Avi is starting the final render. This can take a few minutes."
+            case .createPreview:
+                return "Avi is creating a review preview from your story plan."
+            }
+        }
     }
 }
 
@@ -341,6 +483,228 @@ private struct MomentsCreateOptionsSummaryCard: View {
         }
 
         return "Avi picked a direction for this selection. You can change it before creating the video."
+    }
+}
+
+private struct MomentsCreateStoryReviewCard: View {
+    let presentation: MomentsCreateWorkflowPresentation
+
+    var body: some View {
+        AVAppShellCard {
+            VStack(alignment: .leading, spacing: 14) {
+                HStack(spacing: 10) {
+                    Text("What Avi will focus on")
+                        .font(.system(size: 13, weight: .black))
+                        .foregroundStyle(AVBrandColor.textPrimary)
+
+                    Spacer(minLength: 0)
+
+                    Text(sceneCountTitle)
+                        .font(.system(size: 12, weight: .black))
+                        .foregroundStyle(AVBrandColor.accent)
+                }
+
+                Text("Avi prepared this plan before spending video credits.")
+                    .font(.caption)
+                    .fontWeight(.semibold)
+                    .foregroundStyle(AVBrandColor.textSecondary)
+
+                VStack(alignment: .leading, spacing: 10) {
+                    ForEach(presentation.storySummary.reviewScenes.prefix(3)) { scene in
+                        MomentsCreateStoryReviewSceneRow(scene: scene)
+                    }
+                }
+
+                HStack(spacing: 8) {
+                    MomentsCreateOptionPill(title: "\(presentation.mediaSummary.selectedCount) items", systemImage: "photo.on.rectangle")
+                    MomentsCreateOptionPill(title: "\(presentation.template.duration)", systemImage: "timer")
+                }
+            }
+        }
+    }
+
+    private var sceneCountTitle: String {
+        let count = presentation.storySummary.reviewScenes.count
+        return "\(count) \(count == 1 ? "scene" : "scenes")"
+    }
+}
+
+private struct MomentsCreateStoryReviewPage: View {
+    let presentation: MomentsCreateWorkflowPresentation
+    let createVideo: () -> Void
+    let discardDraft: () -> Void
+    let dismiss: () -> Void
+
+    @State private var showsCreateVideoConfirmation = false
+    @State private var showsDiscardDraftConfirmation = false
+
+    var body: some View {
+        VStack(spacing: 0) {
+            MomentsCreateEditorPageHeader(
+                title: "Story Review",
+                dismiss: dismiss
+            )
+            .padding(.horizontal, 20)
+            .padding(.top, 20)
+            .padding(.bottom, 14)
+
+            ScrollView {
+                VStack(alignment: .leading, spacing: 14) {
+                    AVAppShellCard {
+                        HStack(alignment: .center, spacing: 14) {
+                            ZStack(alignment: .bottomTrailing) {
+                                Image("AviFullBody")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 74, height: 74)
+                                    .padding(12)
+                                    .background(AVBrandColor.accent.opacity(0.10), in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+
+                                Image(systemName: "film.stack.fill")
+                                    .font(.system(size: 13, weight: .black))
+                                    .foregroundStyle(.white)
+                                    .frame(width: 30, height: 30)
+                                    .background(AVBrandColor.accent, in: Circle())
+                                    .offset(x: 8, y: 8)
+                            }
+                            .frame(width: 98, height: 98)
+
+                            VStack(alignment: .leading, spacing: 8) {
+                                Text("Ready to create")
+                                    .font(.system(size: 18, weight: .black))
+                                    .foregroundStyle(AVBrandColor.textPrimary)
+
+                                Text(summaryTitle)
+                                    .font(.system(size: 13, weight: .semibold))
+                                    .foregroundStyle(AVBrandColor.textSecondary)
+                                    .lineLimit(3)
+                                    .fixedSize(horizontal: false, vertical: true)
+
+                                HStack(spacing: 8) {
+                                    MomentsCreateOptionPill(title: "\(presentation.mediaSummary.selectedCount) items", systemImage: "photo.on.rectangle")
+                                    MomentsCreateOptionPill(title: "\(presentation.template.duration)", systemImage: "timer")
+                                }
+                            }
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        }
+                    }
+
+                    MomentsCreateStoryReviewCard(presentation: presentation)
+
+                    AVAppShellCard {
+                        VStack(alignment: .leading, spacing: 14) {
+                            HStack(alignment: .top, spacing: 12) {
+                                Image(systemName: "video.fill")
+                                    .font(.system(size: 18, weight: .black))
+                                    .foregroundStyle(.white)
+                                    .frame(width: 42, height: 42)
+                                    .background(AVBrandColor.textPrimary, in: Circle())
+
+                                VStack(alignment: .leading, spacing: 5) {
+                                    Text("Create the video")
+                                        .font(.system(size: 17, weight: .black))
+                                        .foregroundStyle(AVBrandColor.textPrimary)
+
+                                    Text("This uses \(creditCostTitle). You can go back if you want to change the story first.")
+                                        .font(.system(size: 13, weight: .semibold))
+                                        .foregroundStyle(AVBrandColor.textSecondary)
+                                        .fixedSize(horizontal: false, vertical: true)
+                                }
+                            }
+
+                            Button(action: { showsCreateVideoConfirmation = true }) {
+                                Label("Create video · \(creditCostTitle)", systemImage: "video.fill")
+                                    .font(.system(size: 15, weight: .black))
+                                    .frame(maxWidth: .infinity)
+                                    .frame(height: 50)
+                            }
+                            .buttonStyle(MomentsCreateSoftActionButtonStyle())
+
+                            HStack(spacing: 14) {
+                                Button(action: { showsDiscardDraftConfirmation = true }) {
+                                    Label("Discard draft", systemImage: "trash.fill")
+                                }
+                                .buttonStyle(MomentsCreateDestructiveInlineButtonStyle())
+
+                                Button(action: dismiss) {
+                                    Label("Change media or style", systemImage: "slider.horizontal.3")
+                                }
+                                    .buttonStyle(MomentsCreateNeutralInlineButtonStyle())
+                            }
+                            .font(.system(size: 13, weight: .bold))
+                            .frame(maxWidth: .infinity)
+                        }
+                    }
+                }
+                .padding(.horizontal, 20)
+                .padding(.bottom, 172)
+            }
+            .scrollIndicators(.hidden)
+        }
+        .background(MomentsTheme.shellBackground.ignoresSafeArea())
+        .navigationBarBackButtonHidden(true)
+        .toolbar(.hidden, for: .navigationBar)
+        .alert("Create video?", isPresented: $showsCreateVideoConfirmation) {
+            Button("Not now", role: .cancel) {}
+            Button("Create video · \(creditCostTitle)") {
+                createVideo()
+            }
+        } message: {
+            Text("This will use \(creditCostTitle). Avi will start creating the final video.")
+        }
+        .alert("Discard draft?", isPresented: $showsDiscardDraftConfirmation) {
+            Button("Keep draft", role: .cancel) {}
+            Button("Discard draft", role: .destructive) {
+                discardDraft()
+            }
+        } message: {
+            Text("This removes the current Moment draft, selected media, and story review.")
+        }
+    }
+
+    private var summaryTitle: String {
+        "Avi prepared a simple video plan for this selection."
+    }
+
+    private var creditCostTitle: String {
+        MomentsCreditCopy.countTitle(presentation.finalRenderSummary.creditCost)
+    }
+}
+
+private struct MomentsCreateStoryReviewSceneRow: View {
+    let scene: MomentsCreateStoryReviewScene
+
+    var body: some View {
+        HStack(alignment: .top, spacing: 10) {
+            Image(systemName: "rectangle.stack.fill")
+                .font(.system(size: 12, weight: .black))
+                .foregroundStyle(AVBrandColor.accent)
+                .frame(width: 26, height: 26)
+                .background(AVBrandColor.accent.opacity(0.10), in: Circle())
+
+            VStack(alignment: .leading, spacing: 3) {
+                Text(scene.title)
+                    .font(.system(size: 12, weight: .black))
+                    .foregroundStyle(AVBrandColor.textPrimary)
+
+                Text(scene.caption)
+                    .font(.caption)
+                    .fontWeight(.semibold)
+                    .foregroundStyle(AVBrandColor.textSecondary)
+                    .lineLimit(2)
+
+                if let detail = scene.detail, !detail.isEmpty {
+                    Text(detail)
+                        .font(.caption2)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(AVBrandColor.textSecondary.opacity(0.78))
+                        .lineLimit(2)
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .padding(10)
+        .background(AVBrandColor.neutral100.opacity(0.68), in: RoundedRectangle(cornerRadius: 8, style: .continuous))
     }
 }
 
@@ -450,9 +814,9 @@ private struct MomentsCreateCompactAviGuide: View {
 
 private struct MomentsCreatePrimaryActionBar: View {
     let presentation: MomentsCreateWorkflowPresentation
-    let cancelCreation: () -> Void
+    let discardDraft: () -> Void
     let startSignInFlow: () -> Void
-    let generateStoryDraft: () -> Void
+    let reviewStoryFirst: () -> Void
     let generatePreview: () -> Void
     let refreshPreviewStatus: () -> Void
     let generateFinalRender: () -> Void
@@ -460,74 +824,86 @@ private struct MomentsCreatePrimaryActionBar: View {
 
     var body: some View {
         AVAppShellCard {
-            VStack(alignment: .leading, spacing: 16) {
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("Story")
-                        .font(.system(size: 13, weight: .black))
-                        .foregroundStyle(AVBrandColor.textPrimary)
+            VStack(alignment: .leading, spacing: 14) {
+                HStack(alignment: .top, spacing: 12) {
+                    Image(systemName: primaryHeaderIconName)
+                        .font(.system(size: 18, weight: .black))
+                        .foregroundStyle(.white)
+                        .frame(width: 42, height: 42)
+                        .background(primaryHeaderColor, in: Circle())
 
-                    if let statusMessage {
-                        Label(statusMessage, systemImage: statusIconName)
-                            .font(.system(size: 13, weight: .semibold))
-                            .foregroundStyle(statusColor)
-                            .fixedSize(horizontal: false, vertical: true)
-                    }
+                    VStack(alignment: .leading, spacing: 5) {
+                        Text(title)
+                            .font(.system(size: 17, weight: .black))
+                            .foregroundStyle(AVBrandColor.textPrimary)
 
-                    if let uploadProgress = presentation.mediaSummary.importProgress,
-                       presentation.mediaSummary.isImporting {
-                        ProgressView(value: uploadProgress.fractionCompleted ?? 0)
-                            .tint(AVBrandColor.accent)
-                            .accessibilityLabel("Uploading media")
-                            .accessibilityValue(uploadProgress.title)
-                    }
-                }
-
-                HStack(spacing: 10) {
-                    Button("Cancel", action: cancelCreation)
-                        .font(.system(size: 14, weight: .black))
-                        .foregroundStyle(AVBrandColor.textSecondary)
-                        .frame(width: 94, height: 42)
-                        .background(AVBrandColor.mutedSurface.opacity(0.62), in: Capsule())
-                        .overlay {
-                            Capsule()
-                                .stroke(AVBrandColor.borderSubtle.opacity(0.65), lineWidth: 1)
+                        if let statusMessage {
+                            Text(statusMessage)
+                                .font(.system(size: 13, weight: .semibold))
+                                .foregroundStyle(statusColor)
+                                .fixedSize(horizontal: false, vertical: true)
                         }
-
-                    Button(action: primaryAction) {
-                        Label(buttonTitle, systemImage: buttonIconName)
-                            .font(.system(size: 14, weight: .black))
-                            .lineLimit(1)
-                            .minimumScaleFactor(0.8)
-                            .frame(maxWidth: .infinity)
-                            .frame(height: 42)
                     }
-                    .disabled(!canRunPrimaryAction)
-                    .buttonStyle(MomentsCreateSoftActionButtonStyle())
-                    .opacity(canRunPrimaryAction ? 1 : 0.55)
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 }
 
-                if let secondaryActionTitle {
-                    Button(secondaryActionTitle, action: secondaryAction)
-                        .font(.system(size: 13, weight: .bold))
-                        .buttonStyle(MomentsCreateSubtleInlineButtonStyle())
-                        .frame(maxWidth: .infinity)
+                if let uploadProgress = presentation.mediaSummary.importProgress,
+                   presentation.mediaSummary.isImporting {
+                    ProgressView(value: uploadProgress.fractionCompleted ?? 0)
+                        .tint(AVBrandColor.accent)
+                        .accessibilityLabel("Uploading media")
+                        .accessibilityValue(uploadProgress.title)
                 }
+
+                Button(action: primaryAction) {
+                    Label(buttonTitle, systemImage: buttonIconName)
+                        .font(.system(size: 15, weight: .black))
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.8)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 50)
+                }
+                .disabled(!canRunPrimaryAction)
+                .buttonStyle(MomentsCreateSoftActionButtonStyle())
+                .opacity(canRunPrimaryAction ? 1 : 0.55)
+
+                HStack(spacing: 14) {
+                    Button(action: discardDraft) {
+                        Label("Discard draft", systemImage: "trash.fill")
+                    }
+                    .buttonStyle(MomentsCreateDestructiveInlineButtonStyle())
+
+                    if let secondaryActionTitle {
+                        Button(action: secondaryAction) {
+                            Label(secondaryActionTitle, systemImage: secondaryActionIconName)
+                        }
+                            .buttonStyle(MomentsCreateNeutralInlineButtonStyle())
+                    }
+                }
+                .font(.system(size: 13, weight: .bold))
+                .frame(maxWidth: .infinity)
             }
         }
     }
 
     private var canRunPrimaryAction: Bool {
-        !isBusy
-            && (
-                presentation.canGenerateFinalRender
-                    || presentation.canDraftStory
-                    || needsSignInForStory
-            )
+        if isBusy {
+            return false
+        }
+        if presentation.finalRenderSummary.latestFinalJob != nil {
+            return canRefreshFinalRender
+        }
+        return presentation.canGenerateFinalRender
+            || presentation.canDraftStory
+            || needsSignInForStory
     }
 
     private var buttonTitle: String {
         if presentation.finalRenderSummary.finalExport != nil {
             return "Final video ready"
+        }
+        if presentation.finalRenderSummary.latestFinalJob != nil {
+            return presentation.finalRenderSummary.isRefreshingStatus ? "Refreshing..." : "Refresh final video"
         }
         if presentation.canGenerateFinalRender {
             return presentation.finalRenderSummary.isGenerating ? "Creating video..." : "Create video · \(creditCostTitle)"
@@ -538,13 +914,10 @@ private struct MomentsCreatePrimaryActionBar: View {
         if presentation.previewSummary.latestPreviewJob != nil {
             return presentation.previewSummary.isRefreshingStatus ? "Refreshing..." : "Refresh preview"
         }
-        if presentation.canGeneratePreview {
-            return "Story ready"
-        }
         if needsSignInForStory {
             return "Sign in"
         }
-        return presentation.storySummary.isDrafting ? "Avi is preparing..." : "Prepare story"
+        return presentation.finalRenderSummary.isGenerating ? "Creating video..." : "Create video · \(creditCostTitle)"
     }
 
     private var buttonIconName: String {
@@ -555,6 +928,9 @@ private struct MomentsCreatePrimaryActionBar: View {
             return "wand.and.stars"
         }
         if presentation.previewSummary.latestPreviewJob != nil {
+            return "arrow.clockwise"
+        }
+        if presentation.finalRenderSummary.latestFinalJob != nil {
             return "arrow.clockwise"
         }
         if presentation.canGenerateFinalRender {
@@ -570,13 +946,16 @@ private struct MomentsCreatePrimaryActionBar: View {
         if presentation.finalRenderSummary.finalExport != nil {
             return nil
         }
+        if presentation.finalRenderSummary.latestFinalJob != nil {
+            return presentation.finalRenderRefreshAvailabilityMessage ?? presentation.finalRenderAvailabilityMessage
+        }
         if presentation.previewSummary.latestPreview != nil || presentation.canGenerateFinalRender {
             return presentation.finalRenderAvailabilityMessage
         }
-        if presentation.canGeneratePreview || presentation.previewSummary.latestPreviewJob != nil {
+        if presentation.previewSummary.latestPreviewJob != nil {
             return presentation.previewAvailabilityMessage
         }
-        return presentation.storyAvailabilityMessage
+        return presentation.finalRenderAvailabilityMessage ?? presentation.storyAvailabilityMessage
     }
 
     private var statusMessage: String? {
@@ -591,6 +970,12 @@ private struct MomentsCreatePrimaryActionBar: View {
         }
         if presentation.finalRenderSummary.finalExport != nil {
             return "Final video ready."
+        }
+        if presentation.finalRenderSummary.latestFinalJob != nil {
+            if let renderMessage = presentation.finalRenderSummary.statusMessage, !renderMessage.isEmpty {
+                return renderMessage
+            }
+            return "Video creation is in progress. Refresh to check the latest status."
         }
         if presentation.previewSummary.latestPreview != nil {
             return "Preview ready. Review it before final video."
@@ -610,14 +995,11 @@ private struct MomentsCreatePrimaryActionBar: View {
         if !canRunPrimaryAction {
             return availabilityMessage
         }
-        if presentation.canGeneratePreview {
-            return "Story ready. Next step: create the video."
-        }
         if needsSignInForStory {
             return presentation.storyAvailabilityMessage
         }
         if presentation.canDraftStory {
-            return "Avi will organize the story, style, music, and pacing before video creation."
+            return "Avi can create the video now. Review the story first if you prefer."
         }
         return nil
     }
@@ -642,6 +1024,29 @@ private struct MomentsCreatePrimaryActionBar: View {
         return AVBrandColor.textSecondary
     }
 
+    private var primaryHeaderIconName: String {
+        if presentation.finalRenderSummary.finalExport != nil {
+            return "checkmark.circle.fill"
+        }
+        if presentation.finalRenderSummary.latestFinalJob != nil {
+            return "arrow.clockwise"
+        }
+        if needsSignInForStory {
+            return "person.crop.circle.badge.checkmark"
+        }
+        return "video.fill"
+    }
+
+    private var primaryHeaderColor: Color {
+        if presentation.finalRenderSummary.finalExport != nil {
+            return AVBrandColor.accent
+        }
+        if presentation.finalRenderSummary.latestFinalJob != nil || isBusy {
+            return AVBrandColor.textSecondary
+        }
+        return AVBrandColor.textPrimary
+    }
+
     private var isBusy: Bool {
         presentation.storySummary.isDrafting
             || presentation.mediaSummary.isImporting
@@ -652,33 +1057,50 @@ private struct MomentsCreatePrimaryActionBar: View {
     }
 
     private var secondaryActionTitle: String? {
-        if presentation.finalRenderSummary.latestFinalJob != nil && presentation.canRefreshFinalRenderStatus {
-            return "Refresh final video"
+        guard !isBusy else { return nil }
+        guard presentation.finalRenderSummary.finalExport == nil,
+              presentation.finalRenderSummary.latestFinalJob == nil,
+              presentation.previewSummary.latestPreview == nil,
+              presentation.previewSummary.latestPreviewJob == nil,
+              !needsSignInForStory,
+              (presentation.canDraftStory || presentation.storySummary.hasScenes) else {
+            return nil
         }
-        return nil
+        return presentation.storySummary.hasScenes ? "View story review" : "Review story first"
+    }
+
+    private var secondaryActionIconName: String {
+        presentation.storySummary.hasScenes ? "list.bullet.rectangle.portrait.fill" : "sparkles"
     }
 
     private func primaryAction() {
         if presentation.finalRenderSummary.finalExport != nil {
             return
         }
-        if presentation.previewSummary.latestPreview != nil {
+        if presentation.finalRenderSummary.latestFinalJob != nil {
+            if canRefreshFinalRender {
+                refreshFinalRenderStatus()
+            }
+        } else if presentation.previewSummary.latestPreview != nil {
             generateFinalRender()
-        } else if presentation.canGenerateFinalRender {
+        } else if presentation.canGenerateFinalRender || presentation.canDraftStory {
             generateFinalRender()
         } else if presentation.previewSummary.latestPreviewJob != nil {
             refreshPreviewStatus()
-        } else if presentation.canGeneratePreview {
-            return
         } else if needsSignInForStory {
             startSignInFlow()
-        } else {
-            generateStoryDraft()
         }
     }
 
     private func secondaryAction() {
-        refreshFinalRenderStatus()
+        reviewStoryFirst()
+    }
+
+    private var title: String {
+        if presentation.finalRenderSummary.finalExport != nil || presentation.finalRenderSummary.latestFinalJob != nil {
+            return "Video"
+        }
+        return "Create video"
     }
 
     private var creditCostTitle: String {
@@ -689,6 +1111,11 @@ private struct MomentsCreatePrimaryActionBar: View {
         !presentation.isSignedIn
             && presentation.mediaSummary.selectedCount > 0
             && !presentation.storySummary.isDrafting
+    }
+
+    private var canRefreshFinalRender: Bool {
+        presentation.finalRenderSummary.latestFinalJob != nil
+            && presentation.canRefreshFinalRenderStatus
     }
 }
 

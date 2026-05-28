@@ -13,6 +13,7 @@ enum MomentsCreateUITestFixtures {
             tempo: "balanced",
             occasion: "Birthday",
             details: "Keep the opening gentle, highlight the cake scene, and end with the beach clip.",
+            storyInputSignature: nil,
             durationSeconds: 30,
             creditCost: 2,
             previewCount: 1,

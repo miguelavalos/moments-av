@@ -202,6 +202,47 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         XCTAssertEqual(presentation.finalRenderRefreshAvailabilityMessage, "Refresh final.")
     }
 
+    func testWorkflowPresentationShowsBlockingPreparationForCriticalWork() {
+        var presentation = MomentsCreateWorkflowPresentation(
+            activeProjectId: "project-1",
+            template: .birthdayMessage,
+            mediaSummary: MomentsCreateMediaSummary(isImporting: true),
+            storySummary: MomentsCreateStorySummary(),
+            previewSummary: MomentsCreatePreviewSummary(),
+            finalRenderSummary: MomentsCreateFinalRenderSummary()
+        )
+
+        XCTAssertTrue(presentation.showsBlockingPreparation)
+
+        presentation.mediaSummary = MomentsCreateMediaSummary()
+        presentation.storySummary = MomentsCreateStorySummary(isDrafting: true)
+        XCTAssertTrue(presentation.showsBlockingPreparation)
+
+        presentation.storySummary = MomentsCreateStorySummary()
+        presentation.previewSummary = MomentsCreatePreviewSummary(isGenerating: true)
+        XCTAssertTrue(presentation.showsBlockingPreparation)
+
+        presentation.previewSummary = MomentsCreatePreviewSummary()
+        presentation.finalRenderSummary = MomentsCreateFinalRenderSummary(isGenerating: true)
+        XCTAssertTrue(presentation.showsBlockingPreparation)
+
+        presentation.finalRenderSummary = MomentsCreateFinalRenderSummary()
+        XCTAssertFalse(presentation.showsBlockingPreparation)
+    }
+
+    func testStorySummaryBuildsReviewScenesFromSavedScenes() {
+        let summary = MomentsCreateStorySummary(
+            savedScenes: [
+                MomentsCreateTestFixtures.makeScene(id: "scene-2", sceneIndex: 1, caption: "Show the trip highlights."),
+                MomentsCreateTestFixtures.makeScene(id: "scene-1", sceneIndex: 0, caption: "Open with the arrival.")
+            ]
+        )
+
+        XCTAssertTrue(summary.hasScenes)
+        XCTAssertEqual(summary.reviewScenes.map(\.title), ["Opening", "Main moments"])
+        XCTAssertEqual(summary.reviewScenes.map(\.caption), ["Open with the arrival.", "Show the trip highlights."])
+    }
+
     func testMediaPresentationFormatsSelectionAndSortsSyncedMedia() {
         let presentation = MomentsCreateMediaPresentation(
             activeProjectId: "project-1",

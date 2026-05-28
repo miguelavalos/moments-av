@@ -1,5 +1,6 @@
 import AVAppShellFoundation
 import AVBrandFoundation
+import Photos
 import SwiftUI
 import UIKit
 
@@ -127,12 +128,7 @@ struct MomentsCreateSyncedMediaThumbnailTile: View {
 
     var body: some View {
         ZStack(alignment: .bottomLeading) {
-            ZStack {
-                AVBrandColor.neutral100
-                Image(systemName: media.kind == "video" ? "video.fill" : "photo.fill")
-                    .font(.system(size: 24, weight: .semibold))
-                    .foregroundStyle(MomentsTheme.highlight)
-            }
+            MomentsCreateSyncedMediaThumbnailImage(media: media)
 
             Image(systemName: "checkmark.circle.fill")
                 .font(.system(size: 16, weight: .bold))
@@ -142,6 +138,71 @@ struct MomentsCreateSyncedMediaThumbnailTile: View {
         .aspectRatio(1, contentMode: .fit)
         .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
         .accessibilityLabel("\(media.kind.capitalized) \(index + 1)")
+    }
+}
+
+struct MomentsCreateSyncedMediaThumbnailImage: View {
+    let media: MomentMediaAsset
+    var size: CGFloat?
+    @State private var image: UIImage?
+
+    var body: some View {
+        ZStack {
+            if let image {
+                Image(uiImage: image)
+                    .resizable()
+                    .scaledToFill()
+            } else {
+                AVBrandColor.neutral100
+                Image(systemName: media.kind == "video" ? "video.fill" : "photo.fill")
+                    .font(.system(size: size == nil ? 24 : 20, weight: .semibold))
+                    .foregroundStyle(MomentsTheme.highlight)
+            }
+        }
+        .frame(width: size, height: size)
+        .clipped()
+        .task(id: "\(media.id)-\(media.platformMediaAssetId ?? "")") {
+            image = MomentsLocalMediaThumbnailCache.thumbnail(
+                mediaAssetId: media.id,
+                platformMediaAssetId: media.platformMediaAssetId
+            )
+            guard image == nil else { return }
+            image = await MomentsCreateLocalPhotoThumbnailLoader.thumbnail(
+                for: media.platformMediaAssetId,
+                targetSize: CGSize(width: 220, height: 220)
+            )
+            if let image {
+                MomentsLocalMediaThumbnailCache.store(
+                    image,
+                    mediaAssetId: media.id,
+                    platformMediaAssetId: media.platformMediaAssetId
+                )
+            }
+        }
+    }
+}
+
+private enum MomentsCreateLocalPhotoThumbnailLoader {
+    static func thumbnail(for localIdentifier: String?, targetSize: CGSize) async -> UIImage? {
+        guard let localIdentifier, !localIdentifier.isEmpty else { return nil }
+        let result = PHAsset.fetchAssets(withLocalIdentifiers: [localIdentifier], options: nil)
+        guard let asset = result.firstObject else { return nil }
+
+        return await withCheckedContinuation { continuation in
+            let options = PHImageRequestOptions()
+            options.deliveryMode = .fastFormat
+            options.resizeMode = .fast
+            options.isNetworkAccessAllowed = true
+
+            PHImageManager.default().requestImage(
+                for: asset,
+                targetSize: targetSize,
+                contentMode: .aspectFill,
+                options: options
+            ) { image, _ in
+                continuation.resume(returning: image)
+            }
+        }
     }
 }
 

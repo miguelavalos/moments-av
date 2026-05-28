@@ -139,6 +139,47 @@ enum MediaPickerImport {
         return imported
     }
 
+    static func loadLocalMediaAssets(
+        _ mediaAssets: [MomentMediaAsset],
+        progress: (@MainActor (Int, Int) -> Void)? = nil
+    ) async throws -> [MomentsSelectedMedia] {
+        let status = await requestPhotoLibraryAccess()
+        guard status == .authorized || status == .limited else {
+            throw MomentsUploadError.photoLibraryAccessDenied
+        }
+
+        let candidates = mediaAssets
+            .filter(\.selected)
+            .sorted { $0.sortOrder < $1.sortOrder }
+            .compactMap { media -> (asset: PHAsset, source: MomentMediaAsset)? in
+                guard let localIdentifier = media.platformMediaAssetId else { return nil }
+                guard let asset = PHAsset
+                    .fetchAssets(withLocalIdentifiers: [localIdentifier], options: nil)
+                    .firstObject else { return nil }
+                guard asset.mediaType == .image else { return nil }
+                return (asset, media)
+            }
+
+        var imported: [MomentsSelectedMedia] = []
+        imported.reserveCapacity(candidates.count)
+        await progress?(0, candidates.count)
+
+        for (index, candidate) in candidates.enumerated() {
+            let media = try await loadPhotoAsset(candidate.asset, sortOrder: Int(candidate.source.sortOrder))
+            if let image = UIImage(data: media.data) {
+                MomentsLocalMediaThumbnailCache.store(
+                    image,
+                    mediaAssetId: candidate.source.id,
+                    platformMediaAssetId: candidate.source.platformMediaAssetId
+                )
+            }
+            imported.append(media)
+            await progress?(index + 1, candidates.count)
+        }
+
+        return imported
+    }
+
     private static func loadMedia(from item: PhotosPickerItem, sortOrder: Int) async throws -> MomentsSelectedMedia {
         guard let data = try await item.loadTransferable(type: Data.self) else {
             throw MomentsUploadError.unreadableSelection

@@ -21,6 +21,18 @@ struct MomentsCreateScreen: View {
         .safeAreaPadding(.horizontal, 20)
         .safeAreaPadding(.top, 12)
         .safeAreaPadding(.bottom, 82)
+        .fullScreenCover(
+            isPresented: Binding(
+                get: { viewModel.workflowPresentation.showsBlockingPreparation || viewModel.isPreparingStory },
+                set: { _ in }
+            )
+        ) {
+            MomentsCreateBlockingPreparationView(
+                presentation: viewModel.workflowPresentation,
+                isPreparingStory: viewModel.isPreparingStory
+            )
+            .interactiveDismissDisabled()
+        }
     }
 }
 

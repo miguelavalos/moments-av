@@ -1,4 +1,6 @@
+import CryptoKit
 import Foundation
+import UIKit
 
 struct MediaUploadPersistenceResult {
     let savedCount: Int
@@ -63,17 +65,20 @@ enum MediaUploadPersistence {
             mediaAssets: mediaAssetRequests
         )
 
+        let savedMedia = zip(uploadedMedia, savedMediaAssetIds).map { uploaded, savedMediaAssetId in
+            MomentsLocalMediaThumbnailCache.store(uploaded.media, mediaAssetId: savedMediaAssetId)
+            return MomentsStoryDraftMedia(
+                mediaAssetId: savedMediaAssetId,
+                mediaKind: uploaded.media.kind,
+                sortOrder: uploaded.media.sortOrder,
+                selected: uploaded.media.selected,
+                moderationStatus: "pending"
+            )
+        }
+
         return MediaUploadPersistenceResult(
             savedCount: completedUploads,
-            savedMedia: zip(uploadedMedia, savedMediaAssetIds).map { uploaded, savedMediaAssetId in
-                MomentsStoryDraftMedia(
-                    mediaAssetId: savedMediaAssetId,
-                    mediaKind: uploaded.media.kind,
-                    sortOrder: uploaded.media.sortOrder,
-                    selected: uploaded.media.selected,
-                    moderationStatus: "pending"
-                )
-            },
+            savedMedia: savedMedia,
             storageBlocked: uploadedMedia.contains { $0.preparedUpload.uploadUrl == nil }
         )
     }
@@ -134,5 +139,78 @@ enum MediaUploadPersistence {
         }
 
         return uploadedMedia.sorted { $0.media.sortOrder < $1.media.sortOrder }
+    }
+}
+
+enum MomentsLocalMediaThumbnailCache {
+    private static let thumbnailSize = CGSize(width: 320, height: 320)
+
+    static func store(_ media: MomentsSelectedMedia, mediaAssetId: String) {
+        guard let image = UIImage(data: media.data) else { return }
+        store(image, mediaAssetId: mediaAssetId, platformMediaAssetId: media.sourceLocalIdentifier)
+    }
+
+    static func store(
+        _ image: UIImage,
+        mediaAssetId: String,
+        platformMediaAssetId: String?
+    ) {
+        guard let data = resizedJPEGData(from: image) else { return }
+        write(data, for: mediaAssetId)
+        if let platformMediaAssetId, !platformMediaAssetId.isEmpty {
+            write(data, for: platformMediaAssetId)
+        }
+    }
+
+    static func thumbnail(mediaAssetId: String, platformMediaAssetId: String?) -> UIImage? {
+        if let image = read(for: mediaAssetId) {
+            return image
+        }
+        guard let platformMediaAssetId, !platformMediaAssetId.isEmpty else { return nil }
+        return read(for: platformMediaAssetId)
+    }
+
+    private static func resizedJPEGData(from image: UIImage) -> Data? {
+        let size = image.size
+        guard size.width > 0, size.height > 0 else { return image.jpegData(compressionQuality: 0.72) }
+        let scale = min(thumbnailSize.width / size.width, thumbnailSize.height / size.height, 1)
+        let targetSize = CGSize(width: size.width * scale, height: size.height * scale)
+        let renderer = UIGraphicsImageRenderer(size: targetSize)
+        let renderedImage = renderer.image { _ in
+            image.draw(in: CGRect(origin: .zero, size: targetSize))
+        }
+        return renderedImage.jpegData(compressionQuality: 0.72)
+    }
+
+    private static func read(for key: String) -> UIImage? {
+        guard let data = try? Data(contentsOf: url(for: key)) else { return nil }
+        return UIImage(data: data)
+    }
+
+    private static func write(_ data: Data, for key: String) {
+        do {
+            try FileManager.default.createDirectory(
+                at: cacheDirectory,
+                withIntermediateDirectories: true
+            )
+            try data.write(to: url(for: key), options: .atomic)
+        } catch {
+            return
+        }
+    }
+
+    private static func url(for key: String) -> URL {
+        cacheDirectory.appendingPathComponent("\(cacheKey(for: key)).jpg")
+    }
+
+    private static var cacheDirectory: URL {
+        FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0]
+            .appendingPathComponent("MomentsLocalMediaThumbnails", isDirectory: true)
+    }
+
+    private static func cacheKey(for key: String) -> String {
+        SHA256.hash(data: Data(key.utf8))
+            .map { String(format: "%02x", $0) }
+            .joined()
     }
 }

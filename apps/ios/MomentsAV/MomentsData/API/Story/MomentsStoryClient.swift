@@ -63,7 +63,7 @@ struct MomentsStoryClient {
             occasion: form.occasion,
             details: form.details,
             media: selectedMedia,
-            idempotencyKey: "story:\(projectId):\(selectedMedia.count):\(form.tone.rawValue):\(form.tempo.rawValue)"
+            idempotencyKey: "story:\(projectId):\(MomentsStoryDraftInputSignature.make(projectId: projectId, form: form, selectedMedia: selectedMedia))"
         )
 
         var request = URLRequest(url: endpoint)

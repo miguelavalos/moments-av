@@ -54,6 +54,13 @@ struct MomentsCreateWorkflowPresentation: Equatable {
         return .media
     }
 
+    var showsBlockingPreparation: Bool {
+        mediaSummary.isImporting
+            || storySummary.isDrafting
+            || previewSummary.isGenerating
+            || finalRenderSummary.isGenerating
+    }
+
     static func make(
         activeProjectId: String?,
         isSignedIn: Bool,

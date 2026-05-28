@@ -2,8 +2,9 @@
 
 Status: technical draft for first App Store publication. This is not legal
 approval. Final App Store Connect answers must be confirmed against the exact
-submitted build, production Account AV behavior, backend retention, SDKs, and
-the public Privacy Policy.
+submitted build, production Account AV behavior, public deletion behavior, SDKs,
+and the public Privacy Policy. Private backend, storage, provider, and
+operational details belong in the private `avalsys-suite` docs.
 
 ## Submission Context
 
@@ -31,7 +32,7 @@ the public Privacy Policy.
 - Sign-out behavior: local authenticated app state is cleared by Account AV.
 - Account deletion behavior: handled by Account AV; Moments AV project deletion
   is separate and removes project media/generated artifacts where available.
-- Retention: TODO confirm Account AV production retention policy.
+- Retention: TODO confirm public Account AV retention wording.
 - App Privacy category: Identifiers.
 - Notes: App Store review notes must explain where account deletion is reached.
 
@@ -48,7 +49,7 @@ the public Privacy Policy.
 - User-visible control: Account and creation flow show credit state.
 - Sign-out behavior: hidden from the signed-out app.
 - Account deletion behavior: TODO confirm Account AV credit/access retention.
-- Retention: TODO confirm production backend retention.
+- Retention: TODO confirm public credit/access retention wording.
 - App Privacy category: Purchases or Other Data, depending on final App Store
   Connect interpretation and the exact submitted build.
 - Notes: Metadata and screenshots must not imply unlimited generation.
@@ -58,19 +59,21 @@ the public Privacy Policy.
 - Examples: photos, short clips, filenames or metadata needed for upload,
   selected order, source media references.
 - Collected by: Moments AV media picker and upload flow.
-- Stored where: uploaded to the configured backend/storage only after user
-  selection and project creation. The preferred runtime path uses
-  short-lived direct-to-R2 upload URLs from the Apps AV API; the API keeps the
-  upload job and project metadata, while R2 stores the binary media.
+- Stored where: kept locally in the app for editing. Full-resolution source
+  media is sent to the service only after explicit video creation confirmation,
+  or for a future real video preview that genuinely needs media bytes. The
+  lightweight Story Review path should use local metadata and direction inputs
+  without uploading originals.
 - Linked to user: yes.
 - Used for tracking: no.
 - Purpose: create private memory video drafts, previews, and final exports.
 - User-visible control: user selects media; project deletion requests deletion
   of source media and generated artifacts where available.
 - Sign-out behavior: projects and media are not visible in the signed-out app.
-- Account deletion behavior: TODO confirm Account AV deletion cascade and
-  storage retention.
-- Retention: TODO confirm production media retention and deletion timing.
+- Account deletion behavior: TODO confirm public Account AV deletion cascade
+  wording.
+- Retention: local app copies remain under user/device control; service-side
+  media and generated artifacts follow the public retention/deletion policy.
 - App Privacy category: User Content.
 - Notes: App Store screenshots must not show real private personal media.
 
@@ -78,8 +81,8 @@ the public Privacy Policy.
 
 - Examples: template, occasion, recipient text, tone, tempo, scene draft,
   project status, media asset IDs, render job IDs.
-- Collected by: Moments AV client and Account AV/Moments backend.
-- Stored where: Convex project workspace and Account AV workflow records.
+- Collected by: Moments AV client and Account AV/Moments service.
+- Stored where: Moments AV project service records.
 - Linked to user: yes.
 - Used for tracking: no.
 - Purpose: maintain private project state and let users preview/edit/export.
@@ -92,35 +95,37 @@ the public Privacy Policy.
 
 ### Generated Artifacts
 
-- Examples: story draft output, preview artifact, final export artifact, R2 key,
-  provider/model metadata, workflow run ID, render status.
-- Collected by: Account AV/Moments backend and returned to the app.
-- Stored where: backend object storage and Convex project records.
+- Examples: story draft output, preview artifact, final export artifact, render
+  status.
+- Collected by: Account AV/Moments service and returned to the app.
+- Stored where: Moments AV service records and generated media storage.
 - Linked to user: yes.
 - Used for tracking: no.
 - Purpose: preview and deliver requested memory videos.
 - User-visible control: preview/final render screens, project deletion.
 - Sign-out behavior: hidden from the signed-out app.
-- Account deletion behavior: TODO confirm backend artifact deletion.
-- Retention: TODO confirm storage retention.
+- Account deletion behavior: TODO confirm public generated-artifact deletion
+  wording.
+- Retention: TODO confirm public generated-artifact retention wording.
 - App Privacy category: User Content.
-- Notes: Provider/model metadata should be treated as operational metadata, not
-  App Store marketing copy.
+- Notes: Internal provider and workflow details belong in private docs, not App
+  Store marketing copy.
 
 ### Diagnostics And Operational Errors
 
 - Examples: client-safe API error codes/messages, render provider failures,
   failed configuration states.
-- Collected by: app/backend as part of request handling.
+- Collected by: app/service as part of request handling.
 - Stored where: TODO confirm production logging and crash/diagnostic providers.
-- Linked to user: TODO confirm backend log correlation.
+- Linked to user: TODO confirm service log correlation.
 - Used for tracking: no.
 - Purpose: reliability, support, abuse prevention, debugging.
 - User-visible control: support and deletion links; no in-app diagnostics export
   currently documented.
 - Sign-out behavior: TODO confirm log retention.
-- Account deletion behavior: TODO confirm log deletion/anonymization policy.
-- Retention: TODO confirm production retention.
+- Account deletion behavior: TODO confirm public log deletion/anonymization
+  wording.
+- Retention: TODO confirm public diagnostic retention wording.
 - App Privacy category: Diagnostics or Other Data.
 - Notes: Final App Privacy answers require the production SDK/logging inventory.
 
@@ -149,26 +154,27 @@ the public Privacy Policy.
 - Enabled in submitted build: yes.
 - Notes: Include in final SDK/provider review.
 
-### Convex
+### Project Sync Service
 
-- SDK/package: `convex-swift`.
+- SDK/package: project sync dependency used by Moments AV.
 - Purpose: project workspace sync and project mutations.
 - Data received: project metadata, media references, story scenes, render job
   records, artifact references.
 - Linked to user: yes.
 - Tracking: no.
-- Retention owner: Moments AV/Account AV backend.
-- Enabled in submitted build: yes when `MOMENTSAV_CONVEX_URL` is configured.
-- Notes: Confirm production deployment and retention.
+- Retention owner: Moments AV/Account AV service.
+- Enabled in submitted build: yes when production configuration is present.
+- Notes: Internal vendor, deployment, and retention details belong in private
+  docs.
 
 ### Apple Photos Picker
 
 - SDK/package: Apple PhotosUI.
 - Purpose: user-selected media import.
 - Data received: only media the user selects for the project.
-- Linked to user: yes once uploaded to the project backend.
+- Linked to user: yes once sent to the Moments AV service.
 - Tracking: no.
-- Retention owner: Moments AV/Account AV backend after upload.
+- Retention owner: Moments AV/Account AV service after upload.
 - Enabled in submitted build: yes.
 - Notes: Do not describe this as full photo library access unless the submitted
   entitlement/permission surface changes.
@@ -181,7 +187,7 @@ the public Privacy Policy.
 - Linked to user: depends on URL/source; TODO confirm current usage in submitted
   build.
 - Tracking: no.
-- Retention owner: local app cache/backend source.
+- Retention owner: local app cache or service source.
 - Enabled in submitted build: yes as a dependency.
 - Notes: Confirm whether final build actually exercises remote image loading.
 
@@ -220,7 +226,8 @@ Before entering App Store Connect answers:
 
 1. Inspect the exact archived build, not only `main`.
 2. Confirm Account AV production auth methods and deletion behavior.
-3. Confirm backend storage, object storage, Convex, and log retention.
+3. Confirm public service storage, generated media, project sync, and log
+   retention wording against private implementation docs.
 4. Confirm the credit/access surface visible in the submitted build.
 5. Confirm third-party SDK privacy manifests and App Store processing warnings.
 6. Confirm the public Privacy Policy matches this inventory.

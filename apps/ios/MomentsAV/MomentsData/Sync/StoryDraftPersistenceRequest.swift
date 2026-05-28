@@ -14,6 +14,7 @@ struct StoryScenePersistenceRequest {
 struct StoryReadyPersistenceRequest {
     let workflowRunId: String
     let moderationStatus: String
+    let storyInputSignature: String
 }
 
 extension StoryScenePersistenceRequest {
@@ -32,10 +33,11 @@ extension StoryScenePersistenceRequest {
 }
 
 extension StoryReadyPersistenceRequest {
-    static func draft(_ draft: MomentsStoryDraftResponse) -> StoryReadyPersistenceRequest {
+    static func draft(_ draft: MomentsStoryDraftResponse, storyInputSignature: String) -> StoryReadyPersistenceRequest {
         StoryReadyPersistenceRequest(
             workflowRunId: draft.workflowRunId,
-            moderationStatus: draft.moderationStatus == "allowed" ? "approved" : "blocked"
+            moderationStatus: draft.moderationStatus == "allowed" ? "approved" : "blocked",
+            storyInputSignature: storyInputSignature
         )
     }
 }

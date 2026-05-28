@@ -26,7 +26,7 @@ Varlock:
 
 | Variable | Production expectation |
 | --- | --- |
-| `MOMENTSAV_CONVEX_URL` | HTTPS Convex cloud URL for Moments AV production |
+| `MOMENTSAV_CONVEX_URL` | HTTPS project sync URL for Moments AV production |
 | `ACCOUNTAV_API_BASE_URL` | `https://api-account-av.avalsys.com` |
 | `ACCOUNTAV_PUBLISHABLE_KEY` | Clerk publishable key with `pk_live_` prefix |
 | `AVALSYS_APPLE_DEVELOPMENT_TEAM` | Apple team used for signed builds |
@@ -74,7 +74,7 @@ The checker must pass before archiving. It verifies:
 - Release bundle identifier is `com.avalsys.momentsav`
 - Account AV API is `https://api-account-av.avalsys.com`
 - Clerk publishable key has a `pk_live_` prefix
-- Convex URL is a Convex cloud URL
+- project sync URL is a valid HTTPS production URL
 - legal/support URLs are HTTPS
 - no preview, local, localhost, or `.dev` values are compiled into production
 - Account AV callback URI resolves to `com.avalsys.momentsav://callback`

@@ -91,7 +91,7 @@ Before submission, test these paths on the exact build:
 - [ ] Projects tab shows submitted demo projects.
 - [ ] Account tab shows support, privacy, terms, and delete-account routes.
 - [ ] Account deletion URL opens correctly.
-- [ ] Project deletion messaging matches backend behavior.
+- [ ] Project deletion messaging matches public service behavior.
 
 ## Provider Availability
 
@@ -116,7 +116,7 @@ Record only true limitations of the submitted build:
 - [ ] Supported locales:
 - [ ] Credit/access surface visible in this build:
 - [ ] Provider generation availability during review:
-- [ ] Any temporary backend limitation:
+- [ ] Any temporary service limitation visible to reviewers:
 
 ## Final Gate
 

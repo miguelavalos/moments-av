@@ -149,6 +149,57 @@ final class MomentsCreditGateTests: XCTestCase {
         XCTAssertTrue(MomentsStoryDraftRules.canDraft(mediaAssets: assets, template: .partyRecap))
     }
 
+    func testStoryDraftInputSignatureTracksMediaOrderAndDirection() {
+        func storyMedia(id: String, sortOrder: Int) -> MomentsStoryDraftMedia {
+            MomentsStoryDraftMedia(
+                mediaAssetId: id,
+                mediaKind: "image",
+                sortOrder: sortOrder,
+                selected: true,
+                moderationStatus: "approved"
+            )
+        }
+
+        var form = MomentDraftForm(template: .birthdayMessage)
+        form.occasion = "Trip"
+        form.details = "Use the desert photos."
+        let media = [
+            storyMedia(id: "media-a", sortOrder: 0),
+            storyMedia(id: "media-b", sortOrder: 1)
+        ]
+
+        let baseSignature = MomentsStoryDraftInputSignature.make(
+            projectId: "project-1",
+            form: form,
+            selectedMedia: media
+        )
+        let sameInputSignature = MomentsStoryDraftInputSignature.make(
+            projectId: "project-1",
+            form: form,
+            selectedMedia: media.reversed()
+        )
+
+        XCTAssertEqual(baseSignature, sameInputSignature)
+
+        let reorderedSignature = MomentsStoryDraftInputSignature.make(
+            projectId: "project-1",
+            form: form,
+            selectedMedia: [
+                storyMedia(id: "media-a", sortOrder: 1),
+                storyMedia(id: "media-b", sortOrder: 0)
+            ]
+        )
+        XCTAssertNotEqual(baseSignature, reorderedSignature)
+
+        form.details = "Use the desert photos and end on the group shot."
+        let changedDirectionSignature = MomentsStoryDraftInputSignature.make(
+            projectId: "project-1",
+            form: form,
+            selectedMedia: media
+        )
+        XCTAssertNotEqual(baseSignature, changedDirectionSignature)
+    }
+
     func testPreviewRulesRequireStoryReadyCreditsAndLimit() {
         let balance = MomentsCreditBalance(proMonthly: 0, promotional: 0, purchased: 1)
         let project = MomentDraftProject(

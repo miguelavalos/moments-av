@@ -32,7 +32,7 @@ struct MomentsAppShellView: View {
             },
             onSelectAssistant: {
                 chromeItem = nil
-                if createViewModel.hasMomentWorkspace {
+                if createViewModel.hasRecoverableMomentContext {
                     selectRootTab(.create)
                 } else {
                     selectRootTab(.avi)
@@ -168,8 +168,7 @@ struct MomentsAppShellView: View {
     }
 
     private var hasAviActiveContext: Bool {
-        createViewModel.hasMomentWorkspace
-            || aviViewModel.projectSummary.inProgressCount > 0
+        createViewModel.hasRecoverableMomentContext
     }
 
     private func cancelCreation() {

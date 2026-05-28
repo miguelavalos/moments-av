@@ -5,7 +5,8 @@ extension MomentsProjectRemoteClient {
     func saveStoryDraft(
         ownerUserId: String,
         projectId: String,
-        draft: MomentsStoryDraftResponse
+        draft: MomentsStoryDraftResponse,
+        storyInputSignature: String
     ) async throws {
         for scene in draft.scenes {
             try await upsertStoryScene(
@@ -18,7 +19,7 @@ extension MomentsProjectRemoteClient {
         try await markStoryReady(
             ownerUserId: ownerUserId,
             projectId: projectId,
-            request: .draft(draft)
+            request: .draft(draft, storyInputSignature: storyInputSignature)
         )
     }
 
@@ -59,7 +60,8 @@ extension MomentsProjectRemoteClient {
                 "ownerUserId": ownerUserId,
                 "projectId": projectId,
                 "workflowRunId": request.workflowRunId,
-                "moderationStatus": request.moderationStatus
+                "moderationStatus": request.moderationStatus,
+                "storyInputSignature": request.storyInputSignature
             ]
         )
     }

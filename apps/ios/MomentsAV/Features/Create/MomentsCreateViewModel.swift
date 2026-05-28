@@ -49,6 +49,7 @@ final class MomentsCreateViewModel: ObservableObject {
     let operationRunner = MomentsCreateOperationRunner()
     var cancellables = Set<AnyCancellable>()
     private var autoStyleMediaSignature: String?
+    var lastPreparedStoryInputSignature: String?
     private var hasUserStyleOverride = false
 
     var activeProject: MomentDraftProject? {
@@ -65,6 +66,19 @@ final class MomentsCreateViewModel: ObservableObject {
 
     var hasMomentWorkspace: Bool {
         activeProjectId != nil || isLocalMomentStarted
+    }
+
+    var hasRecoverableMomentContext: Bool {
+        activeProjectId != nil
+            || !selectedMedia.isEmpty
+            || isImportingMedia
+            || isDraftingStory
+            || !savedScenes.isEmpty
+            || !generatedScenes.isEmpty
+            || latestPreview != nil
+            || latestPreviewJob != nil
+            || finalExport != nil
+            || latestFinalJob != nil
     }
 
     var hasLocalMomentWorkspace: Bool {
@@ -197,6 +211,8 @@ final class MomentsCreateViewModel: ObservableObject {
         savedScenes = workspace.storyScenes
         generatedScenes = []
         storyStatusMessage = "Story draft ready for preview."
+        lastPreparedStoryInputSignature = workspace.project.storyInputSignature
+            ?? currentStoryInputSignature(projectId: workspace.project.id)
         activeWorkspace = workspace
         latestPreview = workspace.latestArtifact(kind: "preview")
         latestPreviewJob = workspace.latestRenderJob(kind: "preview")
@@ -270,6 +286,7 @@ final class MomentsCreateViewModel: ObservableObject {
         selectedMusicPreset = selectedCreationStyle.defaultMusic
         autoStyleSuggestion = nil
         autoStyleMediaSignature = nil
+        lastPreparedStoryInputSignature = nil
         hasUserStyleOverride = false
         applyStyleDefaults(selectedCreationStyle)
         newProjectStep = .status
@@ -280,6 +297,45 @@ final class MomentsCreateViewModel: ObservableObject {
         form.occasion = style.title
         form.tone = style.tone
         form.tempo = style.tempo
+    }
+
+    func currentStoryInputSignature(projectId: String) -> String {
+        MomentsStoryDraftInputSignature.make(
+            projectId: projectId,
+            form: form,
+            selectedMedia: currentStorySignatureMedia()
+        )
+    }
+
+    private func currentStorySignatureMedia() -> [MomentsStoryDraftMedia] {
+        let localMedia = effectiveSelectedMedia
+            .filter(\.selected)
+            .sorted { $0.sortOrder < $1.sortOrder }
+        if !localMedia.isEmpty {
+            return localMedia
+                .map {
+                    MomentsStoryDraftMedia(
+                        mediaAssetId: $0.id.uuidString,
+                        mediaKind: $0.kind,
+                        sortOrder: $0.sortOrder,
+                        selected: $0.selected,
+                        moderationStatus: "pending"
+                    )
+                }
+        }
+
+        return (effectiveActiveWorkspace?.mediaAssets ?? [])
+            .filter(\.selected)
+            .sorted { $0.sortOrder < $1.sortOrder }
+            .map {
+                MomentsStoryDraftMedia(
+                    mediaAssetId: $0.id,
+                    mediaKind: $0.kind,
+                    sortOrder: Int($0.sortOrder),
+                    selected: $0.selected,
+                    moderationStatus: $0.moderationStatus
+                )
+            }
     }
 }
 
@@ -321,8 +377,23 @@ extension MomentsCreateViewModel {
         guard !usesFullUITestFixture else { return }
         savedScenes = state.savedScenes
         generatedScenes = state.generatedScenes
-        storyStatusMessage = state.statusMessage
         isDraftingStory = state.isDrafting
+
+        let hasStoryScenes = !state.savedScenes.isEmpty || !state.generatedScenes.isEmpty
+        if hasStoryScenes {
+            if let activeProjectId {
+                lastPreparedStoryInputSignature = effectiveActiveWorkspace?.project.storyInputSignature
+                    ?? lastPreparedStoryInputSignature
+                    ?? currentStoryInputSignature(projectId: activeProjectId)
+            }
+            storyStatusMessage = nil
+        } else {
+            storyStatusMessage = state.statusMessage
+        }
+    }
+
+    func updateStoryStatusMessage(_ message: String?) {
+        storyStatusMessage = message
     }
 
     func applyPreviewGenerationState(_ state: MomentsCreatePreviewGenerationState) {

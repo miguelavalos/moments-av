@@ -59,7 +59,25 @@ struct MomentsCreateMediaCard: View {
                         Spacer(minLength: 0)
                     }
 
-                    if presentation.summary.selectedCount == 0 {
+                    if presentation.summary.hasTemporaryBackendMedia {
+                        Text("This draft still has temporary backend media, but the local photos are not available on this device. Re-select the media to edit or create again.")
+                            .font(.system(size: 13, weight: .semibold))
+                            .foregroundStyle(AVBrandColor.textSecondary)
+                            .lineLimit(nil)
+                            .fixedSize(horizontal: false, vertical: true)
+
+                        Button {
+                            showsPhotoPicker = true
+                        } label: {
+                            MomentsCreateMediaChoiceButtonLabel(
+                                title: "Re-select local media",
+                                systemImage: "photo.badge.plus",
+                                isPrimary: true
+                            )
+                        }
+                        .buttonStyle(.plain)
+                        .disabled(!presentation.canAddMedia || presentation.summary.isImporting)
+                    } else if presentation.summary.selectedCount == 0 {
                         Text("Start by adding the photos or clips you already have. Avi will organize the first version.")
                             .font(.system(size: 13, weight: .semibold))
                             .foregroundStyle(AVBrandColor.textSecondary)
@@ -111,6 +129,7 @@ struct MomentsCreateMediaCard: View {
         .navigationDestination(isPresented: $showsMediaManager) {
             MomentsCreateMediaManagerSheet(
                 selectedMedia: presentation.summary.selectedMedia,
+                syncedMediaAssets: presentation.syncedMediaAssets,
                 canAddMedia: presentation.canAddMedia,
                 isImporting: presentation.summary.isImporting,
                 importProgress: presentation.summary.importProgress,
@@ -147,7 +166,9 @@ struct MomentsCreateMediaCard: View {
 
     @ViewBuilder
     private var mediaVisual: some View {
-        if presentation.summary.selectedMedia.isEmpty {
+        if !presentation.summary.selectedMedia.isEmpty {
+            MomentsCreateStackedMediaSummary(selectedMedia: presentation.summary.selectedMedia)
+        } else {
             ZStack {
                 AVBrandColor.accent.opacity(0.08)
                 Image(systemName: "photo.on.rectangle.angled")
@@ -156,8 +177,6 @@ struct MomentsCreateMediaCard: View {
             }
             .frame(width: 92, height: 92)
             .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-        } else {
-            MomentsCreateStackedMediaSummary(selectedMedia: presentation.summary.selectedMedia)
         }
     }
 
@@ -173,6 +192,9 @@ struct MomentsCreateMediaCard: View {
     private var summaryText: String {
         let count = selectedCount
         if count == 0 {
+            if presentation.summary.hasTemporaryBackendMedia {
+                return "\(presentation.summary.temporaryBackendMediaCount) temporary items in backend."
+            }
             return "Choose photos, clips, or an album from your library."
         }
 
@@ -196,7 +218,7 @@ struct MomentsCreateMediaCard: View {
     }
 
     private var cardMinHeight: CGFloat {
-        selectedCount == 0 ? 232 : 134
+        selectedCount == 0 ? (presentation.summary.hasTemporaryBackendMedia ? 204 : 232) : 134
     }
 }
 
@@ -429,8 +451,46 @@ private struct MomentsCreateStackedMediaSummary: View {
     }
 }
 
+private struct MomentsCreateStackedSyncedMediaSummary: View {
+    let mediaAssets: [MomentMediaAsset]
+
+    var body: some View {
+        ZStack(alignment: .bottomTrailing) {
+            ZStack {
+                ForEach(Array(mediaAssets.prefix(4).enumerated()), id: \.element.id) { index, media in
+                    thumbnail(media)
+                        .offset(x: CGFloat(index) * -6, y: CGFloat(index) * 3)
+                        .rotationEffect(.degrees(Double(index - 1) * -2.0))
+                }
+            }
+            .frame(width: 92, height: 92, alignment: .center)
+
+            Text("\(mediaAssets.count)")
+                .font(.system(size: 11, weight: .black))
+                .foregroundStyle(.white)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 5)
+                .background(.black.opacity(0.52), in: Capsule())
+                .padding(4)
+        }
+        .frame(width: 92, height: 92)
+    }
+
+    private func thumbnail(_ media: MomentMediaAsset) -> some View {
+        MomentsCreateSyncedMediaThumbnailImage(media: media, size: 74)
+        .frame(width: 74, height: 74)
+        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+        .overlay {
+            RoundedRectangle(cornerRadius: 8, style: .continuous)
+                .stroke(.white.opacity(0.95), lineWidth: 2)
+        }
+        .shadow(color: AVBrandColor.ink.opacity(0.08), radius: 6, x: 0, y: 3)
+    }
+}
+
 private struct MomentsCreateMediaManagerSheet: View {
     let selectedMedia: [MomentsSelectedMedia]
+    let syncedMediaAssets: [MomentMediaAsset]
     let canAddMedia: Bool
     let isImporting: Bool
     let importProgress: MomentsMediaImportProgress?
@@ -481,7 +541,7 @@ private struct MomentsCreateMediaManagerSheet: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 16) {
                     MomentsCreateEditorAviPanel(
-                        selectedCount: workingMedia.count,
+                        selectedCount: displayCount,
                         isReordering: false,
                         canAddMedia: canAddMedia,
                         isImporting: isImporting,
@@ -500,27 +560,36 @@ private struct MomentsCreateMediaManagerSheet: View {
                         )
                     }
 
-                    if workingMedia.isEmpty {
+                    if workingMedia.isEmpty, syncedMediaAssets.isEmpty {
                         MomentsCreateMediaEmptyState(
                             canAddMedia: canAddMedia,
                             isImporting: isImporting,
                             addMedia: chooseManually
                         )
                     } else {
-                        LazyVGrid(columns: columns, alignment: .center, spacing: 16) {
-                            ForEach(Array(workingMedia.enumerated()), id: \.element.id) { index, media in
-                                MomentsCreateManageableMediaTile(
-                                    media: media,
-                                    index: index,
-                                    isImporting: isImporting,
-                                    zoom: {
-                                        zoomedMedia = media
-                                    },
-                                    remove: {
-                                        removeMedia(media)
-                                    }
-                                )
+                        if !workingMedia.isEmpty {
+                            LazyVGrid(columns: columns, alignment: .center, spacing: 16) {
+                                ForEach(Array(workingMedia.enumerated()), id: \.element.id) { index, media in
+                                    MomentsCreateManageableMediaTile(
+                                        media: media,
+                                        index: index,
+                                        isImporting: isImporting,
+                                        zoom: {
+                                            zoomedMedia = media
+                                        },
+                                        remove: {
+                                            removeMedia(media)
+                                        }
+                                    )
+                                }
                             }
+                        }
+
+                        if workingMedia.isEmpty, !syncedMediaAssets.isEmpty {
+                            MomentsCreateLocalMediaUnavailableState(
+                                itemCount: syncedMediaAssets.filter(\.selected).count,
+                                addMedia: chooseManually
+                            )
                         }
                     }
                 }
@@ -622,6 +691,10 @@ private struct MomentsCreateMediaManagerSheet: View {
         reorderMedia(previousOrder)
         orderBeforeAviSuggestion = nil
     }
+
+    private var displayCount: Int {
+        workingMedia.isEmpty ? syncedMediaAssets.count : workingMedia.count
+    }
 }
 
 private struct MomentsCreateMediaEmptyState: View {
@@ -683,6 +756,55 @@ private struct MomentsCreateMediaEmptyState: View {
                 }
                 .buttonStyle(.plain)
                 .disabled(!canAddMedia || isImporting)
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 10)
+        }
+    }
+}
+
+private struct MomentsCreateLocalMediaUnavailableState: View {
+    let itemCount: Int
+    let addMedia: () -> Void
+
+    var body: some View {
+        AVAppShellCard {
+            VStack(alignment: .center, spacing: 14) {
+                Image(systemName: "photo.on.rectangle.angled")
+                    .font(.system(size: 34, weight: .bold))
+                    .foregroundStyle(AVBrandColor.accent)
+                    .frame(width: 76, height: 76)
+                    .background(AVBrandColor.accent.opacity(0.08), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+                    .accessibilityHidden(true)
+
+                VStack(spacing: 5) {
+                    Text("Local media unavailable")
+                        .font(.system(size: 17, weight: .black))
+                        .foregroundStyle(AVBrandColor.textPrimary)
+
+                    Text("\(itemCount) temporary backend item\(itemCount == 1 ? "" : "s") exist for generation, but editing uses local photos on this device.")
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundStyle(AVBrandColor.textSecondary)
+                        .multilineTextAlignment(.center)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+
+                Button(action: addMedia) {
+                    Label("Re-select local media", systemImage: "photo.badge.plus")
+                        .font(.system(size: 14, weight: .black))
+                        .foregroundStyle(AVBrandColor.textPrimary)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 42)
+                        .background(
+                            RoundedRectangle(cornerRadius: 21, style: .continuous)
+                                .fill(AVBrandColor.accent.opacity(0.08))
+                        )
+                        .overlay {
+                            RoundedRectangle(cornerRadius: 21, style: .continuous)
+                                .stroke(AVBrandColor.accent.opacity(0.24), lineWidth: 1)
+                        }
+                }
+                .buttonStyle(.plain)
             }
             .frame(maxWidth: .infinity)
             .padding(.vertical, 10)
@@ -1171,6 +1293,44 @@ struct MomentsCreateSubtleInlineButtonStyle: ButtonStyle {
                 isEnabled ? AVBrandColor.accent.opacity(configuration.isPressed ? 0.14 : 0.08) : AVBrandColor.mutedSurface.opacity(0.7),
                 in: Capsule()
             )
+    }
+}
+
+struct MomentsCreateNeutralInlineButtonStyle: ButtonStyle {
+    @Environment(\.isEnabled) private var isEnabled
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .foregroundStyle(isEnabled ? AVBrandColor.textSecondary : AVBrandColor.textSecondary.opacity(0.45))
+            .padding(.horizontal, AVBrandSpacing.sm)
+            .padding(.vertical, 6)
+            .background(
+                isEnabled ? AVBrandColor.mutedSurface.opacity(configuration.isPressed ? 0.82 : 0.58) : AVBrandColor.mutedSurface.opacity(0.42),
+                in: Capsule()
+            )
+            .overlay {
+                Capsule()
+                    .stroke(AVBrandColor.borderSubtle.opacity(isEnabled ? 0.38 : 0.22), lineWidth: 1)
+            }
+    }
+}
+
+struct MomentsCreateDestructiveInlineButtonStyle: ButtonStyle {
+    @Environment(\.isEnabled) private var isEnabled
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .foregroundStyle(isEnabled ? AVBrandColor.textSecondary.opacity(0.92) : AVBrandColor.textSecondary.opacity(0.45))
+            .padding(.horizontal, AVBrandSpacing.sm)
+            .padding(.vertical, 6)
+            .background(
+                isEnabled ? Color.red.opacity(configuration.isPressed ? 0.11 : 0.07) : AVBrandColor.mutedSurface.opacity(0.42),
+                in: Capsule()
+            )
+            .overlay {
+                Capsule()
+                    .stroke(Color.red.opacity(isEnabled ? 0.16 : 0.08), lineWidth: 1)
+            }
     }
 }
 

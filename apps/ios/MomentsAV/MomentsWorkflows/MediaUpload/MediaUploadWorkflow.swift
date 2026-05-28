@@ -13,6 +13,7 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
     private let authTokenProvider: any MomentsAuthTokenProviding
     private let mediaAssetSaver: any MomentsMediaAssetSaving
     private let uploadClient: MomentsUploadClient
+    private var restoredWorkspaceProjectId: String?
 
     init(
         currentUserProvider: any MomentsCurrentUserProviding,
@@ -209,6 +210,18 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
         sortChronologically()
     }
 
+    override func workspaceDidChange(_ workspace: MomentProjectWorkspace?) {
+        guard selectedMedia.isEmpty,
+              let workspace,
+              restoredWorkspaceProjectId != workspace.project.id,
+              !workspace.mediaAssets.isEmpty else { return }
+
+        restoredWorkspaceProjectId = workspace.project.id
+        Task { [weak self] in
+            await self?.restoreLocalMedia(from: workspace)
+        }
+    }
+
     func persistSelectedMedia(projectId: String) async -> [MomentsStoryDraftMedia]? {
         guard let ownerUserId = currentUserProvider.currentUserId else {
             statusMessage = "Sign in before preparing the story."
@@ -224,15 +237,36 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
         if mediaToSave.isEmpty {
             return activeWorkspaceStoryMedia
         }
+        let syncedMediaBySourceIdentifier = (activeWorkspace?.mediaAssets ?? []).reduce(into: [String: MomentMediaAsset]()) {
+            guard let sourceIdentifier = $1.platformMediaAssetId else { return }
+            $0[sourceIdentifier] = $1
+        }
+        let alreadySyncedMedia = mediaToSave.compactMap { media -> MomentsStoryDraftMedia? in
+            guard let synced = syncedMediaBySourceIdentifier[media.sourceLocalIdentifier] else { return nil }
+            return MomentsStoryDraftMedia(
+                mediaAssetId: synced.id,
+                mediaKind: synced.kind,
+                sortOrder: media.sortOrder,
+                selected: media.selected,
+                moderationStatus: synced.moderationStatus
+            )
+        }
+        let pendingMediaToSave = mediaToSave.filter {
+            syncedMediaBySourceIdentifier[$0.sourceLocalIdentifier] == nil
+        }
+        if pendingMediaToSave.isEmpty {
+            statusMessage = "Media ready. Avi can prepare the story."
+            return alreadySyncedMedia.sorted { $0.sortOrder < $1.sortOrder }
+        }
 
         let generation = beginWorkflowGeneration()
         isImporting = true
-        importProgress = MomentsMediaImportProgress(completedCount: 0, totalCount: mediaToSave.count)
-        statusMessage = "Uploading media for the story."
+        importProgress = MomentsMediaImportProgress(completedCount: 0, totalCount: pendingMediaToSave.count)
+        statusMessage = "Uploading media for video creation."
 
         do {
             let result = try await MediaUploadPersistence.save(
-                imported: mediaToSave,
+                imported: pendingMediaToSave,
                 ownerUserId: ownerUserId,
                 bearerToken: bearerToken,
                 projectId: projectId,
@@ -248,7 +282,7 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
             statusMessage = result.statusMessage
             isImporting = false
             importProgress = nil
-            return result.savedMedia
+            return (alreadySyncedMedia + result.savedMedia).sorted { $0.sortOrder < $1.sortOrder }
         } catch {
             guard isCurrentWorkflowGeneration(generation) else { return nil }
             statusMessage = "Couldn’t save media for the story. Please try again."
@@ -265,7 +299,22 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
         importProgress = nil
         selectedMedia = []
         statusMessage = nil
+        restoredWorkspaceProjectId = nil
         clearActiveWorkspace()
+    }
+
+    private func restoreLocalMedia(from workspace: MomentProjectWorkspace) async {
+        do {
+            let restoredMedia = try await MediaPickerImport.loadLocalMediaAssets(workspace.mediaAssets)
+            guard activeWorkspace?.project.id == workspace.project.id, selectedMedia.isEmpty else { return }
+            selectedMedia = restoredMedia
+            if !restoredMedia.isEmpty {
+                statusMessage = "Local media ready for editing."
+            }
+        } catch {
+            guard activeWorkspace?.project.id == workspace.project.id else { return }
+            statusMessage = nil
+        }
     }
 
     private func beginImport(totalCount: Int) {

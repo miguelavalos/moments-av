@@ -30,16 +30,17 @@ final class StoryDraftPersistenceRequestTests: XCTestCase {
     func testReadyRequestApprovesAllowedDrafts() {
         let draft = makeDraft(moderationStatus: "allowed")
 
-        let request = StoryReadyPersistenceRequest.draft(draft)
+        let request = StoryReadyPersistenceRequest.draft(draft, storyInputSignature: "signature-1")
 
         XCTAssertEqual(request.workflowRunId, "workflow-1")
         XCTAssertEqual(request.moderationStatus, "approved")
+        XCTAssertEqual(request.storyInputSignature, "signature-1")
     }
 
     func testReadyRequestBlocksNonAllowedDrafts() {
         let draft = makeDraft(moderationStatus: "rejected")
 
-        let request = StoryReadyPersistenceRequest.draft(draft)
+        let request = StoryReadyPersistenceRequest.draft(draft, storyInputSignature: "signature-1")
 
         XCTAssertEqual(request.moderationStatus, "blocked")
     }

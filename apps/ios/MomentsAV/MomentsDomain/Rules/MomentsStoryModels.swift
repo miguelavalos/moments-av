@@ -1,3 +1,4 @@
+import CryptoKit
 import Foundation
 
 struct MomentsStoryDraftMedia: Encodable {
@@ -20,6 +21,38 @@ struct MomentsStoryDraftRequest: Encodable {
     let media: [MomentsStoryDraftMedia]
     let safetyAcknowledged = true
     let idempotencyKey: String
+}
+
+enum MomentsStoryDraftInputSignature {
+    static func make(
+        projectId: String,
+        form: MomentDraftForm,
+        selectedMedia: [MomentsStoryDraftMedia]
+    ) -> String {
+        let mediaSignature = selectedMedia
+            .filter(\.selected)
+            .sorted { left, right in
+                if left.sortOrder == right.sortOrder {
+                    return left.mediaAssetId < right.mediaAssetId
+                }
+                return left.sortOrder < right.sortOrder
+            }
+            .map { "\($0.sortOrder):\($0.mediaAssetId):\($0.mediaKind)" }
+            .joined(separator: "|")
+
+        let input = [
+            projectId,
+            form.template.id.rawValue,
+            form.tone.rawValue,
+            form.tempo.rawValue,
+            form.occasion.trimmingCharacters(in: .whitespacesAndNewlines),
+            form.details.trimmingCharacters(in: .whitespacesAndNewlines),
+            mediaSignature
+        ].joined(separator: "\u{1F}")
+
+        let digest = SHA256.hash(data: Data(input.utf8))
+        return digest.map { String(format: "%02x", $0) }.joined()
+    }
 }
 
 struct MomentsStoryDraftScene: Decodable, Identifiable, Equatable {

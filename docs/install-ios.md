@@ -76,7 +76,7 @@ scripts/check-ios-runtime-config.sh --env prod --configuration Release
 ```
 
 The runtime check prints non-secret values and redacts the publishable key. It
-fails if the bundle ID, environment, Account AV API host, Convex URL, version,
+fails if the bundle ID, environment, Account AV API host, project sync URL, version,
 build number, legal URLs, or key prefix do not match the selected environment.
 
 ## Tests

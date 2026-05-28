@@ -15,8 +15,8 @@ The signed-in creation flow is media-first:
 1. the user starts a Moment and selects photos or clips;
 2. the user can choose individual media or add photos from an exposed Photos
    collection/album;
-3. the app shows a short preparing state with item progress while local media
-   is imported;
+3. the app shows a blocking full-screen preparing state with item progress while
+   local media is imported;
 4. Moments AV stores the in-progress Moment locally until the user cancels or
    prepares the story;
 5. the Creation Dashboard summarizes media and direction before story
@@ -36,11 +36,25 @@ pace, and optional user note before any paid video generation. Video creation
 and any future preview/final render provider calls remain separate workflow
 stages with explicit credit gating.
 
-When the user taps `Prepare story`, the app first persists the selected local
-media into the active project, then sends the persisted media IDs to the story
-draft endpoint. This avoids drafting against temporary local identifiers and
-keeps the story plan aligned with the backend project state. Duplicate media
-selected in later imports is skipped automatically.
+When the user taps `Prepare story`, the app should keep the step lightweight:
+it uses the selected local media, ordering, style, music, and note to prepare a
+story review before video creation. Duplicate media selected in later imports is
+skipped automatically.
+
+The app remains local-first for editing. Local Photos assets and the app's local
+thumbnail cache are the source of truth for Dashboard and Edit Media screens.
+Temporary media needed for video creation is separate from the editable local
+copy shown in the app. If local media is unavailable on the device, the user
+must re-select it to edit the Moment.
+
+After story preparation, the dashboard shows a Story Review card with the
+prepared scene plan before the paid video action. If the user changes media or
+direction after that review, the app requires a fresh `Prepare story` step before
+enabling video creation. Repeating `Prepare story` with the same local media
+order, theme, music, and note reuses the prepared story state. When the user
+confirms `Create video`, the app starts the paid video creation flow. Users
+should save final videos to Photos or share/export them for durable local
+access.
 
 ## First Publication
 

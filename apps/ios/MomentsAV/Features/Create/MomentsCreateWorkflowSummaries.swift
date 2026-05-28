@@ -46,10 +46,15 @@ struct MomentsCreateMediaSummary: Equatable {
     var statusMessage: String?
 
     var selectedCount: Int {
-        MomentsMediaRules.selectedCount(
-            localMedia: selectedMedia,
-            syncedMedia: syncedMediaAssets
-        )
+        selectedMedia.filter(\.selected).count
+    }
+
+    var hasTemporaryBackendMedia: Bool {
+        selectedMedia.isEmpty && syncedMediaAssets.contains(where: \.selected)
+    }
+
+    var temporaryBackendMediaCount: Int {
+        syncedMediaAssets.filter(\.selected).count
     }
 
     func remainingSlots(template: MomentTemplate) -> Int {
@@ -77,6 +82,54 @@ struct MomentsCreateStorySummary: Equatable {
     var generatedScenes: [MomentsStoryDraftScene] = []
     var isDrafting = false
     var statusMessage: String?
+
+    var hasScenes: Bool {
+        !savedScenes.isEmpty || !generatedScenes.isEmpty
+    }
+
+    var reviewScenes: [MomentsCreateStoryReviewScene] {
+        if !savedScenes.isEmpty {
+            return savedScenes
+                .sorted { $0.sceneIndex < $1.sceneIndex }
+                .map {
+                    MomentsCreateStoryReviewScene(
+                        title: Self.sceneTitle(Int($0.sceneIndex)),
+                        caption: $0.caption,
+                        detail: $0.narrationText
+                    )
+                }
+        }
+
+        return generatedScenes
+            .sorted { $0.sceneIndex < $1.sceneIndex }
+            .map {
+                MomentsCreateStoryReviewScene(
+                    title: Self.sceneTitle($0.sceneIndex),
+                    caption: $0.caption,
+                    detail: $0.narrationText
+                )
+            }
+    }
+
+    private static func sceneTitle(_ index: Int) -> String {
+        switch index {
+        case 0:
+            return "Opening"
+        case 1:
+            return "Main moments"
+        case 2:
+            return "Ending"
+        default:
+            return "Scene \(index + 1)"
+        }
+    }
+}
+
+struct MomentsCreateStoryReviewScene: Equatable, Identifiable {
+    var id: String { "\(title)-\(caption)" }
+    let title: String
+    let caption: String
+    let detail: String?
 }
 
 struct MomentsCreatePreviewSummary: Equatable {

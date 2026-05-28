@@ -60,7 +60,7 @@ struct MomentsHomeScreen: View {
                     title: aviContextTitle,
                     detail: aviContextDetail,
                     buttonTitle: aviContextButtonTitle,
-                    hasMomentContext: createViewModel.hasMomentWorkspace,
+                    hasMomentContext: createViewModel.hasRecoverableMomentContext,
                     isSignedIn: viewModel.isSignedIn,
                     action: viewModel.isSignedIn ? startMoment : startSignInFlow
                 )
@@ -95,7 +95,7 @@ struct MomentsHomeScreen: View {
 
     private var aviContextTitle: String {
         guard viewModel.isSignedIn else { return "Sign in to create" }
-        if createViewModel.hasMomentWorkspace {
+        if createViewModel.hasRecoverableMomentContext {
             if createViewModel.previewSummary.latestPreview != nil {
                 return "Preview ready"
             }
@@ -114,7 +114,7 @@ struct MomentsHomeScreen: View {
         guard viewModel.isSignedIn else {
             return "Connect your account to create memory films, previews, and final videos."
         }
-        if createViewModel.hasMomentWorkspace {
+        if createViewModel.hasRecoverableMomentContext {
             let count = createViewModel.mediaSelectedCount
             if createViewModel.previewSummary.latestPreview != nil {
                 return "Your preview is ready to review before final video."
@@ -135,7 +135,7 @@ struct MomentsHomeScreen: View {
 
     private var aviContextButtonTitle: String {
         guard viewModel.isSignedIn else { return "Sign in" }
-        return createViewModel.hasMomentWorkspace ? "Continue" : "Create"
+        return createViewModel.hasRecoverableMomentContext ? "Continue" : "Create"
     }
 }
 

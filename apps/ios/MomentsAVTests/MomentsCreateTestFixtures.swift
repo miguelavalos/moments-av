@@ -54,12 +54,12 @@ enum MomentsCreateTestFixtures {
         )
     }
 
-    static func makeScene(id: String, sceneIndex: Double = 0) -> MomentStoryScene {
+    static func makeScene(id: String, sceneIndex: Double = 0, caption: String = "Opening") -> MomentStoryScene {
         MomentStoryScene(
             id: id,
             sceneIndex: sceneIndex,
             mediaAssetIds: [],
-            caption: "Opening",
+            caption: caption,
             narrationText: nil,
             tone: nil,
             musicCue: nil,

@@ -25,19 +25,7 @@ extension MomentsProjectRemoteClient {
 
         let savedId: String? = try await client.mutation(
             "moments:addMediaAsset",
-            with: [
-                "ownerUserId": ownerUserId,
-                "projectId": projectId,
-                "platformMediaAssetId": request.platformMediaAssetId,
-                "uploadId": request.uploadId,
-                "kind": request.kind,
-                "r2Key": request.r2Key,
-                "sortOrder": request.sortOrder,
-                "selected": request.selected,
-                "moderationStatus": request.moderationStatus,
-                "uploadedAt": milliseconds(from: request.uploadedAt),
-                "sourceExpiresAt": expirationMilliseconds(from: request.uploadedAt)
-            ]
+            with: mediaAssetPayload(request, ownerUserId: ownerUserId, projectId: projectId)
         )
         return try requireSavedMediaAssetId(savedId)
     }
@@ -55,7 +43,7 @@ extension MomentsProjectRemoteClient {
             with: [
                 "ownerUserId": ownerUserId,
                 "projectId": projectId,
-                "mediaAssets": requests.map(mediaAssetPayload)
+                "mediaAssets": requests.map { mediaAssetPayload($0) }
             ]
         )
         guard let savedIds, savedIds.count == requests.count else {
@@ -71,8 +59,12 @@ extension MomentsProjectRemoteClient {
         return savedId
     }
 
-    private func mediaAssetPayload(_ request: MediaAssetPersistenceRequest) -> [String: ConvexEncodable?] {
-        [
+    private func mediaAssetPayload(
+        _ request: MediaAssetPersistenceRequest,
+        ownerUserId: String? = nil,
+        projectId: String? = nil
+    ) -> [String: ConvexEncodable?] {
+        var payload: [String: ConvexEncodable?] = [
             "platformMediaAssetId": request.platformMediaAssetId as ConvexEncodable,
             "uploadId": request.uploadId as ConvexEncodable,
             "kind": request.kind as ConvexEncodable,
@@ -83,5 +75,15 @@ extension MomentsProjectRemoteClient {
             "uploadedAt": milliseconds(from: request.uploadedAt) as ConvexEncodable,
             "sourceExpiresAt": expirationMilliseconds(from: request.uploadedAt) as ConvexEncodable
         ]
+        if let ownerUserId {
+            payload["ownerUserId"] = ownerUserId as ConvexEncodable
+        }
+        if let projectId {
+            payload["projectId"] = projectId as ConvexEncodable
+        }
+        if let thumbnailR2Key = request.thumbnailR2Key, !thumbnailR2Key.isEmpty {
+            payload["thumbnailR2Key"] = thumbnailR2Key as ConvexEncodable
+        }
+        return payload
     }
 }

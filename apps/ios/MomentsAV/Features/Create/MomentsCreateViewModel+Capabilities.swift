@@ -47,7 +47,7 @@ extension MomentsCreateViewModel {
     }
 
     var canGeneratePreview: Bool {
-        workflowCapability.canGeneratePreview
+        workflowCapability.canGeneratePreview && isStoryPreparedForCurrentInput
     }
 
     var canRefreshPreviewStatus: Bool {
@@ -55,7 +55,7 @@ extension MomentsCreateViewModel {
     }
 
     var canGenerateFinalRender: Bool {
-        workflowCapability.canGenerateFinalRender
+        workflowCapability.canGenerateFinalRender && isStoryPreparedForCurrentInput
     }
 
     var canRefreshFinalRenderStatus: Bool {
@@ -79,6 +79,19 @@ extension MomentsCreateViewModel {
             latestPreview: effectiveLatestPreview,
             selectedMediaCount: mediaSelectedCount
         )
+    }
+
+    var isStoryPreparedForCurrentInput: Bool {
+        if usesFullUITestFixture {
+            return true
+        }
+        guard storySummary.hasScenes else { return false }
+        guard let activeProjectId else { return false }
+        let preparedSignature = lastPreparedStoryInputSignature ?? effectiveActiveWorkspace?.project.storyInputSignature
+        guard let preparedSignature else {
+            return true
+        }
+        return currentStoryInputSignature(projectId: activeProjectId) == preparedSignature
     }
 
     func spendPlanDescription(for template: MomentTemplate) -> String {

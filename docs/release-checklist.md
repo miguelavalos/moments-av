@@ -33,7 +33,7 @@ and review note must match the exact build submitted for review.
   reachable outside the app.
 - [ ] `scripts/check-public-urls.sh` passes.
 - [ ] App Privacy answers match Account AV, selected user media, generated
-  artifacts, credits, diagnostics, and backend retention behavior.
+  artifacts, credits, diagnostics, and public service retention behavior.
 - [ ] App Privacy answers have been checked against
   [app-privacy-inventory.md](app-privacy-inventory.md).
 - [ ] Account deletion is reachable from the app and documented for review.
@@ -188,7 +188,7 @@ notes draft.
 - [ ] Explain credit behavior and when credits are committed.
 - [ ] Explain whether preview/final generation requires production provider
   availability during review.
-- [ ] Explain any region, device, or backend limitation.
+- [ ] Explain any region, device, or service limitation visible to reviewers.
 - [ ] Confirm support, privacy, terms, and deletion URLs.
 
 ## Final Submission Gate
@@ -201,7 +201,7 @@ Submit only when all answers are yes:
 
 1. Does the archive use production config and the production bundle ID?
 2. Are public URLs live and aligned with in-app links?
-3. Are App Privacy answers backed by the real iOS and backend behavior?
+3. Are App Privacy answers backed by the real iOS and public service behavior?
 4. Are screenshots captured from the same build family being submitted?
 5. Are all visible assets canonical and approved?
 6. Does every ASO claim match a shipped, reviewable feature?

@@ -37,10 +37,11 @@ final class MediaAssetPersistenceRequestTests: XCTestCase {
             uploadedAt: uploadedAt
         )
 
-        XCTAssertEqual(request.platformMediaAssetId, "asset-1")
+        XCTAssertEqual(request.platformMediaAssetId, "local-1")
         XCTAssertEqual(request.uploadId, "upload-1")
         XCTAssertEqual(request.kind, "video")
         XCTAssertEqual(request.r2Key, "momentsav/user/project/source/video.mov")
+        XCTAssertNil(request.thumbnailR2Key)
         XCTAssertEqual(request.sortOrder, 2.0)
         XCTAssertTrue(request.selected)
         XCTAssertEqual(request.moderationStatus, "pending")

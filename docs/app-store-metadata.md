@@ -55,7 +55,7 @@ Notes:
 - The keyword draft avoids `moments`, `AV`, `memory`, `video`, and `photos`
   duplication except `photos`, which should be removed if App Store Connect or
   final title/subtitle coverage makes it wasteful.
-- `private` is useful only if the final privacy policy and backend behavior
+- `private` is useful only if the final privacy policy and service behavior
   support the claim.
 
 ## Alternative App Names

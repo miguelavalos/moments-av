@@ -29,7 +29,8 @@ protocol MomentsStoryDraftSaving {
     func saveStoryDraft(
         ownerUserId: String,
         projectId: String,
-        draft: MomentsStoryDraftResponse
+        draft: MomentsStoryDraftResponse,
+        storyInputSignature: String
     ) async throws
 }
 

@@ -44,28 +44,33 @@ final class StoryDraftWorkflow: WorkspaceObservingWorkflow {
         form: MomentDraftForm,
         selectedMedia: [MomentsSelectedMedia],
         persistedMedia: [MomentsStoryDraftMedia]? = nil
-    ) async {
+    ) async -> Bool {
         guard let ownerUserId = currentUserProvider.currentUserId else {
             statusMessage = "Sign in before drafting the story."
-            return
+            return false
         }
         guard let bearerToken = try? await authTokenProvider.currentBearerToken() else {
             statusMessage = "Sign in again before drafting the story."
-            return
+            return false
         }
         guard isConfigured else {
             statusMessage = "Story drafting is not configured yet."
-            return
+            return false
         }
 
         let media = persistedMedia ?? storyMedia(from: selectedMedia, fallbackMediaAssets: activeWorkspace?.mediaAssets)
+        let storyInputSignature = MomentsStoryDraftInputSignature.make(
+            projectId: projectId,
+            form: form,
+            selectedMedia: media
+        )
         let availability = MomentsMediaRules.availability(
             template: form.template,
             selectedCount: media.filter(\.selected).count
         )
         guard availability.canUseSelection else {
             statusMessage = generateBlockMessage(availability)
-            return
+            return false
         }
 
         let generation = beginWorkflowGeneration()
@@ -80,23 +85,27 @@ final class StoryDraftWorkflow: WorkspaceObservingWorkflow {
                 form: form,
                 selectedMedia: media
             )
-            guard isCurrentWorkflowGeneration(generation) else { return }
+            guard isCurrentWorkflowGeneration(generation) else { return false }
             generatedDraft = draft
             try await storyDraftSaver.saveStoryDraft(
                 ownerUserId: ownerUserId,
                 projectId: projectId,
-                draft: draft
+                draft: draft,
+                storyInputSignature: storyInputSignature
             )
-            guard isCurrentWorkflowGeneration(generation) else { return }
+            guard isCurrentWorkflowGeneration(generation) else { return false }
             workspaceObserver.observeWorkspace(ownerUserId: ownerUserId, projectId: projectId)
             statusMessage = draft.helperCopy
         } catch {
-            guard isCurrentWorkflowGeneration(generation) else { return }
+            guard isCurrentWorkflowGeneration(generation) else { return false }
             statusMessage = "Couldn’t prepare the story. Please try again."
+            isDrafting = false
+            return false
         }
 
-        guard isCurrentWorkflowGeneration(generation) else { return }
+        guard isCurrentWorkflowGeneration(generation) else { return false }
         isDrafting = false
+        return true
     }
 
     func reset(force: Bool = false) {

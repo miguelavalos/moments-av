@@ -58,7 +58,7 @@ scripts/check-ios-runtime-config.sh --env prod --configuration Release
 - Build number:
 - Config environment:
 - Account AV API:
-- Convex URL:
+- Project sync URL:
 - Support URL:
 - Privacy URL:
 - Terms URL:
