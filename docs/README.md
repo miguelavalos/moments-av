@@ -85,6 +85,21 @@ For a 15-second Moment, 4-10 media items is the preferred creative range. The
 app can accept up to 20 so users are not forced to over-curate too early, but Avi
 may keep dense selections brief or suggest exclusions before credits are spent.
 
+Story reviews are a product resource separate from final-render credits. Credit
+packs and Pro allocations should include a review allowance so users can refine
+media order, story direction, quality warnings, and render planning without
+triggering expensive final video work every time. Running out of included
+reviews must not block video creation. The Review screen should explain that the
+included reviews are used and offer three friendly choices: continue directly to
+video creation, add more credits/reviews, or spend credits on a review bundle
+when that product exists.
+
+Watermark policy is also product-owned. Pro users should receive watermark-free
+final exports. Non-Pro users may create with a subtle Moments AV watermark at
+the base credit cost, or spend an extra credit to remove it for that final
+export. The UI must show this choice before reserving credits, including the
+total cost and whether Pro already includes watermark removal.
+
 During final creation, Convex is the realtime status authority. The draft is
 locked for editing while a final render is queued, rendering, validating, or
 saving, but the app itself must remain usable. The dashboard should show

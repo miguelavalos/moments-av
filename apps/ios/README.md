@@ -44,6 +44,12 @@ source object exists in storage.
 One Moments AV credit equals one 15-second final video block. iOS should display
 that product rule consistently, while Account AV owns the actual render plan and
 provider route selection.
+Story reviews should be shown as included review allowance, not as final render
+credits. If the allowance is exhausted, iOS should still allow direct video
+creation and offer clear non-technical choices to add more reviews/credits.
+Final exports should show watermark policy before credit reservation: Pro
+removes the Moments AV watermark automatically; non-Pro users can keep the mark
+at base cost or spend an extra credit to remove it for that export.
 
 ## Build
 
