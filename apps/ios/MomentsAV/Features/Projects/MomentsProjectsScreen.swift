@@ -36,7 +36,7 @@ struct MomentsProjectsScreen: View {
         AVAppShellScrollableScreenScaffold {
             MomentsTheme.shellBackground
         } content: {
-            if createViewModel.activeProjectId != nil {
+            if createViewModel.hasLocalMomentWorkspace {
                 MomentsCurrentCreationCard(
                     selectedCount: createViewModel.mediaSelectedCount,
                     continueCreation: startProject

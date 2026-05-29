@@ -53,7 +53,7 @@ struct MomentsAppShellView: View {
         .overlay(alignment: .bottomTrailing) {
             if showsNewMomentFloatingAction {
                 Button {
-                    startOrContinueMoment()
+                    startFloatingMomentAction()
                 } label: {
                     Image(systemName: "plus")
                         .font(.system(size: 22, weight: .black))
@@ -189,6 +189,22 @@ struct MomentsAppShellView: View {
             createViewModel.continueProject(activeProject)
             selectRootTab(.create)
             return
+        }
+
+        if createViewModel.canBeginNewProject {
+            createViewModel.beginNewProject(openMediaPicker: true)
+        }
+        selectRootTab(.create)
+    }
+
+    private func startFloatingMomentAction() {
+        if createViewModel.hasLocalMomentWorkspace {
+            selectRootTab(.create)
+            return
+        }
+
+        if createViewModel.activeProjectId != nil {
+            createViewModel.clearSessionState()
         }
 
         if createViewModel.canBeginNewProject {
