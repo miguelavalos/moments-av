@@ -688,6 +688,8 @@ private struct MomentsCreateStoryReviewPage: View {
 
                     MomentsCreateStoryReviewCard(presentation: presentation)
 
+                    MomentsCreateReadinessChecklistCard(presentation: presentation)
+
                     AVAppShellCard {
                         VStack(alignment: .leading, spacing: 14) {
                             HStack(alignment: .top, spacing: 12) {
@@ -718,6 +720,7 @@ private struct MomentsCreateStoryReviewPage: View {
                                     .frame(height: 50)
                             }
                             .buttonStyle(MomentsCreateSoftActionButtonStyle())
+                            .disabled(isPrimaryCreateDisabled)
 
                             HStack(spacing: 14) {
                                 Button(action: { showsDiscardDraftConfirmation = true }) {
@@ -789,12 +792,100 @@ private struct MomentsCreateStoryReviewPage: View {
         hasRenderPlan ? "video.fill" : "checklist"
     }
 
+    private var isPrimaryCreateDisabled: Bool {
+        presentation.mediaSummary.reviewCount == 0 || !presentation.storySummary.hasScenes
+    }
+
     private func primaryCreateAction() {
+        guard !isPrimaryCreateDisabled else { return }
         if hasRenderPlan {
             showsCreateVideoConfirmation = true
         } else {
             createVideo()
         }
+    }
+}
+
+private struct MomentsCreateReadinessChecklistCard: View {
+    let presentation: MomentsCreateWorkflowPresentation
+
+    var body: some View {
+        AVAppShellCard {
+            VStack(alignment: .leading, spacing: 12) {
+                Text("Ready check")
+                    .font(.system(size: 13, weight: .black))
+                    .foregroundStyle(AVBrandColor.textPrimary)
+
+                VStack(spacing: 8) {
+                    MomentsCreateReadinessRow(
+                        title: "Media selected",
+                        detail: mediaDetail,
+                        isReady: presentation.mediaSummary.reviewCount > 0
+                    )
+                    MomentsCreateReadinessRow(
+                        title: "Story prepared",
+                        detail: storyDetail,
+                        isReady: presentation.storySummary.hasScenes
+                    )
+                    MomentsCreateReadinessRow(
+                        title: "Video plan",
+                        detail: planDetail,
+                        isReady: presentation.finalRenderSummary.renderPlan != nil
+                    )
+                    MomentsCreateReadinessRow(
+                        title: "Credits",
+                        detail: "\(MomentsCreditCopy.countTitle(presentation.finalRenderSummary.creditCost)) reserved when video starts",
+                        isReady: presentation.finalRenderSummary.creditCost > 0
+                    )
+                }
+            }
+        }
+    }
+
+    private var mediaDetail: String {
+        let count = presentation.mediaSummary.reviewCount
+        return count > 0 ? "\(count) \(count == 1 ? "item" : "items") ready" : "Add media first"
+    }
+
+    private var storyDetail: String {
+        let count = presentation.storySummary.reviewScenes.count
+        return count > 0 ? "\(count) \(count == 1 ? "scene" : "scenes") ready" : "Prepare the story first"
+    }
+
+    private var planDetail: String {
+        guard let plan = presentation.finalRenderSummary.renderPlan?.plan else {
+            return "Prepared before final render"
+        }
+        let seconds = plan.targetDurationMs / 1000
+        return "\(seconds)s · \(plan.usedAssetCount) media items"
+    }
+}
+
+private struct MomentsCreateReadinessRow: View {
+    let title: String
+    let detail: String
+    let isReady: Bool
+
+    var body: some View {
+        HStack(spacing: 10) {
+            Image(systemName: isReady ? "checkmark.circle.fill" : "circle.dashed")
+                .font(.system(size: 16, weight: .black))
+                .foregroundStyle(isReady ? AVBrandColor.accent : AVBrandColor.textSecondary.opacity(0.6))
+                .frame(width: 24)
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title)
+                    .font(.system(size: 12, weight: .black))
+                    .foregroundStyle(AVBrandColor.textPrimary)
+                Text(detail)
+                    .font(.system(size: 11, weight: .semibold))
+                    .foregroundStyle(AVBrandColor.textSecondary)
+                    .lineLimit(2)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .padding(10)
+        .background(AVBrandColor.neutral100.opacity(0.66), in: RoundedRectangle(cornerRadius: 8, style: .continuous))
     }
 }
 
