@@ -20,6 +20,25 @@ struct MomentsAppShellView: View {
     @State private var navigationStackResetID = UUID()
 
     var body: some View {
+        Group {
+            if locksUnsavedLocalMoment {
+                lockedCreateContent
+            } else {
+                appScaffold
+            }
+        }
+        .sheet(isPresented: $creditsPaywallIsPresented) {
+            MomentsCreditsPaywallView(
+                balance: accountController.creditBalance,
+                isSignedIn: accountController.isSignedIn,
+                startSignInFlow: startSignInFlow,
+                claimPromotionCode: accountController.claimPromotionCode,
+                dismiss: { creditsPaywallIsPresented = false }
+            )
+        }
+    }
+
+    private var appScaffold: some View {
         AVAppShellConfiguredScaffold(
             selectedTabID: footerSelectedTab,
             tabs: MomentsRootTab.footerTabs.map(\.shellTab),
@@ -71,15 +90,14 @@ struct MomentsAppShellView: View {
                 .padding(.bottom, 104)
             }
         }
-        .sheet(isPresented: $creditsPaywallIsPresented) {
-            MomentsCreditsPaywallView(
-                balance: accountController.creditBalance,
-                isSignedIn: accountController.isSignedIn,
-                startSignInFlow: startSignInFlow,
-                claimPromotionCode: accountController.claimPromotionCode,
-                dismiss: { creditsPaywallIsPresented = false }
-            )
+    }
+
+    private var lockedCreateContent: some View {
+        NavigationStack(path: $navigationPath) {
+            screen(for: .create)
         }
+        .id(navigationStackResetID)
+        .background(MomentsTheme.shellBackground.ignoresSafeArea())
     }
 
     private var footerAssistant: AVAppShellConfiguredAssistant {
@@ -119,7 +137,8 @@ struct MomentsAppShellView: View {
                 MomentsCreateScreen(
                     startSignInFlow: startSignInFlow,
                     openCredits: openCredits,
-                    cancelCreation: cancelCreation
+                    cancelCreation: cancelCreation,
+                    bottomSafeAreaPadding: locksUnsavedLocalMoment ? 16 : 82
                 )
             case .projects:
                 MomentsProjectsScreen(
@@ -168,6 +187,12 @@ struct MomentsAppShellView: View {
             && (createViewModel.hasMomentWorkspace
                 || projectsViewModel.projectSummary.latestInProgressProject != nil
                 || createViewModel.canBeginNewProject)
+    }
+
+    private var locksUnsavedLocalMoment: Bool {
+        chromeItem == nil
+            && selectedTab == .create
+            && createViewModel.hasLocalMomentWorkspace
     }
 
     private var hasAviActiveContext: Bool {

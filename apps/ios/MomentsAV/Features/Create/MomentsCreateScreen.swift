@@ -9,6 +9,19 @@ struct MomentsCreateScreen: View {
     let startSignInFlow: () -> Void
     let openCredits: () -> Void
     let cancelCreation: () -> Void
+    let bottomSafeAreaPadding: CGFloat
+
+    init(
+        startSignInFlow: @escaping () -> Void,
+        openCredits: @escaping () -> Void,
+        cancelCreation: @escaping () -> Void,
+        bottomSafeAreaPadding: CGFloat = 82
+    ) {
+        self.startSignInFlow = startSignInFlow
+        self.openCredits = openCredits
+        self.cancelCreation = cancelCreation
+        self.bottomSafeAreaPadding = bottomSafeAreaPadding
+    }
 
     var body: some View {
         MomentsCreateWorkflowContent(
@@ -21,7 +34,7 @@ struct MomentsCreateScreen: View {
         .background(MomentsTheme.shellBackground.ignoresSafeArea())
         .safeAreaPadding(.horizontal, 20)
         .safeAreaPadding(.top, 12)
-        .safeAreaPadding(.bottom, 82)
+        .safeAreaPadding(.bottom, bottomSafeAreaPadding)
         .fullScreenCover(
             isPresented: Binding(
                 get: { viewModel.workflowPresentation.showsBlockingPreparation || viewModel.isPreparingStory },
