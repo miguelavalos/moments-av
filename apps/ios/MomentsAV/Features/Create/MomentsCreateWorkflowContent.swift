@@ -144,7 +144,7 @@ private struct MomentsCreateMediaFirstWorkspace: View {
                     reviewStoryFirst: reviewStoryFirst,
                     generatePreview: generatePreview,
                     refreshPreviewStatus: refreshPreviewStatus,
-                    generateFinalRender: { showsCreateVideoConfirmation = true },
+                    generateFinalRender: primaryFinalRenderAction,
                     refreshFinalRenderStatus: refreshFinalRenderStatus
                 )
             }
@@ -219,6 +219,14 @@ private struct MomentsCreateMediaFirstWorkspace: View {
 
     private var creditCostTitle: String {
         MomentsCreditCopy.countTitle(presentation.finalRenderSummary.creditCost)
+    }
+
+    private func primaryFinalRenderAction() {
+        if presentation.finalRenderSummary.renderPlan == nil {
+            generateFinalRender()
+        } else {
+            showsCreateVideoConfirmation = true
+        }
     }
 
     private func discardCurrentDraft() {
@@ -961,7 +969,10 @@ private struct MomentsCreatePrimaryActionBar: View {
             return presentation.finalRenderSummary.isRefreshingStatus ? "Checking..." : "Check video status"
         }
         if presentation.canGenerateFinalRender {
-            return presentation.finalRenderSummary.isGenerating ? "Creating video..." : "Create video · \(creditCostTitle)"
+            if presentation.finalRenderSummary.isGenerating {
+                return "Preparing video..."
+            }
+            return presentation.finalRenderSummary.renderPlan == nil ? "Prepare video plan" : "Create video · \(creditCostTitle)"
         }
         if presentation.previewSummary.latestPreview != nil {
             return presentation.finalRenderSummary.isGenerating ? "Creating final..." : "Create final"
@@ -989,7 +1000,7 @@ private struct MomentsCreatePrimaryActionBar: View {
             return "arrow.clockwise"
         }
         if presentation.canGenerateFinalRender {
-            return "video.fill"
+            return presentation.finalRenderSummary.renderPlan == nil ? "checklist" : "video.fill"
         }
         if needsSignInForStory {
             return "person.crop.circle.badge.checkmark"
