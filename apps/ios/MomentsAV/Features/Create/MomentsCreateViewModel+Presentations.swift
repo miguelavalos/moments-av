@@ -5,6 +5,7 @@ extension MomentsCreateViewModel {
             isSignedIn: isSignedIn,
             hasMomentWorkspace: hasMomentWorkspace,
             template: form.template,
+            balance: balance,
             mediaSummary: mediaSummary,
             storySummary: storySummary,
             previewSummary: previewSummary,

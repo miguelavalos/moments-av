@@ -5,6 +5,7 @@ struct MomentsCreateWorkflowPresentation: Equatable {
     var isSignedIn = false
     var hasMomentWorkspace = false
     var template: MomentTemplate
+    var balance: MomentsCreditBalance
     var mediaSummary: MomentsCreateMediaSummary
     var storySummary: MomentsCreateStorySummary
     var previewSummary: MomentsCreatePreviewSummary
@@ -66,6 +67,7 @@ struct MomentsCreateWorkflowPresentation: Equatable {
         isSignedIn: Bool,
         hasMomentWorkspace: Bool,
         template: MomentTemplate,
+        balance: MomentsCreditBalance,
         mediaSummary: MomentsCreateMediaSummary,
         storySummary: MomentsCreateStorySummary,
         previewSummary: MomentsCreatePreviewSummary,
@@ -77,6 +79,7 @@ struct MomentsCreateWorkflowPresentation: Equatable {
             isSignedIn: isSignedIn,
             hasMomentWorkspace: hasMomentWorkspace,
             template: template,
+            balance: balance,
             mediaSummary: mediaSummary,
             storySummary: storySummary,
             previewSummary: previewSummary,

@@ -99,7 +99,7 @@ private struct MomentsCreateMediaFirstWorkspace: View {
     let generateStoryDraft: () -> Void
     let generatePreview: () -> Void
     let refreshPreviewStatus: () -> Void
-    let generateFinalRender: () -> Void
+    let generateFinalRender: (Bool) -> Void
     let refreshFinalRenderStatus: () -> Void
 
     @State private var showsAviOptions = false
@@ -164,7 +164,7 @@ private struct MomentsCreateMediaFirstWorkspace: View {
         .alert("Create video?", isPresented: $showsCreateVideoConfirmation) {
             Button("Not now", role: .cancel) {}
             Button("Create video · \(creditCostTitle)") {
-                generateFinalRender()
+                generateFinalRender(false)
             }
         } message: {
             Text("This will use \(creditCostTitle). Avi will edit your selected media into the final video.")
@@ -626,12 +626,13 @@ private struct MomentsCreateReviewMetric: View {
 
 private struct MomentsCreateStoryReviewPage: View {
     let presentation: MomentsCreateWorkflowPresentation
-    let createVideo: () -> Void
+    let createVideo: (Bool) -> Void
     let discardDraft: () -> Void
     let dismiss: () -> Void
 
     @State private var showsCreateVideoConfirmation = false
     @State private var showsDiscardDraftConfirmation = false
+    @State private var removesWatermark = false
 
     var body: some View {
         VStack(spacing: 0) {
@@ -678,6 +679,7 @@ private struct MomentsCreateStoryReviewPage: View {
                                 HStack(spacing: 8) {
                                     MomentsCreateOptionPill(title: "\(presentation.mediaSummary.reviewCount) items", systemImage: "photo.on.rectangle")
                                     MomentsCreateOptionPill(title: "\(presentation.template.duration)", systemImage: "timer")
+                                    MomentsCreateOptionPill(title: "\(totalCreditCostTitle)", systemImage: "creditcard.fill")
                                 }
                             }
                             .frame(maxWidth: .infinity, alignment: .leading)
@@ -712,6 +714,12 @@ private struct MomentsCreateStoryReviewPage: View {
                             }
 
                             MomentsCreateRenderPlanSummary(plan: presentation.finalRenderSummary.renderPlan?.plan)
+
+                            MomentsCreateFinalVideoOptionsCard(
+                                balance: presentation.balance,
+                                template: presentation.template,
+                                removesWatermark: $removesWatermark
+                            )
 
                             Button(action: primaryCreateAction) {
                                 Label(primaryCreateTitle, systemImage: primaryCreateIconName)
@@ -748,14 +756,14 @@ private struct MomentsCreateStoryReviewPage: View {
         .toolbar(.hidden, for: .navigationBar)
         .alert("Create video?", isPresented: $showsCreateVideoConfirmation) {
             Button("Not now", role: .cancel) {}
-            Button("Create video · \(creditCostTitle)") {
+            Button("Create video · \(totalCreditCostTitle)") {
                 dismiss()
                 Task { @MainActor in
-                    createVideo()
+                    createVideo(removesWatermark)
                 }
             }
         } message: {
-            Text("This will use \(creditCostTitle). Avi will edit your selected media into the final video.")
+            Text("This will use \(totalCreditCostTitle). Avi will edit your selected media into the final video.")
         }
         .alert("Discard draft?", isPresented: $showsDiscardDraftConfirmation) {
             Button("Keep draft", role: .cancel) {}
@@ -775,6 +783,18 @@ private struct MomentsCreateStoryReviewPage: View {
         MomentsCreditCopy.countTitle(presentation.finalRenderSummary.creditCost)
     }
 
+    private var totalCreditCost: Int {
+        MomentsCreditGate.finalRenderCreditCost(
+            template: presentation.template,
+            removesWatermark: removesWatermark,
+            balance: presentation.balance
+        )
+    }
+
+    private var totalCreditCostTitle: String {
+        MomentsCreditCopy.countTitle(totalCreditCost)
+    }
+
     private var mediaCountTitle: String {
         let count = presentation.mediaSummary.reviewCount
         return "\(count) \(count == 1 ? "item" : "items")"
@@ -785,7 +805,7 @@ private struct MomentsCreateStoryReviewPage: View {
     }
 
     private var primaryCreateTitle: String {
-        hasRenderPlan ? "Create video · \(creditCostTitle)" : "Prepare video plan"
+        hasRenderPlan ? "Create video · \(totalCreditCostTitle)" : "Prepare video plan"
     }
 
     private var primaryCreateIconName: String {
@@ -793,7 +813,13 @@ private struct MomentsCreateStoryReviewPage: View {
     }
 
     private var isPrimaryCreateDisabled: Bool {
-        presentation.mediaSummary.reviewCount == 0 || !presentation.storySummary.hasScenes
+        presentation.mediaSummary.reviewCount == 0
+            || !presentation.storySummary.hasScenes
+            || !MomentsCreditGate.canAffordFinalRender(
+                template: presentation.template,
+                removesWatermark: removesWatermark,
+                balance: presentation.balance
+            )
     }
 
     private func primaryCreateAction() {
@@ -801,7 +827,7 @@ private struct MomentsCreateStoryReviewPage: View {
         if hasRenderPlan {
             showsCreateVideoConfirmation = true
         } else {
-            createVideo()
+            createVideo(removesWatermark)
         }
     }
 }
@@ -858,6 +884,90 @@ private struct MomentsCreateReadinessChecklistCard: View {
         }
         let seconds = plan.targetDurationMs / 1000
         return "\(seconds)s · \(plan.usedAssetCount) media items"
+    }
+}
+
+private struct MomentsCreateFinalVideoOptionsCard: View {
+    let balance: MomentsCreditBalance
+    let template: MomentTemplate
+    @Binding var removesWatermark: Bool
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack(spacing: 10) {
+                MomentsCreateReviewMetric(
+                    title: reviewAllowanceTitle,
+                    subtitle: "Story reviews",
+                    systemImage: "list.bullet.clipboard.fill"
+                )
+                MomentsCreateReviewMetric(
+                    title: totalCostTitle,
+                    subtitle: watermarkSubtitle,
+                    systemImage: "creditcard.fill"
+                )
+            }
+
+            Toggle(isOn: $removesWatermark) {
+                VStack(alignment: .leading, spacing: 3) {
+                    Text("Remove Moments AV mark")
+                        .font(.system(size: 13, weight: .black))
+                        .foregroundStyle(AVBrandColor.textPrimary)
+                    Text(watermarkDetail)
+                        .font(.system(size: 11, weight: .semibold))
+                        .foregroundStyle(AVBrandColor.textSecondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            }
+            .toggleStyle(.switch)
+            .disabled(balance.watermarkFreeIncluded)
+
+            if !canAffordSelectedCost {
+                Label("Add \(MomentsCreditCopy.countTitle(missingCredits)) to create this version.", systemImage: "exclamationmark.triangle.fill")
+                    .font(.system(size: 12, weight: .bold))
+                    .foregroundStyle(.orange)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
+        .padding(12)
+        .background(AVBrandColor.neutral100.opacity(0.70), in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+    }
+
+    private var reviewAllowanceTitle: String {
+        "\(balance.reviewAllowanceRemaining) left"
+    }
+
+    private var totalCost: Int {
+        MomentsCreditGate.finalRenderCreditCost(
+            template: template,
+            removesWatermark: removesWatermark,
+            balance: balance
+        )
+    }
+
+    private var totalCostTitle: String {
+        MomentsCreditCopy.countTitle(totalCost)
+    }
+
+    private var watermarkSubtitle: String {
+        if balance.watermarkFreeIncluded {
+            return "No mark with Pro"
+        }
+        return removesWatermark ? "No mark selected" : "Includes mark"
+    }
+
+    private var watermarkDetail: String {
+        if balance.watermarkFreeIncluded {
+            return "Included with Pro."
+        }
+        return "Optional clean export for \(MomentsCreditCopy.countTitle(balance.watermarkRemovalCreditCost))."
+    }
+
+    private var canAffordSelectedCost: Bool {
+        balance.spendable >= totalCost
+    }
+
+    private var missingCredits: Int {
+        max(0, totalCost - balance.spendable)
     }
 }
 

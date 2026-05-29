@@ -70,6 +70,7 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
         template: MomentTemplate,
         creationStyle: MomentCreationStyleID?,
         form: MomentDraftForm,
+        removesWatermark: Bool = false,
         allowPreparedStory: Bool = false
     ) async {
         guard let ownerUserId = currentUserProvider.currentUserId else {
@@ -86,9 +87,18 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
         }
 
         if allowPreparedStory {
-            guard MomentsCreditGate.canAfford(template, balance: creditBalanceProvider.currentCreditBalance) else {
+            guard MomentsCreditGate.canAffordFinalRender(
+                template: template,
+                removesWatermark: removesWatermark,
+                balance: creditBalanceProvider.currentCreditBalance
+            ) else {
+                let requiredCredits = MomentsCreditGate.finalRenderCreditCost(
+                    template: template,
+                    removesWatermark: removesWatermark,
+                    balance: creditBalanceProvider.currentCreditBalance
+                )
                 statusMessage = MomentsCreateAvailabilityCopy.finalRenderInsufficientCredits(
-                    missingCredits: max(0, template.creditCost - creditBalanceProvider.currentCreditBalance.spendable)
+                    missingCredits: max(0, requiredCredits - creditBalanceProvider.currentCreditBalance.spendable)
                 )
                 return
             }
@@ -138,6 +148,7 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
                 creationStyle: creationStyle,
                 form: form,
                 balance: creditBalanceProvider.currentCreditBalance,
+                removesWatermark: removesWatermark,
                 finalRenderClient: finalRenderClient,
                 finalRenderResultSaver: finalRenderResultSaver,
                 workspaceObserver: workspaceObserver,

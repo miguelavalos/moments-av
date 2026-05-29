@@ -291,7 +291,7 @@ extension MomentsCreateViewModel {
         }
     }
 
-    func createFinalVideoFromCurrentSelection() {
+    func createFinalVideoFromCurrentSelection(removesWatermark: Bool = false) {
         guard let storyDraftWorkflow, let finalRenderWorkflow else {
             updateFinalRenderStatusMessage("Video creation is not configured for this build.")
             return
@@ -369,6 +369,7 @@ extension MomentsCreateViewModel {
                 template: form.template,
                 creationStyle: self.selectedCreationStyle.id,
                 form: form,
+                removesWatermark: removesWatermark,
                 allowPreparedStory: true
             )
         }
@@ -385,7 +386,7 @@ extension MomentsCreateViewModel {
         }
     }
 
-    func generateFinalRender() {
+    func generateFinalRender(removesWatermark: Bool = false) {
         guard let finalRenderWorkflow else {
             updateFinalRenderStatusMessage("Video creation is not available in this build.")
             return
@@ -408,7 +409,8 @@ extension MomentsCreateViewModel {
                 projectId: context.projectId,
                 template: context.template,
                 creationStyle: self.selectedCreationStyle.id,
-                form: self.form
+                form: self.form,
+                removesWatermark: removesWatermark
             )
         }
     }

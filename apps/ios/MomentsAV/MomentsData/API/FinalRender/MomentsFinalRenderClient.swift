@@ -202,6 +202,7 @@ struct MomentsFinalRenderClient {
         template: MomentTemplate,
         creationStyle: MomentCreationStyleID?,
         form: MomentDraftForm,
+        removesWatermark: Bool,
         reservationId: String,
         operationId: String
     ) async throws -> MomentsStartWorkflowResponse {
@@ -225,7 +226,7 @@ struct MomentsFinalRenderClient {
             occasion: form.occasion,
             details: form.details,
             creditCost: template.creditCost,
-            removeWatermark: false,
+            removeWatermark: removesWatermark,
             idempotencyKey: "final-workflow:\(projectId):\(template.id.rawValue):\(operationId)",
             reservationId: reservationId
         )
@@ -255,7 +256,11 @@ struct MomentsFinalRenderClient {
         removesWatermark: Bool,
         balance: MomentsCreditBalance
     ) -> Int {
-        template.creditCost + (removesWatermark && !balance.watermarkFreeIncluded ? balance.watermarkRemovalCreditCost : 0)
+        MomentsCreditGate.finalRenderCreditCost(
+            template: template,
+            removesWatermark: removesWatermark,
+            balance: balance
+        )
     }
 }
 
