@@ -110,17 +110,22 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
         statusMessage = "Avi is preparing the final export."
 
         do {
-            statusMessage = "Checking the video plan."
-            let plan = try await finalRenderClient.prepareRenderPlan(
-                projectId: projectId,
-                bearerToken: bearerToken,
-                template: template,
-                creationStyle: creationStyle,
-                form: form
-            )
-            renderPlan = plan
-            guard plan.canCreateVideo else {
-                statusMessage = "Avi needs usable media before creating the video."
+            if renderPlan == nil || renderPlan?.projectId != projectId {
+                statusMessage = "Checking the video plan."
+                let plan = try await finalRenderClient.prepareRenderPlan(
+                    projectId: projectId,
+                    bearerToken: bearerToken,
+                    template: template,
+                    creationStyle: creationStyle,
+                    form: form
+                )
+                renderPlan = plan
+                guard plan.canCreateVideo else {
+                    statusMessage = "Avi needs usable media before creating the video."
+                    isGenerating = false
+                    return
+                }
+                statusMessage = "Video plan ready. Review it before creating the video."
                 isGenerating = false
                 return
             }

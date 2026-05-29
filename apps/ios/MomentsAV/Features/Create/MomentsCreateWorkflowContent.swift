@@ -643,8 +643,8 @@ private struct MomentsCreateStoryReviewPage: View {
                                 MomentsCreateRenderPlanSummary(plan: renderPlan.plan)
                             }
 
-                            Button(action: { showsCreateVideoConfirmation = true }) {
-                                Label("Create video · \(creditCostTitle)", systemImage: "video.fill")
+                            Button(action: primaryCreateAction) {
+                                Label(primaryCreateTitle, systemImage: primaryCreateIconName)
                                     .font(.system(size: 15, weight: .black))
                                     .frame(maxWidth: .infinity)
                                     .frame(height: 50)
@@ -702,6 +702,26 @@ private struct MomentsCreateStoryReviewPage: View {
 
     private var creditCostTitle: String {
         MomentsCreditCopy.countTitle(presentation.finalRenderSummary.creditCost)
+    }
+
+    private var hasRenderPlan: Bool {
+        presentation.finalRenderSummary.renderPlan != nil
+    }
+
+    private var primaryCreateTitle: String {
+        hasRenderPlan ? "Create video · \(creditCostTitle)" : "Prepare video plan"
+    }
+
+    private var primaryCreateIconName: String {
+        hasRenderPlan ? "video.fill" : "checklist"
+    }
+
+    private func primaryCreateAction() {
+        if hasRenderPlan {
+            showsCreateVideoConfirmation = true
+        } else {
+            createVideo()
+        }
     }
 }
 
