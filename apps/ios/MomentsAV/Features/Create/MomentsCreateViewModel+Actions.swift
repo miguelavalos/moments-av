@@ -135,6 +135,10 @@ extension MomentsCreateViewModel {
         mediaUploadWorkflow?.autoPickStrongMoments()
     }
 
+    func restoreLocalMediaForEditing() {
+        mediaUploadWorkflow?.restoreLocalMediaForEditing()
+    }
+
     func generateStoryDraft() {
         guard canDraftStory, let storyDraftWorkflow else {
             updateStoryStatusMessage(storyAvailabilityMessage ?? "Story preparation is not ready yet.")

@@ -221,6 +221,17 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
         }
     }
 
+    func restoreLocalMediaForEditing() {
+        guard selectedMedia.isEmpty,
+              let activeWorkspace,
+              restoredWorkspaceProjectId != activeWorkspace.project.id,
+              !activeWorkspace.mediaAssets.isEmpty else { return }
+
+        Task { [weak self, activeWorkspace] in
+            await self?.restoreLocalMedia(from: activeWorkspace)
+        }
+    }
+
     func persistSelectedMedia(projectId: String) async -> [MomentsStoryDraftMedia]? {
         guard let ownerUserId = currentUserProvider.currentUserId else {
             statusMessage = "Sign in before preparing the story."

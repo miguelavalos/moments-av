@@ -20,6 +20,7 @@ struct MomentsCreateMediaCard: View {
     let removeMedia: (MomentsSelectedMedia) -> Void
     let moveMedia: (MomentsSelectedMedia, MomentsSelectedMedia) -> Void
     let reorderMedia: ([MomentsSelectedMedia]) -> Void
+    let restoreLocalMediaForEditing: () -> Void
     let autoPickStrongMoments: () -> Void
     let consumeOpenPickerRequest: () -> Void
 
@@ -59,25 +60,7 @@ struct MomentsCreateMediaCard: View {
                         Spacer(minLength: 0)
                     }
 
-                    if presentation.summary.hasTemporaryBackendMedia {
-                        Text("This draft has saved media ready for review and video creation.")
-                            .font(.system(size: 13, weight: .semibold))
-                            .foregroundStyle(AVBrandColor.textSecondary)
-                            .lineLimit(nil)
-                            .fixedSize(horizontal: false, vertical: true)
-
-                        Button {
-                            showsMediaManager = true
-                        } label: {
-                            MomentsCreateMediaChoiceButtonLabel(
-                                title: "Manage media",
-                                systemImage: "slider.horizontal.3",
-                                isPrimary: true
-                            )
-                        }
-                        .buttonStyle(.plain)
-                        .disabled(!presentation.canAddMedia || presentation.summary.isImporting)
-                    } else if presentation.summary.selectedCount == 0 {
+                    if presentation.summary.reviewCount == 0 {
                         Text("Start by adding the photos or clips you already have. Avi will organize the first version.")
                             .font(.system(size: 13, weight: .semibold))
                             .foregroundStyle(AVBrandColor.textSecondary)
@@ -126,7 +109,7 @@ struct MomentsCreateMediaCard: View {
             importPickerItems(newItems)
             pickerItems = []
         }
-        .navigationDestination(isPresented: $showsMediaManager) {
+        .fullScreenCover(isPresented: $showsMediaManager) {
             MomentsCreateMediaManagerSheet(
                 selectedMedia: presentation.summary.selectedMedia,
                 syncedMediaAssets: presentation.syncedMediaAssets,
@@ -136,6 +119,7 @@ struct MomentsCreateMediaCard: View {
                 removeMedia: removeMedia,
                 moveMedia: moveMedia,
                 reorderMedia: reorderMedia,
+                restoreLocalMediaForEditing: restoreLocalMediaForEditing,
                 chooseManually: {
                     showsPhotoPicker = true
                 },
@@ -194,10 +178,6 @@ struct MomentsCreateMediaCard: View {
     private var summaryText: String {
         let count = selectedCount
         if count == 0 {
-            if presentation.summary.hasTemporaryBackendMedia {
-                let savedCount = presentation.summary.savedBackendMediaCount
-                return "\(savedCount) \(savedCount == 1 ? "item" : "items") saved for this Moment."
-            }
             return "Choose photos, clips, or an album from your library."
         }
 
@@ -217,11 +197,11 @@ struct MomentsCreateMediaCard: View {
     }
 
     private var selectedCount: Int {
-        presentation.summary.selectedCount
+        presentation.summary.reviewCount
     }
 
     private var cardMinHeight: CGFloat {
-        selectedCount == 0 ? (presentation.summary.hasTemporaryBackendMedia ? 204 : 232) : 134
+        selectedCount == 0 ? 232 : 134
     }
 }
 
@@ -500,6 +480,7 @@ private struct MomentsCreateMediaManagerSheet: View {
     let removeMedia: (MomentsSelectedMedia) -> Void
     let moveMedia: (MomentsSelectedMedia, MomentsSelectedMedia) -> Void
     let reorderMedia: ([MomentsSelectedMedia]) -> Void
+    let restoreLocalMediaForEditing: () -> Void
     let chooseManually: () -> Void
     let chooseAlbum: () -> Void
     let importLatestPhotos: () -> Void
@@ -527,6 +508,7 @@ private struct MomentsCreateMediaManagerSheet: View {
         .navigationBarBackButtonHidden(true)
         .toolbar(.hidden, for: .navigationBar)
         .onAppear {
+            restoreLocalMediaForEditing()
             workingMedia = selectedMedia
         }
         .onChange(of: selectedMedia) { _, newMedia in

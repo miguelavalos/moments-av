@@ -72,7 +72,7 @@ struct MomentsCreateMediaSummary: Equatable {
     }
 
     func remainingSlots(template: MomentTemplate) -> Int {
-        MomentsMediaRules.remainingSlots(template: template, selectedCount: selectedCount)
+        MomentsMediaRules.remainingSlots(template: template, selectedCount: reviewCount)
     }
 }
 

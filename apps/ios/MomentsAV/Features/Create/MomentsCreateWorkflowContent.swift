@@ -28,6 +28,7 @@ struct MomentsCreateWorkflowContent: View {
                     removeMedia: viewModel.removeMedia,
                     moveMedia: viewModel.moveMedia,
                     reorderMedia: viewModel.reorderMedia,
+                    restoreLocalMediaForEditing: viewModel.restoreLocalMediaForEditing,
                     autoPickStrongMoments: viewModel.autoPickStrongMoments,
                     selectStyle: viewModel.selectCreationStyle,
                     selectMusicPreset: viewModel.selectMusicPreset,
@@ -86,6 +87,7 @@ private struct MomentsCreateMediaFirstWorkspace: View {
     let removeMedia: (MomentsSelectedMedia) -> Void
     let moveMedia: (MomentsSelectedMedia, MomentsSelectedMedia) -> Void
     let reorderMedia: ([MomentsSelectedMedia]) -> Void
+    let restoreLocalMediaForEditing: () -> Void
     let autoPickStrongMoments: () -> Void
     let selectStyle: (MomentCreationStyle) -> Void
     let selectMusicPreset: (MomentMusicPreset) -> Void
@@ -126,6 +128,7 @@ private struct MomentsCreateMediaFirstWorkspace: View {
                     removeMedia: removeMedia,
                     moveMedia: moveMedia,
                     reorderMedia: reorderMedia,
+                    restoreLocalMediaForEditing: restoreLocalMediaForEditing,
                     autoPickStrongMoments: autoPickStrongMoments,
                     consumeOpenPickerRequest: consumeOpenPickerRequest
                 )
@@ -1888,6 +1891,7 @@ private struct MomentsCreateWorkflowCards: View {
     let removeMedia: (MomentsSelectedMedia) -> Void
     let moveMedia: (MomentsSelectedMedia, MomentsSelectedMedia) -> Void
     let reorderMedia: ([MomentsSelectedMedia]) -> Void
+    let restoreLocalMediaForEditing: () -> Void
     let autoPickStrongMoments: () -> Void
     let openPickerRequest: Int
     let generateStoryDraft: () -> Void
@@ -1917,6 +1921,7 @@ private struct MomentsCreateWorkflowCards: View {
                     removeMedia: removeMedia,
                     moveMedia: moveMedia,
                     reorderMedia: reorderMedia,
+                    restoreLocalMediaForEditing: restoreLocalMediaForEditing,
                     autoPickStrongMoments: autoPickStrongMoments,
                     consumeOpenPickerRequest: {}
                 )
