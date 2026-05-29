@@ -589,9 +589,11 @@ private struct MomentsCreateMediaManagerSheet: View {
                         }
 
                         if workingMedia.isEmpty, !syncedMediaAssets.isEmpty {
-                            MomentsCreateSyncedMediaEditorGrid(
-                                mediaAssets: syncedMediaAssets
-                            )
+                            LazyVGrid(columns: columns, alignment: .center, spacing: 16) {
+                                ForEach(Array(syncedMediaAssets.enumerated()), id: \.element.id) { index, media in
+                                    MomentsCreateSyncedMediaEditorTile(media: media, index: index)
+                                }
+                            }
                         }
                     }
                 }
@@ -765,59 +767,53 @@ private struct MomentsCreateMediaEmptyState: View {
     }
 }
 
-private struct MomentsCreateSyncedMediaEditorGrid: View {
-    let mediaAssets: [MomentMediaAsset]
-
-    private let columns = [
-        GridItem(.flexible(), spacing: 14),
-        GridItem(.flexible(), spacing: 14)
-    ]
-
-    var body: some View {
-        AVAppShellCard {
-            VStack(alignment: .leading, spacing: 12) {
-                Text("Saved media")
-                    .font(.system(size: 13, weight: .black))
-                    .foregroundStyle(AVBrandColor.textPrimary)
-
-                LazyVGrid(columns: columns, spacing: 14) {
-                    ForEach(Array(mediaAssets.enumerated()), id: \.element.id) { index, media in
-                        MomentsCreateSyncedMediaEditorTile(media: media, index: index)
-                    }
-                }
-
-                Text("These items are saved with the draft and ready for review and video creation.")
-                    .font(.system(size: 12, weight: .semibold))
-                    .foregroundStyle(AVBrandColor.textSecondary)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
-        }
-    }
-}
-
 private struct MomentsCreateSyncedMediaEditorTile: View {
     let media: MomentMediaAsset
     let index: Int
 
     var body: some View {
-        ZStack(alignment: .bottomLeading) {
+        VStack(spacing: 6) {
             MomentsCreateSyncedMediaThumbnailImage(media: media)
-                .aspectRatio(1, contentMode: .fill)
-                .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-                .overlay {
-                    RoundedRectangle(cornerRadius: 8, style: .continuous)
-                        .stroke(AVBrandColor.borderSubtle.opacity(0.55), lineWidth: 1)
-                }
+                .frame(width: 96, height: mediaFrame.height)
+                .clipShape(RoundedRectangle(cornerRadius: 5, style: .continuous))
 
-            Text("\(index + 1)")
-                .font(.system(size: 11, weight: .black))
-                .foregroundStyle(.white)
-                .padding(.horizontal, 7)
-                .padding(.vertical, 4)
-                .background(.black.opacity(0.58), in: Capsule())
-                .padding(8)
+            HStack {
+                Text("\(index + 1)")
+                    .font(.system(size: 11, weight: .black))
+                    .foregroundStyle(AVBrandColor.textPrimary.opacity(0.72))
+                Spacer(minLength: 0)
+                Image(systemName: media.kind == "video" ? "video.fill" : "photo.fill")
+                    .font(.system(size: 10, weight: .bold))
+                    .foregroundStyle(AVBrandColor.textSecondary.opacity(0.55))
+            }
+            .padding(.horizontal, 4)
         }
+        .frame(width: 106, height: 116, alignment: .top)
+        .padding(.top, 5)
+        .padding(.horizontal, 5)
+        .padding(.bottom, 7)
+        .background(cardBackground, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+        .overlay {
+            RoundedRectangle(cornerRadius: 8, style: .continuous)
+                .stroke(AVBrandColor.borderSubtle.opacity(0.46), lineWidth: 1)
+        }
+        .shadow(color: AVBrandColor.ink.opacity(0.08), radius: 5, x: 0, y: 2)
+        .rotationEffect(.degrees(rotationDegrees))
         .accessibilityLabel("\(media.kind.capitalized) \(index + 1)")
+    }
+
+    private var mediaFrame: CGSize {
+        media.kind == "video"
+            ? CGSize(width: 96, height: 54)
+            : CGSize(width: 96, height: 86)
+    }
+
+    private var cardBackground: Color {
+        media.kind == "video" ? AVBrandColor.ink.opacity(0.08) : .white
+    }
+
+    private var rotationDegrees: Double {
+        [-1.0, 0.6, -0.4, 0.9][index % 4]
     }
 }
 
