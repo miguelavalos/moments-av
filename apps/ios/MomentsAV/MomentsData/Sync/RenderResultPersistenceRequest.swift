@@ -51,7 +51,7 @@ extension RenderResultPersistenceRequest {
             r2Key: finalRender.r2Key,
             durationSeconds: template.durationSeconds,
             creditCost: finalRender.creditsCommitted,
-            hasWatermark: false,
+            hasWatermark: finalRender.hasWatermark,
             status: finalRender.status
         )
     }

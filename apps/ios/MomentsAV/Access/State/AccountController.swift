@@ -159,7 +159,16 @@ struct MomentsCreditBalanceClient {
         return MomentsCreditBalance(
             proMonthly: decoded.proMonthlyCredits,
             promotional: decoded.promotionalGrantedCredits,
-            purchased: decoded.purchasedCredits
+            purchased: decoded.purchasedCredits,
+            reviewAllowanceRemaining: decoded.reviewAllowanceRemaining,
+            includedReviewsRemaining: decoded.includedReviewsRemaining,
+            canReview: decoded.canReview,
+            canCreateDirectly: decoded.canCreateDirectly,
+            canBuyReviewBundle: decoded.canBuyReviewBundle,
+            reviewBundleCreditCost: decoded.reviewBundleCreditCost,
+            reviewBundleReviewCount: decoded.reviewBundleReviewCount,
+            watermarkRemovalCreditCost: decoded.watermarkRemovalCreditCost,
+            watermarkFreeIncluded: decoded.watermarkFreeIncluded
         )
     }
 }
@@ -168,6 +177,46 @@ private struct MomentsCreditBalanceResponse: Decodable {
     let proMonthlyCredits: Int
     let promotionalGrantedCredits: Int
     let purchasedCredits: Int
+    let reviewAllowanceRemaining: Int
+    let includedReviewsRemaining: Int
+    let canReview: Bool
+    let canCreateDirectly: Bool
+    let canBuyReviewBundle: Bool
+    let reviewBundleCreditCost: Int
+    let reviewBundleReviewCount: Int
+    let watermarkRemovalCreditCost: Int
+    let watermarkFreeIncluded: Bool
+
+    private enum CodingKeys: String, CodingKey {
+        case proMonthlyCredits
+        case promotionalGrantedCredits
+        case purchasedCredits
+        case reviewAllowanceRemaining
+        case includedReviewsRemaining
+        case canReview
+        case canCreateDirectly
+        case canBuyReviewBundle
+        case reviewBundleCreditCost
+        case reviewBundleReviewCount
+        case watermarkRemovalCreditCost
+        case watermarkFreeIncluded
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        proMonthlyCredits = try container.decode(Int.self, forKey: .proMonthlyCredits)
+        promotionalGrantedCredits = try container.decode(Int.self, forKey: .promotionalGrantedCredits)
+        purchasedCredits = try container.decode(Int.self, forKey: .purchasedCredits)
+        reviewAllowanceRemaining = try container.decodeIfPresent(Int.self, forKey: .reviewAllowanceRemaining) ?? 0
+        includedReviewsRemaining = try container.decodeIfPresent(Int.self, forKey: .includedReviewsRemaining) ?? reviewAllowanceRemaining
+        canReview = try container.decodeIfPresent(Bool.self, forKey: .canReview) ?? true
+        canCreateDirectly = try container.decodeIfPresent(Bool.self, forKey: .canCreateDirectly) ?? true
+        canBuyReviewBundle = try container.decodeIfPresent(Bool.self, forKey: .canBuyReviewBundle) ?? false
+        reviewBundleCreditCost = try container.decodeIfPresent(Int.self, forKey: .reviewBundleCreditCost) ?? 1
+        reviewBundleReviewCount = try container.decodeIfPresent(Int.self, forKey: .reviewBundleReviewCount) ?? 10
+        watermarkRemovalCreditCost = try container.decodeIfPresent(Int.self, forKey: .watermarkRemovalCreditCost) ?? 1
+        watermarkFreeIncluded = try container.decodeIfPresent(Bool.self, forKey: .watermarkFreeIncluded) ?? false
+    }
 }
 
 struct MomentsPromoCodeClient {

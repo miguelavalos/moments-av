@@ -9,6 +9,7 @@ enum FinalRenderGenerationRun {
         template: MomentTemplate,
         creationStyle: MomentCreationStyleID?,
         form: MomentDraftForm,
+        balance: MomentsCreditBalance,
         finalRenderClient: MomentsFinalRenderClient,
         finalRenderResultSaver: any MomentsFinalRenderResultSaving,
         workspaceObserver: any MomentsActiveWorkspaceObserving,
@@ -16,11 +17,13 @@ enum FinalRenderGenerationRun {
         shouldContinue: () -> Bool
     ) async throws -> MomentRenderJob {
         let operationId = UUID().uuidString
-        updateStatus("Reserving 1 credit for the video.")
+        updateStatus("Reserving \(template.creditCost) \(template.creditCost == 1 ? "credit" : "credits") for the video.")
         let reservation = try await finalRenderClient.reserveFinalRenderCredits(
             projectId: projectId,
             bearerToken: bearerToken,
             template: template,
+            removesWatermark: false,
+            balance: balance,
             operationId: operationId
         )
 

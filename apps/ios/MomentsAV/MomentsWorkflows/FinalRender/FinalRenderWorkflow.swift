@@ -137,6 +137,7 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
                 template: template,
                 creationStyle: creationStyle,
                 form: form,
+                balance: creditBalanceProvider.currentCreditBalance,
                 finalRenderClient: finalRenderClient,
                 finalRenderResultSaver: finalRenderResultSaver,
                 workspaceObserver: workspaceObserver,

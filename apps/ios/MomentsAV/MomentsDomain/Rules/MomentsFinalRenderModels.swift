@@ -10,6 +10,7 @@ struct MomentsFinalRenderRequest: Encodable {
     let occasion: String?
     let details: String?
     let creditCost: Int
+    let removeWatermark: Bool
     let safetyAcknowledged = true
     let idempotencyKey: String
 }
@@ -29,6 +30,8 @@ struct MomentsFinalRenderResponse: Decodable, Equatable {
     let r2Key: String
     let expiresAt: String
     let hasWatermark: Bool
+    let baseCreditCost: Int?
+    let watermarkRemovalCreditCost: Int?
     let creditsCommitted: Int
     let generatedAt: String
 }
@@ -61,6 +64,8 @@ struct MomentsStartWorkflowRequest: Encodable {
     let tempo: String?
     let occasion: String?
     let details: String?
+    let creditCost: Int
+    let removeWatermark: Bool
     let safetyAcknowledged = true
     let idempotencyKey: String
     let reservationId: String

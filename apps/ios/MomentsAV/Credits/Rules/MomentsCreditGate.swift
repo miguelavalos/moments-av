@@ -18,6 +18,15 @@ struct MomentsCreditBalance: Equatable {
     var proMonthly: Int
     var promotional: Int
     var purchased: Int
+    var reviewAllowanceRemaining: Int = 0
+    var includedReviewsRemaining: Int = 0
+    var canReview: Bool = true
+    var canCreateDirectly: Bool = true
+    var canBuyReviewBundle: Bool = false
+    var reviewBundleCreditCost: Int = 1
+    var reviewBundleReviewCount: Int = 10
+    var watermarkRemovalCreditCost: Int = 1
+    var watermarkFreeIncluded: Bool = false
 
     static let empty = MomentsCreditBalance(proMonthly: 0, promotional: 0, purchased: 0)
 

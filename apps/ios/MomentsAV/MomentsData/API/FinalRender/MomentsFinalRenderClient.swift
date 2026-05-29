@@ -80,6 +80,7 @@ struct MomentsFinalRenderClient {
             occasion: form.occasion,
             details: form.details,
             creditCost: template.creditCost,
+            removeWatermark: false,
             idempotencyKey: "final:\(projectId)"
         )
 
@@ -107,6 +108,8 @@ struct MomentsFinalRenderClient {
         projectId: String,
         bearerToken: String,
         template: MomentTemplate,
+        removesWatermark: Bool,
+        balance: MomentsCreditBalance,
         operationId: String
     ) async throws -> MomentsCreditReservationResponse {
         guard let baseURL = URL(string: baseURLString.trimmingCharacters(in: .whitespacesAndNewlines)) else {
@@ -121,8 +124,8 @@ struct MomentsFinalRenderClient {
             .appendingPathComponent("reservations")
         let body = MomentsCreditReservationRequest(
             projectId: projectId,
-            amount: template.creditCost,
-            idempotencyKey: "final-reservation:\(projectId):\(template.id.rawValue):\(operationId)"
+            amount: finalRenderCreditCost(template: template, removesWatermark: removesWatermark, balance: balance),
+            idempotencyKey: "final-reservation:\(projectId):\(template.id.rawValue):\(removesWatermark ? "clean" : "watermarked"):\(operationId)"
         )
 
         var request = URLRequest(url: endpoint)
@@ -221,6 +224,8 @@ struct MomentsFinalRenderClient {
             tempo: form.tempo.rawValue,
             occasion: form.occasion,
             details: form.details,
+            creditCost: template.creditCost,
+            removeWatermark: false,
             idempotencyKey: "final-workflow:\(projectId):\(template.id.rawValue):\(operationId)",
             reservationId: reservationId
         )
@@ -243,6 +248,14 @@ struct MomentsFinalRenderClient {
         }
 
         return try JSONDecoder().decode(MomentsStartWorkflowResponse.self, from: data)
+    }
+
+    private func finalRenderCreditCost(
+        template: MomentTemplate,
+        removesWatermark: Bool,
+        balance: MomentsCreditBalance
+    ) -> Int {
+        template.creditCost + (removesWatermark && !balance.watermarkFreeIncluded ? balance.watermarkRemovalCreditCost : 0)
     }
 }
 
