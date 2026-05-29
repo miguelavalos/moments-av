@@ -127,10 +127,6 @@ struct MomentsUploadRetryPolicy: Sendable {
     func shouldRetry(error: Error, attempt: Int) -> Bool {
         guard attempt < maximumRetries else { return false }
 
-        if let apiError = error as? MomentsAPIError {
-            return apiError.code == "moments_upload_expired"
-        }
-
         let nsError = error as NSError
         guard nsError.domain == NSURLErrorDomain else { return false }
 

@@ -32,6 +32,11 @@ metadata from Account AV so Convex project render records do not use placeholder
 provider values.
 Project workspaces include Convex render jobs, and the preview/final sections
 can refresh their status through the shared Account AV render status endpoint.
+Media upload must fail visibly when Account AV cannot return a signed upload
+URL. The client should not save media metadata or advance the creation workflow
+after an unavailable signed-upload response, because that would make the user
+believe local media is safely available for preview or final render when no
+source object exists in storage.
 
 ## Build
 

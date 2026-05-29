@@ -131,6 +131,46 @@ final class MomentsAPIClientTests: XCTestCase {
         XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.value(forHTTPHeaderField: "x-appsav-moments-project-id"), "project-1")
     }
 
+    func testUploadWithoutSignedURLFailsBeforeSavingMedia() async throws {
+        let session = makeMockSession(json: "{}")
+        let client = MomentsUploadClient(baseURLString: accountAPIBaseURL, session: session)
+        let media = MomentsSelectedMedia(
+            id: UUID(uuidString: "00000000-0000-0000-0000-000000000012")!,
+            sourceLocalIdentifier: "local-1",
+            originalFilename: "photo.jpg",
+            contentType: "image/jpeg",
+            kind: "photo",
+            byteSize: 4,
+            sha256: "abcd",
+            data: Data([1, 2, 3, 4]),
+            capturedAt: nil,
+            sortOrder: 0,
+            selected: true
+        )
+        let prepared = MomentsPreparedUpload(
+            appId: "momentsav",
+            projectId: "project-1",
+            mediaAssetId: "media-1",
+            uploadId: "upload-1",
+            uploadUrl: nil,
+            completionUrl: nil,
+            method: "PUT",
+            headers: ["content-type": "image/jpeg"],
+            storageKey: "momentsav/user/project/source/media-1",
+            expiresAt: "2026-05-16T17:00:00Z",
+            generatedAt: "2026-05-16T16:00:00Z"
+        )
+
+        do {
+            try await client.upload(media: media, preparedUpload: prepared)
+            XCTFail("Expected missing upload URL to fail.")
+        } catch MomentsUploadError.signedUploadUnavailable {
+            XCTAssertEqual(MomentsURLProtocolMock.requestCount, 0)
+        } catch {
+            XCTFail("Unexpected error: \(error)")
+        }
+    }
+
     func testDirectUploadCompletesPreparedUploadAfterR2Put() async throws {
         let session = makeMockSession(json: "{}")
         let client = MomentsUploadClient(baseURLString: accountAPIBaseURL, session: session)

@@ -108,14 +108,10 @@ enum MediaUploadPersistence {
                         media: media
                     )
 
-                    do {
-                        try await uploadClient.upload(
-                            media: media,
-                            preparedUpload: prepared
-                        )
-                    } catch MomentsUploadError.signedUploadUnavailable {
-                        return UploadedMedia(media: media, preparedUpload: prepared)
-                    }
+                    try await uploadClient.upload(
+                        media: media,
+                        preparedUpload: prepared
+                    )
 
                     return UploadedMedia(media: media, preparedUpload: prepared)
                 }
