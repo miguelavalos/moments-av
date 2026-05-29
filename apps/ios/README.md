@@ -32,11 +32,18 @@ metadata from Account AV so Convex project render records do not use placeholder
 provider values.
 Project workspaces include Convex render jobs, and the preview/final sections
 can refresh their status through the shared Account AV render status endpoint.
+Convex render jobs are also the realtime source of truth for final creation
+phase, friendly progress copy, retry availability, and whether the draft can be
+edited. While a final render is active, the app should keep the user informed
+without allowing edits that would desync the paid render from the draft.
 Media upload must fail visibly when Account AV cannot return a signed upload
 URL. The client should not save media metadata or advance the creation workflow
 after an unavailable signed-upload response, because that would make the user
 believe local media is safely available for preview or final render when no
 source object exists in storage.
+One Moments AV credit equals one 15-second final video block. iOS should display
+that product rule consistently, while Account AV owns the actual render plan and
+provider route selection.
 
 ## Build
 

@@ -86,6 +86,11 @@ struct RenderJobStatusRefresh {
             ownerUserId: ownerUserId,
             renderJobId: job.id,
             status: status.status,
+            phase: status.phase,
+            progressPercent: status.progressPercent,
+            userMessage: status.userMessage,
+            canEditDraft: status.canEditDraft,
+            canRetry: status.canRetry,
             errorCode: status.errorCode,
             errorMessage: status.errorMessage
         )

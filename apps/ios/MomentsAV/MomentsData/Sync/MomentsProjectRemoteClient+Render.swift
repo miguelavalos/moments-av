@@ -1,3 +1,4 @@
+@preconcurrency import ConvexMobile
 import Foundation
 
 extension MomentsProjectRemoteClient {
@@ -73,20 +74,40 @@ extension MomentsProjectRemoteClient {
         ownerUserId: String,
         renderJobId: String,
         status: String,
+        phase: String?,
+        progressPercent: Int?,
+        userMessage: String?,
+        canEditDraft: Bool?,
+        canRetry: Bool?,
         errorCode: String?,
         errorMessage: String?
     ) async throws {
         let client = try requireClient()
-        var args = [
-            "ownerUserId": ownerUserId,
-            "renderJobId": renderJobId,
-            "status": status
+        var args: [String: ConvexEncodable?] = [
+            "ownerUserId": ownerUserId as ConvexEncodable,
+            "renderJobId": renderJobId as ConvexEncodable,
+            "status": status as ConvexEncodable
         ]
         if let errorCode {
-            args["errorCode"] = errorCode
+            args["errorCode"] = errorCode as ConvexEncodable
         }
         if let errorMessage {
-            args["errorMessage"] = errorMessage
+            args["errorMessage"] = errorMessage as ConvexEncodable
+        }
+        if let phase {
+            args["phase"] = phase as ConvexEncodable
+        }
+        if let progressPercent {
+            args["progressPercent"] = progressPercent as ConvexEncodable
+        }
+        if let userMessage {
+            args["userMessage"] = userMessage as ConvexEncodable
+        }
+        if let canEditDraft {
+            args["canEditDraft"] = canEditDraft as ConvexEncodable
+        }
+        if let canRetry {
+            args["canRetry"] = canRetry as ConvexEncodable
         }
 
         let updatedRenderJobId: String? = try await retryingMutation(

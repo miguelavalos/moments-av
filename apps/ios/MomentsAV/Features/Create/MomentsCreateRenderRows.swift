@@ -17,6 +17,9 @@ struct MomentsCreateRenderJobStatusRow: View {
         if let errorMessage = renderJob.errorMessage, renderJob.status == "failed" {
             return errorMessage
         }
+        if let userMessage = renderJob.userMessage, !userMessage.isEmpty {
+            return userMessage
+        }
 
         return renderJob.model ?? "Waiting for renderer status."
     }

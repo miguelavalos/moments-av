@@ -17,4 +17,15 @@ extension MomentProjectWorkspace {
             }
             .max { $0.updatedAt < $1.updatedAt }
     }
+
+    var activeFinalRenderJob: MomentRenderJob? {
+        renderJobs.first { job in
+            job.kind == "final" && ["queued", "running"].contains(job.status)
+        }
+    }
+
+    var canEditDraftDuringRender: Bool {
+        guard let activeFinalRenderJob else { return true }
+        return activeFinalRenderJob.canEditDraft ?? false
+    }
 }

@@ -41,6 +41,11 @@ protocol MomentsRenderJobStatusUpdating {
         ownerUserId: String,
         renderJobId: String,
         status: String,
+        phase: String?,
+        progressPercent: Int?,
+        userMessage: String?,
+        canEditDraft: Bool?,
+        canRetry: Bool?,
         errorCode: String?,
         errorMessage: String?
     ) async throws

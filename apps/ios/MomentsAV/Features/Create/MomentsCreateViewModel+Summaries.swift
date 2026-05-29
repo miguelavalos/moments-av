@@ -44,7 +44,7 @@ extension MomentsCreateViewModel {
             latestFinalJob: effectiveLatestFinalJob,
             isGenerating: isGeneratingFinalRender,
             isRefreshingStatus: isRefreshingFinalRenderStatus,
-            statusMessage: finalRenderStatusMessage
+            statusMessage: effectiveLatestFinalJob?.userMessage ?? finalRenderStatusMessage
         )
     }
 

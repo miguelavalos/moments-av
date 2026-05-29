@@ -7,7 +7,11 @@ struct MomentsRenderStatusResponse: Decodable, Equatable {
     let workflowRunId: String?
     let renderKind: String
     let status: String
+    let phase: String?
     let progressPercent: Int
+    let userMessage: String?
+    let canEditDraft: Bool?
+    let canRetry: Bool?
     let artifactId: String?
     let artifactKind: String?
     let artifactStatus: String?

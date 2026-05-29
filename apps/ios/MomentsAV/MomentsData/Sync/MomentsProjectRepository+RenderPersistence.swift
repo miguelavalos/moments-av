@@ -22,6 +22,11 @@ extension MomentsProjectRepository {
             ownerUserId: ownerUserId,
             renderJobId: renderJobId,
             status: startedWorkflow.status,
+            phase: "queued",
+            progressPercent: 10,
+            userMessage: "Avi has started creating the video.",
+            canEditDraft: false,
+            canRetry: false,
             errorCode: nil,
             errorMessage: nil
         )
@@ -86,6 +91,11 @@ extension MomentsProjectRepository {
             ownerUserId: ownerUserId,
             renderJobId: renderJobId,
             status: request.status,
+            phase: request.status == "completed" ? "completed" : nil,
+            progressPercent: request.status == "completed" ? 100 : nil,
+            userMessage: request.status == "completed" ? "Your video is ready." : nil,
+            canEditDraft: true,
+            canRetry: false,
             errorCode: nil,
             errorMessage: nil
         )

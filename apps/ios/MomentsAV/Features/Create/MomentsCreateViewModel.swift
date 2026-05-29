@@ -262,6 +262,9 @@ final class MomentsCreateViewModel: ObservableObject {
 
     private var canEditCreationOptions: Bool {
         if isBusy { return false }
+        if effectiveActiveWorkspace?.canEditDraftDuringRender == false {
+            return false
+        }
         if effectiveLatestPreview != nil || effectiveLatestPreviewJob != nil {
             return false
         }

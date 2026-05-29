@@ -47,6 +47,13 @@ Temporary media needed for video creation is separate from the editable local
 copy shown in the app. If local media is unavailable on the device, the user
 must re-select it to edit the Moment.
 
+Draft media must remain visible and editable for as long as the source asset is
+still available to the app on the device. Reinstalling the app, clearing the
+simulator, or losing Photos-library identifiers can break a local test draft, but
+that is not acceptable as normal user behavior. A saved draft should keep its
+local thumbnails and media references in sync, and it should ask for
+re-selection only when the app can no longer access the original asset.
+
 After story preparation, the dashboard shows a Story Review card with the
 prepared scene plan before the paid video action. If the user changes media or
 direction after that review, the app requires a fresh `Prepare story` step before
@@ -55,6 +62,29 @@ order, theme, music, and note reuses the prepared story state. When the user
 confirms `Create video`, the app reserves the required credits and moves the
 Moment into a video-creation progress state. Users should save final videos to
 Photos or share/export them for durable local access.
+
+Credit pricing and timing are product-owned, not provider-owned: 1 Moments AV
+credit equals one 15-second final video block. The backend must build a render
+plan with the target duration before calling any provider, and the provider
+route must be treated as an implementation detail. If a provider can only return
+5-second clips, the backend has to compose, stitch, or choose a different route
+so the final user-facing output still matches the credit and duration promise.
+
+The render plan should use the selected media intentionally. For photo-only
+Moments it should distribute the selected images across the target duration in
+the user's chosen order unless the quality gate excludes an item. For mixed
+photo/video Moments it should preserve clip intent, trim or sample clips to fit
+the target duration, and record how many selected assets were planned, used, or
+rejected. Quality warnings should be friendly and actionable, for example asking
+the user to remove a blurry image or shorten a very dense selection before the
+paid render starts.
+
+During final creation, Convex is the realtime status authority. The draft is
+locked for editing while a final render is queued, rendering, validating, or
+saving, but the app itself must remain usable. The dashboard should show
+cordial, non-technical status copy from the backend, expose retry only when the
+backend says retry is safe, and never show raw provider or validation errors to
+the user.
 
 ## Creation Reliability
 

@@ -46,6 +46,11 @@ struct MomentsProjectRepository {
         ownerUserId: String,
         renderJobId: String,
         status: String,
+        phase: String?,
+        progressPercent: Int?,
+        userMessage: String?,
+        canEditDraft: Bool?,
+        canRetry: Bool?,
         errorCode: String?,
         errorMessage: String?
     ) async throws {
@@ -53,6 +58,11 @@ struct MomentsProjectRepository {
             ownerUserId: ownerUserId,
             renderJobId: renderJobId,
             status: status,
+            phase: phase,
+            progressPercent: progressPercent,
+            userMessage: userMessage,
+            canEditDraft: canEditDraft,
+            canRetry: canRetry,
             errorCode: errorCode,
             errorMessage: errorMessage
         )
