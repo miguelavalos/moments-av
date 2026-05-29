@@ -529,6 +529,33 @@ private struct MomentsCreateStoryReviewCard: View {
     }
 }
 
+private struct MomentsCreateRenderPlanSummary: View {
+    let plan: MomentsRenderPlan
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                MomentsCreateOptionPill(title: "\(plan.usedAssetCount) of \(plan.plannedAssetCount) items", systemImage: "photo.stack")
+                MomentsCreateOptionPill(title: "\(plan.secondsPerCredit * plan.creditCost)s", systemImage: "timer")
+            }
+
+            Text(plan.userMessage)
+                .font(.system(size: 13, weight: .semibold))
+                .foregroundStyle(AVBrandColor.textSecondary)
+                .fixedSize(horizontal: false, vertical: true)
+
+            ForEach(plan.qualityWarnings.prefix(2), id: \.self) { warning in
+                Label(warning, systemImage: "exclamationmark.triangle.fill")
+                    .font(.system(size: 12, weight: .bold))
+                    .foregroundStyle(.orange)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
+        .padding(12)
+        .background(AVBrandColor.accent.opacity(0.08), in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+    }
+}
+
 private struct MomentsCreateStoryReviewPage: View {
     let presentation: MomentsCreateWorkflowPresentation
     let createVideo: () -> Void
@@ -610,6 +637,10 @@ private struct MomentsCreateStoryReviewPage: View {
                                         .foregroundStyle(AVBrandColor.textSecondary)
                                         .fixedSize(horizontal: false, vertical: true)
                                 }
+                            }
+
+                            if let renderPlan = presentation.finalRenderSummary.renderPlan {
+                                MomentsCreateRenderPlanSummary(plan: renderPlan.plan)
                             }
 
                             Button(action: { showsCreateVideoConfirmation = true }) {

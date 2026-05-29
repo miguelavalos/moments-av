@@ -37,6 +37,7 @@ struct MomentsCreatePreviewGenerationState {
 struct MomentsCreateFinalRenderState {
     let finalExport: MomentArtifact?
     let latestFinalJob: MomentRenderJob?
+    let renderPlan: MomentsRenderPlanResponse?
     let statusMessage: String?
     let isGenerating: Bool
     let isRefreshingStatus: Bool

@@ -4,6 +4,7 @@ import Foundation
 final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
     @Published private(set) var finalExport: MomentArtifact?
     @Published private(set) var latestFinalJob: MomentRenderJob?
+    @Published private(set) var renderPlan: MomentsRenderPlanResponse?
     @Published private(set) var isGenerating = false
     @Published private(set) var isRefreshingStatus = false
     @Published private(set) var statusMessage: String?
@@ -109,6 +110,21 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
         statusMessage = "Avi is preparing the final export."
 
         do {
+            statusMessage = "Checking the video plan."
+            let plan = try await finalRenderClient.prepareRenderPlan(
+                projectId: projectId,
+                bearerToken: bearerToken,
+                template: template,
+                creationStyle: creationStyle,
+                form: form
+            )
+            renderPlan = plan
+            guard plan.canCreateVideo else {
+                statusMessage = "Avi needs usable media before creating the video."
+                isGenerating = false
+                return
+            }
+
             let startedJob = try await FinalRenderGenerationRun.perform(
                 ownerUserId: ownerUserId,
                 bearerToken: bearerToken,
@@ -179,6 +195,7 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
         finalExport = nil
         latestFinalJob = nil
         latestFinalJobProjectId = nil
+        renderPlan = nil
         statusMessage = nil
     }
 

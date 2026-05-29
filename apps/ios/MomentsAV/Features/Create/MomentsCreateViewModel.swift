@@ -34,6 +34,7 @@ final class MomentsCreateViewModel: ObservableObject {
     @Published private(set) var isRefreshingPreviewStatus = false
     @Published private(set) var finalExport: MomentArtifact?
     @Published private(set) var latestFinalJob: MomentRenderJob?
+    @Published private(set) var renderPlan: MomentsRenderPlanResponse?
     @Published private(set) var finalRenderStatusMessage: String?
     @Published private(set) var isGeneratingFinalRender = false
     @Published private(set) var isRefreshingFinalRenderStatus = false
@@ -79,6 +80,7 @@ final class MomentsCreateViewModel: ObservableObject {
             || latestPreviewJob != nil
             || finalExport != nil
             || latestFinalJob != nil
+            || renderPlan != nil
     }
 
     var hasLocalMomentWorkspace: Bool {
@@ -455,6 +457,7 @@ extension MomentsCreateViewModel {
         guard !usesFullUITestFixture else { return }
         finalExport = state.finalExport
         latestFinalJob = state.latestFinalJob
+        renderPlan = state.renderPlan
         finalRenderStatusMessage = state.statusMessage
         isGeneratingFinalRender = state.isGenerating
         isRefreshingFinalRenderStatus = state.isRefreshingStatus

@@ -145,6 +145,54 @@ struct MomentsFinalRenderClient {
         return try JSONDecoder().decode(MomentsCreditReservationResponse.self, from: data)
     }
 
+    func prepareRenderPlan(
+        projectId: String,
+        bearerToken: String,
+        template: MomentTemplate,
+        creationStyle: MomentCreationStyleID?,
+        form: MomentDraftForm
+    ) async throws -> MomentsRenderPlanResponse {
+        guard let baseURL = URL(string: baseURLString.trimmingCharacters(in: .whitespacesAndNewlines)) else {
+            throw MomentsFinalRenderError.apiNotConfigured
+        }
+
+        let endpoint = baseURL
+            .appendingPathComponent("v1")
+            .appendingPathComponent("apps")
+            .appendingPathComponent("momentsav")
+            .appendingPathComponent("renders")
+            .appendingPathComponent("plan")
+        let body = MomentsRenderPlanRequest(
+            projectId: projectId,
+            template: template.id.rawValue,
+            creationStyle: creationStyle?.rawValue,
+            tone: form.tone.rawValue,
+            tempo: form.tempo.rawValue,
+            occasion: form.occasion,
+            details: form.details,
+            creditCost: template.creditCost
+        )
+
+        var request = URLRequest(url: endpoint)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("Bearer \(bearerToken)", forHTTPHeaderField: "Authorization")
+        request.httpBody = try JSONEncoder().encode(body)
+
+        let (data, response) = try await retryPolicy.run {
+            try await session.data(for: request)
+        }
+        guard let httpResponse = response as? HTTPURLResponse, 200..<300 ~= httpResponse.statusCode else {
+            throw MomentsAPIError.decode(
+                from: data,
+                fallbackCode: "moments_render_plan_failed",
+                fallbackMessage: MomentsFinalRenderError.planFailed.localizedDescription
+            )
+        }
+
+        return try JSONDecoder().decode(MomentsRenderPlanResponse.self, from: data)
+    }
+
     func startFinalRenderWorkflow(
         projectId: String,
         bearerToken: String,
@@ -200,12 +248,14 @@ struct MomentsFinalRenderClient {
 
 enum MomentsFinalRenderError: LocalizedError {
     case apiNotConfigured
+    case planFailed
     case reservationFailed
     case generationFailed
 
     var errorDescription: String? {
         switch self {
         case .apiNotConfigured: "Final render is not configured for this build."
+        case .planFailed: "Avi could not prepare the final video plan."
         case .reservationFailed: "Credits could not be reserved for the final video."
         case .generationFailed: "Final render failed before delivery. Credits were not committed unless an export was delivered."
         }

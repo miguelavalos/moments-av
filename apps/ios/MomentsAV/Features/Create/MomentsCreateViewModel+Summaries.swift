@@ -40,6 +40,7 @@ extension MomentsCreateViewModel {
     var finalRenderSummary: MomentsCreateFinalRenderSummary {
         MomentsCreateFinalRenderSummary(
             creditCost: form.template.creditCost,
+            renderPlan: renderPlan,
             finalExport: effectiveFinalExport,
             latestFinalJob: effectiveLatestFinalJob,
             isGenerating: isGeneratingFinalRender,

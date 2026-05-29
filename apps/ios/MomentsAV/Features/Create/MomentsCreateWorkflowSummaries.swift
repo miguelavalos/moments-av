@@ -143,6 +143,7 @@ struct MomentsCreatePreviewSummary: Equatable {
 
 struct MomentsCreateFinalRenderSummary: Equatable {
     var creditCost = 0
+    var renderPlan: MomentsRenderPlanResponse?
     var finalExport: MomentArtifact?
     var latestFinalJob: MomentRenderJob?
     var isGenerating = false

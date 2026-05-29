@@ -75,6 +75,39 @@ struct MomentsStartWorkflowResponse: Decodable, Equatable {
     let startedAt: String
 }
 
+struct MomentsRenderPlanRequest: Encodable {
+    let appId = "momentsav"
+    let projectId: String
+    let template: String
+    let creationStyle: String?
+    let tone: String?
+    let tempo: String?
+    let occasion: String?
+    let details: String?
+    let creditCost: Int
+}
+
+struct MomentsRenderPlanResponse: Decodable, Equatable {
+    let appId: String
+    let projectId: String
+    let planId: String
+    let plan: MomentsRenderPlan
+    let canCreateVideo: Bool
+    let generatedAt: String
+}
+
+struct MomentsRenderPlan: Decodable, Equatable {
+    let targetDurationMs: Int
+    let creditCost: Int
+    let secondsPerCredit: Int
+    let plannedAssetCount: Int
+    let usedAssetCount: Int
+    let rejectedAssetCount: Int
+    let rendererMode: String
+    let userMessage: String
+    let qualityWarnings: [String]
+}
+
 enum MomentsFinalRenderRules {
     enum BlockReason {
         case missingProject
