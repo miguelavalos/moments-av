@@ -50,15 +50,25 @@ struct MomentsCreateMediaSummary: Equatable {
     }
 
     var reviewCount: Int {
-        selectedCount > 0 ? selectedCount : temporaryBackendMediaCount
+        if selectedCount > 0 {
+            return selectedCount
+        }
+
+        let selectedBackendCount = temporaryBackendMediaCount
+        return selectedBackendCount > 0 ? selectedBackendCount : syncedMediaAssets.count
     }
 
     var hasTemporaryBackendMedia: Bool {
-        selectedMedia.isEmpty && syncedMediaAssets.contains(where: \.selected)
+        selectedMedia.isEmpty && savedBackendMediaCount > 0
     }
 
     var temporaryBackendMediaCount: Int {
         syncedMediaAssets.filter(\.selected).count
+    }
+
+    var savedBackendMediaCount: Int {
+        let selectedBackendCount = temporaryBackendMediaCount
+        return selectedBackendCount > 0 ? selectedBackendCount : syncedMediaAssets.count
     }
 
     func remainingSlots(template: MomentTemplate) -> Int {

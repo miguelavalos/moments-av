@@ -108,7 +108,8 @@ enum MomentsStoryDraftRules {
             return Availability(canDraft: false, blockReason: .missingMedia)
         }
 
-        let selectedCount = mediaAssets.filter(\.selected).count
+        let selectedMediaCount = mediaAssets.filter(\.selected).count
+        let selectedCount = selectedMediaCount > 0 ? selectedMediaCount : mediaAssets.count
         switch MomentsMediaRules.availability(template: template, selectedCount: selectedCount).blockReason {
         case nil:
             return Availability(canDraft: true, blockReason: nil)

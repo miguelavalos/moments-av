@@ -493,7 +493,7 @@ private struct MomentsCreateStoryReviewCard: View {
         AVAppShellCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(spacing: 10) {
-                    Text("What Avi will focus on")
+                    Text("Story direction")
                         .font(.system(size: 13, weight: .black))
                         .foregroundStyle(AVBrandColor.textPrimary)
 
@@ -504,13 +504,13 @@ private struct MomentsCreateStoryReviewCard: View {
                         .foregroundStyle(AVBrandColor.accent)
                 }
 
-                Text("Avi prepared this plan before spending video credits.")
+                Text("Review the pacing and message before spending video credits.")
                     .font(.caption)
                     .fontWeight(.semibold)
                     .foregroundStyle(AVBrandColor.textSecondary)
 
                 VStack(alignment: .leading, spacing: 10) {
-                    ForEach(presentation.storySummary.reviewScenes.prefix(3)) { scene in
+                    ForEach(presentation.storySummary.reviewScenes) { scene in
                         MomentsCreateStoryReviewSceneRow(scene: scene)
                     }
                 }
@@ -556,6 +556,40 @@ private struct MomentsCreateRenderPlanSummary: View {
     }
 }
 
+private struct MomentsCreateReviewMetric: View {
+    let title: String
+    let subtitle: String
+    let systemImage: String
+
+    var body: some View {
+        HStack(spacing: 10) {
+            Image(systemName: systemImage)
+                .font(.system(size: 14, weight: .black))
+                .foregroundStyle(AVBrandColor.accent)
+                .frame(width: 32, height: 32)
+                .background(AVBrandColor.accent.opacity(0.10), in: Circle())
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title)
+                    .font(.system(size: 14, weight: .black))
+                    .foregroundStyle(AVBrandColor.textPrimary)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
+
+                Text(subtitle)
+                    .font(.system(size: 11, weight: .semibold))
+                    .foregroundStyle(AVBrandColor.textSecondary)
+                    .lineLimit(2)
+                    .minimumScaleFactor(0.82)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .padding(10)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(AVBrandColor.mutedSurface, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+    }
+}
+
 private struct MomentsCreateStoryReviewPage: View {
     let presentation: MomentsCreateWorkflowPresentation
     let createVideo: () -> Void
@@ -597,7 +631,7 @@ private struct MomentsCreateStoryReviewPage: View {
                             .frame(width: 98, height: 98)
 
                             VStack(alignment: .leading, spacing: 8) {
-                                Text("Ready to create")
+                                Text("Review before creating")
                                     .font(.system(size: 18, weight: .black))
                                     .foregroundStyle(AVBrandColor.textPrimary)
 
@@ -613,6 +647,39 @@ private struct MomentsCreateStoryReviewPage: View {
                                 }
                             }
                             .frame(maxWidth: .infinity, alignment: .leading)
+                        }
+                    }
+
+                    AVAppShellCard {
+                        VStack(alignment: .leading, spacing: 12) {
+                            Text("Media and timing")
+                                .font(.system(size: 13, weight: .black))
+                                .foregroundStyle(AVBrandColor.textPrimary)
+
+                            HStack(spacing: 10) {
+                                MomentsCreateReviewMetric(
+                                    title: mediaCountTitle,
+                                    subtitle: mediaCountSubtitle,
+                                    systemImage: "photo.stack.fill"
+                                )
+                                MomentsCreateReviewMetric(
+                                    title: presentation.template.duration,
+                                    subtitle: "\(creditCostTitle) final video",
+                                    systemImage: "timer"
+                                )
+                            }
+
+                            if presentation.mediaSummary.reviewCount == 0 {
+                                Label("Avi cannot create the final video until the draft media is available again.", systemImage: "exclamationmark.triangle.fill")
+                                    .font(.system(size: 12, weight: .bold))
+                                    .foregroundStyle(.orange)
+                                    .fixedSize(horizontal: false, vertical: true)
+                            } else {
+                                Text("Avi will use the saved draft media as the source for the final edit.")
+                                    .font(.system(size: 12, weight: .semibold))
+                                    .foregroundStyle(AVBrandColor.textSecondary)
+                                    .fixedSize(horizontal: false, vertical: true)
+                            }
                         }
                     }
 
@@ -697,11 +764,20 @@ private struct MomentsCreateStoryReviewPage: View {
     }
 
     private var summaryTitle: String {
-        "Avi prepared an edited video plan for this selection."
+        "Confirm the media, story, and timing before the final render starts."
     }
 
     private var creditCostTitle: String {
         MomentsCreditCopy.countTitle(presentation.finalRenderSummary.creditCost)
+    }
+
+    private var mediaCountTitle: String {
+        let count = presentation.mediaSummary.reviewCount
+        return "\(count) \(count == 1 ? "item" : "items")"
+    }
+
+    private var mediaCountSubtitle: String {
+        presentation.mediaSummary.selectedCount > 0 ? "Selected locally" : "Saved in draft"
     }
 
     private var hasRenderPlan: Bool {

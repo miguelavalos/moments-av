@@ -60,18 +60,18 @@ struct MomentsCreateMediaCard: View {
                     }
 
                     if presentation.summary.hasTemporaryBackendMedia {
-                        Text("This draft still has saved media and can create a video. Re-select only if you want to edit the local selection.")
+                        Text("This draft has saved media ready for review and video creation.")
                             .font(.system(size: 13, weight: .semibold))
                             .foregroundStyle(AVBrandColor.textSecondary)
                             .lineLimit(nil)
                             .fixedSize(horizontal: false, vertical: true)
 
                         Button {
-                            showsPhotoPicker = true
+                            showsMediaManager = true
                         } label: {
                             MomentsCreateMediaChoiceButtonLabel(
-                                title: "Re-select local media",
-                                systemImage: "photo.badge.plus",
+                                title: "Manage media",
+                                systemImage: "slider.horizontal.3",
                                 isPrimary: true
                             )
                         }
@@ -168,6 +168,8 @@ struct MomentsCreateMediaCard: View {
     private var mediaVisual: some View {
         if !presentation.summary.selectedMedia.isEmpty {
             MomentsCreateStackedMediaSummary(selectedMedia: presentation.summary.selectedMedia)
+        } else if !presentation.syncedMediaAssets.isEmpty {
+            MomentsCreateStackedSyncedMediaSummary(mediaAssets: presentation.syncedMediaAssets)
         } else {
             ZStack {
                 AVBrandColor.accent.opacity(0.08)
@@ -193,7 +195,8 @@ struct MomentsCreateMediaCard: View {
         let count = selectedCount
         if count == 0 {
             if presentation.summary.hasTemporaryBackendMedia {
-                return "\(presentation.summary.temporaryBackendMediaCount) items saved for this Moment."
+                let savedCount = presentation.summary.savedBackendMediaCount
+                return "\(savedCount) \(savedCount == 1 ? "item" : "items") saved for this Moment."
             }
             return "Choose photos, clips, or an album from your library."
         }
@@ -202,11 +205,11 @@ struct MomentsCreateMediaCard: View {
     }
 
     private var actionTitle: String {
-        selectedCount == 0 && !presentation.summary.hasTemporaryBackendMedia ? "Choose" : "Edit"
+        selectedCount == 0 && presentation.syncedMediaAssets.isEmpty ? "Choose" : "Edit"
     }
 
     private func mediaCardAction() {
-        if selectedCount == 0 {
+        if selectedCount == 0 && presentation.syncedMediaAssets.isEmpty {
             return
         } else {
             showsMediaManager = true

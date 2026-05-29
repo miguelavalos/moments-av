@@ -309,7 +309,8 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
     }
 
     private func restoreLocalMedia(from workspace: MomentProjectWorkspace) async {
-        let expectedSelectedCount = workspace.mediaAssets.filter(\.selected).count
+        let selectedAssetCount = workspace.mediaAssets.filter(\.selected).count
+        let expectedSelectedCount = selectedAssetCount > 0 ? selectedAssetCount : workspace.mediaAssets.count
         do {
             let restoredMedia = try await MediaPickerImport.loadLocalMediaAssets(workspace.mediaAssets)
             guard activeWorkspace?.project.id == workspace.project.id, selectedMedia.isEmpty else { return }
@@ -318,16 +319,16 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
                 selectedMedia = restoredMedia
                 statusMessage = "Local media ready for editing."
             } else if restoredMedia.isEmpty, expectedSelectedCount > 0 {
-                statusMessage = "Saved media is ready for video creation. To edit the local selection, allow Photos access or re-select the same media."
+                statusMessage = "Saved media is ready for review and video creation."
             } else if expectedSelectedCount > 0 {
-                statusMessage = "Some selected photos or clips need Photos access again before editing. Saved media can still create the video."
+                statusMessage = "Saved media is ready. Some local thumbnails may refresh in the background."
             }
         } catch MomentsUploadError.photoLibraryAccessDenied {
             guard activeWorkspace?.project.id == workspace.project.id else { return }
-            statusMessage = "Saved media is ready for video creation. Allow Photos access again if you want to edit the local selection."
+            statusMessage = "Saved media is ready for review and video creation."
         } catch {
             guard activeWorkspace?.project.id == workspace.project.id else { return }
-            statusMessage = "Saved media is ready for video creation. Re-select the same media only if you want to edit it locally."
+            statusMessage = "Saved media is ready for review and video creation."
         }
     }
 
@@ -427,8 +428,9 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
     }
 
     private var activeWorkspaceStoryMedia: [MomentsStoryDraftMedia] {
-        (activeWorkspace?.mediaAssets ?? [])
-            .filter(\.selected)
+        let mediaAssets = activeWorkspace?.mediaAssets ?? []
+        let selectedAssets = mediaAssets.filter(\.selected)
+        return (selectedAssets.isEmpty ? mediaAssets : selectedAssets)
             .sorted { $0.sortOrder < $1.sortOrder }
             .map {
                 MomentsStoryDraftMedia(

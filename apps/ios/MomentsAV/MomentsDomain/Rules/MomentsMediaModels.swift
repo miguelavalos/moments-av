@@ -74,7 +74,8 @@ enum MomentsMediaRules {
         syncedMedia: [MomentMediaAsset]
     ) -> Int {
         if localMedia.isEmpty {
-            return syncedMedia.filter(\.selected).count
+            let selectedSyncedCount = syncedMedia.filter(\.selected).count
+            return selectedSyncedCount > 0 ? selectedSyncedCount : syncedMedia.count
         }
 
         return localMedia.filter(\.selected).count
