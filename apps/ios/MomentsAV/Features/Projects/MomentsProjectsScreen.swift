@@ -91,6 +91,9 @@ struct MomentsProjectsScreen: View {
 
     private func confirmProjectDeletion() {
         if let projectPendingDeletion {
+            if createViewModel.activeProjectId == projectPendingDeletion.id {
+                createViewModel.clearSessionState()
+            }
             viewModel.deleteProject(projectPendingDeletion)
         }
         projectPendingDeletion = nil

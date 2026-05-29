@@ -7,6 +7,8 @@ enum FinalRenderGenerationRun {
         bearerToken: String,
         projectId: String,
         template: MomentTemplate,
+        creationStyle: MomentCreationStyleID?,
+        form: MomentDraftForm,
         finalRenderClient: MomentsFinalRenderClient,
         finalRenderResultSaver: any MomentsFinalRenderResultSaving,
         workspaceObserver: any MomentsActiveWorkspaceObserving,
@@ -31,6 +33,8 @@ enum FinalRenderGenerationRun {
             projectId: projectId,
             bearerToken: bearerToken,
             template: template,
+            creationStyle: creationStyle,
+            form: form,
             reservationId: reservation.id,
             operationId: operationId
         )

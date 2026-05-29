@@ -57,7 +57,9 @@ struct MomentsFinalRenderClient {
     func generateFinalRender(
         projectId: String,
         bearerToken: String,
-        template: MomentTemplate
+        template: MomentTemplate,
+        creationStyle: MomentCreationStyleID?,
+        form: MomentDraftForm
     ) async throws -> MomentsFinalRenderResponse {
         guard let baseURL = URL(string: baseURLString.trimmingCharacters(in: .whitespacesAndNewlines)) else {
             throw MomentsFinalRenderError.apiNotConfigured
@@ -72,6 +74,11 @@ struct MomentsFinalRenderClient {
         let body = MomentsFinalRenderRequest(
             projectId: projectId,
             template: template.id.rawValue,
+            creationStyle: creationStyle?.rawValue,
+            tone: form.tone.rawValue,
+            tempo: form.tempo.rawValue,
+            occasion: form.occasion,
+            details: form.details,
             creditCost: template.creditCost,
             idempotencyKey: "final:\(projectId)"
         )
@@ -142,6 +149,8 @@ struct MomentsFinalRenderClient {
         projectId: String,
         bearerToken: String,
         template: MomentTemplate,
+        creationStyle: MomentCreationStyleID?,
+        form: MomentDraftForm,
         reservationId: String,
         operationId: String
     ) async throws -> MomentsStartWorkflowResponse {
@@ -159,6 +168,11 @@ struct MomentsFinalRenderClient {
             projectId: projectId,
             renderKind: "final",
             template: template.id.rawValue,
+            creationStyle: creationStyle?.rawValue,
+            tone: form.tone.rawValue,
+            tempo: form.tempo.rawValue,
+            occasion: form.occasion,
+            details: form.details,
             idempotencyKey: "final-workflow:\(projectId):\(template.id.rawValue):\(operationId)",
             reservationId: reservationId
         )

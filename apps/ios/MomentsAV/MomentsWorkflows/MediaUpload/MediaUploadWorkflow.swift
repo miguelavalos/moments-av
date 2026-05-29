@@ -216,7 +216,6 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
               restoredWorkspaceProjectId != workspace.project.id,
               !workspace.mediaAssets.isEmpty else { return }
 
-        restoredWorkspaceProjectId = workspace.project.id
         Task { [weak self] in
             await self?.restoreLocalMedia(from: workspace)
         }
@@ -310,16 +309,25 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
     }
 
     private func restoreLocalMedia(from workspace: MomentProjectWorkspace) async {
+        let expectedSelectedCount = workspace.mediaAssets.filter(\.selected).count
         do {
             let restoredMedia = try await MediaPickerImport.loadLocalMediaAssets(workspace.mediaAssets)
             guard activeWorkspace?.project.id == workspace.project.id, selectedMedia.isEmpty else { return }
-            selectedMedia = restoredMedia
-            if !restoredMedia.isEmpty {
+            if restoredMedia.count == expectedSelectedCount {
+                restoredWorkspaceProjectId = workspace.project.id
+                selectedMedia = restoredMedia
                 statusMessage = "Local media ready for editing."
+            } else if restoredMedia.isEmpty, expectedSelectedCount > 0 {
+                statusMessage = "Saved media is ready for video creation. To edit the local selection, allow Photos access or re-select the same media."
+            } else if expectedSelectedCount > 0 {
+                statusMessage = "Some selected photos or clips need Photos access again before editing. Saved media can still create the video."
             }
+        } catch MomentsUploadError.photoLibraryAccessDenied {
+            guard activeWorkspace?.project.id == workspace.project.id else { return }
+            statusMessage = "Saved media is ready for video creation. Allow Photos access again if you want to edit the local selection."
         } catch {
             guard activeWorkspace?.project.id == workspace.project.id else { return }
-            statusMessage = "Local media thumbnails are not available on this device. Add media again if you want to edit the selection."
+            statusMessage = "Saved media is ready for video creation. Re-select the same media only if you want to edit it locally."
         }
     }
 

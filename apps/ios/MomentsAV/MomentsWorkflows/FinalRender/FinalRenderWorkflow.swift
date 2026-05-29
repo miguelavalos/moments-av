@@ -67,6 +67,8 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
     func generateFinalRender(
         projectId: String,
         template: MomentTemplate,
+        creationStyle: MomentCreationStyleID?,
+        form: MomentDraftForm,
         allowPreparedStory: Bool = false
     ) async {
         guard let ownerUserId = currentUserProvider.currentUserId else {
@@ -112,6 +114,8 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
                 bearerToken: bearerToken,
                 projectId: projectId,
                 template: template,
+                creationStyle: creationStyle,
+                form: form,
                 finalRenderClient: finalRenderClient,
                 finalRenderResultSaver: finalRenderResultSaver,
                 workspaceObserver: workspaceObserver,
@@ -120,10 +124,10 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
             )
             latestFinalJob = startedJob
             latestFinalJobProjectId = projectId
-            statusMessage = "Avi is creating the video. Refresh to check the latest status."
+            statusMessage = "Avi is creating the video. You can check progress here."
         } catch {
             guard isCurrentWorkflowGeneration(generation) else { return }
-            statusMessage = "Couldn't start video creation. \(error.localizedDescription)"
+            statusMessage = "Couldn't start video creation. Please try again in a moment."
         }
 
         guard isCurrentWorkflowGeneration(generation) else { return }
@@ -159,7 +163,7 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
             )
         } catch {
             guard isCurrentWorkflowGeneration(generation) else { return }
-            statusMessage = error.localizedDescription
+            statusMessage = "Couldn't refresh the video status. Please try again in a moment."
         }
 
         guard isCurrentWorkflowGeneration(generation) else { return }
@@ -192,7 +196,7 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
             missingProject: "Open a project before refreshing final status.",
             missingJob: "No final render job is available yet.",
             missingProviderRequest: "Final render status is missing its provider request id.",
-            success: "Final render status updated."
+            success: "Video status updated."
         )
     }
 }

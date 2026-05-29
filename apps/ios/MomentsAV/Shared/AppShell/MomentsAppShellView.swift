@@ -10,6 +10,7 @@ struct MomentsAppShellView: View {
 
     @EnvironmentObject private var accountController: AccountController
     @EnvironmentObject private var createViewModel: MomentsCreateViewModel
+    @EnvironmentObject private var projectsViewModel: MomentsProjectsViewModel
     @EnvironmentObject private var aviViewModel: MomentsAviViewModel
     @Environment(\.avCommonAppExperience) private var appExperience
     @State private var chromeItem: AVAppShellChromeItem?
@@ -163,8 +164,10 @@ struct MomentsAppShellView: View {
     private var showsNewMomentFloatingAction: Bool {
         chromeItem == nil
             && selectedTab == .projects
-            && createViewModel.canBeginNewProject
-            && !createViewModel.hasMomentWorkspace
+            && accountController.isSignedIn
+            && (createViewModel.hasMomentWorkspace
+                || projectsViewModel.projectSummary.latestInProgressProject != nil
+                || createViewModel.canBeginNewProject)
     }
 
     private var hasAviActiveContext: Bool {
@@ -177,7 +180,18 @@ struct MomentsAppShellView: View {
     }
 
     private func startOrContinueMoment() {
-        if !createViewModel.hasMomentWorkspace {
+        if createViewModel.hasMomentWorkspace {
+            selectRootTab(.create)
+            return
+        }
+
+        if let activeProject = projectsViewModel.projectSummary.latestInProgressProject {
+            createViewModel.continueProject(activeProject)
+            selectRootTab(.create)
+            return
+        }
+
+        if createViewModel.canBeginNewProject {
             createViewModel.beginNewProject(openMediaPicker: true)
         }
         selectRootTab(.create)

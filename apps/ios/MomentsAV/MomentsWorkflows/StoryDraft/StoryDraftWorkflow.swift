@@ -1,4 +1,5 @@
 import Foundation
+import OSLog
 
 @MainActor
 final class StoryDraftWorkflow: WorkspaceObservingWorkflow {
@@ -10,6 +11,7 @@ final class StoryDraftWorkflow: WorkspaceObservingWorkflow {
     private let authTokenProvider: any MomentsAuthTokenProviding
     private let storyDraftSaver: any MomentsStoryDraftSaving
     private let storyClient: MomentsStoryClient
+    private let logger = Logger(subsystem: "com.avalsys.momentsav", category: "story")
 
     init(
         currentUserProvider: any MomentsCurrentUserProviding,
@@ -86,19 +88,39 @@ final class StoryDraftWorkflow: WorkspaceObservingWorkflow {
                 selectedMedia: media
             )
             guard isCurrentWorkflowGeneration(generation) else { return false }
+            try validateDraftMediaReferences(draft, availableMedia: media)
             generatedDraft = draft
-            try await storyDraftSaver.saveStoryDraft(
-                ownerUserId: ownerUserId,
-                projectId: projectId,
-                draft: draft,
-                storyInputSignature: storyInputSignature
-            )
+            do {
+                try await storyDraftSaver.saveStoryDraft(
+                    ownerUserId: ownerUserId,
+                    projectId: projectId,
+                    draft: draft,
+                    storyInputSignature: storyInputSignature
+                )
+            } catch {
+                logger.error("Story draft save failed projectId=\(projectId, privacy: .public) error=\(String(describing: error), privacy: .public)")
+                throw StoryDraftWorkflowError.saveFailed
+            }
             guard isCurrentWorkflowGeneration(generation) else { return false }
             workspaceObserver.observeWorkspace(ownerUserId: ownerUserId, projectId: projectId)
             statusMessage = draft.helperCopy
+        } catch let error as StoryDraftWorkflowError {
+            guard isCurrentWorkflowGeneration(generation) else { return false }
+            logger.error("Story draft workflow failed projectId=\(projectId, privacy: .public) reason=\(error.localizedDescription, privacy: .public)")
+            statusMessage = error.localizedDescription
+            isDrafting = false
+            return false
+        } catch let error as LocalizedError {
+            guard isCurrentWorkflowGeneration(generation) else { return false }
+            let message = error.errorDescription ?? error.localizedDescription
+            logger.error("Story draft request failed projectId=\(projectId, privacy: .public) error=\(String(describing: error), privacy: .public)")
+            statusMessage = message
+            isDrafting = false
+            return false
         } catch {
             guard isCurrentWorkflowGeneration(generation) else { return false }
-            statusMessage = "Couldn’t prepare the story. Please try again."
+            logger.error("Story draft failed projectId=\(projectId, privacy: .public) error=\(String(describing: error), privacy: .public)")
+            statusMessage = "Avi couldn’t prepare the story right now. Please try again."
             isDrafting = false
             return false
         }
@@ -150,6 +172,20 @@ final class StoryDraftWorkflow: WorkspaceObservingWorkflow {
             }
     }
 
+    private func validateDraftMediaReferences(
+        _ draft: MomentsStoryDraftResponse,
+        availableMedia: [MomentsStoryDraftMedia]
+    ) throws {
+        let availableMediaIds = Set(availableMedia.map(\.mediaAssetId))
+        let missingMediaIds = draft.scenes
+            .flatMap(\.mediaAssetIds)
+            .filter { !availableMediaIds.contains($0) }
+
+        guard missingMediaIds.isEmpty else {
+            throw StoryDraftWorkflowError.invalidMediaReferences
+        }
+    }
+
     private func generateBlockMessage(_ availability: MomentsMediaRules.Availability) -> String {
         switch availability.blockReason {
         case nil:
@@ -160,6 +196,20 @@ final class StoryDraftWorkflow: WorkspaceObservingWorkflow {
         case .tooManySelected(let extraCount):
             let label = extraCount == 1 ? "photo or clip" : "photos or clips"
             return "Remove \(extraCount) \(label) before preparing the story."
+        }
+    }
+}
+
+private enum StoryDraftWorkflowError: LocalizedError {
+    case invalidMediaReferences
+    case saveFailed
+
+    var errorDescription: String? {
+        switch self {
+        case .invalidMediaReferences:
+            "Avi prepared the story, but it did not match the saved media. Please save the media again."
+        case .saveFailed:
+            "Avi prepared the story, but couldn’t save it to this Moment. Please try again."
         }
     }
 }

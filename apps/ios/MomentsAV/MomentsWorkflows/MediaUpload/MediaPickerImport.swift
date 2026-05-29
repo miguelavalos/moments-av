@@ -156,7 +156,7 @@ enum MediaPickerImport {
                 guard let asset = PHAsset
                     .fetchAssets(withLocalIdentifiers: [localIdentifier], options: nil)
                     .firstObject else { return nil }
-                guard asset.mediaType == .image else { return nil }
+                guard asset.mediaType == .image || asset.mediaType == .video else { return nil }
                 return (asset, media)
             }
 
@@ -165,7 +165,7 @@ enum MediaPickerImport {
         await progress?(0, candidates.count)
 
         for (index, candidate) in candidates.enumerated() {
-            let media = try await loadPhotoAsset(candidate.asset, sortOrder: Int(candidate.source.sortOrder))
+            let media = try await loadLibraryAsset(candidate.asset, sortOrder: Int(candidate.source.sortOrder))
             if let image = UIImage(data: media.data) {
                 MomentsLocalMediaThumbnailCache.store(
                     image,
@@ -340,6 +340,51 @@ enum MediaPickerImport {
         )
     }
 
+    private static func loadLibraryAsset(_ asset: PHAsset, sortOrder: Int) async throws -> MomentsSelectedMedia {
+        switch asset.mediaType {
+        case .image:
+            return try await loadPhotoAsset(asset, sortOrder: sortOrder)
+        case .video:
+            return try await loadVideoAsset(asset, sortOrder: sortOrder)
+        default:
+            throw MomentsUploadError.unreadableSelection
+        }
+    }
+
+    private static func loadVideoAsset(_ asset: PHAsset, sortOrder: Int) async throws -> MomentsSelectedMedia {
+        let (data, filename) = try await videoData(for: asset)
+        let contentType = contentType(for: filename) ?? "video/quicktime"
+        let digest = SHA256.hash(data: data)
+            .map { String(format: "%02x", $0) }
+            .joined()
+        let analysis = await analyzer.analyze(
+            AVLocalMediaInput(
+                data: data,
+                filename: filename,
+                contentType: contentType,
+                kind: .video,
+                capturedAt: asset.creationDate,
+                pixelWidth: asset.pixelWidth,
+                pixelHeight: asset.pixelHeight
+            )
+        )
+
+        return MomentsSelectedMedia(
+            id: UUID(),
+            sourceLocalIdentifier: asset.localIdentifier,
+            originalFilename: filename,
+            contentType: contentType,
+            kind: "video",
+            byteSize: data.count,
+            sha256: digest,
+            data: data,
+            capturedAt: asset.creationDate,
+            analysis: analysis,
+            sortOrder: sortOrder,
+            selected: true
+        )
+    }
+
     private static func imageData(for asset: PHAsset) async throws -> (Data, String) {
         let options = PHImageRequestOptions()
         options.isNetworkAccessAllowed = true
@@ -363,6 +408,33 @@ enum MediaPickerImport {
 
                 continuation.resume(returning: (data, originalFilename(for: asset, fallbackKind: "photo")))
             }
+        }
+    }
+
+    private static func videoData(for asset: PHAsset) async throws -> (Data, String) {
+        guard let resource = PHAssetResource.assetResources(for: asset)
+            .first(where: { $0.type == .video || $0.type == .fullSizeVideo }) else {
+            throw MomentsUploadError.unreadableSelection
+        }
+        let options = PHAssetResourceRequestOptions()
+        options.isNetworkAccessAllowed = true
+
+        return try await withCheckedThrowingContinuation { continuation in
+            var data = Data()
+            PHAssetResourceManager.default().requestData(
+                for: resource,
+                options: options,
+                dataReceivedHandler: { chunk in
+                    data.append(chunk)
+                },
+                completionHandler: { error in
+                    if let error {
+                        continuation.resume(throwing: error)
+                        return
+                    }
+                    continuation.resume(returning: (data, resource.originalFilename))
+                }
+            )
         }
     }
 

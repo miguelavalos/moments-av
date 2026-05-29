@@ -77,17 +77,22 @@ extension MomentsProjectRemoteClient {
         errorMessage: String?
     ) async throws {
         let client = try requireClient()
+        var args = [
+            "ownerUserId": ownerUserId,
+            "renderJobId": renderJobId,
+            "status": status
+        ]
+        if let errorCode {
+            args["errorCode"] = errorCode
+        }
+        if let errorMessage {
+            args["errorMessage"] = errorMessage
+        }
 
         let updatedRenderJobId: String? = try await retryingMutation(
             client: client,
             name: "moments:updateRenderJobStatus",
-            args: [
-                "ownerUserId": ownerUserId,
-                "renderJobId": renderJobId,
-                "status": status,
-                "errorCode": errorCode,
-                "errorMessage": errorMessage
-            ]
+            args: args
         )
 
         guard updatedRenderJobId != nil else {

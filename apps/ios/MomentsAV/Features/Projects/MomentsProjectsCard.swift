@@ -35,7 +35,8 @@ struct MomentsProjectsCard: View {
                 MomentsHubModePicker(selectedMode: $selectedMode)
                 MomentsHubEmptyContent(
                     selectedMode: selectedMode,
-                    unavailable: unavailable
+                    unavailable: unavailable,
+                    startProject: startProject
                 )
             case .available:
                 MomentsHubCreditStatus(balance: balance, openCredits: openCredits)
@@ -114,6 +115,7 @@ private struct MomentsHubSignedOutState: View {
 private struct MomentsHubEmptyContent: View {
     let selectedMode: MomentsHubMode
     let unavailable: MomentsProjectsUnavailablePresentation
+    let startProject: () -> Void
 
     var body: some View {
         switch selectedMode {
@@ -131,9 +133,9 @@ private struct MomentsHubEmptyContent: View {
                 systemImage: "photo.badge.plus",
                 title: "No draft in progress",
                 message: "Start a new moment. It stays local until you prepare the story.",
-                actionTitle: nil,
-                actionSystemImage: nil,
-                action: nil
+                actionTitle: "New Moment",
+                actionSystemImage: "plus",
+                action: startProject
             )
         }
     }

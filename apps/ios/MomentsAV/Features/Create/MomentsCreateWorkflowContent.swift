@@ -907,7 +907,7 @@ private struct MomentsCreatePrimaryActionBar: View {
             return "Final video ready"
         }
         if presentation.finalRenderSummary.latestFinalJob != nil {
-            return presentation.finalRenderSummary.isRefreshingStatus ? "Refreshing..." : "Refresh final video"
+            return presentation.finalRenderSummary.isRefreshingStatus ? "Checking..." : "Check video status"
         }
         if presentation.canGenerateFinalRender {
             return presentation.finalRenderSummary.isGenerating ? "Creating video..." : "Create video · \(creditCostTitle)"
@@ -979,7 +979,7 @@ private struct MomentsCreatePrimaryActionBar: View {
             if let renderMessage = presentation.finalRenderSummary.statusMessage, !renderMessage.isEmpty {
                 return renderMessage
             }
-            return "Video creation is in progress. Refresh to check the latest status."
+            return "Avi is creating the video. You can check progress here."
         }
         if presentation.previewSummary.latestPreview != nil {
             return "Preview ready. Review it before final video."

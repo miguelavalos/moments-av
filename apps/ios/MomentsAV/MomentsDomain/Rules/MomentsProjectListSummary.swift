@@ -41,6 +41,10 @@ struct MomentsProjectListSummary: Equatable {
             latestProject: projects.max { $0.updatedAt < $1.updatedAt }
         )
     }
+
+    func removing(projectId: String) -> MomentsProjectListSummary {
+        Self.make(from: projects.filter { $0.id != projectId })
+    }
 }
 
 extension MomentsProjectGroups: Equatable {

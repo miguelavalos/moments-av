@@ -319,19 +319,36 @@ final class MomentsCreateViewModel: ObservableObject {
         )
     }
 
+    func currentStoryInputSignature(
+        projectId: String,
+        persistedMedia: [MomentsStoryDraftMedia]?
+    ) -> String {
+        MomentsStoryDraftInputSignature.make(
+            projectId: projectId,
+            form: form,
+            selectedMedia: persistedMedia ?? currentStorySignatureMedia()
+        )
+    }
+
     private func currentStorySignatureMedia() -> [MomentsStoryDraftMedia] {
         let localMedia = effectiveSelectedMedia
             .filter(\.selected)
             .sorted { $0.sortOrder < $1.sortOrder }
         if !localMedia.isEmpty {
+            let syncedMediaBySourceIdentifier = (effectiveActiveWorkspace?.mediaAssets ?? []).reduce(into: [String: MomentMediaAsset]()) {
+                guard let sourceIdentifier = $1.platformMediaAssetId else { return }
+                $0[sourceIdentifier] = $1
+            }
+
             return localMedia
                 .map {
-                    MomentsStoryDraftMedia(
-                        mediaAssetId: $0.id.uuidString,
-                        mediaKind: $0.kind,
+                    let syncedMedia = syncedMediaBySourceIdentifier[$0.sourceLocalIdentifier]
+                    return MomentsStoryDraftMedia(
+                        mediaAssetId: syncedMedia?.id ?? $0.id.uuidString,
+                        mediaKind: syncedMedia?.kind ?? $0.kind,
                         sortOrder: $0.sortOrder,
                         selected: $0.selected,
-                        moderationStatus: "pending"
+                        moderationStatus: syncedMedia?.moderationStatus ?? "pending"
                     )
                 }
         }

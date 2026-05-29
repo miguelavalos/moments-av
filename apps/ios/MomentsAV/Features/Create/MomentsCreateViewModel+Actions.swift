@@ -164,10 +164,8 @@ extension MomentsCreateViewModel {
                 )
                 return
             }
-            let inputSignature = self.currentStoryInputSignature(projectId: projectId)
-
             if self.storySummary.hasScenes,
-               self.lastPreparedStoryInputSignature == inputSignature {
+               self.lastPreparedStoryInputSignature == self.currentStoryInputSignature(projectId: projectId) {
                 self.updateStoryStatusMessage("Story plan is already ready.")
                 return
             }
@@ -179,6 +177,10 @@ extension MomentsCreateViewModel {
                 )
                 return
             }
+            let inputSignature = self.currentStoryInputSignature(
+                projectId: projectId,
+                persistedMedia: persistedMedia
+            )
 
             let didPrepareStory = await storyDraftWorkflow.generateDraft(
                 projectId: projectId,
@@ -240,8 +242,7 @@ extension MomentsCreateViewModel {
                 )
                 return
             }
-            let inputSignature = self.currentStoryInputSignature(projectId: projectId)
-
+            var inputSignature = self.currentStoryInputSignature(projectId: projectId)
             if self.storySummary.hasScenes,
                self.lastPreparedStoryInputSignature == inputSignature {
                 self.updateStoryStatusMessage("Story plan is already ready.")
@@ -253,6 +254,10 @@ extension MomentsCreateViewModel {
                     )
                     return
                 }
+                inputSignature = self.currentStoryInputSignature(
+                    projectId: projectId,
+                    persistedMedia: persistedMedia
+                )
 
                 let didPrepareStory = await storyDraftWorkflow.generateDraft(
                     projectId: projectId,
@@ -265,7 +270,8 @@ extension MomentsCreateViewModel {
                 }
             }
 
-            guard self.isStoryPreparedForCurrentInput else {
+            guard self.storySummary.hasScenes,
+                  self.lastPreparedStoryInputSignature == inputSignature else {
                 self.updateStoryStatusMessage("Story preparation did not finish. Please try again.")
                 return
             }
@@ -317,8 +323,6 @@ extension MomentsCreateViewModel {
                 )
                 return
             }
-            let inputSignature = self.currentStoryInputSignature(projectId: projectId)
-
             let persistedMedia = await self.mediaUploadWorkflow?.persistSelectedMedia(projectId: projectId)
             guard persistedMedia != nil || selectedMedia.isEmpty else {
                 self.updateFinalRenderStatusMessage(self.mediaStatusMessage
@@ -326,6 +330,10 @@ extension MomentsCreateViewModel {
                 )
                 return
             }
+            let inputSignature = self.currentStoryInputSignature(
+                projectId: projectId,
+                persistedMedia: persistedMedia
+            )
 
             if self.canGenerateFinalRender,
                self.isStoryPreparedForCurrentInput {
@@ -338,7 +346,8 @@ extension MomentsCreateViewModel {
                     persistedMedia: persistedMedia
                 )
                 guard didPrepareStory else {
-                    self.updateFinalRenderStatusMessage(self.storyStatusMessage
+                    self.updateFinalRenderStatusMessage(storyDraftWorkflow.statusMessage
+                        ?? self.storyStatusMessage
                         ?? "Couldn't prepare the story. Please try again."
                     )
                     return
@@ -346,13 +355,16 @@ extension MomentsCreateViewModel {
                 self.lastPreparedStoryInputSignature = inputSignature
             }
 
-            guard self.isStoryPreparedForCurrentInput else {
+            guard self.storySummary.hasScenes,
+                  self.lastPreparedStoryInputSignature == inputSignature else {
                 self.updateFinalRenderStatusMessage("Story preparation did not finish. Please try again.")
                 return
             }
             await finalRenderWorkflow.generateFinalRender(
                 projectId: projectId,
                 template: form.template,
+                creationStyle: self.selectedCreationStyle.id,
+                form: form,
                 allowPreparedStory: true
             )
         }
@@ -390,7 +402,9 @@ extension MomentsCreateViewModel {
         runOperation {
             await finalRenderWorkflow.generateFinalRender(
                 projectId: context.projectId,
-                template: context.template
+                template: context.template,
+                creationStyle: self.selectedCreationStyle.id,
+                form: self.form
             )
         }
     }

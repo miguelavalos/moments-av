@@ -113,6 +113,9 @@ final class MomentsProjectsViewModel: ObservableObject {
             guard !Task.isCancelled else { return }
             if didDelete {
                 self?.selectedProjectId = nil
+                self?.activeProject = nil
+                self?.activeWorkspace = nil
+                self?.projectSummary = self?.projectSummary.removing(projectId: project.id) ?? MomentsProjectListSummary()
                 self?.statusMessage = "Project deleted."
             }
             self?.deletionTask = nil

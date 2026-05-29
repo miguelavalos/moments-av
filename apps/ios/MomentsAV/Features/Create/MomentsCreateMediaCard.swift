@@ -60,7 +60,7 @@ struct MomentsCreateMediaCard: View {
                     }
 
                     if presentation.summary.hasTemporaryBackendMedia {
-                        Text("This draft still has temporary backend media, but the local photos are not available on this device. Re-select the media to edit or create again.")
+                        Text("This draft still has saved media and can create a video. Re-select only if you want to edit the local selection.")
                             .font(.system(size: 13, weight: .semibold))
                             .foregroundStyle(AVBrandColor.textSecondary)
                             .lineLimit(nil)
@@ -193,7 +193,7 @@ struct MomentsCreateMediaCard: View {
         let count = selectedCount
         if count == 0 {
             if presentation.summary.hasTemporaryBackendMedia {
-                return "\(presentation.summary.temporaryBackendMediaCount) temporary items in backend."
+                return "\(presentation.summary.temporaryBackendMediaCount) items saved for this Moment."
             }
             return "Choose photos, clips, or an album from your library."
         }
@@ -202,7 +202,7 @@ struct MomentsCreateMediaCard: View {
     }
 
     private var actionTitle: String {
-        selectedCount == 0 ? "Choose" : "Edit"
+        selectedCount == 0 && !presentation.summary.hasTemporaryBackendMedia ? "Choose" : "Edit"
     }
 
     private func mediaCardAction() {
@@ -778,11 +778,11 @@ private struct MomentsCreateLocalMediaUnavailableState: View {
                     .accessibilityHidden(true)
 
                 VStack(spacing: 5) {
-                    Text("Local media unavailable")
+                    Text("Local editing needs access")
                         .font(.system(size: 17, weight: .black))
                         .foregroundStyle(AVBrandColor.textPrimary)
 
-                    Text("\(itemCount) temporary backend item\(itemCount == 1 ? "" : "s") exist for generation, but editing uses local photos on this device.")
+                    Text("\(itemCount) saved item\(itemCount == 1 ? "" : "s") can create the video. Re-select only if you want to edit the local selection.")
                         .font(.system(size: 13, weight: .semibold))
                         .foregroundStyle(AVBrandColor.textSecondary)
                         .multilineTextAlignment(.center)

@@ -4,6 +4,11 @@ struct MomentsFinalRenderRequest: Encodable {
     let appId = "momentsav"
     let projectId: String
     let template: String
+    let creationStyle: String?
+    let tone: String?
+    let tempo: String?
+    let occasion: String?
+    let details: String?
     let creditCost: Int
     let safetyAcknowledged = true
     let idempotencyKey: String
@@ -51,6 +56,11 @@ struct MomentsStartWorkflowRequest: Encodable {
     let projectId: String
     let renderKind: String
     let template: String
+    let creationStyle: String?
+    let tone: String?
+    let tempo: String?
+    let occasion: String?
+    let details: String?
     let safetyAcknowledged = true
     let idempotencyKey: String
     let reservationId: String
