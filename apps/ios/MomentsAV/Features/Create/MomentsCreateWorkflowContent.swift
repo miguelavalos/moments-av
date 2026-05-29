@@ -572,6 +572,7 @@ private struct MomentsCreateRenderPlanSummary: View {
             HStack(spacing: 8) {
                 MomentsCreateOptionPill(title: assetUsageTitle, systemImage: "photo.stack")
                 MomentsCreateOptionPill(title: durationTitle, systemImage: "timer")
+                MomentsCreateOptionPill(title: renderModeTitle, systemImage: "wand.and.stars")
             }
 
             Text(message)
@@ -601,6 +602,14 @@ private struct MomentsCreateRenderPlanSummary: View {
     private var durationTitle: String {
         guard let plan else { return "Before render" }
         return "\(plan.targetDurationMs / 1000)s"
+    }
+
+    private var renderModeTitle: String {
+        guard let plan else { return "Mode pending" }
+        return plan.rendererMode
+            .split(separator: "_")
+            .map { $0.capitalized }
+            .joined(separator: " ")
     }
 
     private var message: String {
@@ -707,6 +716,8 @@ private struct MomentsCreateStoryReviewPage: View {
                     }
 
                     MomentsCreateReviewMediaTimingCard(presentation: presentation)
+
+                    MomentsCreateStoryDirectionCard(presentation: presentation)
 
                     MomentsCreateStoryReviewCard(presentation: presentation)
 
@@ -851,7 +862,8 @@ private struct MomentsCreateStoryReviewPage: View {
     }
 
     private var isPrimaryCreateDisabled: Bool {
-        presentation.mediaSummary.reviewCount == 0
+        !presentation.canGenerateFinalRender
+            || presentation.mediaSummary.reviewCount == 0
             || !presentation.storySummary.hasScenes
             || !MomentsCreditGate.canAffordFinalRender(
                 template: presentation.template,
@@ -929,6 +941,46 @@ private struct MomentsCreateStoryAllowanceActionCard: View {
         presentation.isBuyingReviewBundle
             ? "Adding reviews..."
             : "Add \(presentation.balance.reviewBundleReviewCount) reviews · \(MomentsCreditCopy.countTitle(presentation.balance.reviewBundleCreditCost))"
+    }
+}
+
+private struct MomentsCreateStoryDirectionCard: View {
+    let presentation: MomentsCreateWorkflowPresentation
+
+    var body: some View {
+        AVAppShellCard {
+            VStack(alignment: .leading, spacing: 12) {
+                Text("Story direction")
+                    .font(.system(size: 13, weight: .black))
+                    .foregroundStyle(AVBrandColor.textPrimary)
+
+                HStack(spacing: 10) {
+                    MomentsCreateReviewMetric(
+                        title: presentation.creationStyleTitle,
+                        subtitle: "Theme",
+                        systemImage: "sparkles"
+                    )
+                    MomentsCreateReviewMetric(
+                        title: presentation.tempoTitle,
+                        subtitle: "Pacing",
+                        systemImage: "metronome.fill"
+                    )
+                }
+
+                HStack(spacing: 10) {
+                    MomentsCreateReviewMetric(
+                        title: presentation.toneTitle,
+                        subtitle: "Tone",
+                        systemImage: "text.bubble.fill"
+                    )
+                    MomentsCreateReviewMetric(
+                        title: presentation.occasionTitle,
+                        subtitle: "Moment",
+                        systemImage: "rectangle.stack.fill"
+                    )
+                }
+            }
+        }
     }
 }
 

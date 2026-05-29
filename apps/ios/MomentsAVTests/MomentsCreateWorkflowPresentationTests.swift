@@ -177,6 +177,10 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
             hasMomentWorkspace: true,
             hasUnsavedLocalMoment: false,
             template: .birthdayMessage,
+            creationStyleTitle: "Birthday Story",
+            toneTitle: "Warm",
+            tempoTitle: "Balanced",
+            occasionTitle: "Birthday for Ava",
             balance: MomentsCreditBalance(proMonthly: 0, promotional: 1, purchased: 0),
             mediaSummary: MomentsCreateMediaSummary(),
             storySummary: MomentsCreateStorySummary(),
@@ -203,6 +207,10 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         XCTAssertTrue(presentation.isBuyingReviewBundle)
         XCTAssertFalse(presentation.canDraftStory)
         XCTAssertTrue(presentation.canGeneratePreview)
+        XCTAssertEqual(presentation.creationStyleTitle, "Birthday Story")
+        XCTAssertEqual(presentation.toneTitle, "Warm")
+        XCTAssertEqual(presentation.tempoTitle, "Balanced")
+        XCTAssertEqual(presentation.occasionTitle, "Birthday for Ava")
         XCTAssertEqual(presentation.storyAvailabilityMessage, "Draft story.")
         XCTAssertEqual(presentation.previewRefreshAvailabilityMessage, "Refresh preview.")
         XCTAssertEqual(presentation.finalRenderRefreshAvailabilityMessage, "Refresh final.")
@@ -215,6 +223,10 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
             hasMomentWorkspace: true,
             hasUnsavedLocalMoment: true,
             template: .birthdayMessage,
+            creationStyleTitle: "Birthday Story",
+            toneTitle: "Warm",
+            tempoTitle: "Balanced",
+            occasionTitle: "Birthday",
             balance: .empty,
             mediaSummary: MomentsCreateMediaSummary(
                 selectedMedia: [MomentsCreateTestFixtures.makeSelectedMedia(id: "00000000-0000-0000-0000-000000000001")]

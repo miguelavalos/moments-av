@@ -6,6 +6,10 @@ struct MomentsCreateWorkflowPresentation: Equatable {
     var hasMomentWorkspace = false
     var hasUnsavedLocalMoment = false
     var template: MomentTemplate
+    var creationStyleTitle = ""
+    var toneTitle = ""
+    var tempoTitle = ""
+    var occasionTitle = ""
     var balance: MomentsCreditBalance
     var mediaSummary: MomentsCreateMediaSummary
     var storySummary: MomentsCreateStorySummary
@@ -70,6 +74,10 @@ struct MomentsCreateWorkflowPresentation: Equatable {
         hasMomentWorkspace: Bool,
         hasUnsavedLocalMoment: Bool,
         template: MomentTemplate,
+        creationStyleTitle: String,
+        toneTitle: String,
+        tempoTitle: String,
+        occasionTitle: String,
         balance: MomentsCreditBalance,
         mediaSummary: MomentsCreateMediaSummary,
         storySummary: MomentsCreateStorySummary,
@@ -84,6 +92,10 @@ struct MomentsCreateWorkflowPresentation: Equatable {
             hasMomentWorkspace: hasMomentWorkspace,
             hasUnsavedLocalMoment: hasUnsavedLocalMoment,
             template: template,
+            creationStyleTitle: creationStyleTitle,
+            toneTitle: toneTitle,
+            tempoTitle: tempoTitle,
+            occasionTitle: occasionTitle,
             balance: balance,
             mediaSummary: mediaSummary,
             storySummary: storySummary,

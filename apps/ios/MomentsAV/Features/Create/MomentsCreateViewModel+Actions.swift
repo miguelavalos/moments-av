@@ -324,83 +324,27 @@ extension MomentsCreateViewModel {
     }
 
     func createFinalVideoFromCurrentSelection(removesWatermark: Bool = false) {
-        guard let storyDraftWorkflow, let finalRenderWorkflow else {
+        guard let finalRenderWorkflow else {
             updateFinalRenderStatusMessage("Video creation is not configured for this build.")
             return
         }
-        guard canGenerateFinalRender || canDraftStory || storySummary.hasScenes else {
+        guard canGenerateFinalRender, isStoryPreparedForCurrentInput else {
             updateFinalRenderStatusMessage(finalRenderAvailabilityMessage
                 ?? storyAvailabilityMessage
-                ?? "Video creation is not ready yet.")
+                ?? "Review the story before creating the final video.")
             return
         }
-        let form = form
-        let selectedMedia = selectedMedia
-        isPreparingStory = true
-        updateFinalRenderStatusMessage("Preparing video creation.")
+        guard let context = activeTemplateContext else {
+            updateFinalRenderStatusMessage("Couldn't find the current Moment. Please go back and try again.")
+            return
+        }
 
         runOperation {
-            defer { self.isPreparingStory = false }
-            let projectId: String?
-            if let activeProjectId = self.activeProjectId {
-                projectId = activeProjectId
-            } else if let projectCreationWorkflow = self.projectCreationWorkflow {
-                projectId = await projectCreationWorkflow.createDraft(form: form)
-                if projectId != nil {
-                    self.isLocalMomentStarted = false
-                }
-            } else {
-                projectId = nil
-            }
-
-            guard let projectId else {
-                self.updateFinalRenderStatusMessage(self.draftErrorMessage
-                    ?? "Couldn't start a Moment for this video. Please try again."
-                )
-                return
-            }
-            let persistedMedia = await self.mediaUploadWorkflow?.persistSelectedMedia(projectId: projectId)
-            guard persistedMedia != nil || selectedMedia.isEmpty else {
-                self.updateFinalRenderStatusMessage(self.mediaStatusMessage
-                    ?? "Couldn't save media for the video. Please try again."
-                )
-                return
-            }
-            let inputSignature = self.currentStoryInputSignature(
-                projectId: projectId,
-                persistedMedia: persistedMedia
-            )
-
-            if self.canGenerateFinalRender,
-               self.isStoryPreparedForCurrentInput {
-                self.updateStoryStatusMessage(nil)
-            } else {
-                let didPrepareStory = await storyDraftWorkflow.generateDraft(
-                    projectId: projectId,
-                    form: form,
-                    selectedMedia: selectedMedia,
-                    persistedMedia: persistedMedia
-                )
-                guard didPrepareStory else {
-                    self.updateFinalRenderStatusMessage(storyDraftWorkflow.statusMessage
-                        ?? self.storyStatusMessage
-                        ?? "Couldn't prepare the story. Please try again."
-                    )
-                    return
-                }
-                self.lastPreparedStoryInputSignature = inputSignature
-            }
-
-            guard self.storySummary.hasScenes,
-                  self.lastPreparedStoryInputSignature == inputSignature else {
-                self.updateFinalRenderStatusMessage("Story preparation did not finish. Please try again.")
-                return
-            }
             await finalRenderWorkflow.generateFinalRender(
-                projectId: projectId,
-                template: form.template,
+                projectId: context.projectId,
+                template: context.template,
                 creationStyle: self.selectedCreationStyle.id,
-                form: form,
+                form: self.form,
                 removesWatermark: removesWatermark,
                 allowPreparedStory: true
             )
