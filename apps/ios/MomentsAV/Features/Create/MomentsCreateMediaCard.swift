@@ -589,9 +589,8 @@ private struct MomentsCreateMediaManagerSheet: View {
                         }
 
                         if workingMedia.isEmpty, !syncedMediaAssets.isEmpty {
-                            MomentsCreateLocalMediaUnavailableState(
-                                itemCount: syncedMediaAssets.filter(\.selected).count,
-                                addMedia: chooseManually
+                            MomentsCreateSyncedMediaEditorGrid(
+                                mediaAssets: syncedMediaAssets
                             )
                         }
                     }
@@ -766,52 +765,59 @@ private struct MomentsCreateMediaEmptyState: View {
     }
 }
 
-private struct MomentsCreateLocalMediaUnavailableState: View {
-    let itemCount: Int
-    let addMedia: () -> Void
+private struct MomentsCreateSyncedMediaEditorGrid: View {
+    let mediaAssets: [MomentMediaAsset]
+
+    private let columns = [
+        GridItem(.flexible(), spacing: 14),
+        GridItem(.flexible(), spacing: 14)
+    ]
 
     var body: some View {
         AVAppShellCard {
-            VStack(alignment: .center, spacing: 14) {
-                Image(systemName: "photo.on.rectangle.angled")
-                    .font(.system(size: 34, weight: .bold))
-                    .foregroundStyle(AVBrandColor.accent)
-                    .frame(width: 76, height: 76)
-                    .background(AVBrandColor.accent.opacity(0.08), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
-                    .accessibilityHidden(true)
+            VStack(alignment: .leading, spacing: 12) {
+                Text("Saved media")
+                    .font(.system(size: 13, weight: .black))
+                    .foregroundStyle(AVBrandColor.textPrimary)
 
-                VStack(spacing: 5) {
-                    Text("Local editing needs access")
-                        .font(.system(size: 17, weight: .black))
-                        .foregroundStyle(AVBrandColor.textPrimary)
-
-                    Text("\(itemCount) saved item\(itemCount == 1 ? "" : "s") can create the video. Re-select only if you want to edit the local selection.")
-                        .font(.system(size: 13, weight: .semibold))
-                        .foregroundStyle(AVBrandColor.textSecondary)
-                        .multilineTextAlignment(.center)
-                        .fixedSize(horizontal: false, vertical: true)
+                LazyVGrid(columns: columns, spacing: 14) {
+                    ForEach(Array(mediaAssets.enumerated()), id: \.element.id) { index, media in
+                        MomentsCreateSyncedMediaEditorTile(media: media, index: index)
+                    }
                 }
 
-                Button(action: addMedia) {
-                    Label("Re-select local media", systemImage: "photo.badge.plus")
-                        .font(.system(size: 14, weight: .black))
-                        .foregroundStyle(AVBrandColor.textPrimary)
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 42)
-                        .background(
-                            RoundedRectangle(cornerRadius: 21, style: .continuous)
-                                .fill(AVBrandColor.accent.opacity(0.08))
-                        )
-                        .overlay {
-                            RoundedRectangle(cornerRadius: 21, style: .continuous)
-                                .stroke(AVBrandColor.accent.opacity(0.24), lineWidth: 1)
-                        }
-                }
-                .buttonStyle(.plain)
+                Text("These items are saved with the draft and ready for review and video creation.")
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundStyle(AVBrandColor.textSecondary)
+                    .fixedSize(horizontal: false, vertical: true)
             }
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 10)
         }
+    }
+}
+
+private struct MomentsCreateSyncedMediaEditorTile: View {
+    let media: MomentMediaAsset
+    let index: Int
+
+    var body: some View {
+        ZStack(alignment: .bottomLeading) {
+            MomentsCreateSyncedMediaThumbnailImage(media: media)
+                .aspectRatio(1, contentMode: .fill)
+                .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                .overlay {
+                    RoundedRectangle(cornerRadius: 8, style: .continuous)
+                        .stroke(AVBrandColor.borderSubtle.opacity(0.55), lineWidth: 1)
+                }
+
+            Text("\(index + 1)")
+                .font(.system(size: 11, weight: .black))
+                .foregroundStyle(.white)
+                .padding(.horizontal, 7)
+                .padding(.vertical, 4)
+                .background(.black.opacity(0.58), in: Capsule())
+                .padding(8)
+        }
+        .accessibilityLabel("\(media.kind.capitalized) \(index + 1)")
     }
 }
 
