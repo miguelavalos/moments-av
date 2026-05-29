@@ -55,6 +55,10 @@ extension MomentsCreateViewModel {
             updateDraftErrorMessage("There is no active draft to discard.")
             return
         }
+        if hasLocalMomentWorkspace {
+            resetActiveProject(force: true)
+            return
+        }
         guard let projectCreationWorkflow else {
             resetActiveProject(force: true)
             return

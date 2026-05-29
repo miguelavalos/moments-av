@@ -4,6 +4,7 @@ extension MomentsCreateViewModel {
             activeProjectId: activeProjectId,
             isSignedIn: isSignedIn,
             hasMomentWorkspace: hasMomentWorkspace,
+            hasUnsavedLocalMoment: hasLocalMomentWorkspace,
             template: form.template,
             balance: balance,
             mediaSummary: mediaSummary,

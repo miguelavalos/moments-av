@@ -191,7 +191,6 @@ struct MomentsAppShellView: View {
 
     private var locksUnsavedLocalMoment: Bool {
         chromeItem == nil
-            && selectedTab == .create
             && createViewModel.hasLocalMomentWorkspace
     }
 

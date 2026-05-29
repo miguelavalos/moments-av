@@ -175,6 +175,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
             activeProjectId: "project-1",
             isSignedIn: true,
             hasMomentWorkspace: true,
+            hasUnsavedLocalMoment: false,
             template: .birthdayMessage,
             balance: MomentsCreditBalance(proMonthly: 0, promotional: 1, purchased: 0),
             mediaSummary: MomentsCreateMediaSummary(),
@@ -205,6 +206,36 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         XCTAssertEqual(presentation.storyAvailabilityMessage, "Draft story.")
         XCTAssertEqual(presentation.previewRefreshAvailabilityMessage, "Refresh preview.")
         XCTAssertEqual(presentation.finalRenderRefreshAvailabilityMessage, "Refresh final.")
+    }
+
+    func testWorkflowPresentationCarriesUnsavedLocalMomentContainmentState() {
+        let presentation = MomentsCreateWorkflowPresentation.make(
+            activeProjectId: nil,
+            isSignedIn: true,
+            hasMomentWorkspace: true,
+            hasUnsavedLocalMoment: true,
+            template: .birthdayMessage,
+            balance: .empty,
+            mediaSummary: MomentsCreateMediaSummary(
+                selectedMedia: [MomentsCreateTestFixtures.makeSelectedMedia(id: "00000000-0000-0000-0000-000000000001")]
+            ),
+            storySummary: MomentsCreateStorySummary(),
+            previewSummary: MomentsCreatePreviewSummary(),
+            finalRenderSummary: MomentsCreateFinalRenderSummary(),
+            isBuyingReviewBundle: false,
+            availability: MomentsCreateWorkflowAvailability(
+                canAddMedia: true,
+                canDraftStory: false,
+                canGeneratePreview: false,
+                canRefreshPreviewStatus: false,
+                canGenerateFinalRender: false,
+                canRefreshFinalRenderStatus: false
+            )
+        )
+
+        XCTAssertTrue(presentation.hasUnsavedLocalMoment)
+        XCTAssertTrue(presentation.showsWorkflowCards)
+        XCTAssertTrue(presentation.showsMediaFirstWorkspace)
     }
 
     func testWorkflowPresentationShowsBlockingPreparationForCriticalWork() {

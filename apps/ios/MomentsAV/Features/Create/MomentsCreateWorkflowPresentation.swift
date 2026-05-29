@@ -4,6 +4,7 @@ struct MomentsCreateWorkflowPresentation: Equatable {
     var activeProjectId: String?
     var isSignedIn = false
     var hasMomentWorkspace = false
+    var hasUnsavedLocalMoment = false
     var template: MomentTemplate
     var balance: MomentsCreditBalance
     var mediaSummary: MomentsCreateMediaSummary
@@ -67,6 +68,7 @@ struct MomentsCreateWorkflowPresentation: Equatable {
         activeProjectId: String?,
         isSignedIn: Bool,
         hasMomentWorkspace: Bool,
+        hasUnsavedLocalMoment: Bool,
         template: MomentTemplate,
         balance: MomentsCreditBalance,
         mediaSummary: MomentsCreateMediaSummary,
@@ -80,6 +82,7 @@ struct MomentsCreateWorkflowPresentation: Equatable {
             activeProjectId: activeProjectId,
             isSignedIn: isSignedIn,
             hasMomentWorkspace: hasMomentWorkspace,
+            hasUnsavedLocalMoment: hasUnsavedLocalMoment,
             template: template,
             balance: balance,
             mediaSummary: mediaSummary,

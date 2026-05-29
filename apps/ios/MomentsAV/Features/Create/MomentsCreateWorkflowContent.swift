@@ -175,11 +175,11 @@ private struct MomentsCreateMediaFirstWorkspace: View {
         }
         .alert("Discard draft?", isPresented: $showsDiscardDraftConfirmation) {
             Button("Keep draft", role: .cancel) {}
-            Button("Discard draft", role: .destructive) {
+            Button(discardConfirmationActionTitle, role: .destructive) {
                 discardCurrentDraft()
             }
         } message: {
-            Text("This removes the current Moment draft, selected media, and story review.")
+            Text(discardConfirmationMessage)
         }
         .navigationDestination(isPresented: $showsAviOptions) {
             MomentsCreateAviOptionsSheet(
@@ -234,6 +234,18 @@ private struct MomentsCreateMediaFirstWorkspace: View {
         showsStoryReview = false
         showsAviOptions = false
         discardDraft()
+    }
+
+    private var discardConfirmationActionTitle: String {
+        presentation.hasUnsavedLocalMoment ? "Discard local Moment" : "Discard draft"
+    }
+
+    private var discardConfirmationMessage: String {
+        if presentation.hasUnsavedLocalMoment {
+            return "This removes the local Moment, selected media, and story setup before anything is saved."
+        }
+
+        return "This removes the current Moment draft, selected media, and story review."
     }
 }
 
@@ -781,16 +793,28 @@ private struct MomentsCreateStoryReviewPage: View {
         }
         .alert("Discard draft?", isPresented: $showsDiscardDraftConfirmation) {
             Button("Keep draft", role: .cancel) {}
-            Button("Discard draft", role: .destructive) {
+            Button(discardConfirmationActionTitle, role: .destructive) {
                 discardDraft()
             }
         } message: {
-            Text("This removes the current Moment draft, selected media, and story review.")
+            Text(discardConfirmationMessage)
         }
     }
 
     private var summaryTitle: String {
         "Confirm the media, story, and timing before the final render starts."
+    }
+
+    private var discardConfirmationActionTitle: String {
+        presentation.hasUnsavedLocalMoment ? "Discard local Moment" : "Discard draft"
+    }
+
+    private var discardConfirmationMessage: String {
+        if presentation.hasUnsavedLocalMoment {
+            return "This removes the local Moment, selected media, and story setup before anything is saved."
+        }
+
+        return "This removes the current Moment draft, selected media, and story review."
     }
 
     private var creditCostTitle: String {
@@ -1340,7 +1364,7 @@ private struct MomentsCreatePrimaryActionBar: View {
 
                 HStack(spacing: 14) {
                     Button(action: discardDraft) {
-                        Label("Discard draft", systemImage: "trash.fill")
+                        Label(discardTitle, systemImage: "trash.fill")
                     }
                     .buttonStyle(MomentsCreateDestructiveInlineButtonStyle())
 
@@ -1368,6 +1392,10 @@ private struct MomentsCreatePrimaryActionBar: View {
             || presentation.canDraftStory
             || presentation.storySummary.hasScenes
             || needsSignInForStory
+    }
+
+    private var discardTitle: String {
+        presentation.hasUnsavedLocalMoment ? "Discard local Moment" : "Discard draft"
     }
 
     private var buttonTitle: String {
