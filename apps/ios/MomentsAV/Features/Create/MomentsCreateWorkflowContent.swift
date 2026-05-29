@@ -1133,92 +1133,12 @@ private struct MomentsCreateReviewMediaStrip: View {
     let mediaSummary: MomentsCreateMediaSummary
 
     var body: some View {
-        ScrollView(.horizontal) {
-            HStack(spacing: 9) {
-                if !mediaSummary.selectedMedia.isEmpty {
-                    ForEach(Array(mediaSummary.selectedMedia.prefix(12).enumerated()), id: \.element.id) { index, media in
-                        MomentsCreateReviewLocalMediaTile(media: media, index: index)
-                    }
-                } else {
-                    ForEach(Array(mediaSummary.syncedMediaAssets.prefix(12).enumerated()), id: \.element.id) { index, media in
-                        MomentsCreateReviewSyncedMediaTile(media: media, index: index)
-                    }
-                }
-            }
-            .padding(.vertical, 2)
-        }
-        .scrollIndicators(.hidden)
-    }
-}
-
-private struct MomentsCreateReviewLocalMediaTile: View {
-    let media: MomentsSelectedMedia
-    let index: Int
-
-    var body: some View {
-        tile {
-            if media.kind == "photo", let image = UIImage(data: media.data) {
-                Image(uiImage: image)
-                    .resizable()
-                    .scaledToFill()
-            } else {
-                fallbackIcon(kind: media.kind)
-            }
-        }
-    }
-
-    private func tile<Content: View>(@ViewBuilder content: () -> Content) -> some View {
-        ZStack(alignment: .bottomLeading) {
-            content()
-
-            Text("\(index + 1)")
-                .font(.system(size: 10, weight: .black))
-                .foregroundStyle(.white)
-                .padding(.horizontal, 6)
-                .padding(.vertical, 3)
-                .background(.black.opacity(0.54), in: Capsule())
-                .padding(5)
-        }
-        .frame(width: 58, height: 58)
-        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-        .overlay {
-            RoundedRectangle(cornerRadius: 8, style: .continuous)
-                .stroke(AVBrandColor.borderSubtle.opacity(0.48), lineWidth: 1)
-        }
-    }
-}
-
-private struct MomentsCreateReviewSyncedMediaTile: View {
-    let media: MomentMediaAsset
-    let index: Int
-
-    var body: some View {
-        ZStack(alignment: .bottomLeading) {
-            MomentsCreateSyncedMediaThumbnailImage(media: media, size: 58)
-
-            Text("\(index + 1)")
-                .font(.system(size: 10, weight: .black))
-                .foregroundStyle(.white)
-                .padding(.horizontal, 6)
-                .padding(.vertical, 3)
-                .background(.black.opacity(0.54), in: Capsule())
-                .padding(5)
-        }
-        .frame(width: 58, height: 58)
-        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-        .overlay {
-            RoundedRectangle(cornerRadius: 8, style: .continuous)
-                .stroke(AVBrandColor.borderSubtle.opacity(0.48), lineWidth: 1)
-        }
-    }
-}
-
-private func fallbackIcon(kind: String) -> some View {
-    ZStack {
-        AVBrandColor.neutral100
-        Image(systemName: kind == "video" ? "video.fill" : "photo.fill")
-            .font(.system(size: 18, weight: .semibold))
-            .foregroundStyle(MomentsTheme.highlight)
+        MomentsSharedMediaStrip(
+            localMedia: mediaSummary.selectedMedia,
+            syncedMedia: mediaSummary.syncedMediaAssets,
+            maxCount: 12,
+            tileSize: 58
+        )
     }
 }
 

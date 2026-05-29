@@ -18,9 +18,7 @@ struct MomentsProjectMediaSection: View {
                     message: presentation.emptyMessage
                 )
             } else {
-                ForEach(presentation.mediaAssets) { mediaAsset in
-                    MomentsProjectMediaAssetRow(presentation: mediaAsset)
-                }
+                MomentsSharedSyncedMediaGrid(mediaAssets: mediaAssets)
             }
         }
     }

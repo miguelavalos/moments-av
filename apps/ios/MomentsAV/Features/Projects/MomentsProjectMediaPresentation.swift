@@ -3,7 +3,7 @@ import Foundation
 struct MomentsProjectMediaSectionPresentation: Equatable {
     let title = "Media"
     let emptySystemImage = "photo.badge.plus"
-    let emptyMessage = "Add photos or clips from Create to unlock story drafting."
+    let emptyMessage = "No media is attached to this Moment yet. Add photos or clips from Create to unlock story drafting."
     let mediaAssets: [MomentsProjectMediaAssetPresentation]
 
     init(mediaAssets: [MomentMediaAsset]) {
@@ -30,4 +30,3 @@ struct MomentsProjectMediaAssetPresentation: Identifiable, Equatable {
             .map(MomentsProjectMediaAssetPresentation.init)
     }
 }
-

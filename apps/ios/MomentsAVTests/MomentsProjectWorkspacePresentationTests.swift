@@ -112,8 +112,25 @@ final class MomentsProjectWorkspacePresentationTests: XCTestCase {
 
         XCTAssertEqual(presentation.title, "Media")
         XCTAssertEqual(presentation.emptySystemImage, "photo.badge.plus")
-        XCTAssertEqual(presentation.emptyMessage, "Add photos or clips from Create to unlock story drafting.")
+        XCTAssertEqual(presentation.emptyMessage, "No media is attached to this Moment yet. Add photos or clips from Create to unlock story drafting.")
         XCTAssertEqual(presentation.mediaAssets.map(\.id), ["first", "second"])
+    }
+
+    func testSharedMediaItemsPreferLocalSelectionAndSortSyncedMedia() {
+        let localMedia = [
+            MomentsCreateTestFixtures.makeSelectedMedia(id: "00000000-0000-0000-0000-000000000001")
+        ]
+        let syncedMedia = [
+            makeMediaAsset(id: "second", kind: "video", sortOrder: 1, selected: false, moderationStatus: "pending"),
+            makeMediaAsset(id: "first", kind: "image", sortOrder: 0, selected: true, moderationStatus: "approved")
+        ]
+
+        let localItems = MomentsSharedMediaItem.preferred(localMedia: localMedia, syncedMedia: syncedMedia)
+        let syncedItems = MomentsSharedMediaItem.preferred(localMedia: [], syncedMedia: syncedMedia)
+
+        XCTAssertEqual(localItems.map(\.id), ["00000000-0000-0000-0000-000000000001"])
+        XCTAssertEqual(syncedItems.map(\.id), ["first", "second"])
+        XCTAssertEqual(syncedItems.map(\.displayKind), ["Image", "Video"])
     }
 
     func testStorySectionPresentationFormatsTitleEmptyStateAndRows() {

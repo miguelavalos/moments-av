@@ -4,6 +4,193 @@ import Photos
 import SwiftUI
 import UIKit
 
+enum MomentsSharedMediaItem: Identifiable, Equatable {
+    case local(MomentsSelectedMedia)
+    case synced(MomentMediaAsset)
+
+    var id: String {
+        switch self {
+        case .local(let media):
+            return media.id.uuidString
+        case .synced(let media):
+            return media.id
+        }
+    }
+
+    var kind: String {
+        switch self {
+        case .local(let media):
+            return media.kind
+        case .synced(let media):
+            return media.kind
+        }
+    }
+
+    var displayKind: String {
+        MomentsProjectStatusRules.displayKind(kind)
+    }
+
+    static func preferred(localMedia: [MomentsSelectedMedia], syncedMedia: [MomentMediaAsset]) -> [MomentsSharedMediaItem] {
+        if !localMedia.isEmpty {
+            return localMedia.map(Self.local)
+        }
+
+        return syncedMedia
+            .sorted { $0.sortOrder < $1.sortOrder }
+            .map(Self.synced)
+    }
+}
+
+struct MomentsSharedMediaSummaryStack: View {
+    let localMedia: [MomentsSelectedMedia]
+    let syncedMedia: [MomentMediaAsset]
+
+    private var items: [MomentsSharedMediaItem] {
+        MomentsSharedMediaItem.preferred(localMedia: localMedia, syncedMedia: syncedMedia)
+    }
+
+    var body: some View {
+        ZStack(alignment: .bottomTrailing) {
+            ZStack {
+                ForEach(Array(items.prefix(4).enumerated()), id: \.element.id) { index, item in
+                    MomentsSharedMediaThumbnailContent(item: item, size: 74)
+                        .frame(width: 74, height: 74)
+                        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                        .overlay {
+                            RoundedRectangle(cornerRadius: 8, style: .continuous)
+                                .stroke(.white.opacity(0.95), lineWidth: 2)
+                        }
+                        .shadow(color: AVBrandColor.ink.opacity(0.09), radius: 6, x: 0, y: 3)
+                        .offset(x: CGFloat(index) * -6, y: CGFloat(index) * 3)
+                        .rotationEffect(.degrees(Double(index - 1) * -2.0))
+                }
+            }
+            .frame(width: 92, height: 92, alignment: .center)
+
+            Text("\(items.count)")
+                .font(.system(size: 11, weight: .black))
+                .foregroundStyle(.white)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 5)
+                .background(.black.opacity(0.52), in: Capsule())
+                .padding(4)
+        }
+        .frame(width: 92, height: 92)
+    }
+}
+
+struct MomentsSharedMediaStrip: View {
+    let localMedia: [MomentsSelectedMedia]
+    let syncedMedia: [MomentMediaAsset]
+    var maxCount = 12
+    var tileSize: CGFloat = 58
+
+    private var items: [MomentsSharedMediaItem] {
+        Array(MomentsSharedMediaItem.preferred(localMedia: localMedia, syncedMedia: syncedMedia).prefix(maxCount))
+    }
+
+    var body: some View {
+        ScrollView(.horizontal) {
+            HStack(spacing: 9) {
+                ForEach(Array(items.enumerated()), id: \.element.id) { index, item in
+                    MomentsSharedMediaIndexedTile(item: item, index: index, size: tileSize)
+                }
+            }
+            .padding(.vertical, 2)
+        }
+        .scrollIndicators(.hidden)
+    }
+}
+
+struct MomentsSharedSyncedMediaGrid: View {
+    let mediaAssets: [MomentMediaAsset]
+    var minimumTileWidth: CGFloat = 72
+    var spacing: CGFloat = 8
+
+    private var sortedMediaAssets: [MomentMediaAsset] {
+        mediaAssets.sorted { $0.sortOrder < $1.sortOrder }
+    }
+
+    private var columns: [GridItem] {
+        [GridItem(.adaptive(minimum: minimumTileWidth), spacing: spacing)]
+    }
+
+    var body: some View {
+        LazyVGrid(columns: columns, alignment: .leading, spacing: spacing) {
+            ForEach(Array(sortedMediaAssets.enumerated()), id: \.element.id) { index, media in
+                MomentsSharedMediaIndexedTile(item: .synced(media), index: index, size: minimumTileWidth)
+            }
+        }
+    }
+}
+
+struct MomentsSharedMediaIndexedTile: View {
+    let item: MomentsSharedMediaItem
+    let index: Int
+    var size: CGFloat = 58
+
+    var body: some View {
+        ZStack(alignment: .bottomLeading) {
+            MomentsSharedMediaThumbnailContent(item: item, size: size)
+
+            Text("\(index + 1)")
+                .font(.system(size: 10, weight: .black))
+                .foregroundStyle(.white)
+                .padding(.horizontal, 6)
+                .padding(.vertical, 3)
+                .background(.black.opacity(0.54), in: Capsule())
+                .padding(5)
+        }
+        .frame(width: size, height: size)
+        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+        .overlay {
+            RoundedRectangle(cornerRadius: 8, style: .continuous)
+                .stroke(AVBrandColor.borderSubtle.opacity(0.48), lineWidth: 1)
+        }
+        .accessibilityLabel("\(item.displayKind) \(index + 1)")
+    }
+}
+
+struct MomentsSharedMediaThumbnailContent: View {
+    let item: MomentsSharedMediaItem
+    var size: CGFloat?
+
+    var body: some View {
+        switch item {
+        case .local(let media):
+            localThumbnail(media)
+        case .synced(let media):
+            MomentsCreateSyncedMediaThumbnailImage(media: media, size: size)
+        }
+    }
+
+    @ViewBuilder
+    private func localThumbnail(_ media: MomentsSelectedMedia) -> some View {
+        if media.kind == "photo", let image = UIImage(data: media.data) {
+            Image(uiImage: image)
+                .resizable()
+                .scaledToFill()
+        } else {
+            MomentsSharedMediaFallbackThumbnail(kind: media.kind, size: size)
+        }
+    }
+}
+
+struct MomentsSharedMediaFallbackThumbnail: View {
+    let kind: String
+    var size: CGFloat?
+
+    var body: some View {
+        ZStack {
+            AVBrandColor.neutral100
+            Image(systemName: kind == "video" ? "video.fill" : "photo.fill")
+                .font(.system(size: size == nil ? 24 : 18, weight: .semibold))
+                .foregroundStyle(MomentsTheme.highlight)
+        }
+        .frame(width: size, height: size)
+    }
+}
+
 struct MomentsCreateMediaRow: View {
     let media: MomentsSelectedMedia
     let remove: () -> Void

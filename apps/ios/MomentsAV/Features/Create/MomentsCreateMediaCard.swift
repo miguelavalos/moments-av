@@ -150,10 +150,11 @@ struct MomentsCreateMediaCard: View {
 
     @ViewBuilder
     private var mediaVisual: some View {
-        if !presentation.summary.selectedMedia.isEmpty {
-            MomentsCreateStackedMediaSummary(selectedMedia: presentation.summary.selectedMedia)
-        } else if !presentation.syncedMediaAssets.isEmpty {
-            MomentsCreateStackedSyncedMediaSummary(mediaAssets: presentation.syncedMediaAssets)
+        if !presentation.summary.selectedMedia.isEmpty || !presentation.syncedMediaAssets.isEmpty {
+            MomentsSharedMediaSummaryStack(
+                localMedia: presentation.summary.selectedMedia,
+                syncedMedia: presentation.syncedMediaAssets
+            )
         } else {
             ZStack {
                 AVBrandColor.accent.opacity(0.08)
@@ -385,89 +386,6 @@ private struct MomentsCreateAlbumCover: View {
                 .stroke(AVBrandColor.borderSubtle.opacity(0.55), lineWidth: 1)
         }
         .accessibilityHidden(true)
-    }
-}
-
-private struct MomentsCreateStackedMediaSummary: View {
-    let selectedMedia: [MomentsSelectedMedia]
-
-    var body: some View {
-        ZStack(alignment: .bottomTrailing) {
-            ZStack {
-                ForEach(Array(selectedMedia.prefix(4).enumerated()), id: \.element.id) { index, media in
-                    thumbnail(media)
-                        .frame(width: 76, height: 76)
-                        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-                        .overlay {
-                            RoundedRectangle(cornerRadius: 8, style: .continuous)
-                                .stroke(.white, lineWidth: 2)
-                        }
-                        .shadow(color: AVBrandColor.ink.opacity(0.10), radius: 6, x: 0, y: 4)
-                        .offset(x: CGFloat(index) * 7, y: CGFloat(index) * -5)
-                }
-            }
-            .frame(width: 112, height: 92, alignment: .center)
-
-            Text("\(selectedMedia.count)")
-                .font(.system(size: 12, weight: .black))
-                .foregroundStyle(.white)
-                .padding(.horizontal, 8)
-                .padding(.vertical, 4)
-                .background(.black.opacity(0.56), in: Capsule())
-        }
-    }
-
-    @ViewBuilder
-    private func thumbnail(_ media: MomentsSelectedMedia) -> some View {
-        if media.kind == "photo", let image = UIImage(data: media.data) {
-            Image(uiImage: image)
-                .resizable()
-                .scaledToFill()
-        } else {
-            ZStack {
-                AVBrandColor.neutral100
-                Image(systemName: media.kind == "video" ? "video.fill" : "photo.fill")
-                    .font(.system(size: 20, weight: .semibold))
-                    .foregroundStyle(MomentsTheme.highlight)
-            }
-        }
-    }
-}
-
-private struct MomentsCreateStackedSyncedMediaSummary: View {
-    let mediaAssets: [MomentMediaAsset]
-
-    var body: some View {
-        ZStack(alignment: .bottomTrailing) {
-            ZStack {
-                ForEach(Array(mediaAssets.prefix(4).enumerated()), id: \.element.id) { index, media in
-                    thumbnail(media)
-                        .offset(x: CGFloat(index) * -6, y: CGFloat(index) * 3)
-                        .rotationEffect(.degrees(Double(index - 1) * -2.0))
-                }
-            }
-            .frame(width: 92, height: 92, alignment: .center)
-
-            Text("\(mediaAssets.count)")
-                .font(.system(size: 11, weight: .black))
-                .foregroundStyle(.white)
-                .padding(.horizontal, 8)
-                .padding(.vertical, 5)
-                .background(.black.opacity(0.52), in: Capsule())
-                .padding(4)
-        }
-        .frame(width: 92, height: 92)
-    }
-
-    private func thumbnail(_ media: MomentMediaAsset) -> some View {
-        MomentsCreateSyncedMediaThumbnailImage(media: media, size: 74)
-        .frame(width: 74, height: 74)
-        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-        .overlay {
-            RoundedRectangle(cornerRadius: 8, style: .continuous)
-                .stroke(.white.opacity(0.95), lineWidth: 2)
-        }
-        .shadow(color: AVBrandColor.ink.opacity(0.08), radius: 6, x: 0, y: 3)
     }
 }
 
