@@ -80,6 +80,8 @@ struct MomentsStoryDraftResponse: Decodable, Equatable {
     let errorMessage: String?
     let narrationVoice: String
     let helperCopy: String
+    let reviewAllowanceConsumed: Int?
+    let reviewAllowanceRemaining: Int?
     let scenes: [MomentsStoryDraftScene]
     let generatedAt: String
 }

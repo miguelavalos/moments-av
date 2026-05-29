@@ -75,11 +75,15 @@ struct MomentsStoryClient {
 
         let (data, response) = try await retryingData(for: request)
         guard let httpResponse = response as? HTTPURLResponse, 200..<300 ~= httpResponse.statusCode else {
-            throw MomentsAPIError.decode(
+            let apiError = MomentsAPIError.decode(
                 from: data,
                 fallbackCode: "moments_story_draft_failed",
                 fallbackMessage: MomentsStoryError.draftFailed.localizedDescription
             )
+            if apiError.code == "moments_review_allowance_exhausted" {
+                throw MomentsStoryError.reviewAllowanceExhausted(apiError.message)
+            }
+            throw apiError
         }
 
         let draft = try JSONDecoder().decode(MomentsStoryDraftResponse.self, from: data)
@@ -116,6 +120,7 @@ enum MomentsStoryError: LocalizedError {
     case draftFailed
     case blocked(String)
     case providerFailed(String)
+    case reviewAllowanceExhausted(String)
 
     var errorDescription: String? {
         switch self {
@@ -123,6 +128,7 @@ enum MomentsStoryError: LocalizedError {
         case .draftFailed: "Story draft request failed."
         case .blocked(let message): message
         case .providerFailed(let message): message
+        case .reviewAllowanceExhausted(let message): message
         }
     }
 }
