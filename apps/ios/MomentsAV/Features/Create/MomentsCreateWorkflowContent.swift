@@ -513,8 +513,18 @@ private struct MomentsCreateStoryReviewCard: View {
                     .foregroundStyle(AVBrandColor.textSecondary)
 
                 VStack(alignment: .leading, spacing: 10) {
-                    ForEach(presentation.storySummary.reviewScenes) { scene in
-                        MomentsCreateStoryReviewSceneRow(scene: scene)
+                    if presentation.storySummary.reviewScenes.isEmpty {
+                        Label("Avi needs to prepare the story before the video can be created.", systemImage: "text.bubble.fill")
+                            .font(.system(size: 12, weight: .bold))
+                            .foregroundStyle(AVBrandColor.textSecondary)
+                            .fixedSize(horizontal: false, vertical: true)
+                            .padding(10)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .background(AVBrandColor.neutral100.opacity(0.68), in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+                    } else {
+                        ForEach(presentation.storySummary.reviewScenes) { scene in
+                            MomentsCreateStoryReviewSceneRow(scene: scene)
+                        }
                     }
                 }
 
@@ -533,21 +543,25 @@ private struct MomentsCreateStoryReviewCard: View {
 }
 
 private struct MomentsCreateRenderPlanSummary: View {
-    let plan: MomentsRenderPlan
+    let plan: MomentsRenderPlan?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
+            Text(plan == nil ? "Video plan" : "Prepared video plan")
+                .font(.system(size: 13, weight: .black))
+                .foregroundStyle(AVBrandColor.textPrimary)
+
             HStack(spacing: 8) {
-                MomentsCreateOptionPill(title: "\(plan.usedAssetCount) of \(plan.plannedAssetCount) items", systemImage: "photo.stack")
-                MomentsCreateOptionPill(title: "\(plan.secondsPerCredit * plan.creditCost)s", systemImage: "timer")
+                MomentsCreateOptionPill(title: assetUsageTitle, systemImage: "photo.stack")
+                MomentsCreateOptionPill(title: durationTitle, systemImage: "timer")
             }
 
-            Text(plan.userMessage)
+            Text(message)
                 .font(.system(size: 13, weight: .semibold))
                 .foregroundStyle(AVBrandColor.textSecondary)
                 .fixedSize(horizontal: false, vertical: true)
 
-            ForEach(plan.qualityWarnings.prefix(2), id: \.self) { warning in
+            ForEach((plan?.qualityWarnings ?? []).prefix(2), id: \.self) { warning in
                 Label(warning, systemImage: "exclamationmark.triangle.fill")
                     .font(.system(size: 12, weight: .bold))
                     .foregroundStyle(.orange)
@@ -556,6 +570,23 @@ private struct MomentsCreateRenderPlanSummary: View {
         }
         .padding(12)
         .background(AVBrandColor.accent.opacity(0.08), in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+    }
+
+    private var assetUsageTitle: String {
+        guard let plan else { return "Needs plan" }
+        if plan.rejectedAssetCount > 0 {
+            return "\(plan.usedAssetCount) used · \(plan.rejectedAssetCount) skipped"
+        }
+        return "\(plan.usedAssetCount) of \(plan.plannedAssetCount) items"
+    }
+
+    private var durationTitle: String {
+        guard let plan else { return "Before render" }
+        return "\(plan.targetDurationMs / 1000)s"
+    }
+
+    private var message: String {
+        plan?.userMessage ?? "Avi will prepare the exact media usage, duration, and quality checks before the final render starts."
     }
 }
 
@@ -653,38 +684,7 @@ private struct MomentsCreateStoryReviewPage: View {
                         }
                     }
 
-                    AVAppShellCard {
-                        VStack(alignment: .leading, spacing: 12) {
-                            Text("Media and timing")
-                                .font(.system(size: 13, weight: .black))
-                                .foregroundStyle(AVBrandColor.textPrimary)
-
-                            HStack(spacing: 10) {
-                                MomentsCreateReviewMetric(
-                                    title: mediaCountTitle,
-                                    subtitle: mediaCountSubtitle,
-                                    systemImage: "photo.stack.fill"
-                                )
-                                MomentsCreateReviewMetric(
-                                    title: presentation.template.duration,
-                                    subtitle: "\(creditCostTitle) final video",
-                                    systemImage: "timer"
-                                )
-                            }
-
-                            if presentation.mediaSummary.reviewCount == 0 {
-                                Label("Avi cannot create the final video until the draft media is available again.", systemImage: "exclamationmark.triangle.fill")
-                                    .font(.system(size: 12, weight: .bold))
-                                    .foregroundStyle(.orange)
-                                    .fixedSize(horizontal: false, vertical: true)
-                            } else {
-                                Text("Avi will use the saved draft media as the source for the final edit.")
-                                    .font(.system(size: 12, weight: .semibold))
-                                    .foregroundStyle(AVBrandColor.textSecondary)
-                                    .fixedSize(horizontal: false, vertical: true)
-                            }
-                        }
-                    }
+                    MomentsCreateReviewMediaTimingCard(presentation: presentation)
 
                     MomentsCreateStoryReviewCard(presentation: presentation)
 
@@ -709,9 +709,7 @@ private struct MomentsCreateStoryReviewPage: View {
                                 }
                             }
 
-                            if let renderPlan = presentation.finalRenderSummary.renderPlan {
-                                MomentsCreateRenderPlanSummary(plan: renderPlan.plan)
-                            }
+                            MomentsCreateRenderPlanSummary(plan: presentation.finalRenderSummary.renderPlan?.plan)
 
                             Button(action: primaryCreateAction) {
                                 Label(primaryCreateTitle, systemImage: primaryCreateIconName)
@@ -779,10 +777,6 @@ private struct MomentsCreateStoryReviewPage: View {
         return "\(count) \(count == 1 ? "item" : "items")"
     }
 
-    private var mediaCountSubtitle: String {
-        presentation.mediaSummary.selectedCount > 0 ? "Selected locally" : "Saved in draft"
-    }
-
     private var hasRenderPlan: Bool {
         presentation.finalRenderSummary.renderPlan != nil
     }
@@ -801,6 +795,58 @@ private struct MomentsCreateStoryReviewPage: View {
         } else {
             createVideo()
         }
+    }
+}
+
+private struct MomentsCreateReviewMediaTimingCard: View {
+    let presentation: MomentsCreateWorkflowPresentation
+
+    var body: some View {
+        AVAppShellCard {
+            VStack(alignment: .leading, spacing: 12) {
+                Text("Media and timing")
+                    .font(.system(size: 13, weight: .black))
+                    .foregroundStyle(AVBrandColor.textPrimary)
+
+                HStack(spacing: 10) {
+                    MomentsCreateReviewMetric(
+                        title: mediaCountTitle,
+                        subtitle: mediaSubtitle,
+                        systemImage: "photo.stack.fill"
+                    )
+                    MomentsCreateReviewMetric(
+                        title: presentation.template.duration,
+                        subtitle: "\(creditCostTitle) final video",
+                        systemImage: "timer"
+                    )
+                }
+
+                if presentation.mediaSummary.reviewCount == 0 {
+                    Label("Avi needs the media before creating the video.", systemImage: "exclamationmark.triangle.fill")
+                        .font(.system(size: 12, weight: .bold))
+                        .foregroundStyle(.orange)
+                        .fixedSize(horizontal: false, vertical: true)
+                } else {
+                    Text("Avi will use these selected items, story direction, and timing for the final edit.")
+                        .font(.system(size: 12, weight: .semibold))
+                        .foregroundStyle(AVBrandColor.textSecondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            }
+        }
+    }
+
+    private var mediaCountTitle: String {
+        let count = presentation.mediaSummary.reviewCount
+        return "\(count) \(count == 1 ? "item" : "items")"
+    }
+
+    private var mediaSubtitle: String {
+        presentation.mediaSummary.reviewCount > 0 ? "Selected for this video" : "Not ready"
+    }
+
+    private var creditCostTitle: String {
+        MomentsCreditCopy.countTitle(presentation.finalRenderSummary.creditCost)
     }
 }
 
