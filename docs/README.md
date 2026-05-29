@@ -69,6 +69,9 @@ plan with the target duration before calling any provider, and the provider
 route must be treated as an implementation detail. If a provider can only return
 5-second clips, the backend has to compose, stitch, or choose a different route
 so the final user-facing output still matches the credit and duration promise.
+The default product route is composition-first: Avi edits the user's real photos
+and clips into a polished memory video. Expensive generative video should be an
+optional future enhancement or premium route, not the baseline 1-credit promise.
 
 The render plan should use the selected media intentionally. For photo-only
 Moments it should distribute the selected images across the target duration in
@@ -78,6 +81,9 @@ the target duration, and record how many selected assets were planned, used, or
 rejected. Quality warnings should be friendly and actionable, for example asking
 the user to remove a blurry image or shorten a very dense selection before the
 paid render starts.
+For a 15-second Moment, 4-10 media items is the preferred creative range. The
+app can accept up to 20 so users are not forced to over-curate too early, but Avi
+may keep dense selections brief or suggest exclusions before credits are spent.
 
 During final creation, Convex is the realtime status authority. The draft is
 locked for editing while a final render is queued, rendering, validating, or

@@ -44,8 +44,8 @@ struct MomentCreationStyle: Identifiable, Equatable {
     var durationSeconds: Int { 15 }
     var creditCost: Int { 1 }
     var minimumAssets: Int { 1 }
-    var recommendedAssets: ClosedRange<Int> { 3...12 }
-    var maximumAssets: Int { 12 }
+    var recommendedAssets: ClosedRange<Int> { 4...10 }
+    var maximumAssets: Int { 20 }
 
     static let launchStyles: [MomentCreationStyle] = [
         MomentCreationStyle(

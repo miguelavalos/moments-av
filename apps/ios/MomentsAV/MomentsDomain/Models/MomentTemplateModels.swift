@@ -31,8 +31,8 @@ struct MomentTemplate: Identifiable, Equatable {
         durationSeconds: 15,
         creditCost: 1,
         minimumAssets: 1,
-        maximumAssets: 60,
-        summary: "A warm, elegant memory video from selected photos."
+        maximumAssets: 20,
+        summary: "A warm, edited memory video from selected photos and clips."
     )
 
     static let partyRecap = MomentTemplate(
@@ -41,8 +41,8 @@ struct MomentTemplate: Identifiable, Equatable {
         durationSeconds: 15,
         creditCost: 1,
         minimumAssets: 1,
-        maximumAssets: 60,
-        summary: "A faster, more rhythmic recap for shared moments."
+        maximumAssets: 20,
+        summary: "A faster, rhythmic recap using the strongest moments."
     )
 
     static let softRoast = MomentTemplate(
@@ -51,8 +51,8 @@ struct MomentTemplate: Identifiable, Equatable {
         durationSeconds: 15,
         creditCost: 1,
         minimumAssets: 1,
-        maximumAssets: 60,
-        summary: "Light, affectionate humor for people who are in on the joke."
+        maximumAssets: 20,
+        summary: "Light, affectionate humor edited from real moments."
     )
 
     static let launchTemplates = [

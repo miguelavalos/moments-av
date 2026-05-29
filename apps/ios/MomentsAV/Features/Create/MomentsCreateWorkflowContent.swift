@@ -164,7 +164,7 @@ private struct MomentsCreateMediaFirstWorkspace: View {
                 generateFinalRender()
             }
         } message: {
-            Text("This will use \(creditCostTitle). Avi will start creating the final video.")
+            Text("This will use \(creditCostTitle). Avi will edit your selected media into the final video.")
         }
         .alert("Discard draft?", isPresented: $showsDiscardDraftConfirmation) {
             Button("Keep draft", role: .cancel) {}
@@ -422,14 +422,14 @@ struct MomentsCreateBlockingPreparationView: View {
                 }
                 return "Avi is reading the selection and setting up the first review."
             case .prepareStory:
-                return "Avi is organizing the selected moments into a simple video plan."
+                return "Avi is organizing the selected moments into an edited video plan."
             case .uploadForVideo:
                 if let itemCount, itemCount > 0 {
                     return "Sending \(itemCount) \(itemCount == 1 ? "item" : "items") needed for final video creation."
                 }
                 return "Sending the selected media needed for final video creation."
             case .createVideo:
-                return "Avi is starting the final render. This can take a few minutes."
+                return "Avi is starting the final edit. This can take a few minutes."
             case .createPreview:
                 return "Avi is creating a review preview from your story plan."
             }
@@ -605,7 +605,7 @@ private struct MomentsCreateStoryReviewPage: View {
                                         .font(.system(size: 17, weight: .black))
                                         .foregroundStyle(AVBrandColor.textPrimary)
 
-                                    Text("This uses \(creditCostTitle). You can go back if you want to change the story first.")
+                                    Text("Avi will edit your real media into a \(presentation.template.duration) video. You can go back if you want to change the story first.")
                                         .font(.system(size: 13, weight: .semibold))
                                         .foregroundStyle(AVBrandColor.textSecondary)
                                         .fixedSize(horizontal: false, vertical: true)
@@ -653,7 +653,7 @@ private struct MomentsCreateStoryReviewPage: View {
                 }
             }
         } message: {
-            Text("This will use \(creditCostTitle). Avi will start creating the final video.")
+            Text("This will use \(creditCostTitle). Avi will edit your selected media into the final video.")
         }
         .alert("Discard draft?", isPresented: $showsDiscardDraftConfirmation) {
             Button("Keep draft", role: .cancel) {}
@@ -666,7 +666,7 @@ private struct MomentsCreateStoryReviewPage: View {
     }
 
     private var summaryTitle: String {
-        "Avi prepared a simple video plan for this selection."
+        "Avi prepared an edited video plan for this selection."
     }
 
     private var creditCostTitle: String {
@@ -985,7 +985,7 @@ private struct MomentsCreatePrimaryActionBar: View {
             return "Preview ready. Review it before final video."
         }
         if presentation.canGenerateFinalRender {
-            return "Creating this video uses \(creditCostTitle)."
+            return "Avi will create a \(presentation.template.duration) edited video from your media."
         }
         if let previewMessage = presentation.previewSummary.statusMessage, !previewMessage.isEmpty {
             return previewMessage
