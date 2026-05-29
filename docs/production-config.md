@@ -87,6 +87,13 @@ Do not validate Clerk sign-in with an unsigned compile-only build. Clerk native
 auth uses Keychain and app callback handling, so QA needs a signed app with the
 expected bundle identifier and entitlements.
 
+`CODE_SIGNING_ALLOWED=NO` is acceptable only for compile checks and isolated
+unit tests. It must not be used for Apple/Google sign-in, token, project sync,
+media upload, preview, final render, or full workflow smoke testing. On
+simulator, unsigned builds can fail with `unexpectedStatus(-34018)` followed by
+`signed_out` or "You are signed out"; uninstall the stale app and rebuild with
+normal simulator signing enabled.
+
 For production-flavored QA:
 
 1. Generate prod config with `scripts/generate-ios-local-xcconfig.sh --env prod`.

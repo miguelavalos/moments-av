@@ -51,6 +51,12 @@ Quick build check:
 2. Run `xcodegen generate --spec apps/ios/project.yml`.
 3. Build with `xcodebuild -project apps/ios/MomentsAV.xcodeproj -scheme MomentsAV -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO build`.
 
+Use that unsigned command only as a compile check. For Account AV, Clerk,
+Apple/Google sign-in, token, project sync, media upload, preview, final render,
+or full workflow testing, build and run with normal simulator signing enabled.
+Unsigned simulator builds can make Clerk fail with Keychain
+`unexpectedStatus(-34018)` followed by `signed_out`.
+
 Generated local config, signing material, and machine-specific files must stay
 out of git.
 

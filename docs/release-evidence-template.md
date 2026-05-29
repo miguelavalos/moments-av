@@ -85,6 +85,17 @@ xcodebuild test -project apps/ios/MomentsAV.xcodeproj -scheme MomentsAV -destina
 - Failure count:
 - `.xcresult` path:
 
+For signed Account AV/Clerk runtime evidence, do not use
+`CODE_SIGNING_ALLOWED=NO`. Record the signed simulator/device build separately:
+
+```bash
+xcodebuild -project apps/ios/MomentsAV.xcodeproj -scheme MomentsAV -destination 'platform=iOS Simulator,name=iPhone 17' build
+```
+
+- Signed runtime result:
+- Account sign-in result:
+- Project/media workflow result:
+
 ## Archive And Upload
 
 - Archive command or Xcode archive path:

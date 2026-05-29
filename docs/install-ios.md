@@ -36,6 +36,13 @@ This verifies the app compiles, but signed-in Account AV, project sync, media
 upload, preview, final render, and deletion flows need local environment
 configuration.
 
+Do not use this unsigned build for Account AV or Clerk sign-in. Clerk native
+auth stores device/session material in Keychain; an unsigned simulator build
+does not receive the simulated Keychain entitlements and can fail with
+`unexpectedStatus(-34018)`, then `signed_out` or "You are signed out". Use
+normal simulator signing for any Apple/Google sign-in smoke or full workflow
+test.
+
 ## Local Runtime Config
 
 Generate the untracked iOS config from the private suite repo:
@@ -78,6 +85,28 @@ scripts/check-ios-runtime-config.sh --env prod --configuration Release
 The runtime check prints non-secret values and redacts the publishable key. It
 fails if the bundle ID, environment, Account AV API host, project sync URL, version,
 build number, legal URLs, or key prefix do not match the selected environment.
+
+## Signed Runtime Smoke
+
+For any flow that depends on a real Account AV/Clerk session, build and launch
+without `CODE_SIGNING_ALLOWED=NO`:
+
+```bash
+xcodebuild -project apps/ios/MomentsAV.xcodeproj -scheme MomentsAV -destination 'platform=iOS Simulator,name=iPhone 17' build
+```
+
+If the simulator has already run an unsigned build and Clerk reports Keychain or
+signed-out errors, remove the stale app state before reinstalling the signed
+simulator build:
+
+```bash
+xcrun simctl uninstall booted com.avalsys.momentsav.dev
+```
+
+Then rebuild/run with simulator signing enabled. If sign-in opens but never
+returns to the app after that, check that Clerk allows the callback URI printed
+by `scripts/check-ios-runtime-config.sh`, for example
+`com.avalsys.momentsav.dev://callback` for staging/debug.
 
 ## Tests
 

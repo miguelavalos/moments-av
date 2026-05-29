@@ -52,6 +52,11 @@ Build for simulator:
 xcodebuild -project apps/ios/MomentsAV.xcodeproj -scheme MomentsAV -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO build
 ```
 
+That command is compile-only. Do not use `CODE_SIGNING_ALLOWED=NO` for Account
+AV/Clerk sign-in or any signed workflow smoke. Clerk needs simulated Keychain
+entitlements on the simulator, so auth and end-to-end tests must be built with
+normal simulator signing enabled.
+
 Local signing values belong in untracked local configuration only.
 
 Validate the effective runtime config after generating local settings:
