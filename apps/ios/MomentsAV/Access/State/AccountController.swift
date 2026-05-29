@@ -12,15 +12,18 @@ final class AccountController: ObservableObject {
     private let service: AVAccountService
     private let balanceClient: MomentsCreditBalanceClient
     private let promoCodeClient: MomentsPromoCodeClient
+    private let reviewBundleClient: MomentsReviewBundleClient
 
     init(
         service: AVAccountService = DefaultAVAccountService(),
         balanceClient: MomentsCreditBalanceClient? = nil,
-        promoCodeClient: MomentsPromoCodeClient? = nil
+        promoCodeClient: MomentsPromoCodeClient? = nil,
+        reviewBundleClient: MomentsReviewBundleClient? = nil
     ) {
         self.service = service
         self.balanceClient = balanceClient ?? MomentsCreditBalanceClient(baseURLString: AppConfig.momentsAPIBaseURL)
         self.promoCodeClient = promoCodeClient ?? MomentsPromoCodeClient(baseURLString: AppConfig.momentsAPIBaseURL)
+        self.reviewBundleClient = reviewBundleClient ?? MomentsReviewBundleClient(baseURLString: AppConfig.momentsAPIBaseURL)
         refresh()
     }
 
@@ -86,6 +89,17 @@ final class AccountController: ObservableObject {
         let response = try await promoCodeClient.redeem(code: normalizedCode, bearerToken: token)
         creditBalance = response.balance
         return response.creditsGranted
+    }
+
+    func purchaseReviewBundle() async throws -> MomentsReviewBundlePurchaseResponse {
+        guard let user else {
+            throw MomentsAPIError(code: "moments_sign_in_required", message: "Sign in before adding story reviews.")
+        }
+
+        let token = try await service.getToken() ?? user.id
+        let response = try await reviewBundleClient.purchase(bearerToken: token)
+        creditBalance = response.balance
+        return response
     }
 
     func refreshCreditBalance() async {
@@ -173,6 +187,60 @@ struct MomentsCreditBalanceClient {
     }
 }
 
+struct MomentsReviewBundleClient {
+    var baseURLString: String
+    var session: URLSession = .shared
+
+    func purchase(bearerToken: String) async throws -> MomentsReviewBundlePurchaseResponse {
+        guard let url = URL(string: "\(baseURLString)/v1/apps/momentsav/credits/review-bundles") else {
+            throw MomentsAPIError(code: "invalid_moments_api_url", message: "Moments AV API URL is not configured.")
+        }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("Bearer \(bearerToken)", forHTTPHeaderField: "Authorization")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpBody = try JSONEncoder().encode(
+            MomentsReviewBundlePurchaseRequest(idempotencyKey: "ios-review-bundle:\(UUID().uuidString)")
+        )
+
+        let (data, response) = try await session.data(for: request)
+        if let httpResponse = response as? HTTPURLResponse, !(200..<300).contains(httpResponse.statusCode) {
+            throw MomentsAPIError.decode(
+                from: data,
+                fallbackCode: "moments_review_bundle_purchase_failed",
+                fallbackMessage: "Story reviews could not be added."
+            )
+        }
+
+        return try JSONDecoder().decode(MomentsReviewBundlePurchaseResponse.self, from: data)
+    }
+}
+
+private struct MomentsReviewBundlePurchaseRequest: Encodable {
+    let appId = "momentsav"
+    let idempotencyKey: String
+}
+
+struct MomentsReviewBundlePurchaseResponse: Decodable, Equatable {
+    let reviewsGranted: Int
+    let creditsCommitted: Int
+    let balance: MomentsCreditBalance
+
+    private enum CodingKeys: String, CodingKey {
+        case reviewsGranted
+        case creditsCommitted
+        case balance
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        reviewsGranted = try container.decode(Int.self, forKey: .reviewsGranted)
+        creditsCommitted = try container.decode(Int.self, forKey: .creditsCommitted)
+        balance = try MomentsCreditBalance.decode(from: container, forKey: .balance)
+    }
+}
+
 private struct MomentsCreditBalanceResponse: Decodable {
     let proMonthlyCredits: Int
     let promotionalGrantedCredits: Int
@@ -217,6 +285,52 @@ private struct MomentsCreditBalanceResponse: Decodable {
         watermarkRemovalCreditCost = try container.decodeIfPresent(Int.self, forKey: .watermarkRemovalCreditCost) ?? 1
         watermarkFreeIncluded = try container.decodeIfPresent(Bool.self, forKey: .watermarkFreeIncluded) ?? false
     }
+}
+
+private extension MomentsCreditBalance {
+    static func decode<Keys: CodingKey>(
+        from container: KeyedDecodingContainer<Keys>,
+        forKey key: Keys
+    ) throws -> MomentsCreditBalance {
+        let balanceContainer = try container.nestedContainer(keyedBy: MomentsCreditBalanceCodingKeys.self, forKey: key)
+        return try decode(from: balanceContainer)
+    }
+
+    static func decode(
+        from container: KeyedDecodingContainer<MomentsCreditBalanceCodingKeys>
+    ) throws -> MomentsCreditBalance {
+        MomentsCreditBalance(
+            proMonthly: try container.decode(Int.self, forKey: .proMonthlyCredits),
+            promotional: try container.decode(Int.self, forKey: .promotionalGrantedCredits),
+            purchased: try container.decode(Int.self, forKey: .purchasedCredits),
+            reviewAllowanceRemaining: try container.decodeIfPresent(Int.self, forKey: .reviewAllowanceRemaining) ?? 0,
+            includedReviewsRemaining: try container.decodeIfPresent(Int.self, forKey: .includedReviewsRemaining)
+                ?? container.decodeIfPresent(Int.self, forKey: .reviewAllowanceRemaining)
+                ?? 0,
+            canReview: try container.decodeIfPresent(Bool.self, forKey: .canReview) ?? true,
+            canCreateDirectly: try container.decodeIfPresent(Bool.self, forKey: .canCreateDirectly) ?? true,
+            canBuyReviewBundle: try container.decodeIfPresent(Bool.self, forKey: .canBuyReviewBundle) ?? false,
+            reviewBundleCreditCost: try container.decodeIfPresent(Int.self, forKey: .reviewBundleCreditCost) ?? 1,
+            reviewBundleReviewCount: try container.decodeIfPresent(Int.self, forKey: .reviewBundleReviewCount) ?? 10,
+            watermarkRemovalCreditCost: try container.decodeIfPresent(Int.self, forKey: .watermarkRemovalCreditCost) ?? 1,
+            watermarkFreeIncluded: try container.decodeIfPresent(Bool.self, forKey: .watermarkFreeIncluded) ?? false
+        )
+    }
+}
+
+private enum MomentsCreditBalanceCodingKeys: String, CodingKey {
+    case proMonthlyCredits
+    case promotionalGrantedCredits
+    case purchasedCredits
+    case reviewAllowanceRemaining
+    case includedReviewsRemaining
+    case canReview
+    case canCreateDirectly
+    case canBuyReviewBundle
+    case reviewBundleCreditCost
+    case reviewBundleReviewCount
+    case watermarkRemovalCreditCost
+    case watermarkFreeIncluded
 }
 
 struct MomentsPromoCodeClient {
@@ -264,6 +378,15 @@ struct MomentsPromoCodeRedemptionResponse: Decodable {
         case proMonthlyCredits
         case promotionalGrantedCredits
         case purchasedCredits
+        case reviewAllowanceRemaining
+        case includedReviewsRemaining
+        case canReview
+        case canCreateDirectly
+        case canBuyReviewBundle
+        case reviewBundleCreditCost
+        case reviewBundleReviewCount
+        case watermarkRemovalCreditCost
+        case watermarkFreeIncluded
     }
 
     init(from decoder: Decoder) throws {
@@ -273,12 +396,21 @@ struct MomentsPromoCodeRedemptionResponse: Decodable {
         balance = MomentsCreditBalance(
             proMonthly: try balanceContainer.decode(Int.self, forKey: .proMonthlyCredits),
             promotional: try balanceContainer.decode(Int.self, forKey: .promotionalGrantedCredits),
-            purchased: try balanceContainer.decode(Int.self, forKey: .purchasedCredits)
+            purchased: try balanceContainer.decode(Int.self, forKey: .purchasedCredits),
+            reviewAllowanceRemaining: try balanceContainer.decodeIfPresent(Int.self, forKey: .reviewAllowanceRemaining) ?? 0,
+            includedReviewsRemaining: try balanceContainer.decodeIfPresent(Int.self, forKey: .includedReviewsRemaining) ?? 0,
+            canReview: try balanceContainer.decodeIfPresent(Bool.self, forKey: .canReview) ?? true,
+            canCreateDirectly: try balanceContainer.decodeIfPresent(Bool.self, forKey: .canCreateDirectly) ?? true,
+            canBuyReviewBundle: try balanceContainer.decodeIfPresent(Bool.self, forKey: .canBuyReviewBundle) ?? false,
+            reviewBundleCreditCost: try balanceContainer.decodeIfPresent(Int.self, forKey: .reviewBundleCreditCost) ?? 1,
+            reviewBundleReviewCount: try balanceContainer.decodeIfPresent(Int.self, forKey: .reviewBundleReviewCount) ?? 10,
+            watermarkRemovalCreditCost: try balanceContainer.decodeIfPresent(Int.self, forKey: .watermarkRemovalCreditCost) ?? 1,
+            watermarkFreeIncluded: try balanceContainer.decodeIfPresent(Bool.self, forKey: .watermarkFreeIncluded) ?? false
         )
     }
 }
 
-extension AccountController: MomentsCurrentUserProviding, MomentsAuthTokenProviding, MomentsCreditBalanceProviding, MomentsAccountStateProviding, MomentsAuthenticationControlling {
+extension AccountController: MomentsCurrentUserProviding, MomentsAuthTokenProviding, MomentsCreditBalanceProviding, MomentsReviewBundlePurchasing, MomentsAccountStateProviding, MomentsAuthenticationControlling {
     var currentUserId: String? {
         user?.id
     }

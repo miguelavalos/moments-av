@@ -17,6 +17,11 @@ protocol MomentsCreditBalanceProviding: AnyObject {
 }
 
 @MainActor
+protocol MomentsReviewBundlePurchasing: AnyObject {
+    func purchaseReviewBundle() async throws -> MomentsReviewBundlePurchaseResponse
+}
+
+@MainActor
 protocol MomentsAccountStateProviding: AnyObject {
     var isSignedInPublisher: AnyPublisher<Bool, Never> { get }
     var currentUserIdPublisher: AnyPublisher<String?, Never> { get }

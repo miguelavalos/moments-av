@@ -198,6 +198,34 @@ extension MomentsCreateViewModel {
         }
     }
 
+    func buyStoryReviewBundle() {
+        guard let reviewBundlePurchaser else {
+            updateStoryStatusMessage("Story reviews are not available in this build.")
+            return
+        }
+        guard balance.canBuyReviewBundle else {
+            updateStoryStatusMessage("Add credits before adding more story reviews.")
+            return
+        }
+        guard !isBusy, !isBuyingReviewBundle else { return }
+
+        isBuyingReviewBundle = true
+        updateStoryStatusMessage(nil)
+        runOperation {
+            defer { self.isBuyingReviewBundle = false }
+            do {
+                let response = try await reviewBundlePurchaser.purchaseReviewBundle()
+                self.updateStoryStatusMessage(
+                    "Added \(response.reviewsGranted) story reviews for \(MomentsCreditCopy.countTitle(response.creditsCommitted))."
+                )
+            } catch let error as LocalizedError {
+                self.updateStoryStatusMessage(error.errorDescription ?? "Story reviews could not be added. Please try again.")
+            } catch {
+                self.updateStoryStatusMessage("Story reviews could not be added. Please try again.")
+            }
+        }
+    }
+
     func generatePreview() {
         guard canGeneratePreview, let previewGenerationWorkflow, let context = activeTemplateContext else {
             updatePreviewStatusMessage(previewAvailabilityMessage ?? "Preview is not ready yet.")

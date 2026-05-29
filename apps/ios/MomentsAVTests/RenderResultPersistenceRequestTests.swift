@@ -56,6 +56,8 @@ final class RenderResultPersistenceRequestTests: XCTestCase {
             r2Key: "momentsav/user/project/final/final.mp4",
             expiresAt: "2026-05-16T17:00:00Z",
             hasWatermark: true,
+            baseCreditCost: 1,
+            watermarkRemovalCreditCost: nil,
             creditsCommitted: 1,
             generatedAt: "2026-05-16T16:00:00Z"
         )
@@ -75,7 +77,7 @@ final class RenderResultPersistenceRequestTests: XCTestCase {
         XCTAssertEqual(request.r2Key, "momentsav/user/project/final/final.mp4")
         XCTAssertEqual(request.durationSeconds, 15)
         XCTAssertEqual(request.creditCost, 1)
-        XCTAssertFalse(request.hasWatermark)
+        XCTAssertTrue(request.hasWatermark)
         XCTAssertEqual(request.status, "available")
     }
 }

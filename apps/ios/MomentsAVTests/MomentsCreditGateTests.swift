@@ -50,17 +50,17 @@ final class MomentsCreditGateTests: XCTestCase {
         XCTAssertEqual(MomentTemplate.birthdayMessage.durationSeconds, 15)
         XCTAssertEqual(MomentTemplate.birthdayMessage.creditCost, 1)
         XCTAssertEqual(MomentTemplate.birthdayMessage.minimumAssets, 1)
-        XCTAssertEqual(MomentTemplate.birthdayMessage.maximumAssets, 60)
+        XCTAssertEqual(MomentTemplate.birthdayMessage.maximumAssets, 20)
 
         XCTAssertEqual(MomentTemplate.partyRecap.durationSeconds, 15)
         XCTAssertEqual(MomentTemplate.partyRecap.creditCost, 1)
         XCTAssertEqual(MomentTemplate.partyRecap.minimumAssets, 1)
-        XCTAssertEqual(MomentTemplate.partyRecap.maximumAssets, 60)
+        XCTAssertEqual(MomentTemplate.partyRecap.maximumAssets, 20)
 
         XCTAssertEqual(MomentTemplate.softRoast.durationSeconds, 15)
         XCTAssertEqual(MomentTemplate.softRoast.creditCost, 1)
         XCTAssertEqual(MomentTemplate.softRoast.minimumAssets, 1)
-        XCTAssertEqual(MomentTemplate.softRoast.maximumAssets, 60)
+        XCTAssertEqual(MomentTemplate.softRoast.maximumAssets, 20)
     }
 
     func testDraftFormRequiresOccasionBeforeCreate() {
@@ -121,13 +121,13 @@ final class MomentsCreditGateTests: XCTestCase {
     func testMediaRulesEnforceTemplateMinimumsAndMaximums() {
         XCTAssertFalse(MomentsMediaRules.canStartPreview(template: .birthdayMessage, selectedCount: 0))
         XCTAssertTrue(MomentsMediaRules.canStartPreview(template: .birthdayMessage, selectedCount: 1))
-        XCTAssertTrue(MomentsMediaRules.canStartPreview(template: .birthdayMessage, selectedCount: 60))
-        XCTAssertFalse(MomentsMediaRules.canStartPreview(template: .birthdayMessage, selectedCount: 61))
+        XCTAssertTrue(MomentsMediaRules.canStartPreview(template: .birthdayMessage, selectedCount: 20))
+        XCTAssertFalse(MomentsMediaRules.canStartPreview(template: .birthdayMessage, selectedCount: 21))
 
         XCTAssertFalse(MomentsMediaRules.canStartPreview(template: .partyRecap, selectedCount: 0))
         XCTAssertTrue(MomentsMediaRules.canStartPreview(template: .partyRecap, selectedCount: 1))
-        XCTAssertTrue(MomentsMediaRules.canStartPreview(template: .partyRecap, selectedCount: 60))
-        XCTAssertFalse(MomentsMediaRules.canStartPreview(template: .partyRecap, selectedCount: 61))
+        XCTAssertTrue(MomentsMediaRules.canStartPreview(template: .partyRecap, selectedCount: 20))
+        XCTAssertFalse(MomentsMediaRules.canStartPreview(template: .partyRecap, selectedCount: 21))
     }
 
     func testStoryDraftRulesUseSelectedConvexMediaCount() {

@@ -449,6 +449,8 @@ final class MomentsAPIClientTests: XCTestCase {
             projectId: "project-1",
             bearerToken: "token-1",
             template: .birthdayMessage,
+            removesWatermark: false,
+            balance: MomentsCreditBalance(proMonthly: 0, promotional: 2, purchased: 0),
             operationId: "operation-1"
         )
 
@@ -478,6 +480,9 @@ final class MomentsAPIClientTests: XCTestCase {
             projectId: "project-1",
             bearerToken: "token-1",
             template: .birthdayMessage,
+            creationStyle: nil,
+            form: MomentDraftForm(template: .birthdayMessage),
+            removesWatermark: false,
             reservationId: "reservation-1",
             operationId: "operation-1"
         )
@@ -508,6 +513,9 @@ final class MomentsAPIClientTests: XCTestCase {
                 projectId: "project-1",
                 bearerToken: "token-1",
                 template: .birthdayMessage,
+                creationStyle: nil,
+                form: MomentDraftForm(template: .birthdayMessage),
+                removesWatermark: false,
                 reservationId: "reservation-1",
                 operationId: "operation-1"
             )
@@ -670,6 +678,57 @@ final class MomentsAPIClientTests: XCTestCase {
         XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.value(forHTTPHeaderField: "Authorization"), "Bearer token-1")
         XCTAssertEqual(response.creditsGranted, 5)
         XCTAssertEqual(response.balance, MomentsCreditBalance(proMonthly: 0, promotional: 5, purchased: 0))
+    }
+
+    func testReviewBundlePurchaseUsesBackendAndReturnsUpdatedBalance() async throws {
+        let session = makeMockSession(
+            json: """
+            {
+              "appId": "momentsav",
+              "userId": "user-1",
+              "reviewsGranted": 10,
+              "creditsCommitted": 1,
+              "creditLedgerEntryId": "credit-ledger-1",
+              "reviewLedgerEntryId": "review-ledger-1",
+              "balance": {
+                "appId": "momentsav",
+                "userId": "user-1",
+                "spendableCredits": 4,
+                "reservedCredits": 0,
+                "proMonthlyCredits": 0,
+                "promotionalGrantedCredits": 4,
+                "purchasedCredits": 0,
+                "hasProFeatures": false,
+                "proSource": "none",
+                "proExpiresAt": null,
+                "reviewAllowanceRemaining": 10,
+                "includedReviewsRemaining": 10,
+                "canReview": true,
+                "canCreateDirectly": true,
+                "canBuyReviewBundle": true,
+                "reviewBundleCreditCost": 1,
+                "reviewBundleReviewCount": 10,
+                "watermarkRemovalCreditCost": 1,
+                "watermarkFreeIncluded": false,
+                "canStartProject": true,
+                "minimumRenderCredits": 1,
+                "generatedAt": "2026-05-29T10:00:00.000Z"
+              },
+              "generatedAt": "2026-05-29T10:00:00.000Z"
+            }
+            """
+        )
+        let client = MomentsReviewBundleClient(baseURLString: accountAPIBaseURL, session: session)
+
+        let response = try await client.purchase(bearerToken: "token-1")
+
+        XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.url?.absoluteString, "\(accountAPIBaseURL)/v1/apps/momentsav/credits/review-bundles")
+        XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.httpMethod, "POST")
+        XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.value(forHTTPHeaderField: "Authorization"), "Bearer token-1")
+        XCTAssertEqual(response.reviewsGranted, 10)
+        XCTAssertEqual(response.creditsCommitted, 1)
+        XCTAssertEqual(response.balance.reviewAllowanceRemaining, 10)
+        XCTAssertEqual(response.balance.spendable, 4)
     }
 
     private var accountAPIBaseURL: String {

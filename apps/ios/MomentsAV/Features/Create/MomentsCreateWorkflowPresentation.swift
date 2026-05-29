@@ -10,6 +10,7 @@ struct MomentsCreateWorkflowPresentation: Equatable {
     var storySummary: MomentsCreateStorySummary
     var previewSummary: MomentsCreatePreviewSummary
     var finalRenderSummary: MomentsCreateFinalRenderSummary
+    var isBuyingReviewBundle = false
     var canAddMedia = false
     var canDraftStory = false
     var canGeneratePreview = false
@@ -72,6 +73,7 @@ struct MomentsCreateWorkflowPresentation: Equatable {
         storySummary: MomentsCreateStorySummary,
         previewSummary: MomentsCreatePreviewSummary,
         finalRenderSummary: MomentsCreateFinalRenderSummary,
+        isBuyingReviewBundle: Bool,
         availability: MomentsCreateWorkflowAvailability
     ) -> MomentsCreateWorkflowPresentation {
         MomentsCreateWorkflowPresentation(
@@ -84,6 +86,7 @@ struct MomentsCreateWorkflowPresentation: Equatable {
             storySummary: storySummary,
             previewSummary: previewSummary,
             finalRenderSummary: finalRenderSummary,
+            isBuyingReviewBundle: isBuyingReviewBundle,
             canAddMedia: availability.canAddMedia,
             canDraftStory: availability.canDraftStory,
             canGeneratePreview: availability.canGeneratePreview,

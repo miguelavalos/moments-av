@@ -37,7 +37,9 @@ struct MomentsCreateWorkflowContent: View {
                     consumeOpenPickerRequest: viewModel.consumeMediaPickerOpenRequest,
                     discardDraft: viewModel.discardDraft,
                     startSignInFlow: startSignInFlow,
+                    openCredits: openCredits,
                     generateStoryDraft: viewModel.generateStoryDraft,
+                    buyReviewBundle: viewModel.buyStoryReviewBundle,
                     generatePreview: viewModel.preparePreview,
                     refreshPreviewStatus: viewModel.refreshPreviewStatus,
                     generateFinalRender: viewModel.createFinalVideoFromCurrentSelection,
@@ -96,7 +98,9 @@ private struct MomentsCreateMediaFirstWorkspace: View {
     let consumeOpenPickerRequest: () -> Void
     let discardDraft: () -> Void
     let startSignInFlow: () -> Void
+    let openCredits: () -> Void
     let generateStoryDraft: () -> Void
+    let buyReviewBundle: () -> Void
     let generatePreview: () -> Void
     let refreshPreviewStatus: () -> Void
     let generateFinalRender: (Bool) -> Void
@@ -195,6 +199,8 @@ private struct MomentsCreateMediaFirstWorkspace: View {
             MomentsCreateStoryReviewPage(
                 presentation: presentation,
                 createVideo: generateFinalRender,
+                buyReviewBundle: buyReviewBundle,
+                openCredits: openCredits,
                 discardDraft: discardCurrentDraft,
                 dismiss: { showsStoryReview = false }
             )
@@ -627,6 +633,8 @@ private struct MomentsCreateReviewMetric: View {
 private struct MomentsCreateStoryReviewPage: View {
     let presentation: MomentsCreateWorkflowPresentation
     let createVideo: (Bool) -> Void
+    let buyReviewBundle: () -> Void
+    let openCredits: () -> Void
     let discardDraft: () -> Void
     let dismiss: () -> Void
 
@@ -689,6 +697,12 @@ private struct MomentsCreateStoryReviewPage: View {
                     MomentsCreateReviewMediaTimingCard(presentation: presentation)
 
                     MomentsCreateStoryReviewCard(presentation: presentation)
+
+                    MomentsCreateStoryAllowanceActionCard(
+                        presentation: presentation,
+                        buyReviewBundle: buyReviewBundle,
+                        openCredits: openCredits
+                    )
 
                     MomentsCreateReadinessChecklistCard(presentation: presentation)
 
@@ -829,6 +843,68 @@ private struct MomentsCreateStoryReviewPage: View {
         } else {
             createVideo(removesWatermark)
         }
+    }
+}
+
+private struct MomentsCreateStoryAllowanceActionCard: View {
+    let presentation: MomentsCreateWorkflowPresentation
+    let buyReviewBundle: () -> Void
+    let openCredits: () -> Void
+
+    var body: some View {
+        AVAppShellCard {
+            VStack(alignment: .leading, spacing: 12) {
+                Text("Story review allowance")
+                    .font(.system(size: 13, weight: .black))
+                    .foregroundStyle(AVBrandColor.textPrimary)
+
+                HStack(spacing: 10) {
+                    MomentsCreateReviewMetric(
+                        title: "\(presentation.balance.reviewAllowanceRemaining)",
+                        subtitle: "reviews left",
+                        systemImage: "list.bullet.clipboard.fill"
+                    )
+                    MomentsCreateReviewMetric(
+                        title: "\(presentation.balance.reviewBundleReviewCount)",
+                        subtitle: "per bundle",
+                        systemImage: "plus.circle.fill"
+                    )
+                    MomentsCreateReviewMetric(
+                        title: MomentsCreditCopy.countTitle(presentation.balance.reviewBundleCreditCost),
+                        subtitle: "bundle cost",
+                        systemImage: "creditcard.fill"
+                    )
+                }
+
+                if presentation.balance.reviewAllowanceRemaining == 0 {
+                    Text("You can add reviews with credits, add credits first, or create the final video from this approved story.")
+                        .font(.system(size: 12, weight: .semibold))
+                        .foregroundStyle(AVBrandColor.textSecondary)
+                        .fixedSize(horizontal: false, vertical: true)
+
+                    if presentation.balance.canBuyReviewBundle {
+                        Button(action: buyReviewBundle) {
+                            Label(reviewBundleButtonTitle, systemImage: "plus.circle.fill")
+                                .frame(maxWidth: .infinity)
+                        }
+                        .buttonStyle(MomentsCreateSoftActionButtonStyle())
+                        .disabled(presentation.isBuyingReviewBundle)
+                    } else {
+                        Button(action: openCredits) {
+                            Label("Add credits", systemImage: "creditcard.fill")
+                                .frame(maxWidth: .infinity)
+                        }
+                        .buttonStyle(MomentsCreateSoftActionButtonStyle())
+                    }
+                }
+            }
+        }
+    }
+
+    private var reviewBundleButtonTitle: String {
+        presentation.isBuyingReviewBundle
+            ? "Adding reviews..."
+            : "Add \(presentation.balance.reviewBundleReviewCount) reviews · \(MomentsCreditCopy.countTitle(presentation.balance.reviewBundleCreditCost))"
     }
 }
 
@@ -2237,6 +2313,8 @@ private struct MomentsCreateWorkflowCards: View {
     let autoPickStrongMoments: () -> Void
     let openPickerRequest: Int
     let generateStoryDraft: () -> Void
+    let buyReviewBundle: () -> Void = {}
+    let openCredits: () -> Void = {}
     let generatePreview: () -> Void
     let refreshPreviewStatus: () -> Void
     let generateFinalRender: () -> Void
@@ -2273,10 +2351,14 @@ private struct MomentsCreateWorkflowCards: View {
                 MomentsCreateStoryCard(
                     presentation: MomentsCreateStoryPresentation(
                         summary: presentation.storySummary,
+                        balance: presentation.balance,
                         canDraftStory: presentation.canDraftStory,
+                        isBuyingReviewBundle: presentation.isBuyingReviewBundle,
                         availabilityMessage: presentation.storyAvailabilityMessage
                     ),
-                    generateStoryDraft: generateStoryDraft
+                    generateStoryDraft: generateStoryDraft,
+                    buyReviewBundle: buyReviewBundle,
+                    openCredits: openCredits
                 )
                 .id(MomentsCreateSection.story)
 

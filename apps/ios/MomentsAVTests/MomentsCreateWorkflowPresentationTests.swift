@@ -82,6 +82,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         let presentation = MomentsCreateWorkflowPresentation(
             activeProjectId: nil,
             template: .birthdayMessage,
+            balance: .empty,
             mediaSummary: MomentsCreateMediaSummary(),
             storySummary: MomentsCreateStorySummary(),
             previewSummary: MomentsCreatePreviewSummary(),
@@ -129,6 +130,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
             activeProjectId: "project-1",
             hasMomentWorkspace: true,
             template: .birthdayMessage,
+            balance: MomentsCreditBalance(proMonthly: 0, promotional: 2, purchased: 0),
             mediaSummary: mediaSummary,
             storySummary: storySummary,
             previewSummary: previewSummary,
@@ -174,10 +176,12 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
             isSignedIn: true,
             hasMomentWorkspace: true,
             template: .birthdayMessage,
+            balance: MomentsCreditBalance(proMonthly: 0, promotional: 1, purchased: 0),
             mediaSummary: MomentsCreateMediaSummary(),
             storySummary: MomentsCreateStorySummary(),
             previewSummary: MomentsCreatePreviewSummary(),
             finalRenderSummary: MomentsCreateFinalRenderSummary(),
+            isBuyingReviewBundle: true,
             availability: MomentsCreateWorkflowAvailability(
                 canAddMedia: true,
                 canDraftStory: false,
@@ -195,6 +199,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         )
 
         XCTAssertTrue(presentation.canAddMedia)
+        XCTAssertTrue(presentation.isBuyingReviewBundle)
         XCTAssertFalse(presentation.canDraftStory)
         XCTAssertTrue(presentation.canGeneratePreview)
         XCTAssertEqual(presentation.storyAvailabilityMessage, "Draft story.")
@@ -206,6 +211,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         var presentation = MomentsCreateWorkflowPresentation(
             activeProjectId: "project-1",
             template: .birthdayMessage,
+            balance: .empty,
             mediaSummary: MomentsCreateMediaSummary(isImporting: true),
             storySummary: MomentsCreateStorySummary(),
             previewSummary: MomentsCreatePreviewSummary(),
@@ -262,7 +268,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
 
         XCTAssertEqual(presentation.activeProjectId, "project-1")
         XCTAssertEqual(presentation.pickerTitle, "Adding media...")
-        XCTAssertEqual(presentation.remainingSlots, 59)
+        XCTAssertEqual(presentation.remainingSlots, 19)
         XCTAssertEqual(presentation.selectedCountTitle, "1 selected")
         XCTAssertEqual(presentation.selectionMessage, "")
         XCTAssertEqual(presentation.syncedMediaAssets.map(\.id), ["first", "second"])
@@ -296,6 +302,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
                 isDrafting: true,
                 statusMessage: "Drafting."
             ),
+            balance: MomentsCreditBalance(proMonthly: 0, promotional: 1, purchased: 0),
             canDraftStory: true,
             availabilityMessage: "Ready."
         )

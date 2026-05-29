@@ -39,7 +39,9 @@ struct MomentsCreateMediaPresentation: Equatable {
 
 struct MomentsCreateStoryPresentation: Equatable {
     var summary: MomentsCreateStorySummary
+    var balance: MomentsCreditBalance
     var canDraftStory = false
+    var isBuyingReviewBundle = false
     var availabilityMessage: String?
 
     var draftButtonTitle: String {
@@ -54,5 +56,15 @@ struct MomentsCreateStoryPresentation: Equatable {
 
     var savedScenes: [MomentStoryScene] {
         summary.savedScenes.sorted { $0.sceneIndex < $1.sceneIndex }
+    }
+
+    var reviewBundleButtonTitle: String {
+        isBuyingReviewBundle
+            ? "Adding reviews..."
+            : "Add \(balance.reviewBundleReviewCount) reviews · \(MomentsCreditCopy.countTitle(balance.reviewBundleCreditCost))"
+    }
+
+    var canBuyReviewBundle: Bool {
+        balance.canBuyReviewBundle && !isBuyingReviewBundle
     }
 }
