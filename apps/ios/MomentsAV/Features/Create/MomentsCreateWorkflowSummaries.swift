@@ -49,6 +49,10 @@ struct MomentsCreateMediaSummary: Equatable {
         selectedMedia.filter(\.selected).count
     }
 
+    var reviewCount: Int {
+        selectedCount > 0 ? selectedCount : temporaryBackendMediaCount
+    }
+
     var hasTemporaryBackendMedia: Bool {
         selectedMedia.isEmpty && syncedMediaAssets.contains(where: \.selected)
     }

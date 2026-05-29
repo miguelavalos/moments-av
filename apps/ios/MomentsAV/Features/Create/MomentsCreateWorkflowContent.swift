@@ -144,7 +144,7 @@ private struct MomentsCreateMediaFirstWorkspace: View {
                     reviewStoryFirst: reviewStoryFirst,
                     generatePreview: generatePreview,
                     refreshPreviewStatus: refreshPreviewStatus,
-                    generateFinalRender: primaryFinalRenderAction,
+                    generateFinalRender: reviewStoryFirst,
                     refreshFinalRenderStatus: refreshFinalRenderStatus
                 )
             }
@@ -219,14 +219,6 @@ private struct MomentsCreateMediaFirstWorkspace: View {
 
     private var creditCostTitle: String {
         MomentsCreditCopy.countTitle(presentation.finalRenderSummary.creditCost)
-    }
-
-    private func primaryFinalRenderAction() {
-        if presentation.finalRenderSummary.renderPlan == nil {
-            generateFinalRender()
-        } else {
-            showsCreateVideoConfirmation = true
-        }
     }
 
     private func discardCurrentDraft() {
@@ -524,7 +516,7 @@ private struct MomentsCreateStoryReviewCard: View {
                 }
 
                 HStack(spacing: 8) {
-                    MomentsCreateOptionPill(title: "\(presentation.mediaSummary.selectedCount) items", systemImage: "photo.on.rectangle")
+                    MomentsCreateOptionPill(title: "\(presentation.mediaSummary.reviewCount) items", systemImage: "photo.on.rectangle")
                     MomentsCreateOptionPill(title: "\(presentation.template.duration)", systemImage: "timer")
                 }
             }
@@ -616,7 +608,7 @@ private struct MomentsCreateStoryReviewPage: View {
                                     .fixedSize(horizontal: false, vertical: true)
 
                                 HStack(spacing: 8) {
-                                    MomentsCreateOptionPill(title: "\(presentation.mediaSummary.selectedCount) items", systemImage: "photo.on.rectangle")
+                                    MomentsCreateOptionPill(title: "\(presentation.mediaSummary.reviewCount) items", systemImage: "photo.on.rectangle")
                                     MomentsCreateOptionPill(title: "\(presentation.template.duration)", systemImage: "timer")
                                 }
                             }
@@ -969,10 +961,7 @@ private struct MomentsCreatePrimaryActionBar: View {
             return presentation.finalRenderSummary.isRefreshingStatus ? "Checking..." : "Check video status"
         }
         if presentation.canGenerateFinalRender {
-            if presentation.finalRenderSummary.isGenerating {
-                return "Preparing video..."
-            }
-            return presentation.finalRenderSummary.renderPlan == nil ? "Prepare video plan" : "Create video · \(creditCostTitle)"
+            return "View story review"
         }
         if presentation.previewSummary.latestPreview != nil {
             return presentation.finalRenderSummary.isGenerating ? "Creating final..." : "Create final"
@@ -983,7 +972,7 @@ private struct MomentsCreatePrimaryActionBar: View {
         if needsSignInForStory {
             return "Sign in"
         }
-        return presentation.finalRenderSummary.isGenerating ? "Creating video..." : "Create video · \(creditCostTitle)"
+        return presentation.finalRenderSummary.isGenerating ? "Preparing review..." : "Review story first"
     }
 
     private var buttonIconName: String {
@@ -1000,7 +989,7 @@ private struct MomentsCreatePrimaryActionBar: View {
             return "arrow.clockwise"
         }
         if presentation.canGenerateFinalRender {
-            return presentation.finalRenderSummary.renderPlan == nil ? "checklist" : "video.fill"
+            return "list.bullet.rectangle.portrait.fill"
         }
         if needsSignInForStory {
             return "person.crop.circle.badge.checkmark"
@@ -1047,7 +1036,7 @@ private struct MomentsCreatePrimaryActionBar: View {
             return "Preview ready. Review it before final video."
         }
         if presentation.canGenerateFinalRender {
-            return "Avi will create a \(presentation.template.duration) edited video from your media."
+            return "Review the story and video plan before creating the final video."
         }
         if let previewMessage = presentation.previewSummary.statusMessage, !previewMessage.isEmpty {
             return previewMessage
@@ -1065,7 +1054,7 @@ private struct MomentsCreatePrimaryActionBar: View {
             return presentation.storyAvailabilityMessage
         }
         if presentation.canDraftStory {
-            return "Avi can create the video now. Review the story first if you prefer."
+            return "Avi can prepare the story review now."
         }
         return nil
     }
@@ -1124,15 +1113,7 @@ private struct MomentsCreatePrimaryActionBar: View {
 
     private var secondaryActionTitle: String? {
         guard !isBusy else { return nil }
-        guard presentation.finalRenderSummary.finalExport == nil,
-              presentation.finalRenderSummary.latestFinalJob == nil,
-              presentation.previewSummary.latestPreview == nil,
-              presentation.previewSummary.latestPreviewJob == nil,
-              !needsSignInForStory,
-              (presentation.canDraftStory || presentation.storySummary.hasScenes) else {
-            return nil
-        }
-        return presentation.storySummary.hasScenes ? "View story review" : "Review story first"
+        return nil
     }
 
     private var secondaryActionIconName: String {
@@ -1148,9 +1129,9 @@ private struct MomentsCreatePrimaryActionBar: View {
                 refreshFinalRenderStatus()
             }
         } else if presentation.previewSummary.latestPreview != nil {
-            generateFinalRender()
+            reviewStoryFirst()
         } else if presentation.canGenerateFinalRender || presentation.canDraftStory || presentation.storySummary.hasScenes {
-            generateFinalRender()
+            reviewStoryFirst()
         } else if presentation.previewSummary.latestPreviewJob != nil {
             refreshPreviewStatus()
         } else if needsSignInForStory {
