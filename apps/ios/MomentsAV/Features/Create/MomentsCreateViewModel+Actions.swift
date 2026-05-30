@@ -168,7 +168,7 @@ extension MomentsCreateViewModel {
 
             guard let projectId else {
                 self.updateStoryStatusMessage(self.draftErrorMessage
-                    ?? "Couldn't start a Moment for this story. Please try again."
+                    ?? MomentsRecoveryCopy.storyStartFailure()
                 )
                 return
             }
@@ -181,7 +181,7 @@ extension MomentsCreateViewModel {
             let persistedMedia = await self.mediaUploadWorkflow?.persistSelectedMedia(projectId: projectId)
             guard persistedMedia != nil || selectedMedia.isEmpty else {
                 self.updateStoryStatusMessage(self.mediaStatusMessage
-                    ?? "Couldn't save media for the story. Please try again."
+                    ?? MomentsRecoveryCopy.mediaStorySaveFailure()
                 )
                 return
             }
@@ -274,7 +274,7 @@ extension MomentsCreateViewModel {
 
             guard let projectId else {
                 self.updateStoryStatusMessage(self.draftErrorMessage
-                    ?? "Couldn't start a Moment for this story. Please try again."
+                    ?? MomentsRecoveryCopy.storyStartFailure()
                 )
                 return
             }
@@ -286,7 +286,7 @@ extension MomentsCreateViewModel {
                 let persistedMedia = await self.mediaUploadWorkflow?.persistSelectedMedia(projectId: projectId)
                 guard persistedMedia != nil || selectedMedia.isEmpty else {
                     self.updateStoryStatusMessage(self.mediaStatusMessage
-                        ?? "Couldn't save media for the story. Please try again."
+                        ?? MomentsRecoveryCopy.mediaStorySaveFailure()
                     )
                     return
                 }

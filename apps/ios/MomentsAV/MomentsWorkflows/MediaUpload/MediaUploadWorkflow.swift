@@ -295,13 +295,13 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
             return (alreadySyncedMedia + result.savedMedia).sorted { $0.sortOrder < $1.sortOrder }
         } catch MomentsUploadError.signedUploadUnavailable {
             guard isCurrentWorkflowGeneration(generation) else { return nil }
-            statusMessage = "Media upload is not ready yet. Please try again in a moment."
+            statusMessage = MomentsRecoveryCopy.mediaUploadUnavailable()
             isImporting = false
             importProgress = nil
             return nil
         } catch {
             guard isCurrentWorkflowGeneration(generation) else { return nil }
-            statusMessage = "Couldn’t save media for the story. Please try again."
+            statusMessage = MomentsRecoveryCopy.mediaStorySaveFailure()
             isImporting = false
             importProgress = nil
             return nil

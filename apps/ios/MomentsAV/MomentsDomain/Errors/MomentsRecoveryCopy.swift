@@ -5,6 +5,18 @@ enum MomentsRecoveryCopy {
         "Couldn’t add that media. Your photos are still on this device; try again or choose different items."
     }
 
+    static func mediaUploadUnavailable() -> String {
+        "Media upload is not ready yet. Your photos and videos are still on this device; please try again in a moment."
+    }
+
+    static func mediaStorySaveFailure() -> String {
+        "Couldn’t save media for the story. Your photos and videos are still on this device; try again or choose different items."
+    }
+
+    static func storyStartFailure() -> String {
+        "Couldn’t start a Moment for this story. No final video credits were used. Please try again."
+    }
+
     static func storyFailure() -> String {
         "Avi couldn’t prepare the story right now. No final video credits were used. Please try again."
     }

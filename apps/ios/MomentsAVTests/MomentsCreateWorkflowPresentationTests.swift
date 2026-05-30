@@ -504,6 +504,29 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         XCTAssertEqual(presentation.detail, "We couldn’t finish this video. No credits were charged.")
     }
 
+    func testRecoveryCopyCoversMediaAndStoryFailurePaths() {
+        XCTAssertEqual(
+            MomentsRecoveryCopy.mediaImportFailure(),
+            "Couldn’t add that media. Your photos are still on this device; try again or choose different items."
+        )
+        XCTAssertEqual(
+            MomentsRecoveryCopy.mediaUploadUnavailable(),
+            "Media upload is not ready yet. Your photos and videos are still on this device; please try again in a moment."
+        )
+        XCTAssertEqual(
+            MomentsRecoveryCopy.mediaStorySaveFailure(),
+            "Couldn’t save media for the story. Your photos and videos are still on this device; try again or choose different items."
+        )
+        XCTAssertEqual(
+            MomentsRecoveryCopy.storyStartFailure(),
+            "Couldn’t start a Moment for this story. No final video credits were used. Please try again."
+        )
+        XCTAssertEqual(
+            MomentsRecoveryCopy.storyFailure(),
+            "Avi couldn’t prepare the story right now. No final video credits were used. Please try again."
+        )
+    }
+
     func testWorkspaceSummaryFormatsProgressDetails() {
         let summary = MomentsCreateWorkspaceSummary(
             mediaCount: 2,
