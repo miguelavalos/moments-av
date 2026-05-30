@@ -166,7 +166,7 @@ final class PreviewGenerationWorkflow: WorkspaceObservingWorkflow {
             signIn: "Sign in before refreshing preview status.",
             missingProject: "Open a project before refreshing preview status.",
             missingJob: "No preview render job is available yet.",
-            missingProviderRequest: "Preview status is missing its provider request id.",
+            missingProviderRequest: MomentsRecoveryCopy.previewStatusMissing(),
             success: "Preview status updated."
         )
     }

@@ -18,7 +18,7 @@ enum MomentsCreateRefreshAvailabilityFactory {
             notConfiguredMessage: "Preview status refresh is not configured for this build.",
             missingProjectMessage: "Open a project before refreshing preview status.",
             missingJobMessage: "No preview render job is available yet.",
-            missingProviderRequestMessage: "Preview status is missing its provider request id."
+            missingProviderRequestMessage: MomentsRecoveryCopy.previewStatusMissing()
         )
     }
 
@@ -39,7 +39,7 @@ enum MomentsCreateRefreshAvailabilityFactory {
             notConfiguredMessage: "Final status refresh is not configured for this build.",
             missingProjectMessage: "Open a project before refreshing final status.",
             missingJobMessage: "No final render job is available yet.",
-            missingProviderRequestMessage: "Final render status is missing its provider request id."
+            missingProviderRequestMessage: MomentsRecoveryCopy.finalRenderStatusMissing()
         )
     }
 }

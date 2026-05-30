@@ -229,7 +229,7 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
             signIn: "Sign in before refreshing final render status.",
             missingProject: "Open a project before refreshing final status.",
             missingJob: "No final render job is available yet.",
-            missingProviderRequest: "Final render status is missing its provider request id.",
+            missingProviderRequest: MomentsRecoveryCopy.finalRenderStatusMissing(),
             success: "Video status updated."
         )
     }

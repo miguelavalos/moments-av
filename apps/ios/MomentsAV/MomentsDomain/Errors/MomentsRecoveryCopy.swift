@@ -29,6 +29,14 @@ enum MomentsRecoveryCopy {
         "Couldn’t refresh the video status. Credits are only finalized when the video is ready. Please try again."
     }
 
+    static func previewStatusMissing() -> String {
+        "Preview status cannot be refreshed yet. Generate a preview again if this does not update."
+    }
+
+    static func finalRenderStatusMissing() -> String {
+        "Final video status cannot be refreshed yet. Credits are only finalized when the video is ready. Please try again."
+    }
+
     static func failedRenderDetail(userMessage: String?, errorMessage: String?) -> String {
         if let userMessage, !userMessage.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             return userMessage
