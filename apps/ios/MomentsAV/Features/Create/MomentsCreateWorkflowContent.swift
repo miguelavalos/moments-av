@@ -269,8 +269,8 @@ private struct MomentsCreateDashboardHeader: View {
         if presentation.finalRenderSummary.finalExport != nil {
             return "Your final video is ready to review and share."
         }
-        if presentation.finalRenderSummary.latestFinalJob != nil {
-            return "Avi is creating the video. Refresh to check the latest status."
+        if let realtimeStatus = presentation.finalRenderSummary.realtimeStatus {
+            return realtimeStatus.detail
         }
         if presentation.storySummary.hasScenes {
             return "Avi has a story plan. Create the video when ready."
@@ -1309,6 +1309,9 @@ private struct MomentsCreateCompactAviGuide: View {
         if presentation.finalRenderSummary.finalExport != nil {
             return "Ready"
         }
+        if let realtimeStatus = presentation.finalRenderSummary.realtimeStatus {
+            return realtimeStatus.title
+        }
         if presentation.previewSummary.latestPreview != nil {
             return "Preview ready"
         }
@@ -1343,8 +1346,8 @@ private struct MomentsCreateCompactAviGuide: View {
         if presentation.storySummary.isDrafting {
             return presentation.storySummary.statusMessage ?? "Avi is organizing the media into a first story plan."
         }
-        if presentation.finalRenderSummary.latestFinalJob != nil {
-            return "Avi is finishing the final video."
+        if let realtimeStatus = presentation.finalRenderSummary.realtimeStatus {
+            return realtimeStatus.detail
         }
         if presentation.previewSummary.latestPreviewJob != nil {
             return "Avi is creating the preview from your selected moments."
@@ -1400,6 +1403,10 @@ private struct MomentsCreatePrimaryActionBar: View {
                         .tint(AVBrandColor.accent)
                         .accessibilityLabel("Uploading media")
                         .accessibilityValue(uploadProgress.title)
+                }
+
+                if let realtimeStatus = presentation.finalRenderSummary.realtimeStatus {
+                    MomentsCreateRealtimeRenderStatusPanel(status: realtimeStatus)
                 }
 
                 Button(action: primaryAction) {
@@ -1524,10 +1531,9 @@ private struct MomentsCreatePrimaryActionBar: View {
             return "Final video ready."
         }
         if presentation.finalRenderSummary.latestFinalJob != nil {
-            if let renderMessage = presentation.finalRenderSummary.statusMessage, !renderMessage.isEmpty {
-                return renderMessage
-            }
-            return "Avi is creating the video. You can check progress here."
+            return presentation.finalRenderSummary.realtimeStatus?.detail
+                ?? presentation.finalRenderSummary.statusMessage
+                ?? "Avi is creating the video. You can check progress here."
         }
         if presentation.previewSummary.latestPreview != nil {
             return "Preview ready. Review it before final video."
@@ -1579,6 +1585,9 @@ private struct MomentsCreatePrimaryActionBar: View {
     private var primaryHeaderIconName: String {
         if presentation.finalRenderSummary.finalExport != nil {
             return "checkmark.circle.fill"
+        }
+        if let realtimeStatus = presentation.finalRenderSummary.realtimeStatus {
+            return realtimeStatus.systemImage
         }
         if presentation.finalRenderSummary.latestFinalJob != nil {
             return "arrow.clockwise"
@@ -1660,6 +1669,56 @@ private struct MomentsCreatePrimaryActionBar: View {
     private var canRefreshFinalRender: Bool {
         presentation.finalRenderSummary.latestFinalJob != nil
             && presentation.canRefreshFinalRenderStatus
+    }
+}
+
+private struct MomentsCreateRealtimeRenderStatusPanel: View {
+    let status: MomentsRenderRealtimePresentation
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 9) {
+            HStack(alignment: .top, spacing: 9) {
+                Image(systemName: status.systemImage)
+                    .font(.system(size: 13, weight: .black))
+                    .foregroundStyle(iconColor)
+                    .frame(width: 24, height: 24)
+                    .background(iconColor.opacity(0.12), in: Circle())
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(status.title)
+                        .font(.system(size: 13, weight: .black))
+                        .foregroundStyle(AVBrandColor.textPrimary)
+
+                    Text(status.detail)
+                        .font(.caption)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(AVBrandColor.textSecondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            }
+
+            if let progressFraction = status.progressFraction {
+                ProgressView(value: progressFraction)
+                    .tint(iconColor)
+                    .accessibilityLabel("Final render progress")
+                    .accessibilityValue("\(Int((progressFraction * 100).rounded())) percent")
+            }
+
+            if status.isActive && !status.canEditDraft {
+                Label("Editing is locked while the final video is rendering.", systemImage: "lock.fill")
+                    .font(.caption2)
+                    .fontWeight(.bold)
+                    .foregroundStyle(AVBrandColor.textSecondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
+        .padding(12)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(AVBrandColor.neutral100.opacity(0.70), in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+    }
+
+    private var iconColor: Color {
+        status.isActive ? AVBrandColor.accent : AVBrandColor.textSecondary
     }
 }
 

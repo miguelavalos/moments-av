@@ -39,15 +39,17 @@ extension MomentsCreateViewModel {
     }
 
     var canAddMedia: Bool {
-        workflowCapability.canAddMedia
+        !isFinalRenderEditingLocked && workflowCapability.canAddMedia
     }
 
     var canDraftStory: Bool {
-        workflowCapability.canDraftStory
+        !isFinalRenderEditingLocked && workflowCapability.canDraftStory
     }
 
     var canGeneratePreview: Bool {
-        workflowCapability.canGeneratePreview && isStoryPreparedForCurrentInput
+        !isFinalRenderEditingLocked
+            && workflowCapability.canGeneratePreview
+            && isStoryPreparedForCurrentInput
     }
 
     var canRefreshPreviewStatus: Bool {
@@ -55,7 +57,9 @@ extension MomentsCreateViewModel {
     }
 
     var canGenerateFinalRender: Bool {
-        workflowCapability.canGenerateFinalRender && isStoryPreparedForCurrentInput
+        !isFinalRenderEditingLocked
+            && workflowCapability.canGenerateFinalRender
+            && isStoryPreparedForCurrentInput
     }
 
     var canRefreshFinalRenderStatus: Bool {
@@ -79,6 +83,14 @@ extension MomentsCreateViewModel {
             latestPreview: effectiveLatestPreview,
             selectedMediaCount: mediaSelectedCount
         )
+    }
+
+    var isFinalRenderEditingLocked: Bool {
+        guard let latestFinalJob = effectiveLatestFinalJob,
+              latestFinalJob.isActiveRender else {
+            return false
+        }
+        return latestFinalJob.canEditDraft != true
     }
 
     var isStoryPreparedForCurrentInput: Bool {

@@ -447,6 +447,45 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         XCTAssertEqual(presentation.creditTitle, "1 credit")
     }
 
+    func testRealtimeRenderPresentationFormatsActivePhaseAndProgress() {
+        let job = MomentsCreateTestFixtures.makeRenderJob(
+            id: "final-job",
+            kind: "final_render",
+            status: "running",
+            phase: "rendering",
+            progressPercent: 42,
+            userMessage: "Rendering your video.",
+            canEditDraft: false
+        )
+
+        let presentation = MomentsRenderRealtimePresentation(renderJob: job)
+
+        XCTAssertEqual(presentation.title, "Rendering")
+        XCTAssertEqual(presentation.detail, "Rendering your video.")
+        XCTAssertEqual(presentation.progressFraction ?? -1, 0.42, accuracy: 0.001)
+        XCTAssertEqual(presentation.systemImage, "gearshape.2.fill")
+        XCTAssertTrue(presentation.isActive)
+        XCTAssertFalse(presentation.canEditDraft)
+    }
+
+    func testRealtimeRenderPresentationFormatsFailedStatus() {
+        let job = MomentsCreateTestFixtures.makeRenderJob(
+            id: "final-job",
+            kind: "final_render",
+            status: "failed",
+            canEditDraft: true,
+            errorMessage: "Provider failed."
+        )
+
+        let presentation = MomentsRenderRealtimePresentation(renderJob: job)
+
+        XCTAssertEqual(presentation.title, "Needs attention")
+        XCTAssertEqual(presentation.detail, "Provider failed.")
+        XCTAssertEqual(presentation.systemImage, "exclamationmark.triangle.fill")
+        XCTAssertFalse(presentation.isActive)
+        XCTAssertTrue(presentation.canEditDraft)
+    }
+
     func testWorkspaceSummaryFormatsProgressDetails() {
         let summary = MomentsCreateWorkspaceSummary(
             mediaCount: 2,

@@ -163,4 +163,100 @@ struct MomentsCreateFinalRenderSummary: Equatable {
     var isGenerating = false
     var isRefreshingStatus = false
     var statusMessage: String?
+
+    var realtimeStatus: MomentsRenderRealtimePresentation? {
+        latestFinalJob.map { MomentsRenderRealtimePresentation(renderJob: $0) }
+    }
+}
+
+struct MomentsRenderRealtimePresentation: Equatable {
+    let title: String
+    let detail: String
+    let progressFraction: Double?
+    let systemImage: String
+    let isActive: Bool
+    let canEditDraft: Bool
+
+    init(renderJob: MomentRenderJob) {
+        isActive = renderJob.isActiveRender
+        canEditDraft = renderJob.canEditDraft ?? !renderJob.isActiveRender
+        title = Self.title(status: renderJob.status, phase: renderJob.phase)
+        detail = Self.detail(renderJob)
+        progressFraction = Self.progressFraction(renderJob.progressPercent)
+        systemImage = Self.systemImage(status: renderJob.status, phase: renderJob.phase)
+    }
+
+    private static func title(status: String, phase: String?) -> String {
+        if status == "completed" { return "Ready" }
+        if status == "failed" { return "Needs attention" }
+
+        switch phase {
+        case "preparing":
+            return "Preparing"
+        case "uploading":
+            return "Uploading"
+        case "composing":
+            return "Composing"
+        case "rendering":
+            return "Rendering"
+        case "saving":
+            return "Saving"
+        case "ready":
+            return "Ready"
+        case "failed":
+            return "Needs attention"
+        default:
+            return status == "queued" ? "Queued" : "Working"
+        }
+    }
+
+    private static func detail(_ renderJob: MomentRenderJob) -> String {
+        if renderJob.status == "failed" {
+            return renderJob.userMessage
+                ?? renderJob.errorMessage
+                ?? "Video creation hit a problem. Credits are not finalized until the render completes."
+        }
+
+        if let userMessage = renderJob.userMessage, !userMessage.isEmpty {
+            return userMessage
+        }
+
+        switch renderJob.phase {
+        case "preparing":
+            return "Avi is preparing the render."
+        case "uploading":
+            return "Avi is sending the media for rendering."
+        case "composing":
+            return "Avi is arranging the selected moments."
+        case "rendering":
+            return "Avi is creating the video."
+        case "saving":
+            return "Avi is saving the finished video."
+        default:
+            return renderJob.isActiveRender ? "Avi is updating the video status in realtime." : "Render status is available."
+        }
+    }
+
+    private static func progressFraction(_ progressPercent: Double?) -> Double? {
+        guard let progressPercent else { return nil }
+        return min(max(progressPercent / 100, 0), 1)
+    }
+
+    private static func systemImage(status: String, phase: String?) -> String {
+        if status == "completed" { return "checkmark.circle.fill" }
+        if status == "failed" { return "exclamationmark.triangle.fill" }
+
+        switch phase {
+        case "uploading":
+            return "icloud.and.arrow.up.fill"
+        case "composing":
+            return "rectangle.stack.fill"
+        case "rendering":
+            return "gearshape.2.fill"
+        case "saving":
+            return "square.and.arrow.down.fill"
+        default:
+            return "sparkles"
+        }
+    }
 }

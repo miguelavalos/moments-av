@@ -79,17 +79,30 @@ enum MomentsCreateTestFixtures {
         )
     }
 
-    static func makeRenderJob(id: String, kind: String, status: String) -> MomentRenderJob {
+    static func makeRenderJob(
+        id: String,
+        kind: String,
+        status: String,
+        phase: String? = nil,
+        progressPercent: Double? = nil,
+        userMessage: String? = nil,
+        canEditDraft: Bool? = nil,
+        errorMessage: String? = nil
+    ) -> MomentRenderJob {
         MomentRenderJob(
             id: id,
             kind: kind,
             status: status,
+            phase: phase,
+            progressPercent: progressPercent,
+            userMessage: userMessage,
+            canEditDraft: canEditDraft,
             workflowRunId: "workflow-\(id)",
             provider: "mock-provider",
             model: "mock-model",
             providerRequestId: "request-\(id)",
             errorCode: nil,
-            errorMessage: nil,
+            errorMessage: errorMessage,
             createdAt: 9,
             updatedAt: 10
         )

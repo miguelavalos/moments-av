@@ -29,3 +29,9 @@ extension MomentProjectWorkspace {
         return activeFinalRenderJob.canEditDraft ?? false
     }
 }
+
+extension MomentRenderJob {
+    var isActiveRender: Bool {
+        ["queued", "running", "processing", "in_progress"].contains(status)
+    }
+}
