@@ -66,6 +66,30 @@ final class MomentsProjectArtifactPresentationTests: XCTestCase {
         XCTAssertEqual(presentation.kindTitle, "Preview")
         XCTAssertEqual(presentation.watermarkTitle, "Included")
         XCTAssertEqual(presentation.expiresAtTitle, MomentsDateFormatting.formattedDate(milliseconds: 1_781_592_000_000))
+        XCTAssertEqual(presentation.actionDetail, "Preview is ready to review.")
+    }
+
+    func testFinalArtifactPresentationProvidesExportAndRecoveryCopy() {
+        let availableFinal = MomentsProjectArtifactPresentation(
+            artifact: makeArtifact(id: "final-1", kind: "final_export", status: "available")
+        )
+        let expiredFinal = MomentsProjectArtifactPresentation(
+            artifact: makeArtifact(id: "final-2", kind: "final_export", status: "expired")
+        )
+        let failedFinal = MomentsProjectArtifactPresentation(
+            artifact: makeArtifact(id: "final-3", kind: "final_export", status: "failed")
+        )
+        let queuedFinal = MomentsProjectArtifactPresentation(
+            artifact: makeArtifact(id: "final-4", kind: "final_export", status: "queued")
+        )
+
+        XCTAssertEqual(availableFinal.actionDetail, "Your final video is ready to export or share.")
+        XCTAssertEqual(expiredFinal.actionDetail, "Final Export is no longer available. Return to Create and generate it again.")
+        XCTAssertEqual(
+            failedFinal.actionDetail,
+            "Final Export is not available. Credits are only finalized after a usable final video is ready. Please retry in Create or contact support."
+        )
+        XCTAssertEqual(queuedFinal.actionDetail, "Final Export is still being prepared. Refresh the project in a moment.")
     }
 
     func testRenderJobPresentationSortsNewestFirstAndUsesFallbacks() {

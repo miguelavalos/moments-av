@@ -35,6 +35,11 @@ struct MomentsProjectArtifactDetail: View {
                 value: presentation.storageKey,
                 lineLimit: 3
             )
+
+            Text(presentation.actionDetail)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
         }
     }
 }

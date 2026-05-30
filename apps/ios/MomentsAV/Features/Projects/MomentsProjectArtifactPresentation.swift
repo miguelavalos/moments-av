@@ -42,6 +42,7 @@ struct MomentsProjectArtifactPresentation: Equatable {
     let watermarkTitle: String
     let expiresAtTitle: String
     let storageKey: String
+    let actionDetail: String
 
     init(artifact: MomentArtifact) {
         status = artifact.status
@@ -49,6 +50,7 @@ struct MomentsProjectArtifactPresentation: Equatable {
         watermarkTitle = artifact.hasWatermark == true ? "Included" : "None"
         expiresAtTitle = MomentsDateFormatting.formattedDate(milliseconds: artifact.expiresAt)
         storageKey = artifact.r2Key
+        actionDetail = MomentsRecoveryCopy.artifactActionDetail(kind: artifact.kind, status: artifact.status)
     }
 
     static func preview(in artifacts: [MomentArtifact]) -> MomentsProjectArtifactPresentation? {
