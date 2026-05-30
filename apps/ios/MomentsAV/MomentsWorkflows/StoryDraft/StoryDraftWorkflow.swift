@@ -112,15 +112,14 @@ final class StoryDraftWorkflow: WorkspaceObservingWorkflow {
             return false
         } catch let error as LocalizedError {
             guard isCurrentWorkflowGeneration(generation) else { return false }
-            let message = error.errorDescription ?? error.localizedDescription
             logger.error("Story draft request failed projectId=\(projectId, privacy: .public) error=\(String(describing: error), privacy: .public)")
-            statusMessage = message
+            statusMessage = MomentsRecoveryCopy.storyFailure()
             isDrafting = false
             return false
         } catch {
             guard isCurrentWorkflowGeneration(generation) else { return false }
             logger.error("Story draft failed projectId=\(projectId, privacy: .public) error=\(String(describing: error), privacy: .public)")
-            statusMessage = "Avi couldn’t prepare the story right now. Please try again."
+            statusMessage = MomentsRecoveryCopy.storyFailure()
             isDrafting = false
             return false
         }

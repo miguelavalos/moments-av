@@ -212,9 +212,10 @@ struct MomentsRenderRealtimePresentation: Equatable {
 
     private static func detail(_ renderJob: MomentRenderJob) -> String {
         if renderJob.status == "failed" {
-            return renderJob.userMessage
-                ?? renderJob.errorMessage
-                ?? "Video creation hit a problem. Credits are not finalized until the render completes."
+            return MomentsRecoveryCopy.failedRenderDetail(
+                userMessage: renderJob.userMessage,
+                errorMessage: renderJob.errorMessage
+            )
         }
 
         if let userMessage = renderJob.userMessage, !userMessage.isEmpty {

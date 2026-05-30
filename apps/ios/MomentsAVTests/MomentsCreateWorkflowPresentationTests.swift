@@ -474,16 +474,34 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
             kind: "final_render",
             status: "failed",
             canEditDraft: true,
-            errorMessage: "Provider failed."
+            errorMessage: "fal provider request failed with upstream trace id abc123"
         )
 
         let presentation = MomentsRenderRealtimePresentation(renderJob: job)
 
         XCTAssertEqual(presentation.title, "Needs attention")
-        XCTAssertEqual(presentation.detail, "Provider failed.")
+        XCTAssertEqual(
+            presentation.detail,
+            "Video creation hit a problem. Any reserved credits will be released if the video was not completed. Please try again or contact support."
+        )
         XCTAssertEqual(presentation.systemImage, "exclamationmark.triangle.fill")
         XCTAssertFalse(presentation.isActive)
         XCTAssertTrue(presentation.canEditDraft)
+    }
+
+    func testRealtimeRenderPresentationUsesSafeFailedUserMessage() {
+        let job = MomentsCreateTestFixtures.makeRenderJob(
+            id: "final-job",
+            kind: "final_render",
+            status: "failed",
+            userMessage: "We couldn’t finish this video. No credits were charged.",
+            canEditDraft: true,
+            errorMessage: "provider stack trace"
+        )
+
+        let presentation = MomentsRenderRealtimePresentation(renderJob: job)
+
+        XCTAssertEqual(presentation.detail, "We couldn’t finish this video. No credits were charged.")
     }
 
     func testWorkspaceSummaryFormatsProgressDetails() {

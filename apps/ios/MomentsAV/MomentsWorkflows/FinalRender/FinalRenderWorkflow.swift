@@ -160,7 +160,7 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
             statusMessage = "Avi is creating the video. You can check progress here."
         } catch {
             guard isCurrentWorkflowGeneration(generation) else { return }
-            statusMessage = "Couldn't start video creation. Please try again in a moment."
+            statusMessage = MomentsRecoveryCopy.renderStartFailure()
         }
 
         guard isCurrentWorkflowGeneration(generation) else { return }
@@ -196,7 +196,7 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
             )
         } catch {
             guard isCurrentWorkflowGeneration(generation) else { return }
-            statusMessage = "Couldn't refresh the video status. Please try again in a moment."
+            statusMessage = MomentsRecoveryCopy.renderRefreshFailure()
         }
 
         guard isCurrentWorkflowGeneration(generation) else { return }

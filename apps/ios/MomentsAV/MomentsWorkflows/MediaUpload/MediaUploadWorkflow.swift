@@ -79,7 +79,7 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
             )
         } catch {
             guard isCurrentWorkflowGeneration(generation) else { return }
-            statusMessage = error.localizedDescription
+            statusMessage = MomentsRecoveryCopy.mediaImportFailure()
         }
 
         guard isCurrentWorkflowGeneration(generation) else { return }
@@ -125,7 +125,7 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
             )
         } catch {
             guard isCurrentWorkflowGeneration(generation) else { return }
-            statusMessage = error.localizedDescription
+            statusMessage = MomentsRecoveryCopy.mediaImportFailure()
         }
 
         guard isCurrentWorkflowGeneration(generation) else { return }
@@ -177,7 +177,7 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
             )
         } catch {
             guard isCurrentWorkflowGeneration(generation) else { return }
-            statusMessage = error.localizedDescription
+            statusMessage = MomentsRecoveryCopy.mediaImportFailure()
         }
 
         guard isCurrentWorkflowGeneration(generation) else { return }

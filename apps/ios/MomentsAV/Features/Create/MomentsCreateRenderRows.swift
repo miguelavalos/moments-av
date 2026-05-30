@@ -14,8 +14,11 @@ struct MomentsCreateRenderJobStatusRow: View {
     }
 
     private var detail: String {
-        if let errorMessage = renderJob.errorMessage, renderJob.status == "failed" {
-            return errorMessage
+        if renderJob.status == "failed" {
+            return MomentsRecoveryCopy.failedRenderDetail(
+                userMessage: renderJob.userMessage,
+                errorMessage: renderJob.errorMessage
+            )
         }
         if let userMessage = renderJob.userMessage, !userMessage.isEmpty {
             return userMessage
