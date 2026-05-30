@@ -71,13 +71,40 @@ final class MomentsProjectArtifactPresentationTests: XCTestCase {
     func testRenderJobPresentationSortsNewestFirstAndUsesFallbacks() {
         let presentations = MomentsProjectRenderJobPresentation.sorted([
             makeRenderJob(id: "old", kind: "preview", status: "queued", updatedAt: 10),
-            makeRenderJob(id: "new", kind: "final", status: "failed", updatedAt: 20, provider: nil, model: nil)
+            makeRenderJob(
+                id: "new",
+                kind: "final",
+                status: "failed",
+                updatedAt: 20,
+                provider: nil,
+                model: nil,
+                errorMessage: "provider stack trace"
+            )
         ])
 
         XCTAssertEqual(presentations.map(\.id), ["new", "old"])
         XCTAssertEqual(presentations[0].kindTitle, "Final")
         XCTAssertEqual(presentations[0].providerTitle, "Unknown")
         XCTAssertEqual(presentations[0].modelTitle, "Unknown")
+        XCTAssertEqual(
+            presentations[0].errorMessage,
+            "Video creation hit a problem. Any reserved credits will be released if the video was not completed. Please try again or contact support."
+        )
+    }
+
+    func testRenderJobPresentationPreservesSafeFailedUserMessage() {
+        let presentation = MomentsProjectRenderJobPresentation(
+            renderJob: makeRenderJob(
+                id: "final",
+                kind: "final",
+                status: "failed",
+                updatedAt: 20,
+                userMessage: "We couldn’t finish this video. No credits were charged.",
+                errorMessage: "provider stack trace"
+            )
+        )
+
+        XCTAssertEqual(presentation.errorMessage, "We couldn’t finish this video. No credits were charged.")
     }
 
     private func makeArtifact(
@@ -103,18 +130,21 @@ final class MomentsProjectArtifactPresentationTests: XCTestCase {
         status: String,
         updatedAt: Double,
         provider: String? = "mock-provider",
-        model: String? = "mock-model"
+        model: String? = "mock-model",
+        userMessage: String? = nil,
+        errorMessage: String? = nil
     ) -> MomentRenderJob {
         MomentRenderJob(
             id: id,
             kind: kind,
             status: status,
+            userMessage: userMessage,
             workflowRunId: "workflow-\(id)",
             provider: provider,
             model: model,
             providerRequestId: "request-\(id)",
             errorCode: status == "failed" ? "provider_failed" : nil,
-            errorMessage: status == "failed" ? "Render failed." : nil,
+            errorMessage: status == "failed" ? (errorMessage ?? "Render failed.") : errorMessage,
             createdAt: updatedAt - 1,
             updatedAt: updatedAt
         )

@@ -84,7 +84,12 @@ struct MomentsProjectRenderJobPresentation: Identifiable, Equatable {
         workflowRunId = renderJob.workflowRunId
         providerRequestId = renderJob.providerRequestId
         errorCode = renderJob.errorCode
-        errorMessage = renderJob.errorMessage
+        errorMessage = renderJob.status == "failed"
+            ? MomentsRecoveryCopy.failedRenderDetail(
+                userMessage: renderJob.userMessage,
+                errorMessage: renderJob.errorMessage
+            )
+            : renderJob.errorMessage
     }
 
     static func sorted(_ renderJobs: [MomentRenderJob]) -> [MomentsProjectRenderJobPresentation] {
