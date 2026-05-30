@@ -79,8 +79,8 @@ struct MomentsProjectRenderJobPresentation: Identifiable, Equatable {
         id = renderJob.id
         status = renderJob.status
         kindTitle = MomentsProjectStatusRules.displayKind(renderJob.kind)
-        providerTitle = renderJob.provider ?? "Unknown"
-        modelTitle = renderJob.model ?? "Unknown"
+        providerTitle = renderJob.provider == nil ? "Not recorded" : "Recorded"
+        modelTitle = renderJob.model == nil ? "Not recorded" : "Configured"
         createdAtTitle = MomentsDateFormatting.formattedDate(milliseconds: renderJob.createdAt)
         updatedAtTitle = MomentsDateFormatting.formattedDate(milliseconds: renderJob.updatedAt)
         workflowRunId = renderJob.workflowRunId

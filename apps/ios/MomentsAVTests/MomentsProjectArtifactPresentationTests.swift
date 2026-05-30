@@ -108,8 +108,10 @@ final class MomentsProjectArtifactPresentationTests: XCTestCase {
 
         XCTAssertEqual(presentations.map(\.id), ["new", "old"])
         XCTAssertEqual(presentations[0].kindTitle, "Final")
-        XCTAssertEqual(presentations[0].providerTitle, "Unknown")
-        XCTAssertEqual(presentations[0].modelTitle, "Unknown")
+        XCTAssertEqual(presentations[0].providerTitle, "Not recorded")
+        XCTAssertEqual(presentations[0].modelTitle, "Not recorded")
+        XCTAssertEqual(presentations[1].providerTitle, "Recorded")
+        XCTAssertEqual(presentations[1].modelTitle, "Configured")
         XCTAssertEqual(
             presentations[0].errorMessage,
             "Video creation hit a problem. Any reserved credits will be released if the video was not completed. Please try again or contact support."

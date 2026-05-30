@@ -64,11 +64,11 @@ struct MomentsProjectRenderJobRow: View {
                 spacing: 8
             ) {
                 AVAppShellMetadataItem(
-                    title: "Provider",
+                    title: "Render service",
                     value: presentation.providerTitle
                 )
                 AVAppShellMetadataItem(
-                    title: "Model",
+                    title: "Render profile",
                     value: presentation.modelTitle
                 )
                 AVAppShellMetadataItem(
@@ -89,7 +89,7 @@ struct MomentsProjectRenderJobRow: View {
             VStack(alignment: .leading, spacing: 6) {
                 AVAppShellIdentifierRow(title: "Job ID", value: presentation.id)
                 AVAppShellIdentifierRow(title: "Workflow", value: presentation.workflowRunId)
-                AVAppShellIdentifierRow(title: "Provider request", value: presentation.providerRequestId)
+                AVAppShellIdentifierRow(title: "Support reference", value: presentation.providerRequestId)
             }
         }
     }
