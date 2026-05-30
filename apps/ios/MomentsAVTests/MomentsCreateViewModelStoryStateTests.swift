@@ -28,19 +28,19 @@ final class MomentsCreateViewModelStoryStateTests: XCTestCase {
             MomentsCreateStoryDraftState(
                 savedScenes: [],
                 generatedScenes: [],
-                statusMessage: "Couldn't prepare the story. Please try again.",
+                statusMessage: MomentsRecoveryCopy.storyFailure(),
                 isDrafting: false
             )
         )
 
-        XCTAssertEqual(viewModel.storySummary.statusMessage, "Couldn't prepare the story. Please try again.")
+        XCTAssertEqual(viewModel.storySummary.statusMessage, MomentsRecoveryCopy.storyFailure())
         XCTAssertFalse(viewModel.isStoryPreparedForCurrentInput)
 
         viewModel.applyStoryDraftState(
             MomentsCreateStoryDraftState(
                 savedScenes: [MomentsCreateTestFixtures.makeScene(id: "scene-1")],
                 generatedScenes: [],
-                statusMessage: "Couldn't prepare the story. Please try again.",
+                statusMessage: MomentsRecoveryCopy.storyFailure(),
                 isDrafting: false
             )
         )
@@ -72,8 +72,6 @@ final class MomentsCreateViewModelStoryStateTests: XCTestCase {
             )
         )
 
-        let localSignature = viewModel.currentStoryInputSignature(projectId: "project-1")
-
         viewModel.applyPreviewGenerationState(
             MomentsCreatePreviewGenerationState(
                 activeWorkspace: MomentProjectWorkspace(
@@ -96,6 +94,32 @@ final class MomentsCreateViewModelStoryStateTests: XCTestCase {
             )
         )
 
-        XCTAssertEqual(viewModel.currentStoryInputSignature(projectId: "project-1"), localSignature)
+        let expectedLocalSignature = viewModel.currentStoryInputSignature(
+            projectId: "project-1",
+            persistedMedia: [
+                MomentsStoryDraftMedia(
+                    mediaAssetId: localMedia.id.uuidString,
+                    mediaKind: localMedia.kind,
+                    sortOrder: localMedia.sortOrder,
+                    selected: localMedia.selected,
+                    moderationStatus: "pending"
+                )
+            ]
+        )
+        let backendMediaSignature = viewModel.currentStoryInputSignature(
+            projectId: "project-1",
+            persistedMedia: [
+                MomentsStoryDraftMedia(
+                    mediaAssetId: "backend-media-1",
+                    mediaKind: "image",
+                    sortOrder: 0,
+                    selected: true,
+                    moderationStatus: "approved"
+                )
+            ]
+        )
+
+        XCTAssertEqual(viewModel.currentStoryInputSignature(projectId: "project-1"), expectedLocalSignature)
+        XCTAssertNotEqual(viewModel.currentStoryInputSignature(projectId: "project-1"), backendMediaSignature)
     }
 }
