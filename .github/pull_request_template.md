@@ -9,15 +9,17 @@
 
 ## Release Impact
 
-- [ ] No App Store metadata, screenshots, review notes, privacy answers, or
-  release evidence updates needed.
+- [ ] No private release-handoff updates needed.
+- [ ] Any App Store metadata, screenshots, review notes, privacy answers, promo,
+  pricing, or release evidence changes are handled in the private suite, not in
+  this public PR.
 - [ ] Public docs updated where release behavior changed.
 
 ## Branding And Assets
 
 - [ ] No icon, splash, AV monogram, Avi artwork, or screenshot frame changes.
 - [ ] Any brand asset changes use approved canonical assets and are documented
-  in release docs.
+  in the private/public canonical asset handoff.
 
 ## Data Safety
 

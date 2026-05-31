@@ -1,124 +1,31 @@
-# Moments AV App Store Screenshots
+# Moments AV Screenshot Safety
 
-Status: first-publication screenshot capture plan. Use this only after the
-release-candidate build, public URLs, App Privacy draft, and canonical asset
-gate are ready.
+This public document covers only screenshot safety for repository work.
+Marketing screenshot planning, App Store captions, launch positioning, and final
+App Store asset selection belong in the private AVALSYS suite.
 
-Screenshots must show real Moments AV UI from the submitted or release-candidate
-build. Marketing frames and captions are allowed, but the app UI inside the
-device frame must be real.
+## Public Screenshot Rules
 
-## Capture Inputs
+- Use only synthetic or explicitly approved sample media.
+- Do not show real family photos, private faces, private locations, private
+  event names, emails, phone numbers, receipts, account IDs, request IDs, tokens,
+  backend URLs, debug panels, or internal logs.
+- Do not show App Store review access details, promo codes, private pricing,
+  provider/model details, or unreleased product strategy.
+- Do not imply features that are not visible and working in the captured build.
+- Do not use final icon, splash, AV monogram, Avi artwork, or framed screenshot
+  assets until the canonical asset handoff has been approved.
 
-Record these values before capture:
+## Public Evidence
 
-- Version:
-- Build:
-- Commit SHA:
-- Release mode:
-- Bundle ID:
-- Device:
-- Simulator or physical device:
-- Locale:
-- Appearance:
-- Screenshot owner:
-- Raw capture folder:
-- Final asset folder:
+When public screenshots are needed for a pull request, record only:
 
-## Required Screens
+- public commit SHA;
+- simulator/device name;
+- OS version;
+- locale and appearance;
+- public-safe screenshot paths;
+- brief reason for capture.
 
-Capture candidates:
-
-- [ ] Signed-out Account AV gate.
-- [ ] Home with a current in-progress Moment.
-- [ ] Creation Dashboard with empty media state.
-- [ ] Media selection after user-selected sample media or collection photos are attached.
-- [ ] Creation Dashboard with selected media, Avi direction, and Prepare story.
-- [ ] Guide Avi screen showing Direction and Note controls.
-- [ ] Story-ready state before final video creation.
-- [ ] Final render screen showing final-export readiness, not unsupported
-  instant delivery.
-- [ ] Projects list with non-private sample project names.
-- [ ] Account screen with support, legal, credits, privacy, and deletion routes.
-
-Optional only if the submitted build fully supports the state:
-
-- [ ] Project deletion confirmation.
-- [ ] Render status refresh.
-- [ ] Credit explanation or purchase route.
-
-## Sample Data Rules
-
-- Use synthetic media that is approved for public marketing.
-- Do not use real family photos, private faces, private locations, private
-  event names, real emails, phone numbers, internal IDs, access tokens, or
-  provider request IDs.
-- Use neutral sample names such as `Birthday Message`, `Party Recap`, and
-  `Weekend Highlights`.
-- Keep draft text realistic but generic.
-- Do not show backend URLs or debug state.
-
-## Avi Rules
-
-- Avi can appear only where the submitted UI actually includes Avi.
-- Captions must not imply open-ended chat, autonomous editing, or background
-  cross-app control.
-- Safe claims: guidance, story preparation, media review, direction selection,
-  export status,
-  credit explanation, recovery guidance.
-- Unsafe claims: unlimited AI creation, automatic perfect edits, autonomous
-  account actions, or unsupported chat.
-
-## Canonical Asset Rules
-
-- Do not use generated or approximate AV marks.
-- Do not use Avi as the product logo, wordmark, app icon, or screenshot brand
-  anchor.
-- Do not create final framed screenshots until the approved Moments AV icon and
-  any AV monogram usage have passed the canonical asset gate in
-  [release-checklist.md](release-checklist.md).
-- If an AV mark is visible in final artwork, it must be the approved canonical
-  AVALSYS monogram and must be secondary to the Moments AV product surface.
-
-## Caption Themes
-
-Use short captions that describe shipped workflows:
-
-- Turn selected photos and clips into memory videos.
-- Start from your selected photos and clips.
-- Let Avi prepare the story before video creation.
-- Create the video when the story is ready.
-- Keep credits, projects, and deletion controls visible.
-
-Avoid:
-
-- Claims about unlimited generation.
-- Claims about access modes, plans, or offers unless live in the submitted build
-  and approved in App Store Connect.
-- Competitor names or third-party brand names.
-- Claims that all media is deleted instantly unless the production retention
-  policy confirms it.
-
-## Capture Checks
-
-Before approving the screenshot set:
-
-1. Every screenshot comes from the release-candidate build.
-2. Device family matches App Store Connect availability.
-3. Text fits without clipping or awkward truncation.
-4. Safe areas, sheets, tab bar, and navigation are clean.
-5. Legal, account, credit, and deletion copy matches the submitted build.
-6. No disabled, mocked, placeholder, debug, or roadmap-only feature is visible.
-7. No unapproved icon, splash, AV monogram, Avi artwork, or brand frame is used.
-8. Captions match App Store metadata and do not add unsupported claims.
-
-## Evidence
-
-Record:
-
-- raw capture file paths;
-- final asset file paths;
-- build/archive used for capture;
-- command or tool used to capture and frame assets;
-- reviewer;
-- known exclusions and why they are acceptable.
+Keep final App Store screenshot plans and approvals in the private release
+handoff.

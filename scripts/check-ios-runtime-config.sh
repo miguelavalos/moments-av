@@ -102,6 +102,9 @@ config_environment="$(setting MOMENTSAV_CONFIG_ENVIRONMENT)"
 api_base_url="$(setting ACCOUNTAV_API_BASE_URL)"
 convex_url="$(setting MOMENTSAV_CONVEX_URL)"
 publishable_key="$(setting ACCOUNTAV_PUBLISHABLE_KEY)"
+revenuecat_api_key="$(setting MOMENTSAV_REVENUECAT_PUBLIC_API_KEY)"
+revenuecat_offering_id="$(setting MOMENTSAV_REVENUECAT_OFFERING_ID)"
+revenuecat_monthly_package_id="$(setting MOMENTSAV_REVENUECAT_MONTHLY_PACKAGE_ID)"
 development_team="$(setting DEVELOPMENT_TEAM)"
 marketing_version="$(setting MARKETING_VERSION)"
 current_project_version="$(setting CURRENT_PROJECT_VERSION)"
@@ -117,6 +120,9 @@ for item in \
   "ACCOUNTAV_API_BASE_URL:$api_base_url" \
   "MOMENTSAV_CONVEX_URL:$convex_url" \
   "ACCOUNTAV_PUBLISHABLE_KEY:$publishable_key" \
+  "MOMENTSAV_REVENUECAT_PUBLIC_API_KEY:$revenuecat_api_key" \
+  "MOMENTSAV_REVENUECAT_OFFERING_ID:$revenuecat_offering_id" \
+  "MOMENTSAV_REVENUECAT_MONTHLY_PACKAGE_ID:$revenuecat_monthly_package_id" \
   "MARKETING_VERSION:$marketing_version" \
   "CURRENT_PROJECT_VERSION:$current_project_version" \
   "MOMENTSAV_SUPPORT_URL:$support_url" \
@@ -136,6 +142,14 @@ done
 [[ "$privacy_url" == https://* ]] || fail "MOMENTSAV_PRIVACY_URL must be https"
 [[ "$terms_url" == https://* ]] || fail "MOMENTSAV_TERMS_URL must be https"
 [[ "$delete_account_url" == https://* ]] || fail "ACCOUNTAV_DELETE_ACCOUNT_URL must be https"
+
+if [ -n "$revenuecat_api_key" ] && [ "$revenuecat_api_key" != '$(inherited)' ]; then
+  [[ "$revenuecat_api_key" == appl_* ]] || fail "MOMENTSAV_REVENUECAT_PUBLIC_API_KEY must be a public Apple SDK key starting with appl_"
+  [[ "$revenuecat_api_key" != sk_* ]] || fail "MOMENTSAV_REVENUECAT_PUBLIC_API_KEY must not be a RevenueCat secret key"
+fi
+
+[ "$revenuecat_offering_id" != '$(inherited)' ] || fail "MOMENTSAV_REVENUECAT_OFFERING_ID is missing"
+[ "$revenuecat_monthly_package_id" != '$(inherited)' ] || fail "MOMENTSAV_REVENUECAT_MONTHLY_PACKAGE_ID is missing"
 
 if [ "$configuration" = "Release" ]; then
   [ "$product_bundle_identifier" = "com.avalsys.momentsav" ] || fail "Release bundle must be com.avalsys.momentsav, got $product_bundle_identifier"
@@ -171,6 +185,11 @@ if [ -n "$publishable_key" ]; then
   redacted_key="${publishable_key:0:8}...${#publishable_key}"
 fi
 
+redacted_revenuecat_key=""
+if [ -n "$revenuecat_api_key" ]; then
+  redacted_revenuecat_key="${revenuecat_api_key:0:8}...${#revenuecat_api_key}"
+fi
+
 cat <<EOF
 Moments AV iOS runtime config ($env_name)
   configuration: $configuration
@@ -188,6 +207,9 @@ Moments AV iOS runtime config ($env_name)
   code sign entitlements: $code_sign_entitlements
   Account AV redirect URI: $product_bundle_identifier://callback
   publishable key: $redacted_key
+  RevenueCat key: $redacted_revenuecat_key
+  RevenueCat offering: $revenuecat_offering_id
+  RevenueCat monthly package: $revenuecat_monthly_package_id
 EOF
 
 if [ "$failures" -gt 0 ]; then

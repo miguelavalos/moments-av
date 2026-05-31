@@ -707,7 +707,7 @@ final class MomentsAPIClientTests: XCTestCase {
                 "canCreateDirectly": true,
                 "canBuyReviewBundle": true,
                 "reviewBundleCreditCost": 1,
-                "reviewBundleReviewCount": 10,
+                "reviewBundleReviewCount": 2,
                 "watermarkRemovalCreditCost": 1,
                 "watermarkFreeIncluded": false,
                 "canStartProject": true,

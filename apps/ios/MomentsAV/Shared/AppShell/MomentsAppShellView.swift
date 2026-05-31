@@ -33,6 +33,10 @@ struct MomentsAppShellView: View {
                 isSignedIn: accountController.isSignedIn,
                 startSignInFlow: startSignInFlow,
                 claimPromotionCode: accountController.claimPromotionCode,
+                purchaseCatalog: accountController.purchaseCatalog,
+                loadPurchaseProducts: accountController.loadPurchaseProducts,
+                purchaseProduct: accountController.purchase,
+                restorePurchases: accountController.restorePurchases,
                 dismiss: { creditsPaywallIsPresented = false }
             )
         }

@@ -6,6 +6,8 @@ import Foundation
 final class AccountController: ObservableObject {
     @Published private(set) var user: AccountAVUser?
     @Published private(set) var creditBalance = MomentsCreditBalance.empty
+    @Published private(set) var purchaseCatalog = MomentsPurchaseCatalog.empty
+    @Published private(set) var isPurchaseInProgress = false
     @Published private(set) var isBusy = false
     @Published var errorMessage: String?
 
@@ -13,17 +15,20 @@ final class AccountController: ObservableObject {
     private let balanceClient: MomentsCreditBalanceClient
     private let promoCodeClient: MomentsPromoCodeClient
     private let reviewBundleClient: MomentsReviewBundleClient
+    private let purchaseService: MomentsPurchaseServicing
 
     init(
         service: AVAccountService = DefaultAVAccountService(),
         balanceClient: MomentsCreditBalanceClient? = nil,
         promoCodeClient: MomentsPromoCodeClient? = nil,
-        reviewBundleClient: MomentsReviewBundleClient? = nil
+        reviewBundleClient: MomentsReviewBundleClient? = nil,
+        purchaseService: MomentsPurchaseServicing = RevenueCatMomentsPurchaseService()
     ) {
         self.service = service
         self.balanceClient = balanceClient ?? MomentsCreditBalanceClient(baseURLString: AppConfig.momentsAPIBaseURL)
         self.promoCodeClient = promoCodeClient ?? MomentsPromoCodeClient(baseURLString: AppConfig.momentsAPIBaseURL)
         self.reviewBundleClient = reviewBundleClient ?? MomentsReviewBundleClient(baseURLString: AppConfig.momentsAPIBaseURL)
+        self.purchaseService = purchaseService
         refresh()
     }
 
@@ -39,6 +44,7 @@ final class AccountController: ObservableObject {
         user = service.currentUser
         if user == nil {
             creditBalance = .empty
+            purchaseCatalog = .empty
         } else {
             Task { await refreshCreditBalance() }
         }
@@ -56,6 +62,7 @@ final class AccountController: ObservableObject {
         }
         if user == nil {
             creditBalance = .empty
+            purchaseCatalog = .empty
         } else {
             await refreshCreditBalance()
         }
@@ -76,8 +83,10 @@ final class AccountController: ObservableObject {
     func signOut() {
         startAuthTask { [self] in
             try await self.service.signOut()
+            await self.purchaseService.logOut()
             self.user = nil
             self.creditBalance = .empty
+            self.purchaseCatalog = .empty
         }
     }
 
@@ -102,6 +111,53 @@ final class AccountController: ObservableObject {
         return response
     }
 
+    func loadPurchaseProducts() async {
+        guard let user else {
+            purchaseCatalog = .empty
+            return
+        }
+
+        do {
+            purchaseCatalog = try await purchaseService.loadCatalog(userId: user.id)
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+    }
+
+    func purchase(_ product: MomentsCreditPaywallProduct) async throws -> MomentsPurchaseResult {
+        guard let user else {
+            throw MomentsAPIError(code: "moments_sign_in_required", message: "Sign in before purchasing credits.")
+        }
+        guard !isPurchaseInProgress else {
+            return MomentsPurchaseResult(status: .cancelled, productId: product.id, transactionId: nil)
+        }
+
+        isPurchaseInProgress = true
+        defer { isPurchaseInProgress = false }
+
+        let result = try await purchaseService.purchase(productId: product.id, userId: user.id)
+        if result.status == .purchased {
+            await refreshCreditBalanceAfterBillingEvent()
+        }
+        return result
+    }
+
+    func restorePurchases() async throws -> MomentsPurchaseResult {
+        guard let user else {
+            throw MomentsAPIError(code: "moments_sign_in_required", message: "Sign in before restoring purchases.")
+        }
+        guard !isPurchaseInProgress else {
+            return MomentsPurchaseResult(status: .cancelled, productId: nil, transactionId: nil)
+        }
+
+        isPurchaseInProgress = true
+        defer { isPurchaseInProgress = false }
+
+        let result = try await purchaseService.restorePurchases(userId: user.id)
+        await refreshCreditBalanceAfterBillingEvent()
+        return result
+    }
+
     func refreshCreditBalance() async {
         guard let user else {
             creditBalance = .empty
@@ -119,6 +175,14 @@ final class AccountController: ObservableObject {
     func currentBearerToken() async throws -> String? {
         guard let user else { return nil }
         return try await service.getToken() ?? user.id
+    }
+
+    private func refreshCreditBalanceAfterBillingEvent() async {
+        await refreshCreditBalance()
+        Task { [weak self] in
+            try? await Task.sleep(nanoseconds: 1_500_000_000)
+            await self?.refreshCreditBalance()
+        }
     }
 
     private func startAuthTask(_ operation: @escaping () async throws -> Void) {
@@ -281,7 +345,7 @@ private struct MomentsCreditBalanceResponse: Decodable {
         canCreateDirectly = try container.decodeIfPresent(Bool.self, forKey: .canCreateDirectly) ?? true
         canBuyReviewBundle = try container.decodeIfPresent(Bool.self, forKey: .canBuyReviewBundle) ?? false
         reviewBundleCreditCost = try container.decodeIfPresent(Int.self, forKey: .reviewBundleCreditCost) ?? 1
-        reviewBundleReviewCount = try container.decodeIfPresent(Int.self, forKey: .reviewBundleReviewCount) ?? 10
+        reviewBundleReviewCount = try container.decodeIfPresent(Int.self, forKey: .reviewBundleReviewCount) ?? 2
         watermarkRemovalCreditCost = try container.decodeIfPresent(Int.self, forKey: .watermarkRemovalCreditCost) ?? 1
         watermarkFreeIncluded = try container.decodeIfPresent(Bool.self, forKey: .watermarkFreeIncluded) ?? false
     }
@@ -311,7 +375,7 @@ private extension MomentsCreditBalance {
             canCreateDirectly: try container.decodeIfPresent(Bool.self, forKey: .canCreateDirectly) ?? true,
             canBuyReviewBundle: try container.decodeIfPresent(Bool.self, forKey: .canBuyReviewBundle) ?? false,
             reviewBundleCreditCost: try container.decodeIfPresent(Int.self, forKey: .reviewBundleCreditCost) ?? 1,
-            reviewBundleReviewCount: try container.decodeIfPresent(Int.self, forKey: .reviewBundleReviewCount) ?? 10,
+            reviewBundleReviewCount: try container.decodeIfPresent(Int.self, forKey: .reviewBundleReviewCount) ?? 2,
             watermarkRemovalCreditCost: try container.decodeIfPresent(Int.self, forKey: .watermarkRemovalCreditCost) ?? 1,
             watermarkFreeIncluded: try container.decodeIfPresent(Bool.self, forKey: .watermarkFreeIncluded) ?? false
         )
@@ -403,7 +467,7 @@ struct MomentsPromoCodeRedemptionResponse: Decodable {
             canCreateDirectly: try balanceContainer.decodeIfPresent(Bool.self, forKey: .canCreateDirectly) ?? true,
             canBuyReviewBundle: try balanceContainer.decodeIfPresent(Bool.self, forKey: .canBuyReviewBundle) ?? false,
             reviewBundleCreditCost: try balanceContainer.decodeIfPresent(Int.self, forKey: .reviewBundleCreditCost) ?? 1,
-            reviewBundleReviewCount: try balanceContainer.decodeIfPresent(Int.self, forKey: .reviewBundleReviewCount) ?? 10,
+            reviewBundleReviewCount: try balanceContainer.decodeIfPresent(Int.self, forKey: .reviewBundleReviewCount) ?? 2,
             watermarkRemovalCreditCost: try balanceContainer.decodeIfPresent(Int.self, forKey: .watermarkRemovalCreditCost) ?? 1,
             watermarkFreeIncluded: try balanceContainer.decodeIfPresent(Bool.self, forKey: .watermarkFreeIncluded) ?? false
         )

@@ -217,17 +217,17 @@ struct MomentsProfileScreen: View {
         ) {
             VStack(alignment: .leading, spacing: 12) {
                 AVSettingsInfoRow(
-                    systemImage: "heart.text.square",
+                    systemImage: "film.stack",
                     title: localized("profile.pro.library.title"),
                     detail: localized("profile.pro.library.detail")
                 )
                 AVSettingsInfoRow(
-                    systemImage: "icloud",
+                    systemImage: "checkmark.seal.fill",
                     title: localized("profile.pro.sync.title"),
                     detail: localized("profile.pro.sync.detail")
                 )
                 AVSettingsInfoRow(
-                    systemImage: "sparkles",
+                    systemImage: "wand.and.stars",
                     title: localized("profile.pro.avi.title"),
                     detail: localized("profile.pro.avi.detail")
                 )

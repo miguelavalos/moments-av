@@ -11,6 +11,18 @@ enum AppConfig {
         !avAccountKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
+    static var revenueCatPublicAPIKey: String {
+        configuredString(for: "MOMENTSAV_REVENUECAT_PUBLIC_API_KEY", fallback: "")
+    }
+
+    static var revenueCatOfferingID: String {
+        configuredString(for: "MOMENTSAV_REVENUECAT_OFFERING_ID", fallback: "moments_credits")
+    }
+
+    static var revenueCatMonthlyPackageID: String {
+        configuredString(for: "MOMENTSAV_REVENUECAT_MONTHLY_PACKAGE_ID", fallback: "$rc_monthly")
+    }
+
     static var momentsConvexURL: String {
         Bundle.main.object(forInfoDictionaryKey: "MOMENTSAV_CONVEX_URL") as? String ?? ""
     }
@@ -44,8 +56,13 @@ enum AppConfig {
     }
 
     private static func configuredURL(for key: String, fallback: String) -> URL {
+        let trimmedValue = configuredString(for: key, fallback: fallback)
+        return URL(string: trimmedValue.isEmpty ? fallback : trimmedValue) ?? URL(string: fallback)!
+    }
+
+    private static func configuredString(for key: String, fallback: String) -> String {
         let rawValue = Bundle.main.object(forInfoDictionaryKey: key) as? String ?? ""
         let trimmedValue = rawValue.trimmingCharacters(in: .whitespacesAndNewlines)
-        return URL(string: trimmedValue.isEmpty ? fallback : trimmedValue) ?? URL(string: fallback)!
+        return trimmedValue.isEmpty || trimmedValue == "$(inherited)" ? fallback : trimmedValue
     }
 }

@@ -92,6 +92,9 @@ INFISICAL_CLIENT_SECRET=
 MOMENTSAV_CONVEX_URL=infisical()
 ACCOUNTAV_API_BASE_URL=infisical()
 ACCOUNTAV_PUBLISHABLE_KEY=infisical()
+MOMENTSAV_REVENUECAT_PUBLIC_API_KEY=infisical()
+MOMENTSAV_REVENUECAT_OFFERING_ID=infisical()
+MOMENTSAV_REVENUECAT_MONTHLY_PACKAGE_ID=infisical()
 AVALSYS_APPLE_DEVELOPMENT_TEAM=infisical()
 MOMENTSAV_SUPPORT_URL=https://moments-av.avalsys.com/support
 MOMENTSAV_PRIVACY_URL=https://moments-av.avalsys.com/privacy
@@ -137,6 +140,23 @@ require_expected_url() {
   fi
 }
 
+require_revenuecat_public_key() {
+  local value="$1"
+
+  case "$value" in
+    appl_*)
+      ;;
+    sk_*)
+      echo "MOMENTSAV_REVENUECAT_PUBLIC_API_KEY must be a public Apple SDK key starting with appl_, not a RevenueCat secret key." >&2
+      exit 1
+      ;;
+    *)
+      echo "MOMENTSAV_REVENUECAT_PUBLIC_API_KEY must be a public Apple SDK key starting with appl_." >&2
+      exit 1
+      ;;
+  esac
+}
+
 escape_xcconfig_value() {
   printf '%s' "$1" | sed 's#/#$(XCCONFIG_SLASH)#g'
 }
@@ -144,6 +164,9 @@ escape_xcconfig_value() {
 moments_convex_url="$(read_required_config MOMENTSAV_CONVEX_URL)"
 account_api_base_url="$(read_required_config ACCOUNTAV_API_BASE_URL)"
 account_publishable_key="$(read_required_config ACCOUNTAV_PUBLISHABLE_KEY)"
+revenuecat_api_key="$(read_required_config MOMENTSAV_REVENUECAT_PUBLIC_API_KEY)"
+revenuecat_offering_id="$(read_required_config MOMENTSAV_REVENUECAT_OFFERING_ID)"
+revenuecat_monthly_package_id="$(read_required_config MOMENTSAV_REVENUECAT_MONTHLY_PACKAGE_ID)"
 development_team="$(read_required_config AVALSYS_APPLE_DEVELOPMENT_TEAM)"
 support_url="$(read_required_config MOMENTSAV_SUPPORT_URL)"
 privacy_url="$(read_required_config MOMENTSAV_PRIVACY_URL)"
@@ -156,6 +179,15 @@ require_http_url MOMENTSAV_SUPPORT_URL "$support_url"
 require_http_url MOMENTSAV_PRIVACY_URL "$privacy_url"
 require_http_url MOMENTSAV_TERMS_URL "$terms_url"
 require_http_url ACCOUNTAV_DELETE_ACCOUNT_URL "$delete_account_url"
+require_revenuecat_public_key "$revenuecat_api_key"
+[ -n "$revenuecat_offering_id" ] || {
+  echo "MOMENTSAV_REVENUECAT_OFFERING_ID must not be empty." >&2
+  exit 1
+}
+[ -n "$revenuecat_monthly_package_id" ] || {
+  echo "MOMENTSAV_REVENUECAT_MONTHLY_PACKAGE_ID must not be empty." >&2
+  exit 1
+}
 
 if [ "$env_name" = "staging" ]; then
   require_expected_url ACCOUNTAV_API_BASE_URL "$account_api_base_url" "https://api-account-av-preview.avalsys.com"
@@ -172,6 +204,9 @@ XCCONFIG_SLASH = /
 MOMENTSAV_CONFIG_ENVIRONMENT = $env_name
 AVALSYS_APPLE_DEVELOPMENT_TEAM = $development_team
 ACCOUNTAV_PUBLISHABLE_KEY = $account_publishable_key
+MOMENTSAV_REVENUECAT_PUBLIC_API_KEY = $revenuecat_api_key
+MOMENTSAV_REVENUECAT_OFFERING_ID = $revenuecat_offering_id
+MOMENTSAV_REVENUECAT_MONTHLY_PACKAGE_ID = $revenuecat_monthly_package_id
 ACCOUNTAV_API_BASE_URL = $(escape_xcconfig_value "$account_api_base_url")
 MOMENTSAV_CONVEX_URL = $(escape_xcconfig_value "$moments_convex_url")
 MOMENTSAV_SUPPORT_URL = $(escape_xcconfig_value "$support_url")

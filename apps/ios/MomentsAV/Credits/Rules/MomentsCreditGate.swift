@@ -24,7 +24,7 @@ struct MomentsCreditBalance: Equatable {
     var canCreateDirectly: Bool = true
     var canBuyReviewBundle: Bool = false
     var reviewBundleCreditCost: Int = 1
-    var reviewBundleReviewCount: Int = 10
+    var reviewBundleReviewCount: Int = 2
     var watermarkRemovalCreditCost: Int = 1
     var watermarkFreeIncluded: Bool = false
 

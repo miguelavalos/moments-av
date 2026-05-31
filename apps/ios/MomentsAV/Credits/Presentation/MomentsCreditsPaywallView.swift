@@ -10,12 +10,18 @@ struct MomentsCreditsPaywallView: View {
     let isSignedIn: Bool
     let startSignInFlow: () -> Void
     let claimPromotionCode: (String) async throws -> Int
+    let purchaseCatalog: MomentsPurchaseCatalog
+    let loadPurchaseProducts: () async -> Void
+    let purchaseProduct: (MomentsCreditPaywallProduct) async throws -> MomentsPurchaseResult
+    let restorePurchases: () async throws -> MomentsPurchaseResult
     let dismiss: () -> Void
 
     @State private var promoCode = ""
     @State private var statusMessage: String?
     @State private var promoStatusMessage: String?
     @State private var isClaimingPromo = false
+    @State private var purchasingProductID: String?
+    @State private var isRestoringPurchases = false
 
     var body: some View {
         NavigationStack {
@@ -25,9 +31,9 @@ struct MomentsCreditsPaywallView: View {
                     balanceOverview
 
                     if isSignedIn {
-                        promoClaim
-                        creditPacks
                         monthlyPlan
+                        creditPacks
+                        promoClaim
                         restoreAndLegal
                     } else {
                         signInRequired
@@ -51,14 +57,18 @@ struct MomentsCreditsPaywallView: View {
             }
         }
         .accessibilityIdentifier("moments.credits.paywall")
+        .task(id: isSignedIn) {
+            guard isSignedIn else { return }
+            await loadPurchaseProducts()
+        }
     }
 
     private var header: some View {
         AVPaywallHeader(
-            eyebrow: "Create videos",
-            title: "Credits for memory videos",
+            eyebrow: "Moments AV",
+            title: "Create videos with credits",
             subtitle: isSignedIn
-                ? "Add credits or redeem a promo code to create a private memory video."
+                ? "Choose Pro for the best monthly value, or add one-time credits when you need them."
                 : "Sign in first so credits and purchases stay attached to your account.",
             titleFontSize: 26,
             subtitleFontSize: 13
@@ -68,7 +78,7 @@ struct MomentsCreditsPaywallView: View {
     private var balanceOverview: some View {
         VStack(alignment: .leading, spacing: AVBrandSpacing.sm) {
             HStack(alignment: .firstTextBaseline) {
-                Text(balanceTitle)
+                Text("Wallet")
                     .font(.system(size: 18, weight: .black, design: .rounded))
                     .foregroundStyle(AVBrandColor.textPrimary)
                     .lineLimit(1)
@@ -76,11 +86,16 @@ struct MomentsCreditsPaywallView: View {
 
                 Spacer()
 
-                Text("Cost starts at 1 credit")
+                Text("Final videos start at 1 credit")
                     .font(.system(size: 11, weight: .black, design: .rounded))
                     .foregroundStyle(AVBrandColor.accent)
                     .lineLimit(1)
                     .minimumScaleFactor(0.75)
+            }
+
+            HStack(spacing: AVBrandSpacing.sm) {
+                MomentsCreditsPrimaryBalanceTile(title: "Video Credits", value: balance.spendable, detail: balanceTitle)
+                MomentsCreditsPrimaryBalanceTile(title: "Story Reviews", value: balance.reviewAllowanceRemaining, detail: storyReviewsDetail)
             }
 
             HStack(spacing: AVBrandSpacing.sm) {
@@ -96,13 +111,23 @@ struct MomentsCreditsPaywallView: View {
 
     private var creditPacks: some View {
         VStack(spacing: AVBrandSpacing.sm) {
-            sectionHeader(title: "Add credits", detail: "Use credit packs when you want to create without a monthly plan.")
+            sectionHeader(title: "One-time credits", detail: "Credit packs do not renew and include extra Story Reviews.")
 
             HStack(spacing: AVBrandSpacing.sm) {
-                MomentsCreditsPackButton(product: .starterPack) {
+                MomentsCreditsPackButton(
+                    product: .starterPack,
+                    priceText: priceText(for: .starterPack),
+                    isBusy: purchasingProductID == MomentsCreditProductID.starterPackProduct,
+                    isDisabled: isPurchaseActionDisabled
+                ) {
                     startPurchase(.starterPack)
                 }
-                MomentsCreditsPackButton(product: .creatorPack) {
+                MomentsCreditsPackButton(
+                    product: .creatorPack,
+                    priceText: priceText(for: .creatorPack),
+                    isBusy: purchasingProductID == MomentsCreditProductID.creatorPackProduct,
+                    isDisabled: isPurchaseActionDisabled
+                ) {
                     startPurchase(.creatorPack)
                 }
             }
@@ -111,9 +136,14 @@ struct MomentsCreditsPaywallView: View {
 
     private var monthlyPlan: some View {
         VStack(alignment: .leading, spacing: AVBrandSpacing.sm) {
-            sectionHeader(title: "Monthly plan", detail: "For regular memory videos once subscriptions are enabled.")
+            sectionHeader(title: "Pro monthly", detail: "Better monthly credit value with Pro-only watermark removal. No unlimited generation.")
 
-            MomentsCreditsCompactProductRow(product: .proMonthly, isProminent: false) {
+            MomentsProPlanCard(
+                product: .proMonthly,
+                priceText: monthlyPriceText(for: .proMonthly),
+                isBusy: purchasingProductID == MomentsCreditProductID.proMonthlyProduct,
+                isDisabled: isPurchaseActionDisabled
+            ) {
                 startPurchase(.proMonthly)
             }
         }
@@ -121,7 +151,7 @@ struct MomentsCreditsPaywallView: View {
 
     private var promoClaim: some View {
         VStack(alignment: .leading, spacing: AVBrandSpacing.sm) {
-            sectionHeader(title: "Promo code", detail: "Redeem tester, campaign, or support credits.")
+            sectionHeader(title: "Promo code", detail: "Enter a code from support, testing, or a private campaign.")
 
             HStack(spacing: AVBrandSpacing.sm) {
                 Image(systemName: "gift.fill")
@@ -155,7 +185,7 @@ struct MomentsCreditsPaywallView: View {
                 .accessibilityIdentifier("moments.credits.claimPromo")
             }
 
-            Text("Try \(demoPromoCode) for this staging build.")
+            Text("Promo codes are shared by support or campaign invitations.")
                 .font(AVBrandTypography.captionStrong)
                 .foregroundStyle(AVBrandColor.textSecondary)
 
@@ -179,14 +209,29 @@ struct MomentsCreditsPaywallView: View {
 
     private var restoreAndLegal: some View {
         VStack(spacing: AVBrandSpacing.md) {
+            Text("Pro renews monthly until canceled. Manage or cancel in App Store settings. One-time credit packs do not renew.")
+                .font(.system(size: 11, weight: .semibold, design: .rounded))
+                .foregroundStyle(AVBrandColor.textSecondary)
+                .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
+
             Button {
-                statusMessage = "Restore purchases is not available in this staging build yet."
+                restorePreviousPurchases()
             } label: {
-                Text("Restore purchases")
-                    .font(.system(size: 12, weight: .bold, design: .rounded))
-                    .foregroundStyle(AVBrandColor.textSecondary)
+                HStack(spacing: AVBrandSpacing.xs) {
+                    if isRestoringPurchases {
+                        ProgressView()
+                            .controlSize(.mini)
+                            .tint(AVBrandColor.textSecondary)
+                    }
+
+                    Text("Restore purchases")
+                        .font(.system(size: 12, weight: .bold, design: .rounded))
+                        .foregroundStyle(AVBrandColor.textSecondary)
+                }
             }
             .buttonStyle(.plain)
+            .disabled(isRestoringPurchases || purchasingProductID != nil)
             .accessibilityIdentifier("moments.credits.restore")
 
             AVPaywallLegalLinks(
@@ -239,32 +284,80 @@ struct MomentsCreditsPaywallView: View {
 
     private var balanceTitle: String {
         if balance.spendable == 0 {
-            return "No credits available"
+            return "No credits"
         }
-        return MomentsCreditCopy.countTitle(balance.spendable) + " available"
+        return MomentsCreditCopy.countTitle(balance.spendable)
     }
 
-    private var balanceDetail: String {
-        if balance.spendable == 0 {
-            return "A final memory video starts at 1 credit."
+    private var storyReviewsDetail: String {
+        if balance.reviewAllowanceRemaining == 0 {
+            return "No reviews"
         }
-        return "Final renders use monthly credits first, then promo, then purchased."
-    }
-
-    private var demoPromoCode: String {
-        "MOMENTS-DEMO-2026"
+        return "\(balance.reviewAllowanceRemaining) available"
     }
 
     private var normalizedPromoCode: String {
         promoCode.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
+    private var isPurchaseActionDisabled: Bool {
+        purchasingProductID != nil || isRestoringPurchases
+    }
+
+    private func priceText(for product: MomentsCreditPaywallProduct) -> String {
+        purchaseCatalog.localizedPrice(for: product) ?? product.buttonTitle
+    }
+
+    private func monthlyPriceText(for product: MomentsCreditPaywallProduct) -> String {
+        guard let price = purchaseCatalog.localizedPrice(for: product) else {
+            return product.buttonTitle
+        }
+        return "\(price)/month"
+    }
+
     private func startPurchase(_ product: MomentsCreditPaywallProduct) {
-        switch product.kind {
-        case .subscription:
-            statusMessage = "Monthly subscriptions are not available in this staging build yet."
-        case .consumableCredits:
-            statusMessage = "Credit purchases are not available in this staging build yet. Use a promo code for testing."
+        guard !isPurchaseActionDisabled else { return }
+        purchasingProductID = product.id
+        statusMessage = nil
+
+        Task {
+            do {
+                let result = try await purchaseProduct(product)
+                switch result.status {
+                case .purchased:
+                    statusMessage = "\(product.title) purchased. Credits may take a moment to appear."
+                case .restored:
+                    statusMessage = "Purchases restored. Credits may take a moment to appear."
+                case .cancelled:
+                    statusMessage = "Purchase cancelled."
+                }
+            } catch {
+                statusMessage = error.localizedDescription
+            }
+            purchasingProductID = nil
+        }
+    }
+
+    private func restorePreviousPurchases() {
+        guard !isRestoringPurchases, purchasingProductID == nil else { return }
+        isRestoringPurchases = true
+        statusMessage = nil
+
+        Task {
+            do {
+                let result = try await restorePurchases()
+                switch result.status {
+                case .restored:
+                    statusMessage = "Purchases restored. Credits may take a moment to appear."
+                case .purchased:
+                    statusMessage = "Purchase restored. Credits may take a moment to appear."
+                case .cancelled:
+                    statusMessage = "Restore cancelled."
+                }
+            } catch {
+                statusMessage = error.localizedDescription
+            }
+            isRestoringPurchases = false
         }
     }
 
@@ -287,89 +380,181 @@ struct MomentsCreditsPaywallView: View {
     }
 }
 
-private struct MomentsCreditsCompactProductRow: View {
+private struct MomentsProPlanCard: View {
     let product: MomentsCreditPaywallProduct
-    let isProminent: Bool
+    let priceText: String
+    let isBusy: Bool
+    let isDisabled: Bool
     let action: () -> Void
 
     var body: some View {
         Button(action: action) {
-            HStack(spacing: AVBrandSpacing.md) {
-                Image(systemName: product.systemImage)
-                    .font(.system(size: 18, weight: .black))
-                    .foregroundStyle(AVBrandColor.accent)
-                    .frame(width: 40, height: 40)
-                    .background(AVBrandColor.accent.opacity(0.1), in: Circle())
+            VStack(alignment: .leading, spacing: AVBrandSpacing.md) {
+                HStack(alignment: .top, spacing: AVBrandSpacing.md) {
+                    Image(systemName: product.systemImage)
+                        .font(.system(size: 20, weight: .black))
+                        .foregroundStyle(AVBrandColor.textInverse)
+                        .frame(width: 44, height: 44)
+                        .background(AVBrandColor.accent, in: RoundedRectangle(cornerRadius: AVBrandRadius.control, style: .continuous))
 
-                VStack(alignment: .leading, spacing: 2) {
-                    HStack(spacing: AVBrandSpacing.xs) {
-                        Text("Optional")
-                            .font(AVBrandTypography.eyebrow)
-                            .foregroundStyle(AVBrandColor.accent)
-                            .textCase(.uppercase)
+                    VStack(alignment: .leading, spacing: 3) {
+                        HStack(spacing: AVBrandSpacing.xs) {
+                            Text(product.eyebrow)
+                                .font(AVBrandTypography.eyebrow)
+                                .foregroundStyle(AVBrandColor.accent)
+                                .textCase(.uppercase)
 
-                        Text("Soon")
-                            .font(.system(size: 10, weight: .black, design: .rounded))
-                            .foregroundStyle(AVBrandColor.textInverse)
-                            .padding(.horizontal, 7)
-                            .padding(.vertical, 3)
-                            .background(AVBrandColor.accent, in: Capsule())
+                            Text("No watermark")
+                                .font(.system(size: 10, weight: .black, design: .rounded))
+                                .foregroundStyle(AVBrandColor.textInverse)
+                                .padding(.horizontal, 7)
+                                .padding(.vertical, 3)
+                                .background(AVBrandColor.accent, in: Capsule())
+                        }
+
+                        Text(product.title)
+                            .font(.system(size: 23, weight: .black, design: .rounded))
+                            .foregroundStyle(AVBrandColor.textPrimary)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.78)
+
+                        Text(priceText)
+                            .font(.system(size: 19, weight: .black, design: .rounded))
+                            .foregroundStyle(AVBrandColor.textPrimary)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.82)
                     }
-
-                    Text(product.title)
-                        .font(.system(size: 19, weight: .black, design: .rounded))
-                        .foregroundStyle(AVBrandColor.textPrimary)
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.82)
-
-                    Text(product.detail)
-                        .font(.system(size: 12, weight: .semibold, design: .rounded))
-                        .foregroundStyle(AVBrandColor.textSecondary)
-                        .lineLimit(3)
-                        .minimumScaleFactor(0.78)
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
 
-                Image(systemName: "clock")
-                    .font(.system(size: 15, weight: .black))
+                Text(product.detail)
+                    .font(.system(size: 13, weight: .semibold, design: .rounded))
                     .foregroundStyle(AVBrandColor.textSecondary)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                VStack(alignment: .leading, spacing: AVBrandSpacing.xs) {
+                    MomentsProBenefitRow(systemImage: "video.fill", text: "6 Video Credits each month")
+                    MomentsProBenefitRow(systemImage: "wand.and.stars", text: "15 Story Reviews each month")
+                    MomentsProBenefitRow(systemImage: "checkmark.seal.fill", text: "Final videos without the Moments AV watermark")
+                }
+
+                HStack(spacing: AVBrandSpacing.sm) {
+                    Text(callToActionTitle)
+                        .font(.system(size: 14, weight: .black, design: .rounded))
+                        .foregroundStyle(AVBrandColor.textInverse)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.78)
+
+                    Spacer()
+
+                    if isBusy {
+                        ProgressView()
+                            .controlSize(.small)
+                            .tint(AVBrandColor.textInverse)
+                    } else {
+                        Image(systemName: "chevron.right")
+                            .font(.system(size: 14, weight: .black))
+                            .foregroundStyle(AVBrandColor.textInverse)
+                    }
+                }
+                .padding(.horizontal, AVBrandSpacing.md)
+                .frame(height: 48)
+                .background(AVBrandColor.accent, in: RoundedRectangle(cornerRadius: AVBrandRadius.control, style: .continuous))
             }
-            .padding(AVBrandSpacing.md)
+            .padding(AVBrandSpacing.lg)
             .background(AVBrandColor.cardSurface, in: RoundedRectangle(cornerRadius: AVBrandRadius.card, style: .continuous))
             .overlay {
                 RoundedRectangle(cornerRadius: AVBrandRadius.card, style: .continuous)
-                    .stroke(AVBrandColor.borderSubtle.opacity(0.5), lineWidth: 1)
+                    .stroke(AVBrandColor.accent.opacity(0.28), lineWidth: 1)
             }
+            .shadow(color: AVBrandColor.softShadow.opacity(0.18), radius: 16, y: 8)
         }
         .buttonStyle(.plain)
+        .disabled(isDisabled)
         .accessibilityIdentifier("moments.credits.purchase.\(product.id)")
+    }
+
+    private var callToActionTitle: String {
+        priceText == product.buttonTitle ? product.buttonTitle : "\(product.buttonTitle) - \(priceText)"
+    }
+}
+
+private struct MomentsProBenefitRow: View {
+    let systemImage: String
+    let text: String
+
+    var body: some View {
+        HStack(spacing: AVBrandSpacing.xs) {
+            Image(systemName: systemImage)
+                .font(.system(size: 12, weight: .black))
+                .foregroundStyle(AVBrandColor.accent)
+                .frame(width: 18)
+
+            Text(text)
+                .font(.system(size: 12, weight: .bold, design: .rounded))
+                .foregroundStyle(AVBrandColor.textSecondary)
+                .fixedSize(horizontal: false, vertical: true)
+        }
     }
 }
 
 private struct MomentsCreditsPackButton: View {
     let product: MomentsCreditPaywallProduct
+    let priceText: String
+    let isBusy: Bool
+    let isDisabled: Bool
     let action: () -> Void
 
     var body: some View {
         Button(action: action) {
-            VStack(alignment: .leading, spacing: 5) {
-                Image(systemName: product.systemImage)
-                    .font(.system(size: 15, weight: .black))
-                    .foregroundStyle(AVBrandColor.accent)
+            VStack(alignment: .leading, spacing: AVBrandSpacing.xs) {
+                HStack(alignment: .top) {
+                    Image(systemName: product.systemImage)
+                        .font(.system(size: 15, weight: .black))
+                        .foregroundStyle(AVBrandColor.accent)
+
+                    Spacer(minLength: AVBrandSpacing.xs)
+
+                    Text(priceText)
+                        .font(.system(size: 12, weight: .black, design: .rounded))
+                        .foregroundStyle(AVBrandColor.accent)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.75)
+                }
 
                 Text(product.title)
-                    .font(.system(size: 18, weight: .black, design: .rounded))
+                    .font(.system(size: 17, weight: .black, design: .rounded))
                     .foregroundStyle(AVBrandColor.textPrimary)
-                    .lineLimit(1)
+                    .lineLimit(2)
                     .minimumScaleFactor(0.78)
 
-                Text("Add credits")
-                    .font(.system(size: 12, weight: .black, design: .rounded))
-                    .foregroundStyle(AVBrandColor.accent)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.75)
+                Text(product.detail)
+                    .font(.system(size: 11, weight: .semibold, design: .rounded))
+                    .foregroundStyle(AVBrandColor.textSecondary)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                Spacer(minLength: AVBrandSpacing.xs)
+
+                HStack(spacing: AVBrandSpacing.xs) {
+                    Text(product.buttonTitle)
+                        .font(.system(size: 12, weight: .black, design: .rounded))
+                        .foregroundStyle(AVBrandColor.accent)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.75)
+
+                    if isBusy {
+                        ProgressView()
+                            .controlSize(.mini)
+                            .tint(AVBrandColor.accent)
+                    } else {
+                        Image(systemName: "chevron.right")
+                            .font(.system(size: 11, weight: .black))
+                            .foregroundStyle(AVBrandColor.accent)
+                    }
+                }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
+            .frame(minHeight: 128, alignment: .topLeading)
             .padding(AVBrandSpacing.md)
             .background(AVBrandColor.cardSurface, in: RoundedRectangle(cornerRadius: AVBrandRadius.card, style: .continuous))
             .overlay {
@@ -378,7 +563,38 @@ private struct MomentsCreditsPackButton: View {
             }
         }
         .buttonStyle(.plain)
+        .disabled(isDisabled)
         .accessibilityIdentifier("moments.credits.purchase.\(product.id)")
+    }
+}
+
+private struct MomentsCreditsPrimaryBalanceTile: View {
+    let title: String
+    let value: Int
+    let detail: String
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 3) {
+            Text(title)
+                .font(.system(size: 11, weight: .bold, design: .rounded))
+                .foregroundStyle(AVBrandColor.textSecondary)
+                .lineLimit(1)
+                .minimumScaleFactor(0.78)
+
+            Text("\(value)")
+                .font(.system(size: 28, weight: .black, design: .rounded))
+                .foregroundStyle(AVBrandColor.textPrimary)
+                .monospacedDigit()
+
+            Text(detail)
+                .font(.system(size: 11, weight: .bold, design: .rounded))
+                .foregroundStyle(AVBrandColor.accent)
+                .lineLimit(1)
+                .minimumScaleFactor(0.78)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(AVBrandSpacing.md)
+        .background(AVBrandColor.mutedSurface, in: RoundedRectangle(cornerRadius: AVBrandRadius.md, style: .continuous))
     }
 }
 
@@ -401,67 +617,5 @@ private struct MomentsCreditsBalanceTile: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(AVBrandSpacing.sm)
         .background(AVBrandColor.mutedSurface, in: RoundedRectangle(cornerRadius: AVBrandRadius.md, style: .continuous))
-    }
-}
-
-private struct MomentsCreditsProductRow: View {
-    let product: MomentsCreditPaywallProduct
-    let action: () -> Void
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: AVBrandSpacing.md) {
-            HStack(alignment: .top, spacing: AVBrandSpacing.md) {
-                Image(systemName: product.systemImage)
-                    .font(.system(size: 18, weight: .black))
-                    .foregroundStyle(AVBrandColor.accent)
-                    .frame(width: 42, height: 42)
-                    .background(AVBrandColor.accent.opacity(0.1), in: Circle())
-
-                VStack(alignment: .leading, spacing: AVBrandSpacing.xxs) {
-                    HStack(spacing: AVBrandSpacing.xs) {
-                        Text(product.eyebrow)
-                            .font(AVBrandTypography.eyebrow)
-                            .foregroundStyle(AVBrandColor.accent)
-                            .textCase(.uppercase)
-
-                        if product.isRecommended {
-                            Text("Best start")
-                                .font(.system(size: 10, weight: .black, design: .rounded))
-                                .foregroundStyle(AVBrandColor.textInverse)
-                                .padding(.horizontal, 8)
-                                .padding(.vertical, 4)
-                                .background(AVBrandColor.accent, in: Capsule())
-                        }
-                    }
-
-                    Text(product.title)
-                        .font(.system(size: 20, weight: .black, design: .rounded))
-                        .foregroundStyle(AVBrandColor.textPrimary)
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.82)
-
-                    Text(product.detail)
-                        .font(AVBrandTypography.captionStrong)
-                        .foregroundStyle(AVBrandColor.textSecondary)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-            }
-
-            AVPaywallPrimaryButton(
-                title: product.buttonTitle,
-                accessibilityIdentifier: "moments.credits.purchase.\(product.id)",
-                action: action
-            )
-        }
-        .padding(AVBrandSpacing.lg)
-        .background(
-            product.isRecommended ? AVBrandColor.accent.opacity(0.08) : AVBrandColor.cardSurface,
-            in: RoundedRectangle(cornerRadius: AVBrandRadius.card, style: .continuous)
-        )
-        .overlay {
-            RoundedRectangle(cornerRadius: AVBrandRadius.card, style: .continuous)
-                .stroke(product.isRecommended ? AVBrandColor.accent.opacity(0.28) : AVBrandColor.borderSubtle.opacity(0.5), lineWidth: 1)
-        }
     }
 }

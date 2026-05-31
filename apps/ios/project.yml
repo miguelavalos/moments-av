@@ -20,6 +20,9 @@ packages:
   ConvexMobile:
     url: https://github.com/get-convex/convex-swift
     from: 0.8.1
+  RevenueCat:
+    url: https://github.com/RevenueCat/purchases-ios-spm.git
+    from: 5.75.0
 
 schemes:
   MomentsAV:
@@ -61,6 +64,8 @@ targets:
       - package: AppsAV
         product: AVLaunchFoundation
       - package: AppsAV
+        product: AVMediaAnalysisFoundation
+      - package: AppsAV
         product: AVSettingsFoundation
       - package: AppsAV
         product: AVAviFoundation
@@ -68,6 +73,8 @@ targets:
         product: AVPaywallFoundation
       - package: ConvexMobile
         product: ConvexMobile
+      - package: RevenueCat
+        product: RevenueCat
     settings:
       base:
         CODE_SIGN_ENTITLEMENTS: MomentsAV/App/MomentsAV.entitlements
