@@ -23,7 +23,7 @@ done
 
 content_pattern='sk_(live|test)_[A-Za-z0-9_]+|CLERK_SECRET_KEY=|AVALSYS_APPLE_DEVELOPMENT_TEAM[[:space:]]*=[[:space:]]*[A-Z0-9]{10}|DEVELOPMENT_TEAM[[:space:]]*=[[:space:]]*[A-Z0-9]{10}|127\.0\.0\.1:8788'
 
-if tracked_files | xargs -0 rg -n --no-messages "$content_pattern"; then
+if tracked_files | xargs -0 grep -E -n -I -- "$content_pattern"; then
   printf 'Forbidden config/secrets pattern found in tracked files.\n' >&2
   exit 1
 fi

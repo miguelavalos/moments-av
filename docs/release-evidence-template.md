@@ -29,6 +29,7 @@ docs/release-evidence-public-YYYY-MM-DD.md
 Record command result:
 
 ```bash
+scripts/check-public-hygiene.sh
 scripts/check-public-release-readiness.sh
 ```
 

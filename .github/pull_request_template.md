@@ -4,7 +4,7 @@
 
 ## Checks
 
-- [ ] `scripts/check-public-release-readiness.sh`
+- [ ] `scripts/check-public-hygiene.sh`
 - [ ] iOS build/test run, if app code changed:
 
 ## Release Impact
@@ -20,6 +20,8 @@
 - [ ] No icon, splash, AV monogram, Avi artwork, or screenshot frame changes.
 - [ ] Any brand asset changes use approved canonical assets and are documented
   in the private/public canonical asset handoff.
+- [ ] Full `scripts/check-public-release-readiness.sh` run before release if
+  canonical assets changed.
 
 ## Data Safety
 

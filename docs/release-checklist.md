@@ -12,7 +12,9 @@ in the private AVALSYS suite.
 - [ ] `xcodegen generate --spec apps/ios/project.yml` succeeds.
 - [ ] The public compile check succeeds with unsigned simulator build settings.
 - [ ] Focused tests pass or failures are documented in the private handoff.
-- [ ] `scripts/check-public-release-readiness.sh` passes.
+- [ ] `scripts/check-public-hygiene.sh` passes for normal public repo changes.
+- [ ] `scripts/check-public-release-readiness.sh` passes before App Store release
+  candidate handoff.
 - [ ] No generated local config is tracked.
 - [ ] No signing material, provisioning profiles, team IDs, keys, tokens, or
   private URLs are tracked.

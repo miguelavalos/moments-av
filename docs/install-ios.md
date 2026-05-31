@@ -94,9 +94,17 @@ and keep the destination explicit.
 Before committing, run:
 
 ```bash
-scripts/check-public-release-readiness.sh
+scripts/check-public-hygiene.sh
 ```
 
 This blocks tracked local configs, local worker URLs, development team IDs,
-secret-looking keys, broken public Markdown links, and accidental final artwork
-that has not passed the public asset gate.
+secret-looking keys, and broken public Markdown links.
+
+Before an App Store release candidate, run:
+
+```bash
+scripts/check-public-release-readiness.sh
+```
+
+That full release check also blocks accidental final artwork that has not passed
+the public asset gate.

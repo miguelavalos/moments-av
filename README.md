@@ -44,6 +44,12 @@ outside this public repo.
 Before opening a pull request, run:
 
 ```bash
+scripts/check-public-hygiene.sh
+```
+
+Before an App Store release candidate, run the full release readiness check:
+
+```bash
 scripts/check-public-release-readiness.sh
 ```
 

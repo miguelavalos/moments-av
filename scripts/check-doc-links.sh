@@ -43,9 +43,7 @@ while IFS= read -r source_file; do
   while IFS= read -r target; do
     check_target "$source_file" "$target"
   done < <(
-    rg -o '\[[^]]+\]\([^)]+\)' "$source_file" \
-      | sed -E 's/^.*\]\(([^)]+)\)$/\1/' \
-      | rg -v '^!'
+    perl -ne 'while (/(!?)\[[^\]]+\]\(([^)]+)\)/g) { print "$2\n" unless $1 }' "$source_file"
   )
 done < <(git ls-files '*.md')
 
