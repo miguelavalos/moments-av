@@ -650,7 +650,7 @@
 "media.photo.singular" = "foto";
 "media.photo.plural" = "fotos";
 "create.media.chooseShort" = "Elegir";
-"create.media.editTitle" = "Editar media";
+"create.media.editTitle" = "Editar medios";
 "create.media.editSummary" = "Toca para eliminar, añadir o reordenar.";
 "create.media.collection.confirmTitleFallback" = "¿Añadir fotos de colección?";
 "create.media.collection.confirmTitle" = "¿Añadir hasta %d %@?";

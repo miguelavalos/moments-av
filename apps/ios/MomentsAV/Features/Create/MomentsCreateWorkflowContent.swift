@@ -500,9 +500,8 @@ private struct MomentsCreateOptionsSummaryCard: View {
 
                         Spacer(minLength: 0)
 
-                        Text(MomentsL10n.string("common.edit"))
-                            .font(.system(size: 12, weight: .black))
-                            .foregroundStyle(AVBrandColor.accent)
+                        MomentsCreateOptionActionText()
+                            .accessibilityHidden(true)
                     }
 
                     HStack(spacing: 8) {

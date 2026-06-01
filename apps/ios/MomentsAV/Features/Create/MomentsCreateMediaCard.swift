@@ -34,9 +34,10 @@ struct MomentsCreateMediaCard: View {
 
                         Spacer(minLength: 0)
 
-                        Text(actionTitle)
-                            .font(.system(size: 12, weight: .black))
-                            .foregroundStyle(AVBrandColor.accent)
+                        if hasEditableMedia {
+                            MomentsCreateMediaActionIcon()
+                                .accessibilityHidden(true)
+                        }
                     }
 
                     HStack(alignment: .center, spacing: 16) {
@@ -185,18 +186,16 @@ struct MomentsCreateMediaCard: View {
         return MomentsL10n.string("create.media.editSummary")
     }
 
-    private var actionTitle: String {
-        selectedCount == 0 && presentation.syncedMediaAssets.isEmpty
-            ? MomentsL10n.string("create.media.chooseShort")
-            : MomentsL10n.string("common.edit")
-    }
-
     private func mediaCardAction() {
-        if selectedCount == 0 && presentation.syncedMediaAssets.isEmpty {
+        if !hasEditableMedia {
             return
         } else {
             showsMediaManager = true
         }
+    }
+
+    private var hasEditableMedia: Bool {
+        selectedCount > 0 || !presentation.syncedMediaAssets.isEmpty
     }
 
     private var selectedCount: Int {
@@ -205,6 +204,16 @@ struct MomentsCreateMediaCard: View {
 
     private var cardMinHeight: CGFloat {
         selectedCount == 0 ? 232 : 134
+    }
+}
+
+private struct MomentsCreateMediaActionIcon: View {
+    var body: some View {
+        Image(systemName: "square.and.pencil")
+            .font(.system(size: 13, weight: .black))
+            .foregroundStyle(AVBrandColor.accent)
+            .frame(width: 32, height: 32)
+            .background(AVBrandColor.accent.opacity(0.08), in: Circle())
     }
 }
 
