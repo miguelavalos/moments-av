@@ -20,9 +20,9 @@ struct MomentsAviPreparationCard: View {
                 systemImage: "photo.on.rectangle"
             )
             AVAviInfoRow(
-                title: "Preview before final export",
-                detail: "Previews are for checking pacing and story. Final render is the credit-committing step.",
-                systemImage: "play.rectangle"
+                title: "Review before final export",
+                detail: "Story Reviews are for checking pacing and story. Final render is the credit-committing step.",
+                systemImage: "text.bubble"
             )
             AVAviActionInfoRow(
                 title: "Prepare a new video",

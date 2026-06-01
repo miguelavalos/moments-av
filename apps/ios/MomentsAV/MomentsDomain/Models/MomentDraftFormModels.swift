@@ -73,7 +73,6 @@ struct MomentDraftForm: Equatable {
 enum MomentDraftRules {
     enum BlockReason {
         case missingOccasion
-        case insufficientCredits(missingCount: Int)
     }
 
     struct Availability {
@@ -89,11 +88,6 @@ enum MomentDraftRules {
             return Availability(canCreateDraft: false, blockReason: .missingOccasion)
         }
 
-        let missingCredits = max(form.template.creditCost - balance.spendable, 0)
-        guard missingCredits == 0 else {
-            return Availability(canCreateDraft: false, blockReason: .insufficientCredits(missingCount: missingCredits))
-        }
-
         return Availability(canCreateDraft: true, blockReason: nil)
     }
 
@@ -103,8 +97,6 @@ enum MomentDraftRules {
             return nil
         case .missingOccasion:
             return "Complete the occasion before starting a project."
-        case .insufficientCredits(let missingCount):
-            return "Add \(missingCount) more \(MomentsCreditCopy.noun(missingCount)) for this template."
         }
     }
 }

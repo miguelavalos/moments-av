@@ -4,13 +4,14 @@ import Foundation
 enum MomentsRootTab: String, CaseIterable, Identifiable {
     case home
     case create
-    case projects
+    case inProgress
+    case gallery
     case avi
     case profile
 
     var id: String { rawValue }
 
-    static let footerTabs: [MomentsRootTab] = [.home, .projects]
+    static let footerTabs: [MomentsRootTab] = [.home, .inProgress, .gallery]
 
     var shellTab: AVAppShellTab<MomentsRootTab> {
         switch self {
@@ -28,12 +29,19 @@ enum MomentsRootTab: String, CaseIterable, Identifiable {
                 systemImage: "plus.app.fill",
                 accessibilityIdentifier: "moments.tab.create"
             )
-        case .projects:
+        case .inProgress:
             AVAppShellTab(
                 id: self,
-                title: "Moments",
-                systemImage: "rectangle.stack.fill",
-                accessibilityIdentifier: "moments.tab.projects"
+                title: "In Progress",
+                systemImage: "clock.fill",
+                accessibilityIdentifier: "moments.tab.inProgress"
+            )
+        case .gallery:
+            AVAppShellTab(
+                id: self,
+                title: "Gallery",
+                systemImage: "play.square.stack.fill",
+                accessibilityIdentifier: "moments.tab.gallery"
             )
         case .avi, .profile:
             AVAppShellTab(

@@ -253,30 +253,17 @@ private struct MomentsCreateNewProjectActionBlock: View {
         VStack(alignment: .leading, spacing: 14) {
             MomentsCreateEconomyPanel(balance: balance, selectedStyle: selectedStyle, isSignedIn: isSignedIn)
 
-            if isSignedIn {
-                if balance.spendable > 0 {
-                    AVAppShellPrimaryButton(
-                        "Add photos or clips",
-                        systemImage: "photo.badge.plus",
-                        isDisabled: !canBeginNewProject,
-                        action: beginNewProject
-                    )
-                } else {
-                    AVAppShellPrimaryButton(
-                        "Get credits",
-                        systemImage: "creditcard.fill",
-                        isDisabled: false,
-                        action: openCredits
-                    )
-                    AVAppShellInlineMessage(message: "Choose Pro, buy credits, or claim a promotion to create this video.")
-                }
-            } else {
-                AVAppShellPrimaryButton(
-                    "Sign in to continue",
-                    systemImage: "person.crop.circle.badge.checkmark",
-                    isDisabled: false,
-                    action: startSignInFlow
-                )
+            AVAppShellPrimaryButton(
+                "Add photos or clips",
+                systemImage: "photo.badge.plus",
+                isDisabled: !canBeginNewProject,
+                action: beginNewProject
+            )
+
+            if !isSignedIn {
+                AVAppShellInlineMessage(message: "You can set up this Moment now. Sign in is required before story review or video creation.")
+            } else if balance.spendable == 0 {
+                AVAppShellInlineMessage(message: "Credits are needed before creating the final video. You can set up this Moment now.")
             }
         }
         .padding(AVBrandSpacing.xl)
@@ -313,7 +300,7 @@ private extension MomentsCreateAviGuidance {
     var eyebrow: String {
         switch emotion {
         case .warning:
-            return "Get credits"
+            return "Needs attention"
         case .happy, .celebrate:
             return "Create video"
         case .focused:
@@ -328,7 +315,7 @@ private extension MomentsCreateAviGuidance {
     var title: String {
         switch emotion {
         case .warning:
-            return "You need 1 credit"
+            return "Check this step"
         case .happy, .celebrate:
             return "Ready to start"
         case .focused:
@@ -363,6 +350,7 @@ private extension MomentsCreateAviGuidance {
 }
 
 private struct MomentsCreateEconomyPanel: View {
+    @State private var showsDetails = false
     let balance: MomentsCreditBalance
     let selectedStyle: MomentCreationStyle
     let isSignedIn: Bool
@@ -384,7 +372,7 @@ private struct MomentsCreateEconomyPanel: View {
                 Spacer(minLength: 12)
 
                 VStack(alignment: .trailing, spacing: 4) {
-                    Text("Project cost")
+                    Text("Final video")
                         .font(.system(size: 12, weight: .black))
                         .foregroundStyle(AVBrandColor.textSecondary)
                         .textCase(.uppercase)
@@ -395,10 +383,31 @@ private struct MomentsCreateEconomyPanel: View {
                 }
             }
 
-            HStack(spacing: 8) {
-                MomentsCreateCreditChip(title: "Monthly", value: balance.proMonthly)
-                MomentsCreateCreditChip(title: "Promo", value: balance.promotional)
-                MomentsCreateCreditChip(title: "Purchased", value: balance.purchased)
+            Text("Credits are only needed when you create the final video.")
+                .font(AVBrandTypography.captionStrong)
+                .foregroundStyle(AVBrandColor.textSecondary)
+                .fixedSize(horizontal: false, vertical: true)
+
+            if isSignedIn {
+                Button {
+                    withAnimation(.easeInOut(duration: 0.18)) {
+                        showsDetails.toggle()
+                    }
+                } label: {
+                    Label(showsDetails ? "Hide details" : "View details", systemImage: showsDetails ? "chevron.up" : "chevron.down")
+                        .font(.system(size: 12, weight: .black, design: .rounded))
+                        .foregroundStyle(AVBrandColor.textSecondary)
+                }
+                .buttonStyle(.plain)
+
+                if showsDetails {
+                    HStack(spacing: 8) {
+                        ForEach(MomentsCreditCopy.detailRows(for: balance)) { row in
+                            MomentsCreateCreditChip(title: row.title, value: row.value)
+                        }
+                    }
+                    .transition(.opacity.combined(with: .move(edge: .top)))
+                }
             }
         }
         .padding(14)

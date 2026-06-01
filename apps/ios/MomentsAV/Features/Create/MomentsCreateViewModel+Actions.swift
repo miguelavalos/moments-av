@@ -232,7 +232,7 @@ extension MomentsCreateViewModel {
 
     func generatePreview() {
         guard canGeneratePreview, let previewGenerationWorkflow, let context = activeTemplateContext else {
-            updatePreviewStatusMessage(previewAvailabilityMessage ?? "Preview is not ready yet.")
+            updatePreviewStatusMessage(previewAvailabilityMessage ?? "Story review is not ready yet.")
             return
         }
 
@@ -313,7 +313,7 @@ extension MomentsCreateViewModel {
             }
 
             guard let previewGenerationWorkflow = self.previewGenerationWorkflow else {
-                self.updatePreviewStatusMessage("Preview generation is not configured for this build.")
+                self.updatePreviewStatusMessage("Story review is not configured for this build.")
                 return
             }
             await previewGenerationWorkflow.generatePreview(
@@ -353,7 +353,7 @@ extension MomentsCreateViewModel {
 
     func refreshPreviewStatus() {
         guard canRefreshPreviewStatus, let previewGenerationWorkflow else {
-            updatePreviewStatusMessage(previewRefreshAvailabilityMessage ?? "No preview status is available yet.")
+            updatePreviewStatusMessage(previewRefreshAvailabilityMessage ?? "No story review status is available yet.")
             return
         }
 
@@ -400,6 +400,30 @@ extension MomentsCreateViewModel {
         runOperation {
             await finalRenderWorkflow.refreshStatus()
         }
+    }
+
+    func retryFinalVideoDownload() {
+        guard let finalRenderWorkflow else {
+            updateFinalRenderStatusMessage("Final video download is not available in this build.")
+            return
+        }
+
+        finalRenderWorkflow.retryFinalVideoDownload()
+    }
+
+    func finishFinalVideoToGallery() {
+        guard let finalRenderWorkflow else {
+            updateFinalRenderStatusMessage("Gallery is not available in this build.")
+            return
+        }
+
+        finalRenderWorkflow.finishFinalExportToGallery()
+    }
+
+    func createAnotherFinalVideoVersion() {
+        resetActiveProject(force: true)
+        isLocalMomentStarted = true
+        updateFinalRenderStatusMessage("Start another version with a fresh Moment.")
     }
 
     private var activeTemplateContext: (projectId: String, template: MomentTemplate)? {

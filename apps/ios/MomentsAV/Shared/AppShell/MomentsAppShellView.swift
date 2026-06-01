@@ -20,13 +20,7 @@ struct MomentsAppShellView: View {
     @State private var navigationStackResetID = UUID()
 
     var body: some View {
-        Group {
-            if locksUnsavedLocalMoment {
-                lockedCreateContent
-            } else {
-                appScaffold
-            }
-        }
+        appScaffold
         .sheet(isPresented: $creditsPaywallIsPresented) {
             MomentsCreditsPaywallView(
                 balance: accountController.creditBalance,
@@ -34,6 +28,8 @@ struct MomentsAppShellView: View {
                 startSignInFlow: startSignInFlow,
                 claimPromotionCode: accountController.claimPromotionCode,
                 purchaseCatalog: accountController.purchaseCatalog,
+                isPurchaseCatalogLoading: accountController.isPurchaseCatalogLoading,
+                purchaseCatalogErrorMessage: accountController.purchaseCatalogErrorMessage,
                 loadPurchaseProducts: accountController.loadPurchaseProducts,
                 purchaseProduct: accountController.purchase,
                 restorePurchases: accountController.restorePurchases,
@@ -96,14 +92,6 @@ struct MomentsAppShellView: View {
         }
     }
 
-    private var lockedCreateContent: some View {
-        NavigationStack(path: $navigationPath) {
-            screen(for: .create)
-        }
-        .id(navigationStackResetID)
-        .background(MomentsTheme.shellBackground.ignoresSafeArea())
-    }
-
     private var footerAssistant: AVAppShellConfiguredAssistant {
         AVAppShellConfiguredAssistant(
             experience: appExperience,
@@ -142,10 +130,11 @@ struct MomentsAppShellView: View {
                     startSignInFlow: startSignInFlow,
                     openCredits: openCredits,
                     cancelCreation: cancelCreation,
-                    bottomSafeAreaPadding: locksUnsavedLocalMoment ? 16 : 82
+                    bottomSafeAreaPadding: 82
                 )
-            case .projects:
+            case .inProgress:
                 MomentsProjectsScreen(
+                    mode: .inProgress,
                     balance: accountController.creditBalance,
                     continueProject: { request in
                         createViewModel.continueProject(request.project, focus: request.focus)
@@ -157,6 +146,8 @@ struct MomentsAppShellView: View {
                     startSignInFlow: startSignInFlow,
                     openCredits: openCredits
                 )
+            case .gallery:
+                MomentsGalleryScreen()
             case .avi:
                 MomentsAviScreen(
                     selectTab: selectRootTab,
@@ -181,21 +172,13 @@ struct MomentsAppShellView: View {
 
     private var footerSelectedTab: MomentsRootTab {
         guard chromeItem == nil else { return .profile }
-        return selectedTab == .create ? .projects : selectedTab
+        return selectedTab == .create ? .inProgress : selectedTab
     }
 
     private var showsNewMomentFloatingAction: Bool {
         chromeItem == nil
-            && selectedTab == .projects
-            && accountController.isSignedIn
-            && (createViewModel.hasMomentWorkspace
-                || projectsViewModel.projectSummary.latestInProgressProject != nil
-                || createViewModel.canBeginNewProject)
-    }
-
-    private var locksUnsavedLocalMoment: Bool {
-        chromeItem == nil
-            && createViewModel.hasLocalMomentWorkspace
+            && selectedTab == .gallery
+            && !createViewModel.hasLocalMomentWorkspace
     }
 
     private var hasAviActiveContext: Bool {
@@ -204,7 +187,7 @@ struct MomentsAppShellView: View {
 
     private func cancelCreation() {
         createViewModel.clearSessionState()
-        selectRootTab(.projects)
+        selectRootTab(.inProgress)
     }
 
     private func startOrContinueMoment() {

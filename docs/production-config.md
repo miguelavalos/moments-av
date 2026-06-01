@@ -39,7 +39,25 @@ settings with:
 scripts/check-ios-runtime-config.sh --env staging
 ```
 
-Use the private release runbook for production archive checks.
+For TestFlight, App Store archives, or any signed-in production smoke, generate
+the production local config first and validate the Release settings:
+
+```bash
+scripts/generate-ios-local-xcconfig.sh --env prod
+scripts/check-ios-runtime-config.sh --env prod --configuration Release
+```
+
+Do not archive or upload a TestFlight build while this check reports `staging`,
+preview hosts, local hosts, or a test Account AV publishable key. TestFlight
+builds use the production bundle identifier and must use the matching
+production Account AV environment. Use the private release runbook for the
+remaining production archive and App Store Connect checks.
+
+Do not treat auth failures from unsigned simulator builds as production auth
+evidence. Signed-in flows require a signed install using the validated runtime
+config. If an unsigned build was installed first, uninstall both development and
+production bundle identifiers from the simulator before repeating the signed
+smoke.
 
 The checker should redact sensitive values and fail when local, preview, or
 placeholder config leaks into a release build.

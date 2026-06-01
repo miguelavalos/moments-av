@@ -36,6 +36,6 @@ enum PreviewGenerationRun {
         }
 
         workspaceObserver.observeWorkspace(ownerUserId: ownerUserId, projectId: projectId)
-        return "Preview ready. You can still refine the story before final render."
+        return "Story review ready. You can still refine the story before final render."
     }
 }

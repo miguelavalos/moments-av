@@ -23,13 +23,13 @@
 "profile.help.terms.detail" = "Revisa els termes aplicables a Moments AV.";
 "profile.help.terms.title" = "Termes del servei";
 "profile.help.title" = "Ajuda i legal";
-"profile.local.artifacts.detail" = "Les escenes d'història, previews i referències d'exportació final es queden en aquest dispositiu.";
+"profile.local.artifacts.detail" = "Les escenes d'història, Story Reviews i referències d'exportació final es queden en aquest dispositiu.";
 "profile.local.artifacts.title" = "Artefactes generats";
 "profile.local.media.detail" = "Les seleccions de media usades per esborranys actius de Moments AV es queden en aquest dispositiu.";
 "profile.local.media.title" = "Media seleccionada";
-"profile.local.projects.detail" = "Les referències de projectes en esborrany i acabats es queden en aquest dispositiu.";
-"profile.local.projects.title" = "Projectes";
-"profile.local.subtitle" = "Els teus projectes, media seleccionada i artefactes generats es queden en aquest dispositiu.";
+"profile.local.projects.detail" = "Les referències d'In Progress i Gallery es queden en aquest dispositiu.";
+"profile.local.projects.title" = "In Progress i Gallery";
+"profile.local.subtitle" = "Els teus Moments, media seleccionada i artefactes generats es queden en aquest dispositiu.";
 "profile.local.title" = "En aquest dispositiu";
 "profile.preferences.language.detail" = "Tria l'idioma que fa servir la interfície de Moments AV.";
 "profile.preferences.language.title" = "Idioma de l'app";
@@ -40,7 +40,7 @@
 "profile.preferences.theme.system" = "Sistema";
 "profile.preferences.theme.title" = "Aparença";
 "profile.preferences.title" = "Preferències de l'app";
-"profile.pro.avi.detail" = "Passes extra de preview mentre el teu mes Pro sigui actiu.";
+"profile.pro.avi.detail" = "Passes extra de Story Review mentre el teu mes Pro sigui actiu.";
 "profile.pro.avi.title" = "15 Story Reviews";
 "profile.pro.library.detail" = "Millor valor mensual que comprar crèdits un a un.";
 "profile.pro.library.title" = "6 Video Credits mensuals";

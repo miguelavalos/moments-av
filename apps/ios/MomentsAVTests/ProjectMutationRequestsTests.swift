@@ -38,4 +38,35 @@ final class ProjectMutationRequestsTests: XCTestCase {
         XCTAssertTrue(request.deleteGeneratedArtifacts)
         XCTAssertEqual(request.reason, "user request")
     }
+
+    func testGalleryStoreResolvesLocalFileURLAndDeletesRecordWithFile() throws {
+        let baseDirectory = FileManager.default.temporaryDirectory
+            .appendingPathComponent("moments-gallery-\(UUID().uuidString)", isDirectory: true)
+        let store = MomentsGalleryStore(baseDirectory: baseDirectory)
+        let videosDirectory = baseDirectory.appendingPathComponent("Videos", isDirectory: true)
+        try FileManager.default.createDirectory(at: videosDirectory, withIntermediateDirectories: true)
+        let localFileURL = videosDirectory.appendingPathComponent("project-artifact.mp4")
+        try Data("video".utf8).write(to: localFileURL)
+        let record = MomentsGalleryVideoRecord(
+            id: "artifact",
+            projectId: "project",
+            artifactId: "artifact",
+            title: "Birthday",
+            r2Key: "renders/project/artifact.mp4",
+            localRelativePath: "Videos/project-artifact.mp4",
+            createdAt: 1_717_000_000
+        )
+
+        store.addRecord(record)
+
+        XCTAssertEqual(store.localFileURL(for: record), localFileURL)
+        XCTAssertTrue(store.localFileExists(for: record))
+        XCTAssertEqual(store.loadRecords(), [record])
+
+        store.deleteRecord(record, deleteLocalFile: true)
+
+        XCTAssertFalse(store.localFileExists(for: record))
+        XCTAssertTrue(store.loadRecords().isEmpty)
+        try? FileManager.default.removeItem(at: baseDirectory)
+    }
 }

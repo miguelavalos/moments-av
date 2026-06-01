@@ -107,7 +107,7 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
         )
         XCTAssertEqual(
             MomentsCreateAvailabilityCopy.previewInsufficientCredits(missingCredits: 1),
-            "Add 1 more credit before generating a preview."
+            "Add 1 more credit before reviewing the story."
         )
         XCTAssertEqual(
             MomentsCreateAvailabilityCopy.finalRenderInsufficientCredits(missingCredits: 2),
@@ -183,7 +183,7 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
                 template: .birthdayMessage,
                 balance: .empty
             ),
-            "Add 1 more credit before generating a preview."
+            "Add 1 more credit before reviewing the story."
         )
     }
 
@@ -219,7 +219,7 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
             isRefreshing: false
         )
 
-        XCTAssertEqual(preview.message, "Open a project before refreshing preview status.")
+        XCTAssertEqual(preview.message, "Open a project before refreshing story review status.")
         XCTAssertEqual(finalRender.message, "No final render job is available yet.")
     }
 }

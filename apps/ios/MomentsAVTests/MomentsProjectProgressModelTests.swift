@@ -5,13 +5,13 @@ final class MomentsProjectProgressModelTests: XCTestCase {
     func testEmptyWorkspaceMarksDraftCompleteAndRemainingStepsWaiting() {
         let model = MomentsProjectProgressModel(workspace: makeWorkspace())
 
-        XCTAssertEqual(model.phases.map(\.title), ["Project", "Media", "Story", "Preview", "Final"])
+        XCTAssertEqual(model.phases.map(\.title), ["Project", "Media", "Story", "Story Review", "Final"])
         XCTAssertEqual(model.phases.map(\.state), [.complete, .waiting, .waiting, .waiting, .waiting])
         XCTAssertEqual(model.phases.map(\.detail), [
             "Draft Created",
             "No media yet",
             "Not drafted",
-            "Not generated",
+            "Not reviewed",
             "Not rendered"
         ])
     }
@@ -21,7 +21,7 @@ final class MomentsProjectProgressModelTests: XCTestCase {
             workspace: makeWorkspace(renderJobs: [makeRenderJob(kind: "preview", status: "running")])
         )
 
-        let preview = model.phases.first { $0.title == "Preview" }
+        let preview = model.phases.first { $0.title == "Story Review" }
         XCTAssertEqual(preview?.state, .active)
         XCTAssertEqual(preview?.detail, "Running")
     }

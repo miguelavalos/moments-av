@@ -42,6 +42,8 @@ extension MomentsCreateViewModel {
             creditCost: form.template.creditCost,
             renderPlan: renderPlan,
             finalExport: effectiveFinalExport,
+            pendingGalleryVideo: pendingGalleryVideo,
+            canRetryFinalVideoDownload: canRetryFinalVideoDownload,
             latestFinalJob: effectiveLatestFinalJob,
             isGenerating: isGeneratingFinalRender,
             isRefreshingStatus: isRefreshingFinalRenderStatus,

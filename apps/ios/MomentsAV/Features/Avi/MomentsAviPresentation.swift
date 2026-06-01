@@ -43,13 +43,13 @@ struct MomentsAviPresentation: Equatable {
         projectSummary: MomentsProjectListSummary
     ) -> String {
         guard isSignedIn else {
-            return "Avi guidance unlocks after sign in because projects and credits are tied to the account."
+            return "Avi guidance unlocks after sign in because Moments and credits are tied to the account."
         }
         if projectSummary.inProgressCount > 0 {
-            return "There \(projectSummary.inProgressCount == 1 ? "is" : "are") \(projectSummary.inProgressCount) \(inProgressProjectLabel(projectSummary)) in progress. Check Projects for the next render or story step."
+            return "There \(projectSummary.inProgressCount == 1 ? "is" : "are") \(projectSummary.inProgressCount) \(inProgressProjectLabel(projectSummary)) in In Progress. Check the next render, download, or story step."
         }
         if projectSummary.finishedCount > 0 {
-            return "Finished exports stay in Projects. Start a new draft in Create when the next occasion is ready."
+            return "Finished remote exports need a local download before they belong in Gallery. Start a new draft when the next occasion is ready."
         }
         return "Start in Create with one occasion and a tight media set. Avi can help turn that into story scenes."
     }
@@ -66,12 +66,12 @@ struct MomentsAviPresentation: Equatable {
             return "Credits appear here after sign in."
         }
         guard creditBalance.spendable > 0 else {
-            return "No spendable credits are available. Final exports require credits after preview review."
+            return "No credits are available. Final exports require credits after story review."
         }
-        return "\(MomentsCreditCopy.countTitle(creditBalance.spendable)) \(creditBalance.spendable == 1 ? "is" : "are") spendable for final exports. Monthly credits are used before promotional and purchased credits."
+        return "\(MomentsCreditCopy.countTitle(creditBalance.spendable)) \(creditBalance.spendable == 1 ? "is" : "are") available for final exports."
     }
 
     private static func inProgressProjectLabel(_ projectSummary: MomentsProjectListSummary) -> String {
-        projectSummary.inProgressCount == 1 ? "project" : "projects"
+        projectSummary.inProgressCount == 1 ? "Moment" : "Moments"
     }
 }

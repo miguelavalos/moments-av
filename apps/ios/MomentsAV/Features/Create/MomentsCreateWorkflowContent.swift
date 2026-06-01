@@ -43,7 +43,10 @@ struct MomentsCreateWorkflowContent: View {
                     generatePreview: viewModel.preparePreview,
                     refreshPreviewStatus: viewModel.refreshPreviewStatus,
                     generateFinalRender: viewModel.createFinalVideoFromCurrentSelection,
-                    refreshFinalRenderStatus: viewModel.refreshFinalRenderStatus
+                    refreshFinalRenderStatus: viewModel.refreshFinalRenderStatus,
+                    retryFinalVideoDownload: viewModel.retryFinalVideoDownload,
+                    finishFinalVideoToGallery: viewModel.finishFinalVideoToGallery,
+                    createAnotherFinalVideoVersion: viewModel.createAnotherFinalVideoVersion
                 )
             } else {
                 draftSetupCard
@@ -105,6 +108,9 @@ private struct MomentsCreateMediaFirstWorkspace: View {
     let refreshPreviewStatus: () -> Void
     let generateFinalRender: (Bool) -> Void
     let refreshFinalRenderStatus: () -> Void
+    let retryFinalVideoDownload: () -> Void
+    let finishFinalVideoToGallery: () -> Void
+    let createAnotherFinalVideoVersion: () -> Void
 
     @State private var showsAviOptions = false
     @State private var showsStoryReview = false
@@ -152,7 +158,10 @@ private struct MomentsCreateMediaFirstWorkspace: View {
                     generatePreview: generatePreview,
                     refreshPreviewStatus: refreshPreviewStatus,
                     generateFinalRender: reviewStoryFirst,
-                    refreshFinalRenderStatus: refreshFinalRenderStatus
+                    refreshFinalRenderStatus: refreshFinalRenderStatus,
+                    retryFinalVideoDownload: retryFinalVideoDownload,
+                    finishFinalVideoToGallery: finishFinalVideoToGallery,
+                    createAnotherFinalVideoVersion: createAnotherFinalVideoVersion
                 )
             }
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -196,11 +205,11 @@ private struct MomentsCreateMediaFirstWorkspace: View {
             )
         }
         .navigationDestination(isPresented: $showsStoryReview) {
-            MomentsCreateStoryReviewPage(
-                presentation: presentation,
-                createVideo: generateFinalRender,
-                buyReviewBundle: buyReviewBundle,
-                openCredits: openCredits,
+                MomentsCreateStoryReviewPage(
+                    presentation: presentation,
+                    createVideo: generateFinalRender,
+                    buyReviewBundle: buyReviewBundle,
+                    openCredits: openCredits,
                 discardDraft: discardCurrentDraft,
                 dismiss: { showsStoryReview = false }
             )
@@ -405,7 +414,7 @@ struct MomentsCreateBlockingPreparationView: View {
             case .createVideo:
                 return "Creating your video"
             case .createPreview:
-                return "Creating your preview"
+                return "Reviewing your story"
             }
         }
 
@@ -420,7 +429,7 @@ struct MomentsCreateBlockingPreparationView: View {
             case .createVideo:
                 return "video.fill"
             case .createPreview:
-                return "play.rectangle.fill"
+                return "text.bubble.fill"
             }
         }
 
@@ -452,7 +461,7 @@ struct MomentsCreateBlockingPreparationView: View {
             case .createVideo:
                 return "Avi is starting the final edit. This can take a few minutes."
             case .createPreview:
-                return "Avi is creating a review preview from your story plan."
+                return "Avi is checking the story plan before final video creation."
             }
         }
     }
@@ -1313,10 +1322,10 @@ private struct MomentsCreateCompactAviGuide: View {
             return realtimeStatus.title
         }
         if presentation.previewSummary.latestPreview != nil {
-            return "Preview ready"
+            return "Story review ready"
         }
         if presentation.previewSummary.isGenerating {
-            return "Creating preview"
+            return "Reviewing story"
         }
         if presentation.storySummary.isDrafting {
             return "Preparing story"
@@ -1338,10 +1347,10 @@ private struct MomentsCreateCompactAviGuide: View {
             return "Your video is ready to export or share."
         }
         if presentation.previewSummary.latestPreview != nil {
-            return "Watch the preview. If it feels right, Avi can create the final video."
+            return "Review the story. If it feels right, Avi can create the final video."
         }
         if presentation.previewSummary.isGenerating {
-            return presentation.previewSummary.statusMessage ?? "Avi is creating the preview from your selected moments."
+            return presentation.previewSummary.statusMessage ?? "Avi is reviewing the story from your selected moments."
         }
         if presentation.storySummary.isDrafting {
             return presentation.storySummary.statusMessage ?? "Avi is organizing the media into a first story plan."
@@ -1350,7 +1359,7 @@ private struct MomentsCreateCompactAviGuide: View {
             return realtimeStatus.detail
         }
         if presentation.previewSummary.latestPreviewJob != nil {
-            return "Avi is creating the preview from your selected moments."
+            return "Avi is reviewing the story from your selected moments."
         }
         if presentation.canGeneratePreview {
             return "Avi prepared the story, style, and pacing. Video creation comes next."
@@ -1371,6 +1380,9 @@ private struct MomentsCreatePrimaryActionBar: View {
     let refreshPreviewStatus: () -> Void
     let generateFinalRender: () -> Void
     let refreshFinalRenderStatus: () -> Void
+    let retryFinalVideoDownload: () -> Void
+    let finishFinalVideoToGallery: () -> Void
+    let createAnotherFinalVideoVersion: () -> Void
 
     var body: some View {
         AVAppShellCard {
@@ -1421,6 +1433,30 @@ private struct MomentsCreatePrimaryActionBar: View {
                 .buttonStyle(MomentsCreateSoftActionButtonStyle())
                 .opacity(canRunPrimaryAction ? 1 : 0.55)
 
+                if presentation.finalRenderSummary.pendingGalleryVideo != nil {
+                    VStack(spacing: 10) {
+                        Button(action: finishFinalVideoToGallery) {
+                            Label("Finish and move to Gallery", systemImage: "checkmark.circle.fill")
+                                .frame(maxWidth: .infinity)
+                        }
+                        .buttonStyle(MomentsCreateSoftActionButtonStyle())
+
+                        Button(action: createAnotherFinalVideoVersion) {
+                            Label("Create another version", systemImage: "plus.rectangle.on.rectangle")
+                                .frame(maxWidth: .infinity)
+                        }
+                        .buttonStyle(MomentsCreateNeutralInlineButtonStyle())
+                    }
+                    .font(.system(size: 14, weight: .black))
+                } else if presentation.finalRenderSummary.canRetryFinalVideoDownload {
+                    Button(action: retryFinalVideoDownload) {
+                        Label("Retry final video download", systemImage: "arrow.down.circle.fill")
+                            .frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(MomentsCreateSoftActionButtonStyle())
+                    .font(.system(size: 14, weight: .black))
+                }
+
                 HStack(spacing: 14) {
                     Button(action: discardDraft) {
                         Label(discardTitle, systemImage: "trash.fill")
@@ -1444,6 +1480,9 @@ private struct MomentsCreatePrimaryActionBar: View {
         if isBusy {
             return false
         }
+        if presentation.finalRenderSummary.pendingGalleryVideo != nil {
+            return false
+        }
         if presentation.finalRenderSummary.latestFinalJob != nil {
             return canRefreshFinalRender
         }
@@ -1458,6 +1497,9 @@ private struct MomentsCreatePrimaryActionBar: View {
     }
 
     private var buttonTitle: String {
+        if presentation.finalRenderSummary.pendingGalleryVideo != nil {
+            return "Choose final video destination"
+        }
         if presentation.finalRenderSummary.finalExport != nil {
             return "Final video ready"
         }
@@ -1471,7 +1513,7 @@ private struct MomentsCreatePrimaryActionBar: View {
             return presentation.finalRenderSummary.isGenerating ? "Creating final..." : "Create final"
         }
         if presentation.previewSummary.latestPreviewJob != nil {
-            return presentation.previewSummary.isRefreshingStatus ? "Refreshing..." : "Refresh preview"
+            return presentation.previewSummary.isRefreshingStatus ? "Refreshing..." : "Refresh story review"
         }
         if needsSignInForStory {
             return "Sign in"
@@ -1480,6 +1522,9 @@ private struct MomentsCreatePrimaryActionBar: View {
     }
 
     private var buttonIconName: String {
+        if presentation.finalRenderSummary.pendingGalleryVideo != nil {
+            return "rectangle.stack.badge.play.fill"
+        }
         if presentation.finalRenderSummary.finalExport != nil {
             return "checkmark.circle.fill"
         }
@@ -1518,11 +1563,15 @@ private struct MomentsCreatePrimaryActionBar: View {
     }
 
     private var statusMessage: String? {
+        if presentation.finalRenderSummary.pendingGalleryVideo != nil {
+            return presentation.finalRenderSummary.statusMessage
+                ?? "Final video is saved on this device. Finish it into Gallery or create another version."
+        }
         if presentation.finalRenderSummary.isGenerating {
             return presentation.finalRenderSummary.statusMessage ?? "Creating video..."
         }
         if presentation.previewSummary.isGenerating {
-            return presentation.previewSummary.statusMessage ?? "Creating preview..."
+            return presentation.previewSummary.statusMessage ?? "Reviewing story..."
         }
         if presentation.storySummary.isDrafting {
             return presentation.storySummary.statusMessage ?? "Preparing story..."
@@ -1536,7 +1585,7 @@ private struct MomentsCreatePrimaryActionBar: View {
                 ?? "Avi is creating the video. You can check progress here."
         }
         if presentation.previewSummary.latestPreview != nil {
-            return "Preview ready. Review it before final video."
+            return "Story review ready. Check it before final video."
         }
         if presentation.canGenerateFinalRender {
             return "Review the story and video plan before creating the final video."
@@ -1583,6 +1632,9 @@ private struct MomentsCreatePrimaryActionBar: View {
     }
 
     private var primaryHeaderIconName: String {
+        if presentation.finalRenderSummary.pendingGalleryVideo != nil {
+            return "rectangle.stack.badge.play.fill"
+        }
         if presentation.finalRenderSummary.finalExport != nil {
             return "checkmark.circle.fill"
         }
@@ -1599,6 +1651,9 @@ private struct MomentsCreatePrimaryActionBar: View {
     }
 
     private var primaryHeaderColor: Color {
+        if presentation.finalRenderSummary.pendingGalleryVideo != nil {
+            return AVBrandColor.accent
+        }
         if presentation.finalRenderSummary.finalExport != nil {
             return AVBrandColor.accent
         }
@@ -1627,6 +1682,9 @@ private struct MomentsCreatePrimaryActionBar: View {
     }
 
     private func primaryAction() {
+        if presentation.finalRenderSummary.pendingGalleryVideo != nil {
+            return
+        }
         if presentation.finalRenderSummary.finalExport != nil {
             return
         }
@@ -1775,7 +1833,7 @@ private struct MomentsCreateLegacyCompactAviGuide: View {
             return "Ready"
         }
         if presentation.previewSummary.latestPreview != nil {
-            return "Preview tip"
+            return "Story review"
         }
         if presentation.previewSummary.latestPreviewJob != nil || presentation.finalRenderSummary.latestFinalJob != nil {
             return "Working"
@@ -1794,13 +1852,13 @@ private struct MomentsCreateLegacyCompactAviGuide: View {
             return "Your video is ready to export or share."
         }
         if presentation.previewSummary.latestPreview != nil {
-            return "Check the preview. If it feels right, create the final video."
+            return "Check the story review. If it feels right, create the final video."
         }
         if presentation.finalRenderSummary.latestFinalJob != nil {
             return "Avi is finishing the final video. You can refresh when needed."
         }
         if presentation.previewSummary.latestPreviewJob != nil {
-            return "Avi is making the preview from your selected moments."
+            return "Avi is reviewing the story from your selected moments."
         }
         if presentation.canGeneratePreview {
             return "The story plan is ready. Next step: create the video."
@@ -2378,6 +2436,9 @@ private struct MomentsCreateWorkflowCards: View {
     let refreshPreviewStatus: () -> Void
     let generateFinalRender: () -> Void
     let refreshFinalRenderStatus: () -> Void
+    let retryFinalVideoDownload: () -> Void = {}
+    let finishFinalVideoToGallery: () -> Void = {}
+    let createAnotherFinalVideoVersion: () -> Void = {}
 
     @ViewBuilder
     var body: some View {
@@ -2445,7 +2506,10 @@ private struct MomentsCreateWorkflowCards: View {
                         refreshAvailabilityMessage: presentation.finalRenderRefreshAvailabilityMessage
                     ),
                     generateFinalRender: generateFinalRender,
-                    refreshFinalRenderStatus: refreshFinalRenderStatus
+                    refreshFinalRenderStatus: refreshFinalRenderStatus,
+                    retryFinalVideoDownload: retryFinalVideoDownload,
+                    finishFinalVideoToGallery: finishFinalVideoToGallery,
+                    createAnotherFinalVideoVersion: createAnotherFinalVideoVersion
                 )
                 .id(MomentsCreateSection.finalRender)
             }

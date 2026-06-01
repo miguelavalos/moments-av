@@ -19,13 +19,19 @@ enum MomentsProjectStatusRules {
     }
 
     static func displayTitle(for status: String) -> String {
-        status
+        if status == "preview_ready" {
+            return "Story Review Ready"
+        }
+        return status
             .replacingOccurrences(of: "_", with: " ")
             .capitalized
     }
 
     static func displayKind(_ kind: String) -> String {
-        kind
+        if kind == "preview" {
+            return "Story Review"
+        }
+        return kind
             .replacingOccurrences(of: "_", with: " ")
             .capitalized
     }
@@ -63,10 +69,10 @@ enum MomentsProjectStatusRules {
 
         if !workspace.artifacts.containsAvailable(kind: "preview") {
             return MomentsProjectNextAction(
-                title: "Generate preview",
-                message: "Create a preview to check pacing before spending credits on the final export.",
-                systemImage: "play.rectangle",
-                primaryButtonTitle: "Generate Preview in Create",
+                title: "Review story",
+                message: "Review the story pacing before spending credits on the final export.",
+                systemImage: "text.bubble",
+                primaryButtonTitle: "Review Story in Create",
                 continuationFocus: .preview
             )
         }
@@ -74,7 +80,7 @@ enum MomentsProjectStatusRules {
         if !workspace.artifacts.containsAvailable(kind: "final_export") {
             return MomentsProjectNextAction(
                 title: "Render final export",
-                message: "Preview is ready. Continue in Create to generate the final export.",
+                message: "Story review is ready. Continue in Create to generate the final export.",
                 systemImage: "square.and.arrow.up",
                 primaryButtonTitle: "Render Final in Create",
                 continuationFocus: .finalRender

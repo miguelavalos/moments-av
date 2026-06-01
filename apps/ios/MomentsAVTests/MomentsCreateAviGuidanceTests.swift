@@ -17,7 +17,7 @@ final class MomentsCreateAviGuidanceTests: XCTestCase {
         XCTAssertEqual(guidance.actionTitle, "Sign in")
     }
 
-    func testSignedInWithoutCreditsShowsOnlyWhatBlocksProgress() {
+    func testSignedInWithoutCreditsAllowsLocalSetup() {
         let guidance = MomentsCreateAviGuidanceResolver.make(
             isSignedIn: true,
             balance: .empty,
@@ -27,9 +27,9 @@ final class MomentsCreateAviGuidanceTests: XCTestCase {
             draftErrorMessage: nil
         )
 
-        XCTAssertEqual(guidance.emotion, .warning)
-        XCTAssertEqual(guidance.message, "You need 1 credit to start.")
-        XCTAssertEqual(guidance.actionTitle, "Get credits")
+        XCTAssertEqual(guidance.emotion, .happy)
+        XCTAssertEqual(guidance.message, "Add photos or clips now. Credits are needed before creating the final video.")
+        XCTAssertEqual(guidance.actionTitle, "Start project")
     }
 
     func testReadyStateStartsWithStyleGuidance() {

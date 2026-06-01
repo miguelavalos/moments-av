@@ -7,6 +7,8 @@ final class AccountController: ObservableObject {
     @Published private(set) var user: AccountAVUser?
     @Published private(set) var creditBalance = MomentsCreditBalance.empty
     @Published private(set) var purchaseCatalog = MomentsPurchaseCatalog.empty
+    @Published private(set) var isPurchaseCatalogLoading = false
+    @Published private(set) var purchaseCatalogErrorMessage: String?
     @Published private(set) var isPurchaseInProgress = false
     @Published private(set) var isBusy = false
     @Published var errorMessage: String?
@@ -45,6 +47,7 @@ final class AccountController: ObservableObject {
         if user == nil {
             creditBalance = .empty
             purchaseCatalog = .empty
+            purchaseCatalogErrorMessage = nil
         } else {
             Task { await refreshCreditBalance() }
         }
@@ -63,6 +66,7 @@ final class AccountController: ObservableObject {
         if user == nil {
             creditBalance = .empty
             purchaseCatalog = .empty
+            purchaseCatalogErrorMessage = nil
         } else {
             await refreshCreditBalance()
         }
@@ -87,6 +91,7 @@ final class AccountController: ObservableObject {
             self.user = nil
             self.creditBalance = .empty
             self.purchaseCatalog = .empty
+            self.purchaseCatalogErrorMessage = nil
         }
     }
 
@@ -114,12 +119,19 @@ final class AccountController: ObservableObject {
     func loadPurchaseProducts() async {
         guard let user else {
             purchaseCatalog = .empty
+            purchaseCatalogErrorMessage = nil
             return
         }
+
+        isPurchaseCatalogLoading = true
+        purchaseCatalogErrorMessage = nil
+        defer { isPurchaseCatalogLoading = false }
 
         do {
             purchaseCatalog = try await purchaseService.loadCatalog(userId: user.id)
         } catch {
+            purchaseCatalog = .empty
+            purchaseCatalogErrorMessage = error.localizedDescription
             errorMessage = error.localizedDescription
         }
     }

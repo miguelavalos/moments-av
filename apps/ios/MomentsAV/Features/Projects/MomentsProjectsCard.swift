@@ -1,10 +1,10 @@
 import AVAppShellFoundation
 import AVBrandFoundation
+import AVKit
 import SwiftUI
 
 struct MomentsProjectsCard: View {
-    @State private var selectedMode: MomentsHubMode = .draft
-
+    let mode: MomentsHubMode
     let presentation: MomentsProjectsPresentation
     let balance: MomentsCreditBalance
     let projectSummary: MomentsProjectListSummary
@@ -13,11 +13,13 @@ struct MomentsProjectsCard: View {
     let activeWorkspace: MomentProjectWorkspace?
     let isDeletingProject: Bool
     let statusMessage: String?
+    let galleryVideos: [MomentsGalleryVideoPresentation]
     let selectProject: (MomentDraftProject) -> Void
     let continueProject: (MomentsProjectContinuationRequest) -> Void
     let startProject: () -> Void
     let startSignInFlow: () -> Void
     let openCredits: () -> Void
+    let requestDeleteGalleryVideo: (MomentsGalleryVideoPresentation) -> Void
     let requestDeleteProject: (MomentDraftProject) -> Void
 
     var body: some View {
@@ -32,24 +34,23 @@ struct MomentsProjectsCard: View {
                 )
             case let .empty(unavailable):
                 MomentsHubCreditStatus(balance: balance, openCredits: openCredits)
-                MomentsHubModePicker(selectedMode: $selectedMode)
                 MomentsHubEmptyContent(
-                    selectedMode: selectedMode,
+                    mode: mode,
                     unavailable: unavailable,
                     startProject: startProject
                 )
             case .available:
                 MomentsHubCreditStatus(balance: balance, openCredits: openCredits)
-                MomentsHubModePicker(selectedMode: $selectedMode)
-                switch selectedMode {
-                case .projects:
-                    MomentsHubFinishedBlock(
-                        projects: projectSummary.groups.finished,
-                        selectProject: selectProject
+                switch mode {
+                case .gallery:
+                    MomentsHubGalleryBlock(
+                        videos: galleryVideos,
+                        requestDeleteGalleryVideo: requestDeleteGalleryVideo
                     )
-                case .draft:
-                    MomentsHubDraftBlock(
-                        project: projectSummary.latestInProgressProject,
+                case .inProgress:
+                    MomentsHubContinueBlock(
+                        projects: continueProjects,
+                        galleryVideos: galleryVideos,
                         continueProject: continueProject,
                         requestDeleteProject: requestDeleteProject
                     )
@@ -57,6 +58,14 @@ struct MomentsProjectsCard: View {
                 MomentsProjectsStatusMessage(message: statusMessage)
             }
         }
+    }
+
+    private var continueProjects: [MomentDraftProject] {
+        let galleryProjectIds = Set(galleryVideos.map(\.record.projectId))
+        return (projectSummary.groups.inProgress + projectSummary.groups.finished.filter { project in
+            !galleryProjectIds.contains(project.id)
+        })
+        .sorted { $0.updatedAt > $1.updatedAt }
     }
 }
 
@@ -77,7 +86,7 @@ private struct MomentsHubCreditStatus: View {
                         .font(.system(size: 15, weight: .black))
                         .foregroundStyle(AVBrandColor.textPrimary)
 
-                    Text("Monthly \(balance.proMonthly) · Promo \(balance.promotional) · Purchased \(balance.purchased)")
+                    Text(balance.spendable > 0 ? "Credits are ready for final video creation." : "Credits are needed before final video creation.")
                         .font(AVBrandTypography.captionStrong)
                         .foregroundStyle(AVBrandColor.textSecondary)
                         .lineLimit(1)
@@ -113,26 +122,26 @@ private struct MomentsHubSignedOutState: View {
 }
 
 private struct MomentsHubEmptyContent: View {
-    let selectedMode: MomentsHubMode
+    let mode: MomentsHubMode
     let unavailable: MomentsProjectsUnavailablePresentation
     let startProject: () -> Void
 
     var body: some View {
-        switch selectedMode {
-        case .projects:
+        switch mode {
+        case .gallery:
             MomentsHubEmptyState(
-                systemImage: "play.rectangle.fill",
-                title: "No finished videos",
-                message: "Finished videos will appear here. Start with a new moment when you are ready.",
+                systemImage: "play.square.stack.fill",
+                title: "Gallery is empty",
+                message: "Finished videos appear here only after they download to this device.",
                 actionTitle: nil,
                 actionSystemImage: nil,
                 action: nil
             )
-        case .draft:
+        case .inProgress:
             MomentsHubEmptyState(
                 systemImage: "photo.badge.plus",
-                title: "No draft in progress",
-                message: "Start a new moment. It stays local until you prepare the story.",
+                title: "Nothing in progress",
+                message: "Drafts and videos that need action will appear here.",
                 actionTitle: "New Moment",
                 actionSystemImage: "plus",
                 action: startProject
@@ -141,24 +150,11 @@ private struct MomentsHubEmptyContent: View {
     }
 }
 
-private enum MomentsHubMode: String, CaseIterable, Identifiable {
-    case projects = "Projects"
-    case draft = "Draft"
+enum MomentsHubMode: String, CaseIterable, Identifiable {
+    case inProgress = "In Progress"
+    case gallery = "Gallery"
 
     var id: String { rawValue }
-}
-
-private struct MomentsHubModePicker: View {
-    @Binding var selectedMode: MomentsHubMode
-
-    var body: some View {
-        Picker("Moments view", selection: $selectedMode) {
-            ForEach(MomentsHubMode.allCases) { mode in
-                Text(mode.rawValue).tag(mode)
-            }
-        }
-        .pickerStyle(.segmented)
-    }
 }
 
 private struct MomentsHubAviBlock: View {
@@ -198,78 +194,116 @@ private struct MomentsHubAviBlock: View {
 
     private var title: String {
         if projectSummary.latestInProgressProject != nil {
-            return "Your draft is waiting"
+            return "Moment in progress"
+        }
+        if projectSummary.finishedCount > 0 {
+            return "Gallery starts on this device"
         }
         return "Ready to make a memory"
     }
 
     private var message: String {
         if let project = projectSummary.latestInProgressProject {
-            return "\(project.title) has a starting point ready."
+            return "\(project.title) needs the next story, render, or download step."
+        }
+        if projectSummary.finishedCount > 0 {
+            return "Remote finished Moments stay out of Gallery until their final video is downloaded locally."
         }
         return "Start a new moment and choose the media you want to use."
     }
 }
 
-private struct MomentsHubDraftBlock: View {
-    let project: MomentDraftProject?
+private struct MomentsHubContinueBlock: View {
+    let projects: [MomentDraftProject]
+    let galleryVideos: [MomentsGalleryVideoPresentation]
     let continueProject: (MomentsProjectContinuationRequest) -> Void
     let requestDeleteProject: (MomentDraftProject) -> Void
 
     var body: some View {
-        if let project {
-            AVAppShellCard {
-                VStack(alignment: .leading, spacing: 12) {
-                    AVAppShellSectionHeader(title: "Current draft")
-
-                    Button {
-                        continueProject(MomentsProjectContinuationRequest(project: project))
-                    } label: {
-                        HStack(alignment: .center, spacing: 12) {
-                            Image(systemName: "sparkles.rectangle.stack.fill")
-                                .font(.system(size: 22, weight: .bold))
-                                .foregroundStyle(AVBrandColor.accent)
-                                .frame(width: 32)
-
-                            VStack(alignment: .leading, spacing: 5) {
-                                Text(project.title)
-                                    .font(.system(size: 17, weight: .black))
-                                    .foregroundStyle(AVBrandColor.textPrimary)
-                                    .lineLimit(2)
-
-                                Text("\(MomentsProjectStatusRules.displayTitle(for: project.status)) · \(Self.creditTitle(project.creditCost))")
-                                    .font(AVBrandTypography.captionStrong)
-                                    .foregroundStyle(AVBrandColor.textSecondary)
-                            }
-
-                            Spacer(minLength: 0)
-
-                            Image(systemName: "chevron.right")
-                                .font(.system(size: 13, weight: .black))
-                                .foregroundStyle(AVBrandColor.textSecondary)
-                        }
-                    }
-                    .buttonStyle(.plain)
-
-                    Button(role: .destructive) {
-                        requestDeleteProject(project)
-                    } label: {
-                        Label("Discard", systemImage: "trash")
-                            .frame(maxWidth: .infinity)
-                    }
-                    .buttonStyle(.bordered)
-                }
-            }
-        } else {
+        if projects.isEmpty {
             MomentsHubEmptyState(
                 systemImage: "photo.badge.plus",
-                title: "No draft in progress",
-                message: "Start a new moment. It stays local until you prepare the story.",
+                title: "Nothing in progress",
+                message: "Drafts, story reviews, renders, and videos waiting for download will appear here.",
                 actionTitle: nil,
                 actionSystemImage: nil,
                 action: nil
             )
+        } else {
+            AVAppShellCard {
+                VStack(alignment: .leading, spacing: 12) {
+                    AVAppShellSectionHeader(title: "In Progress")
+
+                    ForEach(projects) { project in
+                        VStack(spacing: 10) {
+                            Button {
+                                continueProject(MomentsProjectContinuationRequest(project: project))
+                            } label: {
+                                HStack(alignment: .center, spacing: 12) {
+                                    Image(systemName: iconName(for: project))
+                                        .font(.system(size: 22, weight: .bold))
+                                        .foregroundStyle(AVBrandColor.accent)
+                                        .frame(width: 32)
+
+                                    VStack(alignment: .leading, spacing: 5) {
+                                        Text(project.title)
+                                            .font(.system(size: 17, weight: .black))
+                                            .foregroundStyle(AVBrandColor.textPrimary)
+                                            .lineLimit(2)
+
+                                        Text("\(Self.statusTitle(for: project, galleryVideos: galleryVideos)) · \(Self.creditTitle(project.creditCost))")
+                                            .font(AVBrandTypography.captionStrong)
+                                            .foregroundStyle(AVBrandColor.textSecondary)
+                                    }
+
+                                    Spacer(minLength: 0)
+
+                                    Image(systemName: "chevron.right")
+                                        .font(.system(size: 13, weight: .black))
+                                        .foregroundStyle(AVBrandColor.textSecondary)
+                                }
+                            }
+                            .buttonStyle(.plain)
+
+                            Button(role: .destructive) {
+                                requestDeleteProject(project)
+                            } label: {
+                                Label("Discard", systemImage: "trash")
+                                    .frame(maxWidth: .infinity)
+                            }
+                            .buttonStyle(.bordered)
+                        }
+                        if project.id != projects.last?.id {
+                            Divider()
+                        }
+                    }
+                }
+            }
         }
+    }
+
+    private func iconName(for project: MomentDraftProject) -> String {
+        switch project.status {
+        case "final_render_pending", "final_render_running":
+            "gearshape.2.fill"
+        case "export_ready", "completed":
+            "arrow.down.circle.fill"
+        case "preview_ready":
+            "text.bubble.fill"
+        default:
+            "sparkles.rectangle.stack.fill"
+        }
+    }
+
+    private static func statusTitle(
+        for project: MomentDraftProject,
+        galleryVideos: [MomentsGalleryVideoPresentation]
+    ) -> String {
+        if MomentsProjectStatusRules.isFinished(project),
+           !galleryVideos.contains(where: { $0.record.projectId == project.id }) {
+            return "Video Ready - Download Needed"
+        }
+        return MomentsProjectStatusRules.displayTitle(for: project.status)
     }
 
     private static func creditTitle(_ creditCost: Double) -> String {
@@ -342,9 +376,9 @@ private struct MomentsHubEmptyState: View {
 private struct MomentsHubProjectsEmptyState: View {
     var body: some View {
         MomentsHubEmptyState(
-            systemImage: "play.rectangle.fill",
-            title: "No finished videos",
-            message: "Finished videos will appear here. Start with a new moment when you are ready.",
+            systemImage: "play.square.stack.fill",
+            title: "Gallery is empty",
+            message: "Finished videos appear here only after they download to this device.",
             actionTitle: nil,
             actionSystemImage: nil,
             action: nil
@@ -358,8 +392,8 @@ private struct MomentsHubDraftEmptyState: View {
     var body: some View {
         MomentsHubEmptyState(
             systemImage: "photo.badge.plus",
-            title: "No draft in progress",
-            message: "Start a new moment. It stays local until you prepare the story.",
+            title: "Nothing in progress",
+            message: "Drafts and videos that need action will appear here.",
             actionTitle: startProject == nil ? nil : "New Moment",
             actionSystemImage: "plus",
             action: startProject
@@ -367,51 +401,107 @@ private struct MomentsHubDraftEmptyState: View {
     }
 }
 
-private struct MomentsHubFinishedBlock: View {
-    let projects: [MomentDraftProject]
-    let selectProject: (MomentDraftProject) -> Void
+private struct MomentsHubGalleryBlock: View {
+    let videos: [MomentsGalleryVideoPresentation]
+    let requestDeleteGalleryVideo: (MomentsGalleryVideoPresentation) -> Void
+    @State private var selectedVideo: MomentsGalleryVideoPlayerItem?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            AVAppShellSectionHeader(title: "Finished memories")
-
-            if projects.isEmpty {
+            AVAppShellSectionHeader(title: "Gallery")
+            if videos.isEmpty {
                 MomentsHubProjectsEmptyState()
             } else {
-                LazyVGrid(
-                    columns: [GridItem(.adaptive(minimum: 140), spacing: 12)],
-                    alignment: .leading,
-                    spacing: 12
-                ) {
-                    ForEach(projects) { project in
-                        Button {
-                            selectProject(project)
-                        } label: {
-                            VStack(alignment: .leading, spacing: 8) {
-                                Image(systemName: "play.rectangle.fill")
-                                    .font(.system(size: 24, weight: .bold))
-                                    .foregroundStyle(AVBrandColor.accent)
+                AVAppShellCard {
+                    VStack(alignment: .leading, spacing: 12) {
+                        ForEach(videos) { video in
+                            VStack(alignment: .leading, spacing: 10) {
+                                HStack(alignment: .center, spacing: 12) {
+                                    Image(systemName: video.isLocalFileAvailable ? "play.square.fill" : "exclamationmark.triangle.fill")
+                                        .font(.system(size: 22, weight: .bold))
+                                        .foregroundStyle(video.isLocalFileAvailable ? AVBrandColor.accent : AVBrandColor.textSecondary)
+                                        .frame(width: 32)
 
-                                Text(project.title)
-                                    .font(.system(size: 14, weight: .black))
-                                    .foregroundStyle(AVBrandColor.textPrimary)
-                                    .lineLimit(2)
+                                    VStack(alignment: .leading, spacing: 5) {
+                                        Text(video.title)
+                                            .font(.system(size: 17, weight: .black))
+                                            .foregroundStyle(AVBrandColor.textPrimary)
+                                            .lineLimit(2)
 
-                                Text("Final video")
-                                    .font(.system(size: 12, weight: .semibold))
-                                    .foregroundStyle(AVBrandColor.textSecondary)
+                                        Text(video.availabilityTitle)
+                                            .font(AVBrandTypography.captionStrong)
+                                            .foregroundStyle(AVBrandColor.textSecondary)
+                                    }
+
+                                    Spacer(minLength: 0)
+                                }
+
+                                HStack(spacing: 10) {
+                                    Button {
+                                        selectedVideo = MomentsGalleryVideoPlayerItem(video: video)
+                                    } label: {
+                                        Label("Open", systemImage: "play.fill")
+                                    }
+                                    .disabled(!video.isLocalFileAvailable)
+
+                                    if video.isLocalFileAvailable {
+                                        ShareLink(item: video.localFileURL) {
+                                            Label("Share", systemImage: "square.and.arrow.up")
+                                        }
+                                    }
+
+                                    Button(role: .destructive) {
+                                        requestDeleteGalleryVideo(video)
+                                    } label: {
+                                        Label("Delete", systemImage: "trash")
+                                    }
+                                }
+                                .font(.system(size: 13, weight: .bold))
+                                .buttonStyle(.bordered)
                             }
-                            .frame(maxWidth: .infinity, minHeight: 112, alignment: .topLeading)
-                            .padding(14)
-                            .background(
-                                RoundedRectangle(cornerRadius: 8, style: .continuous)
-                                    .fill(AVBrandColor.elevatedSurface)
-                            )
+                            if video.id != videos.last?.id {
+                                Divider()
+                            }
                         }
-                        .buttonStyle(.plain)
                     }
                 }
             }
+        }
+        .sheet(item: $selectedVideo) { item in
+            MomentsGalleryVideoPlayerSheet(item: item)
+        }
+    }
+}
+
+private struct MomentsGalleryVideoPlayerItem: Identifiable {
+    let id: String
+    let title: String
+    let url: URL
+
+    init(video: MomentsGalleryVideoPresentation) {
+        id = video.id
+        title = video.title
+        url = video.localFileURL
+    }
+}
+
+private struct MomentsGalleryVideoPlayerSheet: View {
+    let item: MomentsGalleryVideoPlayerItem
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationStack {
+            VideoPlayer(player: AVPlayer(url: item.url))
+                .ignoresSafeArea(edges: .bottom)
+                .navigationTitle(item.title)
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button("Done") {
+                            dismiss()
+                        }
+                    }
+                }
         }
     }
 }

@@ -13,7 +13,7 @@ enum MomentsProjectFormatting {
     }
 
     static func previewUsage(_ project: MomentDraftProject) -> String {
-        "\(Int(project.previewCount))/\(Int(project.previewLimit)) previews"
+        "\(Int(project.previewCount))/\(Int(project.previewLimit)) Story Reviews"
     }
 
     static func statusTitle(_ project: MomentDraftProject) -> String {

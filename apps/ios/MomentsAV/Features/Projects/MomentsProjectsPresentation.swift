@@ -33,7 +33,7 @@ enum MomentsProjectsAvailability: Equatable {
                 MomentsProjectsUnavailablePresentation(
                     systemImage: "person.crop.circle.fill",
                     title: "Sign in to make Moments",
-                    message: "Your stories and final videos will appear here once your account is connected."
+                    message: "In Progress and local Gallery unlock once your account is connected."
                 )
             )
         }
@@ -42,8 +42,8 @@ enum MomentsProjectsAvailability: Equatable {
             return .empty(
                 MomentsProjectsUnavailablePresentation(
                     systemImage: "rectangle.stack.badge.plus",
-                    title: "No projects yet",
-                    message: "Local creations appear in Create. Projects will appear here after the story is prepared."
+                    title: "Nothing here yet",
+                    message: "Drafts appear in In Progress. Downloaded final videos appear in Gallery."
                 )
             )
         }

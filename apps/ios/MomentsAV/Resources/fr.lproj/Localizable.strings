@@ -27,9 +27,9 @@
 "profile.local.artifacts.title" = "Artefacts générés";
 "profile.local.media.detail" = "Les sélections de médias utilisées par les brouillons Moments AV actifs restent sur cet appareil.";
 "profile.local.media.title" = "Médias sélectionnés";
-"profile.local.projects.detail" = "Les références de projets brouillons et terminés restent sur cet appareil.";
-"profile.local.projects.title" = "Projets";
-"profile.local.subtitle" = "Vos projets, médias sélectionnés et artefacts générés restent sur cet appareil.";
+"profile.local.projects.detail" = "Les références In Progress et Gallery restent sur cet appareil.";
+"profile.local.projects.title" = "In Progress et Gallery";
+"profile.local.subtitle" = "Vos Moments, médias sélectionnés et artefacts générés restent sur cet appareil.";
 "profile.local.title" = "Sur cet appareil";
 "profile.preferences.language.detail" = "Choisissez la langue utilisée par l'interface de Moments AV.";
 "profile.preferences.language.title" = "Langue de l'app";
@@ -40,7 +40,7 @@
 "profile.preferences.theme.system" = "Système";
 "profile.preferences.theme.title" = "Apparence";
 "profile.preferences.title" = "Préférences de l'app";
-"profile.pro.avi.detail" = "Des passages de preview supplémentaires pendant votre mois Pro.";
+"profile.pro.avi.detail" = "Des passages Story Review supplémentaires pendant votre mois Pro.";
 "profile.pro.avi.title" = "15 Story Reviews";
 "profile.pro.library.detail" = "Meilleure valeur mensuelle que l'achat de crédits un par un.";
 "profile.pro.library.title" = "6 Video Credits mensuels";

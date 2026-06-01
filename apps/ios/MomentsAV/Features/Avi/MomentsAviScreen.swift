@@ -17,11 +17,11 @@ struct MomentsAviScreen: View {
     private var landingContent: AVAviLandingContent {
         AVAviLandingContent(
             eyebrow: "Moments guide",
-            title: "Keep projects moving",
-            detail: "Check draft structure, preview readiness, render status, and credit decisions before the final export.",
+            title: "Keep Moments moving",
+            detail: "Check draft structure, story review readiness, render status, and credit decisions before the final export.",
             chips: [
                 AVAviLandingChip(title: "Draft", systemImage: "text.quote"),
-                AVAviLandingChip(title: "Preview", systemImage: "play.rectangle"),
+                AVAviLandingChip(title: "Review", systemImage: "text.bubble"),
                 AVAviLandingChip(title: "Export", systemImage: "square.and.arrow.up")
             ],
             accessibilityIdentifier: "moments.avi.hero"
@@ -31,7 +31,7 @@ struct MomentsAviScreen: View {
     var body: some View {
         AVAviGuidanceScreenScaffold(
             identity: appExperience.identity,
-            summary: "Guidance for story drafts, previews, final renders, and project review.",
+            summary: "Guidance for story drafts, story reviews, final renders, and In Progress review.",
             status: "Guide",
             headerAccessibilityIdentifier: "moments.avi.header",
             landingContent: landingContent,
@@ -87,7 +87,7 @@ private struct MomentsAviGuidanceContent: View {
         MomentsAviHelpCard()
 
         MomentsAviProjectGuidanceCard {
-            selectTab(.projects)
+            selectTab(.inProgress)
         }
     }
 }
@@ -100,12 +100,12 @@ private struct MomentsAviSignInCard: View {
             VStack(alignment: .leading, spacing: 12) {
                 AVAppShellContentHeader(
                     title: "Sign in to use Avi",
-                    detail: "Avi needs your account to see credits, projects, drafts, previews, and final exports."
+                    detail: "Avi needs your account to see credits, Moments, drafts, story reviews, and final exports."
                 )
 
                 AVAppShellActionRow(
                     title: "Sign in",
-                    detail: "Connect your account and unlock project guidance.",
+                    detail: "Connect your account and unlock Moment guidance.",
                     systemImage: "person.crop.circle.fill",
                     isProminent: true,
                     accessibilityIdentifier: "moments.avi.signin",

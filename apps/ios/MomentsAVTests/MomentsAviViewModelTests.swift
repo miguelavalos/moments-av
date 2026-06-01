@@ -27,7 +27,7 @@ final class MomentsAviViewModelTests: XCTestCase {
         )
 
         XCTAssertEqual(presentation.workflowFocusTitle, "Review active work")
-        XCTAssertTrue(presentation.workflowFocusMessage.contains("1 project in progress"))
+        XCTAssertTrue(presentation.workflowFocusMessage.contains("1 Moment in In Progress"))
         XCTAssertEqual(presentation.workflowFocusSystemImage, "clock.badge.checkmark")
     }
 
@@ -38,7 +38,7 @@ final class MomentsAviViewModelTests: XCTestCase {
             creditBalance: MomentsCreditBalance(proMonthly: 2, promotional: 1, purchased: 3)
         )
 
-        XCTAssertTrue(presentation.creditGuidanceMessage.contains("6 credits are spendable"))
+        XCTAssertTrue(presentation.creditGuidanceMessage.contains("6 credits are available"))
     }
 
     func testCreditGuidanceUsesSingularSpendableCredit() {
@@ -48,7 +48,7 @@ final class MomentsAviViewModelTests: XCTestCase {
             creditBalance: MomentsCreditBalance(proMonthly: 1, promotional: 0, purchased: 0)
         )
 
-        XCTAssertTrue(presentation.creditGuidanceMessage.contains("1 credit is spendable"))
+        XCTAssertTrue(presentation.creditGuidanceMessage.contains("1 credit is available"))
     }
 
     func testZeroCreditsExplainFinalExportRequirement() {
@@ -60,7 +60,7 @@ final class MomentsAviViewModelTests: XCTestCase {
 
         XCTAssertEqual(
             presentation.creditGuidanceMessage,
-            "No spendable credits are available. Final exports require credits after preview review."
+            "No credits are available. Final exports require credits after story review."
         )
     }
 
@@ -82,7 +82,7 @@ final class MomentsAviViewModelTests: XCTestCase {
         )
 
         XCTAssertEqual(viewModel.presentation.workflowFocusTitle, "Review active work")
-        XCTAssertTrue(viewModel.presentation.creditGuidanceMessage.contains("1 credit is spendable"))
+        XCTAssertTrue(viewModel.presentation.creditGuidanceMessage.contains("1 credit is available"))
     }
 
     private func makeProject(id: String, status: String, updatedAt: Double) -> MomentDraftProject {

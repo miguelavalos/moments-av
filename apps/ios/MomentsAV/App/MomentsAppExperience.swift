@@ -19,7 +19,7 @@ enum MomentsAppExperience {
             splashTagline: "Private memory films",
             splashStatus: "Preparing your studio",
             onboardingTitle: "Make memory films",
-            onboardingSubtitle: "Turn selected media into private story drafts, previews, and renders.",
+            onboardingSubtitle: "Turn selected media into private story reviews and final videos.",
             onboardingPrimaryTitle: "SIGN IN",
             onboardingSecondaryTitle: "SKIP FOR NOW",
             onboardingBackgroundStart: .init(red: 0.97, green: 0.94, blue: 0.86),

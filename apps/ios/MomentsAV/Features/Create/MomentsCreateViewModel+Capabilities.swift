@@ -15,9 +15,7 @@ extension MomentsCreateViewModel {
     }
 
     var canBeginNewProject: Bool {
-        !isDraftLocked
-            && isSignedIn
-            && canAfford(selectedCreationStyle.template)
+        !isDraftLocked && !isBusy
     }
 
     var isDraftLocked: Bool {

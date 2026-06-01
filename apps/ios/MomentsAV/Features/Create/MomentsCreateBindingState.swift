@@ -38,6 +38,8 @@ struct MomentsCreateFinalRenderState {
     let finalExport: MomentArtifact?
     let latestFinalJob: MomentRenderJob?
     let renderPlan: MomentsRenderPlanResponse?
+    var pendingGalleryVideo: MomentsGalleryVideoRecord? = nil
+    var canRetryFinalVideoDownload = false
     let statusMessage: String?
     let isGenerating: Bool
     let isRefreshingStatus: Bool

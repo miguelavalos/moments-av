@@ -70,7 +70,8 @@ final class MomentsProjectStatusRulesTests: XCTestCase {
     }
 
     func testDisplayHelpersFormatBackendValuesForUI() {
-        XCTAssertEqual(MomentsProjectStatusRules.displayTitle(for: "preview_ready"), "Preview Ready")
+        XCTAssertEqual(MomentsProjectStatusRules.displayTitle(for: "preview_ready"), "Story Review Ready")
+        XCTAssertEqual(MomentsProjectStatusRules.displayKind("preview"), "Story Review")
         XCTAssertEqual(MomentsProjectStatusRules.displayKind("final_render"), "Final Render")
     }
 
@@ -100,9 +101,9 @@ final class MomentsProjectStatusRulesTests: XCTestCase {
             )
         )
 
-        XCTAssertEqual(action.title, "Generate preview")
-        XCTAssertEqual(action.systemImage, "play.rectangle")
-        XCTAssertEqual(action.primaryButtonTitle, "Generate Preview in Create")
+        XCTAssertEqual(action.title, "Review story")
+        XCTAssertEqual(action.systemImage, "text.bubble")
+        XCTAssertEqual(action.primaryButtonTitle, "Review Story in Create")
         XCTAssertEqual(action.continuationFocus, .preview)
     }
 

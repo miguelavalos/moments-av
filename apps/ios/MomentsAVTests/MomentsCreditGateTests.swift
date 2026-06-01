@@ -73,7 +73,7 @@ final class MomentsCreditGateTests: XCTestCase {
         XCTAssertFalse(form.canCreateDraft)
     }
 
-    func testDraftAvailabilityMessageUsesSingularMissingCredit() {
+    func testDraftAvailabilityAllowsSetupWithoutCredits() {
         var form = MomentDraftForm(template: .birthdayMessage)
         form.occasion = "Birthday"
 
@@ -82,10 +82,8 @@ final class MomentsCreditGateTests: XCTestCase {
             balance: .empty
         )
 
-        XCTAssertEqual(
-            MomentDraftRules.availabilityMessage(availability),
-            "Add 1 more credit for this template."
-        )
+        XCTAssertTrue(availability.canCreateDraft)
+        XCTAssertNil(MomentDraftRules.availabilityMessage(availability))
     }
 
     func testContinuingDraftFormUsesProjectFieldsAndFallbacks() {

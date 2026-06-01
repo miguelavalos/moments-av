@@ -10,8 +10,8 @@ struct MomentsCreatePreviewCard: View {
         AVAppShellCard {
             VStack(alignment: .leading, spacing: 14) {
                 AVAppShellContentHeader(
-                    title: "Preview",
-                    detail: "Create a quick preview before making the final video."
+                    title: "Review story",
+                    detail: "Check the story order and pacing before creating the final video."
                 )
 
                 if let usageTitle = presentation.usageTitle {
@@ -22,8 +22,8 @@ struct MomentsCreatePreviewCard: View {
 
                 if let latestPreview = presentation.summary.latestPreview {
                     MomentsCreateArtifactStatusCard(
-                        title: "Preview ready",
-                        systemImage: "play.rectangle",
+                        title: "Story review ready",
+                        systemImage: "list.bullet.rectangle.portrait",
                         artifact: latestPreview,
                         detail: presentation.previewArtifactMessage
                     )
@@ -39,14 +39,14 @@ struct MomentsCreatePreviewCard: View {
 
                 if presentation.showsEmptyState {
                     MomentsCreateEmptySectionRow(
-                        systemImage: "play.rectangle",
+                        systemImage: "text.bubble",
                         message: presentation.emptyMessage
                     )
                 }
 
                 AVAppShellPrimaryButton(
                     presentation.generateButtonTitle,
-                    systemImage: "play.rectangle.fill",
+                    systemImage: "text.bubble.fill",
                     isDisabled: !presentation.canGeneratePreview || presentation.summary.isGenerating,
                     action: generatePreview
                 )

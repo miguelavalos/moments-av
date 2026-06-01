@@ -16,22 +16,22 @@ struct MomentsCreatePreviewPresentation: Equatable {
             return nil
         }
         return latestPreview.hasWatermark == true
-            ? "Includes a subtle Moments AV mark."
-            : "Preview artifact is available."
+            ? "Story review is ready for your final check."
+            : "Story review is available."
     }
 
     var refreshButtonTitle: String {
-        summary.isRefreshingStatus ? "Refreshing preview status..." : "Refresh preview status"
+        summary.isRefreshingStatus ? "Refreshing story review..." : "Refresh story review"
     }
 
     var generateButtonTitle: String {
-        summary.isGenerating ? "Generating preview..." : "Generate preview"
+        summary.isGenerating ? "Reviewing story..." : "Review story"
     }
 
     var emptyMessage: String {
         canGeneratePreview
-            ? "Story is ready. Generate a preview to review the result."
-            : "Generate a story before creating a preview."
+            ? "Story is ready. Review it before creating the final video."
+            : "Prepare the story before reviewing it."
     }
 
     var showsEmptyState: Bool {

@@ -23,13 +23,13 @@
 "profile.help.terms.detail" = "Revisa los términos aplicables a Moments AV.";
 "profile.help.terms.title" = "Términos del servicio";
 "profile.help.title" = "Ayuda y legal";
-"profile.local.artifacts.detail" = "Las escenas de historia, previews y referencias de exportación final se quedan en este dispositivo.";
+"profile.local.artifacts.detail" = "Las escenas de historia, Story Reviews y referencias de exportación final se quedan en este dispositivo.";
 "profile.local.artifacts.title" = "Artefactos generados";
 "profile.local.media.detail" = "Las selecciones de media usadas por borradores activos de Moments AV se quedan en este dispositivo.";
 "profile.local.media.title" = "Media seleccionada";
-"profile.local.projects.detail" = "Las referencias de proyectos en borrador y terminados se quedan en este dispositivo.";
-"profile.local.projects.title" = "Proyectos";
-"profile.local.subtitle" = "Tus proyectos, media seleccionada y artefactos generados se quedan en este dispositivo.";
+"profile.local.projects.detail" = "Las referencias de In Progress y Gallery se quedan en este dispositivo.";
+"profile.local.projects.title" = "In Progress y Gallery";
+"profile.local.subtitle" = "Tus Moments, media seleccionada y artefactos generados se quedan en este dispositivo.";
 "profile.local.title" = "En este dispositivo";
 "profile.preferences.language.detail" = "Elige el idioma que usa la interfaz de Moments AV.";
 "profile.preferences.language.title" = "Idioma de la app";
@@ -40,7 +40,7 @@
 "profile.preferences.theme.system" = "Sistema";
 "profile.preferences.theme.title" = "Apariencia";
 "profile.preferences.title" = "Preferencias de la app";
-"profile.pro.avi.detail" = "Pases extra de preview mientras tu mes Pro esté activo.";
+"profile.pro.avi.detail" = "Pases extra de Story Review mientras tu mes Pro esté activo.";
 "profile.pro.avi.title" = "15 Story Reviews";
 "profile.pro.library.detail" = "Mejor valor mensual que comprar créditos uno a uno.";
 "profile.pro.library.title" = "6 Video Credits mensuales";

@@ -79,7 +79,7 @@ struct MomentsHomeScreen: View {
                 isSignedIn: viewModel.isSignedIn,
                 projectSummary: projectSummary,
                 presentation: presentation,
-                openProjects: { selectTab(.projects) }
+                openProjects: { selectTab(.inProgress) }
             )
 
             MomentsHomeNextActionsCard(
@@ -97,7 +97,7 @@ struct MomentsHomeScreen: View {
         guard viewModel.isSignedIn else { return "Sign in to create" }
         if createViewModel.hasRecoverableMomentContext {
             if createViewModel.previewSummary.latestPreview != nil {
-                return "Preview ready"
+                return "Story review ready"
             }
             if createViewModel.previewSummary.isGenerating {
                 return "Avi is creating"
@@ -112,21 +112,21 @@ struct MomentsHomeScreen: View {
 
     private var aviContextDetail: String {
         guard viewModel.isSignedIn else {
-            return "Connect your account to create memory films, previews, and final videos."
+            return "Connect your account to create memory films, story reviews, and final videos."
         }
         if createViewModel.hasRecoverableMomentContext {
             let count = createViewModel.mediaSelectedCount
             if createViewModel.previewSummary.latestPreview != nil {
-                return "Your preview is ready to review before final video."
+                return "Your story review is ready before final video."
             }
             if createViewModel.previewSummary.isGenerating {
-                return "Avi is creating the preview from your selected moments."
+                return "Avi is reviewing the story from your selected moments."
             }
             if createViewModel.storySummary.isDrafting {
                 return "Avi is organizing the story from your media."
             }
             if count > 0 {
-                return "\(count) \(count == 1 ? "item" : "items") selected. Continue to preview."
+                return "\(count) \(count == 1 ? "item" : "items") selected. Continue to story review."
             }
             return "A local creation is waiting for media."
         }

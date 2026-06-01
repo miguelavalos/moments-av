@@ -251,6 +251,68 @@ struct MomentsFinalRenderClient {
         return try JSONDecoder().decode(MomentsStartWorkflowResponse.self, from: data)
     }
 
+    func prepareFinalArtifactDownload(
+        projectId: String,
+        artifactId: String,
+        bearerToken: String
+    ) async throws -> MomentsArtifactDownloadResponse {
+        guard let baseURL = URL(string: baseURLString.trimmingCharacters(in: .whitespacesAndNewlines)) else {
+            throw MomentsFinalRenderError.apiNotConfigured
+        }
+
+        let endpoint = baseURL
+            .appendingPathComponent("v1")
+            .appendingPathComponent("apps")
+            .appendingPathComponent("momentsav")
+            .appendingPathComponent("artifacts")
+            .appendingPathComponent(artifactId)
+            .appendingPathComponent("download")
+        let body = MomentsArtifactDownloadRequest(
+            projectId: projectId,
+            artifactId: artifactId
+        )
+
+        var request = URLRequest(url: endpoint)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("Bearer \(bearerToken)", forHTTPHeaderField: "Authorization")
+        request.httpBody = try JSONEncoder().encode(body)
+
+        let (data, response) = try await retryPolicy.run {
+            try await session.data(for: request)
+        }
+        guard let httpResponse = response as? HTTPURLResponse, 200..<300 ~= httpResponse.statusCode else {
+            throw MomentsAPIError.decode(
+                from: data,
+                fallbackCode: "moments_artifact_download_failed",
+                fallbackMessage: MomentsFinalRenderError.downloadPreparationFailed.localizedDescription
+            )
+        }
+
+        return try JSONDecoder().decode(MomentsArtifactDownloadResponse.self, from: data)
+    }
+
+    func downloadFinalArtifact(from response: MomentsArtifactDownloadResponse) async throws -> URL {
+        guard let downloadURL = URL(string: response.downloadUrl) else {
+            throw MomentsFinalRenderError.downloadPreparationFailed
+        }
+
+        var request = URLRequest(url: downloadURL)
+        request.httpMethod = response.method
+        response.headers.forEach { key, value in
+            request.setValue(value, forHTTPHeaderField: key)
+        }
+
+        let (fileURL, urlResponse) = try await retryPolicy.run {
+            try await session.download(for: request)
+        }
+        guard let httpResponse = urlResponse as? HTTPURLResponse, 200..<300 ~= httpResponse.statusCode else {
+            throw MomentsFinalRenderError.downloadFailed
+        }
+
+        return fileURL
+    }
+
     private func finalRenderCreditCost(
         template: MomentTemplate,
         removesWatermark: Bool,
@@ -269,6 +331,8 @@ enum MomentsFinalRenderError: LocalizedError {
     case planFailed
     case reservationFailed
     case generationFailed
+    case downloadPreparationFailed
+    case downloadFailed
 
     var errorDescription: String? {
         switch self {
@@ -276,6 +340,8 @@ enum MomentsFinalRenderError: LocalizedError {
         case .planFailed: "Avi could not prepare the final video plan."
         case .reservationFailed: "Credits could not be reserved for the final video."
         case .generationFailed: "Final render failed before delivery. Credits were not committed unless an export was delivered."
+        case .downloadPreparationFailed: "The final video download could not be prepared."
+        case .downloadFailed: "The final video could not be downloaded."
         }
     }
 }

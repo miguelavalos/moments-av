@@ -56,19 +56,19 @@ final class PreviewGenerationWorkflow: WorkspaceObservingWorkflow {
 
     func generatePreview(projectId: String, template: MomentTemplate) async {
         guard let ownerUserId = currentUserProvider.currentUserId else {
-            statusMessage = "Sign in before generating a preview."
+            statusMessage = "Sign in before reviewing the story."
             return
         }
         guard let bearerToken = try? await authTokenProvider.currentBearerToken() else {
-            statusMessage = "Sign in again before generating a preview."
+            statusMessage = "Sign in again before reviewing the story."
             return
         }
         guard let project = activeWorkspace?.project else {
-            statusMessage = "Create the draft and story before generating a preview."
+            statusMessage = "Create the draft and story before reviewing it."
             return
         }
         guard isConfigured else {
-            statusMessage = "Preview generation is not configured for this build."
+            statusMessage = "Story Review is not configured for this build."
             return
         }
 
@@ -84,7 +84,7 @@ final class PreviewGenerationWorkflow: WorkspaceObservingWorkflow {
 
         let generation = beginWorkflowGeneration()
         isGenerating = true
-        statusMessage = "Avi is preparing a preview."
+        statusMessage = "Avi is preparing the story review."
 
         do {
             statusMessage = try await PreviewGenerationRun.perform(
@@ -156,18 +156,18 @@ final class PreviewGenerationWorkflow: WorkspaceObservingWorkflow {
     private func generateBlockMessage(_ availability: MomentsPreviewRules.Availability) -> String {
         MomentsPreviewRules.availabilityMessage(
             availability,
-            missingProjectMessage: "Create the draft and story before generating a preview.",
-            insufficientCreditsMessage: "Add credits before generating a preview."
-        ) ?? "Preview is not ready to generate."
+            missingProjectMessage: "Create the draft and story before reviewing it.",
+            insufficientCreditsMessage: "Add credits before reviewing the story."
+        ) ?? "Story review is not ready."
     }
 
     private var refreshMessages: RenderJobStatusRefreshMessages {
         RenderJobStatusRefreshMessages(
-            signIn: "Sign in before refreshing preview status.",
-            missingProject: "Open a project before refreshing preview status.",
-            missingJob: "No preview render job is available yet.",
+            signIn: "Sign in before refreshing story review status.",
+            missingProject: "Open a project before refreshing story review status.",
+            missingJob: "No story review job is available yet.",
             missingProviderRequest: MomentsRecoveryCopy.previewStatusMissing(),
-            success: "Preview status updated."
+            success: "Story review status updated."
         )
     }
 }

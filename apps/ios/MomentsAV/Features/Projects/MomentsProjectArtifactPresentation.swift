@@ -3,7 +3,7 @@ import Foundation
 struct MomentsProjectRenderJobsSectionPresentation: Equatable {
     let title = "Render jobs"
     let emptySystemImage = "gearshape.2"
-    let emptyMessage = "Preview and final render jobs will appear here."
+    let emptyMessage = "Story review and final render jobs will appear here."
     let jobs: [MomentsProjectRenderJobPresentation]
 
     init(renderJobs: [MomentRenderJob]) {
@@ -19,9 +19,9 @@ struct MomentsProjectArtifactSectionPresentation: Equatable {
 
     static func preview(artifacts: [MomentArtifact]) -> MomentsProjectArtifactSectionPresentation {
         MomentsProjectArtifactSectionPresentation(
-            title: "Preview",
-            emptySystemImage: "play.rectangle",
-            emptyMessage: "Generate a preview after the story draft is ready.",
+            title: "Story Review",
+            emptySystemImage: "text.bubble",
+            emptyMessage: "Review the story after the story draft is ready.",
             artifact: MomentsProjectArtifactPresentation.preview(in: artifacts)
         )
     }
@@ -30,7 +30,7 @@ struct MomentsProjectArtifactSectionPresentation: Equatable {
         MomentsProjectArtifactSectionPresentation(
             title: "Final export",
             emptySystemImage: "square.and.arrow.up",
-            emptyMessage: "Render the final export after approving a preview.",
+            emptyMessage: "Render the final export after approving the story review.",
             artifact: MomentsProjectArtifactPresentation.finalExport(in: artifacts)
         )
     }

@@ -74,8 +74,8 @@ enum MomentsPreviewError: LocalizedError {
 
     var errorDescription: String? {
         switch self {
-        case .apiNotConfigured: "Preview generation is not configured for this build."
-        case .generationFailed: "Preview generation failed."
+        case .apiNotConfigured: "Story Review is not configured for this build."
+        case .generationFailed: "Story Review failed."
         }
     }
 }

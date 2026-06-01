@@ -59,6 +59,18 @@ scripts/check-ios-runtime-config.sh --env staging
 Use the environment required by the private release runbook when preparing a
 signed release or App Store archive.
 
+For TestFlight parity, use production runtime settings:
+
+```bash
+scripts/generate-ios-local-xcconfig.sh --env prod
+scripts/check-ios-runtime-config.sh --env prod --configuration Release
+```
+
+The check must report the production bundle identifier, production Account AV
+API, a production Account AV publishable key class, and the expected RevenueCat
+offering before building an archive. If it reports `staging`, the resulting
+build may compile and upload but signed-in production auth can fail.
+
 ## Signed Runtime Smoke
 
 For any flow that depends on a real account session, build and launch without
@@ -68,12 +80,24 @@ For any flow that depends on a real account session, build and launch without
 xcodebuild -project apps/ios/MomentsAV.xcodeproj -scheme MomentsAV -destination 'platform=iOS Simulator,name=iPhone 17' build
 ```
 
-If the simulator has already run an unsigned build and auth reports Keychain or
-signed-out errors, remove stale app state before reinstalling a signed simulator
-build:
+Do not diagnose onboarding, Sign in with Apple, Google OAuth, persisted sessions,
+credits, purchases, uploads, renders, or account deletion from an unsigned build
+or from a simulator install that previously ran an unsigned build. Those states
+can report false auth/keychain failures even when production runtime config is
+correct.
+
+When testing the production/TestFlight workflow on simulator, use a normal
+signed Release simulator build after generating the production local config.
+This does not replace real-device TestFlight purchase testing, but it should
+match the production Account AV environment closely enough to catch auth
+configuration drift before upload.
+
+Before any auth smoke after unsigned testing, remove stale app state before
+reinstalling a signed simulator build:
 
 ```bash
 xcrun simctl uninstall booted com.avalsys.momentsav.dev
+xcrun simctl uninstall booted com.avalsys.momentsav
 ```
 
 Then rebuild with simulator signing enabled.

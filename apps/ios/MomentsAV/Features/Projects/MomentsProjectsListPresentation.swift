@@ -84,7 +84,7 @@ struct MomentsProjectsListRowPresentation: Identifiable, Equatable {
                 text: MomentsProjectFormatting.updatedAt(project)
             ),
             MomentsProjectsListMetadataPresentation(
-                systemImage: "play.rectangle",
+                systemImage: "text.bubble",
                 text: MomentsProjectFormatting.previewUsage(project)
             )
         ]

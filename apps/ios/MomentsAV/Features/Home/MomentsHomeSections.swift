@@ -11,10 +11,9 @@ struct MomentsHomeAccountCard: View {
             detail: creditDetail
         ) {
             AVAppShellMetricStrip(metrics: creditMetrics)
-            MomentsHomeCreditBreakdown(balance: creditBalance)
             AVAppShellActionRow(
                 title: creditBalance.spendable > 0 ? "Manage credits" : "Get credits",
-                detail: creditBalance.spendable > 0 ? "Review monthly, promo, and purchased credits." : "Add credits before creating your next memory film.",
+                detail: creditBalance.spendable > 0 ? "View wallet details, purchases, and restore options." : "Add credits before creating your next memory film.",
                 systemImage: creditBalance.spendable > 0 ? "creditcard.fill" : "plus.circle.fill",
                 isProminent: creditBalance.spendable == 0,
                 accessibilityIdentifier: "moments.home.credits.open",
@@ -49,7 +48,7 @@ struct MomentsHomeSignInCard: View {
     var body: some View {
         AVAppShellDashboardSection(
             title: "Sign in to use Moments",
-            detail: "Projects, credits, media, previews, and final exports need an account."
+            detail: "Moments, credits, media, story reviews, and final exports need an account."
         ) {
             AVAppShellActionRow(
                 title: "Sign in",
@@ -71,7 +70,7 @@ struct MomentsHomeProjectStatusCard: View {
 
     var body: some View {
         AVAppShellDashboardSection(
-            title: "Project status",
+            title: "In Progress and Gallery",
             detail: presentation.projectStatusDetail
         ) {
             if let latestProject = projectSummary.latestProject {
@@ -115,7 +114,7 @@ struct MomentsHomeNextActionsCard: View {
     var body: some View {
         AVAppShellDashboardSection(
             title: "Next actions",
-            detail: "Start a memory film, review project progress, or open guidance when a project needs a decision."
+            detail: "Start a memory film, continue active work, or open guidance when a Moment needs a decision."
         ) {
             VStack(spacing: 10) {
                 if let latestInProgressAction = presentation.latestInProgressAction {
@@ -128,7 +127,7 @@ struct MomentsHomeNextActionsCard: View {
                 homeActionRow(action: presentation.createAction, perform: startMoment)
 
                 homeActionRow(action: presentation.reviewProjectsAction) {
-                    selectTab(.projects)
+                    selectTab(.inProgress)
                 }
 
                 homeActionRow(action: presentation.aviGuidanceAction) {

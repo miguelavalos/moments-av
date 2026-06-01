@@ -46,12 +46,12 @@ struct MomentsAviCreditGuidanceCard: View {
     var body: some View {
         AVAviGuidanceCard(
             title: "Credit guidance",
-            detail: "Credits are consumed in a predictable order before final export."
+            detail: "Wallet details use the same credit groups across Moments AV."
         ) {
             HStack(spacing: 10) {
-                AVAviStatPill(title: "First", value: "Monthly", systemImage: "calendar")
-                AVAviStatPill(title: "Then", value: "Bonus", systemImage: "gift")
-                AVAviStatPill(title: "Then", value: "Paid", systemImage: "creditcard")
+                AVAviStatPill(title: "First", value: "Pro monthly", systemImage: "calendar")
+                AVAviStatPill(title: "Then", value: "Purchased", systemImage: "creditcard")
+                AVAviStatPill(title: "Then", value: "Other", systemImage: "gift")
             }
             Text(message)
                 .foregroundStyle(.secondary)

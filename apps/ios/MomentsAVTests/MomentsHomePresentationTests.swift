@@ -12,7 +12,7 @@ final class MomentsHomePresentationTests: XCTestCase {
         XCTAssertEqual(presentation.accountTitle, "Account required")
         XCTAssertEqual(
             presentation.accountDetail,
-            "Sign in is required before creating, rendering, and managing projects."
+            "Sign in is required before creating, rendering, and managing Moments."
         )
         XCTAssertTrue(presentation.createAction.isDisabled)
         XCTAssertTrue(presentation.reviewProjectsAction.isDisabled)
@@ -29,12 +29,12 @@ final class MomentsHomePresentationTests: XCTestCase {
 
         XCTAssertEqual(presentation.accountTitle, "Account connected")
         XCTAssertEqual(presentation.accountDetail, "Signed in as Ava.")
-        XCTAssertEqual(presentation.projectStatusDetail, "No synced projects yet.")
+        XCTAssertEqual(presentation.projectStatusDetail, "No synced Moments yet.")
         XCTAssertTrue(presentation.createAction.isProminent)
         XCTAssertFalse(presentation.createAction.isDisabled)
         XCTAssertEqual(
             presentation.reviewProjectsAction.detail,
-            "Synced projects appear after the story is prepared."
+            "Drafts appear after you start a Moment."
         )
     }
 
@@ -49,7 +49,7 @@ final class MomentsHomePresentationTests: XCTestCase {
             ])
         )
 
-        XCTAssertEqual(presentation.latestInProgressAction?.title, "Continue latest project")
+        XCTAssertEqual(presentation.latestInProgressAction?.title, "Continue latest Moment")
         XCTAssertEqual(presentation.latestInProgressAction?.systemImage, "arrow.right.circle")
         XCTAssertTrue(presentation.latestInProgressAction?.isProminent == true)
         XCTAssertFalse(presentation.createAction.isProminent)
@@ -69,11 +69,11 @@ final class MomentsHomePresentationTests: XCTestCase {
 
         XCTAssertEqual(
             presentation.projectStatusDetail,
-            "2 synced projects tracked across the current account."
+            "2 synced Moments tracked across the current account."
         )
         XCTAssertEqual(
             presentation.reviewProjectsAction.detail,
-            "Open 2 synced projects with story and video status."
+            "Open drafts, active renders, and videos waiting for local download."
         )
     }
 
@@ -88,11 +88,11 @@ final class MomentsHomePresentationTests: XCTestCase {
 
         XCTAssertEqual(
             presentation.projectStatusDetail,
-            "1 synced project tracked across the current account."
+            "1 synced Moment tracked across the current account."
         )
         XCTAssertEqual(
             presentation.reviewProjectsAction.detail,
-            "Open 1 synced project with story and video status."
+            "Open drafts, active renders, and videos waiting for local download."
         )
     }
 

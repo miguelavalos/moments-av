@@ -37,7 +37,7 @@ struct MomentsCreditPaywallProduct: Identifiable, Equatable {
         kind: .consumableCredits(5),
         eyebrow: "Starter pack",
         title: "5 Video Credits",
-        detail: "Includes 10 Story Reviews for extra preview passes.",
+        detail: "Includes 10 Story Reviews for extra review passes.",
         buttonTitle: "Buy 5 credits",
         systemImage: "plus.circle.fill",
         isRecommended: false

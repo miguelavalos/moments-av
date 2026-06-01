@@ -64,12 +64,12 @@ struct MomentsCreateCreditsCard: View {
     var body: some View {
         AVAppShellCard {
             AVAppShellContentHeader(
-                title: "Spendable credits",
-                detail: "Credits available for previews and final exports."
+                title: "Available credits",
+                detail: "Credits are needed before creating the final video."
             )
             AVAppShellInfoRow(
                 title: "\(balance.spendable) credits",
-                detail: "Monthly: \(balance.proMonthly) · Promo: \(balance.promotional) · Purchased: \(balance.purchased)",
+                detail: balance.spendable > 0 ? "Ready for final video creation." : "You can still set up this Moment now.",
                 systemImage: "creditcard"
             )
         }
@@ -128,7 +128,7 @@ private extension MomentsProjectContinuationFocus {
         case .story:
             "Continue with story"
         case .preview:
-            "Continue with preview"
+            "Continue with story review"
         case .finalRender:
             "Continue with final export"
         }
@@ -143,7 +143,7 @@ private extension MomentsProjectContinuationFocus {
         case .story:
             "Generate the story scenes from the selected media."
         case .preview:
-            "Generate or refresh the preview before spending credits on the final export."
+            "Review or refresh the story before spending credits on the final export."
         case .finalRender:
             "Render or refresh the final export for the finished video."
         }
@@ -158,7 +158,7 @@ private extension MomentsProjectContinuationFocus {
         case .story:
             "text.bubble"
         case .preview:
-            "play.rectangle"
+            "text.bubble"
         case .finalRender:
             "square.and.arrow.up"
         }

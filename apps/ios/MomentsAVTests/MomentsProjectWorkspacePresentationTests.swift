@@ -91,9 +91,9 @@ final class MomentsProjectWorkspacePresentationTests: XCTestCase {
             )
         )
 
-        XCTAssertEqual(presentation.tiles.map(\.title), ["Status", "Preview", "Final", "Latest job"])
-        XCTAssertEqual(presentation.tiles.map(\.value), ["Preview Ready", "Available", "Available", "Final Render · Failed"])
-        XCTAssertEqual(presentation.tiles.map(\.systemImage), ["circle.dashed", "play.rectangle", "square.and.arrow.up", "gearshape.2"])
+        XCTAssertEqual(presentation.tiles.map(\.title), ["Status", "Story Review", "Final", "Latest job"])
+        XCTAssertEqual(presentation.tiles.map(\.value), ["Story Review Ready", "Available", "Available", "Final Render · Failed"])
+        XCTAssertEqual(presentation.tiles.map(\.systemImage), ["circle.dashed", "text.bubble", "square.and.arrow.up", "gearshape.2"])
     }
 
     func testWorkspaceSummaryPresentationUsesFallbacksWhenNoArtifactsOrJobsExist() {

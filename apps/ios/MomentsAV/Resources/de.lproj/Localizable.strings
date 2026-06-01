@@ -27,9 +27,9 @@
 "profile.local.artifacts.title" = "Generierte Artefakte";
 "profile.local.media.detail" = "Medienauswahlen aktiver Moments AV-Entwürfe bleiben auf diesem Gerät.";
 "profile.local.media.title" = "Ausgewählte Medien";
-"profile.local.projects.detail" = "Verweise auf Entwürfe und fertige Projekte bleiben auf diesem Gerät.";
-"profile.local.projects.title" = "Projekte";
-"profile.local.subtitle" = "Deine Projekte, ausgewählten Medien und generierten Artefakte bleiben auf diesem Gerät.";
+"profile.local.projects.detail" = "Verweise aus In Progress und Gallery bleiben auf diesem Gerät.";
+"profile.local.projects.title" = "In Progress und Gallery";
+"profile.local.subtitle" = "Deine Moments, ausgewählten Medien und generierten Artefakte bleiben auf diesem Gerät.";
 "profile.local.title" = "Auf diesem Gerät";
 "profile.preferences.language.detail" = "Wähle die Sprache der Moments AV Oberfläche.";
 "profile.preferences.language.title" = "App-Sprache";
@@ -40,7 +40,7 @@
 "profile.preferences.theme.system" = "System";
 "profile.preferences.theme.title" = "Darstellung";
 "profile.preferences.title" = "App-Einstellungen";
-"profile.pro.avi.detail" = "Zusätzliche Preview-Durchgänge, solange dein Pro-Monat aktiv ist.";
+"profile.pro.avi.detail" = "Zusätzliche Story-Review-Durchgänge, solange dein Pro-Monat aktiv ist.";
 "profile.pro.avi.title" = "15 Story Reviews";
 "profile.pro.library.detail" = "Besserer Monatswert als Credits einzeln zu kaufen.";
 "profile.pro.library.title" = "6 monatliche Video Credits";

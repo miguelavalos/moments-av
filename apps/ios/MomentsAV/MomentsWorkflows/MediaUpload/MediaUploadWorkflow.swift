@@ -39,10 +39,6 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
         projectId: String?
     ) async {
         guard !items.isEmpty else { return }
-        guard currentUserProvider.currentUserId != nil else {
-            statusMessage = "Sign in before adding media."
-            return
-        }
         let remainingSlots = MomentsMediaRules.remainingSlots(
             template: template,
             selectedCount: selectedMediaCount
@@ -137,10 +133,6 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
         template: MomentTemplate,
         projectId: String?
     ) async {
-        guard currentUserProvider.currentUserId != nil else {
-            statusMessage = "Sign in before adding media."
-            return
-        }
         let remainingSlots = MomentsMediaRules.remainingSlots(
             template: template,
             selectedCount: selectedMediaCount

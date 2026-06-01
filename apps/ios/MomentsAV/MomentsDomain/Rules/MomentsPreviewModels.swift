@@ -75,11 +75,11 @@ enum MomentsPreviewRules {
         case .missingProject:
             return missingProjectMessage
         case .previewLimitReached:
-            return "Preview limit reached for this project."
+            return "Story Review limit reached for this project."
         case .insufficientCredits:
             return insufficientCreditsMessage
         case .storyNotReady:
-            return "Generate a story before creating a preview."
+            return "Generate a story before reviewing it."
         }
     }
 }

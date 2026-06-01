@@ -15,6 +15,7 @@ struct MomentsProfileScreen: View {
     @EnvironmentObject private var themeController: MomentsAppThemeController
     @Environment(\.avCommonAppExperience) private var appExperience
     @Environment(\.openURL) private var openURL
+    @State private var showsCreditDetails = false
 
     var body: some View {
         AVSettingsProfileScreenScaffold(
@@ -181,24 +182,34 @@ struct MomentsProfileScreen: View {
     private var creditsCard: some View {
         AVSettingsSectionCard(
             title: "Credits",
-            subtitle: "\(MomentsCreditCopy.countTitle(accountController.creditBalance.spendable)) available"
+            subtitle: MomentsCreditCopy.availableDetail(accountController.creditBalance)
         ) {
             VStack(alignment: .leading, spacing: 12) {
                 AVSettingsInfoRow(
-                    systemImage: "sparkles.rectangle.stack",
-                    title: "Monthly",
-                    detail: "\(accountController.creditBalance.proMonthly) Pro credits"
-                )
-                AVSettingsInfoRow(
-                    systemImage: "gift",
-                    title: "Promo",
-                    detail: "\(accountController.creditBalance.promotional) claimed credits"
-                )
-                AVSettingsInfoRow(
                     systemImage: "creditcard",
-                    title: "Purchased",
-                    detail: "\(accountController.creditBalance.purchased) extra credits"
+                    title: "Available credits",
+                    detail: MomentsCreditCopy.availableDetail(accountController.creditBalance)
                 )
+
+                Button {
+                    withAnimation(.easeInOut(duration: 0.18)) {
+                        showsCreditDetails.toggle()
+                    }
+                } label: {
+                    Label(showsCreditDetails ? "Hide details" : "View details", systemImage: showsCreditDetails ? "chevron.up" : "chevron.down")
+                        .font(.system(size: 13, weight: .bold, design: .rounded))
+                }
+                .buttonStyle(.plain)
+
+                if showsCreditDetails {
+                    ForEach(MomentsCreditCopy.detailRows(for: accountController.creditBalance)) { row in
+                        AVSettingsInfoRow(
+                            systemImage: row.systemImage,
+                            title: row.title,
+                            detail: row.detail
+                        )
+                    }
+                }
             }
 
             AVSettingsButton(
@@ -363,7 +374,7 @@ struct MomentsProfileScreen: View {
 
     private var accessDetail: String {
         if accountController.isSignedIn {
-            return "\(MomentsCreditCopy.countTitle(accountController.creditBalance.spendable)) available"
+            return MomentsCreditCopy.availableDetail(accountController.creditBalance)
         }
         return localized("profile.summary.plan.detail.guest")
     }

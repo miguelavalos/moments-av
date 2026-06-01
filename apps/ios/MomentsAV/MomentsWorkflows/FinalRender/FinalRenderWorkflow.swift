@@ -7,6 +7,8 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
     @Published private(set) var renderPlan: MomentsRenderPlanResponse?
     @Published private(set) var isGenerating = false
     @Published private(set) var isRefreshingStatus = false
+    @Published private(set) var pendingGalleryVideo: MomentsGalleryVideoRecord?
+    @Published private(set) var canRetryFinalVideoDownload = false
     @Published private(set) var statusMessage: String?
 
     private var latestFinalJobProjectId: String?
@@ -17,6 +19,8 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
     private let finalRenderResultSaver: any MomentsFinalRenderResultSaving
     private let finalRenderClient: MomentsFinalRenderClient
     private let statusClient: MomentsRenderStatusClient
+    private let galleryStore: any MomentsGalleryStoring
+    private var downloadingArtifactIds = Set<String>()
 
     init(
         currentUserProvider: any MomentsCurrentUserProviding,
@@ -25,7 +29,8 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
         finalRenderResultSaver: any MomentsFinalRenderResultSaving,
         workspaceObserver: any MomentsActiveWorkspaceObserving,
         finalRenderClient: MomentsFinalRenderClient,
-        statusClient: MomentsRenderStatusClient
+        statusClient: MomentsRenderStatusClient,
+        galleryStore: any MomentsGalleryStoring = MomentsGalleryStore()
     ) {
         self.currentUserProvider = currentUserProvider
         self.authTokenProvider = authTokenProvider
@@ -33,6 +38,7 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
         self.finalRenderResultSaver = finalRenderResultSaver
         self.finalRenderClient = finalRenderClient
         self.statusClient = statusClient
+        self.galleryStore = galleryStore
         super.init(workspaceObserver: workspaceObserver)
     }
 
@@ -46,6 +52,7 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
             latestFinalJob = nil
             latestFinalJobProjectId = projectId
         }
+        scheduleLocalGalleryDownloadIfNeeded(workspace: workspace)
     }
 
     var isConfigured: Bool {
@@ -213,7 +220,96 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
         latestFinalJob = nil
         latestFinalJobProjectId = nil
         renderPlan = nil
+        pendingGalleryVideo = nil
+        canRetryFinalVideoDownload = false
         statusMessage = nil
+    }
+
+    func retryFinalVideoDownload() {
+        guard let workspace = activeWorkspace,
+              let artifact = workspace.latestArtifact(kind: "final_export"),
+              artifact.status == "available"
+        else {
+            statusMessage = "No final video is ready to download yet."
+            return
+        }
+
+        guard !downloadingArtifactIds.contains(artifact.id) else {
+            statusMessage = "Final video download is already in progress."
+            return
+        }
+
+        canRetryFinalVideoDownload = false
+        downloadingArtifactIds.insert(artifact.id)
+        Task { [weak self] in
+            await self?.downloadFinalExportToGallery(workspace: workspace, artifact: artifact)
+        }
+    }
+
+    private func scheduleLocalGalleryDownloadIfNeeded(workspace: MomentProjectWorkspace?) {
+        guard
+            let workspace,
+            let artifact = workspace.latestArtifact(kind: "final_export"),
+            artifact.status == "available",
+            pendingGalleryVideo?.artifactId != artifact.id,
+            !galleryStore.contains(artifactId: artifact.id),
+            !downloadingArtifactIds.contains(artifact.id)
+        else {
+            return
+        }
+
+        downloadingArtifactIds.insert(artifact.id)
+        canRetryFinalVideoDownload = false
+        Task { [weak self] in
+            await self?.downloadFinalExportToGallery(workspace: workspace, artifact: artifact)
+        }
+    }
+
+    private func downloadFinalExportToGallery(
+        workspace: MomentProjectWorkspace,
+        artifact: MomentArtifact
+    ) async {
+        defer { downloadingArtifactIds.remove(artifact.id) }
+
+        guard let bearerToken = try? await authTokenProvider.currentBearerToken() else {
+            statusMessage = "Sign in again to save the final video locally."
+            return
+        }
+
+        do {
+            statusMessage = "Saving final video to Gallery."
+            let download = try await finalRenderClient.prepareFinalArtifactDownload(
+                projectId: workspace.project.id,
+                artifactId: artifact.id,
+                bearerToken: bearerToken
+            )
+            let temporaryFileURL = try await finalRenderClient.downloadFinalArtifact(from: download)
+            pendingGalleryVideo = try galleryStore.saveDownloadedVideo(
+                temporaryFileURL: temporaryFileURL,
+                projectId: workspace.project.id,
+                artifactId: artifact.id,
+                title: workspace.project.title,
+                r2Key: download.r2Key,
+                createdAt: Date()
+            )
+            canRetryFinalVideoDownload = false
+            statusMessage = "Final video saved on this device. Finish it into Gallery or create another version."
+        } catch {
+            canRetryFinalVideoDownload = true
+            statusMessage = "Final video is ready, but it could not be saved locally yet."
+        }
+    }
+
+    func finishFinalExportToGallery() {
+        guard let pendingGalleryVideo else {
+            statusMessage = "Download the final video before moving it to Gallery."
+            return
+        }
+
+        galleryStore.addRecord(pendingGalleryVideo)
+        self.pendingGalleryVideo = nil
+        canRetryFinalVideoDownload = false
+        statusMessage = "Final video moved to Gallery."
     }
 
     private func generateBlockMessage(_ availability: MomentsFinalRenderRules.Availability) -> String {

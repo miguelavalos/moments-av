@@ -36,6 +36,8 @@ final class MomentsCreateViewModel: ObservableObject {
     @Published private(set) var finalExport: MomentArtifact?
     @Published private(set) var latestFinalJob: MomentRenderJob?
     @Published private(set) var renderPlan: MomentsRenderPlanResponse?
+    @Published private(set) var pendingGalleryVideo: MomentsGalleryVideoRecord?
+    @Published private(set) var canRetryFinalVideoDownload = false
     @Published private(set) var finalRenderStatusMessage: String?
     @Published private(set) var isGeneratingFinalRender = false
     @Published private(set) var isRefreshingFinalRenderStatus = false
@@ -227,14 +229,15 @@ final class MomentsCreateViewModel: ObservableObject {
         mediaStatusMessage = "3 assets synced. Avi selected the strongest opening order."
         savedScenes = workspace.storyScenes
         generatedScenes = []
-        storyStatusMessage = "Story draft ready for preview."
+        storyStatusMessage = "Story draft ready for review."
         lastPreparedStoryInputSignature = workspace.project.storyInputSignature
             ?? currentStoryInputSignature(projectId: workspace.project.id)
         activeWorkspace = workspace
         latestPreview = workspace.latestArtifact(kind: "preview")
         latestPreviewJob = workspace.latestRenderJob(kind: "preview")
-        previewStatusMessage = "Preview is available with watermark."
-        finalExport = workspace.latestArtifact(kind: "final")
+        previewStatusMessage = "Story review is available."
+        finalExport = workspace.latestArtifact(kind: "final_export")
+        pendingGalleryVideo = nil
         latestFinalJob = workspace.latestRenderJob(kind: "final")
         finalRenderStatusMessage = "Final export is ready."
         pendingFocus = .review
@@ -262,7 +265,7 @@ final class MomentsCreateViewModel: ObservableObject {
     }
 
     var effectiveFinalExport: MomentArtifact? {
-        effectiveActiveWorkspace?.latestArtifact(kind: "final") ?? finalExport
+        effectiveActiveWorkspace?.latestArtifact(kind: "final_export") ?? finalExport
     }
 
     private var canEditCreationOptions: Bool {
@@ -462,6 +465,8 @@ extension MomentsCreateViewModel {
         finalExport = state.finalExport
         latestFinalJob = state.latestFinalJob
         renderPlan = state.renderPlan
+        pendingGalleryVideo = state.pendingGalleryVideo
+        canRetryFinalVideoDownload = state.canRetryFinalVideoDownload
         finalRenderStatusMessage = state.statusMessage
         isGeneratingFinalRender = state.isGenerating
         isRefreshingFinalRenderStatus = state.isRefreshingStatus

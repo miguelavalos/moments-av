@@ -26,7 +26,7 @@ struct MomentsProjectsEmptyState: View {
 
             AVAppShellActionRow(
                 title: "Create the first moment",
-                detail: "Start with a draft, add media, then return here to review previews and final exports.",
+                detail: "Start with a draft, add media, then return here to review story reviews and final exports.",
                 systemImage: "plus.app.fill",
                 isProminent: true,
                 accessibilityIdentifier: "moments.projects.empty.create",
@@ -35,7 +35,7 @@ struct MomentsProjectsEmptyState: View {
 
             AVAppShellInlineMessage(
                 title: "What appears here",
-                message: "In-progress projects show draft, media, story, preview, and render status. Finished projects keep the final export artifact visible.",
+                message: "In Progress shows drafts, media, story review, render status, and videos waiting for download.",
                 systemImage: "checkmark.circle",
                 usesAccentIcon: true
             )

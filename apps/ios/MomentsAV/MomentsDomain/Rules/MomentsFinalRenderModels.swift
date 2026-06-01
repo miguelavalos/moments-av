@@ -101,6 +101,25 @@ struct MomentsRenderPlanResponse: Decodable, Equatable {
     let generatedAt: String
 }
 
+struct MomentsArtifactDownloadRequest: Encodable {
+    let appId = "momentsav"
+    let projectId: String
+    let artifactId: String
+}
+
+struct MomentsArtifactDownloadResponse: Decodable, Equatable {
+    let appId: String
+    let projectId: String
+    let artifactId: String
+    let artifactKind: String
+    let downloadUrl: String
+    let method: String
+    let headers: [String: String]
+    let r2Key: String
+    let expiresAt: String
+    let generatedAt: String
+}
+
 struct MomentsRenderPlan: Decodable, Equatable {
     let targetDurationMs: Int
     let creditCost: Int

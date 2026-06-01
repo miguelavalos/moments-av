@@ -159,6 +159,8 @@ struct MomentsCreateFinalRenderSummary: Equatable {
     var creditCost = 0
     var renderPlan: MomentsRenderPlanResponse?
     var finalExport: MomentArtifact?
+    var pendingGalleryVideo: MomentsGalleryVideoRecord?
+    var canRetryFinalVideoDownload = false
     var latestFinalJob: MomentRenderJob?
     var isGenerating = false
     var isRefreshingStatus = false

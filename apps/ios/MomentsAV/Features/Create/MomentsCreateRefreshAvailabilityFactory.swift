@@ -14,10 +14,10 @@ enum MomentsCreateRefreshAvailabilityFactory {
             isAvailable: isAvailable,
             isConfigured: isConfigured,
             isRefreshing: isRefreshing,
-            unavailableMessage: "Preview status refresh is not available yet.",
-            notConfiguredMessage: "Preview status refresh is not configured for this build.",
-            missingProjectMessage: "Open a project before refreshing preview status.",
-            missingJobMessage: "No preview render job is available yet.",
+            unavailableMessage: "Story review refresh is not available yet.",
+            notConfiguredMessage: "Story review refresh is not configured for this build.",
+            missingProjectMessage: "Open a project before refreshing story review status.",
+            missingJobMessage: "No story review job is available yet.",
             missingProviderRequestMessage: MomentsRecoveryCopy.previewStatusMissing()
         )
     }

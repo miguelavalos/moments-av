@@ -373,11 +373,11 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
             refreshAvailabilityMessage: "Refresh preview."
         )
 
-        XCTAssertEqual(presentation.usageTitle, "0/3 previews")
-        XCTAssertEqual(presentation.previewArtifactMessage, "Includes a subtle Moments AV mark.")
-        XCTAssertEqual(presentation.refreshButtonTitle, "Refreshing preview status...")
-        XCTAssertEqual(presentation.generateButtonTitle, "Generating preview...")
-        XCTAssertEqual(presentation.emptyMessage, "Story is ready. Generate a preview to review the result.")
+        XCTAssertEqual(presentation.usageTitle, "0/3 Story Reviews")
+        XCTAssertEqual(presentation.previewArtifactMessage, "Story review is ready for your final check.")
+        XCTAssertEqual(presentation.refreshButtonTitle, "Refreshing story review...")
+        XCTAssertEqual(presentation.generateButtonTitle, "Reviewing story...")
+        XCTAssertEqual(presentation.emptyMessage, "Story is ready. Review it before creating the final video.")
         XCTAssertFalse(presentation.showsEmptyState)
         XCTAssertTrue(presentation.canGeneratePreview)
         XCTAssertTrue(presentation.canRefreshPreviewStatus)
@@ -393,9 +393,9 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
 
         XCTAssertNil(presentation.usageTitle)
         XCTAssertNil(presentation.previewArtifactMessage)
-        XCTAssertEqual(presentation.refreshButtonTitle, "Refresh preview status")
-        XCTAssertEqual(presentation.generateButtonTitle, "Generate preview")
-        XCTAssertEqual(presentation.emptyMessage, "Generate a story before creating a preview.")
+        XCTAssertEqual(presentation.refreshButtonTitle, "Refresh story review")
+        XCTAssertEqual(presentation.generateButtonTitle, "Review story")
+        XCTAssertEqual(presentation.emptyMessage, "Prepare the story before reviewing it.")
         XCTAssertTrue(presentation.showsEmptyState)
     }
 
@@ -527,7 +527,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         )
         XCTAssertEqual(
             MomentsRecoveryCopy.previewStatusMissing(),
-            "Preview status cannot be refreshed yet. Generate a preview again if this does not update."
+            "Story review status cannot be refreshed yet. Review the story again if this does not update."
         )
         XCTAssertEqual(
             MomentsRecoveryCopy.finalRenderStatusMissing(),

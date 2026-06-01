@@ -23,13 +23,13 @@
 "profile.help.terms.detail" = "Review the terms that apply to Moments AV.";
 "profile.help.terms.title" = "Terms of service";
 "profile.help.title" = "Help and legal";
-"profile.local.artifacts.detail" = "Story scenes, previews, and final export references stay on this device.";
+"profile.local.artifacts.detail" = "Story scenes, Story Reviews, and final export references stay on this device.";
 "profile.local.artifacts.title" = "Generated artifacts";
 "profile.local.media.detail" = "Media selections used by active Moments AV drafts stay on this device.";
 "profile.local.media.title" = "Selected media";
-"profile.local.projects.detail" = "Draft and finished project references stay on this device.";
-"profile.local.projects.title" = "Projects";
-"profile.local.subtitle" = "Your projects, selected media, and generated artifacts stay on this device.";
+"profile.local.projects.detail" = "In-progress Moments and Gallery references stay on this device.";
+"profile.local.projects.title" = "In Progress and Gallery";
+"profile.local.subtitle" = "Your Moments, selected media, and generated artifacts stay on this device.";
 "profile.local.title" = "On this device";
 "profile.preferences.language.detail" = "Choose the language used by the Moments AV interface.";
 "profile.preferences.language.title" = "App language";
@@ -40,7 +40,7 @@
 "profile.preferences.theme.system" = "System";
 "profile.preferences.theme.title" = "Appearance";
 "profile.preferences.title" = "App preferences";
-"profile.pro.avi.detail" = "Extra preview passes while your Pro month is active.";
+"profile.pro.avi.detail" = "Extra Story Review passes while your Pro month is active.";
 "profile.pro.avi.title" = "15 Story Reviews";
 "profile.pro.library.detail" = "Better monthly value than buying credits one by one.";
 "profile.pro.library.title" = "6 monthly Video Credits";

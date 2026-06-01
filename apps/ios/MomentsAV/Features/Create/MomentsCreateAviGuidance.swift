@@ -55,10 +55,10 @@ enum MomentsCreateAviGuidanceResolver {
 
         if balance.spendable <= 0 {
             return MomentsCreateAviGuidance(
-                emotion: .warning,
-                message: "You need 1 credit to start.",
-                actionTitle: "Get credits",
-                reaction: .negative
+                emotion: .happy,
+                message: "Add photos or clips now. Credits are needed before creating the final video.",
+                actionTitle: "Start project",
+                reaction: .positive
             )
         }
 

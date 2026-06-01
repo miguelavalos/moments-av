@@ -8,8 +8,8 @@ enum MomentsCreateFormatting {
 
         let parts = [
             plan.proMonthly > 0 ? "\(plan.proMonthly) monthly" : nil,
-            plan.promotional > 0 ? "\(plan.promotional) promo" : nil,
-            plan.purchased > 0 ? "\(plan.purchased) purchased" : nil
+            plan.purchased > 0 ? "\(plan.purchased) purchased" : nil,
+            plan.promotional > 0 ? "\(plan.promotional) other" : nil
         ]
         .compactMap { $0 }
 

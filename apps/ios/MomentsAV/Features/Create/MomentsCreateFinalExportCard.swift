@@ -5,6 +5,9 @@ struct MomentsCreateFinalExportCard: View {
     let presentation: MomentsCreateFinalRenderPresentation
     let generateFinalRender: () -> Void
     let refreshFinalRenderStatus: () -> Void
+    let retryFinalVideoDownload: () -> Void
+    let finishFinalVideoToGallery: () -> Void
+    let createAnotherFinalVideoVersion: () -> Void
 
     var body: some View {
         AVAppShellCard {
@@ -24,6 +27,30 @@ struct MomentsCreateFinalExportCard: View {
                         systemImage: "square.and.arrow.up",
                         artifact: finalExport,
                         detail: nil
+                    )
+                }
+
+                if presentation.summary.pendingGalleryVideo != nil {
+                    MomentsCreateEmptySectionRow(
+                        systemImage: "rectangle.stack.badge.play.fill",
+                        message: "The final video is saved on this device. Choose where this Moment goes next."
+                    )
+
+                    AVAppShellPrimaryButton(
+                        "Finish and move to Gallery",
+                        systemImage: "checkmark.circle.fill",
+                        action: finishFinalVideoToGallery
+                    )
+
+                    Button(action: createAnotherFinalVideoVersion) {
+                        Label("Create another version", systemImage: "plus.rectangle.on.rectangle")
+                    }
+                    .buttonStyle(MomentsCreateNeutralInlineButtonStyle())
+                } else if presentation.summary.canRetryFinalVideoDownload {
+                    AVAppShellPrimaryButton(
+                        "Retry final video download",
+                        systemImage: "arrow.down.circle.fill",
+                        action: retryFinalVideoDownload
                     )
                 }
 

@@ -11,6 +11,13 @@ in the private AVALSYS suite.
 
 - [ ] `xcodegen generate --spec apps/ios/project.yml` succeeds.
 - [ ] The public compile check succeeds with unsigned simulator build settings.
+- [ ] For TestFlight/App Store handoff, the private production local config has
+  been generated and `scripts/check-ios-runtime-config.sh --env prod
+  --configuration Release` passes before archive/upload.
+- [ ] Auth, account, credit, purchase, upload, render, and deletion smokes use a
+  signed install. Any simulator that previously ran an unsigned build has had
+  both `com.avalsys.momentsav.dev` and `com.avalsys.momentsav` uninstalled
+  before the signed smoke.
 - [ ] Focused tests pass or failures are documented in the private handoff.
 - [ ] `scripts/check-public-hygiene.sh` passes for normal public repo changes.
 - [ ] `scripts/check-public-release-readiness.sh` passes before App Store release

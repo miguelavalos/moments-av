@@ -21,9 +21,9 @@ struct MomentsCreateWorkspaceProgress: View {
                 isComplete: summary.sceneCount > 0,
             )
             AVAppShellProgressRow(
-                title: "Preview",
+                title: "Story Review",
                 detail: summary.previewDetail,
-                systemImage: "play.rectangle",
+                systemImage: "text.bubble",
                 isComplete: summary.hasPreviewArtifact,
             )
             AVAppShellProgressRow(

@@ -19,7 +19,7 @@ struct MomentsHomePresentation {
         let latestInProgressProject = projectSummary.latestInProgressProject
         let latestInProgressAction = latestInProgressProject.map {
             MomentsHomeAction(
-                title: "Continue latest project",
+                title: "Continue latest Moment",
                 detail: MomentsProjectFormatting.compactDetail(for: $0, includeTitle: true),
                 systemImage: "arrow.right.circle",
                 isProminent: true
@@ -39,11 +39,11 @@ struct MomentsHomePresentation {
                 isDisabled: !isSignedIn
             ),
             reviewProjectsAction: MomentsHomeAction(
-                title: "Review projects",
+                title: "Open In Progress",
                 detail: projectSummary.hasProjects
-                    ? "Open \(projectSummary.projectCount) synced \(projectLabel(projectSummary.projectCount)) with story and video status."
-                    : "Synced projects appear after the story is prepared.",
-                systemImage: "rectangle.stack",
+                    ? "Open drafts, active renders, and videos waiting for local download."
+                    : "Drafts appear after you start a Moment.",
+                systemImage: "clock",
                 isDisabled: !isSignedIn
             ),
             aviGuidanceAction: MomentsHomeAction(
@@ -61,20 +61,20 @@ struct MomentsHomePresentation {
             return "Signed in as \(displayName ?? "Moments AV user")."
         }
 
-        return "Sign in is required before creating, rendering, and managing projects."
+        return "Sign in is required before creating, rendering, and managing Moments."
     }
 
     private static func projectStatusDetail(projectSummary: MomentsProjectListSummary) -> String {
         if projectSummary.hasProjects {
-            return "\(projectSummary.projectCount) synced \(projectLabel(projectSummary.projectCount)) tracked across the current account."
+            return "\(projectSummary.projectCount) synced \(momentLabel(projectSummary.projectCount)) tracked across the current account."
         }
 
-        return "No synced projects yet."
+        return "No synced Moments yet."
     }
 
     private static func aviBriefDetail(isSignedIn: Bool, projectSummary: MomentsProjectListSummary) -> String {
         guard isSignedIn else {
-            return "Sign in to create projects, track videos, manage renders, and keep credits with your account."
+            return "Sign in to create Moments, track videos, manage renders, and keep credits with your account."
         }
 
         if let latestProject = projectSummary.latestInProgressProject {
@@ -82,13 +82,13 @@ struct MomentsHomePresentation {
         }
 
         if projectSummary.hasProjects {
-            return "Review synced projects and decide the next story or video step."
+            return "Review In Progress and decide the next story, render, or download step."
         }
 
         return "Plan the first memory film before adding media."
     }
 
-    private static func projectLabel(_ count: Int) -> String {
-        count == 1 ? "project" : "projects"
+    private static func momentLabel(_ count: Int) -> String {
+        count == 1 ? "Moment" : "Moments"
     }
 }

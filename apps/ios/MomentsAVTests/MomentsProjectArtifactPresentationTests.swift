@@ -10,7 +10,7 @@ final class MomentsProjectArtifactPresentationTests: XCTestCase {
 
         XCTAssertEqual(presentation.title, "Render jobs")
         XCTAssertEqual(presentation.emptySystemImage, "gearshape.2")
-        XCTAssertEqual(presentation.emptyMessage, "Preview and final render jobs will appear here.")
+        XCTAssertEqual(presentation.emptyMessage, "Story review and final render jobs will appear here.")
         XCTAssertEqual(presentation.jobs.map(\.id), ["new", "old"])
     }
 
@@ -24,14 +24,14 @@ final class MomentsProjectArtifactPresentationTests: XCTestCase {
         let preview = MomentsProjectArtifactSectionPresentation.preview(artifacts: artifacts)
         let finalExport = MomentsProjectArtifactSectionPresentation.finalExport(artifacts: artifacts)
 
-        XCTAssertEqual(preview.title, "Preview")
-        XCTAssertEqual(preview.emptySystemImage, "play.rectangle")
-        XCTAssertEqual(preview.emptyMessage, "Generate a preview after the story draft is ready.")
+        XCTAssertEqual(preview.title, "Story Review")
+        XCTAssertEqual(preview.emptySystemImage, "text.bubble")
+        XCTAssertEqual(preview.emptyMessage, "Review the story after the story draft is ready.")
         XCTAssertEqual(preview.artifact?.storageKey, "momentsav/preview-2.mp4")
 
         XCTAssertEqual(finalExport.title, "Final export")
         XCTAssertEqual(finalExport.emptySystemImage, "square.and.arrow.up")
-        XCTAssertEqual(finalExport.emptyMessage, "Render the final export after approving a preview.")
+        XCTAssertEqual(finalExport.emptyMessage, "Render the final export after approving the story review.")
         XCTAssertEqual(finalExport.artifact?.storageKey, "momentsav/final-1.mp4")
     }
 
@@ -63,10 +63,10 @@ final class MomentsProjectArtifactPresentationTests: XCTestCase {
             )
         )
 
-        XCTAssertEqual(presentation.kindTitle, "Preview")
+        XCTAssertEqual(presentation.kindTitle, "Story Review")
         XCTAssertEqual(presentation.watermarkTitle, "Included")
         XCTAssertEqual(presentation.expiresAtTitle, MomentsDateFormatting.formattedDate(milliseconds: 1_781_592_000_000))
-        XCTAssertEqual(presentation.actionDetail, "Preview is ready to review.")
+        XCTAssertEqual(presentation.actionDetail, "Story Review is ready to review.")
     }
 
     func testFinalArtifactPresentationProvidesExportAndRecoveryCopy() {

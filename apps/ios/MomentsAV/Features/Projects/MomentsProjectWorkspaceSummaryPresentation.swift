@@ -27,9 +27,9 @@ struct MomentsProjectWorkspaceSummaryPresentation: Equatable {
                 systemImage: "circle.dashed"
             ),
             MomentsProjectSummaryTilePresentation(
-                title: "Preview",
+                title: "Story Review",
                 value: Self.summaryValue(for: latestPreview),
-                systemImage: "play.rectangle"
+                systemImage: "text.bubble"
             ),
             MomentsProjectSummaryTilePresentation(
                 title: "Final",

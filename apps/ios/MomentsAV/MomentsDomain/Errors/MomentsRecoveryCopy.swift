@@ -30,7 +30,7 @@ enum MomentsRecoveryCopy {
     }
 
     static func previewStatusMissing() -> String {
-        "Preview status cannot be refreshed yet. Generate a preview again if this does not update."
+        "Story review status cannot be refreshed yet. Review the story again if this does not update."
     }
 
     static func finalRenderStatusMissing() -> String {

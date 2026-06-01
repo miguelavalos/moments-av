@@ -13,9 +13,9 @@ struct MomentsAviHelpCard: View {
                 systemImage: "text.quote"
             )
             AVAviInfoRow(
-                title: "Preview",
+                title: "Story Review",
                 detail: "Helps validate pacing and story shape before credits are committed to the final export.",
-                systemImage: "rectangle.inset.filled.and.person.filled"
+                systemImage: "text.bubble"
             )
             AVAviInfoRow(
                 title: "Project review",
@@ -31,22 +31,22 @@ struct MomentsAviProjectGuidanceCard: View {
 
     var body: some View {
         AVAviGuidanceCard(
-            title: "Project guidance",
-            detail: "Use Projects when a draft, preview, render job, or final artifact needs review."
+            title: "In Progress and Gallery",
+            detail: "Use In Progress for drafts, story reviews, render jobs, and downloads that still need action."
         ) {
             AVAviInfoRow(
-                title: "In progress",
-                detail: "Use Projects to check story scenes, preview artifacts, and render jobs while a video is moving through the workflow.",
+                title: "In Progress",
+                detail: "Check story scenes, story reviews, render jobs, and download-needed videos while a video is moving through the workflow.",
                 systemImage: "clock"
             )
             AVAviInfoRow(
-                title: "Finished",
-                detail: "Completed projects keep the final export artifact visible in the workspace detail.",
+                title: "Gallery",
+                detail: "Gallery is local-only and shows downloaded final videos generated on this device.",
                 systemImage: "checkmark.circle"
             )
             AVAviActionButton(
-                title: "Open Projects",
-                systemImage: "rectangle.stack",
+                title: "Open Gallery",
+                systemImage: "play.square.stack",
                 action: openProjects
             )
         }

@@ -24,9 +24,9 @@ struct MomentsProjectProgressModel {
                 state: workspace.storyScenes.isEmpty ? .waiting : .complete
             ),
             MomentsProjectProgressPhase(
-                title: "Preview",
-                detail: Self.renderDetail(workspace: workspace, kind: "preview", fallback: "Not generated"),
-                systemImage: "play.rectangle",
+                title: "Story Review",
+                detail: Self.renderDetail(workspace: workspace, kind: "preview", fallback: "Not reviewed"),
+                systemImage: "text.bubble",
                 state: Self.renderState(workspace: workspace, kind: "preview", artifactKind: "preview")
             ),
             MomentsProjectProgressPhase(
