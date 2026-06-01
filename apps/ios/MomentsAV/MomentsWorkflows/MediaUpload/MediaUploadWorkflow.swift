@@ -257,7 +257,7 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
             syncedMediaBySourceIdentifier[$0.sourceLocalIdentifier] == nil
         }
         if pendingMediaToSave.isEmpty {
-            statusMessage = "Media ready. Avi can prepare the story."
+            statusMessage = MomentsL10n.string("create.media.status.ready")
             return alreadySyncedMedia.sorted { $0.sortOrder < $1.sortOrder }
         }
 
@@ -412,15 +412,18 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
     ) -> String {
         if importedCount == 0 {
             return skippedDuplicateCount > 0
-                ? "Those moments were already selected."
+                ? MomentsL10n.string("create.media.status.duplicatesOnly")
                 : emptyMessage
         }
 
         if skippedDuplicateCount > 0 {
-            return "Added \(importedCount) \(importedCount == 1 ? "moment" : "moments"). Skipped \(skippedDuplicateCount) already selected."
+            let momentWord = importedCount == 1
+                ? MomentsL10n.string("moment.noun.one")
+                : MomentsL10n.string("moment.noun.other")
+            return MomentsL10n.string("create.media.status.addedSkippingDuplicates", importedCount, momentWord, skippedDuplicateCount)
         }
 
-        return "Media ready. Avi can prepare the story."
+        return MomentsL10n.string("create.media.status.ready")
     }
 
     private var selectedMediaCount: Int {

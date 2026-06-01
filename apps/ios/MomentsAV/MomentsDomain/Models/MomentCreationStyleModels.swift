@@ -249,7 +249,7 @@ struct MomentCreationStyle: Identifiable, Equatable {
             assetName: "StyleFamilyMoments",
             template: .birthdayMessage,
             defaultMusic: .warm,
-            allowedMusic: [.warm, .cinematic, .calm],
+            allowedMusic: [.warm, .fun, .cinematic, .calm],
             tone: .warm,
             tempo: .gentle,
             isEnabled: true
@@ -273,7 +273,7 @@ struct MomentCreationStyle: Identifiable, Equatable {
             assetName: "StyleMilestone",
             template: .birthdayMessage,
             defaultMusic: .warm,
-            allowedMusic: [.warm, .cinematic, .calm],
+            allowedMusic: [.warm, .fun, .cinematic, .calm],
             tone: .warm,
             tempo: .balanced,
             isEnabled: true

@@ -271,7 +271,7 @@ private struct MomentsCreateDashboardHeader: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
-            Text("Creation Dashboard")
+            Text(MomentsL10n.string("create.dashboard.title"))
                 .font(.system(size: 22, weight: .black))
                 .foregroundStyle(AVBrandColor.textPrimary)
 
@@ -284,15 +284,15 @@ private struct MomentsCreateDashboardHeader: View {
 
     private var subtitle: String {
         if presentation.finalRenderSummary.finalExport != nil {
-            return "Your final video is ready to review and share."
+            return MomentsL10n.string("create.dashboard.subtitle.finalReady")
         }
         if let realtimeStatus = presentation.finalRenderSummary.realtimeStatus {
             return realtimeStatus.detail
         }
         if presentation.storySummary.hasScenes {
-            return "Avi has a story plan. Create the video when ready."
+            return MomentsL10n.string("create.dashboard.subtitle.storyPlan")
         }
-        return "Review what Avi prepared, then create the video when ready."
+        return MomentsL10n.string("create.dashboard.subtitle.default")
     }
 }
 
@@ -414,15 +414,15 @@ struct MomentsCreateBlockingPreparationView: View {
         var title: String {
             switch self {
             case .importMedia:
-                return "Reading your selection"
+                return MomentsL10n.string("create.preparation.importMedia.title")
             case .prepareStory:
-                return "Preparing your story"
+                return MomentsL10n.string("create.preparation.prepareStory.title")
             case .uploadForVideo:
-                return "Uploading media"
+                return MomentsL10n.string("create.preparation.uploadForVideo.title")
             case .createVideo:
-                return "Creating your video"
+                return MomentsL10n.string("create.preparation.createVideo.title")
             case .createPreview:
-                return "Reviewing your story"
+                return MomentsL10n.string("create.preparation.createPreview.title")
             }
         }
 
@@ -456,20 +456,26 @@ struct MomentsCreateBlockingPreparationView: View {
             switch self {
             case .importMedia:
                 if let itemCount, itemCount > 0 {
-                    return "Avi is reading \(itemCount) \(itemCount == 1 ? "item" : "items") and setting up the first review."
+                    let itemWord = itemCount == 1
+                        ? MomentsL10n.string("media.item.singular")
+                        : MomentsL10n.string("media.item.plural")
+                    return MomentsL10n.string("create.preparation.importMedia.detailWithCount", itemCount, itemWord)
                 }
-                return "Avi is reading the selection and setting up the first review."
+                return MomentsL10n.string("create.preparation.importMedia.detail")
             case .prepareStory:
-                return "Avi is organizing the selected moments into an edited video plan."
+                return MomentsL10n.string("create.preparation.prepareStory.detail")
             case .uploadForVideo:
                 if let itemCount, itemCount > 0 {
-                    return "Sending \(itemCount) \(itemCount == 1 ? "item" : "items") needed for final video creation."
+                    let itemWord = itemCount == 1
+                        ? MomentsL10n.string("media.item.singular")
+                        : MomentsL10n.string("media.item.plural")
+                    return MomentsL10n.string("create.preparation.uploadForVideo.detailWithCount", itemCount, itemWord)
                 }
-                return "Sending the selected media needed for final video creation."
+                return MomentsL10n.string("create.preparation.uploadForVideo.detail")
             case .createVideo:
-                return "Avi is starting the final edit. This can take a few minutes."
+                return MomentsL10n.string("create.preparation.createVideo.detail")
             case .createPreview:
-                return "Avi is checking the story plan before final video creation."
+                return MomentsL10n.string("create.preparation.createPreview.detail")
             }
         }
     }
@@ -549,9 +555,10 @@ private struct MomentsCreateOptionsSummaryCard: View {
 
     private var suggestionText: String? {
         guard let autoStyleSuggestion else { return nil }
-        let styleTitle = styles.first(where: { $0.id == autoStyleSuggestion.styleID })?.title ?? "another theme"
+        let styleTitle = styles.first(where: { $0.id == autoStyleSuggestion.styleID })?.title
+            ?? MomentsL10n.string("create.options.anotherTheme")
         if canUndoAutoStyleSuggestion {
-            return "Using Avi suggestion: \(styleTitle) · \(autoStyleSuggestion.musicPreset.title)"
+            return MomentsL10n.string("create.options.suggestionUsing", styleTitle, autoStyleSuggestion.musicPreset.title)
         }
         guard selectedStyle.id != autoStyleSuggestion.styleID || selectedMusicPreset != autoStyleSuggestion.musicPreset else {
             return nil
@@ -567,7 +574,7 @@ private struct MomentsCreateStoryReviewCard: View {
         AVAppShellCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(spacing: 10) {
-                    Text("Story direction")
+                    Text(MomentsL10n.string("create.storyDirection.title"))
                         .font(.system(size: 13, weight: .black))
                         .foregroundStyle(AVBrandColor.textPrimary)
 
@@ -578,14 +585,14 @@ private struct MomentsCreateStoryReviewCard: View {
                         .foregroundStyle(AVBrandColor.accent)
                 }
 
-                Text("Review the pacing and message before spending video credits.")
+                Text(MomentsL10n.string("create.storyDirection.detail"))
                     .font(.caption)
                     .fontWeight(.semibold)
                     .foregroundStyle(AVBrandColor.textSecondary)
 
                 VStack(alignment: .leading, spacing: 10) {
                     if presentation.storySummary.reviewScenes.isEmpty {
-                        Label("Avi needs to prepare the story before the video can be created.", systemImage: "text.bubble.fill")
+                        Label(MomentsL10n.string("create.storyDirection.needsStory"), systemImage: "text.bubble.fill")
                             .font(.system(size: 12, weight: .bold))
                             .foregroundStyle(AVBrandColor.textSecondary)
                             .fixedSize(horizontal: false, vertical: true)
@@ -748,7 +755,7 @@ private struct MomentsCreateStoryReviewPage: View {
                             .frame(width: 98, height: 98)
 
                             VStack(alignment: .leading, spacing: 8) {
-                                Text("Review before creating")
+                                Text(MomentsL10n.string("create.reviewBeforeCreating.title"))
                                     .font(.system(size: 18, weight: .black))
                                     .foregroundStyle(AVBrandColor.textPrimary)
 
@@ -759,7 +766,7 @@ private struct MomentsCreateStoryReviewPage: View {
                                     .fixedSize(horizontal: false, vertical: true)
 
                                 HStack(spacing: 8) {
-                                    MomentsCreateOptionPill(title: "\(presentation.mediaSummary.reviewCount) items", systemImage: "photo.on.rectangle")
+                                    MomentsCreateOptionPill(title: MomentsL10n.string("create.media.itemCount", presentation.mediaSummary.reviewCount), systemImage: "photo.on.rectangle")
                                     MomentsCreateOptionPill(title: "\(presentation.template.duration)", systemImage: "timer")
                                     MomentsCreateOptionPill(title: "\(totalCreditCostTitle)", systemImage: "creditcard.fill")
                                 }
@@ -792,11 +799,11 @@ private struct MomentsCreateStoryReviewPage: View {
                                     .background(AVBrandColor.textPrimary, in: Circle())
 
                                 VStack(alignment: .leading, spacing: 5) {
-                                    Text("Create the video")
+                                    Text(MomentsL10n.string("create.final.createVideoTitle"))
                                         .font(.system(size: 17, weight: .black))
                                         .foregroundStyle(AVBrandColor.textPrimary)
 
-                                    Text("Avi will edit your real media into a \(presentation.template.duration) video. You can go back if you want to change the story first.")
+                                    Text(MomentsL10n.string("create.final.createVideoDetail", presentation.template.duration))
                                         .font(.system(size: 13, weight: .semibold))
                                         .foregroundStyle(AVBrandColor.textSecondary)
                                         .fixedSize(horizontal: false, vertical: true)
@@ -1360,58 +1367,58 @@ private struct MomentsCreateCompactAviGuide: View {
 
     private var title: String {
         if presentation.finalRenderSummary.finalExport != nil {
-            return "Ready"
+            return MomentsL10n.string("create.aviStatus.ready.title")
         }
         if let realtimeStatus = presentation.finalRenderSummary.realtimeStatus {
             return realtimeStatus.title
         }
         if presentation.previewSummary.latestPreview != nil {
-            return "Story review ready"
+            return MomentsL10n.string("create.aviStatus.reviewReady.title")
         }
         if presentation.previewSummary.isGenerating {
-            return "Reviewing story"
+            return MomentsL10n.string("create.aviStatus.reviewing.title")
         }
         if presentation.storySummary.isDrafting {
-            return "Preparing story"
+            return MomentsL10n.string("create.aviStatus.preparing.title")
         }
         if presentation.previewSummary.latestPreviewJob != nil || presentation.finalRenderSummary.latestFinalJob != nil {
-            return "Avi is working"
+            return MomentsL10n.string("create.aviStatus.working.title")
         }
         if presentation.canGeneratePreview {
-            return "Story ready"
+            return MomentsL10n.string("create.aviStatus.storyReady.title")
         }
         if presentation.mediaSummary.selectedCount > 0 || !presentation.mediaSummary.syncedMediaAssets.isEmpty {
-            return "Good selection"
+            return MomentsL10n.string("create.aviStatus.goodSelection.title")
         }
-        return "Start with your media"
+        return MomentsL10n.string("create.aviStatus.startMedia.title")
     }
 
     private var message: String {
         if presentation.finalRenderSummary.finalExport != nil {
-            return "Your video is ready to export or share."
+            return MomentsL10n.string("create.aviStatus.exportReady.detail")
         }
         if presentation.previewSummary.latestPreview != nil {
-            return "Review the story. If it feels right, Avi can create the final video."
+            return MomentsL10n.string("create.aviStatus.previewReady.detail")
         }
         if presentation.previewSummary.isGenerating {
-            return presentation.previewSummary.statusMessage ?? "Avi is reviewing the story from your selected moments."
+            return presentation.previewSummary.statusMessage ?? MomentsL10n.string("create.aviStatus.reviewing.detail")
         }
         if presentation.storySummary.isDrafting {
-            return presentation.storySummary.statusMessage ?? "Avi is organizing the media into a first story plan."
+            return presentation.storySummary.statusMessage ?? MomentsL10n.string("create.aviStatus.preparing.detail")
         }
         if let realtimeStatus = presentation.finalRenderSummary.realtimeStatus {
             return realtimeStatus.detail
         }
         if presentation.previewSummary.latestPreviewJob != nil {
-            return "Avi is reviewing the story from your selected moments."
+            return MomentsL10n.string("create.aviStatus.reviewing.detail")
         }
         if presentation.canGeneratePreview {
-            return "Avi prepared the story, style, and pacing. Video creation comes next."
+            return MomentsL10n.string("create.aviStatus.storyReady.detail")
         }
         if presentation.mediaSummary.selectedCount > 0 || !presentation.mediaSummary.syncedMediaAssets.isEmpty {
-            return "Avi will organize the story and you can fine tune the selection."
+            return MomentsL10n.string("create.aviStatus.goodSelection.detail")
         }
-        return "Add photos or clips. Avi will shape the story, mood, and pacing."
+        return MomentsL10n.string("create.aviStatus.startMedia.detail")
     }
 }
 
@@ -1618,21 +1625,21 @@ private struct MomentsCreatePrimaryActionBar: View {
             return presentation.previewSummary.statusMessage ?? "Reviewing story..."
         }
         if presentation.storySummary.isDrafting {
-            return presentation.storySummary.statusMessage ?? "Preparing story..."
+            return presentation.storySummary.statusMessage ?? MomentsL10n.string("create.preparation.prepareStory.progress")
         }
         if presentation.finalRenderSummary.finalExport != nil {
-            return "Final video ready."
+            return MomentsL10n.string("create.primary.finalReady")
         }
         if presentation.finalRenderSummary.latestFinalJob != nil {
             return presentation.finalRenderSummary.realtimeStatus?.detail
                 ?? presentation.finalRenderSummary.statusMessage
-                ?? "Avi is creating the video. You can check progress here."
+                ?? MomentsL10n.string("create.primary.videoCreating")
         }
         if presentation.previewSummary.latestPreview != nil {
-            return "Story review ready. Check it before final video."
+            return MomentsL10n.string("create.primary.previewReady")
         }
         if presentation.canGenerateFinalRender {
-            return "Review the story and video plan before creating the final video."
+            return MomentsL10n.string("create.primary.reviewBeforeVideo")
         }
         if let previewMessage = presentation.previewSummary.statusMessage, !previewMessage.isEmpty {
             return previewMessage
@@ -1650,7 +1657,7 @@ private struct MomentsCreatePrimaryActionBar: View {
             return presentation.storyAvailabilityMessage
         }
         if presentation.canDraftStory {
-            return "Avi can prepare the story review now."
+            return MomentsL10n.string("create.primary.storyReady.detail")
         }
         return nil
     }
@@ -1883,10 +1890,10 @@ private struct MomentsCreateLegacyCompactAviGuide: View {
             return "Working"
         }
         if presentation.canGeneratePreview {
-            return "Story ready"
+            return MomentsL10n.string("create.aviStatus.storyReady.title")
         }
         if presentation.mediaSummary.selectedCount > 0 || !presentation.mediaSummary.syncedMediaAssets.isEmpty {
-            return "Good selection"
+            return MomentsL10n.string("create.aviStatus.goodSelection.title")
         }
         return "Avi tip"
     }
@@ -2060,21 +2067,21 @@ private struct MomentsCreateGuideSummaryCard: View {
                     MomentsCreateOptionDivider()
 
                     MomentsCreateEditableOptionRow(
-                        title: MomentsL10n.string("create.guide.length.title"),
-                        value: form.duration.title,
-                        detail: lengthDetail,
-                        systemImage: "timer",
-                        action: changeLength
-                    )
-
-                    MomentsCreateOptionDivider()
-
-                    MomentsCreateEditableOptionRow(
                         title: MomentsL10n.string("create.guide.mood.title"),
                         value: selectedMusicPreset.title,
                         detail: MomentsL10n.string("create.guide.mood.detail"),
                         systemImage: "sparkles",
                         action: changeMood
+                    )
+
+                    MomentsCreateOptionDivider()
+
+                    MomentsCreateEditableOptionRow(
+                        title: MomentsL10n.string("create.guide.length.title"),
+                        value: form.duration.title,
+                        detail: lengthDetail,
+                        systemImage: "timer",
+                        action: changeLength
                     )
                 }
             }

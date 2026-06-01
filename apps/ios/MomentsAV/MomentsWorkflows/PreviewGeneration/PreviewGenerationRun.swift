@@ -38,6 +38,6 @@ enum PreviewGenerationRun {
         }
 
         workspaceObserver.observeWorkspace(ownerUserId: ownerUserId, projectId: projectId)
-        return "Story review ready. You can still refine the story before final render."
+        return MomentsL10n.string("create.preview.status.readyRefine")
     }
 }

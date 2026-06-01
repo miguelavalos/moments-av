@@ -1,30 +1,30 @@
 import Foundation
 
 enum MomentsCreateAvailabilityCopy {
-    static let draftSignInRequired = "Sign in before starting a project."
-    static let projectSyncNotConfigured = "Project sync is not configured for this build."
-    static let mediaMissingProject = "Start or continue a project before adding media."
-    static let mediaUploadNotConfigured = "Media upload is not configured for this build."
-    static let mediaTemplateFull = "Avi has enough media for this video."
-    static let storySignInRequired = "Sign in before preparing the story."
-    static let storyMissingProject = "Start or continue a project before preparing the story."
-    static let storyUnavailable = "Story preparation is not available yet."
-    static let storyNotConfigured = "Story preparation is not configured for this build."
-    static let storyMissingMedia = "Add photos or clips before preparing the story."
-    static let previewMissingProject = "Start or continue a project before reviewing the story."
-    static let previewUnavailable = "Story Review is not available yet."
-    static let previewNotConfigured = "Story Review is not configured for this build."
-    static let previewMissingWorkspace = "Wait for the project workspace to sync before reviewing the story."
-    static let finalRenderMissingProject = "Start or continue a Moment before creating the final video."
-    static let finalRenderUnavailable = "Final video creation is not available yet."
-    static let finalRenderNotConfigured = "Final video creation is not configured for this build."
-    static let finalRenderMissingWorkspace = "Wait for this Moment to sync before creating the final video."
+    static var draftSignInRequired: String { MomentsL10n.string("create.availability.draftSignInRequired") }
+    static var projectSyncNotConfigured: String { MomentsL10n.string("create.availability.projectSyncNotConfigured") }
+    static var mediaMissingProject: String { MomentsL10n.string("create.availability.mediaMissingProject") }
+    static var mediaUploadNotConfigured: String { MomentsL10n.string("create.availability.mediaUploadNotConfigured") }
+    static var mediaTemplateFull: String { MomentsL10n.string("create.availability.mediaTemplateFull") }
+    static var storySignInRequired: String { MomentsL10n.string("create.availability.storySignInRequired") }
+    static var storyMissingProject: String { MomentsL10n.string("create.availability.storyMissingProject") }
+    static var storyUnavailable: String { MomentsL10n.string("create.availability.storyUnavailable") }
+    static var storyNotConfigured: String { MomentsL10n.string("create.availability.storyNotConfigured") }
+    static var storyMissingMedia: String { MomentsL10n.string("create.availability.storyMissingMedia") }
+    static var previewMissingProject: String { MomentsL10n.string("create.availability.previewMissingProject") }
+    static var previewUnavailable: String { MomentsL10n.string("create.availability.previewUnavailable") }
+    static var previewNotConfigured: String { MomentsL10n.string("create.availability.previewNotConfigured") }
+    static var previewMissingWorkspace: String { MomentsL10n.string("create.availability.previewMissingWorkspace") }
+    static var finalRenderMissingProject: String { MomentsL10n.string("create.availability.finalRenderMissingProject") }
+    static var finalRenderUnavailable: String { MomentsL10n.string("create.availability.finalRenderUnavailable") }
+    static var finalRenderNotConfigured: String { MomentsL10n.string("create.availability.finalRenderNotConfigured") }
+    static var finalRenderMissingWorkspace: String { MomentsL10n.string("create.availability.finalRenderMissingWorkspace") }
 
     static func previewInsufficientCredits(missingCredits: Int) -> String {
-        "Add \(missingCredits) more \(MomentsCreditCopy.noun(missingCredits)) before reviewing the story."
+        MomentsL10n.string("create.availability.previewInsufficientCredits", missingCredits, MomentsCreditCopy.noun(missingCredits))
     }
 
     static func finalRenderInsufficientCredits(missingCredits: Int) -> String {
-        "Add \(missingCredits) more \(MomentsCreditCopy.noun(missingCredits)) before creating the final video."
+        MomentsL10n.string("create.availability.finalRenderInsufficientCredits", missingCredits, MomentsCreditCopy.noun(missingCredits))
     }
 }

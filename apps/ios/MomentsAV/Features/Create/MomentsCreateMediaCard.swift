@@ -182,11 +182,13 @@ struct MomentsCreateMediaCard: View {
             return MomentsL10n.string("create.media.emptySummary")
         }
 
-        return "Tap to delete, add, or reorder."
+        return MomentsL10n.string("create.media.editSummary")
     }
 
     private var actionTitle: String {
-        selectedCount == 0 && presentation.syncedMediaAssets.isEmpty ? "Choose" : "Edit"
+        selectedCount == 0 && presentation.syncedMediaAssets.isEmpty
+            ? MomentsL10n.string("create.media.chooseShort")
+            : MomentsL10n.string("common.edit")
     }
 
     private func mediaCardAction() {
@@ -330,16 +332,21 @@ private struct MomentsCreateAlbumPickerSheet: View {
 
     private var confirmationTitle: String {
         guard let albumPendingConfirmation else {
-            return "Add collection photos?"
+            return MomentsL10n.string("create.media.collection.confirmTitleFallback")
         }
         let importCount = min(albumPendingConfirmation.assetCount, remainingSlots)
-        return "Add up to \(importCount) \(importCount == 1 ? "photo" : "photos")?"
+        let photoWord = importCount == 1
+            ? MomentsL10n.string("media.photo.singular")
+            : MomentsL10n.string("media.photo.plural")
+        return MomentsL10n.string("create.media.collection.confirmTitle", importCount, photoWord)
     }
 
     private func confirmationMessage(for album: MediaPickerImport.PhotoAlbum) -> String {
         let importCount = min(album.assetCount, remainingSlots)
-        let photoWord = importCount == 1 ? "photo" : "photos"
-        return "Avi will add up to \(importCount) \(photoWord) from \(album.title) and skip photos already selected."
+        let photoWord = importCount == 1
+            ? MomentsL10n.string("media.photo.singular")
+            : MomentsL10n.string("media.photo.plural")
+        return MomentsL10n.string("create.media.collection.confirmMessage", importCount, photoWord, album.title)
     }
 
     private func albumDetail(_ album: MediaPickerImport.PhotoAlbum) -> String {
@@ -534,7 +541,9 @@ private struct MomentsCreateMediaManagerSheet: View {
 
     private var editHeader: some View {
         MomentsCreateEditorPageHeader(
-            title: isReordering ? "Reorder media" : "Edit media",
+            title: isReordering
+                ? MomentsL10n.string("create.media.reorderTitle")
+                : MomentsL10n.string("create.media.editTitle"),
             dismiss: { dismiss() }
         )
     }

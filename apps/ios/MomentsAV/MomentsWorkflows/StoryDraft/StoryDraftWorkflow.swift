@@ -188,13 +188,17 @@ final class StoryDraftWorkflow: WorkspaceObservingWorkflow {
     private func generateBlockMessage(_ availability: MomentsMediaRules.Availability) -> String {
         switch availability.blockReason {
         case nil:
-            return "Story plan is ready."
+            return MomentsL10n.string("create.story.status.ready")
         case .tooFewSelected(let missingCount):
-            let label = missingCount == 1 ? "photo or clip" : "photos or clips"
-            return "Add \(missingCount) more \(label) before preparing the story."
+            let label = missingCount == 1
+                ? MomentsL10n.string("media.photoOrClip.singular")
+                : MomentsL10n.string("media.photoOrClip.plural")
+            return MomentsL10n.string("create.story.status.tooFew", missingCount, label)
         case .tooManySelected(let extraCount):
-            let label = extraCount == 1 ? "photo or clip" : "photos or clips"
-            return "Remove \(extraCount) \(label) before preparing the story."
+            let label = extraCount == 1
+                ? MomentsL10n.string("media.photoOrClip.singular")
+                : MomentsL10n.string("media.photoOrClip.plural")
+            return MomentsL10n.string("create.story.status.tooMany", extraCount, label)
         }
     }
 }
@@ -206,9 +210,9 @@ private enum StoryDraftWorkflowError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .invalidMediaReferences:
-            "Avi prepared the story, but it did not match the saved media. Please save the media again."
+            MomentsL10n.string("create.story.error.invalidMediaReferences")
         case .saveFailed:
-            "Avi prepared the story, but couldn’t save it to this Moment. Please try again."
+            MomentsL10n.string("create.story.error.saveFailed")
         }
     }
 }
