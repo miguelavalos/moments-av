@@ -38,7 +38,7 @@ enum MomentsCreateRefreshAvailabilityFactory {
             unavailableMessage: "Final status refresh is not available yet.",
             notConfiguredMessage: "Final status refresh is not configured for this build.",
             missingProjectMessage: "Open a project before refreshing final status.",
-            missingJobMessage: "No final render job is available yet.",
+            missingJobMessage: "No final video is available yet.",
             missingProviderRequestMessage: MomentsRecoveryCopy.finalRenderStatusMissing()
         )
     }

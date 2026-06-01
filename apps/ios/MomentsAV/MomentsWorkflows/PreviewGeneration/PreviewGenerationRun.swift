@@ -8,6 +8,7 @@ enum PreviewGenerationRun {
         projectId: String,
         project: MomentDraftProject,
         template: MomentTemplate,
+        form: MomentDraftForm,
         previewClient: MomentsPreviewClient,
         previewResultSaver: any MomentsPreviewResultSaving,
         workspaceObserver: any MomentsActiveWorkspaceObserving,
@@ -17,6 +18,7 @@ enum PreviewGenerationRun {
             projectId: projectId,
             bearerToken: bearerToken,
             template: template,
+            form: form,
             previewIndex: Int(project.previewCount) + 1
         )
 

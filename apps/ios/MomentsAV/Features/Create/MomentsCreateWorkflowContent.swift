@@ -17,6 +17,7 @@ struct MomentsCreateWorkflowContent: View {
                     form: $viewModel.form,
                     selectedStyle: viewModel.selectedCreationStyle,
                     autoStyleSuggestion: viewModel.autoStyleSuggestion,
+                    canUndoAutoStyleSuggestion: viewModel.canUndoAutoStyleSuggestion,
                     styles: viewModel.creationStyles,
                     selectedMusicPreset: viewModel.selectedMusicPreset,
                     presentation: viewModel.workflowPresentation,
@@ -33,6 +34,7 @@ struct MomentsCreateWorkflowContent: View {
                     selectStyle: viewModel.selectCreationStyle,
                     selectMusicPreset: viewModel.selectMusicPreset,
                     useAutoStyleSuggestion: viewModel.useAutoStyleSuggestion,
+                    undoAutoStyleSuggestion: viewModel.undoAutoStyleSuggestion,
                     openPickerRequest: viewModel.mediaPickerOpenRequest,
                     consumeOpenPickerRequest: viewModel.consumeMediaPickerOpenRequest,
                     discardDraft: viewModel.discardDraft,
@@ -81,6 +83,7 @@ private struct MomentsCreateMediaFirstWorkspace: View {
     @Binding var form: MomentDraftForm
     let selectedStyle: MomentCreationStyle
     let autoStyleSuggestion: MomentsMediaAutoStyleSuggestion?
+    let canUndoAutoStyleSuggestion: Bool
     let styles: [MomentCreationStyle]
     let selectedMusicPreset: MomentMusicPreset
     let presentation: MomentsCreateWorkflowPresentation
@@ -97,6 +100,7 @@ private struct MomentsCreateMediaFirstWorkspace: View {
     let selectStyle: (MomentCreationStyle) -> Void
     let selectMusicPreset: (MomentMusicPreset) -> Void
     let useAutoStyleSuggestion: () -> Void
+    let undoAutoStyleSuggestion: () -> Void
     let openPickerRequest: Int
     let consumeOpenPickerRequest: () -> Void
     let discardDraft: () -> Void
@@ -147,6 +151,8 @@ private struct MomentsCreateMediaFirstWorkspace: View {
                     selectedStyle: selectedStyle,
                     selectedMusicPreset: selectedMusicPreset,
                     autoStyleSuggestion: autoStyleSuggestion,
+                    canUndoAutoStyleSuggestion: canUndoAutoStyleSuggestion,
+                    styles: styles,
                     openOptions: { showsAviOptions = true }
                 )
 
@@ -174,16 +180,16 @@ private struct MomentsCreateMediaFirstWorkspace: View {
             opensStoryReviewAfterDraft = false
             showsStoryReview = true
         }
-        .alert("Create video?", isPresented: $showsCreateVideoConfirmation) {
-            Button("Not now", role: .cancel) {}
-            Button("Create video · \(creditCostTitle)") {
+        .alert(MomentsL10n.string("create.final.confirmTitle"), isPresented: $showsCreateVideoConfirmation) {
+            Button(MomentsL10n.string("create.action.notNow"), role: .cancel) {}
+            Button(MomentsL10n.string("create.final.createWithCost", creditCostTitle)) {
                 generateFinalRender(false)
             }
         } message: {
-            Text("This will use \(creditCostTitle). Avi will edit your selected media into the final video.")
+            Text(MomentsL10n.string("create.final.confirmMessage", creditCostTitle))
         }
-        .alert("Discard draft?", isPresented: $showsDiscardDraftConfirmation) {
-            Button("Keep draft", role: .cancel) {}
+        .alert(MomentsL10n.string("create.discard.confirmTitle"), isPresented: $showsDiscardDraftConfirmation) {
+            Button(MomentsL10n.string("create.discard.keep"), role: .cancel) {}
             Button(discardConfirmationActionTitle, role: .destructive) {
                 discardCurrentDraft()
             }
@@ -195,11 +201,13 @@ private struct MomentsCreateMediaFirstWorkspace: View {
                 form: $form,
                 selectedStyle: selectedStyle,
                 autoStyleSuggestion: autoStyleSuggestion,
+                canUndoAutoStyleSuggestion: canUndoAutoStyleSuggestion,
                 styles: styles,
                 selectedMusicPreset: selectedMusicPreset,
                 selectStyle: selectStyle,
                 selectMusicPreset: selectMusicPreset,
                 useAutoStyleSuggestion: useAutoStyleSuggestion,
+                undoAutoStyleSuggestion: undoAutoStyleSuggestion,
                 autoPickStrongMoments: autoPickStrongMoments,
                 dismiss: { showsAviOptions = false }
             )
@@ -246,15 +254,15 @@ private struct MomentsCreateMediaFirstWorkspace: View {
     }
 
     private var discardConfirmationActionTitle: String {
-        presentation.hasUnsavedLocalMoment ? "Discard local Moment" : "Discard draft"
+        presentation.hasUnsavedLocalMoment ? MomentsL10n.string("create.discard.local") : MomentsL10n.string("create.discard.current")
     }
 
     private var discardConfirmationMessage: String {
         if presentation.hasUnsavedLocalMoment {
-            return "This removes the local Moment, selected media, and story setup before anything is saved."
+            return MomentsL10n.string("create.discard.localMessage")
         }
 
-        return "This removes the current Moment draft, selected media, and story review."
+        return MomentsL10n.string("create.discard.currentMessage")
     }
 }
 
@@ -471,6 +479,8 @@ private struct MomentsCreateOptionsSummaryCard: View {
     let selectedStyle: MomentCreationStyle
     let selectedMusicPreset: MomentMusicPreset
     let autoStyleSuggestion: MomentsMediaAutoStyleSuggestion?
+    let canUndoAutoStyleSuggestion: Bool
+    let styles: [MomentCreationStyle]
     let openOptions: () -> Void
 
     var body: some View {
@@ -478,13 +488,13 @@ private struct MomentsCreateOptionsSummaryCard: View {
             AVAppShellCard {
                 VStack(alignment: .leading, spacing: 10) {
                     HStack(spacing: 10) {
-                        Text("Options")
+                        Text(MomentsL10n.string("create.options.title"))
                             .font(.system(size: 13, weight: .black))
                             .foregroundStyle(AVBrandColor.textPrimary)
 
                         Spacer(minLength: 0)
 
-                        Text("Edit")
+                        Text(MomentsL10n.string("common.edit"))
                             .font(.system(size: 12, weight: .black))
                             .foregroundStyle(AVBrandColor.accent)
                     }
@@ -492,7 +502,25 @@ private struct MomentsCreateOptionsSummaryCard: View {
                     HStack(spacing: 8) {
                         MomentsCreateOptionPill(title: selectedStyle.title, systemImage: "sparkles")
                         MomentsCreateOptionPill(title: selectedMusicPreset.title, systemImage: "music.note")
-                        MomentsCreateOptionPill(title: "Auto length", systemImage: "timer")
+                        MomentsCreateOptionPill(title: MomentsL10n.string("create.duration.auto.title"), systemImage: "timer")
+                    }
+
+                    if let suggestionText {
+                        HStack(spacing: 8) {
+                            Image(systemName: "wand.and.stars")
+                                .font(.system(size: 12, weight: .black))
+                                .foregroundStyle(AVBrandColor.accent)
+
+                            Text(suggestionText)
+                                .font(.caption)
+                                .fontWeight(.black)
+                                .foregroundStyle(AVBrandColor.accent)
+                                .lineLimit(2)
+                        }
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 8)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .background(AVBrandColor.accent.opacity(0.08), in: RoundedRectangle(cornerRadius: 8, style: .continuous))
                     }
 
                     Text(detailText)
@@ -504,15 +532,31 @@ private struct MomentsCreateOptionsSummaryCard: View {
             }
         }
         .buttonStyle(.plain)
-        .accessibilityLabel("Edit options")
+        .accessibilityLabel(MomentsL10n.string("create.options.edit"))
     }
 
     private var detailText: String {
         guard autoStyleSuggestion != nil else {
-            return "Avi can adjust mood, music, rhythm, and the story note before creating the video."
+            return MomentsL10n.string("create.options.detail")
         }
 
-        return "Avi picked a direction for this selection. You can change it before creating the video."
+        if canUndoAutoStyleSuggestion {
+            return MomentsL10n.string("create.options.suggestionActive")
+        }
+
+        return MomentsL10n.string("create.options.suggestionAvailable")
+    }
+
+    private var suggestionText: String? {
+        guard let autoStyleSuggestion else { return nil }
+        let styleTitle = styles.first(where: { $0.id == autoStyleSuggestion.styleID })?.title ?? "another theme"
+        if canUndoAutoStyleSuggestion {
+            return "Using Avi suggestion: \(styleTitle) · \(autoStyleSuggestion.musicPreset.title)"
+        }
+        guard selectedStyle.id != autoStyleSuggestion.styleID || selectedMusicPreset != autoStyleSuggestion.musicPreset else {
+            return nil
+        }
+        return MomentsL10n.string("create.options.suggestion", styleTitle, autoStyleSuggestion.musicPreset.title)
     }
 }
 
@@ -609,7 +653,7 @@ private struct MomentsCreateRenderPlanSummary: View {
     }
 
     private var durationTitle: String {
-        guard let plan else { return "Before render" }
+        guard let plan else { return "Before video" }
         return "\(plan.targetDurationMs / 1000)s"
     }
 
@@ -622,7 +666,7 @@ private struct MomentsCreateRenderPlanSummary: View {
     }
 
     private var message: String {
-        plan?.userMessage ?? "Avi will prepare the exact media usage, duration, and quality checks before the final render starts."
+        plan?.userMessage ?? "Avi will prepare the media, duration, and quality checks before the video starts."
     }
 }
 
@@ -778,7 +822,7 @@ private struct MomentsCreateStoryReviewPage: View {
 
                             HStack(spacing: 14) {
                                 Button(action: { showsDiscardDraftConfirmation = true }) {
-                                    Label("Discard draft", systemImage: "trash.fill")
+                                    Label("Discard Moment", systemImage: "trash.fill")
                                 }
                                 .buttonStyle(MomentsCreateDestructiveInlineButtonStyle())
 
@@ -800,19 +844,19 @@ private struct MomentsCreateStoryReviewPage: View {
         .background(MomentsTheme.shellBackground.ignoresSafeArea())
         .navigationBarBackButtonHidden(true)
         .toolbar(.hidden, for: .navigationBar)
-        .alert("Create video?", isPresented: $showsCreateVideoConfirmation) {
-            Button("Not now", role: .cancel) {}
-            Button("Create video · \(totalCreditCostTitle)") {
+        .alert(MomentsL10n.string("create.final.confirmTitle"), isPresented: $showsCreateVideoConfirmation) {
+            Button(MomentsL10n.string("create.action.notNow"), role: .cancel) {}
+            Button(MomentsL10n.string("create.final.createWithCost", totalCreditCostTitle)) {
                 dismiss()
                 Task { @MainActor in
                     createVideo(removesWatermark)
                 }
             }
         } message: {
-            Text("This will use \(totalCreditCostTitle). Avi will edit your selected media into the final video.")
+            Text(MomentsL10n.string("create.final.confirmMessage", totalCreditCostTitle))
         }
-        .alert("Discard draft?", isPresented: $showsDiscardDraftConfirmation) {
-            Button("Keep draft", role: .cancel) {}
+        .alert(MomentsL10n.string("create.discard.confirmTitle"), isPresented: $showsDiscardDraftConfirmation) {
+            Button(MomentsL10n.string("create.discard.keep"), role: .cancel) {}
             Button(discardConfirmationActionTitle, role: .destructive) {
                 discardDraft()
             }
@@ -822,19 +866,19 @@ private struct MomentsCreateStoryReviewPage: View {
     }
 
     private var summaryTitle: String {
-        "Confirm the media, story, and timing before the final render starts."
+        MomentsL10n.string("create.final.summaryTitle")
     }
 
     private var discardConfirmationActionTitle: String {
-        presentation.hasUnsavedLocalMoment ? "Discard local Moment" : "Discard draft"
+        presentation.hasUnsavedLocalMoment ? MomentsL10n.string("create.discard.local") : MomentsL10n.string("create.discard.current")
     }
 
     private var discardConfirmationMessage: String {
         if presentation.hasUnsavedLocalMoment {
-            return "This removes the local Moment, selected media, and story setup before anything is saved."
+            return MomentsL10n.string("create.discard.localMessage")
         }
 
-        return "This removes the current Moment draft, selected media, and story review."
+        return MomentsL10n.string("create.discard.currentMessage")
     }
 
     private var creditCostTitle: String {
@@ -863,7 +907,7 @@ private struct MomentsCreateStoryReviewPage: View {
     }
 
     private var primaryCreateTitle: String {
-        hasRenderPlan ? "Create video · \(totalCreditCostTitle)" : "Prepare video plan"
+        hasRenderPlan ? MomentsL10n.string("create.final.createWithCost", totalCreditCostTitle) : MomentsL10n.string("create.final.preparePlan")
     }
 
     private var primaryCreateIconName: String {
@@ -1041,7 +1085,7 @@ private struct MomentsCreateReadinessChecklistCard: View {
 
     private var planDetail: String {
         guard let plan = presentation.finalRenderSummary.renderPlan?.plan else {
-            return "Prepared before final render"
+            return "Prepared before video creation"
         }
         let seconds = plan.targetDurationMs / 1000
         return "\(seconds)s · \(plan.usedAssetCount) media items"
@@ -1436,13 +1480,13 @@ private struct MomentsCreatePrimaryActionBar: View {
                 if presentation.finalRenderSummary.pendingGalleryVideo != nil {
                     VStack(spacing: 10) {
                         Button(action: finishFinalVideoToGallery) {
-                            Label("Finish and move to Gallery", systemImage: "checkmark.circle.fill")
+                            Label(MomentsL10n.string("create.final.finishGallery"), systemImage: "checkmark.circle.fill")
                                 .frame(maxWidth: .infinity)
                         }
                         .buttonStyle(MomentsCreateSoftActionButtonStyle())
 
                         Button(action: createAnotherFinalVideoVersion) {
-                            Label("Create another version", systemImage: "plus.rectangle.on.rectangle")
+                            Label(MomentsL10n.string("create.final.createAnother"), systemImage: "plus.rectangle.on.rectangle")
                                 .frame(maxWidth: .infinity)
                         }
                         .buttonStyle(MomentsCreateNeutralInlineButtonStyle())
@@ -1493,32 +1537,32 @@ private struct MomentsCreatePrimaryActionBar: View {
     }
 
     private var discardTitle: String {
-        presentation.hasUnsavedLocalMoment ? "Discard local Moment" : "Discard draft"
+        presentation.hasUnsavedLocalMoment ? MomentsL10n.string("create.discard.local") : MomentsL10n.string("create.discard.current")
     }
 
     private var buttonTitle: String {
         if presentation.finalRenderSummary.pendingGalleryVideo != nil {
-            return "Choose final video destination"
+            return MomentsL10n.string("create.final.chooseDestination")
         }
         if presentation.finalRenderSummary.finalExport != nil {
-            return "Final video ready"
+            return MomentsL10n.string("create.final.videoReady")
         }
         if presentation.finalRenderSummary.latestFinalJob != nil {
-            return presentation.finalRenderSummary.isRefreshingStatus ? "Checking..." : "Check video status"
+            return presentation.finalRenderSummary.isRefreshingStatus ? MomentsL10n.string("create.status.checking") : MomentsL10n.string("create.final.checkStatus")
         }
         if presentation.canGenerateFinalRender {
-            return "View story review"
+            return MomentsL10n.string("create.preview.view")
         }
         if presentation.previewSummary.latestPreview != nil {
-            return presentation.finalRenderSummary.isGenerating ? "Creating final..." : "Create final"
+            return presentation.finalRenderSummary.isGenerating ? MomentsL10n.string("create.final.creating") : MomentsL10n.string("create.final.create")
         }
         if presentation.previewSummary.latestPreviewJob != nil {
-            return presentation.previewSummary.isRefreshingStatus ? "Refreshing..." : "Refresh story review"
+            return presentation.previewSummary.isRefreshingStatus ? MomentsL10n.string("create.status.refreshing") : MomentsL10n.string("create.preview.refresh")
         }
         if needsSignInForStory {
-            return "Sign in"
+            return MomentsL10n.string("common.signIn")
         }
-        return presentation.finalRenderSummary.isGenerating ? "Preparing review..." : "Review story first"
+        return presentation.finalRenderSummary.isGenerating ? MomentsL10n.string("create.preview.preparing") : MomentsL10n.string("create.preview.reviewFirst")
     }
 
     private var buttonIconName: String {
@@ -1709,9 +1753,9 @@ private struct MomentsCreatePrimaryActionBar: View {
 
     private var title: String {
         if presentation.finalRenderSummary.finalExport != nil || presentation.finalRenderSummary.latestFinalJob != nil {
-            return "Video"
+            return MomentsL10n.string("create.final.video")
         }
-        return "Create video"
+        return MomentsL10n.string("project.nextAction.createVideo.title")
     }
 
     private var creditCostTitle: String {
@@ -1758,12 +1802,12 @@ private struct MomentsCreateRealtimeRenderStatusPanel: View {
             if let progressFraction = status.progressFraction {
                 ProgressView(value: progressFraction)
                     .tint(iconColor)
-                    .accessibilityLabel("Final render progress")
+                    .accessibilityLabel("Final video progress")
                     .accessibilityValue("\(Int((progressFraction * 100).rounded())) percent")
             }
 
             if status.isActive && !status.canEditDraft {
-                Label("Editing is locked while the final video is rendering.", systemImage: "lock.fill")
+                Label("Editing is locked while the final video is being created.", systemImage: "lock.fill")
                     .font(.caption2)
                     .fontWeight(.bold)
                     .foregroundStyle(AVBrandColor.textSecondary)
@@ -1874,20 +1918,25 @@ private struct MomentsCreateAviOptionsSheet: View {
     @Binding var form: MomentDraftForm
     let selectedStyle: MomentCreationStyle
     let autoStyleSuggestion: MomentsMediaAutoStyleSuggestion?
+    let canUndoAutoStyleSuggestion: Bool
     let styles: [MomentCreationStyle]
     let selectedMusicPreset: MomentMusicPreset
     let selectStyle: (MomentCreationStyle) -> Void
     let selectMusicPreset: (MomentMusicPreset) -> Void
     let useAutoStyleSuggestion: () -> Void
+    let undoAutoStyleSuggestion: () -> Void
     let autoPickStrongMoments: () -> Void
     let dismiss: () -> Void
 
     @State private var showsThemeChooser = false
+    @State private var showsLookChooser = false
+    @State private var showsLengthChooser = false
+    @State private var showsMoodChooser = false
 
     var body: some View {
         VStack(spacing: 0) {
             MomentsCreateEditorPageHeader(
-                title: "Guide Avi",
+                title: MomentsL10n.string("create.guide.title"),
                 dismiss: dismiss
             )
             .padding(.horizontal, 20)
@@ -1900,14 +1949,19 @@ private struct MomentsCreateAviOptionsSheet: View {
                         selectedStyle: selectedStyle,
                         selectedMusicPreset: selectedMusicPreset,
                         autoStyleSuggestion: autoStyleSuggestion,
-                        useAutoStyleSuggestion: useAutoStyleSuggestion
+                        canUndoAutoStyleSuggestion: canUndoAutoStyleSuggestion,
+                        useAutoStyleSuggestion: useAutoStyleSuggestion,
+                        undoAutoStyleSuggestion: undoAutoStyleSuggestion
                     )
 
-                    MomentsCreateDirectionCard(
+                    MomentsCreateGuideSummaryCard(
+                        form: $form,
                         style: selectedStyle,
-                        autoStyleSuggestion: autoStyleSuggestion,
                         selectedMusicPreset: selectedMusicPreset,
                         changeTheme: { showsThemeChooser = true },
+                        changeLook: { showsLookChooser = true },
+                        changeLength: { showsLengthChooser = true },
+                        changeMood: { showsMoodChooser = true },
                         selectMusicPreset: selectMusicPreset
                     )
 
@@ -1928,125 +1982,178 @@ private struct MomentsCreateAviOptionsSheet: View {
             )
             .id(selectedStyle.id)
         }
+        .navigationDestination(isPresented: $showsLookChooser) {
+            MomentsCreateLookChooserPage(
+                selectedLook: form.look,
+                selectLook: {
+                    form.look = $0
+                    showsLookChooser = false
+                },
+                dismiss: { showsLookChooser = false }
+            )
+            .id(form.look.rawValue)
+        }
+        .navigationDestination(isPresented: $showsLengthChooser) {
+            MomentsCreateLengthChooserPage(
+                selectedDuration: form.duration,
+                selectDuration: {
+                    form.duration = $0
+                    showsLengthChooser = false
+                },
+                dismiss: { showsLengthChooser = false }
+            )
+            .id(form.duration.rawValue)
+        }
+        .navigationDestination(isPresented: $showsMoodChooser) {
+            MomentsCreateMoodChooserPage(
+                allowedMusic: selectedStyle.allowedMusic,
+                selectedMusicPreset: selectedMusicPreset,
+                selectMusicPreset: {
+                    selectMusicPreset($0)
+                    showsMoodChooser = false
+                },
+                dismiss: { showsMoodChooser = false }
+            )
+            .id(selectedMusicPreset.rawValue)
+        }
         .navigationBarBackButtonHidden(true)
         .toolbar(.hidden, for: .navigationBar)
     }
 }
 
-private struct MomentsCreateDirectionCard: View {
+private struct MomentsCreateGuideSummaryCard: View {
+    @Binding var form: MomentDraftForm
     let style: MomentCreationStyle
-    let autoStyleSuggestion: MomentsMediaAutoStyleSuggestion?
     let selectedMusicPreset: MomentMusicPreset
     let changeTheme: () -> Void
+    let changeLook: () -> Void
+    let changeLength: () -> Void
+    let changeMood: () -> Void
     let selectMusicPreset: (MomentMusicPreset) -> Void
 
     var body: some View {
         AVAppShellCard {
-            VStack(alignment: .leading, spacing: 14) {
-                HStack(spacing: 10) {
-                    Text("Direction")
-                        .font(.system(size: 13, weight: .black))
-                        .foregroundStyle(AVBrandColor.textPrimary)
+            VStack(alignment: .leading, spacing: 8) {
+                Text(MomentsL10n.string("create.guide.videoSetup.title"))
+                    .font(.system(size: 13, weight: .black))
+                    .foregroundStyle(AVBrandColor.textPrimary)
 
-                    Spacer(minLength: 0)
-
-                    Button(action: changeTheme) {
-                        Text("Change")
-                            .font(.system(size: 12, weight: .black))
-                            .foregroundStyle(AVBrandColor.accent)
-                    }
-                    .buttonStyle(.plain)
-                }
-
-                Button(action: changeTheme) {
-                    HStack(spacing: 12) {
-                        Image(style.assetName)
-                            .resizable()
-                            .scaledToFill()
-                            .frame(width: 76, height: 58)
-                            .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-                            .overlay {
-                                RoundedRectangle(cornerRadius: 8, style: .continuous)
-                                    .stroke(AVBrandColor.borderSubtle.opacity(0.7), lineWidth: 1)
-                            }
-
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text(style.title)
-                                .font(.system(size: 18, weight: .black))
-                                .foregroundStyle(AVBrandColor.textPrimary)
-                                .lineLimit(2)
-                                .minimumScaleFactor(0.82)
-
-                            Text(style.subtitle)
-                                .font(.caption)
-                                .fontWeight(.semibold)
-                                .foregroundStyle(AVBrandColor.textSecondary)
-                                .lineLimit(2)
-                        }
-                        .layoutPriority(1)
-
-                        Spacer(minLength: 4)
-                    }
-                    .contentShape(Rectangle())
-                }
-                .buttonStyle(.plain)
-                .accessibilityLabel("Change direction, \(style.title)")
-
-                HStack(spacing: 8) {
-                    MomentsCreateOptionPill(
-                        title: style.tone.title,
-                        systemImage: "sparkles"
+                VStack(spacing: 0) {
+                    MomentsCreateEditableOptionRow(
+                        title: MomentsL10n.string("create.guide.theme.title"),
+                        value: style.title,
+                        detail: style.subtitle,
+                        systemImage: "paintpalette.fill",
+                        action: changeTheme
                     )
 
-                    MomentsCreateOptionPill(
-                        title: style.tempo.title,
-                        systemImage: "timer"
+                    MomentsCreateOptionDivider()
+
+                    MomentsCreateEditableOptionRow(
+                        title: MomentsL10n.string("create.guide.look.title"),
+                        value: form.look.title,
+                        detail: form.look.subtitle,
+                        systemImage: form.look.systemImage,
+                        action: changeLook
+                    )
+
+                    MomentsCreateOptionDivider()
+
+                    MomentsCreateEditableOptionRow(
+                        title: MomentsL10n.string("create.guide.length.title"),
+                        value: form.duration.title,
+                        detail: lengthDetail,
+                        systemImage: "timer",
+                        action: changeLength
+                    )
+
+                    MomentsCreateOptionDivider()
+
+                    MomentsCreateEditableOptionRow(
+                        title: MomentsL10n.string("create.guide.mood.title"),
+                        value: selectedMusicPreset.title,
+                        detail: MomentsL10n.string("create.guide.mood.detail"),
+                        systemImage: "sparkles",
+                        action: changeMood
                     )
                 }
-
-                HStack(spacing: 8) {
-                    Button {
-                        selectMusicPreset(style.defaultMusic)
-                    } label: {
-                        Text("Automatic")
-                            .font(.system(size: 13, weight: .black))
-                            .foregroundStyle(selectedMusicPreset == style.defaultMusic ? AVBrandColor.textInverse : AVBrandColor.textPrimary)
-                            .frame(maxWidth: .infinity)
-                            .frame(height: 36)
-                            .background(
-                                RoundedRectangle(cornerRadius: 8, style: .continuous)
-                                    .fill(selectedMusicPreset == style.defaultMusic ? AVBrandColor.ink : AVBrandColor.neutral100)
-                            )
-                    }
-                    .buttonStyle(.plain)
-                    .accessibilityLabel("Use automatic music")
-
-                    ForEach(style.allowedMusic.filter { $0 != style.defaultMusic }) { preset in
-                        Button {
-                            selectMusicPreset(preset)
-                        } label: {
-                            Text(preset.title)
-                                .font(.system(size: 13, weight: .black))
-                                .foregroundStyle(selectedMusicPreset == preset ? AVBrandColor.textInverse : AVBrandColor.textPrimary)
-                                .frame(maxWidth: .infinity)
-                                .frame(height: 36)
-                                .background(
-                                    RoundedRectangle(cornerRadius: 8, style: .continuous)
-                                        .fill(selectedMusicPreset == preset ? AVBrandColor.ink : AVBrandColor.neutral100)
-                                )
-                        }
-                        .buttonStyle(.plain)
-                    }
-                }
-
-                Text("Avi uses this direction to set the mood, pacing, and music.")
-                    .font(.caption)
-                    .fontWeight(.semibold)
-                    .foregroundStyle(AVBrandColor.textSecondary)
-                    .lineLimit(nil)
-                    .fixedSize(horizontal: false, vertical: true)
             }
         }
+    }
+
+    private var lengthDetail: String {
+        switch form.duration {
+        case .auto:
+            return MomentsL10n.string("create.guide.length.auto.detail")
+        case .short:
+            return MomentsL10n.string("create.guide.length.short.detail")
+        case .standard:
+            return MomentsL10n.string("create.guide.length.standard.detail")
+        case .extended:
+            return MomentsL10n.string("create.guide.length.extended.detail")
+        }
+    }
+}
+
+private struct MomentsCreateEditableOptionRow: View {
+    let title: String
+    let value: String
+    let detail: String
+    let systemImage: String
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            HStack(alignment: .center, spacing: 14) {
+                MomentsCreateGuideFieldIcon(systemImage: systemImage)
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(title)
+                        .font(.caption)
+                        .fontWeight(.black)
+                        .foregroundStyle(AVBrandColor.textSecondary)
+
+                    Text(value)
+                        .font(.system(size: 17, weight: .black))
+                        .foregroundStyle(AVBrandColor.textPrimary)
+                        .lineLimit(1)
+
+                    Text(detail)
+                        .font(.caption)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(AVBrandColor.textSecondary)
+                        .lineLimit(2)
+                }
+                .layoutPriority(1)
+
+                Spacer(minLength: 8)
+
+                MomentsCreateOptionActionText()
+            }
+            .padding(.vertical, 12)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .contentShape(RoundedRectangle(cornerRadius: AVBrandRadius.xs, style: .continuous))
+        }
+        .buttonStyle(.plain)
+    }
+}
+
+private struct MomentsCreateOptionActionText: View {
+    var body: some View {
+        Image(systemName: "square.and.pencil")
+            .font(.system(size: 13, weight: .black))
+            .foregroundStyle(AVBrandColor.accent)
+            .frame(width: 32, height: 32)
+            .background(AVBrandColor.accent.opacity(0.08), in: Circle())
+    }
+}
+
+private struct MomentsCreateOptionDivider: View {
+    var body: some View {
+        Rectangle()
+            .fill(AVBrandColor.borderSubtle.opacity(0.42))
+            .frame(height: 1)
+            .padding(.leading, 42)
     }
 }
 
@@ -2054,7 +2161,9 @@ private struct MomentsCreateOptionsAviPanel: View {
     let selectedStyle: MomentCreationStyle
     let selectedMusicPreset: MomentMusicPreset
     let autoStyleSuggestion: MomentsMediaAutoStyleSuggestion?
+    let canUndoAutoStyleSuggestion: Bool
     let useAutoStyleSuggestion: () -> Void
+    let undoAutoStyleSuggestion: () -> Void
 
     var body: some View {
         AVAppShellCard {
@@ -2068,7 +2177,7 @@ private struct MomentsCreateOptionsAviPanel: View {
                     .accessibilityHidden(true)
 
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("Avi direction")
+                    Text(MomentsL10n.string("create.aviDirection.title"))
                         .font(.system(size: 14, weight: .black))
                         .foregroundStyle(AVBrandColor.textPrimary)
 
@@ -2079,16 +2188,22 @@ private struct MomentsCreateOptionsAviPanel: View {
                         .lineLimit(nil)
                         .fixedSize(horizontal: false, vertical: true)
 
-                    if showsUseAviSuggestion {
-                        Button(action: useAutoStyleSuggestion) {
-                            Label("Use Avi suggestion", systemImage: "sparkles")
-                                .font(.system(size: 12, weight: .black))
-                                .foregroundStyle(AVBrandColor.accent)
-                                .padding(.horizontal, 10)
-                                .padding(.vertical, 7)
-                                .background(AVBrandColor.accent.opacity(0.09), in: Capsule())
+                    if autoStyleSuggestion != nil {
+                        HStack(spacing: 8) {
+                            if canUndoAutoStyleSuggestion {
+                                MomentsCreateAviSuggestionButton(
+                                    title: MomentsL10n.string("create.aviDirection.undoSuggestion"),
+                                    systemImage: "arrow.uturn.backward",
+                                    action: undoAutoStyleSuggestion
+                                )
+                            } else if showsUseAviSuggestion {
+                                MomentsCreateAviSuggestionButton(
+                                    title: MomentsL10n.string("create.aviDirection.useSuggestion"),
+                                    systemImage: "sparkles",
+                                    action: useAutoStyleSuggestion
+                                )
+                            }
                         }
-                        .buttonStyle(.plain)
                         .padding(.top, 2)
                     }
                 }
@@ -2100,19 +2215,19 @@ private struct MomentsCreateOptionsAviPanel: View {
 
     private var message: String {
         guard let autoStyleSuggestion else {
-            return "Tell Avi what matters most, or leave everything automatic."
+            return MomentsL10n.string("create.aviDirection.defaultMessage")
         }
 
         if isUsingAviSuggestion {
-            return "Avi picked \(selectedStyle.title.lowercased()) for this selection. You can change the direction or add a note."
+            return MomentsL10n.string("create.aviDirection.usingSuggestion", selectedStyle.title.lowercased())
         }
 
         if isUsingAviDirection {
-            return "Avi picked \(selectedStyle.title.lowercased()) for this selection. You changed the music."
+            return MomentsL10n.string("create.aviDirection.changedMusic", selectedStyle.title.lowercased())
         }
 
         let suggestedTitle = suggestedStyleTitle(for: autoStyleSuggestion.styleID)
-        return "You changed the direction to \(selectedStyle.title.lowercased()). Avi originally suggested \(suggestedTitle.lowercased()) for this selection."
+        return MomentsL10n.string("create.aviDirection.changedDirection", selectedStyle.title.lowercased(), suggestedTitle.lowercased())
     }
 
     private var isUsingAviSuggestion: Bool {
@@ -2132,15 +2247,33 @@ private struct MomentsCreateOptionsAviPanel: View {
 
     private func suggestedStyleTitle(for id: MomentCreationStyleID) -> String {
         switch id {
-        case .celebration: "Celebration"
-        case .eventRecap: "Event Recap"
-        case .travel: "Travel"
-        case .favoritePeople: "Favorite People"
-        case .birthday: "Birthday"
-        case .familyMoments: "Family Moments"
-        case .softRoast: "Soft Roast"
-        case .custom: "Custom"
+        case .celebration: MomentsL10n.string("create.theme.celebration.title")
+        case .eventRecap: MomentsL10n.string("create.theme.eventRecap.title")
+        case .travel: MomentsL10n.string("create.theme.travel.title")
+        case .favoritePeople: MomentsL10n.string("create.theme.favoritePeople.title")
+        case .birthday: MomentsL10n.string("create.theme.birthday.title")
+        case .familyMoments: MomentsL10n.string("create.theme.familyMoments.title")
+        case .softRoast: MomentsL10n.string("create.theme.softRoast.title")
+        case .milestone: MomentsL10n.string("create.theme.milestone.title")
         }
+    }
+}
+
+private struct MomentsCreateAviSuggestionButton: View {
+    let title: String
+    let systemImage: String
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            Label(title, systemImage: systemImage)
+                .font(.system(size: 12, weight: .black))
+                .foregroundStyle(AVBrandColor.accent)
+                .padding(.horizontal, 10)
+                .padding(.vertical, 7)
+                .background(AVBrandColor.accent.opacity(0.09), in: Capsule())
+        }
+        .buttonStyle(.plain)
     }
 }
 
@@ -2150,7 +2283,7 @@ private struct MomentsCreateAviNoteField: View {
     var body: some View {
         AVAppShellCard {
             VStack(alignment: .leading, spacing: 12) {
-                Text("Note")
+                Text(MomentsL10n.string("create.note.title"))
                     .font(.system(size: 13, weight: .black))
                     .foregroundStyle(AVBrandColor.textPrimary)
 
@@ -2159,12 +2292,12 @@ private struct MomentsCreateAviNoteField: View {
                         MomentsCreateGuideFieldIcon(systemImage: "text.bubble.fill")
 
                         VStack(alignment: .leading, spacing: 2) {
-                            Text("Note for Avi")
+                            Text(MomentsL10n.string("create.note.field.title"))
                                 .font(.system(size: 11, weight: .black))
                                 .foregroundStyle(AVBrandColor.textSecondary)
                                 .textCase(.uppercase)
 
-                            Text("Optional direction for the story.")
+                            Text(MomentsL10n.string("create.note.field.subtitle"))
                                 .font(.caption2)
                                 .fontWeight(.semibold)
                                 .foregroundStyle(AVBrandColor.textSecondary.opacity(0.82))
@@ -2182,10 +2315,10 @@ private struct MomentsCreateAviNoteField: View {
                         }
                         .buttonStyle(.plain)
                         .disabled(true)
-                        .accessibilityLabel("Voice note transcription")
+                        .accessibilityLabel(MomentsL10n.string("create.note.voice.accessibility"))
                     }
 
-                    TextField("Tell Avi what to focus on...", text: $text, axis: .vertical)
+                    TextField(MomentsL10n.string("create.note.placeholder"), text: $text, axis: .vertical)
                         .font(AVBrandTypography.body)
                         .foregroundStyle(AVBrandColor.textPrimary)
                         .lineLimit(2...4)
@@ -2226,6 +2359,413 @@ private struct MomentsCreateGuideFieldBackground: View {
     }
 }
 
+private struct MomentsCreateTwoColumnGrid<Item: Identifiable, Content: View>: View {
+    let items: [Item]
+    var horizontalSpacing: CGFloat = 12
+    var verticalSpacing: CGFloat = 12
+    var itemHeight: CGFloat = 106
+    let content: (Item) -> Content
+
+    var body: some View {
+        LazyVGrid(columns: columns, alignment: .center, spacing: verticalSpacing) {
+            ForEach(items) { item in
+                content(item)
+                    .frame(width: itemWidth, height: itemHeight)
+                    .clipped()
+            }
+        }
+        .frame(width: gridWidth, alignment: .center)
+        .frame(maxWidth: .infinity)
+    }
+
+    private var gridWidth: CGFloat {
+        max(280, UIScreen.main.bounds.width - 40)
+    }
+
+    private var itemWidth: CGFloat {
+        floor((gridWidth - horizontalSpacing) / 2)
+    }
+
+    private var columns: [GridItem] {
+        [
+            GridItem(.fixed(itemWidth), spacing: horizontalSpacing, alignment: .top),
+            GridItem(.fixed(itemWidth), spacing: 0, alignment: .top)
+        ]
+    }
+}
+
+private struct MomentsCreateLookChooserPage: View {
+    let selectedLook: MomentLook
+    let selectLook: (MomentLook) -> Void
+    let dismiss: () -> Void
+
+    @State private var draftLook: MomentLook
+
+    init(
+        selectedLook: MomentLook,
+        selectLook: @escaping (MomentLook) -> Void,
+        dismiss: @escaping () -> Void
+    ) {
+        self.selectedLook = selectedLook
+        self.selectLook = selectLook
+        self.dismiss = dismiss
+        _draftLook = State(initialValue: selectedLook)
+    }
+
+    var body: some View {
+        VStack(spacing: 0) {
+            MomentsCreateChooserHeader(
+                title: MomentsL10n.string("create.selector.look.title"),
+                dismiss: dismiss
+            )
+            .padding(.horizontal, 20)
+            .padding(.top, 20)
+            .padding(.bottom, 14)
+
+            ScrollView {
+                VStack(alignment: .leading, spacing: 18) {
+                    AVAppShellCard {
+                        HStack(spacing: 12) {
+                            Image("AviFullBody")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 42, height: 42)
+                                .padding(4)
+                                .background(AVBrandColor.accent.opacity(0.10), in: Circle())
+                                .accessibilityHidden(true)
+
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(MomentsL10n.string("create.selector.look.intro.title"))
+                                    .font(.system(size: 14, weight: .black))
+                                    .foregroundStyle(AVBrandColor.textPrimary)
+
+                                Text(MomentsL10n.string("create.selector.look.intro.detail"))
+                                    .font(.caption)
+                                    .fontWeight(.semibold)
+                                    .foregroundStyle(AVBrandColor.textSecondary)
+                                    .lineLimit(2)
+                            }
+
+                            Spacer(minLength: 0)
+                        }
+                    }
+
+                    MomentsCreateTwoColumnGrid(items: MomentLook.selectorOrder) { look in
+                            MomentsCreateLookImageTile(
+                                look: look,
+                                isSelected: draftLook == look,
+                                selectLook: { applySelection(look) }
+                            )
+                    }
+                }
+                .padding(.horizontal, 20)
+                .padding(.bottom, 20)
+                .safeAreaPadding(.bottom, 96)
+            }
+            .scrollIndicators(.hidden)
+        }
+        .background(MomentsTheme.shellBackground.ignoresSafeArea())
+        .navigationBarBackButtonHidden(true)
+        .toolbar(.hidden, for: .navigationBar)
+    }
+
+    private func applySelection(_ look: MomentLook) {
+        draftLook = look
+        selectLook(look)
+        dismiss()
+    }
+}
+
+private struct MomentsCreateLookImageTile: View {
+    let look: MomentLook
+    let isSelected: Bool
+    let selectLook: () -> Void
+
+    private let tileHeight: CGFloat = 106
+
+    var body: some View {
+        GeometryReader { proxy in
+            Button(action: selectLook) {
+                tileContent(width: proxy.size.width)
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel(MomentsL10n.string("create.selector.look.accessibility", look.title))
+        }
+        .frame(height: tileHeight)
+    }
+
+    private func tileContent(width: CGFloat) -> some View {
+            ZStack(alignment: .bottomLeading) {
+                Image(look.assetName)
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: width, height: tileHeight)
+                    .clipped()
+
+                LinearGradient(
+                    colors: [.black.opacity(0.02), .black.opacity(0.28), .black.opacity(0.80)],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+
+                VStack(alignment: .leading, spacing: 3) {
+                    HStack(spacing: 6) {
+                        if isSelected {
+                            Image(systemName: "checkmark.circle.fill")
+                                .font(.system(size: 14, weight: .black))
+                                .foregroundStyle(.white, AVBrandColor.accent)
+                                .accessibilityHidden(true)
+                        }
+
+                        Text(look.title)
+                            .font(.system(size: 13, weight: .black))
+                            .foregroundStyle(.white)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.72)
+                    }
+
+                    Text(look.subtitle)
+                        .font(.system(size: 10, weight: .bold))
+                        .foregroundStyle(.white.opacity(0.82))
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.7)
+                }
+                .padding(.horizontal, 10)
+                .padding(.vertical, 11)
+                .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            .frame(width: width, height: tileHeight)
+            .background(AVBrandColor.neutral100, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+            .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+            .contentShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+            .overlay {
+                RoundedRectangle(cornerRadius: 8, style: .continuous)
+                    .stroke(isSelected ? AVBrandColor.accent : AVBrandColor.borderSubtle.opacity(0.7), lineWidth: isSelected ? 2 : 1)
+            }
+            .shadow(color: AVBrandColor.ink.opacity(isSelected ? 0.12 : 0.05), radius: isSelected ? 8 : 4, x: 0, y: 3)
+    }
+}
+
+private struct MomentsCreateLengthChooserPage: View {
+    let selectedDuration: MomentDuration
+    let selectDuration: (MomentDuration) -> Void
+    let dismiss: () -> Void
+
+    var body: some View {
+        MomentsCreateVisualOptionChooserPage(
+            title: MomentsL10n.string("create.selector.length.title"),
+            introTitle: MomentsL10n.string("create.selector.length.intro.title"),
+            introDetail: MomentsL10n.string("create.selector.length.intro.detail"),
+            dismiss: dismiss
+        ) {
+            MomentsCreateTwoColumnGrid(items: MomentDuration.allCases) { duration in
+                    MomentsCreateVisualOptionTile(
+                        title: duration.title,
+                        detail: detail(for: duration),
+                        assetName: duration.assetName,
+                        isSelected: selectedDuration == duration,
+                        select: { selectDuration(duration) }
+                    )
+            }
+        }
+    }
+
+    private func detail(for duration: MomentDuration) -> String {
+        switch duration {
+        case .auto:
+            return MomentsL10n.string("create.selector.length.auto.detail")
+        case .short:
+            return MomentsL10n.string("create.selector.length.short.detail")
+        case .standard:
+            return MomentsL10n.string("create.selector.length.standard.detail")
+        case .extended:
+            return MomentsL10n.string("create.selector.length.extended.detail")
+        }
+    }
+}
+
+private struct MomentsCreateMoodChooserPage: View {
+    let allowedMusic: [MomentMusicPreset]
+    let selectedMusicPreset: MomentMusicPreset
+    let selectMusicPreset: (MomentMusicPreset) -> Void
+    let dismiss: () -> Void
+
+    var body: some View {
+        MomentsCreateVisualOptionChooserPage(
+            title: MomentsL10n.string("create.selector.mood.title"),
+            introTitle: MomentsL10n.string("create.selector.mood.intro.title"),
+            introDetail: MomentsL10n.string("create.selector.mood.intro.detail"),
+            dismiss: dismiss
+        ) {
+            MomentsCreateTwoColumnGrid(items: allowedMusic) { preset in
+                    MomentsCreateVisualOptionTile(
+                        title: preset.title,
+                        detail: detail(for: preset),
+                        assetName: preset.assetName,
+                        isSelected: selectedMusicPreset == preset,
+                        select: { selectMusicPreset(preset) }
+                    )
+            }
+        }
+    }
+
+    private func detail(for preset: MomentMusicPreset) -> String {
+        switch preset {
+        case .warm:
+            return MomentsL10n.string("create.selector.mood.warm.detail")
+        case .fun:
+            return MomentsL10n.string("create.selector.mood.fun.detail")
+        case .cinematic:
+            return MomentsL10n.string("create.selector.mood.cinematic.detail")
+        case .calm:
+            return MomentsL10n.string("create.selector.mood.calm.detail")
+        case .upbeat:
+            return MomentsL10n.string("create.selector.mood.upbeat.detail")
+        }
+    }
+}
+
+private struct MomentsCreateVisualOptionChooserPage<Content: View>: View {
+    let title: String
+    let introTitle: String
+    let introDetail: String
+    let dismiss: () -> Void
+    let content: () -> Content
+
+    init(
+        title: String,
+        introTitle: String,
+        introDetail: String,
+        dismiss: @escaping () -> Void,
+        @ViewBuilder content: @escaping () -> Content
+    ) {
+        self.title = title
+        self.introTitle = introTitle
+        self.introDetail = introDetail
+        self.dismiss = dismiss
+        self.content = content
+    }
+
+    var body: some View {
+        VStack(spacing: 0) {
+            MomentsCreateChooserHeader(title: title, dismiss: dismiss)
+                .padding(.horizontal, 20)
+                .padding(.top, 20)
+                .padding(.bottom, 14)
+
+            ScrollView {
+                VStack(alignment: .leading, spacing: 14) {
+                    AVAppShellCard {
+                        HStack(spacing: 12) {
+                            Image("AviFullBody")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 42, height: 42)
+                                .padding(4)
+                                .background(AVBrandColor.accent.opacity(0.10), in: Circle())
+                                .accessibilityHidden(true)
+
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(introTitle)
+                                    .font(.system(size: 14, weight: .black))
+                                    .foregroundStyle(AVBrandColor.textPrimary)
+
+                                Text(introDetail)
+                                    .font(.caption)
+                                    .fontWeight(.semibold)
+                                    .foregroundStyle(AVBrandColor.textSecondary)
+                                    .lineLimit(2)
+                            }
+
+                            Spacer(minLength: 0)
+                        }
+                    }
+
+                    content()
+                }
+                .padding(.horizontal, 20)
+                .padding(.bottom, 20)
+                .safeAreaPadding(.bottom, 96)
+            }
+            .scrollIndicators(.hidden)
+        }
+        .background(MomentsTheme.shellBackground.ignoresSafeArea())
+        .navigationBarBackButtonHidden(true)
+        .toolbar(.hidden, for: .navigationBar)
+    }
+}
+
+private struct MomentsCreateVisualOptionTile: View {
+    let title: String
+    let detail: String
+    let assetName: String
+    let isSelected: Bool
+    let select: () -> Void
+
+    private let tileHeight: CGFloat = 106
+
+    var body: some View {
+        GeometryReader { proxy in
+            Button(action: select) {
+                tileContent(width: proxy.size.width)
+            }
+            .buttonStyle(.plain)
+        }
+        .frame(height: tileHeight)
+    }
+
+    private func tileContent(width: CGFloat) -> some View {
+            ZStack(alignment: .bottomLeading) {
+                Image(assetName)
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: width, height: tileHeight)
+                    .clipped()
+
+                LinearGradient(
+                    colors: [.black.opacity(0.02), .black.opacity(0.28), .black.opacity(0.80)],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+
+                VStack(alignment: .leading, spacing: 4) {
+                    HStack(spacing: 6) {
+                        if isSelected {
+                            Image(systemName: "checkmark.circle.fill")
+                                .font(.system(size: 14, weight: .black))
+                                .foregroundStyle(.white, AVBrandColor.accent)
+                                .accessibilityHidden(true)
+                        }
+
+                        Text(title)
+                            .font(.system(size: 13, weight: .black))
+                            .foregroundStyle(.white)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.72)
+                    }
+
+                    Text(detail)
+                        .font(.system(size: 10, weight: .bold))
+                        .foregroundStyle(.white.opacity(0.84))
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.7)
+                }
+                .padding(.horizontal, 10)
+                .padding(.vertical, 11)
+                .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            .frame(width: width, height: tileHeight)
+            .background(AVBrandColor.neutral100, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+            .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+            .contentShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+            .overlay {
+                RoundedRectangle(cornerRadius: 8, style: .continuous)
+                    .stroke(isSelected ? AVBrandColor.accent : AVBrandColor.borderSubtle.opacity(0.7), lineWidth: isSelected ? 2 : 1)
+            }
+            .shadow(color: AVBrandColor.ink.opacity(isSelected ? 0.12 : 0.05), radius: isSelected ? 8 : 4, x: 0, y: 3)
+    }
+}
+
 private struct MomentsCreateThemeChooserPage: View {
     let styles: [MomentCreationStyle]
     let selectedStyle: MomentCreationStyle
@@ -2233,11 +2773,6 @@ private struct MomentsCreateThemeChooserPage: View {
     let dismiss: () -> Void
 
     @State private var draftStyleID: MomentCreationStyleID
-
-    private let columns = [
-        GridItem(.flexible(), spacing: 10),
-        GridItem(.flexible(), spacing: 10)
-    ]
 
     init(
         styles: [MomentCreationStyle],
@@ -2274,11 +2809,11 @@ private struct MomentsCreateThemeChooserPage: View {
                                 .accessibilityHidden(true)
 
                             VStack(alignment: .leading, spacing: 4) {
-                                Text("Theme sets the mood")
+                                Text(MomentsL10n.string("create.selector.theme.intro.title"))
                                     .font(.system(size: 14, weight: .black))
                                     .foregroundStyle(AVBrandColor.textPrimary)
 
-                                Text("Choose a visual direction. Avi will adjust tone, pacing, and music from it.")
+                                Text(MomentsL10n.string("create.selector.theme.intro.detail"))
                                     .font(.caption)
                                     .fontWeight(.semibold)
                                     .foregroundStyle(AVBrandColor.textSecondary)
@@ -2289,14 +2824,12 @@ private struct MomentsCreateThemeChooserPage: View {
                         }
                     }
 
-                    LazyVGrid(columns: columns, spacing: 10) {
-                        ForEach(styles) { style in
+                    MomentsCreateTwoColumnGrid(items: styles) { style in
                             MomentsCreateThemeImageTile(
                                 style: style,
                                 isSelected: draftStyleID == style.id,
                                 selectStyle: { applySelection(style) }
                             )
-                        }
                     }
                 }
                 .padding(.horizontal, 20)
@@ -2331,9 +2864,37 @@ private struct MomentsCreateThemeChooserHeader: View {
                     .shadow(color: AVBrandColor.ink.opacity(0.08), radius: 10, x: 0, y: 4)
                     .contentShape(Circle())
             }
-            .accessibilityLabel("Back")
+            .accessibilityLabel(MomentsL10n.string("common.back"))
 
-            Text("Choose theme")
+            Text(MomentsL10n.string("create.selector.theme.title"))
+                .font(.system(size: 18, weight: .black))
+                .foregroundStyle(AVBrandColor.textPrimary)
+                .frame(maxWidth: .infinity)
+
+            Color.clear
+                .frame(width: 44, height: 44)
+        }
+    }
+}
+
+private struct MomentsCreateChooserHeader: View {
+    let title: String
+    let dismiss: () -> Void
+
+    var body: some View {
+        HStack(spacing: 12) {
+            Button(action: dismiss) {
+                Image(systemName: "chevron.left")
+                    .font(.system(size: 17, weight: .black))
+                    .foregroundStyle(AVBrandColor.textPrimary)
+                    .frame(width: 44, height: 44)
+                    .background(.white.opacity(0.92), in: Circle())
+                    .shadow(color: AVBrandColor.ink.opacity(0.08), radius: 10, x: 0, y: 4)
+                    .contentShape(Circle())
+            }
+            .accessibilityLabel(MomentsL10n.string("common.back"))
+
+            Text(title)
                 .font(.system(size: 18, weight: .black))
                 .foregroundStyle(AVBrandColor.textPrimary)
                 .frame(maxWidth: .infinity)
@@ -2349,26 +2910,52 @@ private struct MomentsCreateThemeImageTile: View {
     let isSelected: Bool
     let selectStyle: () -> Void
 
+    private let tileHeight: CGFloat = 106
+
     var body: some View {
-        Button(action: selectStyle) {
+        GeometryReader { proxy in
+            Button(action: selectStyle) {
+                tileContent(width: proxy.size.width)
+            }
+            .buttonStyle(.plain)
+            .disabled(!style.isEnabled)
+            .accessibilityLabel(accessibilityLabel)
+        }
+        .frame(height: tileHeight)
+    }
+
+    private var accessibilityLabel: String {
+        if style.isEnabled {
+            return MomentsL10n.string("create.selector.theme.accessibility", style.title)
+        }
+        return MomentsL10n.string("create.selector.theme.accessibilitySoon", style.title)
+    }
+
+    private func tileContent(width: CGFloat) -> some View {
             ZStack(alignment: .bottomLeading) {
                 Image(style.assetName)
                     .resizable()
                     .scaledToFill()
-                    .frame(height: 94)
-                    .frame(maxWidth: .infinity)
+                    .frame(width: width, height: tileHeight)
                     .clipped()
                     .saturation(style.isEnabled ? 1 : 0.2)
                     .opacity(style.isEnabled ? 1 : 0.52)
 
                 LinearGradient(
-                    colors: [.black.opacity(0.04), .black.opacity(0.72)],
+                    colors: [.black.opacity(0.02), .black.opacity(0.28), .black.opacity(0.80)],
                     startPoint: .top,
                     endPoint: .bottom
                 )
 
                 VStack(alignment: .leading, spacing: 3) {
                     HStack(spacing: 6) {
+                        if isSelected {
+                            Image(systemName: "checkmark.circle.fill")
+                                .font(.system(size: 14, weight: .black))
+                                .foregroundStyle(.white, AVBrandColor.accent)
+                                .accessibilityHidden(true)
+                        }
+
                         Text(style.title)
                             .font(.system(size: 13, weight: .black))
                             .foregroundStyle(.white)
@@ -2376,7 +2963,7 @@ private struct MomentsCreateThemeImageTile: View {
                             .minimumScaleFactor(0.72)
 
                         if !style.isEnabled {
-                            Text("Soon")
+                            Text(MomentsL10n.string("common.soon"))
                                 .font(.system(size: 9, weight: .black))
                                 .foregroundStyle(.white)
                                 .padding(.horizontal, 6)
@@ -2391,17 +2978,11 @@ private struct MomentsCreateThemeImageTile: View {
                         .lineLimit(1)
                         .minimumScaleFactor(0.7)
                 }
-                .padding(10)
-
-                if isSelected {
-                    Image(systemName: "checkmark.circle.fill")
-                        .font(.system(size: 22, weight: .black))
-                        .foregroundStyle(.white, AVBrandColor.accent)
-                        .padding(8)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
-                }
+                .padding(.horizontal, 10)
+                .padding(.vertical, 11)
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
-            .frame(height: 94)
+            .frame(width: width, height: tileHeight)
             .background(AVBrandColor.neutral100, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
             .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
             .contentShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
@@ -2410,10 +2991,6 @@ private struct MomentsCreateThemeImageTile: View {
                     .stroke(isSelected ? AVBrandColor.accent : AVBrandColor.borderSubtle.opacity(0.7), lineWidth: isSelected ? 2 : 1)
             }
             .shadow(color: AVBrandColor.ink.opacity(isSelected ? 0.12 : 0.05), radius: isSelected ? 8 : 4, x: 0, y: 3)
-        }
-        .buttonStyle(.plain)
-        .disabled(!style.isEnabled)
-        .accessibilityLabel("\(style.title) theme\(style.isEnabled ? "" : ", coming soon")")
     }
 }
 

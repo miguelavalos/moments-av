@@ -21,42 +21,48 @@ struct MomentsCreditPaywallProduct: Identifiable, Equatable {
     let systemImage: String
     let isRecommended: Bool
 
-    static let proMonthly = MomentsCreditPaywallProduct(
+    static var proMonthly: MomentsCreditPaywallProduct {
+        MomentsCreditPaywallProduct(
         id: MomentsCreditProductID.proMonthlyProduct,
         kind: .subscription,
-        eyebrow: "Best value",
-        title: "Moments AV Pro",
-        detail: "6 Video Credits and 15 Story Reviews each month, plus watermark-free final videos while Pro is active.",
-        buttonTitle: "Start Pro",
+        eyebrow: MomentsL10n.string("paywall.product.bestValue"),
+        title: MomentsL10n.string("paywall.product.pro.title"),
+        detail: MomentsL10n.string("paywall.product.pro.detail"),
+        buttonTitle: MomentsL10n.string("paywall.product.pro.button"),
         systemImage: "sparkles",
         isRecommended: true
-    )
+        )
+    }
 
-    static let starterPack = MomentsCreditPaywallProduct(
+    static var starterPack: MomentsCreditPaywallProduct {
+        MomentsCreditPaywallProduct(
         id: MomentsCreditProductID.starterPackProduct,
         kind: .consumableCredits(5),
-        eyebrow: "Starter pack",
-        title: "5 Video Credits",
-        detail: "Includes 10 Story Reviews for extra review passes.",
-        buttonTitle: "Buy 5 credits",
+        eyebrow: MomentsL10n.string("paywall.product.starter.eyebrow"),
+        title: MomentsL10n.string("paywall.product.starter.title"),
+        detail: MomentsL10n.string("paywall.product.starter.detail"),
+        buttonTitle: MomentsL10n.string("paywall.product.starter.button"),
         systemImage: "plus.circle.fill",
         isRecommended: false
-    )
+        )
+    }
 
-    static let creatorPack = MomentsCreditPaywallProduct(
+    static var creatorPack: MomentsCreditPaywallProduct {
+        MomentsCreditPaywallProduct(
         id: MomentsCreditProductID.creatorPackProduct,
         kind: .consumableCredits(20),
-        eyebrow: "Best value",
-        title: "20 Video Credits",
-        detail: "Includes 40 Story Reviews for bigger batches.",
-        buttonTitle: "Buy 20 credits",
+        eyebrow: MomentsL10n.string("paywall.product.bestValue"),
+        title: MomentsL10n.string("paywall.product.creator.title"),
+        detail: MomentsL10n.string("paywall.product.creator.detail"),
+        buttonTitle: MomentsL10n.string("paywall.product.creator.button"),
         systemImage: "square.stack.3d.up.fill",
         isRecommended: false
-    )
+        )
+    }
 
-    static let all: [MomentsCreditPaywallProduct] = [
+    static var all: [MomentsCreditPaywallProduct] { [
         .proMonthly,
         .starterPack,
         .creatorPack
-    ]
+    ] }
 }

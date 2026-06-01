@@ -11,11 +11,15 @@ struct MomentsProfileScreen: View {
     let startSignInFlow: () -> Void
 
     @EnvironmentObject private var accountController: AccountController
+    @EnvironmentObject private var createViewModel: MomentsCreateViewModel
+    @EnvironmentObject private var projectsViewModel: MomentsProjectsViewModel
     @EnvironmentObject private var languageController: MomentsAppLanguageController
     @EnvironmentObject private var themeController: MomentsAppThemeController
     @Environment(\.avCommonAppExperience) private var appExperience
     @Environment(\.openURL) private var openURL
     @State private var showsCreditDetails = false
+    @State private var isShowingLocalDataActions = false
+    @State private var isClearingLocalData = false
 
     var body: some View {
         AVSettingsProfileScreenScaffold(
@@ -38,6 +42,15 @@ struct MomentsProfileScreen: View {
             }
         }
         .toolbar(.hidden, for: .navigationBar)
+        .sheet(isPresented: $isShowingLocalDataActions) {
+            MomentsLocalDataMaintenanceSheet(
+                clearTitle: localized("profile.local.clear.title"),
+                clearDetail: localized("profile.local.clear.detail"),
+                onConfirmClear: clearLocalMomentData
+            )
+            .presentationDetents([.medium, .large])
+            .presentationDragIndicator(.visible)
+        }
     }
 
     private var screenTitle: String {
@@ -121,6 +134,16 @@ struct MomentsProfileScreen: View {
                     title: localized("profile.local.artifacts.title"),
                     detail: localized("profile.local.artifacts.detail")
                 )
+
+                AVSettingsButton(
+                    title: isClearingLocalData
+                        ? localized("profile.local.clear.loading")
+                        : localized("profile.local.manage"),
+                    style: .destructive,
+                    action: { isShowingLocalDataActions = true }
+                )
+                .disabled(isClearingLocalData)
+                .accessibilityIdentifier("profile.local.manage")
             }
         }
     }
@@ -181,13 +204,13 @@ struct MomentsProfileScreen: View {
 
     private var creditsCard: some View {
         AVSettingsSectionCard(
-            title: "Credits",
+            title: localized("credits.title"),
             subtitle: MomentsCreditCopy.availableDetail(accountController.creditBalance)
         ) {
             VStack(alignment: .leading, spacing: 12) {
                 AVSettingsInfoRow(
                     systemImage: "creditcard",
-                    title: "Available credits",
+                    title: localized("credits.available.title"),
                     detail: MomentsCreditCopy.availableDetail(accountController.creditBalance)
                 )
 
@@ -196,7 +219,10 @@ struct MomentsProfileScreen: View {
                         showsCreditDetails.toggle()
                     }
                 } label: {
-                    Label(showsCreditDetails ? "Hide details" : "View details", systemImage: showsCreditDetails ? "chevron.up" : "chevron.down")
+                    Label(
+                        showsCreditDetails ? localized("paywall.wallet.hideDetails") : localized("paywall.wallet.viewDetails"),
+                        systemImage: showsCreditDetails ? "chevron.up" : "chevron.down"
+                    )
                         .font(.system(size: 13, weight: .bold, design: .rounded))
                 }
                 .buttonStyle(.plain)
@@ -213,7 +239,7 @@ struct MomentsProfileScreen: View {
             }
 
             AVSettingsButton(
-                title: "Get more credits",
+                title: localized("credits.getMore"),
                 style: .primary,
                 action: openCredits
             )
@@ -358,7 +384,7 @@ struct MomentsProfileScreen: View {
         if accountController.isSignedIn {
             return accountController.user?.emailAddress
                 ?? accountController.user?.id
-                ?? "Connected to \(appExperience.identity.accountName)."
+                ?? MomentsL10n.string("profile.account.connected", appExperience.identity.accountName)
         }
         return localized("profile.account.identity.guest")
     }
@@ -367,7 +393,7 @@ struct MomentsProfileScreen: View {
         if accountController.isSignedIn {
             return accountController.user?.displayName
                 ?? accountController.user?.emailAddress
-                ?? "Signed in on this device."
+                ?? localized("profile.account.signedInDevice")
         }
         return localized("profile.summary.account.detail.guest")
     }
@@ -410,7 +436,76 @@ struct MomentsProfileScreen: View {
         }
     }
 
+    private func clearLocalMomentData() {
+        guard isClearingLocalData == false else { return }
+        isClearingLocalData = true
+        createViewModel.clearSessionState()
+        projectsViewModel.clearSelection()
+        MomentsLocalMediaThumbnailCache.clearAll()
+        isClearingLocalData = false
+    }
+
     private func localized(_ key: String) -> String {
         MomentsL10n.string(key)
+    }
+}
+
+private struct MomentsLocalDataMaintenanceSheet: View {
+    let clearTitle: String
+    let clearDetail: String
+    let onConfirmClear: () -> Void
+
+    @Environment(\.dismiss) private var dismiss
+    @State private var isShowingClearAlert = false
+
+    var body: some View {
+        AVSettingsSheetScaffold(
+            backgroundStyle: AnyShapeStyle(MomentsTheme.shellBackground),
+            closeTitle: MomentsL10n.string("profile.local.sheet.close"),
+            onClose: { dismiss() }
+        ) {
+            AVSettingsSheetHeader(
+                title: MomentsL10n.string("profile.local.sheet.title"),
+                subtitle: MomentsL10n.string("profile.local.sheet.subtitle")
+            )
+
+            VStack(alignment: .leading, spacing: 12) {
+                AVSettingsInfoRow(
+                    systemImage: "photo.on.rectangle.angled",
+                    title: MomentsL10n.string("profile.local.keep.photos.title"),
+                    detail: MomentsL10n.string("profile.local.keep.photos.detail")
+                )
+                AVSettingsInfoRow(
+                    systemImage: "play.rectangle",
+                    title: MomentsL10n.string("profile.local.keep.gallery.title"),
+                    detail: MomentsL10n.string("profile.local.keep.gallery.detail")
+                )
+                AVSettingsInfoRow(
+                    systemImage: "cloud",
+                    title: MomentsL10n.string("profile.local.keep.account.title"),
+                    detail: MomentsL10n.string("profile.local.keep.account.detail")
+                )
+            }
+
+            AVSettingsDestructiveActionCard(
+                sectionTitle: MomentsL10n.string("profile.local.sheet.danger"),
+                systemImage: "trash",
+                title: clearTitle,
+                detail: clearDetail,
+                action: { isShowingClearAlert = true }
+            )
+        }
+        .alert(
+            MomentsL10n.string("profile.local.clear.alert.title"),
+            isPresented: $isShowingClearAlert
+        ) {
+            Button(MomentsL10n.string("profile.local.sheet.close"), role: .cancel) {}
+            Button(MomentsL10n.string("profile.local.clear.confirm"), role: .destructive) {
+                onConfirmClear()
+                dismiss()
+            }
+        } message: {
+            Text(MomentsL10n.string("profile.local.clear.alert.message"))
+        }
     }
 }

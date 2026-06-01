@@ -4,23 +4,23 @@ import SwiftUI
 struct MomentsAviHelpCard: View {
     var body: some View {
         AVAviGuidanceCard(
-            title: "How Avi helps",
-            detail: "Avi keeps the memory-video workflow focused without becoming a full chat product."
+            title: MomentsL10n.string("avi.help.title"),
+            detail: MomentsL10n.string("avi.help.detail")
         ) {
             AVAviInfoRow(
-                title: "Draft",
-                detail: "Turns the occasion, tone, template, and selected media into a scene outline.",
-                systemImage: "text.quote"
+                title: MomentsL10n.string("avi.help.choose.title"),
+                detail: MomentsL10n.string("avi.help.choose.detail"),
+                systemImage: "photo.on.rectangle"
             )
             AVAviInfoRow(
-                title: "Story Review",
-                detail: "Helps validate pacing and story shape before credits are committed to the final export.",
+                title: MomentsL10n.string("avi.help.review.title"),
+                detail: MomentsL10n.string("avi.help.review.detail"),
                 systemImage: "text.bubble"
             )
             AVAviInfoRow(
-                title: "Project review",
-                detail: "Points you back to story scenes, render jobs, and artifacts when a project needs inspection.",
-                systemImage: "rectangle.stack"
+                title: MomentsL10n.string("avi.help.create.title"),
+                detail: MomentsL10n.string("avi.help.create.detail"),
+                systemImage: "video.fill"
             )
         }
     }
@@ -31,21 +31,21 @@ struct MomentsAviProjectGuidanceCard: View {
 
     var body: some View {
         AVAviGuidanceCard(
-            title: "In Progress and Gallery",
-            detail: "Use In Progress for drafts, story reviews, render jobs, and downloads that still need action."
+            title: MomentsL10n.string("projects.inProgressAndGallery.title"),
+            detail: MomentsL10n.string("avi.projects.detail")
         ) {
             AVAviInfoRow(
-                title: "In Progress",
-                detail: "Check story scenes, story reviews, render jobs, and download-needed videos while a video is moving through the workflow.",
+                title: MomentsL10n.string("projects.inProgress.title"),
+                detail: MomentsL10n.string("avi.projects.inProgress.detail"),
                 systemImage: "clock"
             )
             AVAviInfoRow(
-                title: "Gallery",
-                detail: "Gallery is local-only and shows downloaded final videos generated on this device.",
+                title: MomentsL10n.string("gallery.title"),
+                detail: MomentsL10n.string("avi.projects.gallery.detail"),
                 systemImage: "checkmark.circle"
             )
             AVAviActionButton(
-                title: "Open Gallery",
+                title: MomentsL10n.string("gallery.open"),
                 systemImage: "play.square.stack",
                 action: openProjects
             )

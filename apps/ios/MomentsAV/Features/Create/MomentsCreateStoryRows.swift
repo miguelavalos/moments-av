@@ -11,7 +11,7 @@ struct MomentsCreateStorySceneRow: View {
             title: caption,
             detail: narration,
             systemImage: "rectangle.stack.fill",
-            eyebrow: "Scene \(index + 1)"
+            eyebrow: MomentsL10n.string("create.story.scene", index + 1)
         )
     }
 }

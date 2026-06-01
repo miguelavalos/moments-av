@@ -47,8 +47,8 @@ struct MomentsHomeScreen: View {
             MomentsTheme.shellBackground
         } content: {
             AVAppShellHomeHeader(
-                title: "Memory Studio",
-                subtitle: "Choose the media and let Avi turn it into a private memory film."
+                title: MomentsL10n.string("home.header.title"),
+                subtitle: MomentsL10n.string("home.header.subtitle")
             ) {
                 AVAppShellConfiguredBrandHeader(
                     activeItem: nil,
@@ -94,48 +94,48 @@ struct MomentsHomeScreen: View {
     @Environment(\.avCommonAppExperience) private var appExperience
 
     private var aviContextTitle: String {
-        guard viewModel.isSignedIn else { return "Sign in to create" }
+        guard viewModel.isSignedIn else { return MomentsL10n.string("home.avi.signIn.title") }
         if createViewModel.hasRecoverableMomentContext {
             if createViewModel.previewSummary.latestPreview != nil {
-                return "Story review ready"
+                return MomentsL10n.string("home.avi.storyReviewReady.title")
             }
             if createViewModel.previewSummary.isGenerating {
-                return "Avi is creating"
+                return MomentsL10n.string("home.avi.creating.title")
             }
             if createViewModel.storySummary.isDrafting {
-                return "Avi is preparing"
+                return MomentsL10n.string("home.avi.preparing.title")
             }
-            return "Current Moment"
+            return MomentsL10n.string("home.avi.currentMoment.title")
         }
-        return "Create a Moment"
+        return MomentsL10n.string("home.avi.createMoment.title")
     }
 
     private var aviContextDetail: String {
         guard viewModel.isSignedIn else {
-            return "Connect your account to create memory films, story reviews, and final videos."
+            return MomentsL10n.string("home.avi.signIn.detail")
         }
         if createViewModel.hasRecoverableMomentContext {
             let count = createViewModel.mediaSelectedCount
             if createViewModel.previewSummary.latestPreview != nil {
-                return "Your story review is ready before final video."
+                return MomentsL10n.string("home.avi.storyReviewReady.detail")
             }
             if createViewModel.previewSummary.isGenerating {
-                return "Avi is reviewing the story from your selected moments."
+                return MomentsL10n.string("home.avi.creating.detail")
             }
             if createViewModel.storySummary.isDrafting {
-                return "Avi is organizing the story from your media."
+                return MomentsL10n.string("home.avi.preparing.detail")
             }
             if count > 0 {
-                return "\(count) \(count == 1 ? "item" : "items") selected. Continue to story review."
+                return MomentsL10n.string("home.avi.selected.detail", count, count == 1 ? MomentsL10n.string("media.item.one") : MomentsL10n.string("media.item.other"))
             }
-            return "A local creation is waiting for media."
+            return MomentsL10n.string("home.avi.addMedia.detail")
         }
-        return "Choose photos or clips and let Avi prepare the first version."
+        return MomentsL10n.string("home.avi.createMoment.detail")
     }
 
     private var aviContextButtonTitle: String {
-        guard viewModel.isSignedIn else { return "Sign in" }
-        return createViewModel.hasRecoverableMomentContext ? "Continue" : "Create"
+        guard viewModel.isSignedIn else { return MomentsL10n.string("common.signIn") }
+        return createViewModel.hasRecoverableMomentContext ? MomentsL10n.string("common.continue") : MomentsL10n.string("common.create")
     }
 }
 

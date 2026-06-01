@@ -7,28 +7,28 @@ struct MomentsCreateWorkspaceProgress: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            AVAppShellSectionHeader(title: "Workspace progress")
+            AVAppShellSectionHeader(title: MomentsL10n.string("create.progress.title"))
             AVAppShellProgressRow(
-                title: "Photos and clips",
+                title: MomentsL10n.string("create.progress.media"),
                 detail: summary.mediaDetail,
                 systemImage: "photo.on.rectangle",
                 isComplete: summary.mediaCount >= minimumMediaCount,
             )
             AVAppShellProgressRow(
-                title: "Story",
+                title: MomentsL10n.string("project.progress.story"),
                 detail: summary.storyDetail,
                 systemImage: "text.bubble",
                 isComplete: summary.sceneCount > 0,
             )
             AVAppShellProgressRow(
-                title: "Story Review",
+                title: MomentsL10n.string("project.kind.storyReview"),
                 detail: summary.previewDetail,
                 systemImage: "text.bubble",
                 isComplete: summary.hasPreviewArtifact,
             )
             AVAppShellProgressRow(
-                title: "Final video",
-                detail: summary.hasFinalExport ? "Ready" : "Not made yet",
+                title: MomentsL10n.string("project.artifact.final.title"),
+                detail: summary.hasFinalExport ? MomentsL10n.string("create.status.ready") : MomentsL10n.string("create.progress.finalNotMade"),
                 systemImage: "square.and.arrow.up",
                 isComplete: summary.hasFinalExport,
             )

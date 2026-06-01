@@ -24,7 +24,7 @@ struct MomentsCreateActiveDraftSection: View {
             )
 
             Button(action: discardDraft) {
-                Label("Discard draft", systemImage: "trash")
+                Label("Discard Moment", systemImage: "trash")
                     .frame(maxWidth: .infinity)
             }
             .buttonStyle(.bordered)

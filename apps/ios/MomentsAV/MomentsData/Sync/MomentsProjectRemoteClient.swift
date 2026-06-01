@@ -63,10 +63,13 @@ struct MomentsProjectRemoteClient {
             name: "moments:createDraftProject",
             args: [
                 "ownerUserId": ownerUserId,
-                "template": request.template,
+                "creationMode": request.creationMode,
+                "look": request.look,
+                "theme": request.theme,
+                "mood": request.mood,
+                "duration": request.duration,
+                "mediaUse": request.mediaUse,
                 "title": request.title,
-                "tone": request.tone,
-                "tempo": request.tempo,
                 "occasion": request.occasion,
                 "details": request.details
             ]

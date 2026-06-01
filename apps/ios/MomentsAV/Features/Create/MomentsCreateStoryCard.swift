@@ -12,8 +12,8 @@ struct MomentsCreateStoryCard: View {
         AVAppShellCard {
             VStack(alignment: .leading, spacing: 14) {
                 AVAppShellContentHeader(
-                    title: "Story plan",
-                    detail: "Prepare the structure before creating the final video."
+                    title: MomentsL10n.string("create.story.plan.title"),
+                    detail: MomentsL10n.string("create.story.plan.detail")
                 )
 
                 MomentsCreateStoryScenesSection(presentation: presentation)
@@ -55,24 +55,24 @@ private struct MomentsCreateStoryReviewAllowancePanel: View {
             HStack(spacing: 10) {
                 MomentsCreateStoryAllowanceMetric(
                     title: "\(presentation.balance.reviewAllowanceRemaining)",
-                    subtitle: "reviews left",
+                    subtitle: MomentsL10n.string("create.story.reviewsLeft"),
                     systemImage: "list.bullet.clipboard.fill"
                 )
                 MomentsCreateStoryAllowanceMetric(
                     title: "\(presentation.balance.reviewBundleReviewCount)",
-                    subtitle: "per bundle",
+                    subtitle: MomentsL10n.string("create.story.perBundle"),
                     systemImage: "plus.circle.fill"
                 )
                 MomentsCreateStoryAllowanceMetric(
                     title: MomentsCreditCopy.countTitle(presentation.balance.reviewBundleCreditCost),
-                    subtitle: "bundle cost",
+                    subtitle: MomentsL10n.string("create.story.bundleCost"),
                     systemImage: "creditcard.fill"
                 )
             }
 
             if presentation.balance.reviewAllowanceRemaining == 0 {
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("Story reviews are used up. You can add more with credits, add credits first, or create the final video if this story is ready.")
+                    Text(MomentsL10n.string("create.story.reviewsUsedUp"))
                         .font(.system(size: 12, weight: .semibold))
                         .foregroundStyle(AVBrandColor.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)
@@ -86,7 +86,7 @@ private struct MomentsCreateStoryReviewAllowancePanel: View {
                         .disabled(!presentation.canBuyReviewBundle)
                     } else {
                         Button(action: openCredits) {
-                            Label("Add credits", systemImage: "creditcard.fill")
+                            Label(MomentsL10n.string("credits.get.title"), systemImage: "creditcard.fill")
                                 .frame(maxWidth: .infinity)
                         }
                         .buttonStyle(MomentsCreateNeutralInlineButtonStyle())

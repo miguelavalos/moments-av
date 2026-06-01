@@ -40,7 +40,7 @@ extension MomentsProjectRemoteClient {
                 "mediaAssetIds": convexStringArray(request.mediaAssetIds),
                 "caption": request.caption,
                 "narrationText": request.narrationText,
-                "tone": request.tone,
+                "mood": request.mood,
                 "musicCue": request.musicCue,
                 "durationMs": request.durationMs,
                 "createdBy": request.createdBy

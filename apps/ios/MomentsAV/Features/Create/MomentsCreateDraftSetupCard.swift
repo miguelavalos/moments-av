@@ -37,8 +37,16 @@ struct MomentsCreateDraftSetupCard: View {
                     guidance: aviGuidance,
                     canBeginNewProject: canBeginNewProject,
                     beginNewProject: {
+                        form.creationMode = .quick
+                        form.look = .real
+                        form.duration = .auto
+                        form.mediaUse = .aviPick
                         beginNewProject()
+                    },
+                    planProject: {
+                        form.creationMode = .planned
                         showsProjectSheet = true
+                        editStyle()
                     },
                     startSignInFlow: startSignInFlow,
                     openCredits: openCredits
@@ -93,7 +101,7 @@ struct MomentsCreateDraftSetupCard: View {
                 showsOptions = true
             } label: {
                 HStack(spacing: 10) {
-                    Label("Options", systemImage: "slider.horizontal.3")
+                    Label(MomentsL10n.string("create.options.title"), systemImage: "slider.horizontal.3")
                         .font(.system(size: 14, weight: .black))
                     Spacer()
                     Image(systemName: "chevron.right")
@@ -122,7 +130,7 @@ struct MomentsCreateDraftSetupCard: View {
         VStack(alignment: .leading, spacing: 16) {
             if presentation.showsActiveProject {
                 Button(action: discardDraft) {
-                    Label("Discard draft", systemImage: "trash")
+                    Label(MomentsL10n.string("create.discard.current"), systemImage: "trash")
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.bordered)
@@ -150,8 +158,8 @@ struct MomentsCreateDraftSetupCard: View {
     private var styleStep: some View {
         VStack(alignment: .leading, spacing: 16) {
             MomentsCreateStepHeader(
-                stepTitle: "Choose a theme",
-                title: "Pick the feeling",
+                stepTitle: MomentsL10n.string("create.selector.theme.title"),
+                title: MomentsL10n.string("create.style.pickFeeling"),
                 detail: aviGuidance.message
             )
 
@@ -176,6 +184,7 @@ private struct MomentsCreateNewProjectStatus: View {
     let guidance: MomentsCreateAviGuidance
     let canBeginNewProject: Bool
     let beginNewProject: () -> Void
+    let planProject: () -> Void
     let startSignInFlow: () -> Void
     let openCredits: () -> Void
 
@@ -192,6 +201,7 @@ private struct MomentsCreateNewProjectStatus: View {
                 selectedStyle: selectedStyle,
                 canBeginNewProject: canBeginNewProject,
                 beginNewProject: beginNewProject,
+                planProject: planProject,
                 startSignInFlow: startSignInFlow,
                 openCredits: openCredits
             )
@@ -246,6 +256,7 @@ private struct MomentsCreateNewProjectActionBlock: View {
     let selectedStyle: MomentCreationStyle
     let canBeginNewProject: Bool
     let beginNewProject: () -> Void
+    let planProject: () -> Void
     let startSignInFlow: () -> Void
     let openCredits: () -> Void
 
@@ -254,16 +265,24 @@ private struct MomentsCreateNewProjectActionBlock: View {
             MomentsCreateEconomyPanel(balance: balance, selectedStyle: selectedStyle, isSignedIn: isSignedIn)
 
             AVAppShellPrimaryButton(
-                "Add photos or clips",
+                MomentsL10n.string("create.media.choose"),
                 systemImage: "photo.badge.plus",
                 isDisabled: !canBeginNewProject,
                 action: beginNewProject
             )
 
+            Button(action: planProject) {
+                Label(MomentsL10n.string("create.planFirst"), systemImage: "slider.horizontal.3")
+                    .font(.system(size: 14, weight: .black))
+                    .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(.bordered)
+            .disabled(!canBeginNewProject)
+
             if !isSignedIn {
-                AVAppShellInlineMessage(message: "You can set up this Moment now. Sign in is required before story review or video creation.")
+                AVAppShellInlineMessage(message: MomentsL10n.string("create.signInLater.detail"))
             } else if balance.spendable == 0 {
-                AVAppShellInlineMessage(message: "Credits are needed before creating the final video. You can set up this Moment now.")
+                AVAppShellInlineMessage(message: MomentsL10n.string("create.credits.setupNow"))
             }
         }
         .padding(AVBrandSpacing.xl)
@@ -300,15 +319,15 @@ private extension MomentsCreateAviGuidance {
     var eyebrow: String {
         switch emotion {
         case .warning:
-            return "Needs attention"
+            return MomentsL10n.string("create.guidance.eyebrow.warning")
         case .happy, .celebrate:
-            return "Create video"
+            return MomentsL10n.string("project.nextAction.createVideo.title")
         case .focused:
-            return "Keep going"
+            return MomentsL10n.string("create.guidance.eyebrow.keepGoing")
         case .curious:
-            return "Sign in first"
+            return MomentsL10n.string("paywall.signIn.title")
         case .thinking:
-            return "Prepare project"
+            return MomentsL10n.string("create.guidance.eyebrow.prepare")
         }
     }
 
@@ -359,12 +378,12 @@ private struct MomentsCreateEconomyPanel: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack(alignment: .firstTextBaseline) {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(isSignedIn ? "Available credits" : "Account status")
+                    Text(isSignedIn ? MomentsL10n.string("credits.available.title") : MomentsL10n.string("profile.summary.account.title"))
                         .font(.system(size: 12, weight: .black))
                         .foregroundStyle(AVBrandColor.textSecondary)
                         .textCase(.uppercase)
 
-                    Text(isSignedIn ? "\(balance.spendable)" : "Sign in")
+                    Text(isSignedIn ? "\(balance.spendable)" : MomentsL10n.string("common.signIn"))
                         .font(.system(size: 42, weight: .black))
                         .foregroundStyle(AVBrandColor.textPrimary)
                 }
@@ -372,18 +391,18 @@ private struct MomentsCreateEconomyPanel: View {
                 Spacer(minLength: 12)
 
                 VStack(alignment: .trailing, spacing: 4) {
-                    Text("Final video")
+                    Text(MomentsL10n.string("project.artifact.final.title"))
                         .font(.system(size: 12, weight: .black))
                         .foregroundStyle(AVBrandColor.textSecondary)
                         .textCase(.uppercase)
 
-                    Text("\(selectedStyle.creditCost) credit")
+                    Text(MomentsCreditCopy.countTitle(selectedStyle.creditCost))
                         .font(AVBrandTypography.bodyStrong)
                         .foregroundStyle(AVBrandColor.textPrimary)
                 }
             }
 
-            Text("Credits are only needed when you create the final video.")
+            Text(MomentsL10n.string("create.credits.onlyFinal"))
                 .font(AVBrandTypography.captionStrong)
                 .foregroundStyle(AVBrandColor.textSecondary)
                 .fixedSize(horizontal: false, vertical: true)
@@ -647,12 +666,12 @@ private struct MomentsCreateQuickCustomizeSection: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack(alignment: .firstTextBaseline) {
                 VStack(alignment: .leading, spacing: 3) {
-                    Text("Optional details")
+                    Text(MomentsL10n.string("create.optionalDetails"))
                         .font(.system(size: 12, weight: .black))
                         .foregroundStyle(AVBrandColor.textSecondary)
                         .textCase(.uppercase)
 
-                    Text("\(selectedStyle.durationSeconds)s · \(selectedStyle.creditCost) credit · add more now or later")
+                    Text(MomentsL10n.string("create.optionalDetails.summary", selectedStyle.durationSeconds, selectedStyle.creditCost))
                         .font(AVBrandTypography.bodyStrong)
                         .foregroundStyle(AVBrandColor.textPrimary)
                         .lineLimit(2)
@@ -661,11 +680,11 @@ private struct MomentsCreateQuickCustomizeSection: View {
 
                 Spacer(minLength: 12)
 
-                AVStatusPill(title: "Min 1", isUppercased: false)
+                AVStatusPill(title: MomentsL10n.string("create.minOne"), isUppercased: false)
             }
 
             MomentsCreateMultilineFieldRow(
-                title: "Note for Avi",
+                title: MomentsL10n.string("create.noteForAvi"),
                 placeholder: "Cumple de Ana, viaje a Lisboa, para mamá...",
                 systemImage: "text.bubble.fill",
                 text: $form.details,
@@ -673,7 +692,7 @@ private struct MomentsCreateQuickCustomizeSection: View {
             )
 
             VStack(alignment: .leading, spacing: 8) {
-                Text("Music mood")
+                Text(MomentsL10n.string("create.musicMood"))
                     .font(.system(size: 12, weight: .black))
                     .foregroundStyle(AVBrandColor.textSecondary)
                     .textCase(.uppercase)

@@ -29,7 +29,7 @@ enum MomentsCreateAviGuidanceResolver {
         if draftErrorMessage != nil {
             return MomentsCreateAviGuidance(
                 emotion: .warning,
-                message: "Something needs another try. You can retry when you are ready.",
+                message: MomentsL10n.string("create.guidance.retry"),
                 actionTitle: nil,
                 reaction: .negative
             )
@@ -38,7 +38,7 @@ enum MomentsCreateAviGuidanceResolver {
         if isDraftLocked {
             return MomentsCreateAviGuidance(
                 emotion: .focused,
-                message: "\(selectedStyle.title) is ready. Add photos or clips.",
+                message: MomentsL10n.string("create.guidance.locked", selectedStyle.title),
                 actionTitle: nil,
                 reaction: .affirm
             )
@@ -47,8 +47,8 @@ enum MomentsCreateAviGuidanceResolver {
         guard isSignedIn else {
             return MomentsCreateAviGuidance(
                 emotion: .curious,
-                message: "Connect your account to start your first memory video.",
-                actionTitle: "Sign in",
+                message: MomentsL10n.string("create.guidance.signIn"),
+                actionTitle: MomentsL10n.string("common.signIn"),
                 reaction: .selection
             )
         }
@@ -56,8 +56,8 @@ enum MomentsCreateAviGuidanceResolver {
         if balance.spendable <= 0 {
             return MomentsCreateAviGuidance(
                 emotion: .happy,
-                message: "Add photos or clips now. Credits are needed before creating the final video.",
-                actionTitle: "Start project",
+                message: MomentsL10n.string("create.guidance.noCredits"),
+                actionTitle: MomentsL10n.string("create.action.startProject"),
                 reaction: .positive
             )
         }
@@ -66,21 +66,21 @@ enum MomentsCreateAviGuidanceResolver {
         case .status:
             return MomentsCreateAviGuidance(
                 emotion: .happy,
-                message: "Add photos or clips. Avi will prepare the first story.",
-                actionTitle: "Start project",
+                message: MomentsL10n.string("create.guidance.addMedia"),
+                actionTitle: MomentsL10n.string("create.action.startProject"),
                 reaction: .positive
             )
         case .style:
             return MomentsCreateAviGuidance(
                 emotion: .curious,
-                message: "Choose a theme. Moments AV will open your workspace right after.",
+                message: MomentsL10n.string("create.guidance.chooseTheme"),
                 actionTitle: nil,
                 reaction: .selection
             )
         case .summary:
             return MomentsCreateAviGuidance(
                 emotion: .focused,
-                message: "\(selectedStyle.title) is set. Add photos or clips next.",
+                message: MomentsL10n.string("create.guidance.styleSet", selectedStyle.title),
                 actionTitle: nil,
                 reaction: .affirm
             )

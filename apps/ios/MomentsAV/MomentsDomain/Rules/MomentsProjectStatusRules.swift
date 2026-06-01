@@ -20,7 +20,13 @@ enum MomentsProjectStatusRules {
 
     static func displayTitle(for status: String) -> String {
         if status == "preview_ready" {
-            return "Story Review Ready"
+            return MomentsL10n.string("project.status.storyReady")
+        }
+        if status == "final_render_pending" || status == "final_render_running" {
+            return MomentsL10n.string("project.status.creatingVideo")
+        }
+        if status == "export_ready" || status == "completed" {
+            return MomentsL10n.string("project.status.videoReady")
         }
         return status
             .replacingOccurrences(of: "_", with: " ")
@@ -29,7 +35,7 @@ enum MomentsProjectStatusRules {
 
     static func displayKind(_ kind: String) -> String {
         if kind == "preview" {
-            return "Story Review"
+            return MomentsL10n.string("project.kind.storyReview")
         }
         return kind
             .replacingOccurrences(of: "_", with: " ")
@@ -39,59 +45,59 @@ enum MomentsProjectStatusRules {
     static func nextAction(for workspace: MomentProjectWorkspace) -> MomentsProjectNextAction {
         if let failedJob = workspace.renderJobs.latest(where: { isFailureStatus($0.status) }) {
             return MomentsProjectNextAction(
-                title: "Review render issue",
-                message: "\(displayKind(failedJob.kind)) failed. Return to Create and refresh or retry the render.",
+                title: MomentsL10n.string("project.nextAction.videoAttention.title"),
+                message: MomentsL10n.string("project.nextAction.videoAttention.message", displayKind(failedJob.kind)),
                 systemImage: "exclamationmark.triangle",
-                primaryButtonTitle: "Review in Create",
+                primaryButtonTitle: MomentsL10n.string("project.nextAction.reviewInCreate"),
                 continuationFocus: focus(forFailedJobKind: failedJob.kind)
             )
         }
 
         if workspace.mediaAssets.isEmpty {
             return MomentsProjectNextAction(
-                title: "Add media",
-                message: "Continue in Create and add photos or clips before generating the story.",
+                title: MomentsL10n.string("project.nextAction.addMedia.title"),
+                message: MomentsL10n.string("project.nextAction.addMedia.message"),
                 systemImage: "photo.badge.plus",
-                primaryButtonTitle: "Add Media in Create",
+                primaryButtonTitle: MomentsL10n.string("project.nextAction.addMedia.button"),
                 continuationFocus: .media
             )
         }
 
         if workspace.storyScenes.isEmpty {
             return MomentsProjectNextAction(
-                title: "Generate story",
-                message: "Continue in Create and ask Avi to draft the story scenes.",
+                title: MomentsL10n.string("project.nextAction.prepareStory.title"),
+                message: MomentsL10n.string("project.nextAction.prepareStory.message"),
                 systemImage: "text.bubble",
-                primaryButtonTitle: "Generate Story in Create",
+                primaryButtonTitle: MomentsL10n.string("project.nextAction.prepareStory.button"),
                 continuationFocus: .story
             )
         }
 
         if !workspace.artifacts.containsAvailable(kind: "preview") {
             return MomentsProjectNextAction(
-                title: "Review story",
-                message: "Review the story pacing before spending credits on the final export.",
+                title: MomentsL10n.string("project.nextAction.reviewStory.title"),
+                message: MomentsL10n.string("project.nextAction.reviewStory.message"),
                 systemImage: "text.bubble",
-                primaryButtonTitle: "Review Story in Create",
+                primaryButtonTitle: MomentsL10n.string("project.nextAction.reviewStory.button"),
                 continuationFocus: .preview
             )
         }
 
         if !workspace.artifacts.containsAvailable(kind: "final_export") {
             return MomentsProjectNextAction(
-                title: "Render final export",
-                message: "Story review is ready. Continue in Create to generate the final export.",
-                systemImage: "square.and.arrow.up",
-                primaryButtonTitle: "Render Final in Create",
+                title: MomentsL10n.string("project.nextAction.createVideo.title"),
+                message: MomentsL10n.string("project.nextAction.createVideo.message"),
+                systemImage: "video.fill",
+                primaryButtonTitle: MomentsL10n.string("project.nextAction.createVideo.button"),
                 continuationFocus: .finalRender
             )
         }
 
         return MomentsProjectNextAction(
-            title: "Finished",
-            message: "Final export is available.",
+            title: MomentsL10n.string("projects.finished.title"),
+            message: MomentsL10n.string("project.nextAction.finished.message"),
             systemImage: "checkmark.circle",
-            primaryButtonTitle: "Open in Create",
+            primaryButtonTitle: MomentsL10n.string("project.nextAction.openInCreate"),
             continuationFocus: .finalRender
         )
     }

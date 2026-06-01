@@ -166,6 +166,10 @@ enum MomentsLocalMediaThumbnailCache {
         return read(for: platformMediaAssetId)
     }
 
+    static func clearAll() {
+        try? FileManager.default.removeItem(at: cacheDirectory)
+    }
+
     private static func resizedJPEGData(from image: UIImage) -> Data? {
         let size = image.size
         guard size.width > 0, size.height > 0 else { return image.jpegData(compressionQuality: 0.72) }

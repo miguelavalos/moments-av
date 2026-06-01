@@ -82,11 +82,11 @@ private struct MomentsHubCreditStatus: View {
                     .frame(width: 28, height: 28)
 
                 VStack(alignment: .leading, spacing: 3) {
-                    Text("\(MomentsCreditCopy.countTitle(balance.spendable)) available")
+                    Text(MomentsL10n.string("credits.available.detail", MomentsCreditCopy.countTitle(balance.spendable)))
                         .font(.system(size: 15, weight: .black))
                         .foregroundStyle(AVBrandColor.textPrimary)
 
-                    Text(balance.spendable > 0 ? "Credits are ready for final video creation." : "Credits are needed before final video creation.")
+                    Text(balance.spendable > 0 ? MomentsL10n.string("projects.credits.ready") : MomentsL10n.string("projects.credits.needed"))
                         .font(AVBrandTypography.captionStrong)
                         .foregroundStyle(AVBrandColor.textSecondary)
                         .lineLimit(1)
@@ -96,7 +96,7 @@ private struct MomentsHubCreditStatus: View {
                 Spacer(minLength: 8)
 
                 Button(action: openCredits) {
-                    Label(balance.spendable > 0 ? "Manage" : "Get", systemImage: "plus.circle.fill")
+                    Label(balance.spendable > 0 ? MomentsL10n.string("common.manage") : MomentsL10n.string("common.get"), systemImage: "plus.circle.fill")
                         .font(.system(size: 13, weight: .black))
                 }
                 .buttonStyle(.bordered)
@@ -114,7 +114,7 @@ private struct MomentsHubSignedOutState: View {
             systemImage: unavailable.systemImage,
             title: unavailable.title,
             message: unavailable.message,
-            actionTitle: "Sign in",
+            actionTitle: MomentsL10n.string("common.signIn"),
             actionSystemImage: "person.crop.circle.fill",
             action: startSignInFlow
         )
@@ -131,8 +131,8 @@ private struct MomentsHubEmptyContent: View {
         case .gallery:
             MomentsHubEmptyState(
                 systemImage: "play.square.stack.fill",
-                title: "Gallery is empty",
-                message: "Finished videos appear here only after they download to this device.",
+                title: MomentsL10n.string("gallery.empty.shortTitle"),
+                message: MomentsL10n.string("gallery.empty.downloadDetail"),
                 actionTitle: nil,
                 actionSystemImage: nil,
                 action: nil
@@ -140,9 +140,9 @@ private struct MomentsHubEmptyContent: View {
         case .inProgress:
             MomentsHubEmptyState(
                 systemImage: "photo.badge.plus",
-                title: "Nothing in progress",
-                message: "Drafts and videos that need action will appear here.",
-                actionTitle: "New Moment",
+                title: MomentsL10n.string("projects.empty.inProgress.title"),
+                message: MomentsL10n.string("projects.empty.inProgress.detail"),
+                actionTitle: MomentsL10n.string("projects.newMoment"),
                 actionSystemImage: "plus",
                 action: startProject
             )
@@ -194,22 +194,22 @@ private struct MomentsHubAviBlock: View {
 
     private var title: String {
         if projectSummary.latestInProgressProject != nil {
-            return "Moment in progress"
+            return MomentsL10n.string("projects.avi.momentInProgress.title")
         }
         if projectSummary.finishedCount > 0 {
-            return "Gallery starts on this device"
+            return MomentsL10n.string("projects.avi.galleryStarts.title")
         }
-        return "Ready to make a memory"
+        return MomentsL10n.string("projects.avi.ready.title")
     }
 
     private var message: String {
         if let project = projectSummary.latestInProgressProject {
-            return "\(project.title) needs the next story, render, or download step."
+            return MomentsL10n.string("projects.avi.momentInProgress.message", project.title)
         }
         if projectSummary.finishedCount > 0 {
-            return "Remote finished Moments stay out of Gallery until their final video is downloaded locally."
+            return MomentsL10n.string("projects.avi.galleryStarts.message")
         }
-        return "Start a new moment and choose the media you want to use."
+        return MomentsL10n.string("projects.avi.ready.message")
     }
 }
 
@@ -223,8 +223,8 @@ private struct MomentsHubContinueBlock: View {
         if projects.isEmpty {
             MomentsHubEmptyState(
                 systemImage: "photo.badge.plus",
-                title: "Nothing in progress",
-                message: "Drafts, story reviews, renders, and videos waiting for download will appear here.",
+                title: MomentsL10n.string("projects.empty.inProgress.title"),
+                message: MomentsL10n.string("projects.empty.inProgress.fullDetail"),
                 actionTitle: nil,
                 actionSystemImage: nil,
                 action: nil
@@ -232,7 +232,7 @@ private struct MomentsHubContinueBlock: View {
         } else {
             AVAppShellCard {
                 VStack(alignment: .leading, spacing: 12) {
-                    AVAppShellSectionHeader(title: "In Progress")
+                    AVAppShellSectionHeader(title: MomentsL10n.string("projects.inProgress.title"))
 
                     ForEach(projects) { project in
                         VStack(spacing: 10) {
@@ -268,7 +268,7 @@ private struct MomentsHubContinueBlock: View {
                             Button(role: .destructive) {
                                 requestDeleteProject(project)
                             } label: {
-                                Label("Discard", systemImage: "trash")
+                                Label(MomentsL10n.string("common.discard"), systemImage: "trash")
                                     .frame(maxWidth: .infinity)
                             }
                             .buttonStyle(.bordered)
@@ -301,14 +301,14 @@ private struct MomentsHubContinueBlock: View {
     ) -> String {
         if MomentsProjectStatusRules.isFinished(project),
            !galleryVideos.contains(where: { $0.record.projectId == project.id }) {
-            return "Video Ready - Download Needed"
+            return MomentsL10n.string("project.status.videoReadyDownloadNeeded")
         }
         return MomentsProjectStatusRules.displayTitle(for: project.status)
     }
 
     private static func creditTitle(_ creditCost: Double) -> String {
         let count = Int(creditCost.rounded())
-        return "\(count) \(count == 1 ? "credit" : "credits")"
+        return MomentsCreditCopy.countTitle(count)
     }
 }
 
@@ -377,8 +377,8 @@ private struct MomentsHubProjectsEmptyState: View {
     var body: some View {
         MomentsHubEmptyState(
             systemImage: "play.square.stack.fill",
-            title: "Gallery is empty",
-            message: "Finished videos appear here only after they download to this device.",
+            title: MomentsL10n.string("gallery.empty.shortTitle"),
+            message: MomentsL10n.string("gallery.empty.downloadDetail"),
             actionTitle: nil,
             actionSystemImage: nil,
             action: nil
@@ -392,9 +392,9 @@ private struct MomentsHubDraftEmptyState: View {
     var body: some View {
         MomentsHubEmptyState(
             systemImage: "photo.badge.plus",
-            title: "Nothing in progress",
-            message: "Drafts and videos that need action will appear here.",
-            actionTitle: startProject == nil ? nil : "New Moment",
+            title: MomentsL10n.string("projects.empty.inProgress.title"),
+            message: MomentsL10n.string("projects.empty.inProgress.detail"),
+            actionTitle: startProject == nil ? nil : MomentsL10n.string("projects.newMoment"),
             actionSystemImage: "plus",
             action: startProject
         )
@@ -408,7 +408,7 @@ private struct MomentsHubGalleryBlock: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            AVAppShellSectionHeader(title: "Gallery")
+            AVAppShellSectionHeader(title: MomentsL10n.string("gallery.title"))
             if videos.isEmpty {
                 MomentsHubProjectsEmptyState()
             } else {
@@ -440,20 +440,20 @@ private struct MomentsHubGalleryBlock: View {
                                     Button {
                                         selectedVideo = MomentsGalleryVideoPlayerItem(video: video)
                                     } label: {
-                                        Label("Open", systemImage: "play.fill")
+                                        Label(MomentsL10n.string("common.open"), systemImage: "play.fill")
                                     }
                                     .disabled(!video.isLocalFileAvailable)
 
                                     if video.isLocalFileAvailable {
                                         ShareLink(item: video.localFileURL) {
-                                            Label("Share", systemImage: "square.and.arrow.up")
+                                            Label(MomentsL10n.string("common.share"), systemImage: "square.and.arrow.up")
                                         }
                                     }
 
                                     Button(role: .destructive) {
                                         requestDeleteGalleryVideo(video)
                                     } label: {
-                                        Label("Delete", systemImage: "trash")
+                                        Label(MomentsL10n.string("common.delete"), systemImage: "trash")
                                     }
                                 }
                                 .font(.system(size: 13, weight: .bold))
@@ -497,7 +497,7 @@ private struct MomentsGalleryVideoPlayerSheet: View {
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
-                        Button("Done") {
+                        Button(MomentsL10n.string("common.done")) {
                             dismiss()
                         }
                     }

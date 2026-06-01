@@ -54,7 +54,7 @@ final class PreviewGenerationWorkflow: WorkspaceObservingWorkflow {
             && !isGenerating
     }
 
-    func generatePreview(projectId: String, template: MomentTemplate) async {
+    func generatePreview(projectId: String, template: MomentTemplate, form: MomentDraftForm) async {
         guard let ownerUserId = currentUserProvider.currentUserId else {
             statusMessage = "Sign in before reviewing the story."
             return
@@ -93,6 +93,7 @@ final class PreviewGenerationWorkflow: WorkspaceObservingWorkflow {
                 projectId: projectId,
                 project: project,
                 template: template,
+                form: form,
                 previewClient: previewClient,
                 previewResultSaver: previewResultSaver,
                 workspaceObserver: workspaceObserver,

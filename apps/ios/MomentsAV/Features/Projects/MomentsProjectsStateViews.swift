@@ -25,8 +25,8 @@ struct MomentsProjectsEmptyState: View {
             MomentsProjectsUnavailableState(presentation: presentation)
 
             AVAppShellActionRow(
-                title: "Create the first moment",
-                detail: "Start with a draft, add media, then return here to review story reviews and final exports.",
+                title: MomentsL10n.string("projects.empty.create.title"),
+                detail: MomentsL10n.string("projects.empty.create.detail"),
                 systemImage: "plus.app.fill",
                 isProminent: true,
                 accessibilityIdentifier: "moments.projects.empty.create",
@@ -34,8 +34,8 @@ struct MomentsProjectsEmptyState: View {
             )
 
             AVAppShellInlineMessage(
-                title: "What appears here",
-                message: "In Progress shows drafts, media, story review, render status, and videos waiting for download.",
+                title: MomentsL10n.string("projects.empty.whatAppears.title"),
+                message: MomentsL10n.string("projects.empty.whatAppears.message"),
                 systemImage: "checkmark.circle",
                 usesAccentIcon: true
             )

@@ -53,11 +53,11 @@ struct MomentsCreditsPaywallView: View {
                 .padding(.bottom, 24)
             }
             .background(MomentsTheme.shellBackground.ignoresSafeArea())
-            .navigationTitle("Credits")
+            .navigationTitle(MomentsL10n.string("credits.title"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Done", action: dismiss)
+                    Button(MomentsL10n.string("common.done"), action: dismiss)
                 }
             }
         }
@@ -70,11 +70,11 @@ struct MomentsCreditsPaywallView: View {
 
     private var header: some View {
         AVPaywallHeader(
-            eyebrow: "Moments AV",
-            title: "Create videos with credits",
+            eyebrow: MomentsL10n.string("paywall.header.eyebrow"),
+            title: MomentsL10n.string("paywall.header.title"),
             subtitle: isSignedIn
-                ? "Choose Pro for the best monthly value, or add one-time credits when you need them."
-                : "Sign in first so credits and purchases stay attached to your account.",
+                ? MomentsL10n.string("paywall.header.subtitle.signedIn")
+                : MomentsL10n.string("paywall.header.subtitle.guest"),
             titleFontSize: 26,
             subtitleFontSize: 13
         )
@@ -83,7 +83,7 @@ struct MomentsCreditsPaywallView: View {
     private var balanceOverview: some View {
         VStack(alignment: .leading, spacing: AVBrandSpacing.sm) {
             HStack(alignment: .firstTextBaseline) {
-                Text("Wallet")
+                Text(MomentsL10n.string("paywall.wallet.title"))
                     .font(.system(size: 18, weight: .black, design: .rounded))
                     .foregroundStyle(AVBrandColor.textPrimary)
                     .lineLimit(1)
@@ -91,7 +91,7 @@ struct MomentsCreditsPaywallView: View {
 
                 Spacer()
 
-                Text("Final videos start at 1 credit")
+                Text(MomentsL10n.string("paywall.wallet.startAt"))
                     .font(.system(size: 11, weight: .black, design: .rounded))
                     .foregroundStyle(AVBrandColor.accent)
                     .lineLimit(1)
@@ -99,8 +99,8 @@ struct MomentsCreditsPaywallView: View {
             }
 
             HStack(spacing: AVBrandSpacing.sm) {
-                MomentsCreditsPrimaryBalanceTile(title: "Video Credits", value: balance.spendable, detail: balanceTitle)
-                MomentsCreditsPrimaryBalanceTile(title: "Story Reviews", value: balance.reviewAllowanceRemaining, detail: storyReviewsDetail)
+                MomentsCreditsPrimaryBalanceTile(title: MomentsL10n.string("credits.videoCredits.title"), value: balance.spendable, detail: balanceTitle)
+                MomentsCreditsPrimaryBalanceTile(title: MomentsL10n.string("credits.storyReviews.title"), value: balance.reviewAllowanceRemaining, detail: storyReviewsDetail)
             }
 
             if isSignedIn {
@@ -109,7 +109,7 @@ struct MomentsCreditsPaywallView: View {
                         showsBalanceDetails.toggle()
                     }
                 } label: {
-                    Label(showsBalanceDetails ? "Hide details" : "View details", systemImage: showsBalanceDetails ? "chevron.up" : "chevron.down")
+                    Label(showsBalanceDetails ? MomentsL10n.string("paywall.wallet.hideDetails") : MomentsL10n.string("paywall.wallet.viewDetails"), systemImage: showsBalanceDetails ? "chevron.up" : "chevron.down")
                         .font(.system(size: 12, weight: .black, design: .rounded))
                         .foregroundStyle(AVBrandColor.textSecondary)
                 }
@@ -132,7 +132,7 @@ struct MomentsCreditsPaywallView: View {
 
     private var creditPacks: some View {
         VStack(spacing: AVBrandSpacing.sm) {
-            sectionHeader(title: "One-time credits", detail: "Credit packs do not renew and include extra Story Reviews.")
+            sectionHeader(title: MomentsL10n.string("paywall.oneTime.title"), detail: MomentsL10n.string("paywall.oneTime.detail"))
 
             HStack(spacing: AVBrandSpacing.sm) {
                 MomentsCreditsPackButton(
@@ -157,7 +157,7 @@ struct MomentsCreditsPaywallView: View {
 
     private var monthlyPlan: some View {
         VStack(alignment: .leading, spacing: AVBrandSpacing.sm) {
-            sectionHeader(title: "Pro monthly", detail: "Better monthly credit value with Pro-only watermark removal. No unlimited generation.")
+            sectionHeader(title: MomentsL10n.string("paywall.proMonthly.title"), detail: MomentsL10n.string("paywall.proMonthly.detail"))
 
             MomentsProPlanCard(
                 product: .proMonthly,
@@ -184,7 +184,7 @@ struct MomentsCreditsPaywallView: View {
                 }
             } label: {
                 HStack {
-                    sectionHeader(title: "Redeem a code?", detail: "Enter a code if one was provided to you.")
+                    sectionHeader(title: MomentsL10n.string("paywall.promo.title"), detail: MomentsL10n.string("paywall.promo.detail"))
                     Spacer(minLength: AVBrandSpacing.sm)
                     Image(systemName: showsPromoClaim ? "chevron.up" : "chevron.down")
                         .font(.system(size: 12, weight: .black))
@@ -199,7 +199,7 @@ struct MomentsCreditsPaywallView: View {
                         .font(.system(size: 15, weight: .black))
                         .foregroundStyle(AVBrandColor.accent)
 
-                    TextField("Code", text: $promoCode)
+                    TextField(MomentsL10n.string("paywall.promo.placeholder"), text: $promoCode)
                         .textInputAutocapitalization(.characters)
                         .autocorrectionDisabled()
                         .font(AVBrandTypography.bodyStrong)
@@ -222,11 +222,11 @@ struct MomentsCreditsPaywallView: View {
                         .background(AVBrandColor.accent, in: RoundedRectangle(cornerRadius: AVBrandRadius.control, style: .continuous))
                     }
                     .disabled(normalizedPromoCode.isEmpty || isClaimingPromo)
-                    .accessibilityLabel("Claim code")
+                    .accessibilityLabel(MomentsL10n.string("paywall.promo.claim"))
                     .accessibilityIdentifier("moments.credits.claimPromo")
                 }
 
-                Text("Codes are optional and are not required to buy Pro or credit packs.")
+                Text(MomentsL10n.string("paywall.promo.optional"))
                     .font(AVBrandTypography.captionStrong)
                     .foregroundStyle(AVBrandColor.textSecondary)
             }
@@ -251,7 +251,7 @@ struct MomentsCreditsPaywallView: View {
 
     private var restoreAndLegal: some View {
         VStack(spacing: AVBrandSpacing.md) {
-            Text("One-time credit packs do not renew. Manage subscriptions in App Store settings.")
+            Text(MomentsL10n.string("paywall.legal.renewal"))
                 .font(.system(size: 11, weight: .semibold, design: .rounded))
                 .foregroundStyle(AVBrandColor.textSecondary)
                 .multilineTextAlignment(.center)
@@ -267,7 +267,7 @@ struct MomentsCreditsPaywallView: View {
                             .tint(AVBrandColor.textSecondary)
                     }
 
-                    Text("Restore purchases")
+                    Text(MomentsL10n.string("paywall.restore.title"))
                         .font(.system(size: 12, weight: .bold, design: .rounded))
                         .foregroundStyle(AVBrandColor.textSecondary)
                 }
@@ -278,10 +278,10 @@ struct MomentsCreditsPaywallView: View {
 
             AVPaywallLegalLinks(
                 links: [
-                    AVPaywallLegalLink(title: "Terms", accessibilityIdentifier: "moments.credits.terms") {
+                    AVPaywallLegalLink(title: MomentsL10n.string("paywall.terms"), accessibilityIdentifier: "moments.credits.terms") {
                         openURL(AppConfig.termsURL)
                     },
-                    AVPaywallLegalLink(title: "Privacy", accessibilityIdentifier: "moments.credits.privacy") {
+                    AVPaywallLegalLink(title: MomentsL10n.string("paywall.privacy"), accessibilityIdentifier: "moments.credits.privacy") {
                         openURL(AppConfig.privacyPolicyURL)
                     }
                 ]
@@ -298,7 +298,7 @@ struct MomentsCreditsPaywallView: View {
                     .controlSize(.mini)
                     .tint(AVBrandColor.textSecondary)
 
-                Text("Loading App Store prices.")
+                Text(MomentsL10n.string("paywall.loadingPrices"))
                     .font(.system(size: 12, weight: .bold, design: .rounded))
                     .foregroundStyle(AVBrandColor.textSecondary)
             }
@@ -326,15 +326,15 @@ struct MomentsCreditsPaywallView: View {
 
     private var signInRequired: some View {
         VStack(alignment: .leading, spacing: AVBrandSpacing.md) {
-            Text("Sign in first")
+            Text(MomentsL10n.string("paywall.signIn.title"))
                 .font(.system(size: 20, weight: .black, design: .rounded))
                 .foregroundStyle(AVBrandColor.textPrimary)
 
-            Text("Credits are account based, so login is required before purchases or promo claims.")
+            Text(MomentsL10n.string("paywall.signIn.detail"))
                 .font(AVBrandTypography.body)
                 .foregroundStyle(AVBrandColor.textSecondary)
 
-            AVAppShellPrimaryButton("Sign in to continue", systemImage: "person.crop.circle.badge.checkmark") {
+            AVAppShellPrimaryButton(MomentsL10n.string("paywall.signIn.button"), systemImage: "person.crop.circle.badge.checkmark") {
                 dismiss()
                 startSignInFlow()
             }
@@ -346,16 +346,16 @@ struct MomentsCreditsPaywallView: View {
 
     private var balanceTitle: String {
         if balance.spendable == 0 {
-            return "No credits"
+            return MomentsL10n.string("paywall.balance.noCredits")
         }
         return MomentsCreditCopy.availableTitle(balance)
     }
 
     private var storyReviewsDetail: String {
         if balance.reviewAllowanceRemaining == 0 {
-            return "No reviews"
+            return MomentsL10n.string("paywall.balance.noReviews")
         }
-        return "\(balance.reviewAllowanceRemaining) available"
+        return MomentsL10n.string("credits.available.count", balance.reviewAllowanceRemaining)
     }
 
     private var normalizedPromoCode: String {
@@ -374,12 +374,12 @@ struct MomentsCreditsPaywallView: View {
         guard let price = purchaseCatalog.localizedPrice(for: product) else {
             return product.buttonTitle
         }
-        return "\(price)/month"
+        return MomentsL10n.string("paywall.price.month", price)
     }
 
     private func monthlySubscriptionTerms(for product: MomentsCreditPaywallProduct) -> String {
-        let price = purchaseCatalog.localizedPrice(for: product) ?? "the App Store price"
-        return "Moments AV Pro is a monthly auto-renewable subscription. You will be charged \(price) for each 1-month period until you cancel in App Store settings."
+        let price = purchaseCatalog.localizedPrice(for: product) ?? MomentsL10n.string("paywall.price.appStore")
+        return MomentsL10n.string("paywall.subscription.terms", price)
     }
 
     private func startPurchase(_ product: MomentsCreditPaywallProduct) {
@@ -392,11 +392,11 @@ struct MomentsCreditsPaywallView: View {
                 let result = try await purchaseProduct(product)
                 switch result.status {
                 case .purchased:
-                    statusMessage = "\(product.title) purchased. Credits may take a moment to appear."
+                    statusMessage = MomentsL10n.string("paywall.purchase.purchased", product.title)
                 case .restored:
-                    statusMessage = "Purchases restored. Credits may take a moment to appear."
+                    statusMessage = MomentsL10n.string("paywall.purchase.restored")
                 case .cancelled:
-                    statusMessage = "Purchase cancelled."
+                    statusMessage = MomentsL10n.string("paywall.purchase.cancelled")
                 }
             } catch {
                 statusMessage = error.localizedDescription
@@ -415,11 +415,11 @@ struct MomentsCreditsPaywallView: View {
                 let result = try await restorePurchases()
                 switch result.status {
                 case .restored:
-                    statusMessage = "Purchases restored. Credits may take a moment to appear."
+                    statusMessage = MomentsL10n.string("paywall.purchase.restored")
                 case .purchased:
-                    statusMessage = "Purchase restored. Credits may take a moment to appear."
+                    statusMessage = MomentsL10n.string("paywall.purchase.restoredSingle")
                 case .cancelled:
-                    statusMessage = "Restore cancelled."
+                    statusMessage = MomentsL10n.string("paywall.restore.cancelled")
                 }
             } catch {
                 statusMessage = error.localizedDescription
@@ -437,7 +437,7 @@ struct MomentsCreditsPaywallView: View {
         Task {
             do {
                 let creditsGranted = try await claimPromotionCode(code)
-                promoStatusMessage = "\(creditsGranted) \(creditsGranted == 1 ? "credit" : "credits") added."
+                promoStatusMessage = MomentsL10n.string("paywall.promo.added", MomentsCreditCopy.countTitle(creditsGranted))
                 promoCode = ""
             } catch {
                 promoStatusMessage = error.localizedDescription
@@ -471,7 +471,7 @@ private struct MomentsProPlanCard: View {
                                 .foregroundStyle(AVBrandColor.accent)
                                 .textCase(.uppercase)
 
-                            Text("No watermark")
+                            Text(MomentsL10n.string("paywall.pro.noWatermark"))
                                 .font(.system(size: 10, weight: .black, design: .rounded))
                                 .foregroundStyle(AVBrandColor.textInverse)
                                 .padding(.horizontal, 7)
@@ -500,9 +500,9 @@ private struct MomentsProPlanCard: View {
                     .fixedSize(horizontal: false, vertical: true)
 
                 VStack(alignment: .leading, spacing: AVBrandSpacing.xs) {
-                    MomentsProBenefitRow(systemImage: "video.fill", text: "6 Video Credits each month")
-                    MomentsProBenefitRow(systemImage: "wand.and.stars", text: "15 Story Reviews each month")
-                    MomentsProBenefitRow(systemImage: "checkmark.seal.fill", text: "Final videos without the Moments AV watermark")
+                    MomentsProBenefitRow(systemImage: "video.fill", text: MomentsL10n.string("paywall.pro.benefit.videoCredits"))
+                    MomentsProBenefitRow(systemImage: "wand.and.stars", text: MomentsL10n.string("paywall.pro.benefit.storyReviews"))
+                    MomentsProBenefitRow(systemImage: "checkmark.seal.fill", text: MomentsL10n.string("paywall.pro.benefit.noWatermark"))
                 }
 
                 HStack(spacing: AVBrandSpacing.sm) {
@@ -544,9 +544,9 @@ private struct MomentsProPlanCard: View {
     private var callToActionTitle: String {
         switch product.kind {
         case .subscription:
-            return priceText == product.buttonTitle ? product.buttonTitle : "Continue for \(priceText)"
+            return priceText == product.buttonTitle ? product.buttonTitle : MomentsL10n.string("paywall.product.continueFor", priceText)
         case .consumableCredits:
-            return priceText == product.buttonTitle ? product.buttonTitle : "\(product.buttonTitle) - \(priceText)"
+            return priceText == product.buttonTitle ? product.buttonTitle : MomentsL10n.string("paywall.product.buyFor", product.buttonTitle, priceText)
         }
     }
 }

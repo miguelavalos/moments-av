@@ -3,6 +3,12 @@ import Foundation
 struct MomentDraftProject: Identifiable, Decodable, Equatable {
     let id: String
     let template: MomentTemplateID
+    let creationMode: String
+    let look: String
+    let theme: String
+    let mood: String?
+    let duration: String
+    let mediaUse: String
     let status: String
     let title: String
     let tone: String?
@@ -19,6 +25,12 @@ struct MomentDraftProject: Identifiable, Decodable, Equatable {
     init(
         id: String,
         template: MomentTemplateID,
+        creationMode: String = "quick",
+        look: String = "real",
+        theme: String = "celebration",
+        mood: String? = nil,
+        duration: String = "auto",
+        mediaUse: String = "aviPick",
         status: String,
         title: String,
         tone: String?,
@@ -34,6 +46,12 @@ struct MomentDraftProject: Identifiable, Decodable, Equatable {
     ) {
         self.id = id
         self.template = template
+        self.creationMode = creationMode
+        self.look = look
+        self.theme = theme
+        self.mood = mood
+        self.duration = duration
+        self.mediaUse = mediaUse
         self.status = status
         self.title = title
         self.tone = tone
@@ -51,6 +69,12 @@ struct MomentDraftProject: Identifiable, Decodable, Equatable {
     enum CodingKeys: String, CodingKey {
         case id = "_id"
         case template
+        case creationMode
+        case look
+        case theme
+        case mood
+        case duration
+        case mediaUse
         case status
         case title
         case tone
@@ -63,5 +87,32 @@ struct MomentDraftProject: Identifiable, Decodable, Equatable {
         case previewCount
         case previewLimit
         case updatedAt
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(String.self, forKey: .id)
+        template = try container.decodeIfPresent(MomentTemplateID.self, forKey: .template)
+            ?? MomentTemplateID(rawValue: try container.decodeIfPresent(String.self, forKey: .theme) ?? "")
+            ?? .birthdayMessage
+        creationMode = try container.decodeIfPresent(String.self, forKey: .creationMode) ?? "quick"
+        look = try container.decodeIfPresent(String.self, forKey: .look) ?? "real"
+        theme = try container.decodeIfPresent(String.self, forKey: .theme) ?? template.rawValue
+        mood = try container.decodeIfPresent(String.self, forKey: .mood)
+            ?? container.decodeIfPresent(String.self, forKey: .tone)
+        duration = try container.decodeIfPresent(String.self, forKey: .duration) ?? "auto"
+        mediaUse = try container.decodeIfPresent(String.self, forKey: .mediaUse) ?? "aviPick"
+        status = try container.decode(String.self, forKey: .status)
+        title = try container.decode(String.self, forKey: .title)
+        tone = try container.decodeIfPresent(String.self, forKey: .tone)
+        tempo = try container.decodeIfPresent(String.self, forKey: .tempo)
+        occasion = try container.decodeIfPresent(String.self, forKey: .occasion)
+        details = try container.decodeIfPresent(String.self, forKey: .details)
+        storyInputSignature = try container.decodeIfPresent(String.self, forKey: .storyInputSignature)
+        durationSeconds = try container.decode(Double.self, forKey: .durationSeconds)
+        creditCost = try container.decode(Double.self, forKey: .creditCost)
+        previewCount = try container.decode(Double.self, forKey: .previewCount)
+        previewLimit = try container.decode(Double.self, forKey: .previewLimit)
+        updatedAt = try container.decode(Double.self, forKey: .updatedAt)
     }
 }

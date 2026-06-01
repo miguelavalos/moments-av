@@ -72,32 +72,32 @@ struct MomentsProjectsScreen: View {
             )
         }
         .confirmationDialog(
-            "Delete project?",
+            MomentsL10n.string("projects.deleteProject.title"),
             isPresented: deletionConfirmationPresented,
             titleVisibility: .visible
         ) {
-            Button("Delete Project", role: .destructive) {
+            Button(MomentsL10n.string("projects.deleteProject.button"), role: .destructive) {
                 confirmProjectDeletion()
             }
-            Button("Cancel", role: .cancel) {
+            Button(MomentsL10n.string("common.cancel"), role: .cancel) {
                 cancelProjectDeletion()
             }
         } message: {
             Text(presentation.deletionMessage)
         }
         .confirmationDialog(
-            "Delete Gallery video?",
+            MomentsL10n.string("gallery.delete.title"),
             isPresented: galleryDeletionConfirmationPresented,
             titleVisibility: .visible
         ) {
-            Button("Delete from this device", role: .destructive) {
+            Button(MomentsL10n.string("gallery.delete.button"), role: .destructive) {
                 confirmGalleryVideoDeletion()
             }
-            Button("Cancel", role: .cancel) {
+            Button(MomentsL10n.string("common.cancel"), role: .cancel) {
                 cancelGalleryVideoDeletion()
             }
         } message: {
-            Text("This removes the local video file and Gallery record from this device.")
+            Text(MomentsL10n.string("gallery.delete.message"))
         }
     }
 

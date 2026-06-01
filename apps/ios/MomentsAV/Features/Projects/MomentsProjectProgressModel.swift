@@ -6,33 +6,33 @@ struct MomentsProjectProgressModel {
     init(workspace: MomentProjectWorkspace) {
         phases = [
             MomentsProjectProgressPhase(
-                title: "Project",
+                title: MomentsL10n.string("project.progress.project"),
                 detail: MomentsProjectStatusRules.displayTitle(for: workspace.project.status),
                 systemImage: "doc.text",
                 state: .complete
             ),
             MomentsProjectProgressPhase(
-                title: "Media",
-                detail: workspace.mediaAssets.isEmpty ? "No media yet" : "\(workspace.mediaAssets.count) assets",
+                title: MomentsL10n.string("project.progress.media"),
+                detail: workspace.mediaAssets.isEmpty ? MomentsL10n.string("project.progress.noMedia") : MomentsL10n.string("project.progress.assets", workspace.mediaAssets.count),
                 systemImage: "photo.on.rectangle",
                 state: workspace.mediaAssets.isEmpty ? .waiting : .complete
             ),
             MomentsProjectProgressPhase(
-                title: "Story",
-                detail: workspace.storyScenes.isEmpty ? "Not drafted" : "\(workspace.storyScenes.count) scenes",
+                title: MomentsL10n.string("project.progress.story"),
+                detail: workspace.storyScenes.isEmpty ? MomentsL10n.string("project.progress.notReady") : MomentsL10n.string("project.progress.scenes", workspace.storyScenes.count),
                 systemImage: "text.bubble",
                 state: workspace.storyScenes.isEmpty ? .waiting : .complete
             ),
             MomentsProjectProgressPhase(
-                title: "Story Review",
-                detail: Self.renderDetail(workspace: workspace, kind: "preview", fallback: "Not reviewed"),
+                title: MomentsL10n.string("project.kind.storyReview"),
+                detail: Self.renderDetail(workspace: workspace, kind: "preview", fallback: MomentsL10n.string("project.progress.notReviewed")),
                 systemImage: "text.bubble",
                 state: Self.renderState(workspace: workspace, kind: "preview", artifactKind: "preview")
             ),
             MomentsProjectProgressPhase(
-                title: "Final",
-                detail: Self.renderDetail(workspace: workspace, kind: "final", fallback: "Not rendered"),
-                systemImage: "square.and.arrow.up",
+                title: MomentsL10n.string("project.progress.createVideo"),
+                detail: Self.renderDetail(workspace: workspace, kind: "final", fallback: MomentsL10n.string("project.progress.notCreated")),
+                systemImage: "video.fill",
                 state: Self.renderState(workspace: workspace, kind: "final", artifactKind: "final_export")
             )
         ]

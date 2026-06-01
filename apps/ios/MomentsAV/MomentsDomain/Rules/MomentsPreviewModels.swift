@@ -3,8 +3,12 @@ import Foundation
 struct MomentsPreviewRequest: Encodable {
     let appId = "momentsav"
     let projectId: String
-    let template: String
-    let creditCost: Int
+    let creationMode: String
+    let look: String
+    let theme: String
+    let mood: String
+    let duration: String
+    let mediaUse: String
     let safetyAcknowledged = true
     let idempotencyKey: String
 }
@@ -54,9 +58,6 @@ enum MomentsPreviewRules {
         }
         if Int(project.previewCount) >= Int(project.previewLimit) {
             return Availability(canGenerate: false, blockReason: .previewLimitReached)
-        }
-        if !MomentsCreditGate.canAfford(template, balance: balance) {
-            return Availability(canGenerate: false, blockReason: .insufficientCredits)
         }
         if project.status != "story_ready" && project.status != "preview_ready" {
             return Availability(canGenerate: false, blockReason: .storyNotReady)

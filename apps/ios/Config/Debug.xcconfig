@@ -9,9 +9,11 @@ MOMENTSAV_REVENUECAT_OFFERING_ID = $(inherited)
 MOMENTSAV_REVENUECAT_MONTHLY_PACKAGE_ID = $(inherited)
 MOMENTSAV_CONVEX_URL = $(inherited)
 ACCOUNTAV_API_BASE_URL = $(inherited)
-MOMENTSAV_SUPPORT_URL = $(inherited)
+SUPPORTAV_BASE_URL = $(inherited)
+SUPPORT_EMAIL_TO = $(inherited)
 MOMENTSAV_PRIVACY_URL = $(inherited)
 MOMENTSAV_TERMS_URL = $(inherited)
 ACCOUNTAV_DELETE_ACCOUNT_URL = $(inherited)
+MOMENTSAV_OPEN_SOURCE_URL = $(inherited)
 
 #include? "Local.xcconfig"

@@ -1,9 +1,9 @@
 import Foundation
 
 struct MomentsProjectRenderJobsSectionPresentation: Equatable {
-    let title = "Render jobs"
+    let title = MomentsL10n.string("project.activity.title")
     let emptySystemImage = "gearshape.2"
-    let emptyMessage = "Story review and final render jobs will appear here."
+    let emptyMessage = MomentsL10n.string("project.activity.empty")
     let jobs: [MomentsProjectRenderJobPresentation]
 
     init(renderJobs: [MomentRenderJob]) {
@@ -19,18 +19,18 @@ struct MomentsProjectArtifactSectionPresentation: Equatable {
 
     static func preview(artifacts: [MomentArtifact]) -> MomentsProjectArtifactSectionPresentation {
         MomentsProjectArtifactSectionPresentation(
-            title: "Story Review",
+            title: MomentsL10n.string("project.kind.storyReview"),
             emptySystemImage: "text.bubble",
-            emptyMessage: "Review the story after the story draft is ready.",
+            emptyMessage: MomentsL10n.string("project.artifact.preview.empty"),
             artifact: MomentsProjectArtifactPresentation.preview(in: artifacts)
         )
     }
 
     static func finalExport(artifacts: [MomentArtifact]) -> MomentsProjectArtifactSectionPresentation {
         MomentsProjectArtifactSectionPresentation(
-            title: "Final export",
-            emptySystemImage: "square.and.arrow.up",
-            emptyMessage: "Render the final export after approving the story review.",
+            title: MomentsL10n.string("project.artifact.final.title"),
+            emptySystemImage: "video.fill",
+            emptyMessage: MomentsL10n.string("project.artifact.final.empty"),
             artifact: MomentsProjectArtifactPresentation.finalExport(in: artifacts)
         )
     }
@@ -47,7 +47,7 @@ struct MomentsProjectArtifactPresentation: Equatable {
     init(artifact: MomentArtifact) {
         status = artifact.status
         kindTitle = MomentsProjectStatusRules.displayKind(artifact.kind)
-        watermarkTitle = artifact.hasWatermark == true ? "Included" : "None"
+        watermarkTitle = artifact.hasWatermark == true ? MomentsL10n.string("project.artifact.included") : MomentsL10n.string("project.artifact.none")
         expiresAtTitle = MomentsDateFormatting.formattedDate(milliseconds: artifact.expiresAt)
         storageKey = artifact.r2Key
         actionDetail = MomentsRecoveryCopy.artifactActionDetail(kind: artifact.kind, status: artifact.status)
@@ -79,8 +79,8 @@ struct MomentsProjectRenderJobPresentation: Identifiable, Equatable {
         id = renderJob.id
         status = renderJob.status
         kindTitle = MomentsProjectStatusRules.displayKind(renderJob.kind)
-        providerTitle = renderJob.provider == nil ? "Not recorded" : "Recorded"
-        modelTitle = renderJob.model == nil ? "Not recorded" : "Configured"
+        providerTitle = renderJob.provider == nil ? MomentsL10n.string("project.job.notRecorded") : MomentsL10n.string("project.job.recorded")
+        modelTitle = renderJob.model == nil ? MomentsL10n.string("project.job.notRecorded") : MomentsL10n.string("project.job.configured")
         createdAtTitle = MomentsDateFormatting.formattedDate(milliseconds: renderJob.createdAt)
         updatedAtTitle = MomentsDateFormatting.formattedDate(milliseconds: renderJob.updatedAt)
         workflowRunId = renderJob.workflowRunId

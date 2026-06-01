@@ -7,9 +7,9 @@ enum CreditSource: String, CaseIterable {
 
     var title: String {
         switch self {
-        case .proMonthly: "Pro monthly"
-        case .promotional: "Promotional"
-        case .purchased: "Purchased"
+        case .proMonthly: MomentsL10n.string("credits.proMonthly.title")
+        case .promotional: MomentsL10n.string("credits.promotional.title")
+        case .purchased: MomentsL10n.string("credits.purchased.title")
         }
     }
 }

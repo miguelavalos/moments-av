@@ -1,9 +1,9 @@
 import Foundation
 
 enum MomentTemplateID: String, CaseIterable, Identifiable, Codable {
-    case birthdayMessage = "birthday_message"
-    case partyRecap = "party_recap"
-    case softRoast = "soft_roast"
+    case birthdayMessage = "birthday"
+    case partyRecap = "eventRecap"
+    case softRoast = "softRoast"
 
     var id: String { rawValue }
 }
@@ -18,46 +18,52 @@ struct MomentTemplate: Identifiable, Equatable {
     let summary: String
 
     var duration: String {
-        "\(durationSeconds) sec"
+        MomentsL10n.string("create.template.duration", durationSeconds)
     }
 
     var mediaRange: String {
-        "\(minimumAssets)-\(maximumAssets) photos or clips"
+        MomentsL10n.string("create.template.mediaRange", minimumAssets, maximumAssets)
     }
 
-    static let birthdayMessage = MomentTemplate(
+    static var birthdayMessage: MomentTemplate {
+        MomentTemplate(
         id: .birthdayMessage,
-        title: "Celebration",
-        durationSeconds: 15,
-        creditCost: 1,
+        title: MomentsL10n.string("create.template.celebration.title"),
+        durationSeconds: 30,
+        creditCost: 2,
         minimumAssets: 1,
-        maximumAssets: 20,
-        summary: "A warm, edited memory video from selected photos and clips."
-    )
+        maximumAssets: 80,
+        summary: MomentsL10n.string("create.template.celebration.summary")
+        )
+    }
 
-    static let partyRecap = MomentTemplate(
+    static var partyRecap: MomentTemplate {
+        MomentTemplate(
         id: .partyRecap,
-        title: "Event Recap",
-        durationSeconds: 15,
-        creditCost: 1,
+        title: MomentsL10n.string("create.template.eventRecap.title"),
+        durationSeconds: 30,
+        creditCost: 2,
         minimumAssets: 1,
-        maximumAssets: 20,
-        summary: "A faster, rhythmic recap using the strongest moments."
-    )
+        maximumAssets: 80,
+        summary: MomentsL10n.string("create.template.eventRecap.summary")
+        )
+    }
 
-    static let softRoast = MomentTemplate(
+    static var softRoast: MomentTemplate {
+        MomentTemplate(
         id: .softRoast,
-        title: "Soft Roast",
-        durationSeconds: 15,
-        creditCost: 1,
+        title: MomentsL10n.string("create.template.softRoast.title"),
+        durationSeconds: 30,
+        creditCost: 2,
         minimumAssets: 1,
-        maximumAssets: 20,
-        summary: "Light, affectionate humor edited from real moments."
-    )
+        maximumAssets: 80,
+        summary: MomentsL10n.string("create.template.softRoast.summary")
+        )
+    }
 
-    static let launchTemplates = [
+    static var launchTemplates: [MomentTemplate] { [
         birthdayMessage,
         partyRecap,
         softRoast
-    ]
+    ] }
 }

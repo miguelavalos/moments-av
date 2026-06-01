@@ -32,10 +32,10 @@ struct MomentsAviPresentation: Equatable {
         isSignedIn: Bool,
         projectSummary: MomentsProjectListSummary
     ) -> String {
-        guard isSignedIn else { return "Sign in first" }
-        if projectSummary.inProgressCount > 0 { return "Review active work" }
-        if projectSummary.finishedCount > 0 { return "Start the next memory" }
-        return "Create the first memory"
+        guard isSignedIn else { return MomentsL10n.string("avi.focus.signIn.title") }
+        if projectSummary.inProgressCount > 0 { return MomentsL10n.string("avi.focus.reviewActive.title") }
+        if projectSummary.finishedCount > 0 { return MomentsL10n.string("avi.focus.nextMemory.title") }
+        return MomentsL10n.string("avi.focus.firstMemory.title")
     }
 
     private static func workflowFocusMessage(
@@ -43,15 +43,15 @@ struct MomentsAviPresentation: Equatable {
         projectSummary: MomentsProjectListSummary
     ) -> String {
         guard isSignedIn else {
-            return "Avi guidance unlocks after sign in because Moments and credits are tied to the account."
+            return MomentsL10n.string("avi.focus.signIn.message")
         }
         if projectSummary.inProgressCount > 0 {
-            return "There \(projectSummary.inProgressCount == 1 ? "is" : "are") \(projectSummary.inProgressCount) \(inProgressProjectLabel(projectSummary)) in In Progress. Check the next render, download, or story step."
+            return MomentsL10n.string("avi.focus.inProgress.message", projectSummary.inProgressCount, inProgressProjectLabel(projectSummary))
         }
         if projectSummary.finishedCount > 0 {
-            return "Finished remote exports need a local download before they belong in Gallery. Start a new draft when the next occasion is ready."
+            return MomentsL10n.string("avi.focus.finished.message")
         }
-        return "Start in Create with one occasion and a tight media set. Avi can help turn that into story scenes."
+        return MomentsL10n.string("avi.focus.empty.message")
     }
 
     private static func workflowFocusSystemImage(projectSummary: MomentsProjectListSummary) -> String {
@@ -63,15 +63,15 @@ struct MomentsAviPresentation: Equatable {
         creditBalance: MomentsCreditBalance
     ) -> String {
         guard isSignedIn else {
-            return "Credits appear here after sign in."
+            return MomentsL10n.string("avi.credits.signIn.message")
         }
         guard creditBalance.spendable > 0 else {
-            return "No credits are available. Final exports require credits after story review."
+            return MomentsL10n.string("avi.credits.none.message")
         }
-        return "\(MomentsCreditCopy.countTitle(creditBalance.spendable)) \(creditBalance.spendable == 1 ? "is" : "are") available for final exports."
+        return MomentsL10n.string("avi.credits.available.message", MomentsCreditCopy.countTitle(creditBalance.spendable))
     }
 
     private static func inProgressProjectLabel(_ projectSummary: MomentsProjectListSummary) -> String {
-        projectSummary.inProgressCount == 1 ? "Moment" : "Moments"
+        projectSummary.inProgressCount == 1 ? MomentsL10n.string("moment.noun.one") : MomentsL10n.string("moment.noun.other")
     }
 }

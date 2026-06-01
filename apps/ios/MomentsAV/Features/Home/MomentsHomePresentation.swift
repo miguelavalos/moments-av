@@ -19,7 +19,7 @@ struct MomentsHomePresentation {
         let latestInProgressProject = projectSummary.latestInProgressProject
         let latestInProgressAction = latestInProgressProject.map {
             MomentsHomeAction(
-                title: "Continue latest Moment",
+                title: MomentsL10n.string("home.action.continueLatest.title"),
                 detail: MomentsProjectFormatting.compactDetail(for: $0, includeTitle: true),
                 systemImage: "arrow.right.circle",
                 isProminent: true
@@ -27,28 +27,28 @@ struct MomentsHomePresentation {
         }
 
         return MomentsHomePresentation(
-            accountTitle: isSignedIn ? "Account connected" : "Account required",
+            accountTitle: isSignedIn ? MomentsL10n.string("home.account.connected.title") : MomentsL10n.string("home.account.required.title"),
             accountDetail: accountDetail(isSignedIn: isSignedIn, displayName: displayName),
             aviBriefDetail: aviBriefDetail(isSignedIn: isSignedIn, projectSummary: projectSummary),
             projectStatusDetail: projectStatusDetail(projectSummary: projectSummary),
             createAction: MomentsHomeAction(
-                title: "Create a moment",
-                detail: "Choose media and let Avi prepare the story.",
+                title: MomentsL10n.string("home.action.create.title"),
+                detail: MomentsL10n.string("home.action.create.detail"),
                 systemImage: "plus.app",
                 isProminent: latestInProgressProject == nil,
                 isDisabled: !isSignedIn
             ),
             reviewProjectsAction: MomentsHomeAction(
-                title: "Open In Progress",
+                title: MomentsL10n.string("home.action.openInProgress.title"),
                 detail: projectSummary.hasProjects
-                    ? "Open drafts, active renders, and videos waiting for local download."
-                    : "Drafts appear after you start a Moment.",
+                    ? MomentsL10n.string("home.action.openInProgress.detail.hasProjects")
+                    : MomentsL10n.string("home.action.openInProgress.detail.empty"),
                 systemImage: "clock",
                 isDisabled: !isSignedIn
             ),
             aviGuidanceAction: MomentsHomeAction(
-                title: "Get project guidance",
-                detail: "Review media, story, video, and credit decisions.",
+                title: MomentsL10n.string("home.action.guidance.title"),
+                detail: MomentsL10n.string("home.action.guidance.detail"),
                 systemImage: "sparkles"
             ),
             latestInProgressAction: latestInProgressAction,
@@ -58,37 +58,37 @@ struct MomentsHomePresentation {
 
     private static func accountDetail(isSignedIn: Bool, displayName: String?) -> String {
         if isSignedIn {
-            return "Signed in as \(displayName ?? "Moments AV user")."
+            return MomentsL10n.string("home.account.signedInAs", displayName ?? MomentsL10n.string("home.account.defaultUser"))
         }
 
-        return "Sign in is required before creating, rendering, and managing Moments."
+        return MomentsL10n.string("home.account.signInRequired")
     }
 
     private static func projectStatusDetail(projectSummary: MomentsProjectListSummary) -> String {
         if projectSummary.hasProjects {
-            return "\(projectSummary.projectCount) synced \(momentLabel(projectSummary.projectCount)) tracked across the current account."
+            return MomentsL10n.string("home.projectStatus.synced", projectSummary.projectCount, momentLabel(projectSummary.projectCount))
         }
 
-        return "No synced Moments yet."
+        return MomentsL10n.string("home.projectStatus.empty")
     }
 
     private static func aviBriefDetail(isSignedIn: Bool, projectSummary: MomentsProjectListSummary) -> String {
         guard isSignedIn else {
-            return "Sign in to create Moments, track videos, manage renders, and keep credits with your account."
+            return MomentsL10n.string("home.aviBrief.signIn")
         }
 
         if let latestProject = projectSummary.latestInProgressProject {
-            return "Continue \(latestProject.title) from the next unfinished step."
+            return MomentsL10n.string("home.aviBrief.continueProject", latestProject.title)
         }
 
         if projectSummary.hasProjects {
-            return "Review In Progress and decide the next story, render, or download step."
+            return MomentsL10n.string("home.aviBrief.reviewInProgress")
         }
 
-        return "Plan the first memory film before adding media."
+        return MomentsL10n.string("home.aviBrief.firstMemory")
     }
 
     private static func momentLabel(_ count: Int) -> String {
-        count == 1 ? "Moment" : "Moments"
+        count == 1 ? MomentsL10n.string("moment.noun.one") : MomentsL10n.string("moment.noun.other")
     }
 }

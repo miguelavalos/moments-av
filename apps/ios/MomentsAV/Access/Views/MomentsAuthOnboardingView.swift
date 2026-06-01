@@ -30,8 +30,8 @@ struct MomentsAuthOnboardingView: View {
                 )
             }
         )
-        .alert("Unable to continue", isPresented: $signInCoordinator.isShowingError) {
-            Button("Close", role: .cancel) {}
+        .alert(MomentsL10n.string("access.error.title"), isPresented: $signInCoordinator.isShowingError) {
+            Button(MomentsL10n.string("common.close"), role: .cancel) {}
         } message: {
             Text(signInCoordinator.errorMessage)
         }
@@ -58,7 +58,7 @@ struct MomentsAuthOnboardingView: View {
         signInCoordinator.start(
             provider: provider,
             isAvailable: accountIsAvailable,
-            unavailableMessage: "Account services are unavailable right now.",
+            unavailableMessage: MomentsL10n.string("access.unavailable"),
             operation: operation,
             onSuccess: {
                 authOptionsArePresented = false
@@ -89,13 +89,13 @@ private struct MomentsAuthOptionsPanel: View {
 
     var body: some View {
         AVAuthOptionsPanel(
-            title: "Connect your account",
-            subtitle: "Use your AV account to continue across devices.",
+            title: MomentsL10n.string("access.connect.title"),
+            subtitle: MomentsL10n.string("access.connect.subtitle"),
             legalConsentText: legalConsentText,
             unavailableMessage: unavailableMessage,
-            skipTitle: "Skip for now",
-            appleTitle: "Continue with Apple",
-            googleTitle: "Continue with Google",
+            skipTitle: MomentsL10n.string("access.skip"),
+            appleTitle: MomentsL10n.string("access.apple"),
+            googleTitle: MomentsL10n.string("access.google"),
             isBusy: activeProvider != nil,
             activeProvider: activeProvider,
             isAvailable: accountIsAvailable,
@@ -122,13 +122,13 @@ private struct MomentsAuthOptionsPanel: View {
     private var legalConsentText: AttributedString {
         let termsURL = appExperience.legalLinks.termsURL?.absoluteString ?? AppConfig.termsURL.absoluteString
         let privacyURL = appExperience.legalLinks.privacyURL?.absoluteString ?? AppConfig.privacyPolicyURL.absoluteString
-        let markdown = "By continuing, you agree to the [Terms](\(termsURL)) and [Privacy Policy](\(privacyURL)) of Moments AV."
-        return (try? AttributedString(markdown: markdown)) ?? AttributedString("By continuing, you agree to the Terms and Privacy Policy of Moments AV.")
+        let markdown = MomentsL10n.string("access.legal.markdown", termsURL, privacyURL)
+        return (try? AttributedString(markdown: markdown)) ?? AttributedString(MomentsL10n.string("access.legal.fallback"))
     }
 
     private var unavailableMessage: String? {
         if !accountIsAvailable {
-            return "Account services are unavailable right now."
+            return MomentsL10n.string("access.unavailable")
         }
         return nil
     }

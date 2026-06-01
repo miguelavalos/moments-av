@@ -33,14 +33,18 @@
 	<string>$(MOMENTSAV_CONVEX_URL)</string>
 	<key>ACCOUNTAV_API_BASE_URL</key>
 	<string>$(ACCOUNTAV_API_BASE_URL)</string>
-	<key>MOMENTSAV_SUPPORT_URL</key>
-	<string>$(MOMENTSAV_SUPPORT_URL)</string>
+	<key>SUPPORTAV_BASE_URL</key>
+	<string>$(SUPPORTAV_BASE_URL)</string>
+	<key>SUPPORT_EMAIL_TO</key>
+	<string>$(SUPPORT_EMAIL_TO)</string>
 	<key>MOMENTSAV_PRIVACY_URL</key>
 	<string>$(MOMENTSAV_PRIVACY_URL)</string>
 	<key>MOMENTSAV_TERMS_URL</key>
 	<string>$(MOMENTSAV_TERMS_URL)</string>
 	<key>ACCOUNTAV_DELETE_ACCOUNT_URL</key>
 	<string>$(ACCOUNTAV_DELETE_ACCOUNT_URL)</string>
+	<key>MOMENTSAV_OPEN_SOURCE_URL</key>
+	<string>$(MOMENTSAV_OPEN_SOURCE_URL)</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Moments AV can import recent photos when you choose to build a memory video from your library.</string>
   <key>CFBundleInfoDictionaryVersion</key>

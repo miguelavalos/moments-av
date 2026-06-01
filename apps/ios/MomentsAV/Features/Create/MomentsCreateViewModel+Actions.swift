@@ -48,11 +48,11 @@ extension MomentsCreateViewModel {
 
     func discardDraft() {
         guard !isBusy else {
-            updateDraftErrorMessage("Wait for the current step to finish before discarding this draft.")
+            updateDraftErrorMessage("Wait for the current step to finish before discarding this Moment.")
             return
         }
         guard hasMomentWorkspace || hasRecoverableMomentContext else {
-            updateDraftErrorMessage("There is no active draft to discard.")
+            updateDraftErrorMessage("There is no active Moment to discard.")
             return
         }
         if hasLocalMomentWorkspace {
@@ -71,7 +71,7 @@ extension MomentsCreateViewModel {
             } else if let message = projectCreationWorkflow.errorMessage {
                 self.updateDraftErrorMessage(message)
             } else {
-                self.updateDraftErrorMessage("Couldn't discard this draft. Please try again.")
+                self.updateDraftErrorMessage("Couldn't discard this Moment. Please try again.")
             }
         }
     }
@@ -239,7 +239,8 @@ extension MomentsCreateViewModel {
         runOperation {
             await previewGenerationWorkflow.generatePreview(
                 projectId: context.projectId,
-                template: context.template
+                template: context.template,
+                form: self.form
             )
         }
     }
@@ -318,7 +319,8 @@ extension MomentsCreateViewModel {
             }
             await previewGenerationWorkflow.generatePreview(
                 projectId: projectId,
-                template: form.template
+                template: form.template,
+                form: form
             )
         }
     }

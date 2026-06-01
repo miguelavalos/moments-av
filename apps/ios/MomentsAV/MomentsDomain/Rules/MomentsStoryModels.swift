@@ -12,9 +12,12 @@ struct MomentsStoryDraftMedia: Encodable {
 struct MomentsStoryDraftRequest: Encodable {
     let appId = "momentsav"
     let projectId: String
-    let template: String
-    let tone: String
-    let tempo: String
+    let creationMode: String
+    let look: String
+    let theme: String
+    let mood: String
+    let duration: String
+    let mediaUse: String
     let occasion: String
     let details: String
     let narrationVoice = "avi_clear"
@@ -42,9 +45,12 @@ enum MomentsStoryDraftInputSignature {
 
         let input = [
             projectId,
-            form.template.id.rawValue,
+            form.creationMode.rawValue,
+            form.look.rawValue,
+            form.theme.rawValue,
             form.tone.rawValue,
-            form.tempo.rawValue,
+            form.duration.rawValue,
+            form.mediaUse.rawValue,
             form.occasion.trimmingCharacters(in: .whitespacesAndNewlines),
             form.details.trimmingCharacters(in: .whitespacesAndNewlines),
             mediaSignature
@@ -61,6 +67,7 @@ struct MomentsStoryDraftScene: Decodable, Identifiable, Equatable {
     let mediaAssetIds: [String]
     let caption: String
     let narrationText: String
+    let mood: String?
     let tone: String?
     let musicCue: String?
     let durationMs: Int

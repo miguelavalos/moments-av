@@ -3,10 +3,12 @@ import Foundation
 struct MomentsFinalRenderRequest: Encodable {
     let appId = "momentsav"
     let projectId: String
-    let template: String
-    let creationStyle: String?
-    let tone: String?
-    let tempo: String?
+    let creationMode: String
+    let look: String
+    let theme: String
+    let mood: String
+    let duration: String
+    let mediaUse: String
     let occasion: String?
     let details: String?
     let creditCost: Int
@@ -58,10 +60,12 @@ struct MomentsStartWorkflowRequest: Encodable {
     let appId = "momentsav"
     let projectId: String
     let renderKind: String
-    let template: String
-    let creationStyle: String?
-    let tone: String?
-    let tempo: String?
+    let creationMode: String
+    let look: String
+    let theme: String
+    let mood: String
+    let duration: String
+    let mediaUse: String
     let occasion: String?
     let details: String?
     let creditCost: Int
@@ -83,10 +87,12 @@ struct MomentsStartWorkflowResponse: Decodable, Equatable {
 struct MomentsRenderPlanRequest: Encodable {
     let appId = "momentsav"
     let projectId: String
-    let template: String
-    let creationStyle: String?
-    let tone: String?
-    let tempo: String?
+    let creationMode: String
+    let look: String
+    let theme: String
+    let mood: String
+    let duration: String
+    let mediaUse: String
     let occasion: String?
     let details: String?
     let creditCost: Int

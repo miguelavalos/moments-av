@@ -14,7 +14,7 @@ struct MomentsProjectsPresentation: Equatable {
                 isSignedIn: isSignedIn,
                 projectSummary: projectSummary
             ),
-            deletionMessage: "This removes \(projectPendingDeletion?.title ?? "this project"), including source media records and generated artifacts."
+            deletionMessage: MomentsL10n.string("projects.deleteProject.message", projectPendingDeletion?.title ?? MomentsL10n.string("moment.this"))
         )
     }
 }
@@ -32,8 +32,8 @@ enum MomentsProjectsAvailability: Equatable {
             return .signedOut(
                 MomentsProjectsUnavailablePresentation(
                     systemImage: "person.crop.circle.fill",
-                    title: "Sign in to make Moments",
-                    message: "In Progress and local Gallery unlock once your account is connected."
+                    title: MomentsL10n.string("projects.signIn.title"),
+                    message: MomentsL10n.string("projects.signIn.message")
                 )
             )
         }
@@ -42,8 +42,8 @@ enum MomentsProjectsAvailability: Equatable {
             return .empty(
                 MomentsProjectsUnavailablePresentation(
                     systemImage: "rectangle.stack.badge.plus",
-                    title: "Nothing here yet",
-                    message: "Drafts appear in In Progress. Downloaded final videos appear in Gallery."
+                    title: MomentsL10n.string("projects.empty.title"),
+                    message: MomentsL10n.string("projects.empty.message")
                 )
             )
         }

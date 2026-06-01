@@ -107,7 +107,7 @@ final class AccountController: ObservableObject {
 
     func purchaseReviewBundle() async throws -> MomentsReviewBundlePurchaseResponse {
         guard let user else {
-            throw MomentsAPIError(code: "moments_sign_in_required", message: "Sign in before adding story reviews.")
+            throw MomentsAPIError(code: "moments_sign_in_required", message: MomentsL10n.string("access.signInRequired.reviews"))
         }
 
         let token = try await service.getToken() ?? user.id
@@ -138,7 +138,7 @@ final class AccountController: ObservableObject {
 
     func purchase(_ product: MomentsCreditPaywallProduct) async throws -> MomentsPurchaseResult {
         guard let user else {
-            throw MomentsAPIError(code: "moments_sign_in_required", message: "Sign in before purchasing credits.")
+            throw MomentsAPIError(code: "moments_sign_in_required", message: MomentsL10n.string("access.signInRequired.purchase"))
         }
         guard !isPurchaseInProgress else {
             return MomentsPurchaseResult(status: .cancelled, productId: product.id, transactionId: nil)
@@ -156,7 +156,7 @@ final class AccountController: ObservableObject {
 
     func restorePurchases() async throws -> MomentsPurchaseResult {
         guard let user else {
-            throw MomentsAPIError(code: "moments_sign_in_required", message: "Sign in before restoring purchases.")
+            throw MomentsAPIError(code: "moments_sign_in_required", message: MomentsL10n.string("access.signInRequired.restore"))
         }
         guard !isPurchaseInProgress else {
             return MomentsPurchaseResult(status: .cancelled, productId: nil, transactionId: nil)
@@ -229,7 +229,7 @@ struct MomentsCreditBalanceClient {
 
     func fetchBalance(bearerToken: String) async throws -> MomentsCreditBalance {
         guard let url = URL(string: "\(baseURLString)/v1/apps/momentsav/credits/balance") else {
-            throw MomentsAPIError(code: "invalid_moments_api_url", message: "Moments AV API URL is not configured.")
+            throw MomentsAPIError(code: "invalid_moments_api_url", message: MomentsL10n.string("access.apiURLMissing"))
         }
 
         var request = URLRequest(url: url)
@@ -269,7 +269,7 @@ struct MomentsReviewBundleClient {
 
     func purchase(bearerToken: String) async throws -> MomentsReviewBundlePurchaseResponse {
         guard let url = URL(string: "\(baseURLString)/v1/apps/momentsav/credits/review-bundles") else {
-            throw MomentsAPIError(code: "invalid_moments_api_url", message: "Moments AV API URL is not configured.")
+            throw MomentsAPIError(code: "invalid_moments_api_url", message: MomentsL10n.string("access.apiURLMissing"))
         }
 
         var request = URLRequest(url: url)
@@ -415,7 +415,7 @@ struct MomentsPromoCodeClient {
 
     func redeem(code: String, bearerToken: String) async throws -> MomentsPromoCodeRedemptionResponse {
         guard let url = URL(string: "\(baseURLString)/v1/apps/momentsav/credits/promotions/redeem") else {
-            throw MomentsAPIError(code: "invalid_moments_api_url", message: "Moments AV API URL is not configured.")
+            throw MomentsAPIError(code: "invalid_moments_api_url", message: MomentsL10n.string("access.apiURLMissing"))
         }
 
         var request = URLRequest(url: url)

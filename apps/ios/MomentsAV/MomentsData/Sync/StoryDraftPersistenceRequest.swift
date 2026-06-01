@@ -5,7 +5,7 @@ struct StoryScenePersistenceRequest {
     let mediaAssetIds: [String]
     let caption: String
     let narrationText: String
-    let tone: String?
+    let mood: String?
     let musicCue: String?
     let durationMs: Double
     let createdBy: String
@@ -24,7 +24,7 @@ extension StoryScenePersistenceRequest {
             mediaAssetIds: scene.mediaAssetIds,
             caption: scene.caption,
             narrationText: scene.narrationText,
-            tone: scene.tone,
+            mood: scene.mood ?? scene.tone,
             musicCue: scene.musicCue,
             durationMs: Double(scene.durationMs),
             createdBy: "avi"

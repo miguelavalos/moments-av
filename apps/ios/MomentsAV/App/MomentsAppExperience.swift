@@ -16,12 +16,12 @@ enum MomentsAppExperience {
             legalLinks: legalLinks,
             brandPalette: MomentsTheme.brandPalette,
             visualAssets: visualAssets,
-            splashTagline: "Private memory films",
-            splashStatus: "Preparing your studio",
-            onboardingTitle: "Make memory films",
-            onboardingSubtitle: "Turn selected media into private story reviews and final videos.",
-            onboardingPrimaryTitle: "SIGN IN",
-            onboardingSecondaryTitle: "SKIP FOR NOW",
+            splashTagline: MomentsL10n.string("app.splash.tagline"),
+            splashStatus: MomentsL10n.string("app.splash.status"),
+            onboardingTitle: MomentsL10n.string("app.onboarding.title"),
+            onboardingSubtitle: MomentsL10n.string("app.onboarding.subtitle"),
+            onboardingPrimaryTitle: MomentsL10n.string("app.onboarding.signIn"),
+            onboardingSecondaryTitle: MomentsL10n.string("app.onboarding.skip"),
             onboardingBackgroundStart: .init(red: 0.97, green: 0.94, blue: 0.86),
             onboardingBackgroundMid: AVBrandColor.neutral50,
             onboardingBackgroundEnd: .init(red: 0.9, green: 0.93, blue: 0.89)
@@ -56,10 +56,10 @@ enum MomentsAppExperience {
     }
 
     static var settingsSubtitle: String {
-        "Manage \(identity.shortName), credits, project privacy, and support links."
+        MomentsL10n.string("app.settings.subtitle", identity.shortName)
     }
 
     static var accountSubtitle: String {
-        "Manage sign-in, \(identity.accountName) identity, credits, and account safety."
+        MomentsL10n.string("app.account.subtitle", identity.accountName)
     }
 }

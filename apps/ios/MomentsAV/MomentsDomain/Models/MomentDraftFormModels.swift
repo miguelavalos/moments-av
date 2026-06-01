@@ -4,14 +4,18 @@ enum MomentDraftTone: String, CaseIterable, Identifiable {
     case warm
     case playful
     case cinematic
+    case calm
+    case upbeat
 
     var id: String { rawValue }
 
     var title: String {
         switch self {
-        case .warm: "Warm"
-        case .playful: "Playful"
-        case .cinematic: "Cinematic"
+        case .warm: MomentsL10n.string("create.tone.warm.title")
+        case .playful: MomentsL10n.string("create.tone.playful.title")
+        case .cinematic: MomentsL10n.string("create.tone.cinematic.title")
+        case .calm: MomentsL10n.string("create.tone.calm.title")
+        case .upbeat: MomentsL10n.string("create.tone.upbeat.title")
         }
     }
 }
@@ -25,14 +29,36 @@ enum MomentDraftTempo: String, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .gentle: "Gentle"
-        case .balanced: "Balanced"
-        case .upbeat: "Upbeat"
+        case .gentle: MomentsL10n.string("create.tempo.gentle.title")
+        case .balanced: MomentsL10n.string("create.tempo.balanced.title")
+        case .upbeat: MomentsL10n.string("create.tempo.upbeat.title")
+        }
+    }
+}
+
+extension MomentDraftTone {
+    init(musicPreset: MomentMusicPreset) {
+        switch musicPreset {
+        case .warm:
+            self = .warm
+        case .fun:
+            self = .playful
+        case .cinematic:
+            self = .cinematic
+        case .calm:
+            self = .calm
+        case .upbeat:
+            self = .upbeat
         }
     }
 }
 
 struct MomentDraftForm: Equatable {
+    var creationMode: MomentCreationMode = .quick
+    var look: MomentLook = .real
+    var theme: MomentCreationStyleID = .celebration
+    var duration: MomentDuration = .auto
+    var mediaUse: MomentMediaUse = .aviPick
     var template: MomentTemplate
     var occasion = "Birthday"
     var recipient = ""
@@ -59,14 +85,20 @@ struct MomentDraftForm: Equatable {
             return nil
         }
 
-        return MomentDraftForm(
+        var form = MomentDraftForm(
             template: template,
             occasion: project.occasion ?? "",
             recipient: "",
-            tone: MomentDraftTone(rawValue: project.tone ?? "") ?? .warm,
+            tone: MomentDraftTone(rawValue: project.mood ?? project.tone ?? "") ?? .warm,
             tempo: MomentDraftTempo(rawValue: project.tempo ?? "") ?? .balanced,
             details: project.details ?? ""
         )
+        form.creationMode = MomentCreationMode(rawValue: project.creationMode) ?? .quick
+        form.look = MomentLook(rawValue: project.look) ?? .real
+        form.theme = MomentCreationStyleID(rawValue: project.theme) ?? .celebration
+        form.duration = MomentDuration(rawValue: project.duration) ?? .auto
+        form.mediaUse = MomentMediaUse(rawValue: project.mediaUse) ?? .aviPick
+        return form
     }
 }
 
@@ -96,7 +128,7 @@ enum MomentDraftRules {
         case nil:
             return nil
         case .missingOccasion:
-            return "Complete the occasion before starting a project."
+            return MomentsL10n.string("create.rules.missingOccasion")
         }
     }
 }

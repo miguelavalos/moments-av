@@ -96,10 +96,12 @@ MOMENTSAV_REVENUECAT_PUBLIC_API_KEY=infisical()
 MOMENTSAV_REVENUECAT_OFFERING_ID=infisical()
 MOMENTSAV_REVENUECAT_MONTHLY_PACKAGE_ID=infisical()
 AVALSYS_APPLE_DEVELOPMENT_TEAM=infisical()
-MOMENTSAV_SUPPORT_URL=https://moments-av.avalsys.com/support
+SUPPORTAV_BASE_URL=https://support-av.avalsys.com
+SUPPORT_EMAIL_TO=support@avalsys.com
 MOMENTSAV_PRIVACY_URL=https://moments-av.avalsys.com/privacy
 MOMENTSAV_TERMS_URL=https://moments-av.avalsys.com/terms
 ACCOUNTAV_DELETE_ACCOUNT_URL=https://account-av.avalsys.com/account/delete
+MOMENTSAV_OPEN_SOURCE_URL=infisical()
 SCHEMA
 
 read_required_config() {
@@ -168,17 +170,24 @@ revenuecat_api_key="$(read_required_config MOMENTSAV_REVENUECAT_PUBLIC_API_KEY)"
 revenuecat_offering_id="$(read_required_config MOMENTSAV_REVENUECAT_OFFERING_ID)"
 revenuecat_monthly_package_id="$(read_required_config MOMENTSAV_REVENUECAT_MONTHLY_PACKAGE_ID)"
 development_team="$(read_required_config AVALSYS_APPLE_DEVELOPMENT_TEAM)"
-support_url="$(read_required_config MOMENTSAV_SUPPORT_URL)"
+support_base_url="$(read_required_config SUPPORTAV_BASE_URL)"
+support_email_to="$(read_required_config SUPPORT_EMAIL_TO)"
 privacy_url="$(read_required_config MOMENTSAV_PRIVACY_URL)"
 terms_url="$(read_required_config MOMENTSAV_TERMS_URL)"
 delete_account_url="$(read_required_config ACCOUNTAV_DELETE_ACCOUNT_URL)"
+open_source_url="$(read_required_config MOMENTSAV_OPEN_SOURCE_URL)"
 
 require_http_url MOMENTSAV_CONVEX_URL "$moments_convex_url"
 require_http_url ACCOUNTAV_API_BASE_URL "$account_api_base_url"
-require_http_url MOMENTSAV_SUPPORT_URL "$support_url"
+require_http_url SUPPORTAV_BASE_URL "$support_base_url"
+case "$support_email_to" in
+  *@*) ;;
+  *) echo "SUPPORT_EMAIL_TO must look like an email address." >&2; exit 1 ;;
+esac
 require_http_url MOMENTSAV_PRIVACY_URL "$privacy_url"
 require_http_url MOMENTSAV_TERMS_URL "$terms_url"
 require_http_url ACCOUNTAV_DELETE_ACCOUNT_URL "$delete_account_url"
+require_http_url MOMENTSAV_OPEN_SOURCE_URL "$open_source_url"
 require_revenuecat_public_key "$revenuecat_api_key"
 [ -n "$revenuecat_offering_id" ] || {
   echo "MOMENTSAV_REVENUECAT_OFFERING_ID must not be empty." >&2
@@ -209,10 +218,12 @@ MOMENTSAV_REVENUECAT_OFFERING_ID = $revenuecat_offering_id
 MOMENTSAV_REVENUECAT_MONTHLY_PACKAGE_ID = $revenuecat_monthly_package_id
 ACCOUNTAV_API_BASE_URL = $(escape_xcconfig_value "$account_api_base_url")
 MOMENTSAV_CONVEX_URL = $(escape_xcconfig_value "$moments_convex_url")
-MOMENTSAV_SUPPORT_URL = $(escape_xcconfig_value "$support_url")
+SUPPORTAV_BASE_URL = $(escape_xcconfig_value "$support_base_url")
+SUPPORT_EMAIL_TO = $support_email_to
 MOMENTSAV_PRIVACY_URL = $(escape_xcconfig_value "$privacy_url")
 MOMENTSAV_TERMS_URL = $(escape_xcconfig_value "$terms_url")
 ACCOUNTAV_DELETE_ACCOUNT_URL = $(escape_xcconfig_value "$delete_account_url")
+MOMENTSAV_OPEN_SOURCE_URL = $(escape_xcconfig_value "$open_source_url")
 EOF
 )"
 

@@ -3,7 +3,7 @@ import Foundation
 struct MomentsProjectStorySectionPresentation: Equatable {
     let title = "Story"
     let emptySystemImage = "text.bubble"
-    let emptyMessage = "Generate a story draft after the project has enough media."
+    let emptyMessage = "Prepare the story after this Moment has enough media."
     let storyScenes: [MomentsProjectStoryScenePresentation]
 
     init(storyScenes: [MomentStoryScene]) {

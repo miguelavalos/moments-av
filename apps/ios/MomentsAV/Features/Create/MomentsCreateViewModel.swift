@@ -21,6 +21,7 @@ final class MomentsCreateViewModel: ObservableObject {
     @Published private(set) var isImportingMedia = false
     @Published private(set) var mediaImportProgress: MomentsMediaImportProgress?
     @Published private(set) var autoStyleSuggestion: MomentsMediaAutoStyleSuggestion?
+    @Published private(set) var canUndoAutoStyleSuggestion = false
     @Published private(set) var savedScenes: [MomentStoryScene] = []
     @Published private(set) var generatedScenes: [MomentsStoryDraftScene] = []
     @Published private(set) var storyStatusMessage: String?
@@ -55,6 +56,7 @@ final class MomentsCreateViewModel: ObservableObject {
     private var autoStyleMediaSignature: String?
     var lastPreparedStoryInputSignature: String?
     private var hasUserStyleOverride = false
+    private var autoStyleUndoSelection: (style: MomentCreationStyle, musicPreset: MomentMusicPreset, form: MomentDraftForm)?
     var reviewBundlePurchaser: (any MomentsReviewBundlePurchasing)?
 
     var activeProject: MomentDraftProject? {
@@ -123,6 +125,8 @@ final class MomentsCreateViewModel: ObservableObject {
         selectedCreationStyle = MomentCreationStyle.launchStyles[0]
         selectedMusicPreset = selectedCreationStyle.defaultMusic
         form = MomentDraftForm(template: projectCreationWorkflow.launchTemplates[0])
+        canUndoAutoStyleSuggestion = false
+        autoStyleUndoSelection = nil
         applyStyleDefaults(selectedCreationStyle)
         cancellables.removeAll()
 
@@ -148,6 +152,8 @@ final class MomentsCreateViewModel: ObservableObject {
         selectedCreationStyle = style
         selectedMusicPreset = style.defaultMusic
         hasUserStyleOverride = true
+        canUndoAutoStyleSuggestion = false
+        autoStyleUndoSelection = nil
         applyStyleDefaults(style)
 
         if newProjectStep == .style {
@@ -158,17 +164,34 @@ final class MomentsCreateViewModel: ObservableObject {
     func selectMusicPreset(_ preset: MomentMusicPreset) {
         guard selectedCreationStyle.allowedMusic.contains(preset) else { return }
         hasUserStyleOverride = true
+        canUndoAutoStyleSuggestion = false
+        autoStyleUndoSelection = nil
         selectedMusicPreset = preset
+        form.tone = MomentDraftTone(musicPreset: preset)
     }
 
     func useAutoStyleSuggestion() {
         guard canEditCreationOptions else { return }
         guard let suggestion = autoStyleSuggestion else { return }
         guard let suggestedStyle = creationStyles.first(where: { $0.id == suggestion.styleID && $0.isEnabled }) else { return }
+        autoStyleUndoSelection = (selectedCreationStyle, selectedMusicPreset, form)
         selectedCreationStyle = suggestedStyle
         selectedMusicPreset = suggestion.musicPreset
         hasUserStyleOverride = false
+        canUndoAutoStyleSuggestion = true
         applyStyleDefaults(suggestedStyle)
+        form.tone = MomentDraftTone(musicPreset: suggestion.musicPreset)
+    }
+
+    func undoAutoStyleSuggestion() {
+        guard canEditCreationOptions else { return }
+        guard let previous = autoStyleUndoSelection else { return }
+        selectedCreationStyle = previous.style
+        selectedMusicPreset = previous.musicPreset
+        form = previous.form
+        hasUserStyleOverride = true
+        canUndoAutoStyleSuggestion = false
+        autoStyleUndoSelection = nil
     }
 
     func clearSessionState() {
@@ -229,7 +252,7 @@ final class MomentsCreateViewModel: ObservableObject {
         mediaStatusMessage = "3 assets synced. Avi selected the strongest opening order."
         savedScenes = workspace.storyScenes
         generatedScenes = []
-        storyStatusMessage = "Story draft ready for review."
+        storyStatusMessage = "Story ready to review."
         lastPreparedStoryInputSignature = workspace.project.storyInputSignature
             ?? currentStoryInputSignature(projectId: workspace.project.id)
         activeWorkspace = workspace
@@ -239,7 +262,7 @@ final class MomentsCreateViewModel: ObservableObject {
         finalExport = workspace.latestArtifact(kind: "final_export")
         pendingGalleryVideo = nil
         latestFinalJob = workspace.latestRenderJob(kind: "final")
-        finalRenderStatusMessage = "Final export is ready."
+        finalRenderStatusMessage = "Final video is ready."
         pendingFocus = .review
         continuationFocusHint = .review
     }
@@ -308,6 +331,8 @@ final class MomentsCreateViewModel: ObservableObject {
         selectedCreationStyle = creationStyles.first ?? MomentCreationStyle.launchStyles[0]
         selectedMusicPreset = selectedCreationStyle.defaultMusic
         autoStyleSuggestion = nil
+        canUndoAutoStyleSuggestion = false
+        autoStyleUndoSelection = nil
         autoStyleMediaSignature = nil
         lastPreparedStoryInputSignature = nil
         hasUserStyleOverride = false
@@ -318,6 +343,11 @@ final class MomentsCreateViewModel: ObservableObject {
 
     private func applyStyleDefaults(_ style: MomentCreationStyle) {
         form.template = style.template
+        form.theme = style.id
+        form.look = .real
+        form.creationMode = .quick
+        form.duration = .auto
+        form.mediaUse = .aviPick
         form.occasion = style.title
         form.tone = style.tone
         form.tempo = style.tempo
@@ -482,6 +512,10 @@ extension MomentsCreateViewModel {
             selectedCreationStyle = continuedStyle
             selectedMusicPreset = continuedStyle.allowedMusic.first(where: { $0 == continuedStyle.defaultMusic }) ?? continuedStyle.defaultMusic
         }
+        if let continuedStyle = creationStyles.first(where: { $0.id.rawValue == project.theme }) {
+            selectedCreationStyle = continuedStyle
+            selectedMusicPreset = continuedStyle.allowedMusic.first(where: { $0 == continuedStyle.defaultMusic }) ?? continuedStyle.defaultMusic
+        }
     }
 
     private func updateAutoStyleSuggestion(for media: [MomentsSelectedMedia]) {
@@ -506,6 +540,7 @@ extension MomentsCreateViewModel {
         selectedCreationStyle = suggestedStyle
         selectedMusicPreset = suggestion.musicPreset
         applyStyleDefaults(suggestedStyle)
+        form.tone = MomentDraftTone(musicPreset: suggestion.musicPreset)
     }
 
     private func mediaSignature(_ media: [MomentsSelectedMedia]) -> String {

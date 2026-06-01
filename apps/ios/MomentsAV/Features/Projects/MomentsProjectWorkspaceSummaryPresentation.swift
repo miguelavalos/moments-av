@@ -22,22 +22,22 @@ struct MomentsProjectWorkspaceSummaryPresentation: Equatable {
 
         tiles = [
             MomentsProjectSummaryTilePresentation(
-                title: "Status",
+                title: MomentsL10n.string("project.summary.status"),
                 value: MomentsProjectStatusRules.displayTitle(for: workspace.project.status),
                 systemImage: "circle.dashed"
             ),
             MomentsProjectSummaryTilePresentation(
-                title: "Story Review",
+                title: MomentsL10n.string("project.kind.storyReview"),
                 value: Self.summaryValue(for: latestPreview),
                 systemImage: "text.bubble"
             ),
             MomentsProjectSummaryTilePresentation(
-                title: "Final",
+                title: MomentsL10n.string("project.summary.final"),
                 value: Self.summaryValue(for: finalExport),
                 systemImage: "square.and.arrow.up"
             ),
             MomentsProjectSummaryTilePresentation(
-                title: "Latest job",
+                title: MomentsL10n.string("project.summary.latestJob"),
                 value: Self.latestJobValue(latestRenderJob),
                 systemImage: "gearshape.2"
             )
@@ -45,12 +45,12 @@ struct MomentsProjectWorkspaceSummaryPresentation: Equatable {
     }
 
     private static func latestJobValue(_ latestRenderJob: MomentRenderJob?) -> String {
-        guard let latestRenderJob else { return "Not started" }
+        guard let latestRenderJob else { return MomentsL10n.string("project.progress.notStarted") }
         return "\(MomentsProjectStatusRules.displayKind(latestRenderJob.kind)) · \(MomentsProjectStatusRules.displayTitle(for: latestRenderJob.status))"
     }
 
     private static func summaryValue(for artifact: MomentArtifact?) -> String {
-        guard let artifact else { return "Not ready" }
+        guard let artifact else { return MomentsL10n.string("project.progress.notReady") }
         return MomentsProjectStatusRules.displayTitle(for: artifact.status)
     }
 }

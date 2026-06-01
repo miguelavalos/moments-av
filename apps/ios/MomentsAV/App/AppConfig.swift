@@ -32,7 +32,10 @@ enum AppConfig {
     }
 
     static var supportURL: URL {
-        configuredURL(for: "MOMENTSAV_SUPPORT_URL", fallback: "https://moments-av.avalsys.com/support")
+        configuredSupportURL(
+            explicitURL: configuredOptionalURL(for: "SUPPORTAV_BASE_URL"),
+            email: configuredOptionalString(for: "SUPPORT_EMAIL_TO") ?? "support@avalsys.com"
+        ) ?? URL(string: "https://support-av.avalsys.com/")!
     }
 
     static var privacyPolicyURL: URL {
@@ -60,9 +63,29 @@ enum AppConfig {
         return URL(string: trimmedValue.isEmpty ? fallback : trimmedValue) ?? URL(string: fallback)!
     }
 
+    private static func configuredOptionalURL(for key: String) -> URL? {
+        guard let rawValue = configuredOptionalString(for: key) else {
+            return nil
+        }
+        return URL(string: rawValue)
+    }
+
     private static func configuredString(for key: String, fallback: String) -> String {
+        configuredOptionalString(for: key) ?? fallback
+    }
+
+    private static func configuredOptionalString(for key: String) -> String? {
         let rawValue = Bundle.main.object(forInfoDictionaryKey: key) as? String ?? ""
         let trimmedValue = rawValue.trimmingCharacters(in: .whitespacesAndNewlines)
-        return trimmedValue.isEmpty || trimmedValue == "$(inherited)" ? fallback : trimmedValue
+        return trimmedValue.isEmpty || trimmedValue == "$(inherited)" ? nil : trimmedValue
+    }
+
+    private static func configuredSupportURL(explicitURL: URL?, email: String?) -> URL? {
+        if let explicitURL {
+            return explicitURL
+        }
+        guard let email else { return nil }
+        let encodedSubject = "Moments AV Support".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "Moments%20AV%20Support"
+        return URL(string: "mailto:\(email)?subject=\(encodedSubject)")
     }
 }

@@ -28,7 +28,7 @@ struct MomentsCreateMediaCard: View {
         AVAppShellCard {
                 VStack(alignment: .leading, spacing: selectedCount == 0 ? 16 : 10) {
                     HStack(spacing: 10) {
-                        Text("Media")
+                        Text(MomentsL10n.string("create.media.title"))
                             .font(.system(size: 13, weight: .black))
                             .foregroundStyle(AVBrandColor.textPrimary)
 
@@ -44,7 +44,7 @@ struct MomentsCreateMediaCard: View {
 
                         VStack(alignment: .leading, spacing: 4) {
                             if selectedCount > 0 {
-                                Text("\(selectedCount) \(selectedCount == 1 ? "item" : "items") selected")
+                                Text(MomentsL10n.string("create.current.selected", selectedCount))
                                     .font(.system(size: 15, weight: .black))
                                     .foregroundStyle(AVBrandColor.textPrimary)
                                     .lineLimit(1)
@@ -61,7 +61,7 @@ struct MomentsCreateMediaCard: View {
                     }
 
                     if presentation.summary.reviewCount == 0 {
-                        Text("Start by adding the photos or clips you already have. Avi will organize the first version.")
+                        Text(MomentsL10n.string("create.media.startDetail"))
                             .font(.system(size: 13, weight: .semibold))
                             .foregroundStyle(AVBrandColor.textSecondary)
                             .lineLimit(nil)
@@ -72,7 +72,7 @@ struct MomentsCreateMediaCard: View {
                                 showsPhotoPicker = true
                             } label: {
                                 MomentsCreateMediaChoiceButtonLabel(
-                                    title: "Choose photos or clips",
+                                    title: MomentsL10n.string("create.media.choose"),
                                     systemImage: "photo.badge.plus",
                                     isPrimary: true
                                 )
@@ -84,7 +84,7 @@ struct MomentsCreateMediaCard: View {
                                 showsAlbumPicker = true
                             } label: {
                                 MomentsCreateMediaChoiceButtonLabel(
-                                    title: "Add collection photos",
+                                    title: MomentsL10n.string("create.media.addCollection"),
                                     systemImage: "rectangle.stack.badge.plus",
                                     isPrimary: false
                                 )
@@ -179,7 +179,7 @@ struct MomentsCreateMediaCard: View {
     private var summaryText: String {
         let count = selectedCount
         if count == 0 {
-            return "Choose photos, clips, or an album from your library."
+            return MomentsL10n.string("create.media.emptySummary")
         }
 
         return "Tap to delete, add, or reorder."
@@ -245,20 +245,20 @@ private struct MomentsCreateAlbumPickerSheet: View {
         NavigationStack {
             Group {
                 if isLoading {
-                    ProgressView("Loading albums")
+                    ProgressView(MomentsL10n.string("create.media.albums.loading"))
                         .font(.system(size: 14, weight: .semibold))
                         .tint(AVBrandColor.accent)
                 } else if let errorMessage {
                     ContentUnavailableView(
-                        "Albums unavailable",
+                        MomentsL10n.string("create.media.albums.unavailable"),
                         systemImage: "photo.on.rectangle.angled",
                         description: Text(errorMessage)
                     )
                 } else if albums.isEmpty {
                     ContentUnavailableView(
-                        "No photo collections",
+                        MomentsL10n.string("create.media.albums.empty"),
                         systemImage: "rectangle.stack",
-                        description: Text("Create an album in Photos, use a Photos collection, or choose individual photos and clips.")
+                        description: Text(MomentsL10n.string("create.media.albums.emptyDetail"))
                     )
                 } else {
                     List(albums) { album in
@@ -289,11 +289,11 @@ private struct MomentsCreateAlbumPickerSheet: View {
                     .listStyle(.plain)
                 }
             }
-            .navigationTitle("Add collection photos")
+            .navigationTitle(MomentsL10n.string("create.media.addCollection"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") {
+                    Button(MomentsL10n.string("common.cancel")) {
                         dismiss()
                     }
                 }
@@ -314,12 +314,12 @@ private struct MomentsCreateAlbumPickerSheet: View {
                 titleVisibility: .visible,
                 presenting: albumPendingConfirmation
             ) { album in
-                Button("Add photos") {
+                Button(MomentsL10n.string("create.media.addPhotos")) {
                     albumPendingConfirmation = nil
                     selectAlbum(album)
                 }
 
-                Button("Cancel", role: .cancel) {
+                Button(MomentsL10n.string("common.cancel"), role: .cancel) {
                     albumPendingConfirmation = nil
                 }
             } message: { album in
@@ -551,9 +551,9 @@ private struct MomentsCreateMediaManagerSheet: View {
                     .background(.white.opacity(0.92), in: Circle())
                     .shadow(color: AVBrandColor.ink.opacity(0.08), radius: 10, x: 0, y: 4)
             }
-            .accessibilityLabel("Back to media editor")
+            .accessibilityLabel(MomentsL10n.string("create.media.backEditor"))
 
-            Text("Reorder media")
+            Text(MomentsL10n.string("create.media.reorderTitle"))
                 .font(.system(size: 18, weight: .black))
                 .foregroundStyle(AVBrandColor.textPrimary)
                 .frame(maxWidth: .infinity)
@@ -567,7 +567,7 @@ private struct MomentsCreateMediaManagerSheet: View {
                     .frame(width: 44, height: 44)
                     .background(AVBrandColor.accent, in: Circle())
             }
-            .accessibilityLabel("Done reordering")
+            .accessibilityLabel(MomentsL10n.string("create.media.doneReordering"))
         }
     }
 
@@ -632,11 +632,11 @@ private struct MomentsCreateMediaEmptyState: View {
                 .accessibilityHidden(true)
 
                 VStack(spacing: 4) {
-                    Text("No media yet")
+                    Text(MomentsL10n.string("project.progress.noMedia"))
                         .font(.system(size: 17, weight: .black))
                         .foregroundStyle(AVBrandColor.textPrimary)
 
-                    Text("Choose photos or clips to start this Moment.")
+                    Text(MomentsL10n.string("create.media.emptyStart"))
                         .font(.system(size: 13, weight: .semibold))
                         .foregroundStyle(AVBrandColor.textSecondary)
                         .multilineTextAlignment(.center)
@@ -644,7 +644,7 @@ private struct MomentsCreateMediaEmptyState: View {
                 }
 
                 Button(action: addMedia) {
-                    Label("Add media", systemImage: "plus")
+                    Label(MomentsL10n.string("create.media.add"), systemImage: "plus")
                         .font(.system(size: 14, weight: .black))
                         .foregroundStyle(AVBrandColor.textPrimary)
                         .frame(maxWidth: .infinity)
@@ -1020,18 +1020,18 @@ private struct MomentsCreateEditorAviPanel: View {
                     Section("Your edits") {
                         if canAddMedia && !isReordering {
                             Button(action: addMedia) {
-                                Label("Add media", systemImage: "photo.badge.plus")
+                            Label(MomentsL10n.string("create.media.add"), systemImage: "photo.badge.plus")
                             }
                             .disabled(isImporting)
 
                             Button(action: chooseAlbum) {
-                                Label("Add collection photos", systemImage: "rectangle.stack.badge.plus")
+                                Label(MomentsL10n.string("create.media.addCollection"), systemImage: "rectangle.stack.badge.plus")
                             }
                             .disabled(isImporting)
                         }
 
                         Button(action: reorder) {
-                            Label(isReordering ? "Finish reorder" : "Reorder manually", systemImage: isReordering ? "checkmark" : "line.3.horizontal")
+                            Label(isReordering ? MomentsL10n.string("create.media.finishReorder") : MomentsL10n.string("create.media.reorder"), systemImage: isReordering ? "checkmark" : "line.3.horizontal")
                         }
                     }
 
@@ -1039,11 +1039,11 @@ private struct MomentsCreateEditorAviPanel: View {
                         Section("Avi automatic") {
                             if hasUndoAviOrder {
                                 Button(action: undoAviOrder) {
-                                    Label("Undo Avi order", systemImage: "arrow.uturn.backward")
+                                    Label(MomentsL10n.string("create.media.undoAviOrder"), systemImage: "arrow.uturn.backward")
                                 }
                             } else {
                                 Button(action: suggestOrder) {
-                                Label("Suggest order", systemImage: "sparkles")
+                                Label(MomentsL10n.string("create.media.suggestOrder"), systemImage: "sparkles")
                                 }
                             }
                         }
@@ -1055,17 +1055,17 @@ private struct MomentsCreateEditorAviPanel: View {
                         .frame(width: 38, height: 38)
                         .background(AVBrandColor.neutral100, in: Circle())
                 }
-                .accessibilityLabel("Avi media actions")
+                .accessibilityLabel(MomentsL10n.string("create.media.actions"))
             }
         }
     }
 
     private var panelTitle: String {
         if isReordering {
-            return "Order the story"
+            return MomentsL10n.string("create.media.orderStory")
         }
         if selectedCount == 0 {
-            return "Start with media"
+            return MomentsL10n.string("create.media.startTitle")
         }
         return "\(selectedCount) selected"
     }
@@ -1075,7 +1075,7 @@ private struct MomentsCreateEditorAviPanel: View {
             return "Drag moments into the order Avi should follow."
         }
         if selectedCount == 0 {
-            return "Add photos or clips and Avi will build the first version."
+            return MomentsL10n.string("create.media.panelDetail")
         }
         return "Review the media, add more, or let Avi suggest an order."
     }
@@ -1092,7 +1092,7 @@ private struct MomentsCreateMediaReorderRow: View {
                 .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
 
             VStack(alignment: .leading, spacing: 4) {
-                Text("Moment \(index + 1)")
+                Text(MomentsL10n.string("create.media.momentIndex", index + 1))
                     .font(.system(size: 14, weight: .black))
                     .foregroundStyle(AVBrandColor.textPrimary)
                 Text(detailText)
@@ -1147,7 +1147,7 @@ private struct MomentsCreateSyncedMediaSection: View {
     var body: some View {
         if !mediaAssets.isEmpty {
             VStack(alignment: .leading, spacing: 10) {
-                AVAppShellSectionHeader(title: "Added media")
+                AVAppShellSectionHeader(title: MomentsL10n.string("create.media.added"))
 
                 LazyVGrid(columns: columns, alignment: .leading, spacing: 8) {
                     ForEach(Array(mediaAssets.enumerated()), id: \.element.id) { index, media in

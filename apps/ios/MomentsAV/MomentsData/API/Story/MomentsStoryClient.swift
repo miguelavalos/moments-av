@@ -58,9 +58,12 @@ struct MomentsStoryClient {
 
         let requestBody = MomentsStoryDraftRequest(
             projectId: projectId,
-            template: form.template.id.rawValue,
-            tone: form.tone.rawValue,
-            tempo: form.tempo.rawValue,
+            creationMode: form.creationMode.rawValue,
+            look: form.look.rawValue,
+            theme: form.theme.rawValue,
+            mood: form.tone.rawValue,
+            duration: form.duration.rawValue,
+            mediaUse: form.mediaUse.rawValue,
             occasion: form.occasion,
             details: form.details,
             media: selectedMedia,

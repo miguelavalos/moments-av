@@ -108,10 +108,12 @@ revenuecat_monthly_package_id="$(setting MOMENTSAV_REVENUECAT_MONTHLY_PACKAGE_ID
 development_team="$(setting DEVELOPMENT_TEAM)"
 marketing_version="$(setting MARKETING_VERSION)"
 current_project_version="$(setting CURRENT_PROJECT_VERSION)"
-support_url="$(setting MOMENTSAV_SUPPORT_URL)"
+support_base_url="$(setting SUPPORTAV_BASE_URL)"
+support_email_to="$(setting SUPPORT_EMAIL_TO)"
 privacy_url="$(setting MOMENTSAV_PRIVACY_URL)"
 terms_url="$(setting MOMENTSAV_TERMS_URL)"
 delete_account_url="$(setting ACCOUNTAV_DELETE_ACCOUNT_URL)"
+open_source_url="$(setting MOMENTSAV_OPEN_SOURCE_URL)"
 code_sign_entitlements="$(setting CODE_SIGN_ENTITLEMENTS)"
 
 for item in \
@@ -125,10 +127,12 @@ for item in \
   "MOMENTSAV_REVENUECAT_MONTHLY_PACKAGE_ID:$revenuecat_monthly_package_id" \
   "MARKETING_VERSION:$marketing_version" \
   "CURRENT_PROJECT_VERSION:$current_project_version" \
-  "MOMENTSAV_SUPPORT_URL:$support_url" \
+  "SUPPORTAV_BASE_URL:$support_base_url" \
+  "SUPPORT_EMAIL_TO:$support_email_to" \
   "MOMENTSAV_PRIVACY_URL:$privacy_url" \
   "MOMENTSAV_TERMS_URL:$terms_url" \
   "ACCOUNTAV_DELETE_ACCOUNT_URL:$delete_account_url" \
+  "MOMENTSAV_OPEN_SOURCE_URL:$open_source_url" \
   "CODE_SIGN_ENTITLEMENTS:$code_sign_entitlements"; do
   require_present "${item%%:*}" "${item#*:}"
 done
@@ -138,10 +142,12 @@ done
 [[ "$convex_url" == https://*.convex.cloud ]] || fail "MOMENTSAV_CONVEX_URL must be a Convex cloud URL"
 [[ "$marketing_version" =~ ^[0-9]+(\.[0-9]+){1,2}$ ]] || fail "MARKETING_VERSION must look like 1.0 or 1.0.0"
 [[ "$current_project_version" =~ ^[0-9]+$ ]] || fail "CURRENT_PROJECT_VERSION must be an integer"
-[[ "$support_url" == https://* ]] || fail "MOMENTSAV_SUPPORT_URL must be https"
+[[ "$support_base_url" == https://* ]] || fail "SUPPORTAV_BASE_URL must be https"
+[[ "$support_email_to" == *"@"* ]] || fail "SUPPORT_EMAIL_TO must look like an email address"
 [[ "$privacy_url" == https://* ]] || fail "MOMENTSAV_PRIVACY_URL must be https"
 [[ "$terms_url" == https://* ]] || fail "MOMENTSAV_TERMS_URL must be https"
 [[ "$delete_account_url" == https://* ]] || fail "ACCOUNTAV_DELETE_ACCOUNT_URL must be https"
+[[ "$open_source_url" == https://* ]] || fail "MOMENTSAV_OPEN_SOURCE_URL must be https"
 
 if [ -n "$revenuecat_api_key" ] && [ "$revenuecat_api_key" != '$(inherited)' ]; then
   [[ "$revenuecat_api_key" == appl_* ]] || fail "MOMENTSAV_REVENUECAT_PUBLIC_API_KEY must be a public Apple SDK key starting with appl_"
@@ -164,10 +170,11 @@ if [ "$env_name" = "prod" ]; then
       "$product_bundle_identifier" \
       "$api_base_url" \
       "$convex_url" \
-      "$support_url" \
+      "$support_base_url" \
       "$privacy_url" \
       "$terms_url" \
-      "$delete_account_url" | rg -q 'preview|127\.0\.0\.1|localhost|\.dev'; then
+      "$delete_account_url" \
+      "$open_source_url" | rg -q 'preview|127\.0\.0\.1|localhost|\.dev'; then
     fail "prod settings contain preview/local/dev values"
   fi
 elif [ "$env_name" = "staging" ]; then
@@ -200,10 +207,12 @@ Moments AV iOS runtime config ($env_name)
   development team: ${development_team:-unknown}
   Account AV API: $api_base_url
   Convex URL: $convex_url
-  support URL: $support_url
+  support URL: $support_base_url
+  support email: $support_email_to
   privacy URL: $privacy_url
   terms URL: $terms_url
   delete account URL: $delete_account_url
+  open source URL: $open_source_url
   code sign entitlements: $code_sign_entitlements
   Account AV redirect URI: $product_bundle_identifier://callback
   publishable key: $redacted_key

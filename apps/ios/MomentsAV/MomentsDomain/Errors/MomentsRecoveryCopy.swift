@@ -51,16 +51,16 @@ enum MomentsRecoveryCopy {
         switch status {
         case "available":
             return kind == "final_export"
-                ? "Your final video is ready to export or share."
+                ? "Your finished video is ready to save or share."
                 : "\(kindTitle) is ready to review."
         case "expired":
             return "\(kindTitle) is no longer available. Return to Create and generate it again."
         case "failed", "error", "blocked":
             return "\(kindTitle) is not available. Credits are only finalized after a usable final video is ready. Please retry in Create or contact support."
         case "processing", "running", "queued":
-            return "\(kindTitle) is still being prepared. Refresh the project in a moment."
+            return "\(kindTitle) is still being prepared. Refresh in a moment."
         default:
-            return "\(kindTitle) is not ready to export or share yet."
+            return "\(kindTitle) is not ready to save or share yet."
         }
     }
 }

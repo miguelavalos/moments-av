@@ -85,7 +85,7 @@ struct MomentsAppShellView: View {
                         .shadow(color: AVBrandColor.accent.opacity(0.24), radius: 16, x: 0, y: 8)
                 }
                 .buttonStyle(.plain)
-                .accessibilityLabel("New Moment")
+                .accessibilityLabel(MomentsL10n.string("projects.newMoment"))
                 .padding(.trailing, 28)
                 .padding(.bottom, 104)
             }
@@ -110,6 +110,8 @@ struct MomentsAppShellView: View {
                 openCredits: openCredits,
                 startSignInFlow: startSignInFlow
             )
+            .environmentObject(createViewModel)
+            .environmentObject(projectsViewModel)
         } else {
             switch tab {
             case .home:

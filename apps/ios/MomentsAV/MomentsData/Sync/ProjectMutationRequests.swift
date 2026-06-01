@@ -1,10 +1,13 @@
 import Foundation
 
 struct DraftProjectCreationRequest {
-    let template: String
+    let creationMode: String
+    let look: String
+    let theme: String
+    let mood: String
+    let duration: String
+    let mediaUse: String
     let title: String
-    let tone: String
-    let tempo: String
     let occasion: String
     let details: String
 }
@@ -19,10 +22,13 @@ struct ProjectDeletionRequest {
 extension DraftProjectCreationRequest {
     static func draft(_ form: MomentDraftForm) -> DraftProjectCreationRequest {
         DraftProjectCreationRequest(
-            template: form.template.id.rawValue,
+            creationMode: form.creationMode.rawValue,
+            look: form.look.rawValue,
+            theme: form.theme.rawValue,
+            mood: form.tone.rawValue,
+            duration: form.duration.rawValue,
+            mediaUse: form.mediaUse.rawValue,
             title: form.title,
-            tone: form.tone.rawValue,
-            tempo: form.tempo.rawValue,
             occasion: form.occasion,
             details: form.details
         )

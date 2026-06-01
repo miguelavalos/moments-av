@@ -29,7 +29,6 @@ enum MomentsProjectFormatting {
 
         parts.append(statusTitle(project))
         parts.append(updatedAt(project))
-        parts.append(previewUsage(project))
 
         return parts.joined(separator: " · ")
     }

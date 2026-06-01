@@ -16,13 +16,13 @@ struct MomentsAviScreen: View {
 
     private var landingContent: AVAviLandingContent {
         AVAviLandingContent(
-            eyebrow: "Moments guide",
-            title: "Keep Moments moving",
-            detail: "Check draft structure, story review readiness, render status, and credit decisions before the final export.",
+            eyebrow: MomentsL10n.string("avi.landing.eyebrow"),
+            title: MomentsL10n.string("avi.landing.title"),
+            detail: MomentsL10n.string("avi.landing.detail"),
             chips: [
-                AVAviLandingChip(title: "Draft", systemImage: "text.quote"),
-                AVAviLandingChip(title: "Review", systemImage: "text.bubble"),
-                AVAviLandingChip(title: "Export", systemImage: "square.and.arrow.up")
+                AVAviLandingChip(title: MomentsL10n.string("avi.landing.choose"), systemImage: "photo.on.rectangle"),
+                AVAviLandingChip(title: MomentsL10n.string("avi.landing.review"), systemImage: "text.bubble"),
+                AVAviLandingChip(title: MomentsL10n.string("avi.landing.create"), systemImage: "video.fill")
             ],
             accessibilityIdentifier: "moments.avi.hero"
         )
@@ -31,8 +31,8 @@ struct MomentsAviScreen: View {
     var body: some View {
         AVAviGuidanceScreenScaffold(
             identity: appExperience.identity,
-            summary: "Guidance for story drafts, story reviews, final renders, and In Progress review.",
-            status: "Guide",
+            summary: MomentsL10n.string("avi.summary"),
+            status: MomentsL10n.string("avi.status"),
             headerAccessibilityIdentifier: "moments.avi.header",
             landingContent: landingContent,
             backgroundStyle: AnyShapeStyle(MomentsTheme.shellBackground)
@@ -87,7 +87,7 @@ private struct MomentsAviGuidanceContent: View {
         MomentsAviHelpCard()
 
         MomentsAviProjectGuidanceCard {
-            selectTab(.inProgress)
+            selectTab(.gallery)
         }
     }
 }
@@ -99,13 +99,13 @@ private struct MomentsAviSignInCard: View {
         AVAppShellCard {
             VStack(alignment: .leading, spacing: 12) {
                 AVAppShellContentHeader(
-                    title: "Sign in to use Avi",
-                    detail: "Avi needs your account to see credits, Moments, drafts, story reviews, and final exports."
+                    title: MomentsL10n.string("avi.signIn.title"),
+                    detail: MomentsL10n.string("avi.signIn.detail")
                 )
 
                 AVAppShellActionRow(
-                    title: "Sign in",
-                    detail: "Connect your account and unlock Moment guidance.",
+                    title: MomentsL10n.string("common.signIn"),
+                    detail: MomentsL10n.string("avi.signIn.action.detail"),
                     systemImage: "person.crop.circle.fill",
                     isProminent: true,
                     accessibilityIdentifier: "moments.avi.signin",

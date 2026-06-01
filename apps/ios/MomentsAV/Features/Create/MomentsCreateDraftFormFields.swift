@@ -8,13 +8,13 @@ struct MomentsCreateDraftFormFields: View {
     let isDraftLocked: Bool
 
     private var selectedTemplateTitle: String {
-        templates.first(where: { $0.id == templateSelection.wrappedValue })?.title ?? "Choose template"
+        templates.first(where: { $0.id == templateSelection.wrappedValue })?.title ?? MomentsL10n.string("create.form.template.choose")
     }
 
     var body: some View {
         VStack(spacing: AVBrandSpacing.sm) {
             MomentsCreateMenuField(
-                title: "Template",
+                title: MomentsL10n.string("create.form.template"),
                 value: selectedTemplateTitle,
                 systemImage: "sparkles.rectangle.stack",
                 isDisabled: isDraftLocked
@@ -28,8 +28,8 @@ struct MomentsCreateDraftFormFields: View {
             .accessibilityIdentifier("moments.create.template")
 
             MomentsCreateTextFieldRow(
-                title: "Occasion",
-                placeholder: "Birthday, trip, launch...",
+                title: MomentsL10n.string("create.form.occasion"),
+                placeholder: MomentsL10n.string("create.form.occasion.placeholder"),
                 systemImage: "calendar",
                 text: $form.occasion,
                 isDisabled: isDraftLocked
@@ -37,8 +37,8 @@ struct MomentsCreateDraftFormFields: View {
             .accessibilityIdentifier("moments.create.occasion")
 
             MomentsCreateTextFieldRow(
-                title: "Recipient",
-                placeholder: "Who is this for?",
+                title: MomentsL10n.string("create.form.recipient"),
+                placeholder: MomentsL10n.string("create.form.recipient.placeholder"),
                 systemImage: "person.crop.circle",
                 text: $form.recipient,
                 isDisabled: isDraftLocked
@@ -47,7 +47,7 @@ struct MomentsCreateDraftFormFields: View {
 
             HStack(spacing: AVBrandSpacing.sm) {
                 MomentsCreateMenuField(
-                    title: "Tone",
+                    title: MomentsL10n.string("create.form.tone"),
                     value: form.tone.title,
                     systemImage: "quote.bubble.fill",
                     isDisabled: isDraftLocked
@@ -61,7 +61,7 @@ struct MomentsCreateDraftFormFields: View {
                 .accessibilityIdentifier("moments.create.tone")
 
                 MomentsCreateMenuField(
-                    title: "Tempo",
+                    title: MomentsL10n.string("create.form.tempo"),
                     value: form.tempo.title,
                     systemImage: "metronome.fill",
                     isDisabled: isDraftLocked
@@ -76,8 +76,8 @@ struct MomentsCreateDraftFormFields: View {
             }
 
             MomentsCreateMultilineFieldRow(
-                title: "Details for Avi",
-                placeholder: "Add names, inside jokes, scenes to emphasize, or anything to avoid.",
+                title: MomentsL10n.string("create.form.details"),
+                placeholder: MomentsL10n.string("create.form.details.placeholder"),
                 systemImage: "wand.and.stars",
                 text: $form.details,
                 isDisabled: isDraftLocked

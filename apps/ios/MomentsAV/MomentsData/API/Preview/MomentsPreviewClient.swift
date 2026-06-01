@@ -13,6 +13,7 @@ struct MomentsPreviewClient {
         projectId: String,
         bearerToken: String,
         template: MomentTemplate,
+        form: MomentDraftForm,
         previewIndex: Int
     ) async throws -> MomentsPreviewResponse {
         guard let baseURL = URL(string: baseURLString.trimmingCharacters(in: .whitespacesAndNewlines)) else {
@@ -27,8 +28,12 @@ struct MomentsPreviewClient {
             .appendingPathComponent("generate")
         let body = MomentsPreviewRequest(
             projectId: projectId,
-            template: template.id.rawValue,
-            creditCost: template.creditCost,
+            creationMode: form.creationMode.rawValue,
+            look: form.look.rawValue,
+            theme: form.theme.rawValue,
+            mood: form.tone.rawValue,
+            duration: form.duration.rawValue,
+            mediaUse: form.mediaUse.rawValue,
             idempotencyKey: "preview:\(projectId):\(previewIndex)"
         )
 

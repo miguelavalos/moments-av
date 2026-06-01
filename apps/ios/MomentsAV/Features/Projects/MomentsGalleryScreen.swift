@@ -13,11 +13,11 @@ struct MomentsGalleryScreen: View {
             MomentsTheme.shellBackground
         } content: {
             VStack(alignment: .leading, spacing: 10) {
-                Text("Gallery")
+                Text(MomentsL10n.string("gallery.title"))
                     .font(.system(size: 34, weight: .black))
                     .foregroundStyle(AVBrandColor.textPrimary)
 
-                Text("Final videos saved on this device.")
+                Text(MomentsL10n.string("gallery.subtitle"))
                     .font(AVBrandTypography.body)
                     .foregroundStyle(AVBrandColor.textSecondary)
             }
@@ -42,18 +42,18 @@ struct MomentsGalleryScreen: View {
             }
         }
         .confirmationDialog(
-            "Delete Gallery video?",
+            MomentsL10n.string("gallery.delete.title"),
             isPresented: deletionConfirmationPresented,
             titleVisibility: .visible
         ) {
-            Button("Delete from this device", role: .destructive) {
+            Button(MomentsL10n.string("gallery.delete.button"), role: .destructive) {
                 confirmDeletion()
             }
-            Button("Cancel", role: .cancel) {
+            Button(MomentsL10n.string("common.cancel"), role: .cancel) {
                 videoPendingDeletion = nil
             }
         } message: {
-            Text("This removes the local video file and Gallery record from this device.")
+            Text(MomentsL10n.string("gallery.delete.message"))
         }
         .sheet(item: $selectedVideo) { item in
             MomentsGalleryVideoPlayerSheet(item: item)
@@ -92,11 +92,11 @@ private struct MomentsGalleryEmptyState: View {
                 )
 
             VStack(spacing: 6) {
-                Text("No saved videos yet")
+                Text(MomentsL10n.string("gallery.empty.title"))
                     .font(.system(size: 20, weight: .black))
                     .foregroundStyle(AVBrandColor.textPrimary)
 
-                Text("Finished Moments appear here after their final video downloads to this device.")
+                Text(MomentsL10n.string("gallery.empty.detail"))
                     .font(AVBrandTypography.body)
                     .foregroundStyle(AVBrandColor.textSecondary)
                     .multilineTextAlignment(.center)
@@ -155,18 +155,18 @@ private struct MomentsGalleryVideoRow: View {
 
                 HStack(spacing: 10) {
                     Button(action: openVideo) {
-                        Label("Open", systemImage: "play.fill")
+                        Label(MomentsL10n.string("common.open"), systemImage: "play.fill")
                     }
                     .disabled(!video.isLocalFileAvailable)
 
                     if video.isLocalFileAvailable {
                         ShareLink(item: video.localFileURL) {
-                            Label("Share", systemImage: "square.and.arrow.up")
+                            Label(MomentsL10n.string("common.share"), systemImage: "square.and.arrow.up")
                         }
                     }
 
                     Button(role: .destructive, action: deleteVideo) {
-                        Label(video.isLocalFileAvailable ? "Delete" : "Remove", systemImage: "trash")
+                        Label(video.isLocalFileAvailable ? MomentsL10n.string("common.delete") : MomentsL10n.string("common.remove"), systemImage: "trash")
                     }
                 }
                 .font(.system(size: 13, weight: .bold))
@@ -200,7 +200,7 @@ private struct MomentsGalleryVideoPlayerSheet: View {
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
-                        Button("Done") {
+                        Button(MomentsL10n.string("common.done")) {
                             dismiss()
                         }
                     }

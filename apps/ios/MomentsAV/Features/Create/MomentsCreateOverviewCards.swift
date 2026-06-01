@@ -8,10 +8,10 @@ struct MomentsCreateIntroCard: View {
     var body: some View {
         AVAppShellCard {
             AVAppShellContentHeader(
-                title: "Create",
-                detail: "Build a private memory video from media, story, and final export."
+                title: MomentsL10n.string("create.intro.title"),
+                detail: MomentsL10n.string("create.intro.detail")
             )
-            AVStatusPill(title: isSignedIn ? "Ready" : "Login required", isUppercased: false)
+            AVStatusPill(title: isSignedIn ? MomentsL10n.string("create.status.ready") : MomentsL10n.string("create.status.loginRequired"), isUppercased: false)
         }
     }
 }
@@ -51,7 +51,7 @@ struct MomentsCreateContinuationHintCard: View {
                     }
                     .buttonStyle(.plain)
                     .foregroundStyle(.secondary)
-                    .accessibilityLabel("Dismiss continuation hint")
+                    .accessibilityLabel(MomentsL10n.string("create.continuation.dismiss"))
                 }
             }
         }
@@ -64,12 +64,12 @@ struct MomentsCreateCreditsCard: View {
     var body: some View {
         AVAppShellCard {
             AVAppShellContentHeader(
-                title: "Available credits",
-                detail: "Credits are needed before creating the final video."
+                title: MomentsL10n.string("credits.available.title"),
+                detail: MomentsL10n.string("create.credits.detail")
             )
             AVAppShellInfoRow(
-                title: "\(balance.spendable) credits",
-                detail: balance.spendable > 0 ? "Ready for final video creation." : "You can still set up this Moment now.",
+                title: MomentsCreditCopy.countTitle(balance.spendable),
+                detail: balance.spendable > 0 ? MomentsL10n.string("create.credits.ready") : MomentsL10n.string("create.credits.setupNow"),
                 systemImage: "creditcard"
             )
         }
@@ -91,7 +91,7 @@ struct MomentsCurrentCreationCard: View {
                         .background(AVBrandColor.accent.opacity(0.10), in: Circle())
 
                     VStack(alignment: .leading, spacing: 3) {
-                        Text("Continue current Moment")
+                        Text(MomentsL10n.string("create.current.continue"))
                             .font(.system(size: 14, weight: .black))
                             .foregroundStyle(AVBrandColor.textPrimary)
                         Text(detail)
@@ -113,8 +113,8 @@ struct MomentsCurrentCreationCard: View {
 
     private var detail: String {
         selectedCount == 0
-            ? "Local creation. Add media before preparing the story."
-            : "Local creation · \(selectedCount) \(selectedCount == 1 ? "item" : "items") selected."
+            ? MomentsL10n.string("create.current.addMedia")
+            : MomentsL10n.string("create.current.selected", selectedCount)
     }
 }
 
@@ -122,30 +122,30 @@ private extension MomentsProjectContinuationFocus {
     var title: String {
         switch self {
         case .review:
-            "Review project"
+            MomentsL10n.string("create.continuation.review.title")
         case .media:
-            "Continue with media"
+            MomentsL10n.string("create.continuation.media.title")
         case .story:
-            "Continue with story"
+            MomentsL10n.string("create.continuation.story.title")
         case .preview:
-            "Continue with story review"
+            MomentsL10n.string("create.continuation.preview.title")
         case .finalRender:
-            "Continue with final export"
+            MomentsL10n.string("create.continuation.final.title")
         }
     }
 
     var message: String {
         switch self {
         case .review:
-            "Check the active project details before continuing the workflow."
+            MomentsL10n.string("create.continuation.review.message")
         case .media:
-            "Add photos or clips for this project, then continue to story generation."
+            MomentsL10n.string("create.continuation.media.message")
         case .story:
-            "Generate the story scenes from the selected media."
+            MomentsL10n.string("create.continuation.story.message")
         case .preview:
-            "Review or refresh the story before spending credits on the final export."
+            MomentsL10n.string("create.continuation.preview.message")
         case .finalRender:
-            "Render or refresh the final export for the finished video."
+            MomentsL10n.string("create.continuation.final.message")
         }
     }
 
