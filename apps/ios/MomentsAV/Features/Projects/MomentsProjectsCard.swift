@@ -151,10 +151,19 @@ private struct MomentsHubEmptyContent: View {
 }
 
 enum MomentsHubMode: String, CaseIterable, Identifiable {
-    case inProgress = "In Progress"
-    case gallery = "Gallery"
+    case inProgress
+    case gallery
 
     var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .inProgress:
+            return L10n.string("projects.mode.inProgress")
+        case .gallery:
+            return L10n.string("projects.mode.gallery")
+        }
+    }
 }
 
 private struct MomentsHubAviBlock: View {

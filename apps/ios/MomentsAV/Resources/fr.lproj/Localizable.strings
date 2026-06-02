@@ -1018,3 +1018,14 @@
 "create.renderRows.none" = "None";
 "create.renderRows.expires" = "Expires";
 "create.renderRows.storageKey" = "Storage key";
+
+"project.story.title" = "Story";
+"project.story.empty" = "Prepare the story after this Moment has enough media.";
+"project.story.scene" = "Scene %d";
+"project.media.title" = "Media";
+"project.media.empty" = "No media is attached to this Moment yet. Add photos or clips from Create to review the story.";
+"projects.status.galleryDeleted" = "Gallery video deleted from this device.";
+"projects.status.projectDeleted" = "Project deleted.";
+"projects.mode.inProgress" = "In Progress";
+"projects.mode.gallery" = "Gallery";
+"project.workspace.detailTitle" = "Project detail";

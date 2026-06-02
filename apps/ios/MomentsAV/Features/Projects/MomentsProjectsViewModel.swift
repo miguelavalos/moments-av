@@ -135,7 +135,7 @@ final class MomentsProjectsViewModel: ObservableObject {
     func deleteGalleryVideo(_ video: MomentsGalleryVideoPresentation) {
         galleryStore.deleteRecord(video.record, deleteLocalFile: true)
         refreshGalleryVideos()
-        statusMessage = "Gallery video deleted from this device."
+        statusMessage = L10n.string("projects.status.galleryDeleted")
     }
 
     func deleteProject(_ project: MomentDraftProject) {
@@ -150,7 +150,7 @@ final class MomentsProjectsViewModel: ObservableObject {
                 self?.activeProject = nil
                 self?.activeWorkspace = nil
                 self?.projectSummary = self?.projectSummary.removing(projectId: project.id) ?? MomentsProjectListSummary()
-                self?.statusMessage = "Project deleted."
+                self?.statusMessage = L10n.string("projects.status.projectDeleted")
             }
             self?.deletionTask = nil
         }

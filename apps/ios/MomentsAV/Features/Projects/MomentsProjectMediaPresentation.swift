@@ -1,9 +1,9 @@
 import Foundation
 
 struct MomentsProjectMediaSectionPresentation: Equatable {
-    let title = "Media"
+    let title = L10n.string("project.media.title")
     let emptySystemImage = "photo.badge.plus"
-    let emptyMessage = "No media is attached to this Moment yet. Add photos or clips from Create to review the story."
+    let emptyMessage = L10n.string("project.media.empty")
     let mediaAssets: [MomentsProjectMediaAssetPresentation]
 
     init(mediaAssets: [MomentMediaAsset]) {
