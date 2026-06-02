@@ -246,7 +246,7 @@ private struct MomentsCreateAviInlineGuide: View {
             reactionTrigger += 1
         }
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("Avi says \(guidance.message)")
+        .accessibilityLabel(L10n.string("create.draftSetup.aviSays", guidance.message))
     }
 }
 
@@ -334,15 +334,15 @@ private extension MomentsCreateAviGuidance {
     var title: String {
         switch emotion {
         case .warning:
-            return "Check this step"
+            return L10n.string("create.draftSetup.guidance.checkStep")
         case .happy, .celebrate:
-            return "Ready to start"
+            return L10n.string("create.draftSetup.guidance.readyStart")
         case .focused:
-            return "Project is moving"
+            return L10n.string("create.draftSetup.guidance.projectMoving")
         case .curious:
-            return "Sign in to create"
+            return L10n.string("create.draftSetup.guidance.signIn")
         case .thinking:
-            return "Preparing your project"
+            return L10n.string("create.draftSetup.guidance.preparing")
         }
     }
 
@@ -413,7 +413,10 @@ private struct MomentsCreateEconomyPanel: View {
                         showsDetails.toggle()
                     }
                 } label: {
-                    Label(showsDetails ? "Hide details" : "View details", systemImage: showsDetails ? "chevron.up" : "chevron.down")
+                    Label(
+                        showsDetails ? L10n.string("create.draftSetup.hideDetails") : L10n.string("create.draftSetup.viewDetails"),
+                        systemImage: showsDetails ? "chevron.up" : "chevron.down"
+                    )
                         .font(.system(size: 12, weight: .black, design: .rounded))
                         .foregroundStyle(AVBrandColor.textSecondary)
                 }
@@ -485,7 +488,7 @@ private struct MomentsCreateProjectHubHeader: View {
                 .frame(width: 96, height: 96)
 
             VStack(alignment: .leading, spacing: 6) {
-                Text("Next: add media")
+                Text(L10n.string("create.draftSetup.nextAddMedia"))
                     .font(.system(size: 12, weight: .black))
                     .foregroundStyle(AVBrandColor.accent)
                     .textCase(.uppercase)
@@ -496,7 +499,7 @@ private struct MomentsCreateProjectHubHeader: View {
                     .lineLimit(2)
                     .fixedSize(horizontal: false, vertical: true)
 
-                Text("\(style.title) · \(style.durationSeconds)s · \(style.creditCost) credit · \(selectedMusicPreset.title)")
+                Text(L10n.string("create.draftSetup.styleSummary", style.title, style.durationSeconds, MomentsCreditCopy.countTitle(style.creditCost), selectedMusicPreset.title))
                     .font(.system(size: 12, weight: .semibold))
                     .foregroundStyle(AVBrandColor.textSecondary)
                     .lineLimit(2)
@@ -532,7 +535,7 @@ private struct MomentsCreateStyleSummaryRow: View {
                     .foregroundStyle(AVBrandColor.textSecondary)
                     .lineLimit(2)
 
-                Text("\(style.durationSeconds)s · \(style.creditCost) credit · \(selectedMusicPreset.title)")
+                Text(L10n.string("create.draftSetup.compactStyleSummary", style.durationSeconds, MomentsCreditCopy.countTitle(style.creditCost), selectedMusicPreset.title))
                     .font(.system(size: 12, weight: .black))
                     .foregroundStyle(AVBrandColor.textPrimary)
             }
@@ -546,7 +549,7 @@ private struct MomentsCreateStyleSummaryRow: View {
                         .foregroundStyle(AVBrandColor.accent)
                 }
                 .buttonStyle(.plain)
-                .accessibilityLabel("Edit style")
+                .accessibilityLabel(L10n.string("create.draftSetup.editStyle"))
             }
         }
         .padding(12)
@@ -651,7 +654,7 @@ private struct MomentsCreateStyleTile: View {
         .buttonStyle(.plain)
         .disabled(isLocked || !style.isEnabled)
         .accessibilityLabel(style.title)
-        .accessibilityHint(style.isEnabled ? style.subtitle : "Coming soon")
+        .accessibilityHint(style.isEnabled ? style.subtitle : L10n.string("create.draftSetup.comingSoon"))
     }
 }
 
@@ -685,7 +688,7 @@ private struct MomentsCreateQuickCustomizeSection: View {
 
             MomentsCreateMultilineFieldRow(
                 title: L10n.string("create.noteForAvi"),
-                placeholder: "Cumple de Ana, viaje a Lisboa, para mamá...",
+                placeholder: L10n.string("create.draftSetup.notePlaceholder"),
                 systemImage: "text.bubble.fill",
                 text: $form.details,
                 isDisabled: isLocked

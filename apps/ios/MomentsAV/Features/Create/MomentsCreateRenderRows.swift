@@ -9,7 +9,7 @@ struct MomentsCreateRenderJobStatusRow: View {
             title: MomentsProjectStatusRules.displayTitle(for: renderJob.status),
             detail: detail,
             systemImage: systemImage,
-            eyebrow: "Render job"
+            eyebrow: L10n.string("create.renderRows.renderJob")
         )
     }
 
@@ -24,7 +24,7 @@ struct MomentsCreateRenderJobStatusRow: View {
             return userMessage
         }
 
-        return renderJob.model ?? "Waiting for renderer status."
+        return renderJob.model ?? L10n.string("create.renderRows.waitingStatus")
     }
 
     private var systemImage: String {
@@ -65,17 +65,17 @@ struct MomentsCreateArtifactStatusCard: View {
                 spacing: 8
             ) {
                 AVAppShellMetadataItem(
-                    title: "Watermark",
-                    value: artifact.hasWatermark == true ? "Included" : "None"
+                    title: L10n.string("create.renderRows.watermark"),
+                    value: artifact.hasWatermark == true ? L10n.string("create.renderRows.included") : L10n.string("create.renderRows.none")
                 )
                 AVAppShellMetadataItem(
-                    title: "Expires",
+                    title: L10n.string("create.renderRows.expires"),
                     value: MomentsDateFormatting.formattedDate(milliseconds: artifact.expiresAt)
                 )
             }
 
             AVAppShellIdentifierRow(
-                title: "Storage key",
+                title: L10n.string("create.renderRows.storageKey"),
                 value: artifact.r2Key,
                 lineLimit: 3
             )

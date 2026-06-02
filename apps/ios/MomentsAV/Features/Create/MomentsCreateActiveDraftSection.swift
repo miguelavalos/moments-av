@@ -24,7 +24,7 @@ struct MomentsCreateActiveDraftSection: View {
             )
 
             Button(action: discardDraft) {
-                Label("Discard Moment", systemImage: "trash")
+                Label(L10n.string("create.workflowContent.discardMoment"), systemImage: "trash")
                     .frame(maxWidth: .infinity)
             }
             .buttonStyle(.bordered)

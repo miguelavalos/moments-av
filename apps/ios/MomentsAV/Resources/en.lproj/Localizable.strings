@@ -998,3 +998,25 @@
 "create.workflowContent.tipMediaReady" = "Avi will shape these moments into a simple story plan.";
 "create.workflowContent.tipPickMoments" = "Pick the moments. Avi will shape the story, mood, and pacing.";
 "create.workflowContent.planDetail" = "%ds · %d media items";
+
+"create.draftSetup.aviSays" = "Avi says %@";
+"create.draftSetup.guidance.checkStep" = "Check this step";
+"create.draftSetup.guidance.readyStart" = "Ready to start";
+"create.draftSetup.guidance.projectMoving" = "Project is moving";
+"create.draftSetup.guidance.signIn" = "Sign in to create";
+"create.draftSetup.guidance.preparing" = "Preparing your project";
+"create.draftSetup.hideDetails" = "Hide details";
+"create.draftSetup.viewDetails" = "View details";
+"create.draftSetup.nextAddMedia" = "Next: add media";
+"create.draftSetup.styleSummary" = "%@ · %ds · %@ · %@";
+"create.draftSetup.compactStyleSummary" = "%ds · %@ · %@";
+"create.draftSetup.editStyle" = "Edit style";
+"create.draftSetup.comingSoon" = "Coming soon";
+"create.draftSetup.notePlaceholder" = "Birthday for Ana, Lisbon trip, for mom...";
+"create.renderRows.renderJob" = "Render job";
+"create.renderRows.waitingStatus" = "Waiting for renderer status.";
+"create.renderRows.watermark" = "Watermark";
+"create.renderRows.included" = "Included";
+"create.renderRows.none" = "None";
+"create.renderRows.expires" = "Expires";
+"create.renderRows.storageKey" = "Storage key";
