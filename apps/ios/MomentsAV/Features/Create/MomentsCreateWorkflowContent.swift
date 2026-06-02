@@ -350,7 +350,7 @@ struct MomentsCreateBlockingPreparationView: View {
                     ProgressView(value: fractionCompleted)
                         .tint(mode.tint)
                         .frame(width: 168)
-                    Text(progress?.title ?? "Reading media")
+                    Text(progress?.title ?? L10n.string("create.media.progress.reading"))
                         .font(.caption)
                         .fontWeight(.black)
                         .foregroundStyle(AVBrandColor.textSecondary)
@@ -624,7 +624,7 @@ private struct MomentsCreateRenderPlanSummary: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text(plan == nil ? "Video plan" : "Prepared video plan")
+            Text(plan == nil ? L10n.string("create.workflowContent.videoPlan") : L10n.string("create.workflowContent.preparedVideoPlan"))
                 .font(.system(size: 13, weight: .black))
                 .foregroundStyle(AVBrandColor.textPrimary)
 
@@ -651,20 +651,20 @@ private struct MomentsCreateRenderPlanSummary: View {
     }
 
     private var assetUsageTitle: String {
-        guard let plan else { return "Needs plan" }
+        guard let plan else { return L10n.string("create.workflowContent.needsPlan") }
         if plan.rejectedAssetCount > 0 {
-            return "\(plan.usedAssetCount) used · \(plan.rejectedAssetCount) skipped"
+            return L10n.string("create.workflowContent.assetUsageSkipped", plan.usedAssetCount, plan.rejectedAssetCount)
         }
-        return "\(plan.usedAssetCount) of \(plan.plannedAssetCount) items"
+        return L10n.string("create.workflowContent.assetUsageItems", plan.usedAssetCount, plan.plannedAssetCount)
     }
 
     private var durationTitle: String {
-        guard let plan else { return "Before video" }
+        guard let plan else { return L10n.string("create.workflowContent.beforeVideo") }
         return "\(plan.targetDurationMs / 1000)s"
     }
 
     private var renderModeTitle: String {
-        guard let plan else { return "Mode pending" }
+        guard let plan else { return L10n.string("create.workflowContent.modePending") }
         return plan.rendererMode
             .split(separator: "_")
             .map { $0.capitalized }
@@ -672,7 +672,7 @@ private struct MomentsCreateRenderPlanSummary: View {
     }
 
     private var message: String {
-        plan?.userMessage ?? "Avi will prepare the media, duration, and quality checks before the video starts."
+        plan?.userMessage ?? L10n.string("create.workflowContent.renderPlanFallback")
     }
 }
 
@@ -725,7 +725,7 @@ private struct MomentsCreateStoryReviewPage: View {
     var body: some View {
         VStack(spacing: 0) {
             MomentsCreateEditorPageHeader(
-                title: "Story Review",
+                title: L10n.string("create.workflowContent.storyReviewTitle"),
                 dismiss: dismiss
             )
             .padding(.horizontal, 20)
@@ -828,12 +828,12 @@ private struct MomentsCreateStoryReviewPage: View {
 
                             HStack(spacing: 14) {
                                 Button(action: { showsDiscardDraftConfirmation = true }) {
-                                    Label("Discard Moment", systemImage: "trash.fill")
+                                    Label(L10n.string("create.workflowContent.discardMoment"), systemImage: "trash.fill")
                                 }
                                 .buttonStyle(MomentsCreateDestructiveInlineButtonStyle())
 
                                 Button(action: dismiss) {
-                                    Label("Change media or style", systemImage: "slider.horizontal.3")
+                                    Label(L10n.string("create.workflowContent.changeMediaOrStyle"), systemImage: "slider.horizontal.3")
                                 }
                                     .buttonStyle(MomentsCreateNeutralInlineButtonStyle())
                             }
@@ -949,30 +949,30 @@ private struct MomentsCreateStoryAllowanceActionCard: View {
     var body: some View {
         AVAppShellCard {
             VStack(alignment: .leading, spacing: 12) {
-                Text("Story review allowance")
+                Text(L10n.string("create.workflowContent.reviewAllowance"))
                     .font(.system(size: 13, weight: .black))
                     .foregroundStyle(AVBrandColor.textPrimary)
 
                 HStack(spacing: 10) {
                     MomentsCreateReviewMetric(
                         title: "\(presentation.balance.reviewAllowanceRemaining)",
-                        subtitle: "reviews left",
+                        subtitle: L10n.string("create.workflowContent.reviewsLeft"),
                         systemImage: "list.bullet.clipboard.fill"
                     )
                     MomentsCreateReviewMetric(
                         title: "\(presentation.balance.reviewBundleReviewCount)",
-                        subtitle: "per bundle",
+                        subtitle: L10n.string("create.workflowContent.perBundle"),
                         systemImage: "plus.circle.fill"
                     )
                     MomentsCreateReviewMetric(
                         title: MomentsCreditCopy.countTitle(presentation.balance.reviewBundleCreditCost),
-                        subtitle: "bundle cost",
+                        subtitle: L10n.string("create.workflowContent.bundleCost"),
                         systemImage: "creditcard.fill"
                     )
                 }
 
                 if presentation.balance.reviewAllowanceRemaining == 0 {
-                    Text("You can add reviews with credits, add credits first, or create the final video from this approved story.")
+                    Text(L10n.string("create.workflowContent.reviewAllowanceEmpty"))
                         .font(.system(size: 12, weight: .semibold))
                         .foregroundStyle(AVBrandColor.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)
@@ -986,7 +986,7 @@ private struct MomentsCreateStoryAllowanceActionCard: View {
                         .disabled(presentation.isBuyingReviewBundle)
                     } else {
                         Button(action: openCredits) {
-                            Label("Add credits", systemImage: "creditcard.fill")
+                            Label(L10n.string("create.workflowContent.addCredits"), systemImage: "creditcard.fill")
                                 .frame(maxWidth: .infinity)
                         }
                         .buttonStyle(MomentsCreateSoftActionButtonStyle())
@@ -998,8 +998,12 @@ private struct MomentsCreateStoryAllowanceActionCard: View {
 
     private var reviewBundleButtonTitle: String {
         presentation.isBuyingReviewBundle
-            ? "Adding reviews..."
-            : "Add \(presentation.balance.reviewBundleReviewCount) reviews · \(MomentsCreditCopy.countTitle(presentation.balance.reviewBundleCreditCost))"
+            ? L10n.string("create.reviewBundle.action.adding")
+            : L10n.string(
+                "create.reviewBundle.action.add",
+                presentation.balance.reviewBundleReviewCount,
+                MomentsCreditCopy.countTitle(presentation.balance.reviewBundleCreditCost)
+            )
     }
 }
 
@@ -1009,19 +1013,19 @@ private struct MomentsCreateStoryDirectionCard: View {
     var body: some View {
         AVAppShellCard {
             VStack(alignment: .leading, spacing: 12) {
-                Text("Story direction")
+                Text(L10n.string("create.workflowContent.storyDirection"))
                     .font(.system(size: 13, weight: .black))
                     .foregroundStyle(AVBrandColor.textPrimary)
 
                 HStack(spacing: 10) {
                     MomentsCreateReviewMetric(
                         title: presentation.creationStyleTitle,
-                        subtitle: "Theme",
+                        subtitle: L10n.string("create.workflowContent.theme"),
                         systemImage: "sparkles"
                     )
                     MomentsCreateReviewMetric(
                         title: presentation.tempoTitle,
-                        subtitle: "Pacing",
+                        subtitle: L10n.string("create.workflowContent.pacing"),
                         systemImage: "metronome.fill"
                     )
                 }
@@ -1029,12 +1033,12 @@ private struct MomentsCreateStoryDirectionCard: View {
                 HStack(spacing: 10) {
                     MomentsCreateReviewMetric(
                         title: presentation.toneTitle,
-                        subtitle: "Tone",
+                        subtitle: L10n.string("create.workflowContent.tone"),
                         systemImage: "text.bubble.fill"
                     )
                     MomentsCreateReviewMetric(
                         title: presentation.occasionTitle,
-                        subtitle: "Moment",
+                        subtitle: L10n.string("create.workflowContent.moment"),
                         systemImage: "rectangle.stack.fill"
                     )
                 }
@@ -1049,29 +1053,29 @@ private struct MomentsCreateReadinessChecklistCard: View {
     var body: some View {
         AVAppShellCard {
             VStack(alignment: .leading, spacing: 12) {
-                Text("Ready check")
+                Text(L10n.string("create.workflowContent.readyCheck"))
                     .font(.system(size: 13, weight: .black))
                     .foregroundStyle(AVBrandColor.textPrimary)
 
                 VStack(spacing: 8) {
                     MomentsCreateReadinessRow(
-                        title: "Media selected",
+                        title: L10n.string("create.workflowContent.mediaSelected"),
                         detail: mediaDetail,
                         isReady: presentation.mediaSummary.reviewCount > 0
                     )
                     MomentsCreateReadinessRow(
-                        title: "Story prepared",
+                        title: L10n.string("create.workflowContent.storyPrepared"),
                         detail: storyDetail,
                         isReady: presentation.storySummary.hasScenes
                     )
                     MomentsCreateReadinessRow(
-                        title: "Video plan",
+                        title: L10n.string("create.workflowContent.videoPlan"),
                         detail: planDetail,
                         isReady: presentation.finalRenderSummary.renderPlan != nil
                     )
                     MomentsCreateReadinessRow(
-                        title: "Credits",
-                        detail: "\(MomentsCreditCopy.countTitle(presentation.finalRenderSummary.creditCost)) reserved when video starts",
+                        title: L10n.string("create.workflowContent.credits"),
+                        detail: L10n.string("create.workflowContent.creditsReserved", MomentsCreditCopy.countTitle(presentation.finalRenderSummary.creditCost)),
                         isReady: presentation.finalRenderSummary.creditCost > 0
                     )
                 }
@@ -1081,20 +1085,24 @@ private struct MomentsCreateReadinessChecklistCard: View {
 
     private var mediaDetail: String {
         let count = presentation.mediaSummary.reviewCount
-        return count > 0 ? "\(count) \(count == 1 ? "item" : "items") ready" : "Add media first"
+        return count > 0
+            ? L10n.string(count == 1 ? "create.workflowContent.itemReady" : "create.workflowContent.itemsReady", count)
+            : L10n.string("create.workflowContent.addMediaFirst")
     }
 
     private var storyDetail: String {
         let count = presentation.storySummary.reviewScenes.count
-        return count > 0 ? "\(count) \(count == 1 ? "scene" : "scenes") ready" : "Prepare the story first"
+        return count > 0
+            ? L10n.string(count == 1 ? "create.workflowContent.sceneReady" : "create.workflowContent.scenesReady", count)
+            : L10n.string("create.workflowContent.prepareStoryFirst")
     }
 
     private var planDetail: String {
         guard let plan = presentation.finalRenderSummary.renderPlan?.plan else {
-            return "Prepared before video creation"
+            return L10n.string("create.workflowContent.preparedBeforeVideo")
         }
         let seconds = plan.targetDurationMs / 1000
-        return "\(seconds)s · \(plan.usedAssetCount) media items"
+        return L10n.string("create.workflowContent.planDetail", seconds, plan.usedAssetCount)
     }
 }
 
@@ -1108,7 +1116,7 @@ private struct MomentsCreateFinalVideoOptionsCard: View {
             HStack(spacing: 10) {
                 MomentsCreateReviewMetric(
                     title: reviewAllowanceTitle,
-                    subtitle: "Story reviews",
+                    subtitle: L10n.string("create.workflowContent.storyReviews"),
                     systemImage: "list.bullet.clipboard.fill"
                 )
                 MomentsCreateReviewMetric(
@@ -1120,7 +1128,7 @@ private struct MomentsCreateFinalVideoOptionsCard: View {
 
             Toggle(isOn: $removesWatermark) {
                 VStack(alignment: .leading, spacing: 3) {
-                    Text("Remove Moments AV mark")
+                    Text(L10n.string("create.workflowContent.removeMark"))
                         .font(.system(size: 13, weight: .black))
                         .foregroundStyle(AVBrandColor.textPrimary)
                     Text(watermarkDetail)
@@ -1133,7 +1141,7 @@ private struct MomentsCreateFinalVideoOptionsCard: View {
             .disabled(balance.watermarkFreeIncluded)
 
             if !canAffordSelectedCost {
-                Label("Add \(MomentsCreditCopy.countTitle(missingCredits)) to create this version.", systemImage: "exclamationmark.triangle.fill")
+                Label(L10n.string("create.workflowContent.addCreditsForVersion", MomentsCreditCopy.countTitle(missingCredits)), systemImage: "exclamationmark.triangle.fill")
                     .font(.system(size: 12, weight: .bold))
                     .foregroundStyle(.orange)
                     .fixedSize(horizontal: false, vertical: true)
@@ -1161,16 +1169,16 @@ private struct MomentsCreateFinalVideoOptionsCard: View {
 
     private var watermarkSubtitle: String {
         if balance.watermarkFreeIncluded {
-            return "No mark with Pro"
+            return L10n.string("create.workflowContent.noMarkWithPro")
         }
-        return removesWatermark ? "No mark selected" : "Includes mark"
+        return removesWatermark ? L10n.string("create.workflowContent.noMarkSelected") : L10n.string("create.workflowContent.includesMark")
     }
 
     private var watermarkDetail: String {
         if balance.watermarkFreeIncluded {
-            return "Included with Pro."
+            return L10n.string("create.workflowContent.includedWithPro")
         }
-        return "Optional clean export for \(MomentsCreditCopy.countTitle(balance.watermarkRemovalCreditCost))."
+        return L10n.string("create.workflowContent.optionalCleanExport", MomentsCreditCopy.countTitle(balance.watermarkRemovalCreditCost))
     }
 
     private var canAffordSelectedCost: Bool {
@@ -1216,7 +1224,7 @@ private struct MomentsCreateReviewMediaTimingCard: View {
     var body: some View {
         AVAppShellCard {
             VStack(alignment: .leading, spacing: 12) {
-                Text("Media and timing")
+                Text(L10n.string("create.workflowContent.mediaAndTiming"))
                     .font(.system(size: 13, weight: .black))
                     .foregroundStyle(AVBrandColor.textPrimary)
 
@@ -1228,20 +1236,20 @@ private struct MomentsCreateReviewMediaTimingCard: View {
                     )
                     MomentsCreateReviewMetric(
                         title: presentation.template.duration,
-                        subtitle: "\(creditCostTitle) final video",
+                        subtitle: L10n.string("create.workflowContent.finalVideoCost", creditCostTitle),
                         systemImage: "timer"
                     )
                 }
 
                 if presentation.mediaSummary.reviewCount == 0 {
-                    Label("Avi needs the media before creating the video.", systemImage: "exclamationmark.triangle.fill")
+                    Label(L10n.string("create.workflowContent.needsMediaBeforeVideo"), systemImage: "exclamationmark.triangle.fill")
                         .font(.system(size: 12, weight: .bold))
                         .foregroundStyle(.orange)
                         .fixedSize(horizontal: false, vertical: true)
                 } else {
                     MomentsCreateReviewMediaStrip(mediaSummary: presentation.mediaSummary)
 
-                    Text("Avi will use these selected items, story direction, and timing for the final edit.")
+                    Text(L10n.string("create.workflowContent.finalEditSummary"))
                         .font(.system(size: 12, weight: .semibold))
                         .foregroundStyle(AVBrandColor.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)
@@ -1252,11 +1260,11 @@ private struct MomentsCreateReviewMediaTimingCard: View {
 
     private var mediaCountTitle: String {
         let count = presentation.mediaSummary.reviewCount
-        return "\(count) \(count == 1 ? "item" : "items")"
+        return L10n.string(count == 1 ? "create.workflowContent.itemCount" : "create.workflowContent.itemsCount", count)
     }
 
     private var mediaSubtitle: String {
-        presentation.mediaSummary.reviewCount > 0 ? "Selected for this video" : "Not ready"
+        presentation.mediaSummary.reviewCount > 0 ? L10n.string("create.workflowContent.selectedForVideo") : L10n.string("create.workflowContent.notReady")
     }
 
     private var creditCostTitle: String {
@@ -1361,7 +1369,7 @@ private struct MomentsCreateCompactAviGuide: View {
             }
         }
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("Avi. \(message)")
+        .accessibilityLabel(L10n.string("create.workflowContent.aviAccessibility", message))
     }
 
     private var title: String {
@@ -1463,7 +1471,7 @@ private struct MomentsCreatePrimaryActionBar: View {
                    presentation.mediaSummary.isImporting {
                     ProgressView(value: uploadProgress.fractionCompleted ?? 0)
                         .tint(AVBrandColor.accent)
-                        .accessibilityLabel("Uploading media")
+                        .accessibilityLabel(L10n.string("create.workflowContent.uploadingMedia"))
                         .accessibilityValue(uploadProgress.title)
                 }
 
@@ -1500,7 +1508,7 @@ private struct MomentsCreatePrimaryActionBar: View {
                     .font(.system(size: 14, weight: .black))
                 } else if presentation.finalRenderSummary.canRetryFinalVideoDownload {
                     Button(action: retryFinalVideoDownload) {
-                        Label("Retry final video download", systemImage: "arrow.down.circle.fill")
+                        Label(L10n.string("create.workflowContent.retryFinalDownload"), systemImage: "arrow.down.circle.fill")
                             .frame(maxWidth: .infinity)
                     }
                     .buttonStyle(MomentsCreateSoftActionButtonStyle())
@@ -1615,13 +1623,13 @@ private struct MomentsCreatePrimaryActionBar: View {
     private var statusMessage: String? {
         if presentation.finalRenderSummary.pendingGalleryVideo != nil {
             return presentation.finalRenderSummary.statusMessage
-                ?? "Final video is saved on this device. Finish it into Gallery or create another version."
+                ?? L10n.string("workflow.final.savedLocal")
         }
         if presentation.finalRenderSummary.isGenerating {
-            return presentation.finalRenderSummary.statusMessage ?? "Creating video..."
+            return presentation.finalRenderSummary.statusMessage ?? L10n.string("create.final.action.creating")
         }
         if presentation.previewSummary.isGenerating {
-            return presentation.previewSummary.statusMessage ?? "Reviewing story..."
+            return presentation.previewSummary.statusMessage ?? L10n.string("create.preview.action.reviewing")
         }
         if presentation.storySummary.isDrafting {
             return presentation.storySummary.statusMessage ?? L10n.string("create.preparation.prepareStory.progress")
@@ -1808,12 +1816,12 @@ private struct MomentsCreateRealtimeRenderStatusPanel: View {
             if let progressFraction = status.progressFraction {
                 ProgressView(value: progressFraction)
                     .tint(iconColor)
-                    .accessibilityLabel("Final video progress")
+                    .accessibilityLabel(L10n.string("create.workflowContent.finalVideoProgress"))
                     .accessibilityValue("\(Int((progressFraction * 100).rounded())) percent")
             }
 
             if status.isActive && !status.canEditDraft {
-                Label("Editing is locked while the final video is being created.", systemImage: "lock.fill")
+                Label(L10n.string("create.workflowContent.editingLocked"), systemImage: "lock.fill")
                     .font(.caption2)
                     .fontWeight(.bold)
                     .foregroundStyle(AVBrandColor.textSecondary)
@@ -1865,7 +1873,7 @@ private struct MomentsCreateLegacyCompactAviGuide: View {
                     .contentShape(Circle())
             }
             .buttonStyle(MomentsCreateSubtleInlineButtonStyle())
-            .accessibilityLabel("Avi options")
+            .accessibilityLabel(L10n.string("create.workflowContent.aviOptions"))
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 10)
@@ -1875,18 +1883,18 @@ private struct MomentsCreateLegacyCompactAviGuide: View {
                 .stroke(AVBrandColor.borderSubtle.opacity(0.7), lineWidth: 1)
         }
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("Avi tip. \(message)")
+        .accessibilityLabel(L10n.string("create.workflowContent.aviTipAccessibility", message))
     }
 
     private var title: String {
         if presentation.finalRenderSummary.finalExport != nil {
-            return "Ready"
+            return L10n.string("create.render.status.ready")
         }
         if presentation.previewSummary.latestPreview != nil {
-            return "Story review"
+            return L10n.string("create.workflowContent.storyReviewTitle")
         }
         if presentation.previewSummary.latestPreviewJob != nil || presentation.finalRenderSummary.latestFinalJob != nil {
-            return "Working"
+            return L10n.string("create.render.status.working")
         }
         if presentation.canGeneratePreview {
             return L10n.string("create.aviStatus.storyReady.title")
@@ -1894,29 +1902,29 @@ private struct MomentsCreateLegacyCompactAviGuide: View {
         if presentation.mediaSummary.selectedCount > 0 || !presentation.mediaSummary.syncedMediaAssets.isEmpty {
             return L10n.string("create.aviStatus.goodSelection.title")
         }
-        return "Avi tip"
+        return L10n.string("create.workflowContent.aviTip")
     }
 
     private var message: String {
         if presentation.finalRenderSummary.finalExport != nil {
-            return "Your video is ready to export or share."
+            return L10n.string("create.workflowContent.tipFinalReady")
         }
         if presentation.previewSummary.latestPreview != nil {
-            return "Check the story review. If it feels right, create the final video."
+            return L10n.string("create.workflowContent.tipReviewReady")
         }
         if presentation.finalRenderSummary.latestFinalJob != nil {
-            return "Avi is finishing the final video. You can refresh when needed."
+            return L10n.string("create.workflowContent.tipFinalWorking")
         }
         if presentation.previewSummary.latestPreviewJob != nil {
-            return "Avi is reviewing the story from your selected moments."
+            return L10n.string("create.workflowContent.tipPreviewWorking")
         }
         if presentation.canGeneratePreview {
-            return "The story plan is ready. Next step: create the video."
+            return L10n.string("create.workflowContent.tipStoryReady")
         }
         if presentation.mediaSummary.selectedCount > 0 || !presentation.mediaSummary.syncedMediaAssets.isEmpty {
-            return "Avi will shape these moments into a simple story plan."
+            return L10n.string("create.workflowContent.tipMediaReady")
         }
-        return "Pick the moments. Avi will shape the story, mood, and pacing."
+        return L10n.string("create.workflowContent.tipPickMoments")
     }
 }
 

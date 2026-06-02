@@ -717,13 +717,17 @@ private struct MomentsCreateSyncedMediaEditorTile: View {
         }
         .shadow(color: AVBrandColor.ink.opacity(0.08), radius: 5, x: 0, y: 2)
         .rotationEffect(.degrees(rotationDegrees))
-        .accessibilityLabel("\(media.kind.capitalized) \(index + 1)")
+        .accessibilityLabel(L10n.string("create.mediaCard.mediaAccessibility", localizedKind, index + 1))
     }
 
     private var mediaFrame: CGSize {
         media.kind == "video"
             ? CGSize(width: 96, height: 54)
             : CGSize(width: 96, height: 86)
+    }
+
+    private var localizedKind: String {
+        media.kind == "video" ? L10n.string("create.mediaCard.kind.video") : L10n.string("create.mediaCard.kind.photo")
     }
 
     private var cardBackground: Color {
@@ -746,7 +750,7 @@ private struct MomentsCreateMediaImportProgressCard: View {
                     .frame(width: 44, height: 32)
 
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("Adding moments")
+                    Text(L10n.string("create.mediaCard.import.title"))
                         .font(.system(size: 14, weight: .black))
                         .foregroundStyle(AVBrandColor.textPrimary)
 
@@ -760,7 +764,7 @@ private struct MomentsCreateMediaImportProgressCard: View {
                 Spacer(minLength: 0)
             }
         }
-        .accessibilityLabel("Adding moments. \(progressMessage)")
+        .accessibilityLabel(L10n.string("create.mediaCard.import.accessibility", progressMessage))
     }
 
     @ViewBuilder
@@ -786,12 +790,24 @@ private struct MomentsCreateMediaImportProgressCard: View {
 
     private var progressMessage: String {
         if let progress, progress.totalCount > 0 {
-            return "Reading \(progress.title) \(progress.totalCount == 1 ? "item" : "items")."
+            return L10n.string(
+                "create.mediaCard.import.progress",
+                progress.title,
+                progress.totalCount == 1
+                    ? L10n.string("create.mediaCard.item.singular")
+                    : L10n.string("create.mediaCard.item.plural")
+            )
         }
         if selectedCount == 0 {
-            return "Avi is reading the selected photos and clips."
+            return L10n.string("create.mediaCard.import.readingSelected")
         }
-        return "Keeping your current \(selectedCount) \(selectedCount == 1 ? "item" : "items") while new media is added."
+        return L10n.string(
+            "create.mediaCard.import.keepingCurrent",
+            selectedCount,
+            selectedCount == 1
+                ? L10n.string("create.mediaCard.item.singular")
+                : L10n.string("create.mediaCard.item.plural")
+        )
     }
 }
 
@@ -849,13 +865,17 @@ private struct MomentsCreateManageableMediaTile: View {
             .padding(1)
             .disabled(isImporting)
             .opacity(isImporting ? 0.45 : 1)
-            .accessibilityLabel("Remove media")
+            .accessibilityLabel(L10n.string("create.mediaCard.removeMedia"))
         }
-        .accessibilityLabel("\(media.kind.capitalized) \(index + 1)")
+        .accessibilityLabel(L10n.string("create.mediaCard.mediaAccessibility", localizedKind, index + 1))
     }
 
     private var mediaAspectRatio: CGFloat {
         media.kind == "video" ? 16.0 / 9.0 : 1.0
+    }
+
+    private var localizedKind: String {
+        media.kind == "video" ? L10n.string("create.mediaCard.kind.video") : L10n.string("create.mediaCard.kind.photo")
     }
 
     private var mediaFrame: CGSize {
@@ -924,7 +944,7 @@ private struct MomentsCreateMediaZoomView: View {
             }
             .padding(.top, 18)
             .padding(.trailing, 18)
-            .accessibilityLabel("Close preview")
+            .accessibilityLabel(L10n.string("create.mediaCard.closePreview"))
         }
     }
 
@@ -938,7 +958,7 @@ private struct MomentsCreateMediaZoomView: View {
             VStack(spacing: 12) {
                 Image(systemName: media.kind == "video" ? "video.fill" : "photo.fill")
                     .font(.system(size: 44, weight: .semibold))
-                Text(media.kind == "video" ? "Video preview" : "Media preview")
+                Text(media.kind == "video" ? L10n.string("create.mediaCard.videoPreview") : L10n.string("create.mediaCard.mediaPreview"))
                     .font(.system(size: 17, weight: .black))
             }
             .foregroundStyle(.white.opacity(0.82))
@@ -1035,7 +1055,7 @@ private struct MomentsCreateEditorAviPanel: View {
                 Spacer(minLength: 0)
 
                 Menu {
-                    Section("Your edits") {
+                    Section(L10n.string("create.mediaCard.menu.yourEdits")) {
                         if canAddMedia && !isReordering {
                             Button(action: addMedia) {
                             Label(L10n.string("create.media.add"), systemImage: "photo.badge.plus")
@@ -1054,7 +1074,7 @@ private struct MomentsCreateEditorAviPanel: View {
                     }
 
                     if !isReordering {
-                        Section("Avi automatic") {
+                        Section(L10n.string("create.mediaCard.menu.aviAutomatic")) {
                             if hasUndoAviOrder {
                                 Button(action: undoAviOrder) {
                                     Label(L10n.string("create.media.undoAviOrder"), systemImage: "arrow.uturn.backward")
@@ -1085,17 +1105,17 @@ private struct MomentsCreateEditorAviPanel: View {
         if selectedCount == 0 {
             return L10n.string("create.media.startTitle")
         }
-        return "\(selectedCount) selected"
+        return L10n.string("create.media.selectedCount", selectedCount)
     }
 
     private var panelMessage: String {
         if isReordering {
-            return "Drag moments into the order Avi should follow."
+            return L10n.string("create.mediaCard.reorderMessage")
         }
         if selectedCount == 0 {
             return L10n.string("create.media.panelDetail")
         }
-        return "Review the media, add more, or let Avi suggest an order."
+        return L10n.string("create.mediaCard.reviewMessage")
     }
 }
 
@@ -1128,10 +1148,10 @@ private struct MomentsCreateMediaReorderRow: View {
         if let capturedAt = media.capturedAt {
             parts.append(capturedAt.formatted(date: .abbreviated, time: .shortened))
         } else {
-            parts.append("No date")
+            parts.append(L10n.string("create.mediaCard.noDate"))
         }
 
-        parts.append(media.kind == "video" ? "Video" : "Photo")
+        parts.append(media.kind == "video" ? L10n.string("create.mediaCard.kind.video") : L10n.string("create.mediaCard.kind.photo"))
         parts.append(media.displaySize)
 
         return parts.joined(separator: " · ")
@@ -1271,7 +1291,7 @@ struct MomentsCreateEditorPageHeader: View {
                     .background(.white.opacity(0.92), in: Circle())
                     .shadow(color: AVBrandColor.ink.opacity(0.08), radius: 10, x: 0, y: 4)
             }
-            .accessibilityLabel("Back to dashboard")
+            .accessibilityLabel(L10n.string("create.mediaCard.backToDashboard"))
 
             Text(title)
                 .font(.system(size: 18, weight: .black))

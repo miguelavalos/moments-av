@@ -198,7 +198,7 @@ struct MomentsCreateMediaRow: View {
     var body: some View {
         AVAppShellInfoRow(
             title: media.originalFilename,
-            detail: "\(media.kind.capitalized) · \(media.displaySize)",
+            detail: "\(localizedKind(media.kind)) · \(media.displaySize)",
             systemImage: media.kind == "video" ? "video.fill" : "photo.fill"
         ) {
             Button(role: .destructive, action: remove) {
@@ -206,8 +206,12 @@ struct MomentsCreateMediaRow: View {
                     .font(.system(size: 18, weight: .semibold))
             }
             .buttonStyle(.plain)
-            .accessibilityLabel("Remove \(media.originalFilename)")
+            .accessibilityLabel(L10n.string("create.mediaRows.removeNamed", media.originalFilename))
         }
+    }
+
+    private func localizedKind(_ kind: String) -> String {
+        kind == "video" ? L10n.string("create.mediaCard.kind.video") : L10n.string("create.mediaCard.kind.photo")
     }
 }
 
@@ -233,7 +237,11 @@ struct MomentsCreateMediaThumbnailTile: View {
             .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
         }
         .buttonStyle(.plain)
-        .accessibilityLabel("\(media.kind.capitalized) \(index + 1)")
+        .accessibilityLabel(L10n.string("create.mediaCard.mediaAccessibility", localizedKind, index + 1))
+    }
+
+    private var localizedKind: String {
+        media.kind == "video" ? L10n.string("create.mediaCard.kind.video") : L10n.string("create.mediaCard.kind.photo")
     }
 
     @ViewBuilder
@@ -264,7 +272,7 @@ struct MomentsCreateMediaDetailSheet: View {
             preview
 
             VStack(alignment: .leading, spacing: 6) {
-                Text(media.kind.capitalized)
+                Text(localizedKind)
                     .font(.system(size: 20, weight: .black))
                     .foregroundStyle(AVBrandColor.textPrimary)
 
@@ -274,7 +282,7 @@ struct MomentsCreateMediaDetailSheet: View {
             }
 
             Button(role: .destructive, action: remove) {
-                Label("Remove from project", systemImage: "trash")
+                Label(L10n.string("create.mediaRows.removeFromProject"), systemImage: "trash")
                     .frame(maxWidth: .infinity)
             }
             .buttonStyle(.bordered)
@@ -307,6 +315,10 @@ struct MomentsCreateMediaDetailSheet: View {
             .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
         }
     }
+
+    private var localizedKind: String {
+        media.kind == "video" ? L10n.string("create.mediaCard.kind.video") : L10n.string("create.mediaCard.kind.photo")
+    }
 }
 
 struct MomentsCreateSyncedMediaThumbnailTile: View {
@@ -324,7 +336,11 @@ struct MomentsCreateSyncedMediaThumbnailTile: View {
         }
         .aspectRatio(1, contentMode: .fit)
         .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-        .accessibilityLabel("\(media.kind.capitalized) \(index + 1)")
+        .accessibilityLabel(L10n.string("create.mediaCard.mediaAccessibility", localizedKind, index + 1))
+    }
+
+    private var localizedKind: String {
+        media.kind == "video" ? L10n.string("create.mediaCard.kind.video") : L10n.string("create.mediaCard.kind.photo")
     }
 }
 
