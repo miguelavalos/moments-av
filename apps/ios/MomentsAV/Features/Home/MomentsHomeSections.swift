@@ -76,7 +76,7 @@ struct MomentsHomeMomentStatusCard: View {
             if let latestProject = projectSummary.latestProject {
                 MomentsHomeLatestMomentRow(
                     title: latestProject.title,
-                    detail: MomentsProjectFormatting.compactDetail(for: latestProject),
+                    detail: MomentsMomentFormatting.compactDetail(for: latestProject),
                     openMoment: openInProgress
                 )
             } else if isSignedIn {

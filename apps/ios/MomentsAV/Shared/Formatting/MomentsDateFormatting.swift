@@ -7,7 +7,7 @@ enum MomentsDateFormatting {
     }
 }
 
-enum MomentsProjectFormatting {
+enum MomentsMomentFormatting {
     static func updatedAt(_ project: MomentDraftProject) -> String {
         "Updated \(MomentsDateFormatting.formattedDate(milliseconds: project.updatedAt))"
     }

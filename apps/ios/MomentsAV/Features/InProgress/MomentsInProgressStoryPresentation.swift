@@ -1,9 +1,9 @@
 import Foundation
 
 struct MomentsInProgressStorySectionPresentation: Equatable {
-    let title = L10n.string("project.story.title")
+    let title = L10n.string("moment.story.title")
     let emptySystemImage = "text.bubble"
-    let emptyMessage = L10n.string("project.story.empty")
+    let emptyMessage = L10n.string("moment.story.empty")
     let storyScenes: [MomentsInProgressStoryScenePresentation]
 
     init(storyScenes: [MomentStoryScene]) {
@@ -18,7 +18,7 @@ struct MomentsInProgressStoryScenePresentation: Identifiable, Equatable {
 
     init(scene: MomentStoryScene) {
         id = scene.id
-        title = L10n.string("project.story.scene", Int(scene.sceneIndex) + 1)
+        title = L10n.string("moment.story.scene", Int(scene.sceneIndex) + 1)
         caption = scene.caption
     }
 

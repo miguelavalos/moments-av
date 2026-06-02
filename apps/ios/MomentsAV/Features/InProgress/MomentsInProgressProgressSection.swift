@@ -6,7 +6,7 @@ struct MomentsInProgressProgressSection: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            AVAppShellSectionHeader(title: L10n.string("project.progress.title"))
+            AVAppShellSectionHeader(title: L10n.string("moment.progress.title"))
 
             VStack(alignment: .leading, spacing: 10) {
                 ForEach(MomentsInProgressProgressModel(workspace: workspace).phases) { phase in

@@ -415,7 +415,7 @@ struct MomentsCreateSyncedMediaRow: View {
     var body: some View {
         AVAppShellInfoRow(
             title: "\(MomentsProjectStatusRules.displayKind(media.kind)) \(Int(media.sortOrder) + 1)",
-            detail: MomentsProjectFormatting.mediaAssetDetail(media),
+            detail: MomentsMomentFormatting.mediaAssetDetail(media),
             systemImage: media.kind == "video" ? "video.fill" : "photo.fill"
         ) {
             Image(systemName: "checkmark.circle.fill")

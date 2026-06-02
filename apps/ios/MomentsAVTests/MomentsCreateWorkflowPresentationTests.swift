@@ -38,9 +38,9 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
             workspaceSummary: MomentsCreateWorkspaceSummary(mediaCount: 2, sceneCount: 1)
         )
 
-        XCTAssertEqual(presentation.createDraftTitle, "Starting project...")
+        XCTAssertEqual(presentation.createDraftTitle, "Starting Moment...")
         XCTAssertEqual(presentation.activeProjectLabel, "Continuing project")
-        XCTAssertEqual(presentation.activeProjectDetail, "Create is attached to this existing project.")
+        XCTAssertEqual(presentation.activeProjectDetail, "Create is attached to this existing Moment.")
         XCTAssertTrue(presentation.showsActiveProject)
         XCTAssertTrue(presentation.isDraftLocked)
         XCTAssertTrue(presentation.isCreatingDraft)

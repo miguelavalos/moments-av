@@ -81,14 +81,14 @@ struct MomentsInProgressListRowPresentation: Identifiable, Equatable {
         self.metadata = [
             MomentsInProgressListMetadataPresentation(
                 systemImage: "clock",
-                text: MomentsProjectFormatting.updatedAt(project)
+                text: MomentsMomentFormatting.updatedAt(project)
             ),
             MomentsInProgressListMetadataPresentation(
                 systemImage: "text.bubble",
-                text: MomentsProjectFormatting.previewUsage(project)
+                text: MomentsMomentFormatting.previewUsage(project)
             )
         ]
-        self.statusTitle = MomentsProjectFormatting.statusTitle(project)
+        self.statusTitle = MomentsMomentFormatting.statusTitle(project)
         self.creditCostTitle = Self.creditCostTitle(project.creditCost)
         self.accessorySystemImage = isSelected ? "chevron.up.circle.fill" : "chevron.right.circle"
         self.isSelected = isSelected

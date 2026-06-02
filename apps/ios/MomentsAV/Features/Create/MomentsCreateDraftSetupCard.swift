@@ -321,7 +321,7 @@ private extension MomentsCreateAviGuidance {
         case .warning:
             return L10n.string("create.guidance.eyebrow.warning")
         case .happy, .celebrate:
-            return L10n.string("project.nextAction.createVideo.title")
+            return L10n.string("moment.nextAction.createVideo.title")
         case .focused:
             return L10n.string("create.guidance.eyebrow.keepGoing")
         case .curious:
@@ -391,7 +391,7 @@ private struct MomentsCreateEconomyPanel: View {
                 Spacer(minLength: 12)
 
                 VStack(alignment: .trailing, spacing: 4) {
-                    Text(L10n.string("project.artifact.final.title"))
+                    Text(L10n.string("moment.artifact.final.title"))
                         .font(.system(size: 12, weight: .black))
                         .foregroundStyle(AVBrandColor.textSecondary)
                         .textCase(.uppercase)

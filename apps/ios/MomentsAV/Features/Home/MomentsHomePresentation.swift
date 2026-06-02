@@ -20,7 +20,7 @@ struct MomentsHomePresentation {
         let latestInProgressAction = latestInProgressProject.map {
             MomentsHomeAction(
                 title: L10n.string("home.action.continueLatest.title"),
-                detail: MomentsProjectFormatting.compactDetail(for: $0, includeTitle: true),
+                detail: MomentsMomentFormatting.compactDetail(for: $0, includeTitle: true),
                 systemImage: "arrow.right.circle",
                 isProminent: true
             )

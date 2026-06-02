@@ -141,7 +141,7 @@ final class MomentsInProgressWorkspacePresentationTests: XCTestCase {
 
         XCTAssertEqual(presentation.title, "Story")
         XCTAssertEqual(presentation.emptySystemImage, "text.bubble")
-        XCTAssertEqual(presentation.emptyMessage, "Generate a story draft after the project has enough media.")
+        XCTAssertEqual(presentation.emptyMessage, "Prepare the story after this Moment has enough media.")
         XCTAssertEqual(presentation.storyScenes.map(\.id), ["scene-1", "scene-2"])
     }
 

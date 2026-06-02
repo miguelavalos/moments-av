@@ -24,9 +24,9 @@ struct MomentsCreateActiveProjectCard: View {
             AVAppShellCard {
                 AVAppShellInfoRow(
                     title: activeProject.title,
-                    detail: MomentsProjectFormatting.updatedAt(activeProject),
+                    detail: MomentsMomentFormatting.updatedAt(activeProject),
                     systemImage: "rectangle.stack",
-                    eyebrow: MomentsProjectFormatting.statusTitle(activeProject)
+                    eyebrow: MomentsMomentFormatting.statusTitle(activeProject)
                 )
             }
         }

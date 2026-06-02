@@ -117,7 +117,7 @@ enum MomentsCreateTestFixtures {
             isRefreshing: false,
             unavailableMessage: "Unavailable.",
             notConfiguredMessage: "Not configured.",
-            missingProjectMessage: "Missing project.",
+            missingProjectMessage: "Missing Moment.",
             missingJobMessage: "Missing job.",
             missingProviderRequestMessage: "Missing request."
         )

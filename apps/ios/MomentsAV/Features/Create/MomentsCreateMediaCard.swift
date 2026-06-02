@@ -650,7 +650,7 @@ private struct MomentsCreateMediaEmptyState: View {
                 .accessibilityHidden(true)
 
                 VStack(spacing: 4) {
-                    Text(L10n.string("project.progress.noMedia"))
+                    Text(L10n.string("moment.progress.noMedia"))
                         .font(.system(size: 17, weight: .black))
                         .foregroundStyle(AVBrandColor.textPrimary)
 

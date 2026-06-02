@@ -76,7 +76,7 @@ enum MomentsPreviewRules {
         case .missingProject:
             return missingProjectMessage
         case .previewLimitReached:
-            return "Story Review limit reached for this project."
+            return "Story Review limit reached for this Moment."
         case .insufficientCredits:
             return insufficientCreditsMessage
         case .storyNotReady:

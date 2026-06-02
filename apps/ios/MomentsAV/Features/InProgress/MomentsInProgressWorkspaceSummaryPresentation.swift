@@ -22,22 +22,22 @@ struct MomentsInProgressWorkspaceSummaryPresentation: Equatable {
 
         tiles = [
             MomentsInProgressSummaryTilePresentation(
-                title: L10n.string("project.summary.status"),
+                title: L10n.string("moment.summary.status"),
                 value: MomentsProjectStatusRules.displayTitle(for: workspace.project.status),
                 systemImage: "circle.dashed"
             ),
             MomentsInProgressSummaryTilePresentation(
-                title: L10n.string("project.kind.storyReview"),
+                title: L10n.string("moment.kind.storyReview"),
                 value: Self.summaryValue(for: latestPreview),
                 systemImage: "text.bubble"
             ),
             MomentsInProgressSummaryTilePresentation(
-                title: L10n.string("project.summary.final"),
+                title: L10n.string("moment.summary.final"),
                 value: Self.summaryValue(for: finalExport),
                 systemImage: "square.and.arrow.up"
             ),
             MomentsInProgressSummaryTilePresentation(
-                title: L10n.string("project.summary.latestJob"),
+                title: L10n.string("moment.summary.latestJob"),
                 value: Self.latestJobValue(latestRenderJob),
                 systemImage: "gearshape.2"
             )
@@ -45,12 +45,12 @@ struct MomentsInProgressWorkspaceSummaryPresentation: Equatable {
     }
 
     private static func latestJobValue(_ latestRenderJob: MomentRenderJob?) -> String {
-        guard let latestRenderJob else { return L10n.string("project.progress.notStarted") }
+        guard let latestRenderJob else { return L10n.string("moment.progress.notStarted") }
         return "\(MomentsProjectStatusRules.displayKind(latestRenderJob.kind)) · \(MomentsProjectStatusRules.displayTitle(for: latestRenderJob.status))"
     }
 
     private static func summaryValue(for artifact: MomentArtifact?) -> String {
-        guard let artifact else { return L10n.string("project.progress.notReady") }
+        guard let artifact else { return L10n.string("moment.progress.notReady") }
         return MomentsProjectStatusRules.displayTitle(for: artifact.status)
     }
 }

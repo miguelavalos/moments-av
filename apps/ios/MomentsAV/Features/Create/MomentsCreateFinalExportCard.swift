@@ -13,7 +13,7 @@ struct MomentsCreateFinalExportCard: View {
         AVAppShellCard {
             VStack(alignment: .leading, spacing: 14) {
                 AVAppShellContentHeader(
-                    title: L10n.string("project.artifact.final.title"),
+                    title: L10n.string("moment.artifact.final.title"),
                     detail: L10n.string("create.final.detail")
                 )
 

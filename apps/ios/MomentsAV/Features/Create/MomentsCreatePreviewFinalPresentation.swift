@@ -8,7 +8,7 @@ struct MomentsCreatePreviewPresentation: Equatable {
     var refreshAvailabilityMessage: String?
 
     var usageTitle: String? {
-        summary.activeProject.map(MomentsProjectFormatting.previewUsage)
+        summary.activeProject.map(MomentsMomentFormatting.previewUsage)
     }
 
     var previewArtifactMessage: String? {

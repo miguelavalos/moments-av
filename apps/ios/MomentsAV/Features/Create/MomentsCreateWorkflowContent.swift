@@ -1769,7 +1769,7 @@ private struct MomentsCreatePrimaryActionBar: View {
         if presentation.finalRenderSummary.finalExport != nil || presentation.finalRenderSummary.latestFinalJob != nil {
             return L10n.string("create.final.video")
         }
-        return L10n.string("project.nextAction.createVideo.title")
+        return L10n.string("moment.nextAction.createVideo.title")
     }
 
     private var creditCostTitle: String {
