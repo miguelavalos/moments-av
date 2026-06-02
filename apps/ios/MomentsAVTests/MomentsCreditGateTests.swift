@@ -322,6 +322,33 @@ final class MomentsCreditGateTests: XCTestCase {
                 latestPreview: nil
             )
         )
+
+        let staleStoryMoment = InProgressMoment(
+            id: moment.id,
+            template: moment.template,
+            status: "in_progress",
+            title: moment.title,
+            tone: moment.tone,
+            tempo: moment.tempo,
+            occasion: moment.occasion,
+            details: moment.details,
+            durationSeconds: moment.durationSeconds,
+            creditCost: moment.creditCost,
+            previewCount: moment.previewCount,
+            previewLimit: moment.previewLimit,
+            updatedAt: moment.updatedAt
+        )
+        XCTAssertFalse(MomentsFinalRenderRules.canPreparePlan(moment: staleStoryMoment))
+        XCTAssertTrue(MomentsFinalRenderRules.canPreparePlan(moment: staleStoryMoment, storySceneCount: 1))
+        XCTAssertTrue(
+            MomentsFinalRenderRules.canGenerate(
+                moment: staleStoryMoment,
+                template: .birthdayMessage,
+                balance: balance,
+                latestPreview: nil,
+                storySceneCount: 1
+            )
+        )
     }
 
     private func purchaseCatalogEntry(productId: String) -> MomentsPurchaseCatalog.Entry {

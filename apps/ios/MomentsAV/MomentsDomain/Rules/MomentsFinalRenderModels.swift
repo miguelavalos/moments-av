@@ -154,17 +154,20 @@ enum MomentsFinalRenderRules {
         moment: InProgressMoment,
         template: MomentTemplate,
         balance: MomentsCreditBalance,
-        latestPreview: MomentArtifact?
+        latestPreview: MomentArtifact?,
+        storySceneCount: Int = 0
     ) -> Bool {
         availability(
             moment: moment,
             template: template,
             balance: balance,
-            latestPreview: latestPreview
+            latestPreview: latestPreview,
+            storySceneCount: storySceneCount
         ).canGenerate
     }
 
-    static func canPreparePlan(moment: InProgressMoment?) -> Bool {
+    static func canPreparePlan(moment: InProgressMoment?, storySceneCount: Int = 0) -> Bool {
+        if storySceneCount > 0 { return true }
         guard let moment else { return false }
         return moment.status == "story_ready"
             || moment.status == "preview_ready"
@@ -175,12 +178,13 @@ enum MomentsFinalRenderRules {
         moment: InProgressMoment?,
         template: MomentTemplate,
         balance: MomentsCreditBalance,
-        latestPreview: MomentArtifact?
+        latestPreview: MomentArtifact?,
+        storySceneCount: Int = 0
     ) -> Availability {
         guard let moment else {
             return Availability(canGenerate: false, blockReason: .missingMoment)
         }
-        if !canPreparePlan(moment: moment) {
+        if !canPreparePlan(moment: moment, storySceneCount: storySceneCount) {
             return Availability(canGenerate: false, blockReason: .storyNotReady)
         }
         if !MomentsCreditGate.canAfford(template, balance: balance) {

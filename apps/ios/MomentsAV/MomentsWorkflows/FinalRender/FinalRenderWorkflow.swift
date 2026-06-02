@@ -67,7 +67,8 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
                 moment: moment,
                 template: template,
                 balance: creditBalanceProvider.currentCreditBalance,
-                latestPreview: latestPreview
+                latestPreview: latestPreview,
+                storySceneCount: activeWorkspace?.storyScenes.count ?? 0
             )
             && !isGenerating
     }
@@ -75,7 +76,10 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
     func canPreparePlan() -> Bool {
         currentUserProvider.currentUserId != nil
             && isConfigured
-            && MomentsFinalRenderRules.canPreparePlan(moment: activeWorkspace?.moment)
+            && MomentsFinalRenderRules.canPreparePlan(
+                moment: activeWorkspace?.moment,
+                storySceneCount: activeWorkspace?.storyScenes.count ?? 0
+            )
             && !isGenerating
     }
 
@@ -125,7 +129,8 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
                 moment: activeWorkspace?.moment,
                 template: template,
                 balance: creditBalanceProvider.currentCreditBalance,
-                latestPreview: activeWorkspace?.latestArtifact(kind: "preview")
+                latestPreview: activeWorkspace?.latestArtifact(kind: "preview"),
+                storySceneCount: activeWorkspace?.storyScenes.count ?? 0
             )
             guard availability.canGenerate else {
                 statusMessage = generateBlockMessage(availability)
