@@ -74,7 +74,7 @@ enum MomentsCreateAvailabilityMessageFactory {
         isPreviewGenerationAvailable: Bool,
         isPreviewGenerating: Bool,
         isPreviewGenerationConfigured: Bool,
-        project: MomentDraftProject?,
+        moment: InProgressMoment?,
         template: MomentTemplate,
         balance: MomentsCreditBalance
     ) -> String? {
@@ -84,7 +84,7 @@ enum MomentsCreateAvailabilityMessageFactory {
         if !isPreviewGenerationConfigured { return MomentsCreateAvailabilityCopy.previewNotConfigured }
         return MomentsPreviewRules.availabilityMessage(
             MomentsPreviewRules.availability(
-                project: project,
+                moment: moment,
                 template: template,
                 balance: balance
             ),
@@ -100,7 +100,7 @@ enum MomentsCreateAvailabilityMessageFactory {
         isFinalRenderAvailable: Bool,
         isFinalRenderGenerating: Bool,
         isFinalRenderConfigured: Bool,
-        project: MomentDraftProject?,
+        moment: InProgressMoment?,
         template: MomentTemplate,
         balance: MomentsCreditBalance,
         latestPreview: MomentArtifact?
@@ -111,7 +111,7 @@ enum MomentsCreateAvailabilityMessageFactory {
         if !isFinalRenderConfigured { return MomentsCreateAvailabilityCopy.finalRenderNotConfigured }
         return MomentsFinalRenderRules.availabilityMessage(
             MomentsFinalRenderRules.availability(
-                project: project,
+                moment: moment,
                 template: template,
                 balance: balance,
                 latestPreview: latestPreview

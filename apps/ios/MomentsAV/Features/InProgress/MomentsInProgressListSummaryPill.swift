@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct MomentsInProgressListSummaryPill: View {
-    let pill: MomentsProjectListSummaryPresentation
+    let pill: InProgressMomentsSummaryPresentation
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {

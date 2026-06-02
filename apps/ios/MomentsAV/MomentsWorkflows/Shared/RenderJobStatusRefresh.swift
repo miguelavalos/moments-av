@@ -2,18 +2,18 @@ import Foundation
 
 @MainActor
 struct RenderJobStatusRefresh {
-    let projectId: String
+    let momentId: String
     let job: MomentRenderJob
     let providerRequestId: String
 
     static func make(
-        projectId: String?,
+        momentId: String?,
         job: MomentRenderJob?,
         missingProjectMessage: String,
         missingJobMessage: String,
         missingProviderRequestMessage: String
     ) throws -> RenderJobStatusRefresh {
-        guard let projectId else {
+        guard let momentId else {
             throw RenderJobStatusRefreshError(message: missingProjectMessage)
         }
         guard let job else {
@@ -24,7 +24,7 @@ struct RenderJobStatusRefresh {
         }
 
         return RenderJobStatusRefresh(
-            projectId: projectId,
+            momentId: momentId,
             job: job,
             providerRequestId: providerRequestId
         )
@@ -33,7 +33,7 @@ struct RenderJobStatusRefresh {
     static func perform(
         ownerUserId: String,
         bearerToken: String,
-        projectId: String?,
+        momentId: String?,
         job: MomentRenderJob?,
         messages: RenderJobStatusRefreshMessages,
         statusClient: MomentsRenderStatusClient,
@@ -43,7 +43,7 @@ struct RenderJobStatusRefresh {
         shouldContinue: () -> Bool
     ) async throws -> String {
         let refresh = try make(
-            projectId: projectId,
+            momentId: momentId,
             job: job,
             missingProjectMessage: messages.missingProject,
             missingJobMessage: messages.missingJob,
@@ -57,7 +57,7 @@ struct RenderJobStatusRefresh {
             usesProviderReconciliation: usesProviderReconciliation,
             shouldContinue: shouldContinue
         )
-        workspaceObserver.observeWorkspace(ownerUserId: ownerUserId, projectId: refresh.projectId)
+        workspaceObserver.observeWorkspace(ownerUserId: ownerUserId, momentId: refresh.momentId)
         return messages.success
     }
 

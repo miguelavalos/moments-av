@@ -19,14 +19,14 @@ final class MediaAssetPersistenceRequestTests: XCTestCase {
         )
         let preparedUpload = MomentsPreparedUpload(
             appId: "momentsav",
-            projectId: "project-1",
+            momentId: "moment-1",
             mediaAssetId: "asset-1",
             uploadId: "upload-1",
             uploadUrl: URL(string: "https://uploads.example/video.mov")!,
             completionUrl: nil,
             method: "PUT",
             headers: ["content-type": "video/quicktime"],
-            storageKey: "momentsav/user/project/source/video.mov",
+            storageKey: "momentsav/user/moment/source/video.mov",
             expiresAt: "2026-05-16T17:00:00Z",
             generatedAt: "2026-05-16T16:00:00Z"
         )
@@ -40,7 +40,7 @@ final class MediaAssetPersistenceRequestTests: XCTestCase {
         XCTAssertEqual(request.platformMediaAssetId, "local-1")
         XCTAssertEqual(request.uploadId, "upload-1")
         XCTAssertEqual(request.kind, "video")
-        XCTAssertEqual(request.r2Key, "momentsav/user/project/source/video.mov")
+        XCTAssertEqual(request.r2Key, "momentsav/user/moment/source/video.mov")
         XCTAssertNil(request.thumbnailR2Key)
         XCTAssertEqual(request.sortOrder, 2.0)
         XCTAssertTrue(request.selected)

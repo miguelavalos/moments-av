@@ -4,7 +4,7 @@ import XCTest
 final class MomentsInProgressListPresentationTests: XCTestCase {
     func testSummaryPillsUseProjectSummaryCounts() {
         let presentation = MomentsInProgressListPresentation.make(
-            projectSummary: MomentsProjectListSummary.make(from: [
+            projectSummary: InProgressMomentsSummary.make(from: [
                 makeProject(id: "active", status: "story_ready", updatedAt: 20),
                 makeProject(id: "done", status: "completed", updatedAt: 10)
             ]),
@@ -18,7 +18,7 @@ final class MomentsInProgressListPresentationTests: XCTestCase {
 
     func testGroupsOmitEmptySectionsAndPreserveStatusRulesOrder() {
         let presentation = MomentsInProgressListPresentation.make(
-            projectSummary: MomentsProjectListSummary.make(from: [
+            projectSummary: InProgressMomentsSummary.make(from: [
                 makeProject(id: "older-active", status: "draft_created", updatedAt: 10),
                 makeProject(id: "newer-active", status: "story_ready", updatedAt: 30),
                 makeProject(id: "done", status: "completed", updatedAt: 20)
@@ -32,17 +32,17 @@ final class MomentsInProgressListPresentationTests: XCTestCase {
     }
 
     func testRowPresentationFormatsProjectMetadataAndSelection() {
-        let project = makeProject(
-            id: "project-1",
+        let moment = makeProject(
+            id: "moment-1",
             status: "preview_ready",
             title: "Family Weekend",
             creditCost: 3,
             previewCount: 1,
             previewLimit: 4
         )
-        let row = MomentsInProgressListRowPresentation(project: project, isSelected: true)
+        let row = MomentsInProgressListRowPresentation(moment: moment, isSelected: true)
 
-        XCTAssertEqual(row.id, "project-1")
+        XCTAssertEqual(row.id, "moment-1")
         XCTAssertEqual(row.title, "Family Weekend")
         XCTAssertEqual(row.statusSystemImage, "circle.dashed")
         XCTAssertFalse(row.isFinished)
@@ -56,7 +56,7 @@ final class MomentsInProgressListPresentationTests: XCTestCase {
 
     func testFinishedRowUsesFinishedMarkerAndCollapsedAccessoryWhenNotSelected() {
         let row = MomentsInProgressListRowPresentation(
-            project: makeProject(id: "done", status: "completed"),
+            moment: makeProject(id: "done", status: "completed"),
             isSelected: false
         )
 
@@ -67,7 +67,7 @@ final class MomentsInProgressListPresentationTests: XCTestCase {
 
     func testRowPresentationUsesSingularCreditCopy() {
         let row = MomentsInProgressListRowPresentation(
-            project: makeProject(id: "one-credit", status: "draft_created", creditCost: 1),
+            moment: makeProject(id: "one-credit", status: "draft_created", creditCost: 1),
             isSelected: false
         )
 
@@ -82,8 +82,8 @@ final class MomentsInProgressListPresentationTests: XCTestCase {
         previewCount: Double = 0,
         previewLimit: Double = 3,
         updatedAt: Double = 10
-    ) -> MomentDraftProject {
-        MomentDraftProject(
+    ) -> InProgressMoment {
+        InProgressMoment(
             id: id,
             template: .birthdayMessage,
             status: status,

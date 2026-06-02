@@ -46,7 +46,7 @@ enum MomentsRecoveryCopy {
     }
 
     static func artifactActionDetail(kind: String, status: String) -> String {
-        let kindTitle = MomentsProjectStatusRules.displayKind(kind)
+        let kindTitle = MomentStatusRules.displayKind(kind)
 
         switch status {
         case "available":

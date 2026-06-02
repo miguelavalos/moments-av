@@ -17,7 +17,7 @@ struct MomentsCreateIntroCard: View {
 }
 
 struct MomentsCreateActiveProjectCard: View {
-    let activeProject: MomentDraftProject?
+    let activeProject: InProgressMoment?
 
     var body: some View {
         if let activeProject {
@@ -34,7 +34,7 @@ struct MomentsCreateActiveProjectCard: View {
 }
 
 struct MomentsCreateContinuationHintCard: View {
-    let focus: MomentsProjectContinuationFocus?
+    let focus: MomentsContinuationFocus?
     let dismiss: () -> Void
 
     var body: some View {
@@ -118,7 +118,7 @@ struct MomentsCurrentCreationCard: View {
     }
 }
 
-private extension MomentsProjectContinuationFocus {
+private extension MomentsContinuationFocus {
     var title: String {
         switch self {
         case .review:

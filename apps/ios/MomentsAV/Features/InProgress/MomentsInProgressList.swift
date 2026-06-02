@@ -1,9 +1,9 @@
 import SwiftUI
 
 struct MomentsInProgressList: View {
-    let projectSummary: MomentsProjectListSummary
+    let projectSummary: InProgressMomentsSummary
     let selectedMomentId: String?
-    let selectProject: (MomentDraftProject) -> Void
+    let selectProject: (InProgressMoment) -> Void
     private var presentation: MomentsInProgressListPresentation {
         MomentsInProgressListPresentation.make(
             projectSummary: projectSummary,

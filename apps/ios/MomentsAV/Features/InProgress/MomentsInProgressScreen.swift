@@ -4,9 +4,9 @@ import SwiftUI
 struct MomentsInProgressScreen: View {
     @EnvironmentObject private var viewModel: MomentsInProgressViewModel
     @EnvironmentObject private var createViewModel: MomentsCreateViewModel
-    @State private var momentPendingDeletion: MomentDraftProject?
+    @State private var momentPendingDeletion: InProgressMoment?
     let balance: MomentsCreditBalance
-    let continueMoment: (MomentsProjectContinuationRequest) -> Void
+    let continueMoment: (MomentsContinuationRequest) -> Void
     let startMoment: () -> Void
     let startSignInFlow: () -> Void
     let openCredits: () -> Void
@@ -21,7 +21,7 @@ struct MomentsInProgressScreen: View {
 
     init(
         balance: MomentsCreditBalance = .empty,
-        continueMoment: @escaping (MomentsProjectContinuationRequest) -> Void = { _ in },
+        continueMoment: @escaping (MomentsContinuationRequest) -> Void = { _ in },
         startMoment: @escaping () -> Void = {},
         startSignInFlow: @escaping () -> Void = {},
         openCredits: @escaping () -> Void = {}
@@ -58,8 +58,8 @@ struct MomentsInProgressScreen: View {
                 startMoment: startMoment,
                 startSignInFlow: startSignInFlow,
                 openCredits: openCredits,
-                requestDeleteMoment: { project in
-                    momentPendingDeletion = project
+                requestDeleteMoment: { moment in
+                    momentPendingDeletion = moment
                 }
             )
         }

@@ -1,7 +1,7 @@
 import XCTest
 @testable import MomentsAV
 
-final class ProjectMutationRequestsTests: XCTestCase {
+final class MomentMutationRequestsTests: XCTestCase {
     func testDraftCreationRequestUsesFormValues() {
         var form = MomentDraftForm(template: .partyRecap)
         form.recipient = "Ava"
@@ -10,7 +10,7 @@ final class ProjectMutationRequestsTests: XCTestCase {
         form.tempo = .upbeat
         form.details = "Use the beach photos first."
 
-        let request = DraftProjectCreationRequest.draft(form)
+        let request = MomentCreationRequest.draft(form)
 
         XCTAssertEqual(request.theme, "party_recap")
         XCTAssertEqual(request.title, "Graduation for Ava")
@@ -25,15 +25,15 @@ final class ProjectMutationRequestsTests: XCTestCase {
         form.occasion = "Team dinner"
         form.recipient = "  "
 
-        let request = DraftProjectCreationRequest.draft(form)
+        let request = MomentCreationRequest.draft(form)
 
         XCTAssertEqual(request.title, "Team dinner")
     }
 
-    func testProjectDeletionRequestDeletesProjectTreeForUserRequest() {
-        let request = ProjectDeletionRequest.userRequested(projectId: "project-1")
+    func testMomentDeletionRequestDeletesProjectTreeForUserRequest() {
+        let request = MomentDeletionRequest.userRequested(momentId: "moment-1")
 
-        XCTAssertEqual(request.projectId, "project-1")
+        XCTAssertEqual(request.momentId, "moment-1")
         XCTAssertTrue(request.deleteSourceMedia)
         XCTAssertTrue(request.deleteGeneratedArtifacts)
         XCTAssertEqual(request.reason, "user request")
@@ -45,15 +45,15 @@ final class ProjectMutationRequestsTests: XCTestCase {
         let store = MomentsGalleryStore(baseDirectory: baseDirectory)
         let videosDirectory = baseDirectory.appendingPathComponent("Videos", isDirectory: true)
         try FileManager.default.createDirectory(at: videosDirectory, withIntermediateDirectories: true)
-        let localFileURL = videosDirectory.appendingPathComponent("project-artifact.mp4")
+        let localFileURL = videosDirectory.appendingPathComponent("moment-artifact.mp4")
         try Data("video".utf8).write(to: localFileURL)
         let record = MomentsGalleryVideoRecord(
             id: "artifact",
-            projectId: "project",
+            momentId: "moment",
             artifactId: "artifact",
             title: "Birthday",
-            r2Key: "renders/project/artifact.mp4",
-            localRelativePath: "Videos/project-artifact.mp4",
+            r2Key: "renders/moment/artifact.mp4",
+            localRelativePath: "Videos/moment-artifact.mp4",
             createdAt: 1_717_000_000
         )
 

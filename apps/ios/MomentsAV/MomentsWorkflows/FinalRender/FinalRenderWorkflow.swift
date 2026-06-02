@@ -42,15 +42,15 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
         super.init(workspaceObserver: workspaceObserver)
     }
 
-    override func workspaceDidChange(_ workspace: MomentProjectWorkspace?) {
+    override func workspaceDidChange(_ workspace: MomentWorkspace?) {
         finalExport = workspace?.latestArtifact(kind: "final_export")
-        let projectId = workspace?.project.id
+        let momentId = workspace?.moment.id
         if let workspaceFinalJob = workspace?.latestRenderJob(kind: "final") {
             latestFinalJob = workspaceFinalJob
-            latestFinalJobProjectId = projectId
-        } else if projectId == nil || latestFinalJobProjectId != projectId {
+            latestFinalJobProjectId = momentId
+        } else if momentId == nil || latestFinalJobProjectId != momentId {
             latestFinalJob = nil
-            latestFinalJobProjectId = projectId
+            latestFinalJobProjectId = momentId
         }
         scheduleLocalGalleryDownloadIfNeeded(workspace: workspace)
     }
@@ -60,11 +60,11 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
     }
 
     func canGenerate(template: MomentTemplate, latestPreview: MomentArtifact?) -> Bool {
-        guard let project = activeWorkspace?.project else { return false }
+        guard let moment = activeWorkspace?.moment else { return false }
         return currentUserProvider.currentUserId != nil
             && isConfigured
             && MomentsFinalRenderRules.canGenerate(
-                project: project,
+                moment: moment,
                 template: template,
                 balance: creditBalanceProvider.currentCreditBalance,
                 latestPreview: latestPreview
@@ -73,7 +73,7 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
     }
 
     func generateFinalRender(
-        projectId: String,
+        momentId: String,
         template: MomentTemplate,
         creationStyle: MomentCreationStyleID?,
         form: MomentDraftForm,
@@ -111,7 +111,7 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
             }
         } else {
             let availability = MomentsFinalRenderRules.availability(
-                project: activeWorkspace?.project,
+                moment: activeWorkspace?.moment,
                 template: template,
                 balance: creditBalanceProvider.currentCreditBalance,
                 latestPreview: activeWorkspace?.latestArtifact(kind: "preview")
@@ -127,10 +127,10 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
         statusMessage = L10n.string("workflow.final.preparing")
 
         do {
-            if renderPlan == nil || renderPlan?.projectId != projectId {
+            if renderPlan == nil || renderPlan?.momentId != momentId {
                 statusMessage = L10n.string("workflow.final.checkingPlan")
                 let plan = try await finalRenderClient.prepareRenderPlan(
-                    projectId: projectId,
+                    momentId: momentId,
                     bearerToken: bearerToken,
                     template: template,
                     creationStyle: creationStyle,
@@ -150,7 +150,7 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
             let startedJob = try await FinalRenderGenerationRun.perform(
                 ownerUserId: ownerUserId,
                 bearerToken: bearerToken,
-                projectId: projectId,
+                momentId: momentId,
                 template: template,
                 creationStyle: creationStyle,
                 form: form,
@@ -163,7 +163,7 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
                 shouldContinue: { isCurrentWorkflowGeneration(generation) }
             )
             latestFinalJob = startedJob
-            latestFinalJobProjectId = projectId
+            latestFinalJobProjectId = momentId
             statusMessage = L10n.string("workflow.final.creatingVideo")
         } catch {
             guard isCurrentWorkflowGeneration(generation) else { return }
@@ -192,7 +192,7 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
             statusMessage = try await RenderJobStatusRefresh.perform(
                 ownerUserId: ownerUserId,
                 bearerToken: bearerToken,
-                projectId: activeWorkspace?.project.id,
+                momentId: activeWorkspace?.moment.id,
                 job: latestFinalJob,
                 messages: refreshMessages,
                 statusClient: statusClient,
@@ -246,7 +246,7 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
         }
     }
 
-    private func scheduleLocalGalleryDownloadIfNeeded(workspace: MomentProjectWorkspace?) {
+    private func scheduleLocalGalleryDownloadIfNeeded(workspace: MomentWorkspace?) {
         guard
             let workspace,
             let artifact = workspace.latestArtifact(kind: "final_export"),
@@ -266,7 +266,7 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
     }
 
     private func downloadFinalExportToGallery(
-        workspace: MomentProjectWorkspace,
+        workspace: MomentWorkspace,
         artifact: MomentArtifact
     ) async {
         defer { downloadingArtifactIds.remove(artifact.id) }
@@ -279,16 +279,16 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
         do {
             statusMessage = L10n.string("workflow.final.savingToGallery")
             let download = try await finalRenderClient.prepareFinalArtifactDownload(
-                projectId: workspace.project.id,
+                momentId: workspace.moment.id,
                 artifactId: artifact.id,
                 bearerToken: bearerToken
             )
             let temporaryFileURL = try await finalRenderClient.downloadFinalArtifact(from: download)
             pendingGalleryVideo = try galleryStore.saveDownloadedVideo(
                 temporaryFileURL: temporaryFileURL,
-                projectId: workspace.project.id,
+                momentId: workspace.moment.id,
                 artifactId: artifact.id,
-                title: workspace.project.title,
+                title: workspace.moment.title,
                 r2Key: download.r2Key,
                 createdAt: Date()
             )

@@ -28,7 +28,7 @@ final class MomentsCreateViewModel: ObservableObject {
     @Published private(set) var isDraftingStory = false
     @Published var isBuyingReviewBundle = false
     @Published var isPreparingStory = false
-    @Published private(set) var activeWorkspace: MomentProjectWorkspace?
+    @Published private(set) var activeWorkspace: MomentWorkspace?
     @Published private(set) var latestPreview: MomentArtifact?
     @Published private(set) var latestPreviewJob: MomentRenderJob?
     @Published private(set) var previewStatusMessage: String?
@@ -42,8 +42,8 @@ final class MomentsCreateViewModel: ObservableObject {
     @Published private(set) var finalRenderStatusMessage: String?
     @Published private(set) var isGeneratingFinalRender = false
     @Published private(set) var isRefreshingFinalRenderStatus = false
-    @Published var pendingFocus: MomentsProjectContinuationFocus?
-    @Published private(set) var continuationFocusHint: MomentsProjectContinuationFocus?
+    @Published var pendingFocus: MomentsContinuationFocus?
+    @Published private(set) var continuationFocusHint: MomentsContinuationFocus?
     @Published var mediaPickerOpenRequest = 0
 
     private(set) var momentCreationWorkflow: MomentCreationWorkflow?
@@ -59,12 +59,12 @@ final class MomentsCreateViewModel: ObservableObject {
     private var autoStyleUndoSelection: (style: MomentCreationStyle, musicPreset: MomentMusicPreset, form: MomentDraftForm)?
     var reviewBundlePurchaser: (any MomentsReviewBundlePurchasing)?
 
-    var activeProject: MomentDraftProject? {
+    var activeProject: InProgressMoment? {
         if usesFullUITestFixture {
-            return MomentsCreateUITestFixtures.project
+            return MomentsCreateUITestFixtures.moment
         }
 
-        return activeWorkspace?.project
+        return activeWorkspace?.moment
     }
 
     var activeMomentId: String? {
@@ -204,18 +204,18 @@ final class MomentsCreateViewModel: ObservableObject {
         isLocalMomentStarted = false
     }
 
-    func continueMoment(_ project: MomentDraftProject, focus: MomentsProjectContinuationFocus = .review) {
+    func continueMoment(_ moment: InProgressMoment, focus: MomentsContinuationFocus = .review) {
         cancelOperations()
         isContinuingMoment = true
         isLocalMomentStarted = false
         pendingFocus = focus
         continuationFocusHint = focus
 
-        if let continuedForm = MomentDraftForm.continuing(project: project, templates: templates) {
+        if let continuedForm = MomentDraftForm.continuing(moment: moment, templates: templates) {
             form = continuedForm
         }
 
-        momentCreationWorkflow?.continueMoment(project)
+        momentCreationWorkflow?.continueMoment(moment)
     }
 
     func consumePendingFocus() {
@@ -234,27 +234,27 @@ final class MomentsCreateViewModel: ObservableObject {
         guard MomentsUITestEnvironment.current.createFixture == "full" else { return }
 
         let workspace = MomentsCreateUITestFixtures.workspace
-        let template = templates.first(where: { $0.id == workspace.project.template }) ?? MomentTemplate.birthdayMessage
+        let template = templates.first(where: { $0.id == workspace.moment.template }) ?? MomentTemplate.birthdayMessage
         form = MomentDraftForm(
             template: template,
-            occasion: workspace.project.occasion ?? "Birthday",
+            occasion: workspace.moment.occasion ?? "Birthday",
             recipient: "Ava",
-            tone: MomentDraftTone(rawValue: workspace.project.tone ?? "") ?? .warm,
-            tempo: MomentDraftTempo(rawValue: workspace.project.tempo ?? "") ?? .balanced,
-            details: workspace.project.details ?? ""
+            tone: MomentDraftTone(rawValue: workspace.moment.tone ?? "") ?? .warm,
+            tempo: MomentDraftTempo(rawValue: workspace.moment.tempo ?? "") ?? .balanced,
+            details: workspace.moment.details ?? ""
         )
         isSignedIn = true
         balance = MomentsCreateUITestFixtures.balance
         isContinuingMoment = true
-        workflowActiveMomentId = workspace.project.id
+        workflowActiveMomentId = workspace.moment.id
         draftErrorMessage = nil
         selectedMedia = MomentsCreateUITestFixtures.selectedMedia
         mediaStatusMessage = L10n.string("create.media.fixture.synced")
         savedScenes = workspace.storyScenes
         generatedScenes = []
         storyStatusMessage = L10n.string("create.story.status.readyToReview")
-        lastPreparedStoryInputSignature = workspace.project.storyInputSignature
-            ?? currentStoryInputSignature(projectId: workspace.project.id)
+        lastPreparedStoryInputSignature = workspace.moment.storyInputSignature
+            ?? currentStoryInputSignature(momentId: workspace.moment.id)
         activeWorkspace = workspace
         latestPreview = workspace.latestArtifact(kind: "preview")
         latestPreviewJob = workspace.latestRenderJob(kind: "preview")
@@ -267,7 +267,7 @@ final class MomentsCreateViewModel: ObservableObject {
         continuationFocusHint = .review
     }
 
-    var effectiveActiveWorkspace: MomentProjectWorkspace? {
+    var effectiveActiveWorkspace: MomentWorkspace? {
         usesFullUITestFixture ? MomentsCreateUITestFixtures.workspace : activeWorkspace
     }
 
@@ -353,20 +353,20 @@ final class MomentsCreateViewModel: ObservableObject {
         form.tempo = style.tempo
     }
 
-    func currentStoryInputSignature(projectId: String) -> String {
+    func currentStoryInputSignature(momentId: String) -> String {
         MomentsStoryDraftInputSignature.make(
-            projectId: projectId,
+            momentId: momentId,
             form: form,
             selectedMedia: currentStorySignatureMedia()
         )
     }
 
     func currentStoryInputSignature(
-        projectId: String,
+        momentId: String,
         persistedMedia: [MomentsStoryDraftMedia]?
     ) -> String {
         MomentsStoryDraftInputSignature.make(
-            projectId: projectId,
+            momentId: momentId,
             form: form,
             selectedMedia: persistedMedia ?? currentStorySignatureMedia()
         )
@@ -453,9 +453,9 @@ extension MomentsCreateViewModel {
         let hasStoryScenes = !state.savedScenes.isEmpty || !state.generatedScenes.isEmpty
         if hasStoryScenes {
             if let activeMomentId {
-                lastPreparedStoryInputSignature = effectiveActiveWorkspace?.project.storyInputSignature
+                lastPreparedStoryInputSignature = effectiveActiveWorkspace?.moment.storyInputSignature
                     ?? lastPreparedStoryInputSignature
-                    ?? currentStoryInputSignature(projectId: activeMomentId)
+                    ?? currentStoryInputSignature(momentId: activeMomentId)
             }
             storyStatusMessage = nil
         } else {
@@ -502,17 +502,17 @@ extension MomentsCreateViewModel {
         isRefreshingFinalRenderStatus = state.isRefreshingStatus
     }
 
-    private func syncFormWithActiveWorkspace(_ workspace: MomentProjectWorkspace?) {
-        guard let project = workspace?.project else { return }
-        guard project.id == activeMomentId else { return }
-        guard let continuedForm = MomentDraftForm.continuing(project: project, templates: templates) else { return }
+    private func syncFormWithActiveWorkspace(_ workspace: MomentWorkspace?) {
+        guard let moment = workspace?.moment else { return }
+        guard moment.id == activeMomentId else { return }
+        guard let continuedForm = MomentDraftForm.continuing(moment: moment, templates: templates) else { return }
 
         form = continuedForm
         if let continuedStyle = creationStyles.first(where: { $0.template.id == continuedForm.template.id }) {
             selectedCreationStyle = continuedStyle
             selectedMusicPreset = continuedStyle.allowedMusic.first(where: { $0 == continuedStyle.defaultMusic }) ?? continuedStyle.defaultMusic
         }
-        if let continuedStyle = creationStyles.first(where: { $0.id.rawValue == project.theme }) {
+        if let continuedStyle = creationStyles.first(where: { $0.id.rawValue == moment.theme }) {
             selectedCreationStyle = continuedStyle
             selectedMusicPreset = continuedStyle.allowedMusic.first(where: { $0 == continuedStyle.defaultMusic }) ?? continuedStyle.defaultMusic
         }

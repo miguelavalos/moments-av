@@ -97,11 +97,11 @@ extension MomentsCreateViewModel {
         }
         guard storySummary.hasScenes else { return false }
         guard let activeMomentId else { return false }
-        let preparedSignature = lastPreparedStoryInputSignature ?? effectiveActiveWorkspace?.project.storyInputSignature
+        let preparedSignature = lastPreparedStoryInputSignature ?? effectiveActiveWorkspace?.moment.storyInputSignature
         guard let preparedSignature else {
             return true
         }
-        return currentStoryInputSignature(projectId: activeMomentId) == preparedSignature
+        return currentStoryInputSignature(momentId: activeMomentId) == preparedSignature
     }
 
     func spendPlanDescription(for template: MomentTemplate) -> String {

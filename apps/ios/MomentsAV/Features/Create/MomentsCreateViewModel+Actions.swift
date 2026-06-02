@@ -39,8 +39,8 @@ extension MomentsCreateViewModel {
         prepareNewDraftCreation()
 
         runOperation {
-            let projectId = await momentCreationWorkflow.createDraft(form: form)
-            if projectId != nil, openMediaPicker {
+            let momentId = await momentCreationWorkflow.createDraft(form: form)
+            if momentId != nil, openMediaPicker {
                 self.mediaPickerOpenRequest += 1
             }
         }
@@ -65,7 +65,7 @@ extension MomentsCreateViewModel {
         }
 
         runOperation {
-            let discarded = await momentCreationWorkflow.discardActiveDraft(projectId: self.activeMomentId)
+            let discarded = await momentCreationWorkflow.discardActiveDraft(momentId: self.activeMomentId)
             if discarded {
                 self.resetActiveProject(force: true)
             } else if let message = momentCreationWorkflow.errorMessage {
@@ -87,7 +87,7 @@ extension MomentsCreateViewModel {
             await mediaUploadWorkflow.importPickerItems(
                 items,
                 template: template,
-                projectId: self.activeMomentId
+                momentId: self.activeMomentId
             )
         }
     }
@@ -102,7 +102,7 @@ extension MomentsCreateViewModel {
         runOperation {
             await mediaUploadWorkflow.importLatestPhotos(
                 template: template,
-                projectId: self.activeMomentId
+                momentId: self.activeMomentId
             )
         }
     }
@@ -118,7 +118,7 @@ extension MomentsCreateViewModel {
             await mediaUploadWorkflow.importPhotoAlbum(
                 id: albumId,
                 template: template,
-                projectId: self.activeMomentId
+                momentId: self.activeMomentId
             )
         }
     }
@@ -154,31 +154,31 @@ extension MomentsCreateViewModel {
 
         runOperation {
             defer { self.isPreparingStory = false }
-            let projectId: String?
+            let momentId: String?
             if let activeMomentId = self.activeMomentId {
-                projectId = activeMomentId
+                momentId = activeMomentId
             } else if let momentCreationWorkflow = self.momentCreationWorkflow {
-                projectId = await momentCreationWorkflow.createDraft(form: form)
-                if projectId != nil {
+                momentId = await momentCreationWorkflow.createDraft(form: form)
+                if momentId != nil {
                     self.isLocalMomentStarted = false
                 }
             } else {
-                projectId = nil
+                momentId = nil
             }
 
-            guard let projectId else {
+            guard let momentId else {
                 self.updateStoryStatusMessage(self.draftErrorMessage
                     ?? MomentsRecoveryCopy.storyStartFailure()
                 )
                 return
             }
             if self.storySummary.hasScenes,
-               self.lastPreparedStoryInputSignature == self.currentStoryInputSignature(projectId: projectId) {
+               self.lastPreparedStoryInputSignature == self.currentStoryInputSignature(momentId: momentId) {
                 self.updateStoryStatusMessage(L10n.string("create.story.status.alreadyReady"))
                 return
             }
 
-            let persistedMedia = await self.mediaUploadWorkflow?.persistSelectedMedia(projectId: projectId)
+            let persistedMedia = await self.mediaUploadWorkflow?.persistSelectedMedia(momentId: momentId)
             guard persistedMedia != nil || selectedMedia.isEmpty else {
                 self.updateStoryStatusMessage(self.mediaStatusMessage
                     ?? MomentsRecoveryCopy.mediaStorySaveFailure()
@@ -186,12 +186,12 @@ extension MomentsCreateViewModel {
                 return
             }
             let inputSignature = self.currentStoryInputSignature(
-                projectId: projectId,
+                momentId: momentId,
                 persistedMedia: persistedMedia
             )
 
             let didPrepareStory = await storyDraftWorkflow.generateDraft(
-                projectId: projectId,
+                momentId: momentId,
                 form: form,
                 selectedMedia: selectedMedia,
                 persistedMedia: persistedMedia
@@ -242,7 +242,7 @@ extension MomentsCreateViewModel {
 
         runOperation {
             await previewGenerationWorkflow.generatePreview(
-                projectId: context.projectId,
+                momentId: context.momentId,
                 template: context.template,
                 form: self.form
             )
@@ -265,30 +265,30 @@ extension MomentsCreateViewModel {
 
         runOperation {
             defer { self.isPreparingStory = false }
-            let projectId: String?
+            let momentId: String?
             if let activeMomentId = self.activeMomentId {
-                projectId = activeMomentId
+                momentId = activeMomentId
             } else if let momentCreationWorkflow = self.momentCreationWorkflow {
-                projectId = await momentCreationWorkflow.createDraft(form: form)
-                if projectId != nil {
+                momentId = await momentCreationWorkflow.createDraft(form: form)
+                if momentId != nil {
                     self.isLocalMomentStarted = false
                 }
             } else {
-                projectId = nil
+                momentId = nil
             }
 
-            guard let projectId else {
+            guard let momentId else {
                 self.updateStoryStatusMessage(self.draftErrorMessage
                     ?? MomentsRecoveryCopy.storyStartFailure()
                 )
                 return
             }
-            var inputSignature = self.currentStoryInputSignature(projectId: projectId)
+            var inputSignature = self.currentStoryInputSignature(momentId: momentId)
             if self.storySummary.hasScenes,
                self.lastPreparedStoryInputSignature == inputSignature {
                 self.updateStoryStatusMessage(L10n.string("create.story.status.alreadyReady"))
             } else {
-                let persistedMedia = await self.mediaUploadWorkflow?.persistSelectedMedia(projectId: projectId)
+                let persistedMedia = await self.mediaUploadWorkflow?.persistSelectedMedia(momentId: momentId)
                 guard persistedMedia != nil || selectedMedia.isEmpty else {
                     self.updateStoryStatusMessage(self.mediaStatusMessage
                         ?? MomentsRecoveryCopy.mediaStorySaveFailure()
@@ -296,12 +296,12 @@ extension MomentsCreateViewModel {
                     return
                 }
                 inputSignature = self.currentStoryInputSignature(
-                    projectId: projectId,
+                    momentId: momentId,
                     persistedMedia: persistedMedia
                 )
 
                 let didPrepareStory = await storyDraftWorkflow.generateDraft(
-                    projectId: projectId,
+                    momentId: momentId,
                     form: form,
                     selectedMedia: selectedMedia,
                     persistedMedia: persistedMedia
@@ -322,7 +322,7 @@ extension MomentsCreateViewModel {
                 return
             }
             await previewGenerationWorkflow.generatePreview(
-                projectId: projectId,
+                momentId: momentId,
                 template: form.template,
                 form: form
             )
@@ -347,7 +347,7 @@ extension MomentsCreateViewModel {
 
         runOperation {
             await finalRenderWorkflow.generateFinalRender(
-                projectId: context.projectId,
+                momentId: context.momentId,
                 template: context.template,
                 creationStyle: self.selectedCreationStyle.id,
                 form: self.form,
@@ -388,7 +388,7 @@ extension MomentsCreateViewModel {
 
         runOperation {
             await finalRenderWorkflow.generateFinalRender(
-                projectId: context.projectId,
+                momentId: context.momentId,
                 template: context.template,
                 creationStyle: self.selectedCreationStyle.id,
                 form: self.form,
@@ -432,12 +432,12 @@ extension MomentsCreateViewModel {
         updateFinalRenderStatusMessage(L10n.string("create.final.status.startAnother"))
     }
 
-    private var activeTemplateContext: (projectId: String, template: MomentTemplate)? {
+    private var activeTemplateContext: (momentId: String, template: MomentTemplate)? {
         guard let activeMomentId else { return nil }
         return (activeMomentId, form.template)
     }
 
-    private var activeFormContext: (projectId: String, form: MomentDraftForm)? {
+    private var activeFormContext: (momentId: String, form: MomentDraftForm)? {
         guard let activeMomentId else { return nil }
         return (activeMomentId, form)
     }

@@ -5,7 +5,7 @@ final class RenderResultPersistenceRequestTests: XCTestCase {
     func testPreviewRequestUsesPreviewRenderAndFreeWatermarkedArtifact() {
         let response = MomentsPreviewResponse(
             appId: "momentsav",
-            projectId: "project-1",
+            momentId: "moment-1",
             renderJobId: "provider-render-1",
             workflowRunId: "workflow-1",
             provider: "mock-provider",
@@ -15,7 +15,7 @@ final class RenderResultPersistenceRequestTests: XCTestCase {
             status: "available",
             progressPercent: 100,
             progressState: "complete",
-            r2Key: "momentsav/user/project/previews/preview.mp4",
+            r2Key: "momentsav/user/moment/previews/preview.mp4",
             expiresAt: "2026-05-16T17:00:00Z",
             hasWatermark: true,
             generatedAt: "2026-05-16T16:00:00Z"
@@ -33,7 +33,7 @@ final class RenderResultPersistenceRequestTests: XCTestCase {
         XCTAssertEqual(request.provider, "mock-provider")
         XCTAssertEqual(request.model, "mock-model")
         XCTAssertEqual(request.providerRequestId, "provider-render-1")
-        XCTAssertEqual(request.r2Key, "momentsav/user/project/previews/preview.mp4")
+        XCTAssertEqual(request.r2Key, "momentsav/user/moment/previews/preview.mp4")
         XCTAssertEqual(request.durationSeconds, 15)
         XCTAssertEqual(request.creditCost, 0)
         XCTAssertTrue(request.hasWatermark)
@@ -43,7 +43,7 @@ final class RenderResultPersistenceRequestTests: XCTestCase {
     func testFinalRenderRequestUsesReservationCommittedCreditsAndUnwatermarkedArtifact() {
         let response = MomentsFinalRenderResponse(
             appId: "momentsav",
-            projectId: "project-1",
+            momentId: "moment-1",
             renderJobId: "provider-render-2",
             workflowRunId: "workflow-2",
             provider: "mock-provider",
@@ -53,7 +53,7 @@ final class RenderResultPersistenceRequestTests: XCTestCase {
             artifactKind: "final_export",
             status: "available",
             progressPercent: 100,
-            r2Key: "momentsav/user/project/final/final.mp4",
+            r2Key: "momentsav/user/moment/final/final.mp4",
             expiresAt: "2026-05-16T17:00:00Z",
             hasWatermark: true,
             baseCreditCost: 1,
@@ -74,7 +74,7 @@ final class RenderResultPersistenceRequestTests: XCTestCase {
         XCTAssertEqual(request.provider, "mock-provider")
         XCTAssertEqual(request.model, "mock-model")
         XCTAssertEqual(request.providerRequestId, "provider-render-2")
-        XCTAssertEqual(request.r2Key, "momentsav/user/project/final/final.mp4")
+        XCTAssertEqual(request.r2Key, "momentsav/user/moment/final/final.mp4")
         XCTAssertEqual(request.durationSeconds, 15)
         XCTAssertEqual(request.creditCost, 1)
         XCTAssertTrue(request.hasWatermark)

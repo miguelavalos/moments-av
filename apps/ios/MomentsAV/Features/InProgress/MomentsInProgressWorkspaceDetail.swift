@@ -1,10 +1,10 @@
 import SwiftUI
 
 struct MomentsInProgressWorkspaceDetail: View {
-    let workspace: MomentProjectWorkspace
+    let workspace: MomentWorkspace
     let isDeletingMoment: Bool
-    let continueMoment: (MomentsProjectContinuationRequest) -> Void
-    let requestDeleteMoment: (MomentDraftProject) -> Void
+    let continueMoment: (MomentsContinuationRequest) -> Void
+    let requestDeleteMoment: (InProgressMoment) -> Void
     private var presentation: MomentsInProgressWorkspaceDetailPresentation {
         MomentsInProgressWorkspaceDetailPresentation(workspace: workspace)
     }
@@ -29,7 +29,7 @@ struct MomentsInProgressWorkspaceDetail: View {
                 continueMoment(presentation.continuationRequest)
             }
             MomentsInProgressDeleteButton(isDeletingMoment: isDeletingMoment) {
-                requestDeleteMoment(workspace.project)
+                requestDeleteMoment(workspace.moment)
             }
         }
     }

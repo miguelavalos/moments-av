@@ -27,7 +27,7 @@ enum MomentsSharedMediaItem: Identifiable, Equatable {
     }
 
     var displayKind: String {
-        MomentsProjectStatusRules.displayKind(kind)
+        MomentStatusRules.displayKind(kind)
     }
 
     static func preferred(localMedia: [MomentsSelectedMedia], syncedMedia: [MomentMediaAsset]) -> [MomentsSharedMediaItem] {
@@ -414,7 +414,7 @@ struct MomentsCreateSyncedMediaRow: View {
 
     var body: some View {
         AVAppShellInfoRow(
-            title: "\(MomentsProjectStatusRules.displayKind(media.kind)) \(Int(media.sortOrder) + 1)",
+            title: "\(MomentStatusRules.displayKind(media.kind)) \(Int(media.sortOrder) + 1)",
             detail: MomentsMomentFormatting.mediaAssetDetail(media),
             systemImage: media.kind == "video" ? "video.fill" : "photo.fill"
         ) {

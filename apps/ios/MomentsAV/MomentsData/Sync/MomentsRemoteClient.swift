@@ -2,7 +2,7 @@ import Combine
 @preconcurrency import ConvexMobile
 import Foundation
 
-struct MomentsProjectRemoteClient {
+struct MomentsRemoteClient {
     private let client: ConvexClient?
     private let retryPolicy = MomentsNetworkRetryPolicy()
 
@@ -15,31 +15,31 @@ struct MomentsProjectRemoteClient {
         client != nil
     }
 
-    func observeProjects(ownerUserId: String) throws -> AnyPublisher<[MomentDraftProject], Error> {
+    func observeInProgressMoments(ownerUserId: String) throws -> AnyPublisher<[InProgressMoment], Error> {
         let client = try requireClient()
 
         return client.subscribe(
             to: "moments:listProjects",
             with: ["ownerUserId": ownerUserId],
-            yielding: [MomentDraftProject].self
+            yielding: [InProgressMoment].self
         )
         .mapError { $0 as Error }
         .eraseToAnyPublisher()
     }
 
-    func observeProjectWorkspace(
+    func observeMomentWorkspace(
         ownerUserId: String,
-        projectId: String
-    ) throws -> AnyPublisher<MomentProjectWorkspace?, Error> {
+        momentId: String
+    ) throws -> AnyPublisher<MomentWorkspace?, Error> {
         let client = try requireClient()
 
         return client.subscribe(
             to: "moments:getProjectWorkspace",
             with: [
                 "ownerUserId": ownerUserId,
-                "projectId": projectId
+                "momentId": momentId
             ],
-            yielding: MomentProjectWorkspace?.self
+            yielding: MomentWorkspace?.self
         )
         .mapError { $0 as Error }
         .eraseToAnyPublisher()
@@ -54,7 +54,7 @@ struct MomentsProjectRemoteClient {
 
     func createDraftProject(
         ownerUserId: String,
-        request: DraftProjectCreationRequest
+        request: MomentCreationRequest
     ) async throws -> String {
         let client = try requireClient()
 
@@ -76,25 +76,25 @@ struct MomentsProjectRemoteClient {
         )
     }
 
-    func deleteProjectTree(ownerUserId: String, projectId: String) async throws {
-        try await deleteProjectTree(
+    func deleteMomentTree(ownerUserId: String, momentId: String) async throws {
+        try await deleteMomentTree(
             ownerUserId: ownerUserId,
-            request: .userRequested(projectId: projectId)
+            request: .userRequested(momentId: momentId)
         )
     }
 
-    func deleteProjectTree(
+    func deleteMomentTree(
         ownerUserId: String,
-        request: ProjectDeletionRequest
+        request: MomentDeletionRequest
     ) async throws {
         let client = try requireClient()
 
         let deletedProjectId: String? = try await retryingMutation(
             client: client,
-            name: "moments:deleteProject",
+            name: "moments:deleteMoment",
             args: [
                 "ownerUserId": ownerUserId,
-                "projectId": request.projectId,
+                "momentId": request.momentId,
                 "deleteSourceMedia": request.deleteSourceMedia,
                 "deleteGeneratedArtifacts": request.deleteGeneratedArtifacts,
                 "reason": request.reason
@@ -102,13 +102,13 @@ struct MomentsProjectRemoteClient {
         )
 
         guard deletedProjectId != nil else {
-            throw MomentsProjectSyncError.unexpectedResponse
+            throw MomentsSyncError.unexpectedResponse
         }
     }
 
     func requireClient() throws -> ConvexClient {
         guard let client else {
-            throw MomentsProjectSyncError.notConfigured
+            throw MomentsSyncError.notConfigured
         }
 
         return client

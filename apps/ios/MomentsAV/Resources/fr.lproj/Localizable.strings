@@ -533,7 +533,7 @@
 "moment.progress.notReady" = "Pas prêt";
 "moment.progress.notReviewed" = "Non révisé";
 "moment.progress.notStarted" = "Non démarré";
-"moment.progress.project" = "Moment";
+"moment.progress.moment" = "Moment";
 "moment.progress.scenes" = "%d scènes";
 "moment.progress.story" = "Histoire";
 "moment.summary.final" = "Finale";
@@ -825,11 +825,11 @@
 
 "create.refresh.preview.unavailable" = "Story review refresh is not available yet.";
 "create.refresh.preview.notConfigured" = "Story review refresh is not configured for this build.";
-"create.refresh.preview.missingProject" = "Open a project before refreshing story review status.";
+"create.refresh.preview.missingProject" = "Open a moment before refreshing story review status.";
 "create.refresh.preview.missingJob" = "No story review job is available yet.";
 "create.refresh.final.unavailable" = "Final status refresh is not available yet.";
 "create.refresh.final.notConfigured" = "Final status refresh is not configured for this build.";
-"create.refresh.final.missingProject" = "Open a project before refreshing final status.";
+"create.refresh.final.missingProject" = "Open a moment before refreshing final status.";
 "create.refresh.final.missingJob" = "No final video is available yet.";
 "create.summary.media.added" = "%d added";
 "create.summary.story.scene" = "%d scene";
@@ -890,8 +890,8 @@
 "create.final.status.startAnother" = "Start another version with a fresh Moment.";
 "create.draft.action.starting" = "Starting Moment...";
 "create.draft.action.useTheme" = "Use this theme";
-"create.draft.active.continuing" = "Continuing project";
-"create.draft.active.ready" = "Project ready";
+"create.draft.active.continuing" = "Continuing moment";
+"create.draft.active.ready" = "Moment ready";
 "create.draft.active.attached" = "Create is attached to this existing Moment.";
 "create.draft.active.nextMedia" = "Add photos or clips next, then Avi can shape the story.";
 "create.preview.artifact.readyFinalCheck" = "Story review is ready for your final check.";
@@ -929,7 +929,7 @@
 "create.mediaCard.backToDashboard" = "Back to dashboard";
 "create.mediaCard.mediaAccessibility" = "%@ %d";
 "create.mediaRows.removeNamed" = "Remove %@";
-"create.mediaRows.removeFromProject" = "Remove from project";
+"create.mediaRows.removeFromProject" = "Remove from moment";
 "create.workflowContent.videoPlan" = "Video plan";
 "create.workflowContent.preparedVideoPlan" = "Prepared video plan";
 "create.workflowContent.needsPlan" = "Needs plan";
@@ -1000,9 +1000,9 @@
 "create.draftSetup.aviSays" = "Avi says %@";
 "create.draftSetup.guidance.checkStep" = "Check this step";
 "create.draftSetup.guidance.readyStart" = "Ready to start";
-"create.draftSetup.guidance.projectMoving" = "Project is moving";
+"create.draftSetup.guidance.projectMoving" = "Moment is moving";
 "create.draftSetup.guidance.signIn" = "Sign in to create";
-"create.draftSetup.guidance.preparing" = "Preparing your project";
+"create.draftSetup.guidance.preparing" = "Preparing your moment";
 "create.draftSetup.hideDetails" = "Hide details";
 "create.draftSetup.viewDetails" = "View details";
 "create.draftSetup.nextAddMedia" = "Next: add media";

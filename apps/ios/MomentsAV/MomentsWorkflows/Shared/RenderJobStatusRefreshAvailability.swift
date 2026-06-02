@@ -1,7 +1,7 @@
 import Foundation
 
 struct RenderJobStatusRefreshAvailability {
-    let projectId: String?
+    let momentId: String?
     let job: MomentRenderJob?
     let isAvailable: Bool
     let isConfigured: Bool
@@ -13,7 +13,7 @@ struct RenderJobStatusRefreshAvailability {
     let missingProviderRequestMessage: String
 
     var message: String? {
-        guard projectId != nil else { return missingProjectMessage }
+        guard momentId != nil else { return missingProjectMessage }
         if !isAvailable { return unavailableMessage }
         if isRefreshing { return nil }
         if !isConfigured { return notConfiguredMessage }
@@ -23,7 +23,7 @@ struct RenderJobStatusRefreshAvailability {
     }
 
     var canRefresh: Bool {
-        projectId != nil
+        momentId != nil
             && !isRefreshing
             && isAvailable
             && isConfigured

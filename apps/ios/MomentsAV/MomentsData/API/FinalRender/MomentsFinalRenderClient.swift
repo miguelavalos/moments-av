@@ -55,7 +55,7 @@ struct MomentsFinalRenderClient {
     }
 
     func generateFinalRender(
-        projectId: String,
+        momentId: String,
         bearerToken: String,
         template: MomentTemplate,
         creationStyle: MomentCreationStyleID?,
@@ -72,7 +72,7 @@ struct MomentsFinalRenderClient {
             .appendingPathComponent("final-renders")
             .appendingPathComponent("generate")
         let body = MomentsFinalRenderRequest(
-            projectId: projectId,
+            momentId: momentId,
             creationMode: form.creationMode.rawValue,
             look: form.look.rawValue,
             theme: form.theme.rawValue,
@@ -83,7 +83,7 @@ struct MomentsFinalRenderClient {
             details: form.details,
             creditCost: template.creditCost,
             removeWatermark: false,
-            idempotencyKey: "final:\(projectId)"
+            idempotencyKey: "final:\(momentId)"
         )
 
         var request = URLRequest(url: endpoint)
@@ -107,7 +107,7 @@ struct MomentsFinalRenderClient {
     }
 
     func reserveFinalRenderCredits(
-        projectId: String,
+        momentId: String,
         bearerToken: String,
         template: MomentTemplate,
         removesWatermark: Bool,
@@ -125,9 +125,9 @@ struct MomentsFinalRenderClient {
             .appendingPathComponent("credits")
             .appendingPathComponent("reservations")
         let body = MomentsCreditReservationRequest(
-            projectId: projectId,
+            momentId: momentId,
             amount: finalRenderCreditCost(template: template, removesWatermark: removesWatermark, balance: balance),
-            idempotencyKey: "final-reservation:\(projectId):\(template.id.rawValue):\(removesWatermark ? "clean" : "watermarked"):\(operationId)"
+            idempotencyKey: "final-reservation:\(momentId):\(template.id.rawValue):\(removesWatermark ? "clean" : "watermarked"):\(operationId)"
         )
 
         var request = URLRequest(url: endpoint)
@@ -151,7 +151,7 @@ struct MomentsFinalRenderClient {
     }
 
     func prepareRenderPlan(
-        projectId: String,
+        momentId: String,
         bearerToken: String,
         template: MomentTemplate,
         creationStyle: MomentCreationStyleID?,
@@ -168,7 +168,7 @@ struct MomentsFinalRenderClient {
             .appendingPathComponent("renders")
             .appendingPathComponent("plan")
         let body = MomentsRenderPlanRequest(
-            projectId: projectId,
+            momentId: momentId,
             creationMode: form.creationMode.rawValue,
             look: form.look.rawValue,
             theme: form.theme.rawValue,
@@ -201,7 +201,7 @@ struct MomentsFinalRenderClient {
     }
 
     func startFinalRenderWorkflow(
-        projectId: String,
+        momentId: String,
         bearerToken: String,
         template: MomentTemplate,
         creationStyle: MomentCreationStyleID?,
@@ -221,7 +221,7 @@ struct MomentsFinalRenderClient {
             .appendingPathComponent("workflows")
             .appendingPathComponent("start")
         let body = MomentsStartWorkflowRequest(
-            projectId: projectId,
+            momentId: momentId,
             renderKind: "final",
             creationMode: form.creationMode.rawValue,
             look: form.look.rawValue,
@@ -233,7 +233,7 @@ struct MomentsFinalRenderClient {
             details: form.details,
             creditCost: template.creditCost,
             removeWatermark: removesWatermark,
-            idempotencyKey: "final-workflow:\(projectId):\(template.id.rawValue):\(operationId)",
+            idempotencyKey: "final-workflow:\(momentId):\(template.id.rawValue):\(operationId)",
             reservationId: reservationId
         )
 
@@ -258,7 +258,7 @@ struct MomentsFinalRenderClient {
     }
 
     func prepareFinalArtifactDownload(
-        projectId: String,
+        momentId: String,
         artifactId: String,
         bearerToken: String
     ) async throws -> MomentsArtifactDownloadResponse {
@@ -274,7 +274,7 @@ struct MomentsFinalRenderClient {
             .appendingPathComponent(artifactId)
             .appendingPathComponent("download")
         let body = MomentsArtifactDownloadRequest(
-            projectId: projectId,
+            momentId: momentId,
             artifactId: artifactId
         )
 

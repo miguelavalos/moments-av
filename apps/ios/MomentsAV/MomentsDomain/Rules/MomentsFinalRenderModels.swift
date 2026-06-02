@@ -2,7 +2,7 @@ import Foundation
 
 struct MomentsFinalRenderRequest: Encodable {
     let appId = "momentsav"
-    let projectId: String
+    let momentId: String
     let creationMode: String
     let look: String
     let theme: String
@@ -19,7 +19,7 @@ struct MomentsFinalRenderRequest: Encodable {
 
 struct MomentsFinalRenderResponse: Decodable, Equatable {
     let appId: String
-    let projectId: String
+    let momentId: String
     let renderJobId: String
     let workflowRunId: String
     let provider: String
@@ -40,7 +40,7 @@ struct MomentsFinalRenderResponse: Decodable, Equatable {
 
 struct MomentsCreditReservationRequest: Encodable {
     let appId = "momentsav"
-    let projectId: String
+    let momentId: String
     let amount: Int
     let idempotencyKey: String
 }
@@ -48,7 +48,7 @@ struct MomentsCreditReservationRequest: Encodable {
 struct MomentsCreditReservationResponse: Decodable, Equatable {
     let id: String
     let appId: String
-    let projectId: String
+    let momentId: String
     let amount: Int
     let status: String
     let expiresAt: String
@@ -58,7 +58,7 @@ struct MomentsCreditReservationResponse: Decodable, Equatable {
 
 struct MomentsStartWorkflowRequest: Encodable {
     let appId = "momentsav"
-    let projectId: String
+    let momentId: String
     let renderKind: String
     let creationMode: String
     let look: String
@@ -77,7 +77,7 @@ struct MomentsStartWorkflowRequest: Encodable {
 
 struct MomentsStartWorkflowResponse: Decodable, Equatable {
     let appId: String
-    let projectId: String
+    let momentId: String
     let renderJobId: String
     let workflowRunId: String
     let status: String
@@ -86,7 +86,7 @@ struct MomentsStartWorkflowResponse: Decodable, Equatable {
 
 struct MomentsRenderPlanRequest: Encodable {
     let appId = "momentsav"
-    let projectId: String
+    let momentId: String
     let creationMode: String
     let look: String
     let theme: String
@@ -100,7 +100,7 @@ struct MomentsRenderPlanRequest: Encodable {
 
 struct MomentsRenderPlanResponse: Decodable, Equatable {
     let appId: String
-    let projectId: String
+    let momentId: String
     let planId: String
     let plan: MomentsRenderPlan
     let canCreateVideo: Bool
@@ -109,13 +109,13 @@ struct MomentsRenderPlanResponse: Decodable, Equatable {
 
 struct MomentsArtifactDownloadRequest: Encodable {
     let appId = "momentsav"
-    let projectId: String
+    let momentId: String
     let artifactId: String
 }
 
 struct MomentsArtifactDownloadResponse: Decodable, Equatable {
     let appId: String
-    let projectId: String
+    let momentId: String
     let artifactId: String
     let artifactKind: String
     let downloadUrl: String
@@ -151,13 +151,13 @@ enum MomentsFinalRenderRules {
     }
 
     static func canGenerate(
-        project: MomentDraftProject,
+        moment: InProgressMoment,
         template: MomentTemplate,
         balance: MomentsCreditBalance,
         latestPreview: MomentArtifact?
     ) -> Bool {
         availability(
-            project: project,
+            moment: moment,
             template: template,
             balance: balance,
             latestPreview: latestPreview
@@ -165,18 +165,18 @@ enum MomentsFinalRenderRules {
     }
 
     static func availability(
-        project: MomentDraftProject?,
+        moment: InProgressMoment?,
         template: MomentTemplate,
         balance: MomentsCreditBalance,
         latestPreview: MomentArtifact?
     ) -> Availability {
-        guard let project else {
+        guard let moment else {
             return Availability(canGenerate: false, blockReason: .missingProject)
         }
         if !MomentsCreditGate.canAfford(template, balance: balance) {
             return Availability(canGenerate: false, blockReason: .insufficientCredits)
         }
-        if project.status != "story_ready" && project.status != "preview_ready" && project.status != "export_ready" {
+        if moment.status != "story_ready" && moment.status != "preview_ready" && moment.status != "export_ready" {
             return Availability(canGenerate: false, blockReason: .storyNotReady)
         }
         return Availability(canGenerate: true, blockReason: nil)

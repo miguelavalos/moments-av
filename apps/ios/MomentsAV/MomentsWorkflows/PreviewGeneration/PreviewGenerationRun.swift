@@ -5,8 +5,8 @@ enum PreviewGenerationRun {
     static func perform(
         ownerUserId: String,
         bearerToken: String,
-        projectId: String,
-        project: MomentDraftProject,
+        momentId: String,
+        moment: InProgressMoment,
         template: MomentTemplate,
         form: MomentDraftForm,
         previewClient: MomentsPreviewClient,
@@ -15,11 +15,11 @@ enum PreviewGenerationRun {
         shouldContinue: () -> Bool
     ) async throws -> String {
         let preview = try await previewClient.generatePreview(
-            projectId: projectId,
+            momentId: momentId,
             bearerToken: bearerToken,
             template: template,
             form: form,
-            previewIndex: Int(project.previewCount) + 1
+            previewIndex: Int(moment.previewCount) + 1
         )
 
         guard shouldContinue() else {
@@ -28,7 +28,7 @@ enum PreviewGenerationRun {
 
         try await previewResultSaver.savePreviewResult(
             ownerUserId: ownerUserId,
-            projectId: projectId,
+            momentId: momentId,
             preview: preview,
             template: template
         )
@@ -37,7 +37,7 @@ enum PreviewGenerationRun {
             throw CancellationError()
         }
 
-        workspaceObserver.observeWorkspace(ownerUserId: ownerUserId, projectId: projectId)
+        workspaceObserver.observeWorkspace(ownerUserId: ownerUserId, momentId: momentId)
         return L10n.string("create.preview.status.readyRefine")
     }
 }

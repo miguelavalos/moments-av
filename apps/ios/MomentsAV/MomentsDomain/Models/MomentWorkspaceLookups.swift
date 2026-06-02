@@ -1,6 +1,6 @@
 import Foundation
 
-extension MomentProjectWorkspace {
+extension MomentWorkspace {
     func latestArtifact(kind: String) -> MomentArtifact? {
         artifacts.last { $0.kind == kind }
     }

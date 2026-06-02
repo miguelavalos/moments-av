@@ -6,8 +6,8 @@ struct MomentsInProgressPresentation: Equatable {
 
     static func make(
         isSignedIn: Bool,
-        projectSummary: MomentsProjectListSummary,
-        momentPendingDeletion: MomentDraftProject?
+        projectSummary: InProgressMomentsSummary,
+        momentPendingDeletion: InProgressMoment?
     ) -> MomentsInProgressPresentation {
         MomentsInProgressPresentation(
             availability: MomentsInProgressAvailability.make(
@@ -26,7 +26,7 @@ enum MomentsInProgressAvailability: Equatable {
 
     static func make(
         isSignedIn: Bool,
-        projectSummary: MomentsProjectListSummary
+        projectSummary: InProgressMomentsSummary
     ) -> MomentsInProgressAvailability {
         if !isSignedIn {
             return .signedOut(

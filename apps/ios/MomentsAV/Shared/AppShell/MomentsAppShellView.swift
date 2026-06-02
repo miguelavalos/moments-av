@@ -124,7 +124,7 @@ struct MomentsAppShellView: View {
                     selectTab: selectRootTab,
                     startMoment: startOrContinueMoment,
                     continueMoment: { request in
-                        createViewModel.continueMoment(request.project, focus: request.focus)
+                        createViewModel.continueMoment(request.moment, focus: request.focus)
                         selectRootTab(.create)
                     }
                 )
@@ -139,7 +139,7 @@ struct MomentsAppShellView: View {
                 MomentsInProgressScreen(
                     balance: accountController.creditBalance,
                     continueMoment: { request in
-                        createViewModel.continueMoment(request.project, focus: request.focus)
+                        createViewModel.continueMoment(request.moment, focus: request.focus)
                         selectedTab = .create
                     },
                     startMoment: {

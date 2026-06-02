@@ -46,7 +46,7 @@ struct MomentsInProgressArtifactPresentation: Equatable {
 
     init(artifact: MomentArtifact) {
         status = artifact.status
-        kindTitle = MomentsProjectStatusRules.displayKind(artifact.kind)
+        kindTitle = MomentStatusRules.displayKind(artifact.kind)
         watermarkTitle = artifact.hasWatermark == true ? L10n.string("moment.artifact.included") : L10n.string("moment.artifact.none")
         expiresAtTitle = MomentsDateFormatting.formattedDate(milliseconds: artifact.expiresAt)
         storageKey = artifact.r2Key
@@ -78,7 +78,7 @@ struct MomentsInProgressRenderJobPresentation: Identifiable, Equatable {
     init(renderJob: MomentRenderJob) {
         id = renderJob.id
         status = renderJob.status
-        kindTitle = MomentsProjectStatusRules.displayKind(renderJob.kind)
+        kindTitle = MomentStatusRules.displayKind(renderJob.kind)
         providerTitle = renderJob.provider == nil ? L10n.string("moment.job.notRecorded") : L10n.string("moment.job.recorded")
         modelTitle = renderJob.model == nil ? L10n.string("moment.job.notRecorded") : L10n.string("moment.job.configured")
         createdAtTitle = MomentsDateFormatting.formattedDate(milliseconds: renderJob.createdAt)

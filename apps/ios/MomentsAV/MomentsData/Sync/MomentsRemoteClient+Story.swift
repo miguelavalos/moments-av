@@ -1,31 +1,31 @@
 @preconcurrency import ConvexMobile
 import Foundation
 
-extension MomentsProjectRemoteClient {
+extension MomentsRemoteClient {
     func saveStoryDraft(
         ownerUserId: String,
-        projectId: String,
+        momentId: String,
         draft: MomentsStoryDraftResponse,
         storyInputSignature: String
     ) async throws {
         for scene in draft.scenes {
             try await upsertStoryScene(
                 ownerUserId: ownerUserId,
-                projectId: projectId,
+                momentId: momentId,
                 request: .scene(scene)
             )
         }
 
         try await markStoryReady(
             ownerUserId: ownerUserId,
-            projectId: projectId,
+            momentId: momentId,
             request: .draft(draft, storyInputSignature: storyInputSignature)
         )
     }
 
     func upsertStoryScene(
         ownerUserId: String,
-        projectId: String,
+        momentId: String,
         request: StoryScenePersistenceRequest
     ) async throws {
         let client = try requireClient()
@@ -35,7 +35,7 @@ extension MomentsProjectRemoteClient {
             name: "moments:upsertStoryScene",
             args: [
                 "ownerUserId": ownerUserId,
-                "projectId": projectId,
+                "momentId": momentId,
                 "sceneIndex": request.sceneIndex,
                 "mediaAssetIds": convexStringArray(request.mediaAssetIds),
                 "caption": request.caption,
@@ -50,7 +50,7 @@ extension MomentsProjectRemoteClient {
 
     func markStoryReady(
         ownerUserId: String,
-        projectId: String,
+        momentId: String,
         request: StoryReadyPersistenceRequest
     ) async throws {
         let client = try requireClient()
@@ -60,7 +60,7 @@ extension MomentsProjectRemoteClient {
             name: "moments:markStoryReady",
             args: [
                 "ownerUserId": ownerUserId,
-                "projectId": projectId,
+                "momentId": momentId,
                 "workflowRunId": request.workflowRunId,
                 "moderationStatus": request.moderationStatus,
                 "storyInputSignature": request.storyInputSignature

@@ -89,7 +89,7 @@ final class MomentsInProgressArtifactPresentationTests: XCTestCase {
             failedFinal.actionDetail,
             "Final Export is not available. Credits are only finalized after a usable final video is ready. Please retry in Create or contact support."
         )
-        XCTAssertEqual(queuedFinal.actionDetail, "Final Export is still being prepared. Refresh the project in a moment.")
+        XCTAssertEqual(queuedFinal.actionDetail, "Final Export is still being prepared. Refresh the moment in a moment.")
     }
 
     func testRenderJobPresentationSortsNewestFirstAndUsesFallbacks() {

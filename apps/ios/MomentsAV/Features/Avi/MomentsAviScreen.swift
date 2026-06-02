@@ -60,7 +60,7 @@ struct MomentsAviScreen: View {
 
 private struct MomentsAviGuidanceContent: View {
     let presentation: MomentsAviPresentation
-    let projectSummary: MomentsProjectListSummary
+    let projectSummary: InProgressMomentsSummary
     let creditBalance: MomentsCreditBalance
     let isSignedIn: Bool
     let startSignInFlow: () -> Void

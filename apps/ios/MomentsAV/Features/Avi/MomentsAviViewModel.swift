@@ -3,7 +3,7 @@ import Foundation
 
 @MainActor
 final class MomentsAviViewModel: ObservableObject {
-    @Published private(set) var projectSummary = MomentsProjectListSummary()
+    @Published private(set) var projectSummary = InProgressMomentsSummary()
     @Published private(set) var isSignedIn = false
     @Published private(set) var creditBalance = MomentsCreditBalance.empty
 
@@ -18,7 +18,7 @@ final class MomentsAviViewModel: ObservableObject {
         )
     }
 
-    func bind(to summaryProvider: any MomentsProjectSummaryProviding) {
+    func bind(to summaryProvider: any InProgressMomentsSummaryProviding) {
         projectCancellables.removeAll()
 
         summaryProvider.inProgressSummaryPublisher

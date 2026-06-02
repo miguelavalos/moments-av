@@ -8,7 +8,7 @@ protocol MomentsGalleryStoring {
     func contains(artifactId: String) -> Bool
     func saveDownloadedVideo(
         temporaryFileURL: URL,
-        projectId: String,
+        momentId: String,
         artifactId: String,
         title: String,
         r2Key: String,
@@ -65,7 +65,7 @@ struct MomentsGalleryStore: MomentsGalleryStoring {
 
     func saveDownloadedVideo(
         temporaryFileURL: URL,
-        projectId: String,
+        momentId: String,
         artifactId: String,
         title: String,
         r2Key: String,
@@ -75,7 +75,7 @@ struct MomentsGalleryStore: MomentsGalleryStoring {
             at: videosDirectory,
             withIntermediateDirectories: true
         )
-        let localRelativePath = "Videos/\(Self.safeFilename(projectId))-\(Self.safeFilename(artifactId)).mp4"
+        let localRelativePath = "Videos/\(Self.safeFilename(momentId))-\(Self.safeFilename(artifactId)).mp4"
         let destinationURL = baseDirectory.appendingPathComponent(localRelativePath)
         if fileManager.fileExists(atPath: destinationURL.path) {
             try fileManager.removeItem(at: destinationURL)
@@ -84,7 +84,7 @@ struct MomentsGalleryStore: MomentsGalleryStoring {
 
         let record = MomentsGalleryVideoRecord(
             id: artifactId,
-            projectId: projectId,
+            momentId: momentId,
             artifactId: artifactId,
             title: title,
             r2Key: r2Key,

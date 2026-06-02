@@ -6,7 +6,7 @@ final class MomentsHomePresentationTests: XCTestCase {
         let presentation = MomentsHomePresentation.make(
             isSignedIn: false,
             displayName: nil,
-            projectSummary: MomentsProjectListSummary()
+            projectSummary: InProgressMomentsSummary()
         )
 
         XCTAssertEqual(presentation.accountTitle, "Account required")
@@ -24,7 +24,7 @@ final class MomentsHomePresentationTests: XCTestCase {
         let presentation = MomentsHomePresentation.make(
             isSignedIn: true,
             displayName: "Ava",
-            projectSummary: MomentsProjectListSummary()
+            projectSummary: InProgressMomentsSummary()
         )
 
         XCTAssertEqual(presentation.accountTitle, "Account connected")
@@ -39,13 +39,13 @@ final class MomentsHomePresentationTests: XCTestCase {
     }
 
     func testLatestInProgressProjectAddsContinuationAction() {
-        let project = makeProject(id: "latest-draft", status: "story_ready", updatedAt: 20)
+        let moment = makeProject(id: "latest-draft", status: "story_ready", updatedAt: 20)
         let presentation = MomentsHomePresentation.make(
             isSignedIn: true,
             displayName: nil,
-            projectSummary: MomentsProjectListSummary.make(from: [
+            projectSummary: InProgressMomentsSummary.make(from: [
                 makeProject(id: "finished", status: "completed", updatedAt: 30),
-                project
+                moment
             ])
         )
 
@@ -53,7 +53,7 @@ final class MomentsHomePresentationTests: XCTestCase {
         XCTAssertEqual(presentation.latestInProgressAction?.systemImage, "arrow.right.circle")
         XCTAssertTrue(presentation.latestInProgressAction?.isProminent == true)
         XCTAssertFalse(presentation.createAction.isProminent)
-        XCTAssertEqual(presentation.latestInProgressContinuationRequest?.project.id, "latest-draft")
+        XCTAssertEqual(presentation.latestInProgressContinuationRequest?.moment.id, "latest-draft")
         XCTAssertEqual(presentation.latestInProgressContinuationRequest?.focus, .review)
     }
 
@@ -61,7 +61,7 @@ final class MomentsHomePresentationTests: XCTestCase {
         let presentation = MomentsHomePresentation.make(
             isSignedIn: true,
             displayName: nil,
-            projectSummary: MomentsProjectListSummary.make(from: [
+            projectSummary: InProgressMomentsSummary.make(from: [
                 makeProject(id: "one", status: "draft_created", updatedAt: 10),
                 makeProject(id: "two", status: "completed", updatedAt: 20)
             ])
@@ -81,7 +81,7 @@ final class MomentsHomePresentationTests: XCTestCase {
         let presentation = MomentsHomePresentation.make(
             isSignedIn: true,
             displayName: nil,
-            projectSummary: MomentsProjectListSummary.make(from: [
+            projectSummary: InProgressMomentsSummary.make(from: [
                 makeProject(id: "one", status: "draft_created", updatedAt: 10)
             ])
         )
@@ -96,8 +96,8 @@ final class MomentsHomePresentationTests: XCTestCase {
         )
     }
 
-    private func makeProject(id: String, status: String, updatedAt: Double) -> MomentDraftProject {
-        MomentDraftProject(
+    private func makeProject(id: String, status: String, updatedAt: Double) -> InProgressMoment {
+        InProgressMoment(
             id: id,
             template: .birthdayMessage,
             status: status,

@@ -6,7 +6,7 @@ struct MomentsCreateRenderJobStatusRow: View {
 
     var body: some View {
         AVAppShellInfoRow(
-            title: MomentsProjectStatusRules.displayTitle(for: renderJob.status),
+            title: MomentStatusRules.displayTitle(for: renderJob.status),
             detail: detail,
             systemImage: systemImage,
             eyebrow: L10n.string("create.renderRows.renderJob")

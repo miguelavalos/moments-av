@@ -1,7 +1,7 @@
 import Foundation
 
-struct MomentProjectWorkspace: Decodable, Equatable {
-    let project: MomentDraftProject
+struct MomentWorkspace: Decodable, Equatable {
+    let moment: InProgressMoment
     let mediaAssets: [MomentMediaAsset]
     let storyScenes: [MomentStoryScene]
     let renderJobs: [MomentRenderJob]

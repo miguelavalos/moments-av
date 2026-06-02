@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct MomentsInProgressListSummaryRow: View {
-    let pills: [MomentsProjectListSummaryPresentation]
+    let pills: [InProgressMomentsSummaryPresentation]
 
     var body: some View {
         HStack(spacing: 10) {

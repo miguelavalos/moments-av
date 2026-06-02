@@ -4,7 +4,7 @@ struct MomentsInProgressDiagnosticStatusBadge: View {
     let status: String
 
     var body: some View {
-        Text(MomentsProjectStatusRules.displayTitle(for: status))
+        Text(MomentStatusRules.displayTitle(for: status))
             .font(.caption2.weight(.semibold))
             .padding(.horizontal, 8)
             .padding(.vertical, 4)

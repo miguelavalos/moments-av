@@ -3,7 +3,7 @@ import Foundation
 @MainActor
 final class MomentsDependencyContainer: ObservableObject {
     let accountController: AccountController
-    let projectsObserver: MomentsProjectsObserver
+    let projectsObserver: InProgressMomentsObserver
     let workspaceObserver: MomentsWorkspaceObserver
     let momentDeletionWorkflow: MomentDeletionWorkflow
     let momentWorkspaceSelectionWorkflow: MomentWorkspaceSelectionWorkflow
@@ -22,13 +22,13 @@ final class MomentsDependencyContainer: ObservableObject {
 
     init(
         accountController: AccountController = AccountController(),
-        projectRepository: MomentsProjectRepository = MomentsProjectRepository(),
-        projectsObserver: MomentsProjectsObserver? = nil,
+        projectRepository: MomentsRepository = MomentsRepository(),
+        projectsObserver: InProgressMomentsObserver? = nil,
         workspaceObserver: MomentsWorkspaceObserver? = nil
     ) {
         let clients = MomentsWorkflowClients(baseURLString: AppConfig.momentsAPIBaseURL)
         self.accountController = accountController
-        let resolvedProjectsObserver = projectsObserver ?? MomentsProjectsObserver(projectRepository: projectRepository)
+        let resolvedProjectsObserver = projectsObserver ?? InProgressMomentsObserver(projectRepository: projectRepository)
         let resolvedWorkspaceObserver = workspaceObserver ?? MomentsWorkspaceObserver(projectRepository: projectRepository)
         self.projectsObserver = resolvedProjectsObserver
         self.workspaceObserver = resolvedWorkspaceObserver
@@ -59,7 +59,7 @@ final class MomentsDependencyContainer: ObservableObject {
         let nextObservedOwnerUserId = ObservedOwnerUserId.observed(ownerUserId)
         guard observedOwnerUserId != nextObservedOwnerUserId else { return }
         observedOwnerUserId = nextObservedOwnerUserId
-        inProgressMomentsWorkflow.observeProjects(ownerUserId: ownerUserId)
+        inProgressMomentsWorkflow.observeInProgressMoments(ownerUserId: ownerUserId)
         inProgressViewModel.clearSelection()
         createViewModel.clearSessionState()
         applyUITestFixturesIfNeeded()

@@ -3,7 +3,7 @@ import Foundation
 
 @MainActor
 class WorkspaceObservingWorkflow: ObservableObject {
-    @Published private(set) var activeWorkspace: MomentProjectWorkspace?
+    @Published private(set) var activeWorkspace: MomentWorkspace?
 
     let workspaceObserver: any MomentsActiveWorkspaceObserving
 
@@ -25,7 +25,7 @@ class WorkspaceObservingWorkflow: ObservableObject {
         updateActiveWorkspace(nil)
     }
 
-    func workspaceDidChange(_ workspace: MomentProjectWorkspace?) {}
+    func workspaceDidChange(_ workspace: MomentWorkspace?) {}
 
     func beginWorkflowGeneration() -> Int {
         workflowGeneration.begin()
@@ -39,7 +39,7 @@ class WorkspaceObservingWorkflow: ObservableObject {
         workflowGeneration.advance()
     }
 
-    private func updateActiveWorkspace(_ workspace: MomentProjectWorkspace?) {
+    private func updateActiveWorkspace(_ workspace: MomentWorkspace?) {
         activeWorkspace = workspace
         workspaceDidChange(workspace)
     }

@@ -3,17 +3,17 @@ import SwiftUI
 struct MomentsInProgressSelectedDetail: View {
     let selectedMomentId: String?
     let isLoadingProjectWorkspace: Bool
-    let activeWorkspace: MomentProjectWorkspace?
+    let activeWorkspace: MomentWorkspace?
     let isDeletingMoment: Bool
-    let continueMoment: (MomentsProjectContinuationRequest) -> Void
-    let requestDeleteMoment: (MomentDraftProject) -> Void
+    let continueMoment: (MomentsContinuationRequest) -> Void
+    let requestDeleteMoment: (InProgressMoment) -> Void
 
     var body: some View {
         if isLoadingProjectWorkspace {
             Divider()
                 .padding(.vertical, 8)
             MomentsInProgressLoadingDetail()
-        } else if let activeWorkspace, selectedMomentId == activeWorkspace.project.id {
+        } else if let activeWorkspace, selectedMomentId == activeWorkspace.moment.id {
             Divider()
                 .padding(.vertical, 8)
             MomentsInProgressWorkspaceDetail(

@@ -50,7 +50,7 @@ final class StoryDraftPersistenceRequestTests: XCTestCase {
         let json = """
         {
           "appId": "momentsav",
-          "projectId": "project-1",
+          "momentId": "moment-1",
           "workflowRunId": "workflow-1",
           "status": "ready",
           "provider": "mock-provider",

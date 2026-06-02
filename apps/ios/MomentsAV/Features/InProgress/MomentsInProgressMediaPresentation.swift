@@ -20,7 +20,7 @@ struct MomentsInProgressMediaAssetPresentation: Identifiable, Equatable {
     init(mediaAsset: MomentMediaAsset) {
         id = mediaAsset.id
         systemImage = mediaAsset.kind == "video" ? "video" : "photo"
-        title = "\(MomentsProjectStatusRules.displayKind(mediaAsset.kind)) \(Int(mediaAsset.sortOrder) + 1)"
+        title = "\(MomentStatusRules.displayKind(mediaAsset.kind)) \(Int(mediaAsset.sortOrder) + 1)"
         detail = MomentsMomentFormatting.mediaAssetDetail(mediaAsset)
     }
 

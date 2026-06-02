@@ -2,7 +2,7 @@ import AVAppShellFoundation
 import SwiftUI
 
 struct MomentsInProgressWorkspaceHeader: View {
-    let workspace: MomentProjectWorkspace
+    let workspace: MomentWorkspace
     private var presentation: MomentsInProgressWorkspaceHeaderPresentation {
         MomentsInProgressWorkspaceHeaderPresentation(workspace: workspace)
     }
@@ -22,7 +22,7 @@ struct MomentsInProgressWorkspaceHeader: View {
 }
 
 struct MomentsInProgressNextActionRow: View {
-    let action: MomentsProjectNextAction
+    let action: MomentNextAction
 
     var body: some View {
         AVAppShellInfoRow(
@@ -34,7 +34,7 @@ struct MomentsInProgressNextActionRow: View {
 }
 
 struct MomentsInProgressContinueButton: View {
-    let action: MomentsProjectNextAction
+    let action: MomentNextAction
     let continueMoment: () -> Void
 
     var body: some View {

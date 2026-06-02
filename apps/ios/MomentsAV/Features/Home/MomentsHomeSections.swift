@@ -64,7 +64,7 @@ struct MomentsHomeSignInCard: View {
 
 struct MomentsHomeMomentStatusCard: View {
     let isSignedIn: Bool
-    let projectSummary: MomentsProjectListSummary
+    let projectSummary: InProgressMomentsSummary
     let presentation: MomentsHomePresentation
     let openInProgress: () -> Void
 
@@ -107,7 +107,7 @@ struct MomentsHomeMomentStatusCard: View {
 
 struct MomentsHomeNextActionsCard: View {
     let presentation: MomentsHomePresentation
-    let continueMoment: (MomentsProjectContinuationRequest) -> Void
+    let continueMoment: (MomentsContinuationRequest) -> Void
     let startMoment: () -> Void
     let selectTab: (MomentsRootTab) -> Void
 

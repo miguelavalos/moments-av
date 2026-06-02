@@ -31,7 +31,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
             isCreatingDraft: true,
             canCreateDraft: false,
             availabilityMessage: "Draft is locked.",
-            activeMomentId: "project-1",
+            activeMomentId: "moment-1",
             isContinuingMoment: true,
             canStartAnotherProject: true,
             draftErrorMessage: "Draft failed.",
@@ -39,14 +39,14 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         )
 
         XCTAssertEqual(presentation.createDraftTitle, "Starting Moment...")
-        XCTAssertEqual(presentation.activeProjectLabel, "Continuing project")
+        XCTAssertEqual(presentation.activeProjectLabel, "Continuing moment")
         XCTAssertEqual(presentation.activeProjectDetail, "Create is attached to this existing Moment.")
         XCTAssertTrue(presentation.showsActiveProject)
         XCTAssertTrue(presentation.isDraftLocked)
         XCTAssertTrue(presentation.isCreatingDraft)
         XCTAssertFalse(presentation.canCreateDraft)
         XCTAssertEqual(presentation.availabilityMessage, "Draft is locked.")
-        XCTAssertEqual(presentation.activeMomentId, "project-1")
+        XCTAssertEqual(presentation.activeMomentId, "moment-1")
         XCTAssertTrue(presentation.canStartAnotherProject)
         XCTAssertEqual(presentation.draftErrorMessage, "Draft failed.")
         XCTAssertEqual(presentation.workspaceSummary.mediaCount, 2)
@@ -64,7 +64,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
             isCreatingDraft: false,
             canCreateDraft: false,
             availabilityMessage: "Locked.",
-            activeMomentId: "project-1",
+            activeMomentId: "moment-1",
             isContinuingMoment: true,
             canStartAnotherProject: true,
             draftErrorMessage: nil,
@@ -74,7 +74,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         XCTAssertEqual(presentation.templateSummary.template, .partyRecap)
         XCTAssertFalse(presentation.templateSummary.canAfford)
         XCTAssertEqual(presentation.templateSummary.spendPlanDescription, "Need credits.")
-        XCTAssertEqual(presentation.activeMomentId, "project-1")
+        XCTAssertEqual(presentation.activeMomentId, "moment-1")
         XCTAssertEqual(presentation.workspaceSummary.mediaCount, 1)
     }
 
@@ -110,7 +110,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
             statusMessage: "Drafting story."
         )
         let previewSummary = MomentsCreatePreviewSummary(
-            activeProject: MomentsCreateTestFixtures.makeProject(id: "project-1"),
+            activeProject: MomentsCreateTestFixtures.makeProject(id: "moment-1"),
             latestPreview: preview,
             latestPreviewJob: latestPreviewJob,
             isGenerating: true,
@@ -127,7 +127,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         )
 
         let presentation = MomentsCreateWorkflowPresentation(
-            activeMomentId: "project-1",
+            activeMomentId: "moment-1",
             hasMomentWorkspace: true,
             template: .birthdayMessage,
             balance: MomentsCreditBalance(proMonthly: 0, promotional: 2, purchased: 0),
@@ -150,7 +150,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         )
 
         XCTAssertTrue(presentation.showsWorkflowCards)
-        XCTAssertEqual(presentation.activeMomentId, "project-1")
+        XCTAssertEqual(presentation.activeMomentId, "moment-1")
         XCTAssertEqual(presentation.template, .birthdayMessage)
         XCTAssertEqual(presentation.mediaSummary, mediaSummary)
         XCTAssertEqual(presentation.storySummary, storySummary)
@@ -172,7 +172,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
 
     func testWorkflowPresentationBuilderAppliesAvailabilityState() {
         let presentation = MomentsCreateWorkflowPresentation.make(
-            activeMomentId: "project-1",
+            activeMomentId: "moment-1",
             isSignedIn: true,
             hasMomentWorkspace: true,
             hasUnsavedLocalMoment: false,
@@ -252,7 +252,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
 
     func testWorkflowPresentationShowsBlockingPreparationForCriticalWork() {
         var presentation = MomentsCreateWorkflowPresentation(
-            activeMomentId: "project-1",
+            activeMomentId: "moment-1",
             template: .birthdayMessage,
             balance: .empty,
             mediaSummary: MomentsCreateMediaSummary(isImporting: true),
@@ -294,7 +294,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
 
     func testMediaPresentationFormatsSelectionAndSortsSyncedMedia() {
         let presentation = MomentsCreateMediaPresentation(
-            activeMomentId: "project-1",
+            activeMomentId: "moment-1",
             template: .birthdayMessage,
             summary: MomentsCreateMediaSummary(
                 selectedMedia: [MomentsCreateTestFixtures.makeSelectedMedia(id: "00000000-0000-0000-0000-000000000001")],
@@ -309,7 +309,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
             availabilityMessage: "Add media."
         )
 
-        XCTAssertEqual(presentation.activeMomentId, "project-1")
+        XCTAssertEqual(presentation.activeMomentId, "moment-1")
         XCTAssertEqual(presentation.pickerTitle, "Adding media...")
         XCTAssertEqual(presentation.remainingSlots, 19)
         XCTAssertEqual(presentation.selectedCountTitle, "1 selected")
@@ -321,7 +321,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
 
     func testMediaPresentationUsesSingularMissingMediaCopy() {
         let presentation = MomentsCreateMediaPresentation(
-            activeMomentId: "project-1",
+            activeMomentId: "moment-1",
             template: .birthdayMessage,
             summary: MomentsCreateMediaSummary(
                 selectedMedia: [
@@ -360,7 +360,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
     func testPreviewPresentationFormatsUsageActionsAndArtifactState() {
         let presentation = MomentsCreatePreviewPresentation(
             summary: MomentsCreatePreviewSummary(
-                activeProject: MomentsCreateTestFixtures.makeProject(id: "project-1"),
+                activeProject: MomentsCreateTestFixtures.makeProject(id: "moment-1"),
                 latestPreview: MomentsCreateTestFixtures.makeArtifact(id: "preview-1", kind: "preview"),
                 latestPreviewJob: MomentsCreateTestFixtures.makeRenderJob(id: "preview-job", kind: "preview", status: "running"),
                 isGenerating: true,

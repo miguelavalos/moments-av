@@ -10,7 +10,7 @@ struct MomentsPreviewClient {
     }
 
     func generatePreview(
-        projectId: String,
+        momentId: String,
         bearerToken: String,
         template: MomentTemplate,
         form: MomentDraftForm,
@@ -27,14 +27,14 @@ struct MomentsPreviewClient {
             .appendingPathComponent("previews")
             .appendingPathComponent("generate")
         let body = MomentsPreviewRequest(
-            projectId: projectId,
+            momentId: momentId,
             creationMode: form.creationMode.rawValue,
             look: form.look.rawValue,
             theme: form.theme.rawValue,
             mood: form.tone.rawValue,
             duration: form.duration.rawValue,
             mediaUse: form.mediaUse.rawValue,
-            idempotencyKey: "preview:\(projectId):\(previewIndex)"
+            idempotencyKey: "preview:\(momentId):\(previewIndex)"
         )
 
         var request = URLRequest(url: endpoint)

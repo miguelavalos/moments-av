@@ -5,7 +5,7 @@ final class MomentsInProgressProgressModelTests: XCTestCase {
     func testEmptyWorkspaceMarksDraftCompleteAndRemainingStepsWaiting() {
         let model = MomentsInProgressProgressModel(workspace: makeWorkspace())
 
-        XCTAssertEqual(model.phases.map(\.title), ["Project", "Media", "Story", "Story Review", "Final"])
+        XCTAssertEqual(model.phases.map(\.title), ["Moment", "Media", "Story", "Story Review", "Final"])
         XCTAssertEqual(model.phases.map(\.state), [.complete, .waiting, .waiting, .waiting, .waiting])
         XCTAssertEqual(model.phases.map(\.detail), [
             "Draft Created",
@@ -44,9 +44,9 @@ final class MomentsInProgressProgressModelTests: XCTestCase {
         storyScenes: [MomentStoryScene] = [],
         renderJobs: [MomentRenderJob] = [],
         artifacts: [MomentArtifact] = []
-    ) -> MomentProjectWorkspace {
-        MomentProjectWorkspace(
-            project: makeProject(id: "project-1", status: "draft_created", updatedAt: 10),
+    ) -> MomentWorkspace {
+        MomentWorkspace(
+            moment: makeProject(id: "moment-1", status: "draft_created", updatedAt: 10),
             mediaAssets: mediaAssets,
             storyScenes: storyScenes,
             renderJobs: renderJobs,
@@ -54,8 +54,8 @@ final class MomentsInProgressProgressModelTests: XCTestCase {
         )
     }
 
-    private func makeProject(id: String, status: String, updatedAt: Double) -> MomentDraftProject {
-        MomentDraftProject(
+    private func makeProject(id: String, status: String, updatedAt: Double) -> InProgressMoment {
+        InProgressMoment(
             id: id,
             template: .birthdayMessage,
             status: status,
@@ -76,7 +76,7 @@ final class MomentsInProgressProgressModelTests: XCTestCase {
         MomentArtifact(
             id: "\(kind)-1",
             kind: kind,
-            r2Key: "momentsav/user/project/\(kind).mp4",
+            r2Key: "momentsav/user/moment/\(kind).mp4",
             status: status,
             hasWatermark: kind == "preview",
             expiresAt: 1_781_592_000_000

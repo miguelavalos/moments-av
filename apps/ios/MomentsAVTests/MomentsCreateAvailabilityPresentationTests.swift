@@ -35,7 +35,7 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
 
     func testWorkflowCapabilityFactoryFormatsMediaAndRefreshCapabilities() {
         let capability = MomentsCreateWorkflowCapabilityFactory.make(
-            activeMomentId: "project-1",
+            activeMomentId: "moment-1",
             isSignedIn: true,
             hasMomentWorkspace: true,
             isImportingMedia: false,
@@ -61,7 +61,7 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
 
     func testWorkflowCapabilityFactoryBlocksMediaWithoutSlotsOrProject() {
         let withoutSlots = MomentsCreateWorkflowCapabilityFactory.make(
-            activeMomentId: "project-1",
+            activeMomentId: "moment-1",
             isSignedIn: true,
             hasMomentWorkspace: true,
             isImportingMedia: false,
@@ -103,7 +103,7 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
         XCTAssertEqual(MomentsCreateAvailabilityCopy.storyMissingMedia, "Add photos or clips before preparing the story.")
         XCTAssertEqual(
             MomentsCreateAvailabilityCopy.finalRenderMissingWorkspace,
-            "Wait for the project workspace to sync before rendering the final export."
+            "Wait for the moment workspace to sync before rendering the final export."
         )
         XCTAssertEqual(
             MomentsCreateAvailabilityCopy.previewInsufficientCredits(missingCredits: 1),
@@ -175,11 +175,11 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
     func testAvailabilityMessageFactoryFormatsPreviewCreditStates() {
         XCTAssertEqual(
             MomentsCreateAvailabilityMessageFactory.preview(
-                activeMomentId: "project-1",
+                activeMomentId: "moment-1",
                 isPreviewGenerationAvailable: true,
                 isPreviewGenerating: false,
                 isPreviewGenerationConfigured: true,
-                project: MomentsCreateTestFixtures.makeProject(id: "project-1"),
+                moment: MomentsCreateTestFixtures.makeProject(id: "moment-1"),
                 template: .birthdayMessage,
                 balance: .empty
             ),
@@ -190,11 +190,11 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
     func testAvailabilityMessageFactoryFormatsFinalRenderPreviewRequirement() {
         XCTAssertEqual(
             MomentsCreateAvailabilityMessageFactory.finalRender(
-                activeMomentId: "project-1",
+                activeMomentId: "moment-1",
                 isFinalRenderAvailable: true,
                 isFinalRenderGenerating: false,
                 isFinalRenderConfigured: true,
-                project: MomentsCreateTestFixtures.makeProject(id: "project-1"),
+                moment: MomentsCreateTestFixtures.makeProject(id: "moment-1"),
                 template: .birthdayMessage,
                 balance: MomentsCreditBalance(proMonthly: 4, promotional: 0, purchased: 0),
                 latestPreview: nil
@@ -205,21 +205,21 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
 
     func testRefreshAvailabilityFactoryFormatsPreviewAndFinalMessages() {
         let preview = MomentsCreateRefreshAvailabilityFactory.preview(
-            projectId: nil,
+            momentId: nil,
             job: nil,
             isAvailable: false,
             isConfigured: false,
             isRefreshing: false
         )
         let finalRender = MomentsCreateRefreshAvailabilityFactory.finalRender(
-            projectId: "project-1",
+            momentId: "moment-1",
             job: nil,
             isAvailable: true,
             isConfigured: true,
             isRefreshing: false
         )
 
-        XCTAssertEqual(preview.message, "Open a project before refreshing story review status.")
+        XCTAssertEqual(preview.message, "Open a moment before refreshing story review status.")
         XCTAssertEqual(finalRender.message, "No final render job is available yet.")
     }
 }

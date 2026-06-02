@@ -42,7 +42,7 @@ final class StoryDraftWorkflow: WorkspaceObservingWorkflow {
     }
 
     func generateDraft(
-        projectId: String,
+        momentId: String,
         form: MomentDraftForm,
         selectedMedia: [MomentsSelectedMedia],
         persistedMedia: [MomentsStoryDraftMedia]? = nil
@@ -62,7 +62,7 @@ final class StoryDraftWorkflow: WorkspaceObservingWorkflow {
 
         let media = persistedMedia ?? storyMedia(from: selectedMedia, fallbackMediaAssets: activeWorkspace?.mediaAssets)
         let storyInputSignature = MomentsStoryDraftInputSignature.make(
-            projectId: projectId,
+            momentId: momentId,
             form: form,
             selectedMedia: media
         )
@@ -81,7 +81,7 @@ final class StoryDraftWorkflow: WorkspaceObservingWorkflow {
 
         do {
             let draft = try await storyClient.generateDraft(
-                projectId: projectId,
+                momentId: momentId,
                 ownerUserId: ownerUserId,
                 bearerToken: bearerToken,
                 form: form,
@@ -93,32 +93,32 @@ final class StoryDraftWorkflow: WorkspaceObservingWorkflow {
             do {
                 try await storyDraftSaver.saveStoryDraft(
                     ownerUserId: ownerUserId,
-                    projectId: projectId,
+                    momentId: momentId,
                     draft: draft,
                     storyInputSignature: storyInputSignature
                 )
             } catch {
-                logger.error("Story draft save failed projectId=\(projectId, privacy: .public) error=\(String(describing: error), privacy: .public)")
+                logger.error("Story draft save failed momentId=\(momentId, privacy: .public) error=\(String(describing: error), privacy: .public)")
                 throw StoryDraftWorkflowError.saveFailed
             }
             guard isCurrentWorkflowGeneration(generation) else { return false }
-            workspaceObserver.observeWorkspace(ownerUserId: ownerUserId, projectId: projectId)
+            workspaceObserver.observeWorkspace(ownerUserId: ownerUserId, momentId: momentId)
             statusMessage = draft.helperCopy
         } catch let error as StoryDraftWorkflowError {
             guard isCurrentWorkflowGeneration(generation) else { return false }
-            logger.error("Story draft workflow failed projectId=\(projectId, privacy: .public) reason=\(error.localizedDescription, privacy: .public)")
+            logger.error("Story draft workflow failed momentId=\(momentId, privacy: .public) reason=\(error.localizedDescription, privacy: .public)")
             statusMessage = error.localizedDescription
             isDrafting = false
             return false
         } catch let error as LocalizedError {
             guard isCurrentWorkflowGeneration(generation) else { return false }
-            logger.error("Story draft request failed projectId=\(projectId, privacy: .public) error=\(String(describing: error), privacy: .public)")
+            logger.error("Story draft request failed momentId=\(momentId, privacy: .public) error=\(String(describing: error), privacy: .public)")
             statusMessage = MomentsRecoveryCopy.storyFailure()
             isDrafting = false
             return false
         } catch {
             guard isCurrentWorkflowGeneration(generation) else { return false }
-            logger.error("Story draft failed projectId=\(projectId, privacy: .public) error=\(String(describing: error), privacy: .public)")
+            logger.error("Story draft failed momentId=\(momentId, privacy: .public) error=\(String(describing: error), privacy: .public)")
             statusMessage = MomentsRecoveryCopy.storyFailure()
             isDrafting = false
             return false

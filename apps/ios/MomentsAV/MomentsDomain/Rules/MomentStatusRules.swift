@@ -1,18 +1,18 @@
 import Foundation
 
-enum MomentsProjectStatusRules {
-    static func isFinished(_ project: MomentDraftProject) -> Bool {
-        isFinishedStatus(project.status)
+enum MomentStatusRules {
+    static func isFinished(_ moment: InProgressMoment) -> Bool {
+        isFinishedStatus(moment.status)
     }
 
     static func isFinishedStatus(_ status: String) -> Bool {
         status == "completed"
     }
 
-    static func group(_ projects: [MomentDraftProject]) -> MomentsProjectGroups {
-        let sortedProjects = projects.sortedByLatestUpdate()
+    static func group(_ moments: [InProgressMoment]) -> InProgressMomentGroups {
+        let sortedProjects = moments.sortedByLatestUpdate()
 
-        return MomentsProjectGroups(
+        return InProgressMomentGroups(
             inProgress: sortedProjects.filter { !isFinished($0) },
             finished: sortedProjects.filter(isFinished)
         )
@@ -42,9 +42,9 @@ enum MomentsProjectStatusRules {
             .capitalized
     }
 
-    static func nextAction(for workspace: MomentProjectWorkspace) -> MomentsProjectNextAction {
+    static func nextAction(for workspace: MomentWorkspace) -> MomentNextAction {
         if let failedJob = workspace.renderJobs.latest(where: { isFailureStatus($0.status) }) {
-            return MomentsProjectNextAction(
+            return MomentNextAction(
                 title: L10n.string("moment.nextAction.videoAttention.title"),
                 message: L10n.string("moment.nextAction.videoAttention.message", displayKind(failedJob.kind)),
                 systemImage: "exclamationmark.triangle",
@@ -54,7 +54,7 @@ enum MomentsProjectStatusRules {
         }
 
         if workspace.mediaAssets.isEmpty {
-            return MomentsProjectNextAction(
+            return MomentNextAction(
                 title: L10n.string("moment.nextAction.addMedia.title"),
                 message: L10n.string("moment.nextAction.addMedia.message"),
                 systemImage: "photo.badge.plus",
@@ -64,7 +64,7 @@ enum MomentsProjectStatusRules {
         }
 
         if workspace.storyScenes.isEmpty {
-            return MomentsProjectNextAction(
+            return MomentNextAction(
                 title: L10n.string("moment.nextAction.prepareStory.title"),
                 message: L10n.string("moment.nextAction.prepareStory.message"),
                 systemImage: "text.bubble",
@@ -74,7 +74,7 @@ enum MomentsProjectStatusRules {
         }
 
         if !workspace.artifacts.containsAvailable(kind: "preview") {
-            return MomentsProjectNextAction(
+            return MomentNextAction(
                 title: L10n.string("moment.nextAction.reviewStory.title"),
                 message: L10n.string("moment.nextAction.reviewStory.message"),
                 systemImage: "text.bubble",
@@ -84,7 +84,7 @@ enum MomentsProjectStatusRules {
         }
 
         if !workspace.artifacts.containsAvailable(kind: "final_export") {
-            return MomentsProjectNextAction(
+            return MomentNextAction(
                 title: L10n.string("moment.nextAction.createVideo.title"),
                 message: L10n.string("moment.nextAction.createVideo.message"),
                 systemImage: "video.fill",
@@ -93,7 +93,7 @@ enum MomentsProjectStatusRules {
             )
         }
 
-        return MomentsProjectNextAction(
+        return MomentNextAction(
             title: L10n.string("library.finished.title"),
             message: L10n.string("moment.nextAction.finished.message"),
             systemImage: "checkmark.circle",
@@ -102,7 +102,7 @@ enum MomentsProjectStatusRules {
         )
     }
 
-    private static func focus(forFailedJobKind kind: String) -> MomentsProjectContinuationFocus {
+    private static func focus(forFailedJobKind kind: String) -> MomentsContinuationFocus {
         switch kind {
         case "preview":
             .preview
@@ -118,8 +118,8 @@ enum MomentsProjectStatusRules {
     }
 }
 
-private extension [MomentDraftProject] {
-    func sortedByLatestUpdate() -> [MomentDraftProject] {
+private extension [InProgressMoment] {
+    func sortedByLatestUpdate() -> [InProgressMoment] {
         sorted { $0.updatedAt > $1.updatedAt }
     }
 }

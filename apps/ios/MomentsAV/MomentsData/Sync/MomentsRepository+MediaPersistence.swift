@@ -1,15 +1,15 @@
 import Foundation
 
-extension MomentsProjectRepository {
+extension MomentsRepository {
     func saveMediaAsset(
         ownerUserId: String,
-        projectId: String,
+        momentId: String,
         media: MomentsSelectedMedia,
         preparedUpload: MomentsPreparedUpload
     ) async throws -> String {
         try await remoteClient.addMediaAsset(
             ownerUserId: ownerUserId,
-            projectId: projectId,
+            momentId: momentId,
             media: media,
             preparedUpload: preparedUpload
         )
@@ -17,13 +17,13 @@ extension MomentsProjectRepository {
 
     func saveMediaAssets(
         ownerUserId: String,
-        projectId: String,
+        momentId: String,
         mediaAssets: [MediaAssetPersistenceRequest]
     ) async throws -> [String] {
         do {
             return try await remoteClient.addMediaAssets(
                 ownerUserId: ownerUserId,
-                projectId: projectId,
+                momentId: momentId,
                 requests: mediaAssets
             )
         } catch {
@@ -31,7 +31,7 @@ extension MomentsProjectRepository {
             for mediaAsset in mediaAssets {
                 let savedId = try await remoteClient.addMediaAsset(
                     ownerUserId: ownerUserId,
-                    projectId: projectId,
+                    momentId: momentId,
                     request: mediaAsset
                 )
                 savedIds.append(savedId)

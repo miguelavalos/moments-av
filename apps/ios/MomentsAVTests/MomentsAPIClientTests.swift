@@ -13,13 +13,13 @@ final class MomentsAPIClientTests: XCTestCase {
             json: """
             {
               "appId": "momentsav",
-              "projectId": "project-1",
+              "momentId": "moment-1",
               "mediaAssetId": "media-1",
               "uploadId": "upload-1",
               "uploadUrl": "https://uploads.example.com/media-1",
               "method": "PUT",
               "headers": { "content-type": "image/jpeg" },
-              "storageKey": "momentsav/user/project/source/media-1.jpg",
+              "storageKey": "momentsav/user/moment/source/media-1.jpg",
               "expiresAt": "2026-05-16T17:00:00Z",
               "generatedAt": "2026-05-16T16:00:00Z"
             }
@@ -40,7 +40,7 @@ final class MomentsAPIClientTests: XCTestCase {
             selected: true
         )
 
-        _ = try await client.prepareUpload(projectId: "project-1", bearerToken: "token-1", media: media)
+        _ = try await client.prepareUpload(momentId: "moment-1", bearerToken: "token-1", media: media)
 
         XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.url?.absoluteString, "\(accountAPIBaseURL)/v1/apps/momentsav/media/prepare-upload")
         XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.value(forHTTPHeaderField: "Authorization"), "Bearer token-1")
@@ -52,13 +52,13 @@ final class MomentsAPIClientTests: XCTestCase {
             json: """
             {
               "appId": "momentsav",
-              "projectId": "project-1",
+              "momentId": "moment-1",
               "mediaAssetId": "media-1",
               "uploadId": "upload-1",
               "uploadUrl": "https://uploads.example.com/media-1",
               "method": "PUT",
               "headers": { "content-type": "image/jpeg" },
-              "storageKey": "momentsav/user/project/source/media-1.jpg",
+              "storageKey": "momentsav/user/moment/source/media-1.jpg",
               "expiresAt": "2026-05-16T17:00:00Z",
               "generatedAt": "2026-05-16T16:00:00Z"
             }
@@ -83,7 +83,7 @@ final class MomentsAPIClientTests: XCTestCase {
             selected: true
         )
 
-        _ = try await client.prepareUpload(projectId: "project-1", bearerToken: "token-1", media: media)
+        _ = try await client.prepareUpload(momentId: "moment-1", bearerToken: "token-1", media: media)
 
         XCTAssertEqual(MomentsURLProtocolMock.requestCount, 2)
     }
@@ -107,7 +107,7 @@ final class MomentsAPIClientTests: XCTestCase {
         )
         let prepared = MomentsPreparedUpload(
             appId: "momentsav",
-            projectId: "project-1",
+            momentId: "moment-1",
             mediaAssetId: "media-1",
             uploadId: "upload-1",
             uploadUrl: uploadURL,
@@ -115,10 +115,10 @@ final class MomentsAPIClientTests: XCTestCase {
             method: "PUT",
             headers: [
                 "content-type": "image/jpeg",
-                "x-appsav-moments-project-id": "project-1",
+                "x-appsav-moments-moment-id": "moment-1",
                 "x-appsav-moments-media-asset-id": "media-1"
             ],
-            storageKey: "momentsav/user/project/source/media-1",
+            storageKey: "momentsav/user/moment/source/media-1",
             expiresAt: "2026-05-16T17:00:00Z",
             generatedAt: "2026-05-16T16:00:00Z"
         )
@@ -128,7 +128,7 @@ final class MomentsAPIClientTests: XCTestCase {
         XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.url?.absoluteString, uploadURL.absoluteString)
         XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.httpMethod, "PUT")
         XCTAssertNil(MomentsURLProtocolMock.lastRequest?.value(forHTTPHeaderField: "Authorization"))
-        XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.value(forHTTPHeaderField: "x-appsav-moments-project-id"), "project-1")
+        XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.value(forHTTPHeaderField: "x-appsav-moments-moment-id"), "moment-1")
     }
 
     func testUploadWithoutSignedURLFailsBeforeSavingMedia() async throws {
@@ -149,14 +149,14 @@ final class MomentsAPIClientTests: XCTestCase {
         )
         let prepared = MomentsPreparedUpload(
             appId: "momentsav",
-            projectId: "project-1",
+            momentId: "moment-1",
             mediaAssetId: "media-1",
             uploadId: "upload-1",
             uploadUrl: nil,
             completionUrl: nil,
             method: "PUT",
             headers: ["content-type": "image/jpeg"],
-            storageKey: "momentsav/user/project/source/media-1",
+            storageKey: "momentsav/user/moment/source/media-1",
             expiresAt: "2026-05-16T17:00:00Z",
             generatedAt: "2026-05-16T16:00:00Z"
         )
@@ -174,7 +174,7 @@ final class MomentsAPIClientTests: XCTestCase {
     func testDirectUploadCompletesPreparedUploadAfterR2Put() async throws {
         let session = makeMockSession(json: "{}")
         let client = MomentsUploadClient(baseURLString: accountAPIBaseURL, session: session)
-        let uploadURL = URL(string: "https://account-1.r2.cloudflarestorage.com/appsav-assets-preview/momentsav/user/project/source/media-1?X-Amz-Signature=test")!
+        let uploadURL = URL(string: "https://account-1.r2.cloudflarestorage.com/appsav-assets-preview/momentsav/user/moment/source/media-1?X-Amz-Signature=test")!
         let completionURL = URL(string: "\(accountAPIBaseURL)/v1/apps/momentsav/uploads/upload-1/complete")!
         let media = MomentsSelectedMedia(
             id: UUID(uuidString: "00000000-0000-0000-0000-000000000010")!,
@@ -191,7 +191,7 @@ final class MomentsAPIClientTests: XCTestCase {
         )
         let prepared = MomentsPreparedUpload(
             appId: "momentsav",
-            projectId: "project-1",
+            momentId: "moment-1",
             mediaAssetId: "media-1",
             uploadId: "upload-1",
             uploadUrl: uploadURL,
@@ -201,7 +201,7 @@ final class MomentsAPIClientTests: XCTestCase {
                 "content-type": "image/jpeg",
                 "x-amz-meta-upload-id": "upload-1"
             ],
-            storageKey: "momentsav/user/project/source/media-1",
+            storageKey: "momentsav/user/moment/source/media-1",
             expiresAt: "2026-05-16T17:00:00Z",
             generatedAt: "2026-05-16T16:00:00Z"
         )
@@ -237,14 +237,14 @@ final class MomentsAPIClientTests: XCTestCase {
         )
         let prepared = MomentsPreparedUpload(
             appId: "momentsav",
-            projectId: "project-1",
+            momentId: "moment-1",
             mediaAssetId: "media-1",
             uploadId: "upload-1",
             uploadUrl: uploadURL,
             completionUrl: nil,
             method: "PUT",
             headers: ["content-type": "image/jpeg"],
-            storageKey: "momentsav/user/project/source/media-1",
+            storageKey: "momentsav/user/moment/source/media-1",
             expiresAt: "2026-05-16T17:00:00Z",
             generatedAt: "2026-05-16T16:00:00Z"
         )
@@ -259,7 +259,7 @@ final class MomentsAPIClientTests: XCTestCase {
             json: """
             {
               "appId": "momentsav",
-              "projectId": "project-1",
+              "momentId": "moment-1",
               "workflowRunId": "workflow-1",
               "status": "ready",
               "provider": "mock",
@@ -277,7 +277,7 @@ final class MomentsAPIClientTests: XCTestCase {
         let client = MomentsStoryClient(baseURLString: accountAPIBaseURL, session: session)
 
         _ = try await client.generateDraft(
-            projectId: "project-1",
+            momentId: "moment-1",
             ownerUserId: "user-1",
             bearerToken: "token-1",
             form: MomentDraftForm(template: .birthdayMessage),
@@ -294,7 +294,7 @@ final class MomentsAPIClientTests: XCTestCase {
             json: """
             {
               "appId": "momentsav",
-              "projectId": "project-1",
+              "momentId": "moment-1",
               "workflowRunId": "workflow-1",
               "status": "ready",
               "provider": "mock",
@@ -316,7 +316,7 @@ final class MomentsAPIClientTests: XCTestCase {
         )
 
         _ = try await client.generateDraft(
-            projectId: "project-1",
+            momentId: "moment-1",
             ownerUserId: "user-1",
             bearerToken: "token-1",
             form: MomentDraftForm(template: .birthdayMessage),
@@ -331,7 +331,7 @@ final class MomentsAPIClientTests: XCTestCase {
             json: """
             {
               "appId": "momentsav",
-              "projectId": "project-1",
+              "momentId": "moment-1",
               "renderJobId": "render-1",
               "workflowRunId": "workflow-1",
               "provider": "mock",
@@ -341,7 +341,7 @@ final class MomentsAPIClientTests: XCTestCase {
               "status": "completed",
               "progressPercent": 100,
               "progressState": "ready",
-              "r2Key": "momentsav/user/project/previews/preview-1.mp4",
+              "r2Key": "momentsav/user/moment/previews/preview-1.mp4",
               "expiresAt": "2026-06-16T16:00:00Z",
               "hasWatermark": true,
               "generatedAt": "2026-05-16T16:00:00Z"
@@ -351,7 +351,7 @@ final class MomentsAPIClientTests: XCTestCase {
         let client = MomentsPreviewClient(baseURLString: accountAPIBaseURL, session: session)
 
         let preview = try await client.generatePreview(
-            projectId: "project-1",
+            momentId: "moment-1",
             bearerToken: "token-1",
             template: .birthdayMessage,
             form: MomentDraftForm(template: .birthdayMessage),
@@ -369,7 +369,7 @@ final class MomentsAPIClientTests: XCTestCase {
             json: """
             {
               "appId": "momentsav",
-              "projectId": "project-1",
+              "momentId": "moment-1",
               "renderJobId": "render-1",
               "workflowRunId": "workflow-1",
               "provider": "mock",
@@ -379,7 +379,7 @@ final class MomentsAPIClientTests: XCTestCase {
               "status": "completed",
               "progressPercent": 100,
               "progressState": "ready",
-              "r2Key": "momentsav/user/project/previews/preview-1.mp4",
+              "r2Key": "momentsav/user/moment/previews/preview-1.mp4",
               "expiresAt": "2026-06-16T16:00:00Z",
               "hasWatermark": true,
               "generatedAt": "2026-05-16T16:00:00Z"
@@ -393,7 +393,7 @@ final class MomentsAPIClientTests: XCTestCase {
         )
 
         _ = try await client.generatePreview(
-            projectId: "project-1",
+            momentId: "moment-1",
             bearerToken: "token-1",
             template: .birthdayMessage,
             form: MomentDraftForm(template: .birthdayMessage),
@@ -419,7 +419,7 @@ final class MomentsAPIClientTests: XCTestCase {
 
         do {
             _ = try await client.generatePreview(
-                projectId: "project-1",
+                momentId: "moment-1",
                 bearerToken: "token-1",
                 template: .birthdayMessage,
                 form: MomentDraftForm(template: .birthdayMessage),
@@ -437,7 +437,7 @@ final class MomentsAPIClientTests: XCTestCase {
             {
               "id": "reservation-1",
               "appId": "momentsav",
-              "projectId": "project-1",
+              "momentId": "moment-1",
               "amount": 2,
               "status": "reserved",
               "expiresAt": "2026-06-16T16:00:00Z",
@@ -449,7 +449,7 @@ final class MomentsAPIClientTests: XCTestCase {
         let client = MomentsFinalRenderClient(baseURLString: accountAPIBaseURL, session: session)
 
         let reservation = try await client.reserveFinalRenderCredits(
-            projectId: "project-1",
+            momentId: "moment-1",
             bearerToken: "token-1",
             template: .birthdayMessage,
             removesWatermark: false,
@@ -469,7 +469,7 @@ final class MomentsAPIClientTests: XCTestCase {
             json: """
             {
               "appId": "momentsav",
-              "projectId": "project-1",
+              "momentId": "moment-1",
               "renderJobId": "render-1",
               "workflowRunId": "workflow-1",
               "status": "running",
@@ -480,7 +480,7 @@ final class MomentsAPIClientTests: XCTestCase {
         let client = MomentsFinalRenderClient(baseURLString: accountAPIBaseURL, session: session)
 
         let workflow = try await client.startFinalRenderWorkflow(
-            projectId: "project-1",
+            momentId: "moment-1",
             bearerToken: "token-1",
             template: .birthdayMessage,
             creationStyle: nil,
@@ -513,7 +513,7 @@ final class MomentsAPIClientTests: XCTestCase {
 
         do {
             _ = try await client.startFinalRenderWorkflow(
-                projectId: "project-1",
+                momentId: "moment-1",
                 bearerToken: "token-1",
                 template: .birthdayMessage,
                 creationStyle: nil,
@@ -533,7 +533,7 @@ final class MomentsAPIClientTests: XCTestCase {
             json: """
             {
               "appId": "momentsav",
-              "projectId": "project-1",
+              "momentId": "moment-1",
               "renderJobId": "render-1",
               "workflowRunId": "workflow-1",
               "renderKind": "preview",
@@ -564,7 +564,7 @@ final class MomentsAPIClientTests: XCTestCase {
             json: """
             {
               "appId": "momentsav",
-              "projectId": "project-1",
+              "momentId": "moment-1",
               "renderJobId": "render-1",
               "workflowRunId": "workflow-1",
               "renderKind": "final",

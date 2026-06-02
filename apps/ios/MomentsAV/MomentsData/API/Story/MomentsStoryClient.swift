@@ -10,7 +10,7 @@ struct MomentsStoryClient {
     }
 
     func generateDraft(
-        projectId: String,
+        momentId: String,
         ownerUserId: String,
         bearerToken: String,
         form: MomentDraftForm,
@@ -30,7 +30,7 @@ struct MomentsStoryClient {
             }
 
         return try await generateDraft(
-            projectId: projectId,
+            momentId: momentId,
             ownerUserId: ownerUserId,
             bearerToken: bearerToken,
             form: form,
@@ -39,7 +39,7 @@ struct MomentsStoryClient {
     }
 
     func generateDraft(
-        projectId: String,
+        momentId: String,
         ownerUserId: String,
         bearerToken: String,
         form: MomentDraftForm,
@@ -57,7 +57,7 @@ struct MomentsStoryClient {
             .appendingPathComponent("drafts")
 
         let requestBody = MomentsStoryDraftRequest(
-            projectId: projectId,
+            momentId: momentId,
             creationMode: form.creationMode.rawValue,
             look: form.look.rawValue,
             theme: form.theme.rawValue,
@@ -67,7 +67,7 @@ struct MomentsStoryClient {
             occasion: form.occasion,
             details: form.details,
             media: selectedMedia,
-            idempotencyKey: "story:\(projectId):\(MomentsStoryDraftInputSignature.make(projectId: projectId, form: form, selectedMedia: selectedMedia))"
+            idempotencyKey: "story:\(momentId):\(MomentsStoryDraftInputSignature.make(momentId: momentId, form: form, selectedMedia: selectedMedia))"
         )
 
         var request = URLRequest(url: endpoint)

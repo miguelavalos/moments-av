@@ -20,7 +20,7 @@ struct MomentsCreateWorkspaceSummary: Equatable {
     }
 
     static func make(
-        workspace: MomentProjectWorkspace?,
+        workspace: MomentWorkspace?,
         latestPreview: MomentArtifact?,
         finalExport: MomentArtifact?
     ) -> MomentsCreateWorkspaceSummary {
@@ -144,7 +144,7 @@ struct MomentsCreateStoryReviewScene: Equatable, Identifiable {
 }
 
 struct MomentsCreatePreviewSummary: Equatable {
-    var activeProject: MomentDraftProject?
+    var activeProject: InProgressMoment?
     var latestPreview: MomentArtifact?
     var latestPreviewJob: MomentRenderJob?
     var isGenerating = false

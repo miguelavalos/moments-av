@@ -6,18 +6,18 @@ import SwiftUI
 struct MomentsInProgressCard: View {
     let presentation: MomentsInProgressPresentation
     let balance: MomentsCreditBalance
-    let projectSummary: MomentsProjectListSummary
+    let projectSummary: InProgressMomentsSummary
     let selectedMomentId: String?
     let isLoadingProjectWorkspace: Bool
-    let activeWorkspace: MomentProjectWorkspace?
+    let activeWorkspace: MomentWorkspace?
     let isDeletingMoment: Bool
     let statusMessage: String?
-    let selectProject: (MomentDraftProject) -> Void
-    let continueMoment: (MomentsProjectContinuationRequest) -> Void
+    let selectProject: (InProgressMoment) -> Void
+    let continueMoment: (MomentsContinuationRequest) -> Void
     let startMoment: () -> Void
     let startSignInFlow: () -> Void
     let openCredits: () -> Void
-    let requestDeleteMoment: (MomentDraftProject) -> Void
+    let requestDeleteMoment: (InProgressMoment) -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
@@ -38,7 +38,7 @@ struct MomentsInProgressCard: View {
             case .available:
                 MomentsInProgressCreditStatus(balance: balance, openCredits: openCredits)
                 MomentsInProgressContinueBlock(
-                    projects: continueMoments,
+                    moments: continueMoments,
                     continueMoment: continueMoment,
                     requestDeleteMoment: requestDeleteMoment
                 )
@@ -47,7 +47,7 @@ struct MomentsInProgressCard: View {
         }
     }
 
-    private var continueMoments: [MomentDraftProject] {
+    private var continueMoments: [InProgressMoment] {
         projectSummary.groups.inProgress.sorted { $0.updatedAt > $1.updatedAt }
     }
 }
@@ -121,7 +121,7 @@ private struct MomentsInProgressEmptyContent: View {
 }
 
 private struct MomentsInProgressAviBlock: View {
-    let projectSummary: MomentsProjectListSummary
+    let projectSummary: InProgressMomentsSummary
 
     var body: some View {
         HStack(spacing: 16) {
@@ -166,8 +166,8 @@ private struct MomentsInProgressAviBlock: View {
     }
 
     private var message: String {
-        if let project = projectSummary.latestInProgressProject {
-            return L10n.string("inProgress.avi.momentInProgress.message", project.title)
+        if let moment = projectSummary.latestInProgressProject {
+            return L10n.string("inProgress.avi.momentInProgress.message", moment.title)
         }
         if projectSummary.finishedCount > 0 {
             return L10n.string("inProgress.avi.galleryStarts.message")
@@ -177,12 +177,12 @@ private struct MomentsInProgressAviBlock: View {
 }
 
 private struct MomentsInProgressContinueBlock: View {
-    let projects: [MomentDraftProject]
-    let continueMoment: (MomentsProjectContinuationRequest) -> Void
-    let requestDeleteMoment: (MomentDraftProject) -> Void
+    let moments: [InProgressMoment]
+    let continueMoment: (MomentsContinuationRequest) -> Void
+    let requestDeleteMoment: (InProgressMoment) -> Void
 
     var body: some View {
-        if projects.isEmpty {
+        if moments.isEmpty {
             MomentsInProgressInlineEmptyState(
                 systemImage: "photo.badge.plus",
                 title: L10n.string("inProgress.empty.inProgress.title"),
@@ -196,24 +196,24 @@ private struct MomentsInProgressContinueBlock: View {
                 VStack(alignment: .leading, spacing: 12) {
                     AVAppShellSectionHeader(title: L10n.string("inProgress.title"))
 
-                    ForEach(projects) { project in
+                    ForEach(moments) { moment in
                         VStack(spacing: 10) {
                             Button {
-                                continueMoment(MomentsProjectContinuationRequest(project: project))
+                                continueMoment(MomentsContinuationRequest(moment: moment))
                             } label: {
                                 HStack(alignment: .center, spacing: 12) {
-                                    Image(systemName: iconName(for: project))
+                                    Image(systemName: iconName(for: moment))
                                         .font(.system(size: 22, weight: .bold))
                                         .foregroundStyle(AVBrandColor.accent)
                                         .frame(width: 32)
 
                                     VStack(alignment: .leading, spacing: 5) {
-                                        Text(project.title)
+                                        Text(moment.title)
                                             .font(.system(size: 17, weight: .black))
                                             .foregroundStyle(AVBrandColor.textPrimary)
                                             .lineLimit(2)
 
-                                        Text("\(MomentsProjectStatusRules.displayTitle(for: project.status)) · \(Self.creditTitle(project.creditCost))")
+                                        Text("\(MomentStatusRules.displayTitle(for: moment.status)) · \(Self.creditTitle(moment.creditCost))")
                                             .font(AVBrandTypography.captionStrong)
                                             .foregroundStyle(AVBrandColor.textSecondary)
                                     }
@@ -228,14 +228,14 @@ private struct MomentsInProgressContinueBlock: View {
                             .buttonStyle(.plain)
 
                             Button(role: .destructive) {
-                                requestDeleteMoment(project)
+                                requestDeleteMoment(moment)
                             } label: {
                                 Label(L10n.string("common.discard"), systemImage: "trash")
                                     .frame(maxWidth: .infinity)
                             }
                             .buttonStyle(.bordered)
                         }
-                        if project.id != projects.last?.id {
+                        if moment.id != moments.last?.id {
                             Divider()
                         }
                     }
@@ -244,8 +244,8 @@ private struct MomentsInProgressContinueBlock: View {
         }
     }
 
-    private func iconName(for project: MomentDraftProject) -> String {
-        switch project.status {
+    private func iconName(for moment: InProgressMoment) -> String {
+        switch moment.status {
         case "final_render_pending", "final_render_running":
             "gearshape.2.fill"
         case "export_ready", "completed":

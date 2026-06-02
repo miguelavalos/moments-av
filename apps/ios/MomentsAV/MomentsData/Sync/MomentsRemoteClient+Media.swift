@@ -1,24 +1,24 @@
 @preconcurrency import ConvexMobile
 import Foundation
 
-extension MomentsProjectRemoteClient {
+extension MomentsRemoteClient {
     func addMediaAsset(
         ownerUserId: String,
-        projectId: String,
+        momentId: String,
         media: MomentsSelectedMedia,
         preparedUpload: MomentsPreparedUpload,
         uploadedAt: Date = Date()
     ) async throws -> String {
         try await addMediaAsset(
             ownerUserId: ownerUserId,
-            projectId: projectId,
+            momentId: momentId,
             request: .asset(media, preparedUpload: preparedUpload, uploadedAt: uploadedAt)
         )
     }
 
     func addMediaAsset(
         ownerUserId: String,
-        projectId: String,
+        momentId: String,
         request: MediaAssetPersistenceRequest
     ) async throws -> String {
         let client = try requireClient()
@@ -26,14 +26,14 @@ extension MomentsProjectRemoteClient {
         let savedId: String? = try await retryingMutation(
             client: client,
             name: "moments:addMediaAsset",
-            args: mediaAssetPayload(request, ownerUserId: ownerUserId, projectId: projectId)
+            args: mediaAssetPayload(request, ownerUserId: ownerUserId, momentId: momentId)
         )
         return try requireSavedMediaAssetId(savedId)
     }
 
     func addMediaAssets(
         ownerUserId: String,
-        projectId: String,
+        momentId: String,
         requests: [MediaAssetPersistenceRequest]
     ) async throws -> [String] {
         guard !requests.isEmpty else { return [] }
@@ -44,19 +44,19 @@ extension MomentsProjectRemoteClient {
             name: "moments:addMediaAssets",
             args: [
                 "ownerUserId": ownerUserId,
-                "projectId": projectId,
+                "momentId": momentId,
                 "mediaAssets": requests.map { mediaAssetPayload($0) }
             ]
         )
         guard let savedIds, savedIds.count == requests.count else {
-            throw MomentsProjectSyncError.unexpectedResponse
+            throw MomentsSyncError.unexpectedResponse
         }
         return savedIds
     }
 
     private func requireSavedMediaAssetId(_ savedId: String?) throws -> String {
         guard let savedId, !savedId.isEmpty else {
-            throw MomentsProjectSyncError.unexpectedResponse
+            throw MomentsSyncError.unexpectedResponse
         }
         return savedId
     }
@@ -64,7 +64,7 @@ extension MomentsProjectRemoteClient {
     private func mediaAssetPayload(
         _ request: MediaAssetPersistenceRequest,
         ownerUserId: String? = nil,
-        projectId: String? = nil
+        momentId: String? = nil
     ) -> [String: ConvexEncodable?] {
         var payload: [String: ConvexEncodable?] = [
             "platformMediaAssetId": request.platformMediaAssetId as ConvexEncodable,
@@ -80,8 +80,8 @@ extension MomentsProjectRemoteClient {
         if let ownerUserId {
             payload["ownerUserId"] = ownerUserId as ConvexEncodable
         }
-        if let projectId {
-            payload["projectId"] = projectId as ConvexEncodable
+        if let momentId {
+            payload["momentId"] = momentId as ConvexEncodable
         }
         if let thumbnailR2Key = request.thumbnailR2Key, !thumbnailR2Key.isEmpty {
             payload["thumbnailR2Key"] = thumbnailR2Key as ConvexEncodable

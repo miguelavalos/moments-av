@@ -3,7 +3,7 @@ import SwiftUI
 
 struct MomentsInProgressListGroup: View {
     let group: MomentsInProgressListGroupPresentation
-    let selectProject: (MomentDraftProject) -> Void
+    let selectProject: (InProgressMoment) -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -15,7 +15,7 @@ struct MomentsInProgressListGroup: View {
 
             ForEach(group.rows) { row in
                 MomentsInProgressListRow(row: row) {
-                    selectProject(row.project)
+                    selectProject(row.moment)
                 }
             }
         }

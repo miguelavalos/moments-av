@@ -2,19 +2,19 @@ import Combine
 import Foundation
 
 @MainActor
-protocol MomentsProjectSummaryProviding: AnyObject {
-    var inProgressSummaryPublisher: AnyPublisher<MomentsProjectListSummary, Never> { get }
+protocol InProgressMomentsSummaryProviding: AnyObject {
+    var inProgressSummaryPublisher: AnyPublisher<InProgressMomentsSummary, Never> { get }
 }
 
 @MainActor
-protocol MomentsInProgressViewing: MomentsProjectSummaryProviding {
-    var activeProjectPublisher: AnyPublisher<MomentDraftProject?, Never> { get }
-    var activeWorkspacePublisher: AnyPublisher<MomentProjectWorkspace?, Never> { get }
+protocol InProgressMomentsViewing: InProgressMomentsSummaryProviding {
+    var activeProjectPublisher: AnyPublisher<InProgressMoment?, Never> { get }
+    var activeWorkspacePublisher: AnyPublisher<MomentWorkspace?, Never> { get }
     var isLoadingProjectWorkspacePublisher: AnyPublisher<Bool, Never> { get }
     var isDeletingMomentPublisher: AnyPublisher<Bool, Never> { get }
     var inProgressErrorMessagePublisher: AnyPublisher<String?, Never> { get }
 
-    func observeProjectWorkspace(ownerUserId: String?, projectId: String?)
+    func observeMomentWorkspace(ownerUserId: String?, momentId: String?)
     func clearProjectWorkspace()
-    func deleteMoment(_ project: MomentDraftProject) async -> Bool
+    func deleteMoment(_ moment: InProgressMoment) async -> Bool
 }

@@ -1,10 +1,10 @@
 @preconcurrency import ConvexMobile
 import Foundation
 
-extension MomentsProjectRemoteClient {
+extension MomentsRemoteClient {
     func createRenderJob(
         ownerUserId: String,
-        projectId: String,
+        momentId: String,
         kind: String,
         workflowRunId: String,
         creditReservationId: String?,
@@ -19,7 +19,7 @@ extension MomentsProjectRemoteClient {
             name: "moments:createRenderJob",
             args: [
                 "ownerUserId": ownerUserId,
-                "projectId": projectId,
+                "momentId": momentId,
                 "kind": kind,
                 "workflowRunId": workflowRunId,
                 "creditReservationId": creditReservationId,
@@ -30,7 +30,7 @@ extension MomentsProjectRemoteClient {
         )
 
         guard let renderJobId else {
-            throw MomentsProjectSyncError.missingRenderJob
+            throw MomentsSyncError.missingRenderJob
         }
 
         return renderJobId
@@ -38,7 +38,7 @@ extension MomentsProjectRemoteClient {
 
     func attachArtifact(
         ownerUserId: String,
-        projectId: String,
+        momentId: String,
         renderJobId: String,
         kind: String,
         r2Key: String,
@@ -53,7 +53,7 @@ extension MomentsProjectRemoteClient {
             name: "moments:attachArtifact",
             args: [
                 "ownerUserId": ownerUserId,
-                "projectId": projectId,
+                "momentId": momentId,
                 "renderJobId": renderJobId,
                 "kind": kind,
                 "r2Key": r2Key,
@@ -66,7 +66,7 @@ extension MomentsProjectRemoteClient {
         )
 
         guard artifactId != nil else {
-            throw MomentsProjectSyncError.unexpectedResponse
+            throw MomentsSyncError.unexpectedResponse
         }
     }
 
@@ -117,7 +117,7 @@ extension MomentsProjectRemoteClient {
         )
 
         guard updatedRenderJobId != nil else {
-            throw MomentsProjectSyncError.unexpectedResponse
+            throw MomentsSyncError.unexpectedResponse
         }
     }
 }

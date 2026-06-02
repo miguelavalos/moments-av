@@ -10,7 +10,7 @@ struct MomentsUploadClient: Sendable {
         URL(string: baseURLString.trimmingCharacters(in: .whitespacesAndNewlines)) != nil
     }
 
-    func prepareUpload(projectId: String, bearerToken: String, media: MomentsSelectedMedia) async throws -> MomentsPreparedUpload {
+    func prepareUpload(momentId: String, bearerToken: String, media: MomentsSelectedMedia) async throws -> MomentsPreparedUpload {
         guard let baseURL = URL(string: baseURLString.trimmingCharacters(in: .whitespacesAndNewlines)) else {
             throw MomentsUploadError.apiNotConfigured
         }
@@ -26,7 +26,7 @@ struct MomentsUploadClient: Sendable {
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.setValue("Bearer \(bearerToken)", forHTTPHeaderField: "Authorization")
-        request.httpBody = try JSONEncoder().encode(MomentsPrepareUploadRequest(projectId: projectId, media: media))
+        request.httpBody = try JSONEncoder().encode(MomentsPrepareUploadRequest(momentId: momentId, media: media))
 
         let (data, response) = try await retryingData(for: request)
         guard let httpResponse = response as? HTTPURLResponse, 200..<300 ~= httpResponse.statusCode else {
@@ -150,7 +150,7 @@ struct MomentsUploadRetryPolicy: Sendable {
 
 private struct MomentsPrepareUploadRequest: Encodable {
     let appId = "momentsav"
-    let projectId: String
+    let momentId: String
     let mediaKind: String
     let sourceLocalIdentifier: String
     let originalFilename: String
@@ -158,8 +158,8 @@ private struct MomentsPrepareUploadRequest: Encodable {
     let byteSize: Int
     let sha256: String
 
-    init(projectId: String, media: MomentsSelectedMedia) {
-        self.projectId = projectId
+    init(momentId: String, media: MomentsSelectedMedia) {
+        self.momentId = momentId
         mediaKind = media.kind
         sourceLocalIdentifier = media.sourceLocalIdentifier
         originalFilename = media.originalFilename

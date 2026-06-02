@@ -8,16 +8,16 @@ final class MomentCreationWorkflow: ObservableObject {
 
     private let currentUserProvider: any MomentsCurrentUserProviding
     private let creditBalanceProvider: any MomentsCreditBalanceProviding
-    private let projectCreator: any MomentsProjectCreating
-    private let projectDeleter: any MomentsProjectDeleting
+    private let projectCreator: any MomentsCreating
+    private let projectDeleter: any MomentsDeleting
     private let workspaceObserver: any MomentsActiveWorkspaceObserving
     private var workflowGeneration = WorkflowGeneration()
 
     init(
         currentUserProvider: any MomentsCurrentUserProviding,
         creditBalanceProvider: any MomentsCreditBalanceProviding,
-        projectCreator: any MomentsProjectCreating,
-        projectDeleter: any MomentsProjectDeleting,
+        projectCreator: any MomentsCreating,
+        projectDeleter: any MomentsDeleting,
         workspaceObserver: any MomentsActiveWorkspaceObserving
     ) {
         self.currentUserProvider = currentUserProvider
@@ -65,12 +65,12 @@ final class MomentCreationWorkflow: ObservableObject {
         errorMessage = nil
 
         do {
-            let projectId = try await projectCreator.createDraft(ownerUserId: ownerUserId, form: form)
+            let momentId = try await projectCreator.createDraft(ownerUserId: ownerUserId, form: form)
             guard workflowGeneration.isCurrent(generation) else { return nil }
-            activeMomentId = projectId
-            workspaceObserver.observeWorkspace(ownerUserId: ownerUserId, projectId: projectId)
+            activeMomentId = momentId
+            workspaceObserver.observeWorkspace(ownerUserId: ownerUserId, momentId: momentId)
             isCreatingDraft = false
-            return projectId
+            return momentId
         } catch {
             guard workflowGeneration.isCurrent(generation) else { return nil }
             errorMessage = error.localizedDescription
@@ -79,7 +79,7 @@ final class MomentCreationWorkflow: ObservableObject {
         }
     }
 
-    func continueMoment(_ project: MomentDraftProject) {
+    func continueMoment(_ moment: InProgressMoment) {
         guard let ownerUserId = currentUserProvider.currentUserId else {
             errorMessage = L10n.string("workflow.moment.signInContinue")
             return
@@ -87,9 +87,9 @@ final class MomentCreationWorkflow: ObservableObject {
 
         workflowGeneration.advance()
         isCreatingDraft = false
-        activeMomentId = project.id
+        activeMomentId = moment.id
         errorMessage = nil
-        workspaceObserver.observeWorkspace(ownerUserId: ownerUserId, projectId: project.id)
+        workspaceObserver.observeWorkspace(ownerUserId: ownerUserId, momentId: moment.id)
     }
 
     func resetDraft(force: Bool = false) {
@@ -101,20 +101,20 @@ final class MomentCreationWorkflow: ObservableObject {
         workspaceObserver.clearWorkspace()
     }
 
-    func discardActiveDraft(projectId projectIdOverride: String? = nil) async -> Bool {
+    func discardActiveDraft(momentId momentIdOverride: String? = nil) async -> Bool {
         guard !isCreatingDraft else { return false }
         guard let ownerUserId = currentUserProvider.currentUserId else {
             errorMessage = L10n.string("workflow.moment.signInDiscard")
             return false
         }
-        guard let projectId = projectIdOverride ?? activeMomentId else { return true }
+        guard let momentId = momentIdOverride ?? activeMomentId else { return true }
 
         let generation = workflowGeneration.begin()
         isCreatingDraft = true
         errorMessage = nil
 
         do {
-            try await projectDeleter.deleteProject(ownerUserId: ownerUserId, projectId: projectId)
+            try await projectDeleter.deleteMoment(ownerUserId: ownerUserId, momentId: momentId)
             guard workflowGeneration.isCurrent(generation) else { return false }
             isCreatingDraft = false
             self.activeMomentId = nil

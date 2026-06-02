@@ -9,12 +9,12 @@ struct MomentsHomePresentation {
     let reviewInProgressAction: MomentsHomeAction
     let aviGuidanceAction: MomentsHomeAction
     let latestInProgressAction: MomentsHomeAction?
-    let latestInProgressContinuationRequest: MomentsProjectContinuationRequest?
+    let latestInProgressContinuationRequest: MomentsContinuationRequest?
 
     static func make(
         isSignedIn: Bool,
         displayName: String?,
-        projectSummary: MomentsProjectListSummary
+        projectSummary: InProgressMomentsSummary
     ) -> MomentsHomePresentation {
         let latestInProgressProject = projectSummary.latestInProgressProject
         let latestInProgressAction = latestInProgressProject.map {
@@ -64,7 +64,7 @@ struct MomentsHomePresentation {
         return L10n.string("home.account.signInRequired")
     }
 
-    private static func momentStatusDetail(projectSummary: MomentsProjectListSummary) -> String {
+    private static func momentStatusDetail(projectSummary: InProgressMomentsSummary) -> String {
         if projectSummary.hasProjects {
             return L10n.string("home.momentStatus.synced", projectSummary.projectCount, momentLabel(projectSummary.projectCount))
         }
@@ -72,7 +72,7 @@ struct MomentsHomePresentation {
         return L10n.string("home.momentStatus.empty")
     }
 
-    private static func aviBriefDetail(isSignedIn: Bool, projectSummary: MomentsProjectListSummary) -> String {
+    private static func aviBriefDetail(isSignedIn: Bool, projectSummary: InProgressMomentsSummary) -> String {
         guard isSignedIn else {
             return L10n.string("home.aviBrief.signIn")
         }

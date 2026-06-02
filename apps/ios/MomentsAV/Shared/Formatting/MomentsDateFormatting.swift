@@ -8,39 +8,39 @@ enum MomentsDateFormatting {
 }
 
 enum MomentsMomentFormatting {
-    static func updatedAt(_ project: MomentDraftProject) -> String {
-        "Updated \(MomentsDateFormatting.formattedDate(milliseconds: project.updatedAt))"
+    static func updatedAt(_ moment: InProgressMoment) -> String {
+        "Updated \(MomentsDateFormatting.formattedDate(milliseconds: moment.updatedAt))"
     }
 
-    static func previewUsage(_ project: MomentDraftProject) -> String {
-        "\(Int(project.previewCount))/\(Int(project.previewLimit)) Story Reviews"
+    static func previewUsage(_ moment: InProgressMoment) -> String {
+        "\(Int(moment.previewCount))/\(Int(moment.previewLimit)) Story Reviews"
     }
 
-    static func statusTitle(_ project: MomentDraftProject) -> String {
-        MomentsProjectStatusRules.displayTitle(for: project.status)
+    static func statusTitle(_ moment: InProgressMoment) -> String {
+        MomentStatusRules.displayTitle(for: moment.status)
     }
 
-    static func compactDetail(for project: MomentDraftProject, includeTitle: Bool = false) -> String {
+    static func compactDetail(for moment: InProgressMoment, includeTitle: Bool = false) -> String {
         var parts: [String] = []
 
         if includeTitle {
-            parts.append(project.title)
+            parts.append(moment.title)
         }
 
-        parts.append(statusTitle(project))
-        parts.append(updatedAt(project))
+        parts.append(statusTitle(moment))
+        parts.append(updatedAt(moment))
 
         return parts.joined(separator: " · ")
     }
 
     static func mediaAssetDetail(_ media: MomentMediaAsset) -> String {
         let selection = media.selected ? "Selected" : "Not selected"
-        return "\(selection) · \(MomentsProjectStatusRules.displayTitle(for: media.moderationStatus))"
+        return "\(selection) · \(MomentStatusRules.displayTitle(for: media.moderationStatus))"
     }
 
     static func artifactDetail(_ artifact: MomentArtifact) -> String {
         var parts = [
-            MomentsProjectStatusRules.displayTitle(for: artifact.status)
+            MomentStatusRules.displayTitle(for: artifact.status)
         ]
 
         if artifact.hasWatermark == true {

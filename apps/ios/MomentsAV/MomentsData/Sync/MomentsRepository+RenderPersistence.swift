@@ -1,15 +1,15 @@
 import Foundation
 
-extension MomentsProjectRepository {
+extension MomentsRepository {
     func saveStartedFinalRender(
         ownerUserId: String,
-        projectId: String,
+        momentId: String,
         reservationId: String,
         startedWorkflow: MomentsStartWorkflowResponse
     ) async throws -> String {
         let renderJobId = try await remoteClient.createRenderJob(
             ownerUserId: ownerUserId,
-            projectId: projectId,
+            momentId: momentId,
             kind: "final",
             workflowRunId: startedWorkflow.workflowRunId,
             creditReservationId: reservationId,
@@ -36,38 +36,38 @@ extension MomentsProjectRepository {
 
     func savePreviewResult(
         ownerUserId: String,
-        projectId: String,
+        momentId: String,
         preview: MomentsPreviewResponse,
         template: MomentTemplate
     ) async throws {
         try await saveRenderResult(
             ownerUserId: ownerUserId,
-            projectId: projectId,
+            momentId: momentId,
             request: .preview(preview, template: template)
         )
     }
 
     func saveFinalRenderResult(
         ownerUserId: String,
-        projectId: String,
+        momentId: String,
         finalRender: MomentsFinalRenderResponse,
         template: MomentTemplate
     ) async throws {
         try await saveRenderResult(
             ownerUserId: ownerUserId,
-            projectId: projectId,
+            momentId: momentId,
             request: .finalRender(finalRender, template: template)
         )
     }
 
     private func saveRenderResult(
         ownerUserId: String,
-        projectId: String,
+        momentId: String,
         request: RenderResultPersistenceRequest
     ) async throws {
         let renderJobId = try await remoteClient.createRenderJob(
             ownerUserId: ownerUserId,
-            projectId: projectId,
+            momentId: momentId,
             kind: request.renderKind,
             workflowRunId: request.workflowRunId,
             creditReservationId: request.creditReservationId,
@@ -78,7 +78,7 @@ extension MomentsProjectRepository {
 
         try await remoteClient.attachArtifact(
             ownerUserId: ownerUserId,
-            projectId: projectId,
+            momentId: momentId,
             renderJobId: renderJobId,
             kind: request.artifactKind,
             r2Key: request.r2Key,

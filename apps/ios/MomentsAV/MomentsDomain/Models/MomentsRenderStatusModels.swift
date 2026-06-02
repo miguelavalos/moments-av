@@ -2,7 +2,7 @@ import Foundation
 
 struct MomentsRenderStatusResponse: Decodable, Equatable {
     let appId: String
-    let projectId: String
+    let momentId: String
     let renderJobId: String
     let workflowRunId: String?
     let renderKind: String

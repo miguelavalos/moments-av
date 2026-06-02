@@ -1,6 +1,6 @@
 import Foundation
 
-struct DraftProjectCreationRequest {
+struct MomentCreationRequest {
     let creationMode: String
     let look: String
     let theme: String
@@ -12,16 +12,16 @@ struct DraftProjectCreationRequest {
     let details: String
 }
 
-struct ProjectDeletionRequest {
-    let projectId: String
+struct MomentDeletionRequest {
+    let momentId: String
     let deleteSourceMedia: Bool
     let deleteGeneratedArtifacts: Bool
     let reason: String
 }
 
-extension DraftProjectCreationRequest {
-    static func draft(_ form: MomentDraftForm) -> DraftProjectCreationRequest {
-        DraftProjectCreationRequest(
+extension MomentCreationRequest {
+    static func draft(_ form: MomentDraftForm) -> MomentCreationRequest {
+        MomentCreationRequest(
             creationMode: form.creationMode.rawValue,
             look: form.look.rawValue,
             theme: form.theme.rawValue,
@@ -35,10 +35,10 @@ extension DraftProjectCreationRequest {
     }
 }
 
-extension ProjectDeletionRequest {
-    static func userRequested(projectId: String) -> ProjectDeletionRequest {
-        ProjectDeletionRequest(
-            projectId: projectId,
+extension MomentDeletionRequest {
+    static func userRequested(momentId: String) -> MomentDeletionRequest {
+        MomentDeletionRequest(
+            momentId: momentId,
             deleteSourceMedia: true,
             deleteGeneratedArtifacts: true,
             reason: "user request"

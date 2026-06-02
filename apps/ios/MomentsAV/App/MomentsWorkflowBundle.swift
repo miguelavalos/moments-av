@@ -13,8 +13,8 @@ struct MomentsWorkflowBundle {
 
     init(
         accountController: AccountController,
-        projectRepository: MomentsProjectRepository,
-        projectsObserver: MomentsProjectsObserver,
+        projectRepository: MomentsRepository,
+        projectsObserver: InProgressMomentsObserver,
         workspaceObserver: MomentsWorkspaceObserver,
         clients: MomentsWorkflowClients
     ) {

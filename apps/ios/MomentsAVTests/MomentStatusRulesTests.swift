@@ -1,13 +1,13 @@
 import XCTest
 @testable import MomentsAV
 
-final class MomentsProjectStatusRulesTests: XCTestCase {
+final class MomentStatusRulesTests: XCTestCase {
     func testGroupsCompletedProjectsAsFinished() {
         let draft = makeProject(id: "draft", status: "draft_created", updatedAt: 10)
         let preview = makeProject(id: "preview", status: "preview_ready", updatedAt: 20)
         let completed = makeProject(id: "completed", status: "completed", updatedAt: 30)
 
-        let groups = MomentsProjectStatusRules.group([draft, preview, completed])
+        let groups = MomentStatusRules.group([draft, preview, completed])
 
         XCTAssertEqual(groups.inProgress.map(\.id), ["preview", "draft"])
         XCTAssertEqual(groups.finished.map(\.id), ["completed"])
@@ -19,7 +19,7 @@ final class MomentsProjectStatusRulesTests: XCTestCase {
         let olderFinished = makeProject(id: "older-finished", status: "completed", updatedAt: 20)
         let newerFinished = makeProject(id: "newer-finished", status: "completed", updatedAt: 40)
 
-        let groups = MomentsProjectStatusRules.group([
+        let groups = MomentStatusRules.group([
             olderDraft,
             olderFinished,
             newerDraft,
@@ -35,7 +35,7 @@ final class MomentsProjectStatusRulesTests: XCTestCase {
         let newest = makeProject(id: "newest", status: "story_ready", updatedAt: 30)
         let middle = makeProject(id: "middle", status: "completed", updatedAt: 20)
 
-        let summary = MomentsProjectListSummary.make(from: [oldest, newest, middle])
+        let summary = InProgressMomentsSummary.make(from: [oldest, newest, middle])
 
         XCTAssertEqual(summary.projectCount, 3)
         XCTAssertEqual(summary.inProgressCount, 1)
@@ -49,16 +49,16 @@ final class MomentsProjectStatusRulesTests: XCTestCase {
         let newestFinished = makeProject(id: "newest-finished", status: "completed", updatedAt: 30)
         let latestDraft = makeProject(id: "latest-draft", status: "story_ready", updatedAt: 20)
 
-        let summary = MomentsProjectListSummary.make(from: [olderDraft, newestFinished, latestDraft])
+        let summary = InProgressMomentsSummary.make(from: [olderDraft, newestFinished, latestDraft])
 
         XCTAssertEqual(summary.latestProject?.id, "newest-finished")
         XCTAssertEqual(summary.latestInProgressProject?.id, "latest-draft")
-        XCTAssertEqual(summary.latestInProgressContinuationRequest?.project.id, "latest-draft")
+        XCTAssertEqual(summary.latestInProgressContinuationRequest?.moment.id, "latest-draft")
         XCTAssertEqual(summary.latestInProgressContinuationRequest?.focus, .review)
     }
 
     func testEmptyListSummaryHasNoProjects() {
-        let summary = MomentsProjectListSummary.make(from: [])
+        let summary = InProgressMomentsSummary.make(from: [])
 
         XCTAssertEqual(summary.projectCount, 0)
         XCTAssertEqual(summary.inProgressCount, 0)
@@ -70,13 +70,13 @@ final class MomentsProjectStatusRulesTests: XCTestCase {
     }
 
     func testDisplayHelpersFormatBackendValuesForUI() {
-        XCTAssertEqual(MomentsProjectStatusRules.displayTitle(for: "preview_ready"), "Story Review Ready")
-        XCTAssertEqual(MomentsProjectStatusRules.displayKind("preview"), "Story Review")
-        XCTAssertEqual(MomentsProjectStatusRules.displayKind("final_render"), "Final Render")
+        XCTAssertEqual(MomentStatusRules.displayTitle(for: "preview_ready"), "Story Review Ready")
+        XCTAssertEqual(MomentStatusRules.displayKind("preview"), "Story Review")
+        XCTAssertEqual(MomentStatusRules.displayKind("final_render"), "Final Render")
     }
 
     func testNextActionAsksForMediaWhenWorkspaceHasNoMedia() {
-        let action = MomentsProjectStatusRules.nextAction(for: makeWorkspace())
+        let action = MomentStatusRules.nextAction(for: makeWorkspace())
 
         XCTAssertEqual(action.title, "Add media")
         XCTAssertEqual(action.systemImage, "photo.badge.plus")
@@ -85,7 +85,7 @@ final class MomentsProjectStatusRulesTests: XCTestCase {
     }
 
     func testNextActionAsksForStoryWhenMediaExistsWithoutScenes() {
-        let action = MomentsProjectStatusRules.nextAction(for: makeWorkspace(mediaAssets: [makeMediaAsset()]))
+        let action = MomentStatusRules.nextAction(for: makeWorkspace(mediaAssets: [makeMediaAsset()]))
 
         XCTAssertEqual(action.title, "Generate story")
         XCTAssertEqual(action.systemImage, "text.bubble")
@@ -94,7 +94,7 @@ final class MomentsProjectStatusRulesTests: XCTestCase {
     }
 
     func testNextActionAsksForPreviewWhenStoryExistsWithoutPreviewArtifact() {
-        let action = MomentsProjectStatusRules.nextAction(
+        let action = MomentStatusRules.nextAction(
             for: makeWorkspace(
                 mediaAssets: [makeMediaAsset()],
                 storyScenes: [makeStoryScene()]
@@ -108,7 +108,7 @@ final class MomentsProjectStatusRulesTests: XCTestCase {
     }
 
     func testNextActionAsksForFinalWhenPreviewIsAvailable() {
-        let action = MomentsProjectStatusRules.nextAction(
+        let action = MomentStatusRules.nextAction(
             for: makeWorkspace(
                 mediaAssets: [makeMediaAsset()],
                 storyScenes: [makeStoryScene()],
@@ -123,7 +123,7 @@ final class MomentsProjectStatusRulesTests: XCTestCase {
     }
 
     func testNextActionMarksFinishedWhenFinalExportIsAvailable() {
-        let action = MomentsProjectStatusRules.nextAction(
+        let action = MomentStatusRules.nextAction(
             for: makeWorkspace(
                 mediaAssets: [makeMediaAsset()],
                 storyScenes: [makeStoryScene()],
@@ -141,7 +141,7 @@ final class MomentsProjectStatusRulesTests: XCTestCase {
     }
 
     func testNextActionPrioritizesFailedRenderJobs() {
-        let action = MomentsProjectStatusRules.nextAction(
+        let action = MomentStatusRules.nextAction(
             for: makeWorkspace(
                 mediaAssets: [makeMediaAsset()],
                 storyScenes: [makeStoryScene()],
@@ -159,8 +159,8 @@ final class MomentsProjectStatusRulesTests: XCTestCase {
         id: String,
         status: String,
         updatedAt: Double
-    ) -> MomentDraftProject {
-        MomentDraftProject(
+    ) -> InProgressMoment {
+        InProgressMoment(
             id: id,
             template: .birthdayMessage,
             status: status,
@@ -182,9 +182,9 @@ final class MomentsProjectStatusRulesTests: XCTestCase {
         storyScenes: [MomentStoryScene] = [],
         renderJobs: [MomentRenderJob] = [],
         artifacts: [MomentArtifact] = []
-    ) -> MomentProjectWorkspace {
-        MomentProjectWorkspace(
-            project: makeProject(id: "project-1", status: "draft_created", updatedAt: 10),
+    ) -> MomentWorkspace {
+        MomentWorkspace(
+            moment: makeProject(id: "moment-1", status: "draft_created", updatedAt: 10),
             mediaAssets: mediaAssets,
             storyScenes: storyScenes,
             renderJobs: renderJobs,
@@ -224,7 +224,7 @@ final class MomentsProjectStatusRulesTests: XCTestCase {
         MomentArtifact(
             id: "\(kind)-1",
             kind: kind,
-            r2Key: "momentsav/user/project/\(kind).mp4",
+            r2Key: "momentsav/user/moment/\(kind).mp4",
             status: "available",
             hasWatermark: kind == "preview",
             expiresAt: 1_781_592_000_000

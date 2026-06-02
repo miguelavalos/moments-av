@@ -22,7 +22,7 @@ struct MomentsSelectedMedia: Identifiable, Equatable {
 
 struct MomentsPreparedUpload: Decodable, Equatable, Sendable {
     let appId: String
-    let projectId: String
+    let momentId: String
     let mediaAssetId: String
     let uploadId: String
     let uploadUrl: URL?

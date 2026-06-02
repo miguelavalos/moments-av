@@ -78,26 +78,26 @@ struct MomentDraftForm: Equatable {
     }
 
     static func continuing(
-        project: MomentDraftProject,
+        moment: InProgressMoment,
         templates: [MomentTemplate]
     ) -> MomentDraftForm? {
-        guard let template = templates.first(where: { $0.id == project.template }) else {
+        guard let template = templates.first(where: { $0.id == moment.template }) else {
             return nil
         }
 
         var form = MomentDraftForm(
             template: template,
-            occasion: project.occasion ?? "",
+            occasion: moment.occasion ?? "",
             recipient: "",
-            tone: MomentDraftTone(rawValue: project.mood ?? project.tone ?? "") ?? .warm,
-            tempo: MomentDraftTempo(rawValue: project.tempo ?? "") ?? .balanced,
-            details: project.details ?? ""
+            tone: MomentDraftTone(rawValue: moment.mood ?? moment.tone ?? "") ?? .warm,
+            tempo: MomentDraftTempo(rawValue: moment.tempo ?? "") ?? .balanced,
+            details: moment.details ?? ""
         )
-        form.creationMode = MomentCreationMode(rawValue: project.creationMode) ?? .quick
-        form.look = MomentLook(rawValue: project.look) ?? .real
-        form.theme = MomentCreationStyleID(rawValue: project.theme) ?? .celebration
-        form.duration = MomentDuration(rawValue: project.duration) ?? .auto
-        form.mediaUse = MomentMediaUse(rawValue: project.mediaUse) ?? .aviPick
+        form.creationMode = MomentCreationMode(rawValue: moment.creationMode) ?? .quick
+        form.look = MomentLook(rawValue: moment.look) ?? .real
+        form.theme = MomentCreationStyleID(rawValue: moment.theme) ?? .celebration
+        form.duration = MomentDuration(rawValue: moment.duration) ?? .auto
+        form.mediaUse = MomentMediaUse(rawValue: moment.mediaUse) ?? .aviPick
         return form
     }
 }

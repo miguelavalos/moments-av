@@ -2,7 +2,7 @@ import Combine
 import Foundation
 
 @MainActor
-protocol MomentsProjectCreating {
+protocol MomentsCreating {
     var isConfigured: Bool { get }
     func createDraft(ownerUserId: String, form: MomentDraftForm) async throws -> String
 }
@@ -12,13 +12,13 @@ protocol MomentsMediaAssetSaving {
     var isConfigured: Bool { get }
     func saveMediaAsset(
         ownerUserId: String,
-        projectId: String,
+        momentId: String,
         media: MomentsSelectedMedia,
         preparedUpload: MomentsPreparedUpload
     ) async throws -> String
     func saveMediaAssets(
         ownerUserId: String,
-        projectId: String,
+        momentId: String,
         mediaAssets: [MediaAssetPersistenceRequest]
     ) async throws -> [String]
 }
@@ -28,7 +28,7 @@ protocol MomentsStoryDraftSaving {
     var isConfigured: Bool { get }
     func saveStoryDraft(
         ownerUserId: String,
-        projectId: String,
+        momentId: String,
         draft: MomentsStoryDraftResponse,
         storyInputSignature: String
     ) async throws
@@ -55,7 +55,7 @@ protocol MomentsRenderJobStatusUpdating {
 protocol MomentsPreviewResultSaving: MomentsRenderJobStatusUpdating {
     func savePreviewResult(
         ownerUserId: String,
-        projectId: String,
+        momentId: String,
         preview: MomentsPreviewResponse,
         template: MomentTemplate
     ) async throws
@@ -65,62 +65,62 @@ protocol MomentsPreviewResultSaving: MomentsRenderJobStatusUpdating {
 protocol MomentsFinalRenderResultSaving: MomentsRenderJobStatusUpdating {
     func saveStartedFinalRender(
         ownerUserId: String,
-        projectId: String,
+        momentId: String,
         reservationId: String,
         startedWorkflow: MomentsStartWorkflowResponse
     ) async throws -> String
 
     func saveFinalRenderResult(
         ownerUserId: String,
-        projectId: String,
+        momentId: String,
         finalRender: MomentsFinalRenderResponse,
         template: MomentTemplate
     ) async throws
 }
 
 @MainActor
-protocol MomentsProjectDeleting {
-    func deleteProject(ownerUserId: String, projectId: String) async throws
+protocol MomentsDeleting {
+    func deleteMoment(ownerUserId: String, momentId: String) async throws
 }
 
 @MainActor
-protocol MomentsProjectsObserving {
-    func observeProjects(ownerUserId: String) throws -> AnyPublisher<[MomentDraftProject], Error>
+protocol InProgressMomentsObserving {
+    func observeInProgressMoments(ownerUserId: String) throws -> AnyPublisher<[InProgressMoment], Error>
 }
 
 @MainActor
-protocol MomentsActiveProjectsObserving {
-    var projectsPublisher: AnyPublisher<[MomentDraftProject], Never> { get }
-    var projectsErrorPublisher: AnyPublisher<String?, Never> { get }
+protocol InProgressMomentsListProviding {
+    var momentsPublisher: AnyPublisher<[InProgressMoment], Never> { get }
+    var momentsErrorPublisher: AnyPublisher<String?, Never> { get }
 
-    func observeProjects(ownerUserId: String?)
-    func clearProjects()
+    func observeInProgressMoments(ownerUserId: String?)
+    func clearInProgressMoments()
 }
 
 @MainActor
-protocol MomentsWorkspaceObserving {
-    func observeProjectWorkspace(
+protocol MomentWorkspaceObserving {
+    func observeMomentWorkspace(
         ownerUserId: String,
-        projectId: String
-    ) throws -> AnyPublisher<MomentProjectWorkspace?, Error>
+        momentId: String
+    ) throws -> AnyPublisher<MomentWorkspace?, Error>
 }
 
 @MainActor
 protocol MomentsActiveWorkspaceObserving {
-    var activeWorkspacePublisher: AnyPublisher<MomentProjectWorkspace?, Never> { get }
+    var activeWorkspacePublisher: AnyPublisher<MomentWorkspace?, Never> { get }
     var workspaceErrorPublisher: AnyPublisher<String?, Never> { get }
 
-    func observeWorkspace(ownerUserId: String?, projectId: String?)
+    func observeWorkspace(ownerUserId: String?, momentId: String?)
     func clearWorkspace()
 }
 
-extension MomentsProjectRepository:
-    MomentsProjectCreating,
+extension MomentsRepository:
+    MomentsCreating,
     MomentsMediaAssetSaving,
     MomentsStoryDraftSaving,
     MomentsRenderJobStatusUpdating,
     MomentsPreviewResultSaving,
     MomentsFinalRenderResultSaving,
-    MomentsProjectDeleting,
-    MomentsProjectsObserving,
-    MomentsWorkspaceObserving {}
+    MomentsDeleting,
+    InProgressMomentsObserving,
+    MomentWorkspaceObserving {}

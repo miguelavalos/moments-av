@@ -14,8 +14,8 @@ struct MomentsHomeScreen: View {
     let openCredits: () -> Void
     let selectTab: (MomentsRootTab) -> Void
     let startMoment: () -> Void
-    let continueMoment: (MomentsProjectContinuationRequest) -> Void
-    private var projectSummary: MomentsProjectListSummary { viewModel.projectSummary }
+    let continueMoment: (MomentsContinuationRequest) -> Void
+    private var projectSummary: InProgressMomentsSummary { viewModel.projectSummary }
     private var presentation: MomentsHomePresentation {
         MomentsHomePresentation.make(
             isSignedIn: viewModel.isSignedIn,
@@ -31,7 +31,7 @@ struct MomentsHomeScreen: View {
         openCredits: @escaping () -> Void,
         selectTab: @escaping (MomentsRootTab) -> Void,
         startMoment: @escaping () -> Void,
-        continueMoment: @escaping (MomentsProjectContinuationRequest) -> Void
+        continueMoment: @escaping (MomentsContinuationRequest) -> Void
     ) {
         self.openSettings = openSettings
         self.openAccount = openAccount

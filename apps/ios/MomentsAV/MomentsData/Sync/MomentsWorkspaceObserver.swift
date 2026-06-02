@@ -3,18 +3,18 @@ import Foundation
 
 @MainActor
 final class MomentsWorkspaceObserver: ObservableObject {
-    @Published private(set) var activeWorkspace: MomentProjectWorkspace?
+    @Published private(set) var activeWorkspace: MomentWorkspace?
     @Published private(set) var errorMessage: String?
 
-    private let workspaceObserver: any MomentsWorkspaceObserving
+    private let workspaceObserver: any MomentWorkspaceObserving
     private var activeWorkspaceTask: Task<Void, Never>?
     private var observationGeneration = 0
 
-    init(projectRepository: any MomentsWorkspaceObserving = MomentsProjectRepository()) {
+    init(projectRepository: any MomentWorkspaceObserving = MomentsRepository()) {
         workspaceObserver = projectRepository
     }
 
-    var activeWorkspacePublisher: AnyPublisher<MomentProjectWorkspace?, Never> {
+    var activeWorkspacePublisher: AnyPublisher<MomentWorkspace?, Never> {
         $activeWorkspace.eraseToAnyPublisher()
     }
 
@@ -22,19 +22,19 @@ final class MomentsWorkspaceObserver: ObservableObject {
         $errorMessage.eraseToAnyPublisher()
     }
 
-    func observeWorkspace(ownerUserId: String?, projectId: String?) {
+    func observeWorkspace(ownerUserId: String?, momentId: String?) {
         observationGeneration += 1
         let generation = observationGeneration
         activeWorkspaceTask?.cancel()
         activeWorkspace = nil
         errorMessage = nil
 
-        guard let ownerUserId, let projectId else { return }
+        guard let ownerUserId, let momentId else { return }
 
         do {
-            let updates = try workspaceObserver.observeProjectWorkspace(
+            let updates = try workspaceObserver.observeMomentWorkspace(
                 ownerUserId: ownerUserId,
-                projectId: projectId
+                momentId: momentId
             )
             .values
 

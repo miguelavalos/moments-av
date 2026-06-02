@@ -2,7 +2,7 @@ import Foundation
 
 struct MomentsPreviewRequest: Encodable {
     let appId = "momentsav"
-    let projectId: String
+    let momentId: String
     let creationMode: String
     let look: String
     let theme: String
@@ -15,7 +15,7 @@ struct MomentsPreviewRequest: Encodable {
 
 struct MomentsPreviewResponse: Decodable, Equatable {
     let appId: String
-    let projectId: String
+    let momentId: String
     let renderJobId: String
     let workflowRunId: String
     let provider: String
@@ -44,22 +44,22 @@ enum MomentsPreviewRules {
         let blockReason: BlockReason?
     }
 
-    static func canGenerate(project: MomentDraftProject, template: MomentTemplate, balance: MomentsCreditBalance) -> Bool {
-        availability(project: project, template: template, balance: balance).canGenerate
+    static func canGenerate(moment: InProgressMoment, template: MomentTemplate, balance: MomentsCreditBalance) -> Bool {
+        availability(moment: moment, template: template, balance: balance).canGenerate
     }
 
     static func availability(
-        project: MomentDraftProject?,
+        moment: InProgressMoment?,
         template: MomentTemplate,
         balance: MomentsCreditBalance
     ) -> Availability {
-        guard let project else {
+        guard let moment else {
             return Availability(canGenerate: false, blockReason: .missingProject)
         }
-        if Int(project.previewCount) >= Int(project.previewLimit) {
+        if Int(moment.previewCount) >= Int(moment.previewLimit) {
             return Availability(canGenerate: false, blockReason: .previewLimitReached)
         }
-        if project.status != "story_ready" && project.status != "preview_ready" {
+        if moment.status != "story_ready" && moment.status != "preview_ready" {
             return Availability(canGenerate: false, blockReason: .storyNotReady)
         }
         return Availability(canGenerate: true, blockReason: nil)

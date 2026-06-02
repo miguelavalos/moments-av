@@ -7,12 +7,12 @@ final class MomentDeletionWorkflow: ObservableObject {
     @Published private(set) var errorMessage: String?
 
     private let currentUserProvider: any MomentsCurrentUserProviding
-    private let projectDeleter: any MomentsProjectDeleting
+    private let projectDeleter: any MomentsDeleting
     private var deletionGeneration = 0
 
     init(
         currentUserProvider: any MomentsCurrentUserProviding,
-        projectDeleter: any MomentsProjectDeleting
+        projectDeleter: any MomentsDeleting
     ) {
         self.currentUserProvider = currentUserProvider
         self.projectDeleter = projectDeleter
@@ -26,10 +26,10 @@ final class MomentDeletionWorkflow: ObservableObject {
         $errorMessage.eraseToAnyPublisher()
     }
 
-    func deleteMoment(_ project: MomentDraftProject) async -> Bool {
+    func deleteMoment(_ moment: InProgressMoment) async -> Bool {
         guard !isDeletingMoment else { return false }
         guard let ownerUserId = currentUserProvider.currentUserId else {
-            errorMessage = "Sign in before deleting a project."
+            errorMessage = "Sign in before deleting a moment."
             return false
         }
 
@@ -39,7 +39,7 @@ final class MomentDeletionWorkflow: ObservableObject {
         let generation = deletionGeneration
 
         do {
-            try await projectDeleter.deleteProject(ownerUserId: ownerUserId, projectId: project.id)
+            try await projectDeleter.deleteMoment(ownerUserId: ownerUserId, momentId: moment.id)
             guard deletionGeneration == generation else { return false }
             isDeletingMoment = false
             return true

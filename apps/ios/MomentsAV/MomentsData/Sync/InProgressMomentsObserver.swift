@@ -2,66 +2,66 @@ import Combine
 import Foundation
 
 @MainActor
-final class MomentsProjectsObserver: ObservableObject {
-    @Published private(set) var projects: [MomentDraftProject] = []
+final class InProgressMomentsObserver: ObservableObject {
+    @Published private(set) var moments: [InProgressMoment] = []
     @Published private(set) var errorMessage: String?
 
-    private let projectsObserver: any MomentsProjectsObserving
+    private let projectsObserver: any InProgressMomentsObserving
     private var projectsTask: Task<Void, Never>?
     private var observationGeneration = 0
 
-    init(projectRepository: any MomentsProjectsObserving = MomentsProjectRepository()) {
+    init(projectRepository: any InProgressMomentsObserving = MomentsRepository()) {
         projectsObserver = projectRepository
     }
 
-    var projectsPublisher: AnyPublisher<[MomentDraftProject], Never> {
-        $projects.eraseToAnyPublisher()
+    var momentsPublisher: AnyPublisher<[InProgressMoment], Never> {
+        $moments.eraseToAnyPublisher()
     }
 
-    var projectsErrorPublisher: AnyPublisher<String?, Never> {
+    var momentsErrorPublisher: AnyPublisher<String?, Never> {
         $errorMessage.eraseToAnyPublisher()
     }
 
-    func observeProjects(ownerUserId: String?) {
+    func observeInProgressMoments(ownerUserId: String?) {
         observationGeneration += 1
         let generation = observationGeneration
         projectsTask?.cancel()
-        projects = []
+        moments = []
         errorMessage = nil
 
         guard let ownerUserId else { return }
 
         do {
-            let updates = try projectsObserver.observeProjects(ownerUserId: ownerUserId).values
+            let updates = try projectsObserver.observeInProgressMoments(ownerUserId: ownerUserId).values
 
             projectsTask = Task { [weak self] in
                 do {
-                    for try await projects in updates {
+                    for try await moments in updates {
                         await MainActor.run {
                             guard self?.observationGeneration == generation else { return }
-                            self?.projects = projects
+                            self?.moments = moments
                             self?.errorMessage = nil
                         }
                     }
                 } catch {
                     await MainActor.run {
                         guard self?.observationGeneration == generation else { return }
-                        self?.projects = []
+                        self?.moments = []
                         self?.errorMessage = error.localizedDescription
                     }
                 }
             }
         } catch {
             guard observationGeneration == generation else { return }
-            projects = []
+            moments = []
             errorMessage = error.localizedDescription
         }
     }
 
-    func clearProjects() {
+    func clearInProgressMoments() {
         observationGeneration += 1
         projectsTask?.cancel()
-        projects = []
+        moments = []
         errorMessage = nil
     }
 
@@ -70,4 +70,4 @@ final class MomentsProjectsObserver: ObservableObject {
     }
 }
 
-extension MomentsProjectsObserver: MomentsActiveProjectsObserving {}
+extension InProgressMomentsObserver: InProgressMomentsListProviding {}

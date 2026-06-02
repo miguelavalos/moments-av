@@ -4,7 +4,7 @@ import XCTest
 final class MomentsInProgressWorkspacePresentationTests: XCTestCase {
     func testWorkspaceDetailPresentationFormatsTitleActionAndContinuationRequest() {
         let workspace = makeWorkspace(
-            project: makeProject(title: "Family Weekend"),
+            moment: makeProject(title: "Family Weekend"),
             mediaAssets: [
                 makeMediaAsset(id: "media-1", kind: "image", sortOrder: 0, selected: true, moderationStatus: "approved")
             ]
@@ -12,15 +12,15 @@ final class MomentsInProgressWorkspacePresentationTests: XCTestCase {
 
         let presentation = MomentsInProgressWorkspaceDetailPresentation(workspace: workspace)
 
-        XCTAssertEqual(presentation.title, "Project detail")
+        XCTAssertEqual(presentation.title, "Moment detail")
         XCTAssertEqual(presentation.nextAction.title, "Generate story")
-        XCTAssertEqual(presentation.continuationRequest.project, workspace.project)
+        XCTAssertEqual(presentation.continuationRequest.moment, workspace.moment)
         XCTAssertEqual(presentation.continuationRequest.focus, .story)
     }
 
     func testWorkspaceDetailPresentationUsesFailedRenderContinuationFocus() {
         let workspace = makeWorkspace(
-            project: makeProject(title: "Family Weekend"),
+            moment: makeProject(title: "Family Weekend"),
             renderJobs: [
                 makeRenderJob(id: "job-1", kind: "final_render", status: "failed", updatedAt: 20)
             ]
@@ -35,7 +35,7 @@ final class MomentsInProgressWorkspacePresentationTests: XCTestCase {
     func testWorkspaceHeaderPresentationFormatsTitleUpdateAndCounts() {
         let presentation = MomentsInProgressWorkspaceHeaderPresentation(
             workspace: makeWorkspace(
-                project: makeProject(title: "Family Weekend", updatedAt: 1_781_592_000_000),
+                moment: makeProject(title: "Family Weekend", updatedAt: 1_781_592_000_000),
                 mediaAssets: [
                     makeMediaAsset(id: "media-1", kind: "image", sortOrder: 0, selected: true, moderationStatus: "approved")
                 ],
@@ -56,7 +56,7 @@ final class MomentsInProgressWorkspacePresentationTests: XCTestCase {
     func testWorkspaceHeaderPresentationFormatsPluralCounts() {
         let presentation = MomentsInProgressWorkspaceHeaderPresentation(
             workspace: makeWorkspace(
-                project: makeProject(title: "Family Weekend"),
+                moment: makeProject(title: "Family Weekend"),
                 mediaAssets: [
                     makeMediaAsset(id: "media-1", kind: "image", sortOrder: 0, selected: true, moderationStatus: "approved"),
                     makeMediaAsset(id: "media-2", kind: "video", sortOrder: 1, selected: false, moderationStatus: "pending")
@@ -78,7 +78,7 @@ final class MomentsInProgressWorkspacePresentationTests: XCTestCase {
     func testWorkspaceSummaryPresentationFormatsStatusArtifactsAndLatestJob() {
         let presentation = MomentsInProgressWorkspaceSummaryPresentation(
             workspace: makeWorkspace(
-                project: makeProject(status: "preview_ready"),
+                moment: makeProject(status: "preview_ready"),
                 renderJobs: [
                     makeRenderJob(id: "old", kind: "preview", status: "queued", updatedAt: 10),
                     makeRenderJob(id: "new", kind: "final_render", status: "failed", updatedAt: 20)
@@ -98,7 +98,7 @@ final class MomentsInProgressWorkspacePresentationTests: XCTestCase {
 
     func testWorkspaceSummaryPresentationUsesFallbacksWhenNoArtifactsOrJobsExist() {
         let presentation = MomentsInProgressWorkspaceSummaryPresentation(
-            workspace: makeWorkspace(project: makeProject(status: "draft_created"))
+            workspace: makeWorkspace(moment: makeProject(status: "draft_created"))
         )
 
         XCTAssertEqual(presentation.tiles.map(\.value), ["Draft Created", "Not ready", "Not ready", "Not started"])
@@ -161,14 +161,14 @@ final class MomentsInProgressWorkspacePresentationTests: XCTestCase {
     }
 
     private func makeWorkspace(
-        project: MomentDraftProject,
+        moment: InProgressMoment,
         mediaAssets: [MomentMediaAsset] = [],
         storyScenes: [MomentStoryScene] = [],
         renderJobs: [MomentRenderJob] = [],
         artifacts: [MomentArtifact] = []
-    ) -> MomentProjectWorkspace {
-        MomentProjectWorkspace(
-            project: project,
+    ) -> MomentWorkspace {
+        MomentWorkspace(
+            moment: moment,
             mediaAssets: mediaAssets,
             storyScenes: storyScenes,
             renderJobs: renderJobs,
@@ -178,11 +178,11 @@ final class MomentsInProgressWorkspacePresentationTests: XCTestCase {
 
     private func makeProject(
         status: String = "draft_created",
-        title: String = "project-1",
+        title: String = "moment-1",
         updatedAt: Double = 10
-    ) -> MomentDraftProject {
-        MomentDraftProject(
-            id: "project-1",
+    ) -> InProgressMoment {
+        InProgressMoment(
+            id: "moment-1",
             template: .birthdayMessage,
             status: status,
             title: title,
@@ -212,7 +212,7 @@ final class MomentsInProgressWorkspacePresentationTests: XCTestCase {
 
     func testWorkspaceLookupsFindLatestArtifactAndRenderJob() {
         let workspace = makeWorkspace(
-            project: makeProject(),
+            moment: makeProject(),
             renderJobs: [
                 makeRenderJob(id: "final", kind: "final", status: "queued", updatedAt: 30),
                 makeRenderJob(id: "preview-old", kind: "preview", status: "queued", updatedAt: 10),

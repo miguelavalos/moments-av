@@ -87,8 +87,8 @@ final class MomentsCreditGateTests: XCTestCase {
     }
 
     func testContinuingDraftFormUsesProjectFieldsAndFallbacks() {
-        let project = MomentDraftProject(
-            id: "project-1",
+        let moment = InProgressMoment(
+            id: "moment-1",
             template: .birthdayMessage,
             status: "draft",
             title: "Birthday",
@@ -104,7 +104,7 @@ final class MomentsCreditGateTests: XCTestCase {
         )
 
         let form = MomentDraftForm.continuing(
-            project: project,
+            moment: moment,
             templates: MomentTemplate.launchTemplates
         )
 
@@ -167,12 +167,12 @@ final class MomentsCreditGateTests: XCTestCase {
         ]
 
         let baseSignature = MomentsStoryDraftInputSignature.make(
-            projectId: "project-1",
+            momentId: "moment-1",
             form: form,
             selectedMedia: media
         )
         let sameInputSignature = MomentsStoryDraftInputSignature.make(
-            projectId: "project-1",
+            momentId: "moment-1",
             form: form,
             selectedMedia: media.reversed()
         )
@@ -180,7 +180,7 @@ final class MomentsCreditGateTests: XCTestCase {
         XCTAssertEqual(baseSignature, sameInputSignature)
 
         let reorderedSignature = MomentsStoryDraftInputSignature.make(
-            projectId: "project-1",
+            momentId: "moment-1",
             form: form,
             selectedMedia: [
                 storyMedia(id: "media-a", sortOrder: 1),
@@ -191,7 +191,7 @@ final class MomentsCreditGateTests: XCTestCase {
 
         form.details = "Use the desert photos and end on the group shot."
         let changedDirectionSignature = MomentsStoryDraftInputSignature.make(
-            projectId: "project-1",
+            momentId: "moment-1",
             form: form,
             selectedMedia: media
         )
@@ -200,8 +200,8 @@ final class MomentsCreditGateTests: XCTestCase {
 
     func testPreviewRulesRequireStoryReadyCreditsAndLimit() {
         let balance = MomentsCreditBalance(proMonthly: 0, promotional: 0, purchased: 1)
-        let project = MomentDraftProject(
-            id: "project-1",
+        let moment = InProgressMoment(
+            id: "moment-1",
             template: .birthdayMessage,
             status: "story_ready",
             title: "Birthday",
@@ -216,47 +216,47 @@ final class MomentsCreditGateTests: XCTestCase {
             updatedAt: 0
         )
 
-        XCTAssertTrue(MomentsPreviewRules.canGenerate(project: project, template: .birthdayMessage, balance: balance))
+        XCTAssertTrue(MomentsPreviewRules.canGenerate(moment: moment, template: .birthdayMessage, balance: balance))
 
-        let previewReadyProject = MomentDraftProject(
-            id: project.id,
-            template: project.template,
+        let previewReadyProject = InProgressMoment(
+            id: moment.id,
+            template: moment.template,
             status: "preview_ready",
-            title: project.title,
-            tone: project.tone,
-            tempo: project.tempo,
-            occasion: project.occasion,
-            details: project.details,
-            durationSeconds: project.durationSeconds,
-            creditCost: project.creditCost,
-            previewCount: project.previewCount,
-            previewLimit: project.previewLimit,
-            updatedAt: project.updatedAt
+            title: moment.title,
+            tone: moment.tone,
+            tempo: moment.tempo,
+            occasion: moment.occasion,
+            details: moment.details,
+            durationSeconds: moment.durationSeconds,
+            creditCost: moment.creditCost,
+            previewCount: moment.previewCount,
+            previewLimit: moment.previewLimit,
+            updatedAt: moment.updatedAt
         )
-        XCTAssertTrue(MomentsPreviewRules.canGenerate(project: previewReadyProject, template: .birthdayMessage, balance: balance))
+        XCTAssertTrue(MomentsPreviewRules.canGenerate(moment: previewReadyProject, template: .birthdayMessage, balance: balance))
 
-        let limitedProject = MomentDraftProject(
-            id: project.id,
-            template: project.template,
-            status: project.status,
-            title: project.title,
-            tone: project.tone,
-            tempo: project.tempo,
-            occasion: project.occasion,
-            details: project.details,
-            durationSeconds: project.durationSeconds,
-            creditCost: project.creditCost,
+        let limitedProject = InProgressMoment(
+            id: moment.id,
+            template: moment.template,
+            status: moment.status,
+            title: moment.title,
+            tone: moment.tone,
+            tempo: moment.tempo,
+            occasion: moment.occasion,
+            details: moment.details,
+            durationSeconds: moment.durationSeconds,
+            creditCost: moment.creditCost,
             previewCount: 3,
             previewLimit: 3,
-            updatedAt: project.updatedAt
+            updatedAt: moment.updatedAt
         )
-        XCTAssertFalse(MomentsPreviewRules.canGenerate(project: limitedProject, template: .birthdayMessage, balance: balance))
+        XCTAssertFalse(MomentsPreviewRules.canGenerate(moment: limitedProject, template: .birthdayMessage, balance: balance))
     }
 
     func testFinalRenderRulesRequirePreviewAndCredits() {
         let balance = MomentsCreditBalance(proMonthly: 0, promotional: 0, purchased: 1)
-        let project = MomentDraftProject(
-            id: "project-1",
+        let moment = InProgressMoment(
+            id: "moment-1",
             template: .birthdayMessage,
             status: "preview_ready",
             title: "Birthday",
@@ -273,7 +273,7 @@ final class MomentsCreditGateTests: XCTestCase {
         let preview = MomentArtifact(
             id: "preview-1",
             kind: "preview",
-            r2Key: "momentsav/user/project/previews/preview-1.mp4",
+            r2Key: "momentsav/user/moment/previews/preview-1.mp4",
             status: "available",
             hasWatermark: true,
             expiresAt: 0
@@ -281,7 +281,7 @@ final class MomentsCreditGateTests: XCTestCase {
 
         XCTAssertTrue(
             MomentsFinalRenderRules.canGenerate(
-                project: project,
+                moment: moment,
                 template: .birthdayMessage,
                 balance: balance,
                 latestPreview: preview
@@ -289,7 +289,7 @@ final class MomentsCreditGateTests: XCTestCase {
         )
         XCTAssertFalse(
             MomentsFinalRenderRules.canGenerate(
-                project: project,
+                moment: moment,
                 template: .birthdayMessage,
                 balance: .empty,
                 latestPreview: preview
@@ -297,7 +297,7 @@ final class MomentsCreditGateTests: XCTestCase {
         )
         XCTAssertTrue(
             MomentsFinalRenderRules.canGenerate(
-                project: project,
+                moment: moment,
                 template: .birthdayMessage,
                 balance: balance,
                 latestPreview: nil

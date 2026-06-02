@@ -2,14 +2,14 @@ import Foundation
 
 enum MomentsCreateRefreshAvailabilityFactory {
     static func preview(
-        projectId: String?,
+        momentId: String?,
         job: MomentRenderJob?,
         isAvailable: Bool,
         isConfigured: Bool,
         isRefreshing: Bool
     ) -> RenderJobStatusRefreshAvailability {
         RenderJobStatusRefreshAvailability(
-            projectId: projectId,
+            momentId: momentId,
             job: job,
             isAvailable: isAvailable,
             isConfigured: isConfigured,
@@ -23,14 +23,14 @@ enum MomentsCreateRefreshAvailabilityFactory {
     }
 
     static func finalRender(
-        projectId: String?,
+        momentId: String?,
         job: MomentRenderJob?,
         isAvailable: Bool,
         isConfigured: Bool,
         isRefreshing: Bool
     ) -> RenderJobStatusRefreshAvailability {
         RenderJobStatusRefreshAvailability(
-            projectId: projectId,
+            momentId: momentId,
             job: job,
             isAvailable: isAvailable,
             isConfigured: isConfigured,

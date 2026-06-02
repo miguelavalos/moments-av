@@ -1,8 +1,8 @@
 import Combine
 import Foundation
 
-struct MomentsProjectRepository {
-    let remoteClient: MomentsProjectRemoteClient
+struct MomentsRepository {
+    let remoteClient: MomentsRemoteClient
 
     @MainActor
     init() {
@@ -10,30 +10,30 @@ struct MomentsProjectRepository {
     }
 
     init(deploymentURL: String) {
-        remoteClient = MomentsProjectRemoteClient(deploymentURL: deploymentURL)
+        remoteClient = MomentsRemoteClient(deploymentURL: deploymentURL)
     }
 
     var isConfigured: Bool {
         remoteClient.isConfigured
     }
 
-    func observeProjects(ownerUserId: String) throws -> AnyPublisher<[MomentDraftProject], Error> {
-        try remoteClient.observeProjects(ownerUserId: ownerUserId)
+    func observeInProgressMoments(ownerUserId: String) throws -> AnyPublisher<[InProgressMoment], Error> {
+        try remoteClient.observeInProgressMoments(ownerUserId: ownerUserId)
     }
 
-    func observeProjectWorkspace(
+    func observeMomentWorkspace(
         ownerUserId: String,
-        projectId: String
-    ) throws -> AnyPublisher<MomentProjectWorkspace?, Error> {
-        try remoteClient.observeProjectWorkspace(
+        momentId: String
+    ) throws -> AnyPublisher<MomentWorkspace?, Error> {
+        try remoteClient.observeMomentWorkspace(
             ownerUserId: ownerUserId,
-            projectId: projectId
+            momentId: momentId
         )
     }
 
     func createDraft(ownerUserId: String, form: MomentDraftForm) async throws -> String {
         guard form.canCreateDraft else {
-            throw MomentsProjectSyncError.invalidForm
+            throw MomentsSyncError.invalidForm
         }
 
         return try await remoteClient.createDraftProject(
@@ -68,10 +68,10 @@ struct MomentsProjectRepository {
         )
     }
 
-    func deleteProject(ownerUserId: String, projectId: String) async throws {
-        try await remoteClient.deleteProjectTree(
+    func deleteMoment(ownerUserId: String, momentId: String) async throws {
+        try await remoteClient.deleteMomentTree(
             ownerUserId: ownerUserId,
-            projectId: projectId
+            momentId: momentId
         )
     }
 }

@@ -1,6 +1,6 @@
 import Foundation
 
-struct MomentDraftProject: Identifiable, Decodable, Equatable {
+struct InProgressMoment: Identifiable, Decodable, Equatable {
     let id: String
     let template: MomentTemplateID
     let creationMode: String

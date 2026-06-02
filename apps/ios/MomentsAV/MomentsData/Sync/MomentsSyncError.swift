@@ -1,6 +1,6 @@
 import Foundation
 
-enum MomentsProjectSyncError: LocalizedError {
+enum MomentsSyncError: LocalizedError {
     case notConfigured
     case invalidForm
     case missingRenderJob
@@ -9,7 +9,7 @@ enum MomentsProjectSyncError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .notConfigured:
-            "Project sync is not configured for this build."
+            "Moment sync is not configured for this build."
         case .invalidForm:
             "Add the occasion before starting a Moment."
         case .missingRenderJob:

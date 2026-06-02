@@ -11,7 +11,7 @@ struct MomentsStoryDraftMedia: Encodable {
 
 struct MomentsStoryDraftRequest: Encodable {
     let appId = "momentsav"
-    let projectId: String
+    let momentId: String
     let creationMode: String
     let look: String
     let theme: String
@@ -28,7 +28,7 @@ struct MomentsStoryDraftRequest: Encodable {
 
 enum MomentsStoryDraftInputSignature {
     static func make(
-        projectId: String,
+        momentId: String,
         form: MomentDraftForm,
         selectedMedia: [MomentsStoryDraftMedia]
     ) -> String {
@@ -44,7 +44,7 @@ enum MomentsStoryDraftInputSignature {
             .joined(separator: "|")
 
         let input = [
-            projectId,
+            momentId,
             form.creationMode.rawValue,
             form.look.rawValue,
             form.theme.rawValue,
@@ -77,7 +77,7 @@ struct MomentsStoryDraftScene: Decodable, Identifiable, Equatable {
 
 struct MomentsStoryDraftResponse: Decodable, Equatable {
     let appId: String
-    let projectId: String
+    let momentId: String
     let workflowRunId: String
     let status: String
     let provider: String?

@@ -7,7 +7,7 @@ final class MomentsAviViewModelTests: XCTestCase {
     func testSignedOutGuidanceAsksForAuthentication() {
         let presentation = MomentsAviPresentation.make(
             isSignedIn: false,
-            projectSummary: MomentsProjectListSummary(),
+            projectSummary: InProgressMomentsSummary(),
             creditBalance: .empty
         )
 
@@ -19,7 +19,7 @@ final class MomentsAviViewModelTests: XCTestCase {
     func testActiveProjectsDriveWorkflowFocus() {
         let presentation = MomentsAviPresentation.make(
             isSignedIn: true,
-            projectSummary: MomentsProjectListSummary.make(from: [
+            projectSummary: InProgressMomentsSummary.make(from: [
                 makeProject(id: "active-1", status: "story_ready", updatedAt: 20),
                 makeProject(id: "done-1", status: "completed", updatedAt: 10)
             ]),
@@ -34,7 +34,7 @@ final class MomentsAviViewModelTests: XCTestCase {
     func testCreditGuidanceUsesSpendableBalance() {
         let presentation = MomentsAviPresentation.make(
             isSignedIn: true,
-            projectSummary: MomentsProjectListSummary(),
+            projectSummary: InProgressMomentsSummary(),
             creditBalance: MomentsCreditBalance(proMonthly: 2, promotional: 1, purchased: 3)
         )
 
@@ -44,7 +44,7 @@ final class MomentsAviViewModelTests: XCTestCase {
     func testCreditGuidanceUsesSingularSpendableCredit() {
         let presentation = MomentsAviPresentation.make(
             isSignedIn: true,
-            projectSummary: MomentsProjectListSummary(),
+            projectSummary: InProgressMomentsSummary(),
             creditBalance: MomentsCreditBalance(proMonthly: 1, promotional: 0, purchased: 0)
         )
 
@@ -54,7 +54,7 @@ final class MomentsAviViewModelTests: XCTestCase {
     func testZeroCreditsExplainFinalExportRequirement() {
         let presentation = MomentsAviPresentation.make(
             isSignedIn: true,
-            projectSummary: MomentsProjectListSummary(),
+            projectSummary: InProgressMomentsSummary(),
             creditBalance: .empty
         )
 
@@ -76,7 +76,7 @@ final class MomentsAviViewModelTests: XCTestCase {
             MomentsCreditBalance(proMonthly: 1, promotional: 0, purchased: 0)
         )
         summaryProvider.summary.send(
-            MomentsProjectListSummary.make(from: [
+            InProgressMomentsSummary.make(from: [
                 makeProject(id: "active-1", status: "story_ready", updatedAt: 20)
             ])
         )
@@ -85,8 +85,8 @@ final class MomentsAviViewModelTests: XCTestCase {
         XCTAssertTrue(viewModel.presentation.creditGuidanceMessage.contains("1 credit is available"))
     }
 
-    private func makeProject(id: String, status: String, updatedAt: Double) -> MomentDraftProject {
-        MomentDraftProject(
+    private func makeProject(id: String, status: String, updatedAt: Double) -> InProgressMoment {
+        InProgressMoment(
             id: id,
             template: .birthdayMessage,
             status: status,
@@ -104,10 +104,10 @@ final class MomentsAviViewModelTests: XCTestCase {
     }
 }
 
-private final class AviProjectSummaryProvider: MomentsProjectSummaryProviding {
-    let summary = CurrentValueSubject<MomentsProjectListSummary, Never>(MomentsProjectListSummary())
+private final class AviProjectSummaryProvider: InProgressMomentsSummaryProviding {
+    let summary = CurrentValueSubject<InProgressMomentsSummary, Never>(InProgressMomentsSummary())
 
-    var inProgressSummaryPublisher: AnyPublisher<MomentsProjectListSummary, Never> {
+    var inProgressSummaryPublisher: AnyPublisher<InProgressMomentsSummary, Never> {
         summary.eraseToAnyPublisher()
     }
 }

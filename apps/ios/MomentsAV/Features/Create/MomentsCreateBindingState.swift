@@ -26,7 +26,7 @@ struct MomentsCreateStoryDraftState {
 }
 
 struct MomentsCreatePreviewGenerationState {
-    let activeWorkspace: MomentProjectWorkspace?
+    let activeWorkspace: MomentWorkspace?
     let latestPreview: MomentArtifact?
     let latestPreviewJob: MomentRenderJob?
     let statusMessage: String?

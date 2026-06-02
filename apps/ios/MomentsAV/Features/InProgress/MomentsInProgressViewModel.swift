@@ -3,24 +3,24 @@ import Foundation
 
 @MainActor
 final class MomentsInProgressViewModel: ObservableObject {
-    @Published private(set) var projectSummary = MomentsProjectListSummary()
+    @Published private(set) var projectSummary = InProgressMomentsSummary()
     @Published private(set) var isSignedIn = false
     @Published private(set) var currentUserId: String?
-    @Published private(set) var activeProject: MomentDraftProject?
-    @Published private(set) var activeWorkspace: MomentProjectWorkspace?
+    @Published private(set) var activeProject: InProgressMoment?
+    @Published private(set) var activeWorkspace: MomentWorkspace?
     @Published private(set) var selectedMomentId: String?
     @Published private(set) var isLoadingProjectWorkspace = false
     @Published private(set) var isDeletingMoment = false
     @Published private(set) var statusMessage: String?
 
-    private var workflow: (any MomentsInProgressViewing)?
+    private var workflow: (any InProgressMomentsViewing)?
     private var workflowCancellables = Set<AnyCancellable>()
     private var accountCancellables = Set<AnyCancellable>()
     private var deletionTask: Task<Void, Never>?
 
     init() {}
 
-    func bind(to workflow: any MomentsInProgressViewing) {
+    func bind(to workflow: any InProgressMomentsViewing) {
         self.workflow = workflow
         workflowCancellables.removeAll()
 
@@ -34,8 +34,8 @@ final class MomentsInProgressViewModel: ObservableObject {
 
         workflow.activeProjectPublisher
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] project in
-                self?.activeProject = project
+            .sink { [weak self] moment in
+                self?.activeProject = moment
             }
             .store(in: &workflowCancellables)
 
@@ -83,19 +83,19 @@ final class MomentsInProgressViewModel: ObservableObject {
         .store(in: &accountCancellables)
     }
 
-    func selectProject(_ project: MomentDraftProject) {
-        if selectedMomentId == project.id {
+    func selectProject(_ moment: InProgressMoment) {
+        if selectedMomentId == moment.id {
             selectedMomentId = nil
             workflow?.clearProjectWorkspace()
             return
         }
 
-        selectedMomentId = project.id
-        workflow?.observeProjectWorkspace(ownerUserId: currentUserId, projectId: project.id)
+        selectedMomentId = moment.id
+        workflow?.observeMomentWorkspace(ownerUserId: currentUserId, momentId: moment.id)
     }
 
-    func isSelected(_ project: MomentDraftProject) -> Bool {
-        selectedMomentId == project.id
+    func isSelected(_ moment: InProgressMoment) -> Bool {
+        selectedMomentId == moment.id
     }
 
     func clearSelection() {
@@ -106,18 +106,18 @@ final class MomentsInProgressViewModel: ObservableObject {
         workflow?.clearProjectWorkspace()
     }
 
-    func deleteMoment(_ project: MomentDraftProject) {
+    func deleteMoment(_ moment: InProgressMoment) {
         guard let workflow else { return }
 
         deletionTask?.cancel()
         deletionTask = Task { [weak self] in
-            let didDelete = await workflow.deleteMoment(project)
+            let didDelete = await workflow.deleteMoment(moment)
             guard !Task.isCancelled else { return }
             if didDelete {
                 self?.selectedMomentId = nil
                 self?.activeProject = nil
                 self?.activeWorkspace = nil
-                self?.projectSummary = self?.projectSummary.removing(projectId: project.id) ?? MomentsProjectListSummary()
+                self?.projectSummary = self?.projectSummary.removing(momentId: moment.id) ?? InProgressMomentsSummary()
                 self?.statusMessage = L10n.string("inProgress.status.momentDeleted")
             }
             self?.deletionTask = nil

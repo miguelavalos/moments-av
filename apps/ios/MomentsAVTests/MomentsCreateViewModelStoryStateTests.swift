@@ -12,7 +12,7 @@ final class MomentsCreateViewModelStoryStateTests: XCTestCase {
         viewModel.applyMomentCreationState(
             MomentsCreateMomentCreationState(
                 isCreatingDraft: false,
-                activeMomentId: "project-1",
+                activeMomentId: "moment-1",
                 draftErrorMessage: nil
             )
         )
@@ -59,7 +59,7 @@ final class MomentsCreateViewModelStoryStateTests: XCTestCase {
         viewModel.applyMomentCreationState(
             MomentsCreateMomentCreationState(
                 isCreatingDraft: false,
-                activeMomentId: "project-1",
+                activeMomentId: "moment-1",
                 draftErrorMessage: nil
             )
         )
@@ -74,8 +74,8 @@ final class MomentsCreateViewModelStoryStateTests: XCTestCase {
 
         viewModel.applyPreviewGenerationState(
             MomentsCreatePreviewGenerationState(
-                activeWorkspace: MomentProjectWorkspace(
-                project: MomentsCreateTestFixtures.makeProject(id: "project-1"),
+                activeWorkspace: MomentWorkspace(
+                moment: MomentsCreateTestFixtures.makeProject(id: "moment-1"),
                 mediaAssets: [
                     MomentsCreateTestFixtures.makeMediaAsset(
                         id: "backend-media-1",
@@ -95,7 +95,7 @@ final class MomentsCreateViewModelStoryStateTests: XCTestCase {
         )
 
         let expectedLocalSignature = viewModel.currentStoryInputSignature(
-            projectId: "project-1",
+            momentId: "moment-1",
             persistedMedia: [
                 MomentsStoryDraftMedia(
                     mediaAssetId: localMedia.id.uuidString,
@@ -107,7 +107,7 @@ final class MomentsCreateViewModelStoryStateTests: XCTestCase {
             ]
         )
         let backendMediaSignature = viewModel.currentStoryInputSignature(
-            projectId: "project-1",
+            momentId: "moment-1",
             persistedMedia: [
                 MomentsStoryDraftMedia(
                     mediaAssetId: "backend-media-1",
@@ -119,7 +119,7 @@ final class MomentsCreateViewModelStoryStateTests: XCTestCase {
             ]
         )
 
-        XCTAssertEqual(viewModel.currentStoryInputSignature(projectId: "project-1"), expectedLocalSignature)
-        XCTAssertNotEqual(viewModel.currentStoryInputSignature(projectId: "project-1"), backendMediaSignature)
+        XCTAssertEqual(viewModel.currentStoryInputSignature(momentId: "moment-1"), expectedLocalSignature)
+        XCTAssertNotEqual(viewModel.currentStoryInputSignature(momentId: "moment-1"), backendMediaSignature)
     }
 }

@@ -8,7 +8,7 @@ struct MomentsAviPresentation: Equatable {
 
     static func make(
         isSignedIn: Bool,
-        projectSummary: MomentsProjectListSummary,
+        projectSummary: InProgressMomentsSummary,
         creditBalance: MomentsCreditBalance
     ) -> MomentsAviPresentation {
         MomentsAviPresentation(
@@ -30,7 +30,7 @@ struct MomentsAviPresentation: Equatable {
 
     private static func workflowFocusTitle(
         isSignedIn: Bool,
-        projectSummary: MomentsProjectListSummary
+        projectSummary: InProgressMomentsSummary
     ) -> String {
         guard isSignedIn else { return L10n.string("avi.focus.signIn.title") }
         if projectSummary.inProgressCount > 0 { return L10n.string("avi.focus.reviewActive.title") }
@@ -40,7 +40,7 @@ struct MomentsAviPresentation: Equatable {
 
     private static func workflowFocusMessage(
         isSignedIn: Bool,
-        projectSummary: MomentsProjectListSummary
+        projectSummary: InProgressMomentsSummary
     ) -> String {
         guard isSignedIn else {
             return L10n.string("avi.focus.signIn.message")
@@ -54,7 +54,7 @@ struct MomentsAviPresentation: Equatable {
         return L10n.string("avi.focus.empty.message")
     }
 
-    private static func workflowFocusSystemImage(projectSummary: MomentsProjectListSummary) -> String {
+    private static func workflowFocusSystemImage(projectSummary: InProgressMomentsSummary) -> String {
         projectSummary.inProgressCount > 0 ? "clock.badge.checkmark" : "sparkles"
     }
 
@@ -71,7 +71,7 @@ struct MomentsAviPresentation: Equatable {
         return L10n.string("avi.credits.available.message", MomentsCreditCopy.countTitle(creditBalance.spendable))
     }
 
-    private static func inProgressProjectLabel(_ projectSummary: MomentsProjectListSummary) -> String {
+    private static func inProgressProjectLabel(_ projectSummary: InProgressMomentsSummary) -> String {
         projectSummary.inProgressCount == 1 ? L10n.string("moment.noun.one") : L10n.string("moment.noun.other")
     }
 }

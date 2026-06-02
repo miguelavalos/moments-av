@@ -3,7 +3,7 @@ import Foundation
 
 @MainActor
 final class MomentsHomeViewModel: ObservableObject {
-    @Published private(set) var projectSummary = MomentsProjectListSummary()
+    @Published private(set) var projectSummary = InProgressMomentsSummary()
     @Published private(set) var isSignedIn = false
     @Published private(set) var displayName: String?
     @Published private(set) var creditBalance = MomentsCreditBalance.empty
@@ -11,7 +11,7 @@ final class MomentsHomeViewModel: ObservableObject {
     private var projectCancellables = Set<AnyCancellable>()
     private var accountCancellables = Set<AnyCancellable>()
 
-    func bind(to summaryProvider: any MomentsProjectSummaryProviding) {
+    func bind(to summaryProvider: any InProgressMomentsSummaryProviding) {
         projectCancellables.removeAll()
 
         summaryProvider.inProgressSummaryPublisher

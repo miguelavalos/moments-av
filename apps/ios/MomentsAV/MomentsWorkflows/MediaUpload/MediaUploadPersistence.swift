@@ -34,7 +34,7 @@ enum MediaUploadPersistence {
         imported mediaItems: [MomentsSelectedMedia],
         ownerUserId: String,
         bearerToken: String,
-        projectId: String,
+        momentId: String,
         uploadClient: MomentsUploadClient,
         mediaAssetSaver: any MomentsMediaAssetSaving,
         progress: @MainActor @escaping (_ completedCount: Int, _ totalCount: Int) -> Void = { _, _ in },
@@ -48,7 +48,7 @@ enum MediaUploadPersistence {
         var completedUploads = 0
         let uploadedMedia = try await uploadMedia(
             mediaItems,
-            projectId: projectId,
+            momentId: momentId,
             bearerToken: bearerToken,
             uploadClient: uploadClient,
             shouldContinue: shouldContinue,
@@ -67,7 +67,7 @@ enum MediaUploadPersistence {
         }
         let savedMediaAssetIds = try await mediaAssetSaver.saveMediaAssets(
             ownerUserId: ownerUserId,
-            projectId: projectId,
+            momentId: momentId,
             mediaAssets: mediaAssetRequests
         )
 
@@ -92,7 +92,7 @@ enum MediaUploadPersistence {
     @MainActor
     private static func uploadMedia(
         _ mediaItems: [MomentsSelectedMedia],
-        projectId: String,
+        momentId: String,
         bearerToken: String,
         uploadClient: MomentsUploadClient,
         shouldContinue: @MainActor () -> Bool,
@@ -109,7 +109,7 @@ enum MediaUploadPersistence {
                 nextIndex += 1
                 group.addTask {
                     let prepared = try await uploadClient.prepareUpload(
-                        projectId: projectId,
+                        momentId: momentId,
                         bearerToken: bearerToken,
                         media: media
                     )

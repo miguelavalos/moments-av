@@ -33,7 +33,7 @@ final class PreviewGenerationWorkflow: WorkspaceObservingWorkflow {
         super.init(workspaceObserver: workspaceObserver)
     }
 
-    override func workspaceDidChange(_ workspace: MomentProjectWorkspace?) {
+    override func workspaceDidChange(_ workspace: MomentWorkspace?) {
         latestPreview = workspace?.latestArtifact(kind: "preview")
         latestPreviewJob = workspace?.latestRenderJob(kind: "preview")
     }
@@ -43,18 +43,18 @@ final class PreviewGenerationWorkflow: WorkspaceObservingWorkflow {
     }
 
     func canGenerate(template: MomentTemplate) -> Bool {
-        guard let project = activeWorkspace?.project else { return false }
+        guard let moment = activeWorkspace?.moment else { return false }
         return currentUserProvider.currentUserId != nil
             && isConfigured
             && MomentsPreviewRules.canGenerate(
-                project: project,
+                moment: moment,
                 template: template,
                 balance: creditBalanceProvider.currentCreditBalance
             )
             && !isGenerating
     }
 
-    func generatePreview(projectId: String, template: MomentTemplate, form: MomentDraftForm) async {
+    func generatePreview(momentId: String, template: MomentTemplate, form: MomentDraftForm) async {
         guard let ownerUserId = currentUserProvider.currentUserId else {
             statusMessage = L10n.string("workflow.preview.signInReview")
             return
@@ -63,7 +63,7 @@ final class PreviewGenerationWorkflow: WorkspaceObservingWorkflow {
             statusMessage = L10n.string("workflow.preview.signInAgainReview")
             return
         }
-        guard let project = activeWorkspace?.project else {
+        guard let moment = activeWorkspace?.moment else {
             statusMessage = L10n.string("workflow.preview.missingProject")
             return
         }
@@ -73,7 +73,7 @@ final class PreviewGenerationWorkflow: WorkspaceObservingWorkflow {
         }
 
         let availability = MomentsPreviewRules.availability(
-            project: project,
+            moment: moment,
             template: template,
             balance: creditBalanceProvider.currentCreditBalance
         )
@@ -90,8 +90,8 @@ final class PreviewGenerationWorkflow: WorkspaceObservingWorkflow {
             statusMessage = try await PreviewGenerationRun.perform(
                 ownerUserId: ownerUserId,
                 bearerToken: bearerToken,
-                projectId: projectId,
-                project: project,
+                momentId: momentId,
+                moment: moment,
                 template: template,
                 form: form,
                 previewClient: previewClient,
@@ -126,7 +126,7 @@ final class PreviewGenerationWorkflow: WorkspaceObservingWorkflow {
             statusMessage = try await RenderJobStatusRefresh.perform(
                 ownerUserId: ownerUserId,
                 bearerToken: bearerToken,
-                projectId: activeWorkspace?.project.id,
+                momentId: activeWorkspace?.moment.id,
                 job: latestPreviewJob,
                 messages: refreshMessages,
                 statusClient: statusClient,

@@ -5,7 +5,7 @@ final class MomentsInProgressPresentationTests: XCTestCase {
     func testSignedOutAvailabilityExplainsAccountRequirement() {
         let presentation = MomentsInProgressPresentation.make(
             isSignedIn: false,
-            projectSummary: MomentsProjectListSummary(),
+            projectSummary: InProgressMomentsSummary(),
             momentPendingDeletion: nil
         )
 
@@ -24,7 +24,7 @@ final class MomentsInProgressPresentationTests: XCTestCase {
     func testEmptySignedInAvailabilityExplainsCreateFirstState() {
         let presentation = MomentsInProgressPresentation.make(
             isSignedIn: true,
-            projectSummary: MomentsProjectListSummary(),
+            projectSummary: InProgressMomentsSummary(),
             momentPendingDeletion: nil
         )
 
@@ -43,8 +43,8 @@ final class MomentsInProgressPresentationTests: XCTestCase {
     func testProjectsAvailabilityIsAvailableWhenSignedInWithProjects() {
         let presentation = MomentsInProgressPresentation.make(
             isSignedIn: true,
-            projectSummary: MomentsProjectListSummary.make(from: [
-                makeProject(id: "project-1")
+            projectSummary: InProgressMomentsSummary.make(from: [
+                makeProject(id: "moment-1")
             ]),
             momentPendingDeletion: nil
         )
@@ -55,19 +55,19 @@ final class MomentsInProgressPresentationTests: XCTestCase {
     func testDeletionMessageUsesPendingProjectTitleOrFallback() {
         let fallback = MomentsInProgressPresentation.make(
             isSignedIn: true,
-            projectSummary: MomentsProjectListSummary(),
+            projectSummary: InProgressMomentsSummary(),
             momentPendingDeletion: nil
         )
-        let project = makeProject(id: "project-1", title: "Family Weekend")
+        let moment = makeProject(id: "moment-1", title: "Family Weekend")
         let titled = MomentsInProgressPresentation.make(
             isSignedIn: true,
-            projectSummary: MomentsProjectListSummary(),
-            momentPendingDeletion: project
+            projectSummary: InProgressMomentsSummary(),
+            momentPendingDeletion: moment
         )
 
         XCTAssertEqual(
             fallback.deletionMessage,
-            "This removes this project, including source media records and generated artifacts."
+            "This removes this moment, including source media records and generated artifacts."
         )
         XCTAssertEqual(
             titled.deletionMessage,
@@ -80,8 +80,8 @@ final class MomentsInProgressPresentationTests: XCTestCase {
         title: String? = nil,
         status: String = "draft_created",
         updatedAt: Double = 10
-    ) -> MomentDraftProject {
-        MomentDraftProject(
+    ) -> InProgressMoment {
+        InProgressMoment(
             id: id,
             template: .birthdayMessage,
             status: status,

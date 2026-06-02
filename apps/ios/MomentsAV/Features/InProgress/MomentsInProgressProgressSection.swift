@@ -2,7 +2,7 @@ import AVAppShellFoundation
 import SwiftUI
 
 struct MomentsInProgressProgressSection: View {
-    let workspace: MomentProjectWorkspace
+    let workspace: MomentWorkspace
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {

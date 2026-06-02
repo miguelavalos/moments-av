@@ -5,7 +5,7 @@ enum FinalRenderGenerationRun {
     static func perform(
         ownerUserId: String,
         bearerToken: String,
-        projectId: String,
+        momentId: String,
         template: MomentTemplate,
         creationStyle: MomentCreationStyleID?,
         form: MomentDraftForm,
@@ -25,7 +25,7 @@ enum FinalRenderGenerationRun {
         )
         updateStatus("Reserving \(creditCost) \(creditCost == 1 ? "credit" : "credits") for the video.")
         let reservation = try await finalRenderClient.reserveFinalRenderCredits(
-            projectId: projectId,
+            momentId: momentId,
             bearerToken: bearerToken,
             template: template,
             removesWatermark: removesWatermark,
@@ -39,7 +39,7 @@ enum FinalRenderGenerationRun {
 
         updateStatus("Starting video creation.")
         let startedWorkflow = try await finalRenderClient.startFinalRenderWorkflow(
-            projectId: projectId,
+            momentId: momentId,
             bearerToken: bearerToken,
             template: template,
             creationStyle: creationStyle,
@@ -57,7 +57,7 @@ enum FinalRenderGenerationRun {
         let savedRenderJobId = try await saveStartedFinalRenderWithRetry(
             finalRenderResultSaver: finalRenderResultSaver,
             ownerUserId: ownerUserId,
-            projectId: projectId,
+            momentId: momentId,
             reservationId: reservation.id,
             startedWorkflow: startedWorkflow
         )
@@ -66,7 +66,7 @@ enum FinalRenderGenerationRun {
             throw CancellationError()
         }
 
-        workspaceObserver.observeWorkspace(ownerUserId: ownerUserId, projectId: projectId)
+        workspaceObserver.observeWorkspace(ownerUserId: ownerUserId, momentId: momentId)
         return MomentRenderJob(
             id: savedRenderJobId,
             kind: "final",
@@ -96,7 +96,7 @@ enum FinalRenderGenerationRun {
     private static func saveStartedFinalRenderWithRetry(
         finalRenderResultSaver: any MomentsFinalRenderResultSaving,
         ownerUserId: String,
-        projectId: String,
+        momentId: String,
         reservationId: String,
         startedWorkflow: MomentsStartWorkflowResponse
     ) async throws -> String {
@@ -107,7 +107,7 @@ enum FinalRenderGenerationRun {
             do {
                 return try await finalRenderResultSaver.saveStartedFinalRender(
                     ownerUserId: ownerUserId,
-                    projectId: projectId,
+                    momentId: momentId,
                     reservationId: reservationId,
                     startedWorkflow: startedWorkflow
                 )

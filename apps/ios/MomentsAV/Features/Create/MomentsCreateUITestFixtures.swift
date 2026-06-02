@@ -1,11 +1,11 @@
 import Foundation
 
 enum MomentsCreateUITestFixtures {
-    static let projectId = "moments-ui-project-1"
+    static let momentId = "moments-ui-moment-1"
 
-    static var project: MomentDraftProject {
-        MomentDraftProject(
-            id: projectId,
+    static var moment: InProgressMoment {
+        InProgressMoment(
+            id: momentId,
             template: .birthdayMessage,
             status: "final_rendering",
             title: "Family Weekend",
@@ -22,9 +22,9 @@ enum MomentsCreateUITestFixtures {
         )
     }
 
-    static var workspace: MomentProjectWorkspace {
-        MomentProjectWorkspace(
-            project: project,
+    static var workspace: MomentWorkspace {
+        MomentWorkspace(
+            moment: moment,
             mediaAssets: mediaAssets,
             storyScenes: storyScenes,
             renderJobs: renderJobs,
@@ -77,8 +77,8 @@ enum MomentsCreateUITestFixtures {
 
     static var artifacts: [MomentArtifact] {
         [
-            artifact(id: "preview-artifact-1", kind: "preview", key: "momentsav/ui-test/project-1/previews/preview-1.mp4", hasWatermark: true),
-            artifact(id: "final-artifact-1", kind: "final", key: "momentsav/ui-test/project-1/final/final-1.mp4", hasWatermark: false)
+            artifact(id: "preview-artifact-1", kind: "preview", key: "momentsav/ui-test/moment-1/previews/preview-1.mp4", hasWatermark: true),
+            artifact(id: "final-artifact-1", kind: "final", key: "momentsav/ui-test/moment-1/final/final-1.mp4", hasWatermark: false)
         ]
     }
 

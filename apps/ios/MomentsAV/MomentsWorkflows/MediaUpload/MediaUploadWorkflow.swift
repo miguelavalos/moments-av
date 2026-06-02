@@ -36,7 +36,7 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
     func importPickerItems(
         _ items: [PhotosPickerItem],
         template: MomentTemplate,
-        projectId: String?
+        momentId: String?
     ) async {
         guard !items.isEmpty else { return }
         let remainingSlots = MomentsMediaRules.remainingSlots(
@@ -84,7 +84,7 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
 
     func importLatestPhotos(
         template: MomentTemplate,
-        projectId: String?
+        momentId: String?
     ) async {
         let remainingSlots = MomentsMediaRules.remainingSlots(
             template: template,
@@ -131,7 +131,7 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
     func importPhotoAlbum(
         id albumId: String,
         template: MomentTemplate,
-        projectId: String?
+        momentId: String?
     ) async {
         let remainingSlots = MomentsMediaRules.remainingSlots(
             template: template,
@@ -202,10 +202,10 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
         sortChronologically()
     }
 
-    override func workspaceDidChange(_ workspace: MomentProjectWorkspace?) {
+    override func workspaceDidChange(_ workspace: MomentWorkspace?) {
         guard selectedMedia.isEmpty,
               let workspace,
-              restoredWorkspaceProjectId != workspace.project.id,
+              restoredWorkspaceProjectId != workspace.moment.id,
               !workspace.mediaAssets.isEmpty else { return }
 
         Task { [weak self] in
@@ -216,7 +216,7 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
     func restoreLocalMediaForEditing() {
         guard selectedMedia.isEmpty,
               let activeWorkspace,
-              restoredWorkspaceProjectId != activeWorkspace.project.id,
+              restoredWorkspaceProjectId != activeWorkspace.moment.id,
               !activeWorkspace.mediaAssets.isEmpty else { return }
 
         Task { [weak self, activeWorkspace] in
@@ -224,7 +224,7 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
         }
     }
 
-    func persistSelectedMedia(projectId: String) async -> [MomentsStoryDraftMedia]? {
+    func persistSelectedMedia(momentId: String) async -> [MomentsStoryDraftMedia]? {
         guard let ownerUserId = currentUserProvider.currentUserId else {
             statusMessage = L10n.string("workflow.media.signInPrepareStory")
             return nil
@@ -271,7 +271,7 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
                 imported: pendingMediaToSave,
                 ownerUserId: ownerUserId,
                 bearerToken: bearerToken,
-                projectId: projectId,
+                momentId: momentId,
                 uploadClient: uploadClient,
                 mediaAssetSaver: mediaAssetSaver,
                 progress: { [weak self] completedCount, totalCount in
@@ -315,14 +315,14 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
         clearActiveWorkspace()
     }
 
-    private func restoreLocalMedia(from workspace: MomentProjectWorkspace) async {
+    private func restoreLocalMedia(from workspace: MomentWorkspace) async {
         let selectedAssetCount = workspace.mediaAssets.filter(\.selected).count
         let expectedSelectedCount = selectedAssetCount > 0 ? selectedAssetCount : workspace.mediaAssets.count
         do {
             let restoredMedia = try await MediaPickerImport.loadLocalMediaAssets(workspace.mediaAssets)
-            guard activeWorkspace?.project.id == workspace.project.id, selectedMedia.isEmpty else { return }
+            guard activeWorkspace?.moment.id == workspace.moment.id, selectedMedia.isEmpty else { return }
             if restoredMedia.count == expectedSelectedCount {
-                restoredWorkspaceProjectId = workspace.project.id
+                restoredWorkspaceProjectId = workspace.moment.id
                 selectedMedia = restoredMedia
                 statusMessage = L10n.string("workflow.media.localReady")
             } else if restoredMedia.isEmpty, expectedSelectedCount > 0 {
@@ -331,10 +331,10 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
                 statusMessage = L10n.string("workflow.media.savedReadyThumbnailsPending")
             }
         } catch MomentsUploadError.photoLibraryAccessDenied {
-            guard activeWorkspace?.project.id == workspace.project.id else { return }
+            guard activeWorkspace?.moment.id == workspace.moment.id else { return }
             statusMessage = L10n.string("workflow.media.savedReady")
         } catch {
-            guard activeWorkspace?.project.id == workspace.project.id else { return }
+            guard activeWorkspace?.moment.id == workspace.moment.id else { return }
             statusMessage = L10n.string("workflow.media.savedReady")
         }
     }

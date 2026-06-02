@@ -2,8 +2,8 @@ import Foundation
 @testable import MomentsAV
 
 enum MomentsCreateTestFixtures {
-    static func makeProject(id: String) -> MomentDraftProject {
-        MomentDraftProject(
+    static func makeProject(id: String) -> InProgressMoment {
+        InProgressMoment(
             id: id,
             template: .birthdayMessage,
             status: "draft_created",
@@ -110,7 +110,7 @@ enum MomentsCreateTestFixtures {
 
     static func makeRefreshAvailability(canRefresh: Bool) -> RenderJobStatusRefreshAvailability {
         RenderJobStatusRefreshAvailability(
-            projectId: canRefresh ? "project-1" : nil,
+            momentId: canRefresh ? "moment-1" : nil,
             job: canRefresh ? MomentsCreateTestFixtures.makeRenderJob(id: "job-1", kind: "preview", status: "running") : nil,
             isAvailable: canRefresh,
             isConfigured: canRefresh,

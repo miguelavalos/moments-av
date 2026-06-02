@@ -74,7 +74,7 @@ enum MomentsCreateSection: Hashable {
     case preview
     case finalRender
 
-    init(focus: MomentsProjectContinuationFocus) {
+    init(focus: MomentsContinuationFocus) {
         switch focus {
         case .review:
             self = .review

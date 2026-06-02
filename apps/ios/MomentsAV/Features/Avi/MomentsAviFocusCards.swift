@@ -5,7 +5,7 @@ struct MomentsAviCurrentFocusCard: View {
     let workflowFocusTitle: String
     let workflowFocusMessage: String
     let workflowFocusSystemImage: String
-    let projectSummary: MomentsProjectListSummary
+    let projectSummary: InProgressMomentsSummary
     let creditBalance: MomentsCreditBalance
 
     var body: some View {

@@ -3,8 +3,8 @@ import Foundation
 
 @MainActor
 final class MomentWorkspaceSelectionWorkflow: ObservableObject {
-    @Published private(set) var activeProject: MomentDraftProject?
-    @Published private(set) var activeWorkspace: MomentProjectWorkspace?
+    @Published private(set) var activeProject: InProgressMoment?
+    @Published private(set) var activeWorkspace: MomentWorkspace?
     @Published private(set) var isLoadingProjectWorkspace = false
     @Published private(set) var errorMessage: String?
 
@@ -29,11 +29,11 @@ final class MomentWorkspaceSelectionWorkflow: ObservableObject {
             .store(in: &cancellables)
     }
 
-    var activeProjectPublisher: AnyPublisher<MomentDraftProject?, Never> {
+    var activeProjectPublisher: AnyPublisher<InProgressMoment?, Never> {
         $activeProject.eraseToAnyPublisher()
     }
 
-    var activeWorkspacePublisher: AnyPublisher<MomentProjectWorkspace?, Never> {
+    var activeWorkspacePublisher: AnyPublisher<MomentWorkspace?, Never> {
         $activeWorkspace.eraseToAnyPublisher()
     }
 
@@ -45,18 +45,18 @@ final class MomentWorkspaceSelectionWorkflow: ObservableObject {
         $errorMessage.eraseToAnyPublisher()
     }
 
-    func observeProjectWorkspace(ownerUserId: String?, projectId: String?) {
+    func observeMomentWorkspace(ownerUserId: String?, momentId: String?) {
         activeProject = nil
         activeWorkspace = nil
         isLoadingProjectWorkspace = false
         errorMessage = nil
 
-        guard let ownerUserId, let projectId else {
+        guard let ownerUserId, let momentId else {
             workspaceObserver.clearWorkspace()
             return
         }
 
-        workspaceObserver.observeWorkspace(ownerUserId: ownerUserId, projectId: projectId)
+        workspaceObserver.observeWorkspace(ownerUserId: ownerUserId, momentId: momentId)
         isLoadingProjectWorkspace = true
     }
 
@@ -67,9 +67,9 @@ final class MomentWorkspaceSelectionWorkflow: ObservableObject {
         isLoadingProjectWorkspace = false
     }
 
-    private func apply(workspace: MomentProjectWorkspace?) {
+    private func apply(workspace: MomentWorkspace?) {
         activeWorkspace = workspace
-        activeProject = workspace?.project
+        activeProject = workspace?.moment
         isLoadingProjectWorkspace = false
     }
 
