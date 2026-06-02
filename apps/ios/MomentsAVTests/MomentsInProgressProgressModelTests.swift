@@ -1,9 +1,9 @@
 import XCTest
 @testable import MomentsAV
 
-final class MomentsProjectProgressModelTests: XCTestCase {
+final class MomentsInProgressProgressModelTests: XCTestCase {
     func testEmptyWorkspaceMarksDraftCompleteAndRemainingStepsWaiting() {
-        let model = MomentsProjectProgressModel(workspace: makeWorkspace())
+        let model = MomentsInProgressProgressModel(workspace: makeWorkspace())
 
         XCTAssertEqual(model.phases.map(\.title), ["Project", "Media", "Story", "Story Review", "Final"])
         XCTAssertEqual(model.phases.map(\.state), [.complete, .waiting, .waiting, .waiting, .waiting])
@@ -17,7 +17,7 @@ final class MomentsProjectProgressModelTests: XCTestCase {
     }
 
     func testRenderJobStatusDrivesPreviewProgressUntilArtifactIsAvailable() {
-        let model = MomentsProjectProgressModel(
+        let model = MomentsInProgressProgressModel(
             workspace: makeWorkspace(renderJobs: [makeRenderJob(kind: "preview", status: "running")])
         )
 
@@ -27,7 +27,7 @@ final class MomentsProjectProgressModelTests: XCTestCase {
     }
 
     func testAvailableFinalExportArtifactCompletesFinalProgress() {
-        let model = MomentsProjectProgressModel(
+        let model = MomentsInProgressProgressModel(
             workspace: makeWorkspace(
                 renderJobs: [makeRenderJob(kind: "final", status: "failed")],
                 artifacts: [makeArtifact(kind: "final_export", status: "available")]

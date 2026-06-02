@@ -1,35 +1,35 @@
 import Foundation
 
-struct MomentsProjectProgressModel {
-    let phases: [MomentsProjectProgressPhase]
+struct MomentsInProgressProgressModel {
+    let phases: [MomentsInProgressProgressPhase]
 
     init(workspace: MomentProjectWorkspace) {
         phases = [
-            MomentsProjectProgressPhase(
+            MomentsInProgressProgressPhase(
                 title: L10n.string("project.progress.project"),
                 detail: MomentsProjectStatusRules.displayTitle(for: workspace.project.status),
                 systemImage: "doc.text",
                 state: .complete
             ),
-            MomentsProjectProgressPhase(
+            MomentsInProgressProgressPhase(
                 title: L10n.string("project.progress.media"),
                 detail: workspace.mediaAssets.isEmpty ? L10n.string("project.progress.noMedia") : L10n.string("project.progress.assets", workspace.mediaAssets.count),
                 systemImage: "photo.on.rectangle",
                 state: workspace.mediaAssets.isEmpty ? .waiting : .complete
             ),
-            MomentsProjectProgressPhase(
+            MomentsInProgressProgressPhase(
                 title: L10n.string("project.progress.story"),
                 detail: workspace.storyScenes.isEmpty ? L10n.string("project.progress.notReady") : L10n.string("project.progress.scenes", workspace.storyScenes.count),
                 systemImage: "text.bubble",
                 state: workspace.storyScenes.isEmpty ? .waiting : .complete
             ),
-            MomentsProjectProgressPhase(
+            MomentsInProgressProgressPhase(
                 title: L10n.string("project.kind.storyReview"),
                 detail: Self.renderDetail(workspace: workspace, kind: "preview", fallback: L10n.string("project.progress.notReviewed")),
                 systemImage: "text.bubble",
                 state: Self.renderState(workspace: workspace, kind: "preview", artifactKind: "preview")
             ),
-            MomentsProjectProgressPhase(
+            MomentsInProgressProgressPhase(
                 title: L10n.string("project.progress.createVideo"),
                 detail: Self.renderDetail(workspace: workspace, kind: "final", fallback: L10n.string("project.progress.notCreated")),
                 systemImage: "video.fill",
@@ -54,7 +54,7 @@ struct MomentsProjectProgressModel {
         workspace: MomentProjectWorkspace,
         kind: String,
         artifactKind: String
-    ) -> MomentsProjectProgressState {
+    ) -> MomentsInProgressProgressState {
         if workspace.hasAvailableArtifact(kind: artifactKind) {
             return .complete
         }
@@ -63,7 +63,7 @@ struct MomentsProjectProgressModel {
             return .waiting
         }
 
-        return MomentsProjectProgressState(status: job.status)
+        return MomentsInProgressProgressState(status: job.status)
     }
 
     private static func artifactKind(for renderKind: String) -> String {
@@ -71,18 +71,18 @@ struct MomentsProjectProgressModel {
     }
 }
 
-struct MomentsProjectProgressPhase: Identifiable, Equatable {
+struct MomentsInProgressProgressPhase: Identifiable, Equatable {
     let title: String
     let detail: String
     let systemImage: String
-    let state: MomentsProjectProgressState
+    let state: MomentsInProgressProgressState
 
     var id: String {
         title
     }
 }
 
-enum MomentsProjectProgressState: Equatable {
+enum MomentsInProgressProgressState: Equatable {
     case complete
     case active
     case waiting

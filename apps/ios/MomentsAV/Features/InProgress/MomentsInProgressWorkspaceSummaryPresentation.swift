@@ -1,7 +1,7 @@
 import AVAppShellFoundation
 import Foundation
 
-struct MomentsProjectWorkspaceSummaryPresentation: Equatable {
+struct MomentsInProgressWorkspaceSummaryPresentation: Equatable {
     let tiles: [MomentsInProgressSummaryTilePresentation]
 
     var metrics: [AVAppShellMetric] {

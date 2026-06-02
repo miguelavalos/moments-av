@@ -1,12 +1,12 @@
 import SwiftUI
 
-struct MomentsProjectWorkspaceDetail: View {
+struct MomentsInProgressWorkspaceDetail: View {
     let workspace: MomentProjectWorkspace
     let isDeletingProject: Bool
     let continueProject: (MomentsProjectContinuationRequest) -> Void
     let requestDeleteProject: (MomentDraftProject) -> Void
-    private var presentation: MomentsProjectWorkspaceDetailPresentation {
-        MomentsProjectWorkspaceDetailPresentation(workspace: workspace)
+    private var presentation: MomentsInProgressWorkspaceDetailPresentation {
+        MomentsInProgressWorkspaceDetailPresentation(workspace: workspace)
     }
 
     var body: some View {
@@ -14,28 +14,28 @@ struct MomentsProjectWorkspaceDetail: View {
             Text(presentation.title)
                 .font(.headline)
 
-            MomentsProjectWorkspaceHeader(workspace: workspace)
-            MomentsProjectNextActionRow(action: presentation.nextAction)
-            MomentsProjectWorkspaceSummary(workspace: workspace)
-            MomentsProjectProgressSection(workspace: workspace)
+            MomentsInProgressWorkspaceHeader(workspace: workspace)
+            MomentsInProgressNextActionRow(action: presentation.nextAction)
+            MomentsInProgressWorkspaceSummary(workspace: workspace)
+            MomentsInProgressProgressSection(workspace: workspace)
 
             MomentsProjectPreviewArtifactSection(artifacts: workspace.artifacts)
             MomentsProjectFinalExportSection(artifacts: workspace.artifacts)
 
-            MomentsProjectMediaSection(mediaAssets: workspace.mediaAssets)
-            MomentsProjectStorySection(storyScenes: workspace.storyScenes)
-            MomentsProjectRenderJobsSection(renderJobs: workspace.renderJobs)
-            MomentsProjectContinueButton(action: presentation.nextAction) {
+            MomentsInProgressMediaSection(mediaAssets: workspace.mediaAssets)
+            MomentsInProgressStorySection(storyScenes: workspace.storyScenes)
+            MomentsInProgressRenderJobsSection(renderJobs: workspace.renderJobs)
+            MomentsInProgressContinueButton(action: presentation.nextAction) {
                 continueProject(presentation.continuationRequest)
             }
-            MomentsProjectDeleteButton(isDeletingProject: isDeletingProject) {
+            MomentsInProgressDeleteButton(isDeletingProject: isDeletingProject) {
                 requestDeleteProject(workspace.project)
             }
         }
     }
 }
 
-struct MomentsProjectLoadingDetail: View {
+struct MomentsInProgressLoadingDetail: View {
     var body: some View {
         HStack(spacing: 10) {
             ProgressView()

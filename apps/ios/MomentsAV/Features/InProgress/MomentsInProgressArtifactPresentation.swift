@@ -1,42 +1,42 @@
 import Foundation
 
-struct MomentsProjectRenderJobsSectionPresentation: Equatable {
+struct MomentsInProgressRenderJobsSectionPresentation: Equatable {
     let title = L10n.string("project.activity.title")
     let emptySystemImage = "gearshape.2"
     let emptyMessage = L10n.string("project.activity.empty")
-    let jobs: [MomentsProjectRenderJobPresentation]
+    let jobs: [MomentsInProgressRenderJobPresentation]
 
     init(renderJobs: [MomentRenderJob]) {
-        jobs = MomentsProjectRenderJobPresentation.sorted(renderJobs)
+        jobs = MomentsInProgressRenderJobPresentation.sorted(renderJobs)
     }
 }
 
-struct MomentsProjectArtifactSectionPresentation: Equatable {
+struct MomentsInProgressArtifactSectionPresentation: Equatable {
     let title: String
     let emptySystemImage: String
     let emptyMessage: String
-    let artifact: MomentsProjectArtifactPresentation?
+    let artifact: MomentsInProgressArtifactPresentation?
 
-    static func preview(artifacts: [MomentArtifact]) -> MomentsProjectArtifactSectionPresentation {
-        MomentsProjectArtifactSectionPresentation(
+    static func preview(artifacts: [MomentArtifact]) -> MomentsInProgressArtifactSectionPresentation {
+        MomentsInProgressArtifactSectionPresentation(
             title: L10n.string("project.kind.storyReview"),
             emptySystemImage: "text.bubble",
             emptyMessage: L10n.string("project.artifact.preview.empty"),
-            artifact: MomentsProjectArtifactPresentation.preview(in: artifacts)
+            artifact: MomentsInProgressArtifactPresentation.preview(in: artifacts)
         )
     }
 
-    static func finalExport(artifacts: [MomentArtifact]) -> MomentsProjectArtifactSectionPresentation {
-        MomentsProjectArtifactSectionPresentation(
+    static func finalExport(artifacts: [MomentArtifact]) -> MomentsInProgressArtifactSectionPresentation {
+        MomentsInProgressArtifactSectionPresentation(
             title: L10n.string("project.artifact.final.title"),
             emptySystemImage: "video.fill",
             emptyMessage: L10n.string("project.artifact.final.empty"),
-            artifact: MomentsProjectArtifactPresentation.finalExport(in: artifacts)
+            artifact: MomentsInProgressArtifactPresentation.finalExport(in: artifacts)
         )
     }
 }
 
-struct MomentsProjectArtifactPresentation: Equatable {
+struct MomentsInProgressArtifactPresentation: Equatable {
     let status: String
     let kindTitle: String
     let watermarkTitle: String
@@ -53,16 +53,16 @@ struct MomentsProjectArtifactPresentation: Equatable {
         actionDetail = MomentsRecoveryCopy.artifactActionDetail(kind: artifact.kind, status: artifact.status)
     }
 
-    static func preview(in artifacts: [MomentArtifact]) -> MomentsProjectArtifactPresentation? {
-        artifacts.last { $0.kind == "preview" }.map(MomentsProjectArtifactPresentation.init)
+    static func preview(in artifacts: [MomentArtifact]) -> MomentsInProgressArtifactPresentation? {
+        artifacts.last { $0.kind == "preview" }.map(MomentsInProgressArtifactPresentation.init)
     }
 
-    static func finalExport(in artifacts: [MomentArtifact]) -> MomentsProjectArtifactPresentation? {
-        artifacts.last { $0.kind == "final_export" }.map(MomentsProjectArtifactPresentation.init)
+    static func finalExport(in artifacts: [MomentArtifact]) -> MomentsInProgressArtifactPresentation? {
+        artifacts.last { $0.kind == "final_export" }.map(MomentsInProgressArtifactPresentation.init)
     }
 }
 
-struct MomentsProjectRenderJobPresentation: Identifiable, Equatable {
+struct MomentsInProgressRenderJobPresentation: Identifiable, Equatable {
     let id: String
     let status: String
     let kindTitle: String
@@ -94,9 +94,9 @@ struct MomentsProjectRenderJobPresentation: Identifiable, Equatable {
             : renderJob.errorMessage
     }
 
-    static func sorted(_ renderJobs: [MomentRenderJob]) -> [MomentsProjectRenderJobPresentation] {
+    static func sorted(_ renderJobs: [MomentRenderJob]) -> [MomentsInProgressRenderJobPresentation] {
         renderJobs
             .sorted { $0.updatedAt > $1.updatedAt }
-            .map(MomentsProjectRenderJobPresentation.init)
+            .map(MomentsInProgressRenderJobPresentation.init)
     }
 }

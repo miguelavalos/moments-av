@@ -1,6 +1,6 @@
 import Foundation
 
-struct MomentsProjectWorkspaceDetailPresentation: Equatable {
+struct MomentsInProgressWorkspaceDetailPresentation: Equatable {
     let title = L10n.string("project.workspace.detailTitle")
     let nextAction: MomentsProjectNextAction
     let continuationRequest: MomentsProjectContinuationRequest

@@ -1,10 +1,10 @@
 import AVAppShellFoundation
 import SwiftUI
 
-struct MomentsProjectWorkspaceSummary: View {
+struct MomentsInProgressWorkspaceSummary: View {
     let workspace: MomentProjectWorkspace
-    private var presentation: MomentsProjectWorkspaceSummaryPresentation {
-        MomentsProjectWorkspaceSummaryPresentation(workspace: workspace)
+    private var presentation: MomentsInProgressWorkspaceSummaryPresentation {
+        MomentsInProgressWorkspaceSummaryPresentation(workspace: workspace)
     }
 
     var body: some View {

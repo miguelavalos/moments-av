@@ -1,6 +1,6 @@
 import Foundation
 
-struct MomentsProjectWorkspaceHeaderPresentation: Equatable {
+struct MomentsInProgressWorkspaceHeaderPresentation: Equatable {
     let title: String
     let updatedAtTitle: String
     let countsTitle: String

@@ -123,7 +123,7 @@ private extension MomentsRootTab {
             self = .home
         case .create:
             self = .create
-        case .projects:
+        case .inProgress:
             self = .inProgress
         case .avi:
             self = .avi

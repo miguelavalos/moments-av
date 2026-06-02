@@ -1,17 +1,17 @@
 import Foundation
 
-struct MomentsProjectMediaSectionPresentation: Equatable {
+struct MomentsInProgressMediaSectionPresentation: Equatable {
     let title = L10n.string("project.media.title")
     let emptySystemImage = "photo.badge.plus"
     let emptyMessage = L10n.string("project.media.empty")
-    let mediaAssets: [MomentsProjectMediaAssetPresentation]
+    let mediaAssets: [MomentsInProgressMediaAssetPresentation]
 
     init(mediaAssets: [MomentMediaAsset]) {
-        self.mediaAssets = MomentsProjectMediaAssetPresentation.sorted(mediaAssets)
+        self.mediaAssets = MomentsInProgressMediaAssetPresentation.sorted(mediaAssets)
     }
 }
 
-struct MomentsProjectMediaAssetPresentation: Identifiable, Equatable {
+struct MomentsInProgressMediaAssetPresentation: Identifiable, Equatable {
     let id: String
     let systemImage: String
     let title: String
@@ -24,9 +24,9 @@ struct MomentsProjectMediaAssetPresentation: Identifiable, Equatable {
         detail = MomentsProjectFormatting.mediaAssetDetail(mediaAsset)
     }
 
-    static func sorted(_ mediaAssets: [MomentMediaAsset]) -> [MomentsProjectMediaAssetPresentation] {
+    static func sorted(_ mediaAssets: [MomentMediaAsset]) -> [MomentsInProgressMediaAssetPresentation] {
         mediaAssets
             .sorted { $0.sortOrder < $1.sortOrder }
-            .map(MomentsProjectMediaAssetPresentation.init)
+            .map(MomentsInProgressMediaAssetPresentation.init)
     }
 }

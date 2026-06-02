@@ -1,9 +1,9 @@
 import XCTest
 @testable import MomentsAV
 
-final class MomentsProjectArtifactPresentationTests: XCTestCase {
+final class MomentsInProgressArtifactPresentationTests: XCTestCase {
     func testRenderJobsSectionPresentationFormatsTitleEmptyStateAndJobs() {
-        let presentation = MomentsProjectRenderJobsSectionPresentation(renderJobs: [
+        let presentation = MomentsInProgressRenderJobsSectionPresentation(renderJobs: [
             makeRenderJob(id: "old", kind: "preview", status: "queued", updatedAt: 10),
             makeRenderJob(id: "new", kind: "final", status: "failed", updatedAt: 20)
         ])
@@ -21,8 +21,8 @@ final class MomentsProjectArtifactPresentationTests: XCTestCase {
             makeArtifact(id: "preview-2", kind: "preview", status: "available")
         ]
 
-        let preview = MomentsProjectArtifactSectionPresentation.preview(artifacts: artifacts)
-        let finalExport = MomentsProjectArtifactSectionPresentation.finalExport(artifacts: artifacts)
+        let preview = MomentsInProgressArtifactSectionPresentation.preview(artifacts: artifacts)
+        let finalExport = MomentsInProgressArtifactSectionPresentation.finalExport(artifacts: artifacts)
 
         XCTAssertEqual(preview.title, "Story Review")
         XCTAssertEqual(preview.emptySystemImage, "text.bubble")
@@ -36,8 +36,8 @@ final class MomentsProjectArtifactPresentationTests: XCTestCase {
     }
 
     func testArtifactSectionPresentationsUseEmptyArtifactWhenMissing() {
-        XCTAssertNil(MomentsProjectArtifactSectionPresentation.preview(artifacts: []).artifact)
-        XCTAssertNil(MomentsProjectArtifactSectionPresentation.finalExport(artifacts: []).artifact)
+        XCTAssertNil(MomentsInProgressArtifactSectionPresentation.preview(artifacts: []).artifact)
+        XCTAssertNil(MomentsInProgressArtifactSectionPresentation.finalExport(artifacts: []).artifact)
     }
 
     func testPreviewAndFinalExportPickLatestMatchingArtifact() {
@@ -47,13 +47,13 @@ final class MomentsProjectArtifactPresentationTests: XCTestCase {
             makeArtifact(id: "preview-2", kind: "preview", status: "available")
         ]
 
-        XCTAssertEqual(MomentsProjectArtifactPresentation.preview(in: artifacts)?.status, "available")
-        XCTAssertEqual(MomentsProjectArtifactPresentation.preview(in: artifacts)?.storageKey, "momentsav/preview-2.mp4")
-        XCTAssertEqual(MomentsProjectArtifactPresentation.finalExport(in: artifacts)?.storageKey, "momentsav/final-1.mp4")
+        XCTAssertEqual(MomentsInProgressArtifactPresentation.preview(in: artifacts)?.status, "available")
+        XCTAssertEqual(MomentsInProgressArtifactPresentation.preview(in: artifacts)?.storageKey, "momentsav/preview-2.mp4")
+        XCTAssertEqual(MomentsInProgressArtifactPresentation.finalExport(in: artifacts)?.storageKey, "momentsav/final-1.mp4")
     }
 
     func testArtifactPresentationFormatsKindWatermarkAndExpiry() {
-        let presentation = MomentsProjectArtifactPresentation(
+        let presentation = MomentsInProgressArtifactPresentation(
             artifact: makeArtifact(
                 id: "preview-1",
                 kind: "preview",
@@ -70,16 +70,16 @@ final class MomentsProjectArtifactPresentationTests: XCTestCase {
     }
 
     func testFinalArtifactPresentationProvidesExportAndRecoveryCopy() {
-        let availableFinal = MomentsProjectArtifactPresentation(
+        let availableFinal = MomentsInProgressArtifactPresentation(
             artifact: makeArtifact(id: "final-1", kind: "final_export", status: "available")
         )
-        let expiredFinal = MomentsProjectArtifactPresentation(
+        let expiredFinal = MomentsInProgressArtifactPresentation(
             artifact: makeArtifact(id: "final-2", kind: "final_export", status: "expired")
         )
-        let failedFinal = MomentsProjectArtifactPresentation(
+        let failedFinal = MomentsInProgressArtifactPresentation(
             artifact: makeArtifact(id: "final-3", kind: "final_export", status: "failed")
         )
-        let queuedFinal = MomentsProjectArtifactPresentation(
+        let queuedFinal = MomentsInProgressArtifactPresentation(
             artifact: makeArtifact(id: "final-4", kind: "final_export", status: "queued")
         )
 
@@ -93,7 +93,7 @@ final class MomentsProjectArtifactPresentationTests: XCTestCase {
     }
 
     func testRenderJobPresentationSortsNewestFirstAndUsesFallbacks() {
-        let presentations = MomentsProjectRenderJobPresentation.sorted([
+        let presentations = MomentsInProgressRenderJobPresentation.sorted([
             makeRenderJob(id: "old", kind: "preview", status: "queued", updatedAt: 10),
             makeRenderJob(
                 id: "new",
@@ -119,7 +119,7 @@ final class MomentsProjectArtifactPresentationTests: XCTestCase {
     }
 
     func testRenderJobPresentationPreservesSafeFailedUserMessage() {
-        let presentation = MomentsProjectRenderJobPresentation(
+        let presentation = MomentsInProgressRenderJobPresentation(
             renderJob: makeRenderJob(
                 id: "final",
                 kind: "final",

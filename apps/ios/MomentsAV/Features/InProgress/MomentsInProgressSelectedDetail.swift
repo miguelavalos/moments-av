@@ -12,11 +12,11 @@ struct MomentsInProgressSelectedDetail: View {
         if isLoadingProjectWorkspace {
             Divider()
                 .padding(.vertical, 8)
-            MomentsProjectLoadingDetail()
+            MomentsInProgressLoadingDetail()
         } else if let activeWorkspace, selectedProjectId == activeWorkspace.project.id {
             Divider()
                 .padding(.vertical, 8)
-            MomentsProjectWorkspaceDetail(
+            MomentsInProgressWorkspaceDetail(
                 workspace: activeWorkspace,
                 isDeletingProject: isDeletingProject,
                 continueProject: continueProject,

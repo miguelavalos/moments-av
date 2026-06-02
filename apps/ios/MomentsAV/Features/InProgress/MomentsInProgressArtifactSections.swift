@@ -1,11 +1,11 @@
 import AVAppShellFoundation
 import SwiftUI
 
-struct MomentsProjectRenderJobsSection: View {
+struct MomentsInProgressRenderJobsSection: View {
     let renderJobs: [MomentRenderJob]
 
-    private var presentation: MomentsProjectRenderJobsSectionPresentation {
-        MomentsProjectRenderJobsSectionPresentation(renderJobs: renderJobs)
+    private var presentation: MomentsInProgressRenderJobsSectionPresentation {
+        MomentsInProgressRenderJobsSectionPresentation(renderJobs: renderJobs)
     }
 
     var body: some View {
@@ -13,13 +13,13 @@ struct MomentsProjectRenderJobsSection: View {
             AVAppShellSectionHeader(title: presentation.title)
 
             if presentation.jobs.isEmpty {
-                MomentsProjectEmptySectionRow(
+                MomentsInProgressEmptySectionRow(
                     systemImage: presentation.emptySystemImage,
                     message: presentation.emptyMessage
                 )
             } else {
                 ForEach(presentation.jobs) { job in
-                    MomentsProjectRenderJobRow(presentation: job)
+                    MomentsInProgressRenderJobRow(presentation: job)
                 }
             }
         }
@@ -29,8 +29,8 @@ struct MomentsProjectRenderJobsSection: View {
 struct MomentsProjectPreviewArtifactSection: View {
     let artifacts: [MomentArtifact]
 
-    private var presentation: MomentsProjectArtifactSectionPresentation {
-        MomentsProjectArtifactSectionPresentation.preview(artifacts: artifacts)
+    private var presentation: MomentsInProgressArtifactSectionPresentation {
+        MomentsInProgressArtifactSectionPresentation.preview(artifacts: artifacts)
     }
 
     var body: some View {
@@ -38,9 +38,9 @@ struct MomentsProjectPreviewArtifactSection: View {
             AVAppShellSectionHeader(title: presentation.title)
 
             if let artifact = presentation.artifact {
-                MomentsProjectArtifactDetail(presentation: artifact)
+                MomentsInProgressArtifactDetail(presentation: artifact)
             } else {
-                MomentsProjectEmptySectionRow(
+                MomentsInProgressEmptySectionRow(
                     systemImage: presentation.emptySystemImage,
                     message: presentation.emptyMessage
                 )
@@ -52,8 +52,8 @@ struct MomentsProjectPreviewArtifactSection: View {
 struct MomentsProjectFinalExportSection: View {
     let artifacts: [MomentArtifact]
 
-    private var presentation: MomentsProjectArtifactSectionPresentation {
-        MomentsProjectArtifactSectionPresentation.finalExport(artifacts: artifacts)
+    private var presentation: MomentsInProgressArtifactSectionPresentation {
+        MomentsInProgressArtifactSectionPresentation.finalExport(artifacts: artifacts)
     }
 
     var body: some View {
@@ -61,9 +61,9 @@ struct MomentsProjectFinalExportSection: View {
             AVAppShellSectionHeader(title: presentation.title)
 
             if let artifact = presentation.artifact {
-                MomentsProjectArtifactDetail(presentation: artifact)
+                MomentsInProgressArtifactDetail(presentation: artifact)
             } else {
-                MomentsProjectEmptySectionRow(
+                MomentsInProgressEmptySectionRow(
                     systemImage: presentation.emptySystemImage,
                     message: presentation.emptyMessage
                 )

@@ -4,7 +4,7 @@ struct MomentsLaunchContext {
     enum Tab: String {
         case home
         case create
-        case projects
+        case inProgress
         case avi
     }
 
