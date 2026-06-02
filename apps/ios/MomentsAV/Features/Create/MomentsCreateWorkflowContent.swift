@@ -117,8 +117,6 @@ private struct MomentsCreateMediaFirstWorkspace: View {
     let createAnotherFinalVideoVersion: () -> Void
 
     @State private var showsAviOptions = false
-    @State private var showsStoryReview = false
-    @State private var opensStoryReviewAfterPlan = false
     @State private var showsCreateVideoConfirmation = false
     @State private var showsDiscardMomentConfirmation = false
 
@@ -156,14 +154,20 @@ private struct MomentsCreateMediaFirstWorkspace: View {
                     openOptions: { showsAviOptions = true }
                 )
 
+                MomentsCreateAviCutCard(
+                    presentation: presentation,
+                    prepareCut: prepareAviCut,
+                    openOptions: { showsAviOptions = true }
+                )
+
                 MomentsCreatePrimaryActionBar(
                     presentation: presentation,
                     discardMoment: { showsDiscardMomentConfirmation = true },
                     startSignInFlow: startSignInFlow,
-                    reviewStoryFirst: reviewStoryFirst,
+                    prepareAviCut: prepareAviCut,
                     generatePreview: generatePreview,
                     refreshPreviewStatus: refreshPreviewStatus,
-                    generateFinalRender: reviewStoryFirst,
+                    generateFinalRender: { showsCreateVideoConfirmation = true },
                     refreshFinalRenderStatus: refreshFinalRenderStatus,
                     retryFinalVideoDownload: retryFinalVideoDownload,
                     finishFinalVideoToGallery: finishFinalVideoToGallery,
@@ -175,11 +179,6 @@ private struct MomentsCreateMediaFirstWorkspace: View {
         }
         .scrollIndicators(.hidden)
         .animation(.spring(response: 0.38, dampingFraction: 0.86), value: presentation.storySummary.hasScenes)
-        .onChange(of: presentation.storySummary.hasScenes) { _, hasScenes in
-            guard hasScenes, opensStoryReviewAfterPlan else { return }
-            opensStoryReviewAfterPlan = false
-            showsStoryReview = true
-        }
         .alert(L10n.string("create.final.confirmTitle"), isPresented: $showsCreateVideoConfirmation) {
             Button(L10n.string("create.action.notNow"), role: .cancel) {}
             Button(L10n.string("create.final.createWithCost", creditCostTitle)) {
@@ -212,16 +211,6 @@ private struct MomentsCreateMediaFirstWorkspace: View {
                 dismiss: { showsAviOptions = false }
             )
         }
-        .navigationDestination(isPresented: $showsStoryReview) {
-                MomentsCreateStoryReviewPage(
-                    presentation: presentation,
-                    createVideo: generateFinalRender,
-                    buyReviewBundle: buyReviewBundle,
-                    openCredits: openCredits,
-                discardMoment: discardCurrentMoment,
-                dismiss: { showsStoryReview = false }
-            )
-        }
     }
 
     private var mediaPresentation: MomentsCreateMediaPresentation {
@@ -234,12 +223,7 @@ private struct MomentsCreateMediaFirstWorkspace: View {
         )
     }
 
-    private func reviewStoryFirst() {
-        guard !presentation.storySummary.hasScenes else {
-            showsStoryReview = true
-            return
-        }
-        opensStoryReviewAfterPlan = true
+    private func prepareAviCut() {
         generateStoryPlan()
     }
 
@@ -248,7 +232,6 @@ private struct MomentsCreateMediaFirstWorkspace: View {
     }
 
     private func discardCurrentMoment() {
-        showsStoryReview = false
         showsAviOptions = false
         discardMoment()
     }
@@ -616,6 +599,134 @@ private struct MomentsCreateStoryReviewCard: View {
     private var sceneCountTitle: String {
         let count = presentation.storySummary.reviewScenes.count
         return "\(count) \(count == 1 ? "scene" : "scenes")"
+    }
+}
+
+private struct MomentsCreateAviCutCard: View {
+    let presentation: MomentsCreateWorkflowPresentation
+    let prepareCut: () -> Void
+    let openOptions: () -> Void
+
+    var body: some View {
+        AVAppShellCard {
+            VStack(alignment: .leading, spacing: 14) {
+                HStack(alignment: .top, spacing: 12) {
+                    Image(systemName: iconName)
+                        .font(.system(size: 16, weight: .black))
+                        .foregroundStyle(.white)
+                        .frame(width: 38, height: 38)
+                        .background(iconColor, in: Circle())
+
+                    VStack(alignment: .leading, spacing: 5) {
+                        Text("Avi's Cut")
+                            .font(.system(size: 16, weight: .black))
+                            .foregroundStyle(AVBrandColor.textPrimary)
+
+                        Text(statusMessage)
+                            .font(.system(size: 13, weight: .semibold))
+                            .foregroundStyle(AVBrandColor.textSecondary)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                }
+
+                HStack(spacing: 8) {
+                    MomentsCreateOptionPill(title: cutModeTitle, systemImage: "wand.and.stars")
+                    MomentsCreateOptionPill(title: mediaCountTitle, systemImage: "photo.stack")
+                    MomentsCreateOptionPill(title: presentation.template.duration, systemImage: "timer")
+                }
+
+                if presentation.storySummary.hasScenes {
+                    VStack(alignment: .leading, spacing: 8) {
+                        ForEach(presentation.storySummary.reviewScenes.prefix(3)) { scene in
+                            MomentsCreateStoryReviewSceneRow(scene: scene)
+                        }
+
+                        if presentation.storySummary.reviewScenes.count > 3 {
+                            Text("\(presentation.storySummary.reviewScenes.count - 3) more scenes in this cut")
+                                .font(.caption)
+                                .fontWeight(.bold)
+                                .foregroundStyle(AVBrandColor.textSecondary)
+                        }
+                    }
+                } else if presentation.storySummary.isPlanning {
+                    ProgressView()
+                        .tint(AVBrandColor.accent)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                } else {
+                    Text("Avi will arrange the selected moments before creating the final video.")
+                        .font(.system(size: 12, weight: .semibold))
+                        .foregroundStyle(AVBrandColor.textSecondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+
+                HStack(spacing: 10) {
+                    Button(action: primaryAction) {
+                        Label(primaryActionTitle, systemImage: primaryActionIconName)
+                            .frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(MomentsCreateNeutralInlineButtonStyle())
+                    .disabled(isPrimaryActionDisabled)
+
+                    Button(action: openOptions) {
+                        Label("Edit options", systemImage: "slider.horizontal.3")
+                            .frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(MomentsCreateNeutralInlineButtonStyle())
+                }
+                .font(.system(size: 13, weight: .black))
+            }
+        }
+    }
+
+    private var iconName: String {
+        if presentation.storySummary.hasScenes { return "rectangle.stack.fill" }
+        if presentation.storySummary.isPlanning { return "sparkles" }
+        return "wand.and.stars"
+    }
+
+    private var iconColor: Color {
+        presentation.storySummary.hasScenes ? AVBrandColor.accent : AVBrandColor.textPrimary
+    }
+
+    private var statusMessage: String {
+        if presentation.storySummary.hasScenes {
+            return "Avi prepared a cut from your selected media. You can still change media or options before creating the video."
+        }
+        if presentation.storySummary.isPlanning {
+            return presentation.storySummary.statusMessage ?? "Avi is preparing the cut."
+        }
+        if presentation.mediaSummary.reviewCount > 0 {
+            return "Ready for Avi to prepare a cut."
+        }
+        return "Add photos or clips to start the cut."
+    }
+
+    private var cutModeTitle: String {
+        presentation.storySummary.hasScenes ? "Avi picked moments" : "Cut pending"
+    }
+
+    private var mediaCountTitle: String {
+        let count = presentation.mediaSummary.reviewCount
+        return "\(count) \(count == 1 ? "moment" : "moments")"
+    }
+
+    private var primaryActionTitle: String {
+        presentation.storySummary.hasScenes ? "Improve with Avi" : "Prepare cut"
+    }
+
+    private var primaryActionIconName: String {
+        presentation.storySummary.hasScenes ? "sparkles" : "wand.and.stars"
+    }
+
+    private var isPrimaryActionDisabled: Bool {
+        presentation.storySummary.isPlanning
+            || presentation.mediaSummary.reviewCount == 0
+            || !presentation.canPlanStory
+    }
+
+    private func primaryAction() {
+        prepareCut()
     }
 }
 
@@ -1433,7 +1544,7 @@ private struct MomentsCreatePrimaryActionBar: View {
     let presentation: MomentsCreateWorkflowPresentation
     let discardMoment: () -> Void
     let startSignInFlow: () -> Void
-    let reviewStoryFirst: () -> Void
+    let prepareAviCut: () -> Void
     let generatePreview: () -> Void
     let refreshPreviewStatus: () -> Void
     let generateFinalRender: () -> Void
@@ -1565,7 +1676,7 @@ private struct MomentsCreatePrimaryActionBar: View {
             return presentation.finalRenderSummary.isRefreshingStatus ? L10n.string("create.status.checking") : L10n.string("create.final.checkStatus")
         }
         if presentation.canGenerateFinalRender {
-            return L10n.string("create.preview.view")
+            return L10n.string("create.final.create")
         }
         if presentation.previewSummary.latestPreview != nil {
             return presentation.finalRenderSummary.isGenerating ? L10n.string("create.final.creating") : L10n.string("create.final.create")
@@ -1576,7 +1687,7 @@ private struct MomentsCreatePrimaryActionBar: View {
         if needsSignInForStory {
             return L10n.string("common.signIn")
         }
-        return presentation.finalRenderSummary.isGenerating ? L10n.string("create.preview.preparing") : L10n.string("create.preview.reviewFirst")
+        return presentation.finalRenderSummary.isGenerating ? L10n.string("create.preview.preparing") : "Prepare Avi's Cut"
     }
 
     private var buttonIconName: String {
@@ -1596,7 +1707,7 @@ private struct MomentsCreatePrimaryActionBar: View {
             return "arrow.clockwise"
         }
         if presentation.canGenerateFinalRender {
-            return "list.bullet.rectangle.portrait.fill"
+            return "video.fill"
         }
         if needsSignInForStory {
             return "person.crop.circle.badge.checkmark"
@@ -1646,7 +1757,7 @@ private struct MomentsCreatePrimaryActionBar: View {
             return L10n.string("create.primary.previewReady")
         }
         if presentation.canGenerateFinalRender {
-            return L10n.string("create.primary.reviewBeforeVideo")
+            return "Avi's cut is ready for the final video."
         }
         if let previewMessage = presentation.previewSummary.statusMessage, !previewMessage.isEmpty {
             return previewMessage
@@ -1664,7 +1775,7 @@ private struct MomentsCreatePrimaryActionBar: View {
             return presentation.storyAvailabilityMessage
         }
         if presentation.canPlanStory {
-            return L10n.string("create.primary.storyReady.detail")
+            return "Avi can prepare a cut from this media."
         }
         return nil
     }
@@ -1751,9 +1862,13 @@ private struct MomentsCreatePrimaryActionBar: View {
                 refreshFinalRenderStatus()
             }
         } else if presentation.previewSummary.latestPreview != nil {
-            reviewStoryFirst()
+            generateFinalRender()
         } else if presentation.canGenerateFinalRender || presentation.canPlanStory || presentation.storySummary.hasScenes {
-            reviewStoryFirst()
+            if presentation.canGenerateFinalRender {
+                generateFinalRender()
+            } else {
+                prepareAviCut()
+            }
         } else if presentation.previewSummary.latestPreviewJob != nil {
             refreshPreviewStatus()
         } else if needsSignInForStory {
@@ -1762,7 +1877,7 @@ private struct MomentsCreatePrimaryActionBar: View {
     }
 
     private func secondaryAction() {
-        reviewStoryFirst()
+        prepareAviCut()
     }
 
     private var title: String {
