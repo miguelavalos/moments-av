@@ -19,8 +19,8 @@ struct MomentsInProgressWorkspaceDetail: View {
             MomentsInProgressWorkspaceSummary(workspace: workspace)
             MomentsInProgressProgressSection(workspace: workspace)
 
-            MomentsProjectPreviewArtifactSection(artifacts: workspace.artifacts)
-            MomentsProjectFinalExportSection(artifacts: workspace.artifacts)
+            MomentsInProgressPreviewArtifactSection(artifacts: workspace.artifacts)
+            MomentsInProgressFinalExportSection(artifacts: workspace.artifacts)
 
             MomentsInProgressMediaSection(mediaAssets: workspace.mediaAssets)
             MomentsInProgressStorySection(storyScenes: workspace.storyScenes)
@@ -39,7 +39,7 @@ struct MomentsInProgressLoadingDetail: View {
     var body: some View {
         HStack(spacing: 10) {
             ProgressView()
-            Text(L10n.string("projects.loadingDetail"))
+            Text(L10n.string("inProgress.loadingDetail"))
                 .font(.caption)
                 .foregroundStyle(.secondary)
         }

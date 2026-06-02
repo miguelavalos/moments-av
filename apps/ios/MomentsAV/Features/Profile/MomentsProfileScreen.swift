@@ -121,8 +121,8 @@ struct MomentsProfileScreen: View {
             VStack(alignment: .leading, spacing: 12) {
                 AVSettingsInfoRow(
                     systemImage: "folder",
-                    title: localized("profile.local.projects.title"),
-                    detail: localized("profile.local.projects.detail")
+                    title: localized("profile.local.library.title"),
+                    detail: localized("profile.local.library.detail")
                 )
                 AVSettingsInfoRow(
                     systemImage: "photo.on.rectangle.angled",

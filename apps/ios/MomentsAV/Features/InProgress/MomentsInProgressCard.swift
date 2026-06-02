@@ -69,7 +69,7 @@ private struct MomentsInProgressCreditStatus: View {
                         .font(.system(size: 15, weight: .black))
                         .foregroundStyle(AVBrandColor.textPrimary)
 
-                    Text(balance.spendable > 0 ? L10n.string("projects.credits.ready") : L10n.string("projects.credits.needed"))
+                    Text(balance.spendable > 0 ? L10n.string("inProgress.credits.ready") : L10n.string("inProgress.credits.needed"))
                         .font(AVBrandTypography.captionStrong)
                         .foregroundStyle(AVBrandColor.textSecondary)
                         .lineLimit(1)
@@ -111,9 +111,9 @@ private struct MomentsInProgressEmptyContent: View {
     var body: some View {
         MomentsInProgressInlineEmptyState(
             systemImage: "photo.badge.plus",
-            title: L10n.string("projects.empty.inProgress.title"),
-            message: L10n.string("projects.empty.inProgress.detail"),
-            actionTitle: L10n.string("projects.newMoment"),
+            title: L10n.string("inProgress.empty.inProgress.title"),
+            message: L10n.string("inProgress.empty.inProgress.detail"),
+            actionTitle: L10n.string("inProgress.newMoment"),
             actionSystemImage: "plus",
             action: startProject
         )
@@ -157,22 +157,22 @@ private struct MomentsInProgressAviBlock: View {
 
     private var title: String {
         if projectSummary.latestInProgressProject != nil {
-            return L10n.string("projects.avi.momentInProgress.title")
+            return L10n.string("inProgress.avi.momentInProgress.title")
         }
         if projectSummary.finishedCount > 0 {
-            return L10n.string("projects.avi.galleryStarts.title")
+            return L10n.string("inProgress.avi.galleryStarts.title")
         }
-        return L10n.string("projects.avi.ready.title")
+        return L10n.string("inProgress.avi.ready.title")
     }
 
     private var message: String {
         if let project = projectSummary.latestInProgressProject {
-            return L10n.string("projects.avi.momentInProgress.message", project.title)
+            return L10n.string("inProgress.avi.momentInProgress.message", project.title)
         }
         if projectSummary.finishedCount > 0 {
-            return L10n.string("projects.avi.galleryStarts.message")
+            return L10n.string("inProgress.avi.galleryStarts.message")
         }
-        return L10n.string("projects.avi.ready.message")
+        return L10n.string("inProgress.avi.ready.message")
     }
 }
 
@@ -185,8 +185,8 @@ private struct MomentsInProgressContinueBlock: View {
         if projects.isEmpty {
             MomentsInProgressInlineEmptyState(
                 systemImage: "photo.badge.plus",
-                title: L10n.string("projects.empty.inProgress.title"),
-                message: L10n.string("projects.empty.inProgress.fullDetail"),
+                title: L10n.string("inProgress.empty.inProgress.title"),
+                message: L10n.string("inProgress.empty.inProgress.fullDetail"),
                 actionTitle: nil,
                 actionSystemImage: nil,
                 action: nil
@@ -194,7 +194,7 @@ private struct MomentsInProgressContinueBlock: View {
         } else {
             AVAppShellCard {
                 VStack(alignment: .leading, spacing: 12) {
-                    AVAppShellSectionHeader(title: L10n.string("projects.inProgress.title"))
+                    AVAppShellSectionHeader(title: L10n.string("inProgress.title"))
 
                     ForEach(projects) { project in
                         VStack(spacing: 10) {
@@ -343,9 +343,9 @@ private struct MomentsInProgressDraftEmptyState: View {
     var body: some View {
         MomentsInProgressInlineEmptyState(
             systemImage: "photo.badge.plus",
-            title: L10n.string("projects.empty.inProgress.title"),
-            message: L10n.string("projects.empty.inProgress.detail"),
-            actionTitle: startProject == nil ? nil : L10n.string("projects.newMoment"),
+            title: L10n.string("inProgress.empty.inProgress.title"),
+            message: L10n.string("inProgress.empty.inProgress.detail"),
+            actionTitle: startProject == nil ? nil : L10n.string("inProgress.newMoment"),
             actionSystemImage: "plus",
             action: startProject
         )

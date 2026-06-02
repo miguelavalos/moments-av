@@ -86,7 +86,7 @@ private struct MomentsAviGuidanceContent: View {
 
         MomentsAviHelpCard()
 
-        MomentsAviProjectGuidanceCard {
+        MomentsAviLibraryGuidanceCard {
             selectTab(.gallery)
         }
     }

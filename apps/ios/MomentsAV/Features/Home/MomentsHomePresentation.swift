@@ -4,9 +4,9 @@ struct MomentsHomePresentation {
     let accountTitle: String
     let accountDetail: String
     let aviBriefDetail: String
-    let projectStatusDetail: String
+    let momentStatusDetail: String
     let createAction: MomentsHomeAction
-    let reviewProjectsAction: MomentsHomeAction
+    let reviewInProgressAction: MomentsHomeAction
     let aviGuidanceAction: MomentsHomeAction
     let latestInProgressAction: MomentsHomeAction?
     let latestInProgressContinuationRequest: MomentsProjectContinuationRequest?
@@ -30,7 +30,7 @@ struct MomentsHomePresentation {
             accountTitle: isSignedIn ? L10n.string("home.account.connected.title") : L10n.string("home.account.required.title"),
             accountDetail: accountDetail(isSignedIn: isSignedIn, displayName: displayName),
             aviBriefDetail: aviBriefDetail(isSignedIn: isSignedIn, projectSummary: projectSummary),
-            projectStatusDetail: projectStatusDetail(projectSummary: projectSummary),
+            momentStatusDetail: momentStatusDetail(projectSummary: projectSummary),
             createAction: MomentsHomeAction(
                 title: L10n.string("home.action.create.title"),
                 detail: L10n.string("home.action.create.detail"),
@@ -38,7 +38,7 @@ struct MomentsHomePresentation {
                 isProminent: latestInProgressProject == nil,
                 isDisabled: !isSignedIn
             ),
-            reviewProjectsAction: MomentsHomeAction(
+            reviewInProgressAction: MomentsHomeAction(
                 title: L10n.string("home.action.openInProgress.title"),
                 detail: projectSummary.hasProjects
                     ? L10n.string("home.action.openInProgress.detail.hasProjects")
@@ -64,12 +64,12 @@ struct MomentsHomePresentation {
         return L10n.string("home.account.signInRequired")
     }
 
-    private static func projectStatusDetail(projectSummary: MomentsProjectListSummary) -> String {
+    private static func momentStatusDetail(projectSummary: MomentsProjectListSummary) -> String {
         if projectSummary.hasProjects {
-            return L10n.string("home.projectStatus.synced", projectSummary.projectCount, momentLabel(projectSummary.projectCount))
+            return L10n.string("home.momentStatus.synced", projectSummary.projectCount, momentLabel(projectSummary.projectCount))
         }
 
-        return L10n.string("home.projectStatus.empty")
+        return L10n.string("home.momentStatus.empty")
     }
 
     private static func aviBriefDetail(isSignedIn: Bool, projectSummary: MomentsProjectListSummary) -> String {

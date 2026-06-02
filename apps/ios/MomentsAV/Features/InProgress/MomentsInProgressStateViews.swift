@@ -25,17 +25,17 @@ struct MomentsInProgressEmptyState: View {
             MomentsInProgressUnavailableState(presentation: presentation)
 
             AVAppShellActionRow(
-                title: L10n.string("projects.empty.create.title"),
-                detail: L10n.string("projects.empty.create.detail"),
+                title: L10n.string("inProgress.empty.create.title"),
+                detail: L10n.string("inProgress.empty.create.detail"),
                 systemImage: "plus.app.fill",
                 isProminent: true,
-                accessibilityIdentifier: "moments.projects.empty.create",
+                accessibilityIdentifier: "moments.inProgress.empty.create",
                 action: startProject
             )
 
             AVAppShellInlineMessage(
-                title: L10n.string("projects.empty.whatAppears.title"),
-                message: L10n.string("projects.empty.whatAppears.message"),
+                title: L10n.string("inProgress.empty.whatAppears.title"),
+                message: L10n.string("inProgress.empty.whatAppears.message"),
                 systemImage: "checkmark.circle",
                 usesAccentIcon: true
             )

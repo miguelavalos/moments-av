@@ -94,7 +94,7 @@ enum MomentsProjectStatusRules {
         }
 
         return MomentsProjectNextAction(
-            title: L10n.string("projects.finished.title"),
+            title: L10n.string("library.finished.title"),
             message: L10n.string("project.nextAction.finished.message"),
             systemImage: "checkmark.circle",
             primaryButtonTitle: L10n.string("project.nextAction.openInCreate"),

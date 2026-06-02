@@ -14,7 +14,7 @@ struct MomentsInProgressPresentation: Equatable {
                 isSignedIn: isSignedIn,
                 projectSummary: projectSummary
             ),
-            deletionMessage: L10n.string("projects.deleteProject.message", projectPendingDeletion?.title ?? L10n.string("moment.this"))
+            deletionMessage: L10n.string("inProgress.deleteMoment.message", projectPendingDeletion?.title ?? L10n.string("moment.this"))
         )
     }
 }
@@ -32,8 +32,8 @@ enum MomentsInProgressAvailability: Equatable {
             return .signedOut(
                 MomentsInProgressUnavailablePresentation(
                     systemImage: "person.crop.circle.fill",
-                    title: L10n.string("projects.signIn.title"),
-                    message: L10n.string("projects.signIn.message")
+                    title: L10n.string("inProgress.signIn.title"),
+                    message: L10n.string("inProgress.signIn.message")
                 )
             )
         }
@@ -42,8 +42,8 @@ enum MomentsInProgressAvailability: Equatable {
             return .empty(
                 MomentsInProgressUnavailablePresentation(
                     systemImage: "rectangle.stack.badge.plus",
-                    title: L10n.string("projects.empty.title"),
-                    message: L10n.string("projects.empty.message")
+                    title: L10n.string("inProgress.empty.title"),
+                    message: L10n.string("inProgress.empty.message")
                 )
             )
         }

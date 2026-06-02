@@ -1,10 +1,10 @@
 import AVAppShellFoundation
 import SwiftUI
 
-struct MomentsHomeLatestProjectRow: View {
+struct MomentsHomeLatestMomentRow: View {
     let title: String
     let detail: String
-    let openProject: () -> Void
+    let openMoment: () -> Void
 
     var body: some View {
         AVAppShellActionRow(
@@ -12,19 +12,19 @@ struct MomentsHomeLatestProjectRow: View {
             detail: detail,
             systemImage: "clock.badge.checkmark",
             eyebrow: L10n.string("home.latestMoment.eyebrow"),
-            accessibilityIdentifier: "moments.home.latestProject",
-            action: openProject
+            accessibilityIdentifier: "moments.home.latestMoment",
+            action: openMoment
         )
     }
 }
 
-struct MomentsHomeEmptyProjectRow: View {
+struct MomentsHomeEmptyMomentRow: View {
     var body: some View {
         AVAppShellInfoRow(
-            title: L10n.string("home.projects.emptyRow.title"),
-            detail: L10n.string("home.projects.emptyRow.detail"),
+            title: L10n.string("home.moments.emptyRow.title"),
+            detail: L10n.string("home.moments.emptyRow.detail"),
             systemImage: "rectangle.stack.badge.plus",
-            accessibilityIdentifier: "moments.home.projects.empty"
+            accessibilityIdentifier: "moments.home.moments.empty"
         )
     }
 }

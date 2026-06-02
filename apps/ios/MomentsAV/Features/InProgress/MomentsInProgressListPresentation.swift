@@ -11,30 +11,30 @@ struct MomentsInProgressListPresentation: Equatable {
         MomentsInProgressListPresentation(
             summaryPills: [
                 MomentsProjectListSummaryPresentation(
-                    title: L10n.string("projects.summary.total"),
+                    title: L10n.string("inProgress.summary.total"),
                     value: projectSummary.projectCount,
                     systemImage: "rectangle.stack"
                 ),
                 MomentsProjectListSummaryPresentation(
-                    title: L10n.string("projects.summary.active"),
+                    title: L10n.string("inProgress.summary.active"),
                     value: projectSummary.inProgressCount,
                     systemImage: "clock"
                 ),
                 MomentsProjectListSummaryPresentation(
-                    title: L10n.string("projects.summary.done"),
+                    title: L10n.string("inProgress.summary.done"),
                     value: projectSummary.finishedCount,
                     systemImage: "checkmark.circle"
                 )
             ],
             groups: [
                 MomentsInProgressListGroupPresentation(
-                    title: L10n.string("projects.group.inProgress"),
+                    title: L10n.string("inProgress.group.inProgress"),
                     rows: projectSummary.groups.inProgress.map {
                         MomentsInProgressListRowPresentation(project: $0, isSelected: selectedProjectId == $0.id)
                     }
                 ),
                 MomentsInProgressListGroupPresentation(
-                    title: L10n.string("projects.group.finished"),
+                    title: L10n.string("inProgress.group.finished"),
                     rows: projectSummary.groups.finished.map {
                         MomentsInProgressListRowPresentation(project: $0, isSelected: selectedProjectId == $0.id)
                     }

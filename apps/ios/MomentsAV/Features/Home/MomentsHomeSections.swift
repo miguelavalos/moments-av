@@ -62,25 +62,25 @@ struct MomentsHomeSignInCard: View {
     }
 }
 
-struct MomentsHomeProjectStatusCard: View {
+struct MomentsHomeMomentStatusCard: View {
     let isSignedIn: Bool
     let projectSummary: MomentsProjectListSummary
     let presentation: MomentsHomePresentation
-    let openProjects: () -> Void
+    let openInProgress: () -> Void
 
     var body: some View {
         AVAppShellDashboardSection(
-            title: L10n.string("projects.inProgressAndGallery.title"),
-            detail: presentation.projectStatusDetail
+            title: L10n.string("library.inProgressAndGallery.title"),
+            detail: presentation.momentStatusDetail
         ) {
             if let latestProject = projectSummary.latestProject {
-                MomentsHomeLatestProjectRow(
+                MomentsHomeLatestMomentRow(
                     title: latestProject.title,
                     detail: MomentsProjectFormatting.compactDetail(for: latestProject),
-                    openProject: openProjects
+                    openMoment: openInProgress
                 )
             } else if isSignedIn {
-                MomentsHomeEmptyProjectRow()
+                MomentsHomeEmptyMomentRow()
             }
 
             AVAppShellMetricStrip(metrics: projectMetrics)
@@ -91,13 +91,13 @@ struct MomentsHomeProjectStatusCard: View {
         [
             AVAppShellMetric(
                 id: "in-progress",
-                title: L10n.string("projects.inProgress.title"),
+                title: L10n.string("inProgress.title"),
                 value: "\(projectSummary.inProgressCount)",
                 systemImage: "clock"
             ),
             AVAppShellMetric(
                 id: "finished",
-                title: L10n.string("projects.finished.title"),
+                title: L10n.string("library.finished.title"),
                 value: "\(projectSummary.finishedCount)",
                 systemImage: "checkmark.circle"
             )
@@ -120,13 +120,13 @@ struct MomentsHomeNextActionsCard: View {
                 if let latestInProgressAction = presentation.latestInProgressAction {
                     homeActionRow(
                         action: latestInProgressAction,
-                        perform: continueLatestProject
+                        perform: continueLatestMoment
                     )
                 }
 
                 homeActionRow(action: presentation.createAction, perform: startMoment)
 
-                homeActionRow(action: presentation.reviewProjectsAction) {
+                homeActionRow(action: presentation.reviewInProgressAction) {
                     selectTab(.inProgress)
                 }
 
@@ -149,7 +149,7 @@ struct MomentsHomeNextActionsCard: View {
         )
     }
 
-    private func continueLatestProject() {
+    private func continueLatestMoment() {
         if let request = presentation.latestInProgressContinuationRequest {
             continueProject(request)
         }

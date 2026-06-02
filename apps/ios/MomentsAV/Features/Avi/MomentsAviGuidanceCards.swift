@@ -26,28 +26,28 @@ struct MomentsAviHelpCard: View {
     }
 }
 
-struct MomentsAviProjectGuidanceCard: View {
-    let openProjects: () -> Void
+struct MomentsAviLibraryGuidanceCard: View {
+    let openGallery: () -> Void
 
     var body: some View {
         AVAviGuidanceCard(
-            title: L10n.string("projects.inProgressAndGallery.title"),
-            detail: L10n.string("avi.projects.detail")
+            title: L10n.string("library.inProgressAndGallery.title"),
+            detail: L10n.string("avi.library.detail")
         ) {
             AVAviInfoRow(
-                title: L10n.string("projects.inProgress.title"),
-                detail: L10n.string("avi.projects.inProgress.detail"),
+                title: L10n.string("inProgress.title"),
+                detail: L10n.string("avi.library.inProgress.detail"),
                 systemImage: "clock"
             )
             AVAviInfoRow(
                 title: L10n.string("gallery.title"),
-                detail: L10n.string("avi.projects.gallery.detail"),
+                detail: L10n.string("avi.library.gallery.detail"),
                 systemImage: "checkmark.circle"
             )
             AVAviActionButton(
                 title: L10n.string("gallery.open"),
                 systemImage: "play.square.stack",
-                action: openProjects
+                action: openGallery
             )
         }
     }

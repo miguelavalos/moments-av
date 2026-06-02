@@ -15,7 +15,7 @@ final class MomentsHomePresentationTests: XCTestCase {
             "Sign in is required before creating, rendering, and managing Moments."
         )
         XCTAssertTrue(presentation.createAction.isDisabled)
-        XCTAssertTrue(presentation.reviewProjectsAction.isDisabled)
+        XCTAssertTrue(presentation.reviewInProgressAction.isDisabled)
         XCTAssertNil(presentation.latestInProgressAction)
         XCTAssertNil(presentation.latestInProgressContinuationRequest)
     }
@@ -29,11 +29,11 @@ final class MomentsHomePresentationTests: XCTestCase {
 
         XCTAssertEqual(presentation.accountTitle, "Account connected")
         XCTAssertEqual(presentation.accountDetail, "Signed in as Ava.")
-        XCTAssertEqual(presentation.projectStatusDetail, "No synced Moments yet.")
+        XCTAssertEqual(presentation.momentStatusDetail, "No synced Moments yet.")
         XCTAssertTrue(presentation.createAction.isProminent)
         XCTAssertFalse(presentation.createAction.isDisabled)
         XCTAssertEqual(
-            presentation.reviewProjectsAction.detail,
+            presentation.reviewInProgressAction.detail,
             "Drafts appear after you start a Moment."
         )
     }
@@ -68,11 +68,11 @@ final class MomentsHomePresentationTests: XCTestCase {
         )
 
         XCTAssertEqual(
-            presentation.projectStatusDetail,
+            presentation.momentStatusDetail,
             "2 synced Moments tracked across the current account."
         )
         XCTAssertEqual(
-            presentation.reviewProjectsAction.detail,
+            presentation.reviewInProgressAction.detail,
             "Open drafts, active renders, and videos waiting for local download."
         )
     }
@@ -87,11 +87,11 @@ final class MomentsHomePresentationTests: XCTestCase {
         )
 
         XCTAssertEqual(
-            presentation.projectStatusDetail,
+            presentation.momentStatusDetail,
             "1 synced Moment tracked across the current account."
         )
         XCTAssertEqual(
-            presentation.reviewProjectsAction.detail,
+            presentation.reviewInProgressAction.detail,
             "Open drafts, active renders, and videos waiting for local download."
         )
     }

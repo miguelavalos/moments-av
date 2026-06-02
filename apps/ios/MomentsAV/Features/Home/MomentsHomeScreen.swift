@@ -75,11 +75,11 @@ struct MomentsHomeScreen: View {
                 MomentsHomeSignInCard(startSignInFlow: startSignInFlow)
             }
 
-            MomentsHomeProjectStatusCard(
+            MomentsHomeMomentStatusCard(
                 isSignedIn: viewModel.isSignedIn,
                 projectSummary: projectSummary,
                 presentation: presentation,
-                openProjects: { selectTab(.inProgress) }
+                openInProgress: { selectTab(.inProgress) }
             )
 
             MomentsHomeNextActionsCard(

@@ -64,11 +64,11 @@ struct MomentsInProgressScreen: View {
             )
         }
         .confirmationDialog(
-            L10n.string("projects.deleteProject.title"),
+            L10n.string("inProgress.deleteMoment.title"),
             isPresented: deletionConfirmationPresented,
             titleVisibility: .visible
         ) {
-            Button(L10n.string("projects.deleteProject.button"), role: .destructive) {
+            Button(L10n.string("inProgress.deleteMoment.button"), role: .destructive) {
                 confirmProjectDeletion()
             }
             Button(L10n.string("common.cancel"), role: .cancel) {

@@ -26,7 +26,7 @@ struct MomentsAviCurrentFocusCard: View {
                     systemImage: "clock"
                 )
                 AVAviStatPill(
-                    title: L10n.string("projects.finished.title"),
+                    title: L10n.string("library.finished.title"),
                     value: "\(projectSummary.finishedCount)",
                     systemImage: "checkmark.circle"
                 )

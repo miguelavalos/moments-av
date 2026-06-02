@@ -86,7 +86,7 @@ struct MomentsAppShellView: View {
                         .shadow(color: AVBrandColor.accent.opacity(0.24), radius: 16, x: 0, y: 8)
                 }
                 .buttonStyle(.plain)
-                .accessibilityLabel(L10n.string("projects.newMoment"))
+                .accessibilityLabel(L10n.string("inProgress.newMoment"))
                 .padding(.trailing, 28)
                 .padding(.bottom, 104)
             }

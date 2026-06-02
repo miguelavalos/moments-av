@@ -26,7 +26,7 @@ struct MomentsInProgressRenderJobsSection: View {
     }
 }
 
-struct MomentsProjectPreviewArtifactSection: View {
+struct MomentsInProgressPreviewArtifactSection: View {
     let artifacts: [MomentArtifact]
 
     private var presentation: MomentsInProgressArtifactSectionPresentation {
@@ -49,7 +49,7 @@ struct MomentsProjectPreviewArtifactSection: View {
     }
 }
 
-struct MomentsProjectFinalExportSection: View {
+struct MomentsInProgressFinalExportSection: View {
     let artifacts: [MomentArtifact]
 
     private var presentation: MomentsInProgressArtifactSectionPresentation {

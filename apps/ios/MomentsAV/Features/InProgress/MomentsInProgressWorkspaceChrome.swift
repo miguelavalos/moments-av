@@ -54,7 +54,7 @@ struct MomentsInProgressDeleteButton: View {
         Button(role: .destructive) {
             requestDeleteProject()
         } label: {
-            Label(isDeletingProject ? L10n.string("projects.deleteProject.deleting") : L10n.string("projects.deleteProject.shortButton"), systemImage: "trash")
+            Label(isDeletingProject ? L10n.string("inProgress.deleteMoment.deleting") : L10n.string("inProgress.deleteMoment.shortButton"), systemImage: "trash")
                 .frame(maxWidth: .infinity)
         }
         .buttonStyle(.bordered)

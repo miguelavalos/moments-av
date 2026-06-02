@@ -118,7 +118,7 @@ final class MomentsInProgressViewModel: ObservableObject {
                 self?.activeProject = nil
                 self?.activeWorkspace = nil
                 self?.projectSummary = self?.projectSummary.removing(projectId: project.id) ?? MomentsProjectListSummary()
-                self?.statusMessage = L10n.string("projects.status.projectDeleted")
+                self?.statusMessage = L10n.string("inProgress.status.momentDeleted")
             }
             self?.deletionTask = nil
         }
