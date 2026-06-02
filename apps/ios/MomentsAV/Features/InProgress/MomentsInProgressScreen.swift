@@ -69,10 +69,10 @@ struct MomentsInProgressScreen: View {
             titleVisibility: .visible
         ) {
             Button(L10n.string("inProgress.deleteMoment.button"), role: .destructive) {
-                confirmProjectDeletion()
+                confirmMomentDeletion()
             }
             Button(L10n.string("common.cancel"), role: .cancel) {
-                cancelProjectDeletion()
+                cancelMomentDeletion()
             }
         } message: {
             Text(presentation.deletionMessage)
@@ -90,7 +90,7 @@ struct MomentsInProgressScreen: View {
         )
     }
 
-    private func confirmProjectDeletion() {
+    private func confirmMomentDeletion() {
         if let projectPendingDeletion {
             if createViewModel.activeProjectId == projectPendingDeletion.id {
                 createViewModel.clearSessionState()
@@ -100,7 +100,7 @@ struct MomentsInProgressScreen: View {
         projectPendingDeletion = nil
     }
 
-    private func cancelProjectDeletion() {
+    private func cancelMomentDeletion() {
         projectPendingDeletion = nil
     }
 }

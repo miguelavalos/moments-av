@@ -772,10 +772,10 @@
 "purchase.error.notConfigured" = "Purchases are not configured for this build.";
 "purchase.error.offeringUnavailable" = "Purchases are not available right now. Try again later.";
 "purchase.error.productUnavailable" = "This product is not available right now. Try again later.";
-"workflow.project.signInStart" = "Sign in before starting a Moment.";
-"workflow.project.signInContinue" = "Sign in before continuing a project.";
-"workflow.project.signInDiscard" = "Sign in before discarding a project.";
-"workflow.project.draftNotReady" = "Draft is not ready to create.";
+"workflow.moment.signInStart" = "Sign in before starting a Moment.";
+"workflow.moment.signInContinue" = "Sign in before continuing a project.";
+"workflow.moment.signInDiscard" = "Sign in before discarding a project.";
+"workflow.moment.draftNotReady" = "Draft is not ready to create.";
 "workflow.media.templateFull" = "Avi has enough media for this video.";
 "workflow.media.noNewMedia" = "No new media added.";
 "workflow.media.noRecentPhotos" = "No recent photos found.";

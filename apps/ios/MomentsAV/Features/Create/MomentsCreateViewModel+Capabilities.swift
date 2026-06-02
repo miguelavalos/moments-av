@@ -4,13 +4,13 @@ extension MomentsCreateViewModel {
             return MomentsCreditGate.canAfford(template, balance: balance)
         }
 
-        return projectCreationWorkflow?.canAfford(template) ?? false
+        return momentCreationWorkflow?.canAfford(template) ?? false
     }
 
     var canCreateDraft: Bool {
         !isDraftLocked
             && isSignedIn
-            && (projectCreationWorkflow?.isConfigured ?? false)
+            && (momentCreationWorkflow?.isConfigured ?? false)
             && draftFormAvailability.canCreateDraft
     }
 
@@ -112,7 +112,7 @@ extension MomentsCreateViewModel {
         }
 
         return MomentsCreateFormatting.spendPlanDescription(
-            projectCreationWorkflow?.spendPlan(for: template)
+            momentCreationWorkflow?.spendPlan(for: template)
         )
     }
 }

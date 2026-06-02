@@ -4,14 +4,14 @@ import Foundation
 extension MomentsCreateViewModel {
     func bindWorkflowState(
         accountStateProvider: any MomentsAccountStateProviding,
-        projectCreationWorkflow: ProjectCreationWorkflow,
+        momentCreationWorkflow: MomentCreationWorkflow,
         mediaUploadWorkflow: MediaUploadWorkflow,
         storyDraftWorkflow: StoryDraftWorkflow,
         previewGenerationWorkflow: PreviewGenerationWorkflow,
         finalRenderWorkflow: FinalRenderWorkflow
     ) {
         bindAccount(accountStateProvider)
-        bindProjectCreation(projectCreationWorkflow)
+        bindMomentCreation(momentCreationWorkflow)
         bindMediaUpload(mediaUploadWorkflow)
         bindStoryDraft(storyDraftWorkflow)
         bindPreviewGeneration(previewGenerationWorkflow)
@@ -32,7 +32,7 @@ extension MomentsCreateViewModel {
             .store(in: &cancellables)
     }
 
-    private func bindProjectCreation(_ workflow: ProjectCreationWorkflow) {
+    private func bindMomentCreation(_ workflow: MomentCreationWorkflow) {
         Publishers.CombineLatest3(
             workflow.$isCreatingDraft,
             workflow.$activeProjectId,
@@ -40,8 +40,8 @@ extension MomentsCreateViewModel {
         )
             .receive(on: DispatchQueue.main)
             .sink { [weak self] isCreatingDraft, activeProjectId, draftErrorMessage in
-                self?.applyProjectCreationState(
-                    MomentsCreateProjectCreationState(
+                self?.applyMomentCreationState(
+                    MomentsCreateMomentCreationState(
                         isCreatingDraft: isCreatingDraft,
                         activeProjectId: activeProjectId,
                         draftErrorMessage: draftErrorMessage

@@ -2,25 +2,25 @@ import Combine
 import Foundation
 
 @MainActor
-final class ProjectsListWorkflow: ObservableObject {
+final class InProgressMomentsWorkflow: ObservableObject {
     @Published private(set) var projectSummary = MomentsProjectListSummary()
     @Published private(set) var isDeletingProject = false
     @Published private(set) var errorMessage: String?
 
     private let projectsObserver: any MomentsActiveProjectsObserving
-    private let workspaceSelectionWorkflow: ProjectWorkspaceSelectionWorkflow
-    private let projectDeletionWorkflow: ProjectDeletionWorkflow
+    private let workspaceSelectionWorkflow: MomentWorkspaceSelectionWorkflow
+    private let momentDeletionWorkflow: MomentDeletionWorkflow
     private var currentOwnerUserId: String?
     private var cancellables = Set<AnyCancellable>()
 
     init(
         projectsObserver: any MomentsActiveProjectsObserving,
-        workspaceSelectionWorkflow: ProjectWorkspaceSelectionWorkflow,
-        projectDeletionWorkflow: ProjectDeletionWorkflow
+        workspaceSelectionWorkflow: MomentWorkspaceSelectionWorkflow,
+        momentDeletionWorkflow: MomentDeletionWorkflow
     ) {
         self.projectsObserver = projectsObserver
         self.workspaceSelectionWorkflow = workspaceSelectionWorkflow
-        self.projectDeletionWorkflow = projectDeletionWorkflow
+        self.momentDeletionWorkflow = momentDeletionWorkflow
 
         projectsObserver.projectsPublisher
             .receive(on: DispatchQueue.main)
@@ -36,17 +36,17 @@ final class ProjectsListWorkflow: ObservableObject {
             }
             .store(in: &cancellables)
 
-        projectDeletionWorkflow.isDeletingProjectPublisher
+        momentDeletionWorkflow.isDeletingProjectPublisher
             .receive(on: DispatchQueue.main)
             .sink { [weak self] isDeleting in
                 self?.isDeletingProject = isDeleting
             }
             .store(in: &cancellables)
 
-        projectDeletionWorkflow.deletionErrorPublisher
+        momentDeletionWorkflow.deletionErrorPublisher
             .receive(on: DispatchQueue.main)
             .sink { [weak self] message in
-                self?.applyProjectDeletionError(message)
+                self?.applyMomentDeletionError(message)
             }
             .store(in: &cancellables)
 
@@ -82,7 +82,7 @@ final class ProjectsListWorkflow: ObservableObject {
 
     func deleteProject(_ project: MomentDraftProject) async -> Bool {
         errorMessage = nil
-        let didDelete = await projectDeletionWorkflow.deleteProject(project)
+        let didDelete = await momentDeletionWorkflow.deleteProject(project)
         guard didDelete else { return false }
 
         if workspaceSelectionWorkflow.activeProject?.id == project.id {
@@ -101,7 +101,7 @@ final class ProjectsListWorkflow: ObservableObject {
         errorMessage = message
     }
 
-    private func applyProjectDeletionError(_ message: String?) {
+    private func applyMomentDeletionError(_ message: String?) {
         guard let message else { return }
         errorMessage = message
     }
@@ -111,7 +111,7 @@ final class ProjectsListWorkflow: ObservableObject {
     }
 }
 
-extension ProjectsListWorkflow: MomentsInProgressViewing {
+extension InProgressMomentsWorkflow: MomentsInProgressViewing {
     var projectSummaryPublisher: AnyPublisher<MomentsProjectListSummary, Never> {
         $projectSummary.eraseToAnyPublisher()
     }

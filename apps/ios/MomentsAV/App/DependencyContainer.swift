@@ -5,10 +5,10 @@ final class MomentsDependencyContainer: ObservableObject {
     let accountController: AccountController
     let projectsObserver: MomentsProjectsObserver
     let workspaceObserver: MomentsWorkspaceObserver
-    let projectDeletionWorkflow: ProjectDeletionWorkflow
-    let projectWorkspaceSelectionWorkflow: ProjectWorkspaceSelectionWorkflow
-    let projectsListWorkflow: ProjectsListWorkflow
-    let projectCreationWorkflow: ProjectCreationWorkflow
+    let momentDeletionWorkflow: MomentDeletionWorkflow
+    let momentWorkspaceSelectionWorkflow: MomentWorkspaceSelectionWorkflow
+    let inProgressMomentsWorkflow: InProgressMomentsWorkflow
+    let momentCreationWorkflow: MomentCreationWorkflow
     let mediaUploadWorkflow: MediaUploadWorkflow
     let storyDraftWorkflow: StoryDraftWorkflow
     let previewGenerationWorkflow: PreviewGenerationWorkflow
@@ -39,10 +39,10 @@ final class MomentsDependencyContainer: ObservableObject {
             workspaceObserver: resolvedWorkspaceObserver,
             clients: clients
         )
-        self.projectDeletionWorkflow = workflows.projectDeletion
-        self.projectWorkspaceSelectionWorkflow = workflows.projectWorkspaceSelection
-        self.projectsListWorkflow = workflows.projectsList
-        self.projectCreationWorkflow = workflows.projectCreation
+        self.momentDeletionWorkflow = workflows.momentDeletion
+        self.momentWorkspaceSelectionWorkflow = workflows.momentWorkspaceSelection
+        self.inProgressMomentsWorkflow = workflows.inProgressMoments
+        self.momentCreationWorkflow = workflows.momentCreation
         self.mediaUploadWorkflow = workflows.mediaUpload
         self.storyDraftWorkflow = workflows.storyDraft
         self.previewGenerationWorkflow = workflows.previewGeneration
@@ -59,7 +59,7 @@ final class MomentsDependencyContainer: ObservableObject {
         let nextObservedOwnerUserId = ObservedOwnerUserId.observed(ownerUserId)
         guard observedOwnerUserId != nextObservedOwnerUserId else { return }
         observedOwnerUserId = nextObservedOwnerUserId
-        projectsListWorkflow.observeProjects(ownerUserId: ownerUserId)
+        inProgressMomentsWorkflow.observeProjects(ownerUserId: ownerUserId)
         inProgressViewModel.clearSelection()
         createViewModel.clearSessionState()
         applyUITestFixturesIfNeeded()

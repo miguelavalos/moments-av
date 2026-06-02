@@ -3,7 +3,7 @@ extension MomentsCreateViewModel {
         MomentsCreateAvailabilityMessageFactory.draft(
             isDraftLocked: isDraftLocked,
             isSignedIn: isSignedIn,
-            isProjectCreationConfigured: projectCreationWorkflow?.isConfigured ?? false,
+            isMomentCreationConfigured: momentCreationWorkflow?.isConfigured ?? false,
             draftFormAvailability: draftFormAvailability
         )
     }

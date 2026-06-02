@@ -31,7 +31,7 @@ extension MomentsCreateViewModel {
     }
 
     func createDraft(openMediaPicker: Bool) {
-        guard canCreateDraft, let projectCreationWorkflow else {
+        guard canCreateDraft, let momentCreationWorkflow else {
             updateDraftErrorMessage(draftAvailabilityMessage ?? L10n.string("create.error.startMoment"))
             return
         }
@@ -39,7 +39,7 @@ extension MomentsCreateViewModel {
         prepareNewDraftCreation()
 
         runOperation {
-            let projectId = await projectCreationWorkflow.createDraft(form: form)
+            let projectId = await momentCreationWorkflow.createDraft(form: form)
             if projectId != nil, openMediaPicker {
                 self.mediaPickerOpenRequest += 1
             }
@@ -59,16 +59,16 @@ extension MomentsCreateViewModel {
             resetActiveProject(force: true)
             return
         }
-        guard let projectCreationWorkflow else {
+        guard let momentCreationWorkflow else {
             resetActiveProject(force: true)
             return
         }
 
         runOperation {
-            let discarded = await projectCreationWorkflow.discardActiveDraft(projectId: self.activeProjectId)
+            let discarded = await momentCreationWorkflow.discardActiveDraft(projectId: self.activeProjectId)
             if discarded {
                 self.resetActiveProject(force: true)
-            } else if let message = projectCreationWorkflow.errorMessage {
+            } else if let message = momentCreationWorkflow.errorMessage {
                 self.updateDraftErrorMessage(message)
             } else {
                 self.updateDraftErrorMessage(L10n.string("create.error.discardMoment"))
@@ -157,8 +157,8 @@ extension MomentsCreateViewModel {
             let projectId: String?
             if let activeProjectId = self.activeProjectId {
                 projectId = activeProjectId
-            } else if let projectCreationWorkflow = self.projectCreationWorkflow {
-                projectId = await projectCreationWorkflow.createDraft(form: form)
+            } else if let momentCreationWorkflow = self.momentCreationWorkflow {
+                projectId = await momentCreationWorkflow.createDraft(form: form)
                 if projectId != nil {
                     self.isLocalMomentStarted = false
                 }
@@ -268,8 +268,8 @@ extension MomentsCreateViewModel {
             let projectId: String?
             if let activeProjectId = self.activeProjectId {
                 projectId = activeProjectId
-            } else if let projectCreationWorkflow = self.projectCreationWorkflow {
-                projectId = await projectCreationWorkflow.createDraft(form: form)
+            } else if let momentCreationWorkflow = self.momentCreationWorkflow {
+                projectId = await momentCreationWorkflow.createDraft(form: form)
                 if projectId != nil {
                     self.isLocalMomentStarted = false
                 }

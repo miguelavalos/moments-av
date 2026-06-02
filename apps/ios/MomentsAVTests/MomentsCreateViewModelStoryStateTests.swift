@@ -9,8 +9,8 @@ final class MomentsCreateViewModelStoryStateTests: XCTestCase {
             id: "00000000-0000-0000-0000-000000000001"
         )
 
-        viewModel.applyProjectCreationState(
-            MomentsCreateProjectCreationState(
+        viewModel.applyMomentCreationState(
+            MomentsCreateMomentCreationState(
                 isCreatingDraft: false,
                 activeProjectId: "project-1",
                 draftErrorMessage: nil
@@ -56,8 +56,8 @@ final class MomentsCreateViewModelStoryStateTests: XCTestCase {
             sourceLocalIdentifier: "local-asset-1"
         )
 
-        viewModel.applyProjectCreationState(
-            MomentsCreateProjectCreationState(
+        viewModel.applyMomentCreationState(
+            MomentsCreateMomentCreationState(
                 isCreatingDraft: false,
                 activeProjectId: "project-1",
                 draftErrorMessage: nil

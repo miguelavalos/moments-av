@@ -46,7 +46,7 @@ final class MomentsCreateViewModel: ObservableObject {
     @Published private(set) var continuationFocusHint: MomentsProjectContinuationFocus?
     @Published var mediaPickerOpenRequest = 0
 
-    private(set) var projectCreationWorkflow: ProjectCreationWorkflow?
+    private(set) var momentCreationWorkflow: MomentCreationWorkflow?
     private(set) var mediaUploadWorkflow: MediaUploadWorkflow?
     private(set) var storyDraftWorkflow: StoryDraftWorkflow?
     private(set) var previewGenerationWorkflow: PreviewGenerationWorkflow?
@@ -107,7 +107,7 @@ final class MomentsCreateViewModel: ObservableObject {
 
     func bind(
         accountStateProvider: any MomentsAccountStateProviding,
-        projectCreationWorkflow: ProjectCreationWorkflow,
+        momentCreationWorkflow: MomentCreationWorkflow,
         mediaUploadWorkflow: MediaUploadWorkflow,
         storyDraftWorkflow: StoryDraftWorkflow,
         previewGenerationWorkflow: PreviewGenerationWorkflow,
@@ -115,16 +115,16 @@ final class MomentsCreateViewModel: ObservableObject {
     ) {
         cancelOperations()
         reviewBundlePurchaser = accountStateProvider as? any MomentsReviewBundlePurchasing
-        self.projectCreationWorkflow = projectCreationWorkflow
+        self.momentCreationWorkflow = momentCreationWorkflow
         self.mediaUploadWorkflow = mediaUploadWorkflow
         self.storyDraftWorkflow = storyDraftWorkflow
         self.previewGenerationWorkflow = previewGenerationWorkflow
         self.finalRenderWorkflow = finalRenderWorkflow
-        templates = projectCreationWorkflow.launchTemplates
+        templates = momentCreationWorkflow.launchTemplates
         creationStyles = MomentCreationStyle.launchStyles
         selectedCreationStyle = MomentCreationStyle.launchStyles[0]
         selectedMusicPreset = selectedCreationStyle.defaultMusic
-        form = MomentDraftForm(template: projectCreationWorkflow.launchTemplates[0])
+        form = MomentDraftForm(template: momentCreationWorkflow.launchTemplates[0])
         canUndoAutoStyleSuggestion = false
         autoStyleUndoSelection = nil
         applyStyleDefaults(selectedCreationStyle)
@@ -132,7 +132,7 @@ final class MomentsCreateViewModel: ObservableObject {
 
         bindWorkflowState(
             accountStateProvider: accountStateProvider,
-            projectCreationWorkflow: projectCreationWorkflow,
+            momentCreationWorkflow: momentCreationWorkflow,
             mediaUploadWorkflow: mediaUploadWorkflow,
             storyDraftWorkflow: storyDraftWorkflow,
             previewGenerationWorkflow: previewGenerationWorkflow,
@@ -215,7 +215,7 @@ final class MomentsCreateViewModel: ObservableObject {
             form = continuedForm
         }
 
-        projectCreationWorkflow?.continueProject(project)
+        momentCreationWorkflow?.continueProject(project)
     }
 
     func consumePendingFocus() {
@@ -319,7 +319,7 @@ final class MomentsCreateViewModel: ObservableObject {
         isLocalMomentStarted = false
         pendingFocus = nil
         continuationFocusHint = nil
-        projectCreationWorkflow?.resetDraft(force: force)
+        momentCreationWorkflow?.resetDraft(force: force)
         mediaUploadWorkflow?.reset(force: force)
         storyDraftWorkflow?.reset(force: force)
         previewGenerationWorkflow?.reset(force: force)
@@ -422,7 +422,7 @@ extension MomentsCreateViewModel {
         balance = state.balance
     }
 
-    func applyProjectCreationState(_ state: MomentsCreateProjectCreationState) {
+    func applyMomentCreationState(_ state: MomentsCreateMomentCreationState) {
         guard !usesFullUITestFixture else { return }
         let previousActiveProjectId = workflowActiveProjectId
         isCreatingDraft = state.isCreatingDraft

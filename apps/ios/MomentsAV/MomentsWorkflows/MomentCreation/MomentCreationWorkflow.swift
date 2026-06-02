@@ -1,7 +1,7 @@
 import Foundation
 
 @MainActor
-final class ProjectCreationWorkflow: ObservableObject {
+final class MomentCreationWorkflow: ObservableObject {
     @Published private(set) var isCreatingDraft = false
     @Published private(set) var activeProjectId: String?
     @Published private(set) var errorMessage: String?
@@ -50,7 +50,7 @@ final class ProjectCreationWorkflow: ObservableObject {
     func createDraft(form: MomentDraftForm) async -> String? {
         guard !isCreatingDraft else { return nil }
         guard let ownerUserId = currentUserProvider.currentUserId else {
-            errorMessage = L10n.string("workflow.project.signInStart")
+            errorMessage = L10n.string("workflow.moment.signInStart")
             return nil
         }
 
@@ -81,7 +81,7 @@ final class ProjectCreationWorkflow: ObservableObject {
 
     func continueProject(_ project: MomentDraftProject) {
         guard let ownerUserId = currentUserProvider.currentUserId else {
-            errorMessage = L10n.string("workflow.project.signInContinue")
+            errorMessage = L10n.string("workflow.moment.signInContinue")
             return
         }
 
@@ -104,7 +104,7 @@ final class ProjectCreationWorkflow: ObservableObject {
     func discardActiveDraft(projectId projectIdOverride: String? = nil) async -> Bool {
         guard !isCreatingDraft else { return false }
         guard let ownerUserId = currentUserProvider.currentUserId else {
-            errorMessage = L10n.string("workflow.project.signInDiscard")
+            errorMessage = L10n.string("workflow.moment.signInDiscard")
             return false
         }
         guard let projectId = projectIdOverride ?? activeProjectId else { return true }
@@ -129,6 +129,6 @@ final class ProjectCreationWorkflow: ObservableObject {
     }
 
     private func createDraftBlockMessage(_ availability: MomentDraftRules.Availability) -> String {
-        MomentDraftRules.availabilityMessage(availability) ?? L10n.string("workflow.project.draftNotReady")
+        MomentDraftRules.availabilityMessage(availability) ?? L10n.string("workflow.moment.draftNotReady")
     }
 }

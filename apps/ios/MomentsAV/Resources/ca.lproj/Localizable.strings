@@ -770,10 +770,10 @@
 "purchase.error.notConfigured" = "Les compres no estan configurades per a aquesta build.";
 "purchase.error.offeringUnavailable" = "Les compres no estan disponibles ara mateix. Torna-ho a provar més tard.";
 "purchase.error.productUnavailable" = "Aquest producte no està disponible ara mateix. Torna-ho a provar més tard.";
-"workflow.project.signInStart" = "Inicia sessió abans de començar un Moment.";
-"workflow.project.signInContinue" = "Inicia sessió abans de continuar un Moment.";
-"workflow.project.signInDiscard" = "Inicia sessió abans de descartar un Moment.";
-"workflow.project.draftNotReady" = "L’esborrany encara no està llest per crear-se.";
+"workflow.moment.signInStart" = "Inicia sessió abans de començar un Moment.";
+"workflow.moment.signInContinue" = "Inicia sessió abans de continuar un Moment.";
+"workflow.moment.signInDiscard" = "Inicia sessió abans de descartar un Moment.";
+"workflow.moment.draftNotReady" = "L’esborrany encara no està llest per crear-se.";
 "workflow.media.templateFull" = "Avi té prou mèdia per a aquest vídeo.";
 "workflow.media.noNewMedia" = "No s’ha afegit mèdia nova.";
 "workflow.media.noRecentPhotos" = "No s’han trobat fotos recents.";

@@ -15,19 +15,19 @@ struct MomentsViewModelBundle {
         gallery = MomentsGalleryViewModel()
         avi = MomentsAviViewModel()
 
-        home.bind(to: workflows.projectsList)
+        home.bind(to: workflows.inProgressMoments)
         home.bind(accountStateProvider: accountController)
         create.bind(
             accountStateProvider: accountController,
-            projectCreationWorkflow: workflows.projectCreation,
+            momentCreationWorkflow: workflows.momentCreation,
             mediaUploadWorkflow: workflows.mediaUpload,
             storyDraftWorkflow: workflows.storyDraft,
             previewGenerationWorkflow: workflows.previewGeneration,
             finalRenderWorkflow: workflows.finalRender
         )
-        inProgress.bind(to: workflows.projectsList)
+        inProgress.bind(to: workflows.inProgressMoments)
         inProgress.bind(accountStateProvider: accountController)
-        avi.bind(to: workflows.projectsList)
+        avi.bind(to: workflows.inProgressMoments)
         avi.bind(accountStateProvider: accountController)
     }
 }

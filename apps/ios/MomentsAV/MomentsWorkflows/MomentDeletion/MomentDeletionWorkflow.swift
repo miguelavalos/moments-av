@@ -2,7 +2,7 @@ import Combine
 import Foundation
 
 @MainActor
-final class ProjectDeletionWorkflow: ObservableObject {
+final class MomentDeletionWorkflow: ObservableObject {
     @Published private(set) var isDeletingProject = false
     @Published private(set) var errorMessage: String?
 

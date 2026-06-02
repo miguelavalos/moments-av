@@ -5,7 +5,7 @@ struct MomentsCreateAccountState {
     let balance: MomentsCreditBalance
 }
 
-struct MomentsCreateProjectCreationState {
+struct MomentsCreateMomentCreationState {
     let isCreatingDraft: Bool
     let activeProjectId: String?
     let draftErrorMessage: String?

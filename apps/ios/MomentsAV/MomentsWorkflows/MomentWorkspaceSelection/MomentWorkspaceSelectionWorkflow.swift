@@ -2,7 +2,7 @@ import Combine
 import Foundation
 
 @MainActor
-final class ProjectWorkspaceSelectionWorkflow: ObservableObject {
+final class MomentWorkspaceSelectionWorkflow: ObservableObject {
     @Published private(set) var activeProject: MomentDraftProject?
     @Published private(set) var activeWorkspace: MomentProjectWorkspace?
     @Published private(set) var isLoadingProjectWorkspace = false

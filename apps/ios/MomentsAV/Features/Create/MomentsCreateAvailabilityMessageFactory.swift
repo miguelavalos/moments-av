@@ -4,12 +4,12 @@ enum MomentsCreateAvailabilityMessageFactory {
     static func draft(
         isDraftLocked: Bool,
         isSignedIn: Bool,
-        isProjectCreationConfigured: Bool,
+        isMomentCreationConfigured: Bool,
         draftFormAvailability: MomentDraftRules.Availability
     ) -> String? {
         if isDraftLocked { return nil }
         if !isSignedIn { return MomentsCreateAvailabilityCopy.draftSignInRequired }
-        if !isProjectCreationConfigured { return MomentsCreateAvailabilityCopy.projectSyncNotConfigured }
+        if !isMomentCreationConfigured { return MomentsCreateAvailabilityCopy.projectSyncNotConfigured }
         return MomentDraftRules.availabilityMessage(draftFormAvailability)
     }
 

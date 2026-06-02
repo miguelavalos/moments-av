@@ -770,10 +770,10 @@
 "purchase.error.notConfigured" = "Les achats ne sont pas configurés pour cette build.";
 "purchase.error.offeringUnavailable" = "Les achats ne sont pas disponibles pour le moment. Réessaie plus tard.";
 "purchase.error.productUnavailable" = "Ce produit n’est pas disponible pour le moment. Réessaie plus tard.";
-"workflow.project.signInStart" = "Connecte-toi avant de démarrer un Moment.";
-"workflow.project.signInContinue" = "Connecte-toi avant de continuer un Moment.";
-"workflow.project.signInDiscard" = "Connecte-toi avant d’abandonner un Moment.";
-"workflow.project.draftNotReady" = "Le brouillon n’est pas encore prêt à être créé.";
+"workflow.moment.signInStart" = "Connecte-toi avant de démarrer un Moment.";
+"workflow.moment.signInContinue" = "Connecte-toi avant de continuer un Moment.";
+"workflow.moment.signInDiscard" = "Connecte-toi avant d’abandonner un Moment.";
+"workflow.moment.draftNotReady" = "Le brouillon n’est pas encore prêt à être créé.";
 "workflow.media.templateFull" = "Avi a assez de médias pour cette vidéo.";
 "workflow.media.noNewMedia" = "Aucun nouveau média ajouté.";
 "workflow.media.noRecentPhotos" = "Aucune photo récente trouvée.";

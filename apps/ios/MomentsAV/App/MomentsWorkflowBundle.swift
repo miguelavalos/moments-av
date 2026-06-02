@@ -2,10 +2,10 @@ import Foundation
 
 @MainActor
 struct MomentsWorkflowBundle {
-    let projectDeletion: ProjectDeletionWorkflow
-    let projectWorkspaceSelection: ProjectWorkspaceSelectionWorkflow
-    let projectsList: ProjectsListWorkflow
-    let projectCreation: ProjectCreationWorkflow
+    let momentDeletion: MomentDeletionWorkflow
+    let momentWorkspaceSelection: MomentWorkspaceSelectionWorkflow
+    let inProgressMoments: InProgressMomentsWorkflow
+    let momentCreation: MomentCreationWorkflow
     let mediaUpload: MediaUploadWorkflow
     let storyDraft: StoryDraftWorkflow
     let previewGeneration: PreviewGenerationWorkflow
@@ -18,17 +18,17 @@ struct MomentsWorkflowBundle {
         workspaceObserver: MomentsWorkspaceObserver,
         clients: MomentsWorkflowClients
     ) {
-        projectDeletion = ProjectDeletionWorkflow(
+        momentDeletion = MomentDeletionWorkflow(
             currentUserProvider: accountController,
             projectDeleter: projectRepository
         )
-        projectWorkspaceSelection = ProjectWorkspaceSelectionWorkflow(workspaceObserver: workspaceObserver)
-        projectsList = ProjectsListWorkflow(
+        momentWorkspaceSelection = MomentWorkspaceSelectionWorkflow(workspaceObserver: workspaceObserver)
+        inProgressMoments = InProgressMomentsWorkflow(
             projectsObserver: projectsObserver,
-            workspaceSelectionWorkflow: projectWorkspaceSelection,
-            projectDeletionWorkflow: projectDeletion
+            workspaceSelectionWorkflow: momentWorkspaceSelection,
+            momentDeletionWorkflow: momentDeletion
         )
-        projectCreation = ProjectCreationWorkflow(
+        momentCreation = MomentCreationWorkflow(
             currentUserProvider: accountController,
             creditBalanceProvider: accountController,
             projectCreator: projectRepository,
