@@ -16,22 +16,22 @@ struct MomentsCreatePreviewPresentation: Equatable {
             return nil
         }
         return latestPreview.hasWatermark == true
-            ? "Story review is ready for your final check."
-            : "Story review is available."
+            ? L10n.string("create.preview.artifact.readyFinalCheck")
+            : L10n.string("create.preview.status.available")
     }
 
     var refreshButtonTitle: String {
-        summary.isRefreshingStatus ? "Refreshing story review..." : "Refresh story review"
+        summary.isRefreshingStatus ? L10n.string("create.preview.action.refreshing") : L10n.string("create.preview.action.refresh")
     }
 
     var generateButtonTitle: String {
-        summary.isGenerating ? "Reviewing story..." : "Review story"
+        summary.isGenerating ? L10n.string("create.preview.action.reviewing") : L10n.string("create.preview.action.review")
     }
 
     var emptyMessage: String {
         canGeneratePreview
-            ? "Story is ready. Review it before creating the final video."
-            : "Prepare the story before reviewing it."
+            ? L10n.string("create.preview.empty.ready")
+            : L10n.string("create.preview.empty.prepareStory")
     }
 
     var showsEmptyState: Bool {
@@ -51,17 +51,17 @@ struct MomentsCreateFinalRenderPresentation: Equatable {
     }
 
     var refreshButtonTitle: String {
-        summary.isRefreshingStatus ? "Refreshing final video..." : "Refresh final video"
+        summary.isRefreshingStatus ? L10n.string("create.final.action.refreshing") : L10n.string("create.final.action.refresh")
     }
 
     var generateButtonTitle: String {
-        summary.isGenerating ? "Creating final video..." : "Create final video"
+        summary.isGenerating ? L10n.string("create.final.action.creating") : L10n.string("create.final.action.create")
     }
 
     var emptyMessage: String {
         canGenerateFinalRender
-            ? "The story plan is ready. Create the final video when you are ready."
-            : "Prepare the story before creating the final video."
+            ? L10n.string("create.final.empty.ready")
+            : L10n.string("create.final.empty.prepareStory")
     }
 
     var showsEmptyState: Bool {

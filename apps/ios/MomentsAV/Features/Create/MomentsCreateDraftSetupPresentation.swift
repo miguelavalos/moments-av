@@ -13,17 +13,17 @@ struct MomentsCreateDraftSetupPresentation: Equatable {
     var workspaceSummary: MomentsCreateWorkspaceSummary
 
     var createDraftTitle: String {
-        isCreatingDraft ? "Starting project..." : "Use this theme"
+        isCreatingDraft ? L10n.string("create.draft.action.starting") : L10n.string("create.draft.action.useTheme")
     }
 
     var activeProjectLabel: String {
-        isContinuingProject ? "Continuing project" : "Project ready"
+        isContinuingProject ? L10n.string("create.draft.active.continuing") : L10n.string("create.draft.active.ready")
     }
 
     var activeProjectDetail: String {
         isContinuingProject
-            ? "Create is attached to this existing project."
-            : "Add photos or clips next, then Avi can shape the story."
+            ? L10n.string("create.draft.active.attached")
+            : L10n.string("create.draft.active.nextMedia")
     }
 
     var showsActiveProject: Bool {

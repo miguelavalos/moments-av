@@ -12,19 +12,19 @@ struct MomentsCreateMediaPresentation: Equatable {
     }
 
     var pickerTitle: String {
-        summary.isImporting ? "Adding media..." : "Add Photos or Clips"
+        summary.isImporting ? L10n.string("create.media.action.adding") : L10n.string("create.media.action.add")
     }
 
     var selectedCountTitle: String {
-        "\(summary.selectedCount) selected"
+        L10n.string("create.media.selectedCount", summary.selectedCount)
     }
 
     var selectionMessage: String {
         MomentsMediaRules.selectionMessage(
             MomentsMediaRules.availability(template: template, selectedCount: summary.selectedCount),
             readyMessage: "",
-            tooFewMessage: { "Add \($0) more \(Self.mediaAssetLabel($0))." },
-            tooManyMessage: { _ in "Avi will use the strongest moments first." }
+            tooFewMessage: { L10n.string("create.media.selection.tooFew", $0, Self.mediaAssetLabel($0)) },
+            tooManyMessage: { _ in L10n.string("create.media.selection.tooMany") }
         )
     }
 
@@ -33,7 +33,7 @@ struct MomentsCreateMediaPresentation: Equatable {
     }
 
     private static func mediaAssetLabel(_ count: Int) -> String {
-        count == 1 ? "photo or clip" : "photos or clips"
+        count == 1 ? L10n.string("create.media.asset.singular") : L10n.string("create.media.asset.plural")
     }
 }
 
@@ -45,13 +45,13 @@ struct MomentsCreateStoryPresentation: Equatable {
     var availabilityMessage: String?
 
     var draftButtonTitle: String {
-        summary.isDrafting ? "Preparing story..." : "Prepare story"
+        summary.isDrafting ? L10n.string("create.story.action.preparing") : L10n.string("create.story.action.prepare")
     }
 
     var emptyMessage: String {
         canDraftStory
-            ? "Avi can prepare a story plan from your photos and clips."
-            : "Add enough photos or clips before preparing the story."
+            ? L10n.string("create.story.empty.ready")
+            : L10n.string("create.story.empty.needsMedia")
     }
 
     var savedScenes: [MomentStoryScene] {
@@ -60,8 +60,12 @@ struct MomentsCreateStoryPresentation: Equatable {
 
     var reviewBundleButtonTitle: String {
         isBuyingReviewBundle
-            ? "Adding reviews..."
-            : "Add \(balance.reviewBundleReviewCount) reviews · \(MomentsCreditCopy.countTitle(balance.reviewBundleCreditCost))"
+            ? L10n.string("create.reviewBundle.action.adding")
+            : L10n.string(
+                "create.reviewBundle.action.add",
+                balance.reviewBundleReviewCount,
+                MomentsCreditCopy.countTitle(balance.reviewBundleCreditCost)
+            )
     }
 
     var canBuyReviewBundle: Bool {

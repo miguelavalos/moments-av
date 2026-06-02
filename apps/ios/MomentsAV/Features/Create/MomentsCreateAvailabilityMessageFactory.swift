@@ -48,10 +48,14 @@ enum MomentsCreateAvailabilityMessageFactory {
             return MomentsMediaRules.selectionMessage(
                 availability,
                 tooFewMessage: { missingCount in
-                    missingCount == 1 ? "Add 1 more photo or clip." : "Add \(missingCount) more photos or clips."
+                    missingCount == 1
+                        ? L10n.string("create.availability.media.addOne")
+                        : L10n.string("create.availability.media.addMany", missingCount)
                 },
                 tooManyMessage: { extraCount in
-                    extraCount == 1 ? "Remove 1 photo or clip." : "Remove \(extraCount) photos or clips."
+                    extraCount == 1
+                        ? L10n.string("create.availability.media.removeOne")
+                        : L10n.string("create.availability.media.removeMany", extraCount)
                 }
             )
         }

@@ -14,10 +14,10 @@ enum MomentsCreateRefreshAvailabilityFactory {
             isAvailable: isAvailable,
             isConfigured: isConfigured,
             isRefreshing: isRefreshing,
-            unavailableMessage: "Story review refresh is not available yet.",
-            notConfiguredMessage: "Story review refresh is not configured for this build.",
-            missingProjectMessage: "Open a project before refreshing story review status.",
-            missingJobMessage: "No story review job is available yet.",
+            unavailableMessage: L10n.string("create.refresh.preview.unavailable"),
+            notConfiguredMessage: L10n.string("create.refresh.preview.notConfigured"),
+            missingProjectMessage: L10n.string("create.refresh.preview.missingProject"),
+            missingJobMessage: L10n.string("create.refresh.preview.missingJob"),
             missingProviderRequestMessage: MomentsRecoveryCopy.previewStatusMissing()
         )
     }
@@ -35,10 +35,10 @@ enum MomentsCreateRefreshAvailabilityFactory {
             isAvailable: isAvailable,
             isConfigured: isConfigured,
             isRefreshing: isRefreshing,
-            unavailableMessage: "Final status refresh is not available yet.",
-            notConfiguredMessage: "Final status refresh is not configured for this build.",
-            missingProjectMessage: "Open a project before refreshing final status.",
-            missingJobMessage: "No final video is available yet.",
+            unavailableMessage: L10n.string("create.refresh.final.unavailable"),
+            notConfiguredMessage: L10n.string("create.refresh.final.notConfigured"),
+            missingProjectMessage: L10n.string("create.refresh.final.missingProject"),
+            missingJobMessage: L10n.string("create.refresh.final.missingJob"),
             missingProviderRequestMessage: MomentsRecoveryCopy.finalRenderStatusMissing()
         )
     }

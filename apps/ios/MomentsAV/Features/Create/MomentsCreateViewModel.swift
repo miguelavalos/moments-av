@@ -258,11 +258,11 @@ final class MomentsCreateViewModel: ObservableObject {
         activeWorkspace = workspace
         latestPreview = workspace.latestArtifact(kind: "preview")
         latestPreviewJob = workspace.latestRenderJob(kind: "preview")
-        previewStatusMessage = "Story review is available."
+        previewStatusMessage = L10n.string("create.preview.status.available")
         finalExport = workspace.latestArtifact(kind: "final_export")
         pendingGalleryVideo = nil
         latestFinalJob = workspace.latestRenderJob(kind: "final")
-        finalRenderStatusMessage = "Final video is ready."
+        finalRenderStatusMessage = L10n.string("create.final.status.ready")
         pendingFocus = .review
         continuationFocusHint = .review
     }

@@ -8,15 +8,15 @@ struct MomentsCreateWorkspaceSummary: Equatable {
     var hasFinalExport = false
 
     var mediaDetail: String {
-        "\(mediaCount) added"
+        L10n.string("create.summary.media.added", mediaCount)
     }
 
     var storyDetail: String {
-        Self.countTitle(sceneCount, singular: "scene", plural: "scenes")
+        L10n.string(sceneCount == 1 ? "create.summary.story.scene" : "create.summary.story.scenes", sceneCount)
     }
 
     var previewDetail: String {
-        hasPreviewArtifact ? "Ready" : "Not made yet"
+        hasPreviewArtifact ? L10n.string("create.summary.preview.ready") : L10n.string("create.summary.preview.notMade")
     }
 
     static func make(
@@ -33,9 +33,6 @@ struct MomentsCreateWorkspaceSummary: Equatable {
         )
     }
 
-    private static func countTitle(_ count: Int, singular: String, plural: String) -> String {
-        "\(count) \(count == 1 ? singular : plural)"
-    }
 }
 
 struct MomentsCreateMediaSummary: Equatable {
@@ -86,8 +83,8 @@ struct MomentsMediaImportProgress: Equatable {
     }
 
     var title: String {
-        guard totalCount > 0 else { return "Reading media" }
-        return "\(min(completedCount, totalCount)) of \(totalCount)"
+        guard totalCount > 0 else { return L10n.string("create.media.progress.reading") }
+        return L10n.string("create.media.progress.count", min(completedCount, totalCount), totalCount)
     }
 }
 
@@ -128,13 +125,13 @@ struct MomentsCreateStorySummary: Equatable {
     private static func sceneTitle(_ index: Int) -> String {
         switch index {
         case 0:
-            return "Opening"
+            return L10n.string("create.story.scene.opening")
         case 1:
-            return "Main moments"
+            return L10n.string("create.story.scene.main")
         case 2:
-            return "Ending"
+            return L10n.string("create.story.scene.ending")
         default:
-            return "Scene \(index + 1)"
+            return L10n.string("create.story.scene.number", index + 1)
         }
     }
 }
@@ -189,26 +186,26 @@ struct MomentsRenderRealtimePresentation: Equatable {
     }
 
     private static func title(status: String, phase: String?) -> String {
-        if status == "completed" { return "Ready" }
-        if status == "failed" { return "Needs attention" }
+        if status == "completed" { return L10n.string("create.render.status.ready") }
+        if status == "failed" { return L10n.string("create.render.status.needsAttention") }
 
         switch phase {
         case "preparing":
-            return "Preparing"
+            return L10n.string("create.render.phase.preparing")
         case "uploading":
-            return "Uploading"
+            return L10n.string("create.render.phase.uploading")
         case "composing":
-            return "Composing"
+            return L10n.string("create.render.phase.composing")
         case "rendering":
-            return "Rendering"
+            return L10n.string("create.render.phase.rendering")
         case "saving":
-            return "Saving"
+            return L10n.string("create.render.phase.saving")
         case "ready":
-            return "Ready"
+            return L10n.string("create.render.status.ready")
         case "failed":
-            return "Needs attention"
+            return L10n.string("create.render.status.needsAttention")
         default:
-            return status == "queued" ? "Queued" : "Working"
+            return status == "queued" ? L10n.string("create.render.status.queued") : L10n.string("create.render.status.working")
         }
     }
 
@@ -226,17 +223,17 @@ struct MomentsRenderRealtimePresentation: Equatable {
 
         switch renderJob.phase {
         case "preparing":
-            return "Avi is preparing the render."
+            return L10n.string("create.render.detail.preparing")
         case "uploading":
-            return "Avi is sending the media for rendering."
+            return L10n.string("create.render.detail.uploading")
         case "composing":
-            return "Avi is arranging the selected moments."
+            return L10n.string("create.render.detail.composing")
         case "rendering":
-            return "Avi is creating the video."
+            return L10n.string("create.render.detail.rendering")
         case "saving":
-            return "Avi is saving the finished video."
+            return L10n.string("create.render.detail.saving")
         default:
-            return renderJob.isActiveRender ? "Avi is updating the video status in realtime." : "Render status is available."
+            return renderJob.isActiveRender ? L10n.string("create.render.detail.realtime") : L10n.string("create.render.detail.available")
         }
     }
 

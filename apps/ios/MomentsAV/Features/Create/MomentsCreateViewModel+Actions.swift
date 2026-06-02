@@ -174,7 +174,7 @@ extension MomentsCreateViewModel {
             }
             if self.storySummary.hasScenes,
                self.lastPreparedStoryInputSignature == self.currentStoryInputSignature(projectId: projectId) {
-                self.updateStoryStatusMessage("Story plan is already ready.")
+                self.updateStoryStatusMessage(L10n.string("create.story.status.alreadyReady"))
                 return
             }
 
@@ -204,11 +204,11 @@ extension MomentsCreateViewModel {
 
     func buyStoryReviewBundle() {
         guard let reviewBundlePurchaser else {
-            updateStoryStatusMessage("Story reviews are not available in this build.")
+            updateStoryStatusMessage(L10n.string("create.reviewBundle.unavailable"))
             return
         }
         guard balance.canBuyReviewBundle else {
-            updateStoryStatusMessage("Add credits before adding more story reviews.")
+            updateStoryStatusMessage(L10n.string("create.reviewBundle.addCreditsFirst"))
             return
         }
         guard !isBusy, !isBuyingReviewBundle else { return }
@@ -236,7 +236,7 @@ extension MomentsCreateViewModel {
 
     func generatePreview() {
         guard canGeneratePreview, let previewGenerationWorkflow, let context = activeTemplateContext else {
-            updatePreviewStatusMessage(previewAvailabilityMessage ?? "Story review is not ready yet.")
+            updatePreviewStatusMessage(previewAvailabilityMessage ?? L10n.string("create.preview.status.notReady"))
             return
         }
 
@@ -286,7 +286,7 @@ extension MomentsCreateViewModel {
             var inputSignature = self.currentStoryInputSignature(projectId: projectId)
             if self.storySummary.hasScenes,
                self.lastPreparedStoryInputSignature == inputSignature {
-                self.updateStoryStatusMessage("Story plan is already ready.")
+                self.updateStoryStatusMessage(L10n.string("create.story.status.alreadyReady"))
             } else {
                 let persistedMedia = await self.mediaUploadWorkflow?.persistSelectedMedia(projectId: projectId)
                 guard persistedMedia != nil || selectedMedia.isEmpty else {
@@ -429,7 +429,7 @@ extension MomentsCreateViewModel {
     func createAnotherFinalVideoVersion() {
         resetActiveProject(force: true)
         isLocalMomentStarted = true
-        updateFinalRenderStatusMessage("Start another version with a fresh Moment.")
+        updateFinalRenderStatusMessage(L10n.string("create.final.status.startAnother"))
     }
 
     private var activeTemplateContext: (projectId: String, template: MomentTemplate)? {
