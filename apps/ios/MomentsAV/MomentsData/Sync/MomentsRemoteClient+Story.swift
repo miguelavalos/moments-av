@@ -2,13 +2,13 @@
 import Foundation
 
 extension MomentsRemoteClient {
-    func saveStoryDraft(
+    func saveStoryPlan(
         ownerUserId: String,
         momentId: String,
-        draft: MomentsStoryDraftResponse,
+        plan: MomentsStoryPlanResponse,
         storyInputSignature: String
     ) async throws {
-        for scene in draft.scenes {
+        for scene in plan.scenes {
             try await upsertStoryScene(
                 ownerUserId: ownerUserId,
                 momentId: momentId,
@@ -19,7 +19,7 @@ extension MomentsRemoteClient {
         try await markStoryReady(
             ownerUserId: ownerUserId,
             momentId: momentId,
-            request: .draft(draft, storyInputSignature: storyInputSignature)
+            request: .plan(plan, storyInputSignature: storyInputSignature)
         )
     }
 

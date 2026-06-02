@@ -224,7 +224,7 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
         }
     }
 
-    func persistSelectedMedia(momentId: String) async -> [MomentsStoryDraftMedia]? {
+    func persistSelectedMedia(momentId: String) async -> [MomentsStoryPlanMedia]? {
         guard let ownerUserId = currentUserProvider.currentUserId else {
             statusMessage = L10n.string("workflow.media.signInPrepareStory")
             return nil
@@ -243,9 +243,9 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
             guard let sourceIdentifier = $1.platformMediaAssetId else { return }
             $0[sourceIdentifier] = $1
         }
-        let alreadySyncedMedia = mediaToSave.compactMap { media -> MomentsStoryDraftMedia? in
+        let alreadySyncedMedia = mediaToSave.compactMap { media -> MomentsStoryPlanMedia? in
             guard let synced = syncedMediaBySourceIdentifier[media.sourceLocalIdentifier] else { return nil }
-            return MomentsStoryDraftMedia(
+            return MomentsStoryPlanMedia(
                 mediaAssetId: synced.id,
                 mediaKind: synced.kind,
                 sortOrder: media.sortOrder,
@@ -437,13 +437,13 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
         )
     }
 
-    private var activeWorkspaceStoryMedia: [MomentsStoryDraftMedia] {
+    private var activeWorkspaceStoryMedia: [MomentsStoryPlanMedia] {
         let mediaAssets = activeWorkspace?.mediaAssets ?? []
         let selectedAssets = mediaAssets.filter(\.selected)
         return (selectedAssets.isEmpty ? mediaAssets : selectedAssets)
             .sorted { $0.sortOrder < $1.sortOrder }
             .map {
-                MomentsStoryDraftMedia(
+                MomentsStoryPlanMedia(
                     mediaAssetId: $0.id,
                     mediaKind: $0.kind,
                     sortOrder: Int($0.sortOrder),

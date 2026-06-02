@@ -773,7 +773,7 @@
 "workflow.moment.signInStart" = "Inicia sessió abans de començar un Moment.";
 "workflow.moment.signInContinue" = "Inicia sessió abans de continuar un Moment.";
 "workflow.moment.signInDiscard" = "Inicia sessió abans de descartar un Moment.";
-"workflow.moment.draftNotReady" = "L’esborrany encara no està llest per crear-se.";
+"workflow.moment.setupNotReady" = "L’esborrany encara no està llest per crear-se.";
 "workflow.media.templateFull" = "Avi té prou mèdia per a aquest vídeo.";
 "workflow.media.noNewMedia" = "No s’ha afegit mèdia nova.";
 "workflow.media.noRecentPhotos" = "No s’han trobat fotos recents.";
@@ -785,8 +785,8 @@
 "workflow.media.localReady" = "La mèdia local està llesta per editar.";
 "workflow.media.savedReady" = "La mèdia desada està llesta per revisar i crear el vídeo.";
 "workflow.media.savedReadyThumbnailsPending" = "La mèdia desada està llesta. Algunes miniatures locals es poden actualitzar en segon pla.";
-"workflow.story.signInDraft" = "Inicia sessió abans de redactar la història.";
-"workflow.story.signInAgainDraft" = "Torna a iniciar sessió abans de redactar la història.";
+"workflow.story.signInPlan" = "Inicia sessió abans de redactar la història.";
+"workflow.story.signInAgainPlan" = "Torna a iniciar sessió abans de redactar la història.";
 "workflow.story.notConfigured" = "La redacció d’història encara no està configurada.";
 "workflow.preview.signInReview" = "Inicia sessió abans de revisar la història.";
 "workflow.preview.signInAgainReview" = "Torna a iniciar sessió abans de revisar la història.";

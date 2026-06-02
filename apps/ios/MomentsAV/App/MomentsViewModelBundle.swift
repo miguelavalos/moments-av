@@ -21,7 +21,7 @@ struct MomentsViewModelBundle {
             accountStateProvider: accountController,
             momentCreationWorkflow: workflows.momentCreation,
             mediaUploadWorkflow: workflows.mediaUpload,
-            storyDraftWorkflow: workflows.storyDraft,
+            storyPlanWorkflow: workflows.storyPlan,
             previewGenerationWorkflow: workflows.previewGeneration,
             finalRenderWorkflow: workflows.finalRender
         )

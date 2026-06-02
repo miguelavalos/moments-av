@@ -10,7 +10,7 @@ final class MomentsDependencyContainer: ObservableObject {
     let inProgressMomentsWorkflow: InProgressMomentsWorkflow
     let momentCreationWorkflow: MomentCreationWorkflow
     let mediaUploadWorkflow: MediaUploadWorkflow
-    let storyDraftWorkflow: StoryDraftWorkflow
+    let storyPlanWorkflow: StoryPlanWorkflow
     let previewGenerationWorkflow: PreviewGenerationWorkflow
     let finalRenderWorkflow: FinalRenderWorkflow
     let homeViewModel: MomentsHomeViewModel
@@ -44,7 +44,7 @@ final class MomentsDependencyContainer: ObservableObject {
         self.inProgressMomentsWorkflow = workflows.inProgressMoments
         self.momentCreationWorkflow = workflows.momentCreation
         self.mediaUploadWorkflow = workflows.mediaUpload
-        self.storyDraftWorkflow = workflows.storyDraft
+        self.storyPlanWorkflow = workflows.storyPlan
         self.previewGenerationWorkflow = workflows.previewGeneration
         self.finalRenderWorkflow = workflows.finalRender
         let viewModels = MomentsViewModelBundle(accountController: accountController, workflows: workflows)

@@ -11,9 +11,9 @@ final class MomentsCreateViewModelStoryStateTests: XCTestCase {
 
         viewModel.applyMomentCreationState(
             MomentsCreateMomentCreationState(
-                isCreatingDraft: false,
+                isCreatingMoment: false,
                 activeMomentId: "moment-1",
-                draftErrorMessage: nil
+                setupErrorMessage: nil
             )
         )
         viewModel.applyMediaUploadState(
@@ -24,8 +24,8 @@ final class MomentsCreateViewModelStoryStateTests: XCTestCase {
                 importProgress: nil
             )
         )
-        viewModel.applyStoryDraftState(
-            MomentsCreateStoryDraftState(
+        viewModel.applyStoryPlanState(
+            MomentsCreateStoryPlanState(
                 savedScenes: [],
                 generatedScenes: [],
                 statusMessage: MomentsRecoveryCopy.storyFailure(),
@@ -36,8 +36,8 @@ final class MomentsCreateViewModelStoryStateTests: XCTestCase {
         XCTAssertEqual(viewModel.storySummary.statusMessage, MomentsRecoveryCopy.storyFailure())
         XCTAssertFalse(viewModel.isStoryPreparedForCurrentInput)
 
-        viewModel.applyStoryDraftState(
-            MomentsCreateStoryDraftState(
+        viewModel.applyStoryPlanState(
+            MomentsCreateStoryPlanState(
                 savedScenes: [MomentsCreateTestFixtures.makeScene(id: "scene-1")],
                 generatedScenes: [],
                 statusMessage: MomentsRecoveryCopy.storyFailure(),
@@ -58,9 +58,9 @@ final class MomentsCreateViewModelStoryStateTests: XCTestCase {
 
         viewModel.applyMomentCreationState(
             MomentsCreateMomentCreationState(
-                isCreatingDraft: false,
+                isCreatingMoment: false,
                 activeMomentId: "moment-1",
-                draftErrorMessage: nil
+                setupErrorMessage: nil
             )
         )
         viewModel.applyMediaUploadState(
@@ -94,10 +94,10 @@ final class MomentsCreateViewModelStoryStateTests: XCTestCase {
             )
         )
 
-        let expectedLocalSignature = viewModel.currentStoryInputSignature(
+        let expectedLocalSignature = viewModel.currentStoryPlanInputSignature(
             momentId: "moment-1",
             persistedMedia: [
-                MomentsStoryDraftMedia(
+                MomentsStoryPlanMedia(
                     mediaAssetId: localMedia.id.uuidString,
                     mediaKind: localMedia.kind,
                     sortOrder: localMedia.sortOrder,
@@ -106,10 +106,10 @@ final class MomentsCreateViewModelStoryStateTests: XCTestCase {
                 )
             ]
         )
-        let backendMediaSignature = viewModel.currentStoryInputSignature(
+        let backendMediaSignature = viewModel.currentStoryPlanInputSignature(
             momentId: "moment-1",
             persistedMedia: [
-                MomentsStoryDraftMedia(
+                MomentsStoryPlanMedia(
                     mediaAssetId: "backend-media-1",
                     mediaKind: "image",
                     sortOrder: 0,
@@ -119,7 +119,7 @@ final class MomentsCreateViewModelStoryStateTests: XCTestCase {
             ]
         )
 
-        XCTAssertEqual(viewModel.currentStoryInputSignature(momentId: "moment-1"), expectedLocalSignature)
-        XCTAssertNotEqual(viewModel.currentStoryInputSignature(momentId: "moment-1"), backendMediaSignature)
+        XCTAssertEqual(viewModel.currentStoryPlanInputSignature(momentId: "moment-1"), expectedLocalSignature)
+        XCTAssertNotEqual(viewModel.currentStoryPlanInputSignature(momentId: "moment-1"), backendMediaSignature)
     }
 }

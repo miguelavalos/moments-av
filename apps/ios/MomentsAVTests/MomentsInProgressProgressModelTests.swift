@@ -8,7 +8,7 @@ final class MomentsInProgressProgressModelTests: XCTestCase {
         XCTAssertEqual(model.phases.map(\.title), ["Moment", "Media", "Story", "Story Review", "Final"])
         XCTAssertEqual(model.phases.map(\.state), [.complete, .waiting, .waiting, .waiting, .waiting])
         XCTAssertEqual(model.phases.map(\.detail), [
-            "Draft Created",
+            "Moment Created",
             "No media yet",
             "Not drafted",
             "Not reviewed",

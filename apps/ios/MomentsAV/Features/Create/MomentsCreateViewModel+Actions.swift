@@ -5,7 +5,7 @@ import SwiftUI
 extension MomentsCreateViewModel {
     func beginNewProject(openMediaPicker: Bool = true) {
         guard canBeginNewProject else {
-            updateDraftErrorMessage(draftAvailabilityMessage ?? L10n.string("create.error.startWhenReady"))
+            updateSetupErrorMessage(setupAvailabilityMessage ?? L10n.string("create.error.startWhenReady"))
             return
         }
         prepareNewDraftCreation()
@@ -32,7 +32,7 @@ extension MomentsCreateViewModel {
 
     func createMoment(openMediaPicker: Bool) {
         guard canCreateDraft, let momentCreationWorkflow else {
-            updateDraftErrorMessage(draftAvailabilityMessage ?? L10n.string("create.error.startMoment"))
+            updateSetupErrorMessage(setupAvailabilityMessage ?? L10n.string("create.error.startMoment"))
             return
         }
         let form = form
@@ -48,11 +48,11 @@ extension MomentsCreateViewModel {
 
     func discardDraft() {
         guard !isBusy else {
-            updateDraftErrorMessage(L10n.string("create.error.waitBeforeDiscard"))
+            updateSetupErrorMessage(L10n.string("create.error.waitBeforeDiscard"))
             return
         }
         guard hasMomentWorkspace || hasRecoverableMomentContext else {
-            updateDraftErrorMessage(L10n.string("create.error.noActiveMoment"))
+            updateSetupErrorMessage(L10n.string("create.error.noActiveMoment"))
             return
         }
         if hasLocalMomentWorkspace {
@@ -69,16 +69,16 @@ extension MomentsCreateViewModel {
             if discarded {
                 self.resetActiveMoment(force: true)
             } else if let message = momentCreationWorkflow.errorMessage {
-                self.updateDraftErrorMessage(message)
+                self.updateSetupErrorMessage(message)
             } else {
-                self.updateDraftErrorMessage(L10n.string("create.error.discardMoment"))
+                self.updateSetupErrorMessage(L10n.string("create.error.discardMoment"))
             }
         }
     }
 
     func importPickerItems(_ items: [PhotosPickerItem]) {
         guard canAddMedia, let mediaUploadWorkflow else {
-            updateDraftErrorMessage(mediaAvailabilityMessage ?? L10n.string("create.error.mediaUnavailable"))
+            updateSetupErrorMessage(mediaAvailabilityMessage ?? L10n.string("create.error.mediaUnavailable"))
             return
         }
         let template = form.template
@@ -94,7 +94,7 @@ extension MomentsCreateViewModel {
 
     func importLatestPhotos() {
         guard canAddMedia, let mediaUploadWorkflow else {
-            updateDraftErrorMessage(mediaAvailabilityMessage ?? L10n.string("create.error.mediaUnavailable"))
+            updateSetupErrorMessage(mediaAvailabilityMessage ?? L10n.string("create.error.mediaUnavailable"))
             return
         }
         let template = form.template
@@ -109,7 +109,7 @@ extension MomentsCreateViewModel {
 
     func importPhotoAlbum(id albumId: String) {
         guard canAddMedia, let mediaUploadWorkflow else {
-            updateDraftErrorMessage(mediaAvailabilityMessage ?? L10n.string("create.error.mediaUnavailable"))
+            updateSetupErrorMessage(mediaAvailabilityMessage ?? L10n.string("create.error.mediaUnavailable"))
             return
         }
         let template = form.template
@@ -143,8 +143,8 @@ extension MomentsCreateViewModel {
         mediaUploadWorkflow?.restoreLocalMediaForEditing()
     }
 
-    func generateStoryDraft() {
-        guard canDraftStory, let storyDraftWorkflow else {
+    func generateStoryPlan() {
+        guard canPlanStory, let storyPlanWorkflow else {
             updateStoryStatusMessage(storyAvailabilityMessage ?? L10n.string("create.error.storyPreparationNotReady"))
             return
         }
@@ -167,13 +167,13 @@ extension MomentsCreateViewModel {
             }
 
             guard let momentId else {
-                self.updateStoryStatusMessage(self.draftErrorMessage
+                self.updateStoryStatusMessage(self.setupErrorMessage
                     ?? MomentsRecoveryCopy.storyStartFailure()
                 )
                 return
             }
             if self.storySummary.hasScenes,
-               self.lastPreparedStoryInputSignature == self.currentStoryInputSignature(momentId: momentId) {
+               self.lastPreparedStoryInputSignature == self.currentStoryPlanInputSignature(momentId: momentId) {
                 self.updateStoryStatusMessage(L10n.string("create.story.status.alreadyReady"))
                 return
             }
@@ -185,12 +185,12 @@ extension MomentsCreateViewModel {
                 )
                 return
             }
-            let inputSignature = self.currentStoryInputSignature(
+            let inputSignature = self.currentStoryPlanInputSignature(
                 momentId: momentId,
                 persistedMedia: persistedMedia
             )
 
-            let didPrepareStory = await storyDraftWorkflow.generateDraft(
+            let didPrepareStory = await storyPlanWorkflow.generatePlan(
                 momentId: momentId,
                 form: form,
                 selectedMedia: selectedMedia,
@@ -255,7 +255,7 @@ extension MomentsCreateViewModel {
             return
         }
 
-        guard canDraftStory, let storyDraftWorkflow else {
+        guard canPlanStory, let storyPlanWorkflow else {
             updateStoryStatusMessage(storyAvailabilityMessage ?? L10n.string("create.error.storyPreparationNotReady"))
             return
         }
@@ -278,12 +278,12 @@ extension MomentsCreateViewModel {
             }
 
             guard let momentId else {
-                self.updateStoryStatusMessage(self.draftErrorMessage
+                self.updateStoryStatusMessage(self.setupErrorMessage
                     ?? MomentsRecoveryCopy.storyStartFailure()
                 )
                 return
             }
-            var inputSignature = self.currentStoryInputSignature(momentId: momentId)
+            var inputSignature = self.currentStoryPlanInputSignature(momentId: momentId)
             if self.storySummary.hasScenes,
                self.lastPreparedStoryInputSignature == inputSignature {
                 self.updateStoryStatusMessage(L10n.string("create.story.status.alreadyReady"))
@@ -295,12 +295,12 @@ extension MomentsCreateViewModel {
                     )
                     return
                 }
-                inputSignature = self.currentStoryInputSignature(
+                inputSignature = self.currentStoryPlanInputSignature(
                     momentId: momentId,
                     persistedMedia: persistedMedia
                 )
 
-                let didPrepareStory = await storyDraftWorkflow.generateDraft(
+                let didPrepareStory = await storyPlanWorkflow.generatePlan(
                     momentId: momentId,
                     form: form,
                     selectedMedia: selectedMedia,

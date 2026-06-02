@@ -23,7 +23,7 @@ extension MomentsCreateViewModel {
     var workflowAvailability: MomentsCreateWorkflowAvailability {
         MomentsCreateWorkflowAvailability.make(
             canAddMedia: canAddMedia,
-            canDraftStory: canDraftStory,
+            canPlanStory: canPlanStory,
             canGeneratePreview: canGeneratePreview,
             canRefreshPreviewStatus: canRefreshPreviewStatus,
             canGenerateFinalRender: canGenerateFinalRender,
@@ -43,13 +43,13 @@ extension MomentsCreateViewModel {
             canAfford: canAfford(form.template),
             spendPlanDescription: spendPlanDescription(for: form.template),
             isDraftLocked: isDraftLocked,
-            isCreatingDraft: isCreatingDraft,
+            isCreatingMoment: isCreatingMoment,
             canCreateDraft: canCreateDraft,
-            availabilityMessage: draftAvailabilityMessage,
+            availabilityMessage: setupAvailabilityMessage,
             activeMomentId: activeMomentId,
             isContinuingMoment: isContinuingMoment,
             canStartAnotherProject: canStartAnotherProject,
-            draftErrorMessage: draftErrorMessage,
+            setupErrorMessage: setupErrorMessage,
             workspaceSummary: workspaceSummary
         )
     }

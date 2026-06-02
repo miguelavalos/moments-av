@@ -775,7 +775,7 @@
 "workflow.moment.signInStart" = "Inicia sesión antes de empezar un Moment.";
 "workflow.moment.signInContinue" = "Inicia sesión antes de continuar un Moment.";
 "workflow.moment.signInDiscard" = "Inicia sesión antes de descartar un Moment.";
-"workflow.moment.draftNotReady" = "El borrador aún no está listo para crearse.";
+"workflow.moment.setupNotReady" = "El borrador aún no está listo para crearse.";
 "workflow.media.templateFull" = "Avi tiene suficiente media para este video.";
 "workflow.media.noNewMedia" = "No se añadió media nueva.";
 "workflow.media.noRecentPhotos" = "No se encontraron fotos recientes.";
@@ -787,8 +787,8 @@
 "workflow.media.localReady" = "La media local está lista para editar.";
 "workflow.media.savedReady" = "La media guardada está lista para revisar y crear el video.";
 "workflow.media.savedReadyThumbnailsPending" = "La media guardada está lista. Algunas miniaturas locales pueden actualizarse en segundo plano.";
-"workflow.story.signInDraft" = "Inicia sesión antes de redactar la historia.";
-"workflow.story.signInAgainDraft" = "Vuelve a iniciar sesión antes de redactar la historia.";
+"workflow.story.signInPlan" = "Inicia sesión antes de redactar la historia.";
+"workflow.story.signInAgainPlan" = "Vuelve a iniciar sesión antes de redactar la historia.";
 "workflow.story.notConfigured" = "La redacción de historia aún no está configurada.";
 "workflow.preview.signInReview" = "Inicia sesión antes de revisar la historia.";
 "workflow.preview.signInAgainReview" = "Vuelve a iniciar sesión antes de revisar la historia.";

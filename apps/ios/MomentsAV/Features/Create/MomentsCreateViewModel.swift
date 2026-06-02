@@ -11,11 +11,11 @@ final class MomentsCreateViewModel: ObservableObject {
     @Published var selectedCreationStyle = MomentCreationStyle.launchStyles[0]
     @Published var selectedMusicPreset = MomentCreationStyle.launchStyles[0].defaultMusic
     @Published var form = MomentSetupForm(template: MomentTemplate.launchTemplates[0])
-    @Published private(set) var isCreatingDraft = false
+    @Published private(set) var isCreatingMoment = false
     @Published private(set) var isContinuingMoment = false
     @Published var isLocalMomentStarted = false
     @Published private(set) var workflowActiveMomentId: String?
-    @Published private(set) var draftErrorMessage: String?
+    @Published private(set) var setupErrorMessage: String?
     @Published private(set) var selectedMedia: [MomentsSelectedMedia] = []
     @Published private(set) var mediaStatusMessage: String?
     @Published private(set) var isImportingMedia = false
@@ -23,7 +23,7 @@ final class MomentsCreateViewModel: ObservableObject {
     @Published private(set) var autoStyleSuggestion: MomentsMediaAutoStyleSuggestion?
     @Published private(set) var canUndoAutoStyleSuggestion = false
     @Published private(set) var savedScenes: [MomentStoryScene] = []
-    @Published private(set) var generatedScenes: [MomentsStoryDraftScene] = []
+    @Published private(set) var generatedScenes: [MomentsStoryPlanScene] = []
     @Published private(set) var storyStatusMessage: String?
     @Published private(set) var isDraftingStory = false
     @Published var isBuyingReviewBundle = false
@@ -48,7 +48,7 @@ final class MomentsCreateViewModel: ObservableObject {
 
     private(set) var momentCreationWorkflow: MomentCreationWorkflow?
     private(set) var mediaUploadWorkflow: MediaUploadWorkflow?
-    private(set) var storyDraftWorkflow: StoryDraftWorkflow?
+    private(set) var storyPlanWorkflow: StoryPlanWorkflow?
     private(set) var previewGenerationWorkflow: PreviewGenerationWorkflow?
     private(set) var finalRenderWorkflow: FinalRenderWorkflow?
     let operationRunner = MomentsCreateOperationRunner()
@@ -95,7 +95,7 @@ final class MomentsCreateViewModel: ObservableObject {
 
     var workflowErrorAlertMessage: String? {
         [
-            draftErrorMessage,
+            setupErrorMessage,
             mediaStatusMessage,
             storyStatusMessage,
             previewStatusMessage,
@@ -109,7 +109,7 @@ final class MomentsCreateViewModel: ObservableObject {
         accountStateProvider: any MomentsAccountStateProviding,
         momentCreationWorkflow: MomentCreationWorkflow,
         mediaUploadWorkflow: MediaUploadWorkflow,
-        storyDraftWorkflow: StoryDraftWorkflow,
+        storyPlanWorkflow: StoryPlanWorkflow,
         previewGenerationWorkflow: PreviewGenerationWorkflow,
         finalRenderWorkflow: FinalRenderWorkflow
     ) {
@@ -117,7 +117,7 @@ final class MomentsCreateViewModel: ObservableObject {
         reviewBundlePurchaser = accountStateProvider as? any MomentsReviewBundlePurchasing
         self.momentCreationWorkflow = momentCreationWorkflow
         self.mediaUploadWorkflow = mediaUploadWorkflow
-        self.storyDraftWorkflow = storyDraftWorkflow
+        self.storyPlanWorkflow = storyPlanWorkflow
         self.previewGenerationWorkflow = previewGenerationWorkflow
         self.finalRenderWorkflow = finalRenderWorkflow
         templates = momentCreationWorkflow.launchTemplates
@@ -134,7 +134,7 @@ final class MomentsCreateViewModel: ObservableObject {
             accountStateProvider: accountStateProvider,
             momentCreationWorkflow: momentCreationWorkflow,
             mediaUploadWorkflow: mediaUploadWorkflow,
-            storyDraftWorkflow: storyDraftWorkflow,
+            storyPlanWorkflow: storyPlanWorkflow,
             previewGenerationWorkflow: previewGenerationWorkflow,
             finalRenderWorkflow: finalRenderWorkflow
         )
@@ -247,14 +247,14 @@ final class MomentsCreateViewModel: ObservableObject {
         balance = MomentsCreateUITestFixtures.balance
         isContinuingMoment = true
         workflowActiveMomentId = workspace.moment.id
-        draftErrorMessage = nil
+        setupErrorMessage = nil
         selectedMedia = MomentsCreateUITestFixtures.selectedMedia
         mediaStatusMessage = L10n.string("create.media.fixture.synced")
         savedScenes = workspace.storyScenes
         generatedScenes = []
         storyStatusMessage = L10n.string("create.story.status.readyToReview")
         lastPreparedStoryInputSignature = workspace.moment.storyInputSignature
-            ?? currentStoryInputSignature(momentId: workspace.moment.id)
+            ?? currentStoryPlanInputSignature(momentId: workspace.moment.id)
         activeWorkspace = workspace
         latestPreview = workspace.latestArtifact(kind: "preview")
         latestPreviewJob = workspace.latestRenderJob(kind: "preview")
@@ -321,7 +321,7 @@ final class MomentsCreateViewModel: ObservableObject {
         continuationFocusHint = nil
         momentCreationWorkflow?.resetDraft(force: force)
         mediaUploadWorkflow?.reset(force: force)
-        storyDraftWorkflow?.reset(force: force)
+        storyPlanWorkflow?.reset(force: force)
         previewGenerationWorkflow?.reset(force: force)
         finalRenderWorkflow?.reset(force: force)
 
@@ -353,26 +353,26 @@ final class MomentsCreateViewModel: ObservableObject {
         form.tempo = style.tempo
     }
 
-    func currentStoryInputSignature(momentId: String) -> String {
-        MomentsStoryDraftInputSignature.make(
+    func currentStoryPlanInputSignature(momentId: String) -> String {
+        MomentsStoryPlanInputSignature.make(
             momentId: momentId,
             form: form,
-            selectedMedia: currentStorySignatureMedia()
+            selectedMedia: currentStoryPlanSignatureMedia()
         )
     }
 
-    func currentStoryInputSignature(
+    func currentStoryPlanInputSignature(
         momentId: String,
-        persistedMedia: [MomentsStoryDraftMedia]?
+        persistedMedia: [MomentsStoryPlanMedia]?
     ) -> String {
-        MomentsStoryDraftInputSignature.make(
+        MomentsStoryPlanInputSignature.make(
             momentId: momentId,
             form: form,
-            selectedMedia: persistedMedia ?? currentStorySignatureMedia()
+            selectedMedia: persistedMedia ?? currentStoryPlanSignatureMedia()
         )
     }
 
-    private func currentStorySignatureMedia() -> [MomentsStoryDraftMedia] {
+    private func currentStoryPlanSignatureMedia() -> [MomentsStoryPlanMedia] {
         let localMedia = effectiveSelectedMedia
             .filter(\.selected)
             .sorted { $0.sortOrder < $1.sortOrder }
@@ -385,7 +385,7 @@ final class MomentsCreateViewModel: ObservableObject {
             return localMedia
                 .map {
                     let syncedMedia = syncedMediaBySourceIdentifier[$0.sourceLocalIdentifier]
-                    return MomentsStoryDraftMedia(
+                    return MomentsStoryPlanMedia(
                         mediaAssetId: syncedMedia?.id ?? $0.id.uuidString,
                         mediaKind: syncedMedia?.kind ?? $0.kind,
                         sortOrder: $0.sortOrder,
@@ -399,7 +399,7 @@ final class MomentsCreateViewModel: ObservableObject {
             .filter(\.selected)
             .sorted { $0.sortOrder < $1.sortOrder }
             .map {
-                MomentsStoryDraftMedia(
+                MomentsStoryPlanMedia(
                     mediaAssetId: $0.id,
                     mediaKind: $0.kind,
                     sortOrder: Int($0.sortOrder),
@@ -425,9 +425,9 @@ extension MomentsCreateViewModel {
     func applyMomentCreationState(_ state: MomentsCreateMomentCreationState) {
         guard !usesFullUITestFixture else { return }
         let previousActiveMomentId = workflowActiveMomentId
-        isCreatingDraft = state.isCreatingDraft
+        isCreatingMoment = state.isCreatingMoment
         workflowActiveMomentId = state.activeMomentId
-        draftErrorMessage = state.draftErrorMessage
+        setupErrorMessage = state.setupErrorMessage
 
         if previousActiveMomentId == nil, state.activeMomentId != nil {
             pendingFocus = .media
@@ -444,7 +444,7 @@ extension MomentsCreateViewModel {
         updateAutoStyleSuggestion(for: state.selectedMedia)
     }
 
-    func applyStoryDraftState(_ state: MomentsCreateStoryDraftState) {
+    func applyStoryPlanState(_ state: MomentsCreateStoryPlanState) {
         guard !usesFullUITestFixture else { return }
         savedScenes = state.savedScenes
         generatedScenes = state.generatedScenes
@@ -455,7 +455,7 @@ extension MomentsCreateViewModel {
             if let activeMomentId {
                 lastPreparedStoryInputSignature = effectiveActiveWorkspace?.moment.storyInputSignature
                     ?? lastPreparedStoryInputSignature
-                    ?? currentStoryInputSignature(momentId: activeMomentId)
+                    ?? currentStoryPlanInputSignature(momentId: activeMomentId)
             }
             storyStatusMessage = nil
         } else {
@@ -471,8 +471,8 @@ extension MomentsCreateViewModel {
         previewStatusMessage = message
     }
 
-    func updateDraftErrorMessage(_ message: String?) {
-        draftErrorMessage = message
+    func updateSetupErrorMessage(_ message: String?) {
+        setupErrorMessage = message
     }
 
     func updateFinalRenderStatusMessage(_ message: String?) {

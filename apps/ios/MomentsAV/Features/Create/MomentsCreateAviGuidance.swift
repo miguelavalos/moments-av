@@ -24,9 +24,9 @@ enum MomentsCreateAviGuidanceResolver {
         selectedStyle: MomentCreationStyle,
         step: MomentsCreateNewMomentStep,
         isDraftLocked: Bool,
-        draftErrorMessage: String?
+        setupErrorMessage: String?
     ) -> MomentsCreateAviGuidance {
-        if draftErrorMessage != nil {
+        if setupErrorMessage != nil {
             return MomentsCreateAviGuidance(
                 emotion: .warning,
                 message: L10n.string("create.guidance.retry"),

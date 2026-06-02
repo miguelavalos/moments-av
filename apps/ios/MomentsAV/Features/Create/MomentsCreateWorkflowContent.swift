@@ -40,7 +40,7 @@ struct MomentsCreateWorkflowContent: View {
                     discardDraft: viewModel.discardDraft,
                     startSignInFlow: startSignInFlow,
                     openCredits: openCredits,
-                    generateStoryDraft: viewModel.generateStoryDraft,
+                    generateStoryPlan: viewModel.generateStoryPlan,
                     buyReviewBundle: viewModel.buyStoryReviewBundle,
                     generatePreview: viewModel.preparePreview,
                     refreshPreviewStatus: viewModel.refreshPreviewStatus,
@@ -106,7 +106,7 @@ private struct MomentsCreateMediaFirstWorkspace: View {
     let discardDraft: () -> Void
     let startSignInFlow: () -> Void
     let openCredits: () -> Void
-    let generateStoryDraft: () -> Void
+    let generateStoryPlan: () -> Void
     let buyReviewBundle: () -> Void
     let generatePreview: () -> Void
     let refreshPreviewStatus: () -> Void
@@ -240,7 +240,7 @@ private struct MomentsCreateMediaFirstWorkspace: View {
             return
         }
         opensStoryReviewAfterDraft = true
-        generateStoryDraft()
+        generateStoryPlan()
     }
 
     private var creditCostTitle: String {
@@ -1545,7 +1545,7 @@ private struct MomentsCreatePrimaryActionBar: View {
             return canRefreshFinalRender
         }
         return presentation.canGenerateFinalRender
-            || presentation.canDraftStory
+            || presentation.canPlanStory
             || presentation.storySummary.hasScenes
             || needsSignInForStory
     }
@@ -1663,7 +1663,7 @@ private struct MomentsCreatePrimaryActionBar: View {
         if needsSignInForStory {
             return presentation.storyAvailabilityMessage
         }
-        if presentation.canDraftStory {
+        if presentation.canPlanStory {
             return L10n.string("create.primary.storyReady.detail")
         }
         return nil
@@ -1752,7 +1752,7 @@ private struct MomentsCreatePrimaryActionBar: View {
             }
         } else if presentation.previewSummary.latestPreview != nil {
             reviewStoryFirst()
-        } else if presentation.canGenerateFinalRender || presentation.canDraftStory || presentation.storySummary.hasScenes {
+        } else if presentation.canGenerateFinalRender || presentation.canPlanStory || presentation.storySummary.hasScenes {
             reviewStoryFirst()
         } else if presentation.previewSummary.latestPreviewJob != nil {
             refreshPreviewStatus()
@@ -2413,7 +2413,7 @@ private struct MomentsCreateLookChooserPage: View {
     let selectLook: (MomentLook) -> Void
     let dismiss: () -> Void
 
-    @State private var draftLook: MomentLook
+    @State private var setupLook: MomentLook
 
     init(
         selectedLook: MomentLook,
@@ -2423,7 +2423,7 @@ private struct MomentsCreateLookChooserPage: View {
         self.selectedLook = selectedLook
         self.selectLook = selectLook
         self.dismiss = dismiss
-        _draftLook = State(initialValue: selectedLook)
+        _setupLook = State(initialValue: selectedLook)
     }
 
     var body: some View {
@@ -2467,7 +2467,7 @@ private struct MomentsCreateLookChooserPage: View {
                     MomentsCreateTwoColumnGrid(items: MomentLook.selectorOrder) { look in
                             MomentsCreateLookImageTile(
                                 look: look,
-                                isSelected: draftLook == look,
+                                isSelected: setupLook == look,
                                 selectLook: { applySelection(look) }
                             )
                     }
@@ -2484,7 +2484,7 @@ private struct MomentsCreateLookChooserPage: View {
     }
 
     private func applySelection(_ look: MomentLook) {
-        draftLook = look
+        setupLook = look
         selectLook(look)
         dismiss()
     }
@@ -2786,7 +2786,7 @@ private struct MomentsCreateThemeChooserPage: View {
     let selectStyle: (MomentCreationStyle) -> Void
     let dismiss: () -> Void
 
-    @State private var draftStyleID: MomentCreationStyleID
+    @State private var setupStyleID: MomentCreationStyleID
 
     init(
         styles: [MomentCreationStyle],
@@ -2798,7 +2798,7 @@ private struct MomentsCreateThemeChooserPage: View {
         self.selectedStyle = selectedStyle
         self.selectStyle = selectStyle
         self.dismiss = dismiss
-        _draftStyleID = State(initialValue: selectedStyle.id)
+        _setupStyleID = State(initialValue: selectedStyle.id)
     }
 
     var body: some View {
@@ -2841,7 +2841,7 @@ private struct MomentsCreateThemeChooserPage: View {
                     MomentsCreateTwoColumnGrid(items: styles) { style in
                             MomentsCreateThemeImageTile(
                                 style: style,
-                                isSelected: draftStyleID == style.id,
+                                isSelected: setupStyleID == style.id,
                                 selectStyle: { applySelection(style) }
                             )
                     }
@@ -2858,7 +2858,7 @@ private struct MomentsCreateThemeChooserPage: View {
     }
 
     private func applySelection(_ style: MomentCreationStyle) {
-        draftStyleID = style.id
+        setupStyleID = style.id
         selectStyle(style)
         dismiss()
     }
@@ -3020,7 +3020,7 @@ private struct MomentsCreateWorkflowCards: View {
     let restoreLocalMediaForEditing: () -> Void
     let autoPickStrongMoments: () -> Void
     let openPickerRequest: Int
-    let generateStoryDraft: () -> Void
+    let generateStoryPlan: () -> Void
     let buyReviewBundle: () -> Void = {}
     let openCredits: () -> Void = {}
     let generatePreview: () -> Void
@@ -3063,11 +3063,11 @@ private struct MomentsCreateWorkflowCards: View {
                     presentation: MomentsCreateStoryPresentation(
                         summary: presentation.storySummary,
                         balance: presentation.balance,
-                        canDraftStory: presentation.canDraftStory,
+                        canPlanStory: presentation.canPlanStory,
                         isBuyingReviewBundle: presentation.isBuyingReviewBundle,
                         availabilityMessage: presentation.storyAvailabilityMessage
                     ),
-                    generateStoryDraft: generateStoryDraft,
+                    generateStoryPlan: generateStoryPlan,
                     buyReviewBundle: buyReviewBundle,
                     openCredits: openCredits
                 )

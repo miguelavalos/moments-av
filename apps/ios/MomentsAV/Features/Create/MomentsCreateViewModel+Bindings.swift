@@ -6,14 +6,14 @@ extension MomentsCreateViewModel {
         accountStateProvider: any MomentsAccountStateProviding,
         momentCreationWorkflow: MomentCreationWorkflow,
         mediaUploadWorkflow: MediaUploadWorkflow,
-        storyDraftWorkflow: StoryDraftWorkflow,
+        storyPlanWorkflow: StoryPlanWorkflow,
         previewGenerationWorkflow: PreviewGenerationWorkflow,
         finalRenderWorkflow: FinalRenderWorkflow
     ) {
         bindAccount(accountStateProvider)
         bindMomentCreation(momentCreationWorkflow)
         bindMediaUpload(mediaUploadWorkflow)
-        bindStoryDraft(storyDraftWorkflow)
+        bindStoryPlan(storyPlanWorkflow)
         bindPreviewGeneration(previewGenerationWorkflow)
         bindFinalRender(finalRenderWorkflow)
     }
@@ -34,17 +34,17 @@ extension MomentsCreateViewModel {
 
     private func bindMomentCreation(_ workflow: MomentCreationWorkflow) {
         Publishers.CombineLatest3(
-            workflow.$isCreatingDraft,
+            workflow.$isCreatingMoment,
             workflow.$activeMomentId,
             workflow.$errorMessage
         )
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] isCreatingDraft, activeMomentId, draftErrorMessage in
+            .sink { [weak self] isCreatingMoment, activeMomentId, setupErrorMessage in
                 self?.applyMomentCreationState(
                     MomentsCreateMomentCreationState(
-                        isCreatingDraft: isCreatingDraft,
+                        isCreatingMoment: isCreatingMoment,
                         activeMomentId: activeMomentId,
-                        draftErrorMessage: draftErrorMessage
+                        setupErrorMessage: setupErrorMessage
                     )
                 )
             }
@@ -72,17 +72,17 @@ extension MomentsCreateViewModel {
             .store(in: &cancellables)
     }
 
-    private func bindStoryDraft(_ workflow: StoryDraftWorkflow) {
+    private func bindStoryPlan(_ workflow: StoryPlanWorkflow) {
         Publishers.CombineLatest4(
             workflow.$activeWorkspace.map { $0?.storyScenes ?? [] },
-            workflow.$generatedDraft.map { $0?.scenes ?? [] },
+            workflow.$generatedPlan.map { $0?.scenes ?? [] },
             workflow.$statusMessage,
             workflow.$isDrafting
         )
             .receive(on: DispatchQueue.main)
             .sink { [weak self] savedScenes, generatedScenes, statusMessage, isDrafting in
-                self?.applyStoryDraftState(
-                    MomentsCreateStoryDraftState(
+                self?.applyStoryPlanState(
+                    MomentsCreateStoryPlanState(
                         savedScenes: savedScenes,
                         generatedScenes: generatedScenes,
                         statusMessage: statusMessage,

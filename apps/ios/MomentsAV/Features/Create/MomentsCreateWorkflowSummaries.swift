@@ -90,7 +90,7 @@ struct MomentsMediaImportProgress: Equatable {
 
 struct MomentsCreateStorySummary: Equatable {
     var savedScenes: [MomentStoryScene] = []
-    var generatedScenes: [MomentsStoryDraftScene] = []
+    var generatedScenes: [MomentsStoryPlanScene] = []
     var isDrafting = false
     var statusMessage: String?
 

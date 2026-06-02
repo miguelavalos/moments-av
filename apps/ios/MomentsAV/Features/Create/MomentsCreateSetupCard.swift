@@ -85,7 +85,7 @@ struct MomentsCreateSetupCard: View {
             selectedStyle: selectedStyle,
             step: newMomentStep,
             isDraftLocked: presentation.isDraftLocked,
-            draftErrorMessage: presentation.draftErrorMessage
+            setupErrorMessage: presentation.setupErrorMessage
         )
     }
 
@@ -137,8 +137,8 @@ struct MomentsCreateSetupCard: View {
                 .disabled(!presentation.canStartAnotherProject)
             }
 
-            if let draftErrorMessage = presentation.draftErrorMessage {
-                Text(draftErrorMessage)
+            if let setupErrorMessage = presentation.setupErrorMessage {
+                Text(setupErrorMessage)
                     .font(.caption)
                     .foregroundStyle(.red)
             }
@@ -147,8 +147,8 @@ struct MomentsCreateSetupCard: View {
 
     private var errorContent: some View {
         Group {
-            if let draftErrorMessage = presentation.draftErrorMessage {
-                Text(draftErrorMessage)
+            if let setupErrorMessage = presentation.setupErrorMessage {
+                Text(setupErrorMessage)
                     .font(.caption)
                     .foregroundStyle(.red)
             }

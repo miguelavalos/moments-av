@@ -9,7 +9,7 @@ enum MomentsCreateWorkflowCapabilityFactory {
         isImportingMedia: Bool,
         isMediaUploadConfigured: Bool,
         mediaRemainingSlots: Int,
-        storyDraftWorkflow: StoryDraftWorkflow?,
+        storyPlanWorkflow: StoryPlanWorkflow?,
         previewGenerationWorkflow: PreviewGenerationWorkflow?,
         finalRenderWorkflow: FinalRenderWorkflow?,
         template: MomentTemplate,
@@ -25,10 +25,10 @@ enum MomentsCreateWorkflowCapabilityFactory {
                 isMediaUploadConfigured: isMediaUploadConfigured,
                 mediaRemainingSlots: mediaRemainingSlots
             ),
-            canDraftStory: canDraftStory(
+            canPlanStory: canPlanStory(
                 isSignedIn: isSignedIn,
                 hasMomentWorkspace: hasMomentWorkspace,
-                storyDraftWorkflow: storyDraftWorkflow,
+                storyPlanWorkflow: storyPlanWorkflow,
                 template: template,
                 selectedMediaCount: selectedMediaCount
             ),
@@ -60,17 +60,17 @@ enum MomentsCreateWorkflowCapabilityFactory {
             && mediaRemainingSlots > 0
     }
 
-    private static func canDraftStory(
+    private static func canPlanStory(
         isSignedIn: Bool,
         hasMomentWorkspace: Bool,
-        storyDraftWorkflow: StoryDraftWorkflow?,
+        storyPlanWorkflow: StoryPlanWorkflow?,
         template: MomentTemplate,
         selectedMediaCount: Int
     ) -> Bool {
         guard isSignedIn else { return false }
-        guard let storyDraftWorkflow, hasMomentWorkspace else { return false }
-        return storyDraftWorkflow.isConfigured
-            && !storyDraftWorkflow.isDrafting
+        guard let storyPlanWorkflow, hasMomentWorkspace else { return false }
+        return storyPlanWorkflow.isConfigured
+            && !storyPlanWorkflow.isDrafting
             && MomentsMediaRules.availability(template: template, selectedCount: selectedMediaCount).canUseSelection
     }
 

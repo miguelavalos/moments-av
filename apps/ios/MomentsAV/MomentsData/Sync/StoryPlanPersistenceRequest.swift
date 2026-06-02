@@ -18,7 +18,7 @@ struct StoryReadyPersistenceRequest {
 }
 
 extension StoryScenePersistenceRequest {
-    static func scene(_ scene: MomentsStoryDraftScene) -> StoryScenePersistenceRequest {
+    static func scene(_ scene: MomentsStoryPlanScene) -> StoryScenePersistenceRequest {
         StoryScenePersistenceRequest(
             sceneIndex: Double(scene.sceneIndex),
             mediaAssetIds: scene.mediaAssetIds,
@@ -33,10 +33,10 @@ extension StoryScenePersistenceRequest {
 }
 
 extension StoryReadyPersistenceRequest {
-    static func draft(_ draft: MomentsStoryDraftResponse, storyInputSignature: String) -> StoryReadyPersistenceRequest {
+    static func plan(_ plan: MomentsStoryPlanResponse, storyInputSignature: String) -> StoryReadyPersistenceRequest {
         StoryReadyPersistenceRequest(
-            workflowRunId: draft.workflowRunId,
-            moderationStatus: draft.moderationStatus == "allowed" ? "approved" : "blocked",
+            workflowRunId: plan.workflowRunId,
+            moderationStatus: plan.moderationStatus == "allowed" ? "approved" : "blocked",
             storyInputSignature: storyInputSignature
         )
     }

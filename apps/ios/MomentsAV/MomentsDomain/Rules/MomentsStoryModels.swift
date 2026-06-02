@@ -1,7 +1,7 @@
 import CryptoKit
 import Foundation
 
-struct MomentsStoryDraftMedia: Encodable {
+struct MomentsStoryPlanMedia: Encodable {
     let mediaAssetId: String
     let mediaKind: String
     let sortOrder: Int
@@ -9,7 +9,7 @@ struct MomentsStoryDraftMedia: Encodable {
     let moderationStatus: String
 }
 
-struct MomentsStoryDraftRequest: Encodable {
+struct MomentsStoryPlanRequest: Encodable {
     let appId = "momentsav"
     let momentId: String
     let creationMode: String
@@ -21,16 +21,16 @@ struct MomentsStoryDraftRequest: Encodable {
     let occasion: String
     let details: String
     let narrationVoice = "avi_clear"
-    let media: [MomentsStoryDraftMedia]
+    let media: [MomentsStoryPlanMedia]
     let safetyAcknowledged = true
     let idempotencyKey: String
 }
 
-enum MomentsStoryDraftInputSignature {
+enum MomentsStoryPlanInputSignature {
     static func make(
         momentId: String,
         form: MomentSetupForm,
-        selectedMedia: [MomentsStoryDraftMedia]
+        selectedMedia: [MomentsStoryPlanMedia]
     ) -> String {
         let mediaSignature = selectedMedia
             .filter(\.selected)
@@ -61,7 +61,7 @@ enum MomentsStoryDraftInputSignature {
     }
 }
 
-struct MomentsStoryDraftScene: Decodable, Identifiable, Equatable {
+struct MomentsStoryPlanScene: Decodable, Identifiable, Equatable {
     var id: Int { sceneIndex }
     let sceneIndex: Int
     let mediaAssetIds: [String]
@@ -75,7 +75,7 @@ struct MomentsStoryDraftScene: Decodable, Identifiable, Equatable {
     let editable: Bool
 }
 
-struct MomentsStoryDraftResponse: Decodable, Equatable {
+struct MomentsStoryPlanResponse: Decodable, Equatable {
     let appId: String
     let momentId: String
     let workflowRunId: String
@@ -89,11 +89,11 @@ struct MomentsStoryDraftResponse: Decodable, Equatable {
     let helperCopy: String
     let reviewAllowanceConsumed: Int?
     let reviewAllowanceRemaining: Int?
-    let scenes: [MomentsStoryDraftScene]
+    let scenes: [MomentsStoryPlanScene]
     let generatedAt: String
 }
 
-enum MomentsStoryDraftRules {
+enum MomentsStoryPlanRules {
     enum BlockReason {
         case missingMedia
         case tooFewSelectedMedia(missingCount: Int)
@@ -101,12 +101,12 @@ enum MomentsStoryDraftRules {
     }
 
     struct Availability {
-        let canDraft: Bool
+        let canPlan: Bool
         let blockReason: BlockReason?
     }
 
-    static func canDraft(mediaAssets: [MomentMediaAsset], template: MomentTemplate) -> Bool {
-        availability(mediaAssets: mediaAssets, template: template).canDraft
+    static func canPlan(mediaAssets: [MomentMediaAsset], template: MomentTemplate) -> Bool {
+        availability(mediaAssets: mediaAssets, template: template).canPlan
     }
 
     static func availability(
@@ -114,22 +114,22 @@ enum MomentsStoryDraftRules {
         template: MomentTemplate
     ) -> Availability {
         guard let mediaAssets else {
-            return Availability(canDraft: false, blockReason: .missingMedia)
+            return Availability(canPlan: false, blockReason: .missingMedia)
         }
 
         let selectedMediaCount = mediaAssets.filter(\.selected).count
         let selectedCount = selectedMediaCount > 0 ? selectedMediaCount : mediaAssets.count
         switch MomentsMediaRules.availability(template: template, selectedCount: selectedCount).blockReason {
         case nil:
-            return Availability(canDraft: true, blockReason: nil)
+            return Availability(canPlan: true, blockReason: nil)
         case .tooFewSelected(let missingCount):
             return Availability(
-                canDraft: false,
+                canPlan: false,
                 blockReason: .tooFewSelectedMedia(missingCount: missingCount)
             )
         case .tooManySelected(let extraCount):
             return Availability(
-                canDraft: false,
+                canPlan: false,
                 blockReason: .tooManySelectedMedia(extraCount: extraCount)
             )
         }

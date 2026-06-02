@@ -3,17 +3,17 @@ import Foundation
 struct MomentsCreateSetupPresentation: Equatable {
     var templateSummary: MomentsCreateTemplateSummaryPresentation
     var isDraftLocked = false
-    var isCreatingDraft = false
+    var isCreatingMoment = false
     var canCreateDraft = false
     var availabilityMessage: String?
     var activeMomentId: String?
     var isContinuingMoment = false
     var canStartAnotherProject = false
-    var draftErrorMessage: String?
+    var setupErrorMessage: String?
     var workspaceSummary: MomentsCreateWorkspaceSummary
 
     var createMomentTitle: String {
-        isCreatingDraft ? L10n.string("create.moment.action.starting") : L10n.string("create.moment.action.useTheme")
+        isCreatingMoment ? L10n.string("create.moment.action.starting") : L10n.string("create.moment.action.useTheme")
     }
 
     var activeMomentLabel: String {
@@ -35,13 +35,13 @@ struct MomentsCreateSetupPresentation: Equatable {
         canAfford: Bool,
         spendPlanDescription: String,
         isDraftLocked: Bool,
-        isCreatingDraft: Bool,
+        isCreatingMoment: Bool,
         canCreateDraft: Bool,
         availabilityMessage: String?,
         activeMomentId: String?,
         isContinuingMoment: Bool,
         canStartAnotherProject: Bool,
-        draftErrorMessage: String?,
+        setupErrorMessage: String?,
         workspaceSummary: MomentsCreateWorkspaceSummary
     ) -> MomentsCreateSetupPresentation {
         MomentsCreateSetupPresentation(
@@ -51,13 +51,13 @@ struct MomentsCreateSetupPresentation: Equatable {
                 spendPlanDescription: spendPlanDescription
             ),
             isDraftLocked: isDraftLocked,
-            isCreatingDraft: isCreatingDraft,
+            isCreatingMoment: isCreatingMoment,
             canCreateDraft: canCreateDraft,
             availabilityMessage: availabilityMessage,
             activeMomentId: activeMomentId,
             isContinuingMoment: isContinuingMoment,
             canStartAnotherProject: canStartAnotherProject,
-            draftErrorMessage: draftErrorMessage,
+            setupErrorMessage: setupErrorMessage,
             workspaceSummary: workspaceSummary
         )
     }

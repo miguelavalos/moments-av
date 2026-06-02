@@ -775,7 +775,7 @@
 "workflow.moment.signInStart" = "Melde dich an, bevor du einen Moment startest.";
 "workflow.moment.signInContinue" = "Melde dich an, bevor du ein Moment fortsetzt.";
 "workflow.moment.signInDiscard" = "Melde dich an, bevor du ein Moment verwirfst.";
-"workflow.moment.draftNotReady" = "Der Entwurf ist noch nicht bereit zum Erstellen.";
+"workflow.moment.setupNotReady" = "Der Entwurf ist noch nicht bereit zum Erstellen.";
 "workflow.media.templateFull" = "Avi hat genug Medien für dieses Video.";
 "workflow.media.noNewMedia" = "Keine neuen Medien hinzugefügt.";
 "workflow.media.noRecentPhotos" = "Keine aktuellen Fotos gefunden.";
@@ -787,8 +787,8 @@
 "workflow.media.localReady" = "Lokale Medien sind bereit zur Bearbeitung.";
 "workflow.media.savedReady" = "Gespeicherte Medien sind bereit für Review und Videoerstellung.";
 "workflow.media.savedReadyThumbnailsPending" = "Gespeicherte Medien sind bereit. Einige lokale Miniaturen werden möglicherweise im Hintergrund aktualisiert.";
-"workflow.story.signInDraft" = "Melde dich an, bevor du die Story entwirfst.";
-"workflow.story.signInAgainDraft" = "Melde dich erneut an, bevor du die Story entwirfst.";
+"workflow.story.signInPlan" = "Melde dich an, bevor du die Story entwirfst.";
+"workflow.story.signInAgainPlan" = "Melde dich erneut an, bevor du die Story entwirfst.";
 "workflow.story.notConfigured" = "Story-Entwurf ist noch nicht konfiguriert.";
 "workflow.preview.signInReview" = "Melde dich an, bevor du die Story prüfst.";
 "workflow.preview.signInAgainReview" = "Melde dich erneut an, bevor du die Story prüfst.";

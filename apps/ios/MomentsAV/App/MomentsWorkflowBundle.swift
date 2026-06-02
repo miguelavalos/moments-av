@@ -7,7 +7,7 @@ struct MomentsWorkflowBundle {
     let inProgressMoments: InProgressMomentsWorkflow
     let momentCreation: MomentCreationWorkflow
     let mediaUpload: MediaUploadWorkflow
-    let storyDraft: StoryDraftWorkflow
+    let storyPlan: StoryPlanWorkflow
     let previewGeneration: PreviewGenerationWorkflow
     let finalRender: FinalRenderWorkflow
 
@@ -42,10 +42,10 @@ struct MomentsWorkflowBundle {
             workspaceObserver: workspaceObserver,
             uploadClient: clients.upload
         )
-        storyDraft = StoryDraftWorkflow(
+        storyPlan = StoryPlanWorkflow(
             currentUserProvider: accountController,
             authTokenProvider: accountController,
-            storyDraftSaver: momentsRepository,
+            storyPlanSaver: momentsRepository,
             workspaceObserver: workspaceObserver,
             storyClient: clients.story
         )

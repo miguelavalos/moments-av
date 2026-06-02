@@ -4,7 +4,7 @@ import UIKit
 
 struct MediaUploadPersistenceResult {
     let savedCount: Int
-    let savedMedia: [MomentsStoryDraftMedia]
+    let savedMedia: [MomentsStoryPlanMedia]
     let storageBlocked: Bool
 
     var statusMessage: String {
@@ -73,7 +73,7 @@ enum MediaUploadPersistence {
 
         let savedMedia = zip(uploadedMedia, savedMediaAssetIds).map { uploaded, savedMediaAssetId in
             MomentsLocalMediaThumbnailCache.store(uploaded.media, mediaAssetId: savedMediaAssetId)
-            return MomentsStoryDraftMedia(
+            return MomentsStoryPlanMedia(
                 mediaAssetId: savedMediaAssetId,
                 mediaKind: uploaded.media.kind,
                 sortOrder: uploaded.media.sortOrder,

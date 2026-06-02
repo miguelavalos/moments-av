@@ -101,7 +101,7 @@ final class MomentsInProgressWorkspacePresentationTests: XCTestCase {
             workspace: makeWorkspace(moment: makeMoment(status: "draft_created"))
         )
 
-        XCTAssertEqual(presentation.tiles.map(\.value), ["Draft Created", "Not ready", "Not ready", "Not started"])
+        XCTAssertEqual(presentation.tiles.map(\.value), ["Moment Created", "Not ready", "Not ready", "Not started"])
     }
 
     func testMediaSectionPresentationFormatsTitleEmptyStateAndRows() {
@@ -112,7 +112,7 @@ final class MomentsInProgressWorkspacePresentationTests: XCTestCase {
 
         XCTAssertEqual(presentation.title, "Media")
         XCTAssertEqual(presentation.emptySystemImage, "photo.badge.plus")
-        XCTAssertEqual(presentation.emptyMessage, "No media is attached to this Moment yet. Add photos or clips from Create to unlock story drafting.")
+        XCTAssertEqual(presentation.emptyMessage, "No media is attached to this Moment yet. Add photos or clips from Create to unlock story planing.")
         XCTAssertEqual(presentation.mediaAssets.map(\.id), ["first", "second"])
     }
 

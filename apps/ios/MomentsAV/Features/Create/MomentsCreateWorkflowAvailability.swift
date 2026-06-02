@@ -2,7 +2,7 @@ import Foundation
 
 struct MomentsCreateWorkflowAvailability: Equatable {
     var canAddMedia = false
-    var canDraftStory = false
+    var canPlanStory = false
     var canGeneratePreview = false
     var canRefreshPreviewStatus = false
     var canGenerateFinalRender = false
@@ -16,7 +16,7 @@ struct MomentsCreateWorkflowAvailability: Equatable {
 
     static func make(
         canAddMedia: Bool,
-        canDraftStory: Bool,
+        canPlanStory: Bool,
         canGeneratePreview: Bool,
         canRefreshPreviewStatus: Bool,
         canGenerateFinalRender: Bool,
@@ -30,7 +30,7 @@ struct MomentsCreateWorkflowAvailability: Equatable {
     ) -> MomentsCreateWorkflowAvailability {
         MomentsCreateWorkflowAvailability(
             canAddMedia: canAddMedia,
-            canDraftStory: canDraftStory,
+            canPlanStory: canPlanStory,
             canGeneratePreview: canGeneratePreview,
             canRefreshPreviewStatus: canRefreshPreviewStatus,
             canGenerateFinalRender: canGenerateFinalRender,

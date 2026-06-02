@@ -28,7 +28,7 @@
 "profile.local.clear.alert.message" = "This removes current local Moments, selected-media references, and cached thumbnails from this device. Photos and clips stay in Photos. Finished videos in Gallery are kept.";
 "profile.local.clear.alert.title" = "Delete unfinished Moments?";
 "profile.local.clear.confirm" = "Delete unfinished Moments";
-"profile.local.clear.detail" = "Remove local draft data and media references from this device.";
+"profile.local.clear.detail" = "Remove local in-progress data and media references from this device.";
 "profile.local.clear.loading" = "Deleting local data";
 "profile.local.clear.title" = "Delete unfinished Moments";
 "profile.local.keep.account.detail" = "This does not delete your account, credits, purchases, or subscription.";
@@ -775,7 +775,7 @@
 "workflow.moment.signInStart" = "Sign in before starting a Moment.";
 "workflow.moment.signInContinue" = "Sign in before continuing a moment.";
 "workflow.moment.signInDiscard" = "Sign in before discarding a moment.";
-"workflow.moment.draftNotReady" = "Draft is not ready to create.";
+"workflow.moment.setupNotReady" = "Setup is not ready to create.";
 "workflow.media.templateFull" = "Avi has enough media for this video.";
 "workflow.media.noNewMedia" = "No new media added.";
 "workflow.media.noRecentPhotos" = "No recent photos found.";
@@ -787,12 +787,12 @@
 "workflow.media.localReady" = "Local media ready for editing.";
 "workflow.media.savedReady" = "Saved media is ready for review and video creation.";
 "workflow.media.savedReadyThumbnailsPending" = "Saved media is ready. Some local thumbnails may refresh in the background.";
-"workflow.story.signInDraft" = "Sign in before drafting the story.";
-"workflow.story.signInAgainDraft" = "Sign in again before drafting the story.";
-"workflow.story.notConfigured" = "Story drafting is not configured yet.";
+"workflow.story.signInPlan" = "Sign in before planning the story.";
+"workflow.story.signInAgainPlan" = "Sign in again before planning the story.";
+"workflow.story.notConfigured" = "Story planing is not configured yet.";
 "workflow.preview.signInReview" = "Sign in before reviewing the story.";
 "workflow.preview.signInAgainReview" = "Sign in again before reviewing the story.";
-"workflow.preview.missingMoment" = "Create the draft and story before reviewing it.";
+"workflow.preview.missingMoment" = "Create the moment setup and story before reviewing it.";
 "workflow.preview.notConfigured" = "Story Review is not configured for this build.";
 "workflow.preview.preparing" = "Avi is preparing the story review.";
 "workflow.preview.addCredits" = "Add credits before reviewing the story.";

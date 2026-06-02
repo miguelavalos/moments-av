@@ -9,7 +9,7 @@ final class MomentsCreateAviGuidanceTests: XCTestCase {
             selectedStyle: MomentCreationStyle.launchStyles[0],
             step: .status,
             isDraftLocked: false,
-            draftErrorMessage: nil
+            setupErrorMessage: nil
         )
 
         XCTAssertEqual(guidance.emotion, .curious)
@@ -24,7 +24,7 @@ final class MomentsCreateAviGuidanceTests: XCTestCase {
             selectedStyle: MomentCreationStyle.launchStyles[0],
             step: .status,
             isDraftLocked: false,
-            draftErrorMessage: nil
+            setupErrorMessage: nil
         )
 
         XCTAssertEqual(guidance.emotion, .happy)
@@ -39,7 +39,7 @@ final class MomentsCreateAviGuidanceTests: XCTestCase {
             selectedStyle: MomentCreationStyle.launchStyles[0],
             step: .status,
             isDraftLocked: false,
-            draftErrorMessage: nil
+            setupErrorMessage: nil
         )
 
         XCTAssertEqual(guidance.emotion, .happy)
@@ -55,7 +55,7 @@ final class MomentsCreateAviGuidanceTests: XCTestCase {
             selectedStyle: style,
             step: .summary,
             isDraftLocked: false,
-            draftErrorMessage: nil
+            setupErrorMessage: nil
         )
 
         XCTAssertEqual(guidance.emotion, .focused)

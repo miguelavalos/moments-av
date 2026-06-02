@@ -39,7 +39,7 @@ final class MomentsHomePresentationTests: XCTestCase {
     }
 
     func testLatestInProgressProjectAddsContinuationAction() {
-        let moment = makeMoment(id: "latest-draft", status: "story_ready", updatedAt: 20)
+        let moment = makeMoment(id: "latest-plan", status: "story_ready", updatedAt: 20)
         let presentation = MomentsHomePresentation.make(
             isSignedIn: true,
             displayName: nil,
@@ -53,7 +53,7 @@ final class MomentsHomePresentationTests: XCTestCase {
         XCTAssertEqual(presentation.latestInProgressAction?.systemImage, "arrow.right.circle")
         XCTAssertTrue(presentation.latestInProgressAction?.isProminent == true)
         XCTAssertFalse(presentation.createAction.isProminent)
-        XCTAssertEqual(presentation.latestInProgressContinuationRequest?.moment.id, "latest-draft")
+        XCTAssertEqual(presentation.latestInProgressContinuationRequest?.moment.id, "latest-plan")
         XCTAssertEqual(presentation.latestInProgressContinuationRequest?.focus, .review)
     }
 

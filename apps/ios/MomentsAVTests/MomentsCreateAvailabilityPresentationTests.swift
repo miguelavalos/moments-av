@@ -6,7 +6,7 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
     func testWorkflowAvailabilityBuilderCarriesCapabilitiesAndMessages() {
         let availability = MomentsCreateWorkflowAvailability.make(
             canAddMedia: true,
-            canDraftStory: false,
+            canPlanStory: false,
             canGeneratePreview: true,
             canRefreshPreviewStatus: false,
             canGenerateFinalRender: true,
@@ -20,7 +20,7 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
         )
 
         XCTAssertTrue(availability.canAddMedia)
-        XCTAssertFalse(availability.canDraftStory)
+        XCTAssertFalse(availability.canPlanStory)
         XCTAssertTrue(availability.canGeneratePreview)
         XCTAssertFalse(availability.canRefreshPreviewStatus)
         XCTAssertTrue(availability.canGenerateFinalRender)
@@ -41,7 +41,7 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
             isImportingMedia: false,
             isMediaUploadConfigured: true,
             mediaRemainingSlots: 2,
-            storyDraftWorkflow: nil,
+            storyPlanWorkflow: nil,
             previewGenerationWorkflow: nil,
             finalRenderWorkflow: nil,
             template: .birthdayMessage,
@@ -52,7 +52,7 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
         )
 
         XCTAssertTrue(capability.canAddMedia)
-        XCTAssertFalse(capability.canDraftStory)
+        XCTAssertFalse(capability.canPlanStory)
         XCTAssertFalse(capability.canGeneratePreview)
         XCTAssertTrue(capability.canRefreshPreviewStatus)
         XCTAssertFalse(capability.canGenerateFinalRender)
@@ -67,7 +67,7 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
             isImportingMedia: false,
             isMediaUploadConfigured: true,
             mediaRemainingSlots: 0,
-            storyDraftWorkflow: nil,
+            storyPlanWorkflow: nil,
             previewGenerationWorkflow: nil,
             finalRenderWorkflow: nil,
             template: .birthdayMessage,
@@ -83,7 +83,7 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
             isImportingMedia: false,
             isMediaUploadConfigured: true,
             mediaRemainingSlots: 2,
-            storyDraftWorkflow: nil,
+            storyPlanWorkflow: nil,
             previewGenerationWorkflow: nil,
             finalRenderWorkflow: nil,
             template: .birthdayMessage,
@@ -149,9 +149,9 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
             MomentsCreateAvailabilityMessageFactory.story(
                 isSignedIn: true,
                 hasMomentWorkspace: true,
-                isStoryDrafting: false,
-                isStoryDraftAvailable: true,
-                isStoryDraftConfigured: true,
+                isStoryPlaning: false,
+                isStoryPlanAvailable: true,
+                isStoryPlanConfigured: true,
                 mediaAssets: [],
                 selectedMediaCount: 0,
                 template: .birthdayMessage
@@ -162,9 +162,9 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
             MomentsCreateAvailabilityMessageFactory.story(
                 isSignedIn: true,
                 hasMomentWorkspace: true,
-                isStoryDrafting: true,
-                isStoryDraftAvailable: true,
-                isStoryDraftConfigured: false,
+                isStoryPlaning: true,
+                isStoryPlanAvailable: true,
+                isStoryPlanConfigured: false,
                 mediaAssets: [],
                 selectedMediaCount: 0,
                 template: .birthdayMessage

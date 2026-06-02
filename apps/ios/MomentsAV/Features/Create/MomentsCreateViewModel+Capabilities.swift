@@ -23,7 +23,7 @@ extension MomentsCreateViewModel {
     }
 
     var isBusy: Bool {
-        isCreatingDraft
+        isCreatingMoment
             || isImportingMedia
             || isDraftingStory
             || isGeneratingPreview
@@ -40,8 +40,8 @@ extension MomentsCreateViewModel {
         !isFinalRenderEditingLocked && workflowCapability.canAddMedia
     }
 
-    var canDraftStory: Bool {
-        !isFinalRenderEditingLocked && workflowCapability.canDraftStory
+    var canPlanStory: Bool {
+        !isFinalRenderEditingLocked && workflowCapability.canPlanStory
     }
 
     var canGeneratePreview: Bool {
@@ -72,7 +72,7 @@ extension MomentsCreateViewModel {
             isImportingMedia: isImportingMedia,
             isMediaUploadConfigured: mediaUploadWorkflow?.isConfigured ?? false,
             mediaRemainingSlots: mediaRemainingSlots,
-            storyDraftWorkflow: storyDraftWorkflow,
+            storyPlanWorkflow: storyPlanWorkflow,
             previewGenerationWorkflow: previewGenerationWorkflow,
             finalRenderWorkflow: finalRenderWorkflow,
             template: form.template,
@@ -101,7 +101,7 @@ extension MomentsCreateViewModel {
         guard let preparedSignature else {
             return true
         }
-        return currentStoryInputSignature(momentId: activeMomentId) == preparedSignature
+        return currentStoryPlanInputSignature(momentId: activeMomentId) == preparedSignature
     }
 
     func spendPlanDescription(for template: MomentTemplate) -> String {

@@ -773,7 +773,7 @@
 "workflow.moment.signInStart" = "Connecte-toi avant de démarrer un Moment.";
 "workflow.moment.signInContinue" = "Connecte-toi avant de continuer un Moment.";
 "workflow.moment.signInDiscard" = "Connecte-toi avant d’abandonner un Moment.";
-"workflow.moment.draftNotReady" = "Le brouillon n’est pas encore prêt à être créé.";
+"workflow.moment.setupNotReady" = "Le brouillon n’est pas encore prêt à être créé.";
 "workflow.media.templateFull" = "Avi a assez de médias pour cette vidéo.";
 "workflow.media.noNewMedia" = "Aucun nouveau média ajouté.";
 "workflow.media.noRecentPhotos" = "Aucune photo récente trouvée.";
@@ -785,8 +785,8 @@
 "workflow.media.localReady" = "Les médias locaux sont prêts pour l’édition.";
 "workflow.media.savedReady" = "Les médias enregistrés sont prêts pour la revue et la création vidéo.";
 "workflow.media.savedReadyThumbnailsPending" = "Les médias enregistrés sont prêts. Certaines miniatures locales peuvent se rafraîchir en arrière-plan.";
-"workflow.story.signInDraft" = "Connecte-toi avant de rédiger l’histoire.";
-"workflow.story.signInAgainDraft" = "Reconnecte-toi avant de rédiger l’histoire.";
+"workflow.story.signInPlan" = "Connecte-toi avant de rédiger l’histoire.";
+"workflow.story.signInAgainPlan" = "Reconnecte-toi avant de rédiger l’histoire.";
 "workflow.story.notConfigured" = "La rédaction de l’histoire n’est pas encore configurée.";
 "workflow.preview.signInReview" = "Connecte-toi avant de relire l’histoire.";
 "workflow.preview.signInAgainReview" = "Reconnecte-toi avant de relire l’histoire.";

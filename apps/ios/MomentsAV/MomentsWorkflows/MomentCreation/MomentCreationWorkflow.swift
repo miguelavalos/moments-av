@@ -2,7 +2,7 @@ import Foundation
 
 @MainActor
 final class MomentCreationWorkflow: ObservableObject {
-    @Published private(set) var isCreatingDraft = false
+    @Published private(set) var isCreatingMoment = false
     @Published private(set) var activeMomentId: String?
     @Published private(set) var errorMessage: String?
 
@@ -48,7 +48,7 @@ final class MomentCreationWorkflow: ObservableObject {
     }
 
     func createMoment(form: MomentSetupForm) async -> String? {
-        guard !isCreatingDraft else { return nil }
+        guard !isCreatingMoment else { return nil }
         guard let ownerUserId = currentUserProvider.currentUserId else {
             errorMessage = L10n.string("workflow.moment.signInStart")
             return nil
@@ -61,7 +61,7 @@ final class MomentCreationWorkflow: ObservableObject {
         }
 
         let generation = workflowGeneration.begin()
-        isCreatingDraft = true
+        isCreatingMoment = true
         errorMessage = nil
 
         do {
@@ -69,12 +69,12 @@ final class MomentCreationWorkflow: ObservableObject {
             guard workflowGeneration.isCurrent(generation) else { return nil }
             activeMomentId = momentId
             workspaceObserver.observeWorkspace(ownerUserId: ownerUserId, momentId: momentId)
-            isCreatingDraft = false
+            isCreatingMoment = false
             return momentId
         } catch {
             guard workflowGeneration.isCurrent(generation) else { return nil }
             errorMessage = error.localizedDescription
-            isCreatingDraft = false
+            isCreatingMoment = false
             return nil
         }
     }
@@ -86,23 +86,23 @@ final class MomentCreationWorkflow: ObservableObject {
         }
 
         workflowGeneration.advance()
-        isCreatingDraft = false
+        isCreatingMoment = false
         activeMomentId = moment.id
         errorMessage = nil
         workspaceObserver.observeWorkspace(ownerUserId: ownerUserId, momentId: moment.id)
     }
 
     func resetDraft(force: Bool = false) {
-        guard force || !isCreatingDraft else { return }
+        guard force || !isCreatingMoment else { return }
         workflowGeneration.advance()
-        isCreatingDraft = false
+        isCreatingMoment = false
         activeMomentId = nil
         errorMessage = nil
         workspaceObserver.clearWorkspace()
     }
 
     func discardActiveMoment(momentId momentIdOverride: String? = nil) async -> Bool {
-        guard !isCreatingDraft else { return false }
+        guard !isCreatingMoment else { return false }
         guard let ownerUserId = currentUserProvider.currentUserId else {
             errorMessage = L10n.string("workflow.moment.signInDiscard")
             return false
@@ -110,25 +110,25 @@ final class MomentCreationWorkflow: ObservableObject {
         guard let momentId = momentIdOverride ?? activeMomentId else { return true }
 
         let generation = workflowGeneration.begin()
-        isCreatingDraft = true
+        isCreatingMoment = true
         errorMessage = nil
 
         do {
             try await momentDeleter.deleteMoment(ownerUserId: ownerUserId, momentId: momentId)
             guard workflowGeneration.isCurrent(generation) else { return false }
-            isCreatingDraft = false
+            isCreatingMoment = false
             self.activeMomentId = nil
             workspaceObserver.clearWorkspace()
             return true
         } catch {
             guard workflowGeneration.isCurrent(generation) else { return false }
             errorMessage = error.localizedDescription
-            isCreatingDraft = false
+            isCreatingMoment = false
             return false
         }
     }
 
     private func createMomentBlockMessage(_ availability: MomentSetupRules.Availability) -> String {
-        MomentSetupRules.availabilityMessage(availability) ?? L10n.string("workflow.moment.draftNotReady")
+        MomentSetupRules.availabilityMessage(availability) ?? L10n.string("workflow.moment.setupNotReady")
     }
 }

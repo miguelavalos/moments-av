@@ -4,7 +4,7 @@ import SwiftUI
 
 struct MomentsCreateStoryCard: View {
     let presentation: MomentsCreateStoryPresentation
-    let generateStoryDraft: () -> Void
+    let generateStoryPlan: () -> Void
     let buyReviewBundle: () -> Void
     let openCredits: () -> Void
 
@@ -27,8 +27,8 @@ struct MomentsCreateStoryCard: View {
                 AVAppShellPrimaryButton(
                     presentation.draftButtonTitle,
                     systemImage: "text.bubble.fill",
-                    isDisabled: !presentation.canDraftStory || presentation.summary.isDrafting || presentation.isBuyingReviewBundle,
-                    action: generateStoryDraft
+                    isDisabled: !presentation.canPlanStory || presentation.summary.isDrafting || presentation.isBuyingReviewBundle,
+                    action: generateStoryPlan
                 )
 
                 if let availabilityMessage = presentation.availabilityMessage {

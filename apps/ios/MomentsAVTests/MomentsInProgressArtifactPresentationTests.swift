@@ -26,7 +26,7 @@ final class MomentsInProgressArtifactPresentationTests: XCTestCase {
 
         XCTAssertEqual(preview.title, "Story Review")
         XCTAssertEqual(preview.emptySystemImage, "text.bubble")
-        XCTAssertEqual(preview.emptyMessage, "Review the story after the story draft is ready.")
+        XCTAssertEqual(preview.emptyMessage, "Review the story after the story plan is ready.")
         XCTAssertEqual(preview.artifact?.storageKey, "momentsav/preview-2.mp4")
 
         XCTAssertEqual(finalExport.title, "Final export")

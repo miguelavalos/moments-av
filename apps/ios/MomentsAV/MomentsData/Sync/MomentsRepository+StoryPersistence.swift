@@ -1,16 +1,16 @@
 import Foundation
 
 extension MomentsRepository {
-    func saveStoryDraft(
+    func saveStoryPlan(
         ownerUserId: String,
         momentId: String,
-        draft: MomentsStoryDraftResponse,
+        plan: MomentsStoryPlanResponse,
         storyInputSignature: String
     ) async throws {
-        try await remoteClient.saveStoryDraft(
+        try await remoteClient.saveStoryPlan(
             ownerUserId: ownerUserId,
             momentId: momentId,
-            draft: draft,
+            plan: plan,
             storyInputSignature: storyInputSignature
         )
     }

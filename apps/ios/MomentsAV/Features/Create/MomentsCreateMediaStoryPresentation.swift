@@ -40,7 +40,7 @@ struct MomentsCreateMediaPresentation: Equatable {
 struct MomentsCreateStoryPresentation: Equatable {
     var summary: MomentsCreateStorySummary
     var balance: MomentsCreditBalance
-    var canDraftStory = false
+    var canPlanStory = false
     var isBuyingReviewBundle = false
     var availabilityMessage: String?
 
@@ -49,7 +49,7 @@ struct MomentsCreateStoryPresentation: Equatable {
     }
 
     var emptyMessage: String {
-        canDraftStory
+        canPlanStory
             ? L10n.string("create.story.empty.ready")
             : L10n.string("create.story.empty.needsMedia")
     }

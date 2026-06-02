@@ -2,57 +2,57 @@ import Foundation
 import OSLog
 
 @MainActor
-final class StoryDraftWorkflow: WorkspaceObservingWorkflow {
-    @Published private(set) var generatedDraft: MomentsStoryDraftResponse?
+final class StoryPlanWorkflow: WorkspaceObservingWorkflow {
+    @Published private(set) var generatedPlan: MomentsStoryPlanResponse?
     @Published private(set) var isDrafting = false
     @Published private(set) var statusMessage: String?
 
     private let currentUserProvider: any MomentsCurrentUserProviding
     private let authTokenProvider: any MomentsAuthTokenProviding
-    private let storyDraftSaver: any MomentsStoryDraftSaving
+    private let storyPlanSaver: any MomentsStoryPlanSaving
     private let storyClient: MomentsStoryClient
     private let logger = Logger(subsystem: "com.avalsys.momentsav", category: "story")
 
     init(
         currentUserProvider: any MomentsCurrentUserProviding,
         authTokenProvider: any MomentsAuthTokenProviding,
-        storyDraftSaver: any MomentsStoryDraftSaving,
+        storyPlanSaver: any MomentsStoryPlanSaving,
         workspaceObserver: any MomentsActiveWorkspaceObserving,
         storyClient: MomentsStoryClient
     ) {
         self.currentUserProvider = currentUserProvider
         self.authTokenProvider = authTokenProvider
-        self.storyDraftSaver = storyDraftSaver
+        self.storyPlanSaver = storyPlanSaver
         self.storyClient = storyClient
         super.init(workspaceObserver: workspaceObserver)
     }
 
     var isConfigured: Bool {
-        storyDraftSaver.isConfigured && storyClient.isConfigured
+        storyPlanSaver.isConfigured && storyClient.isConfigured
     }
 
-    func canDraft(template: MomentTemplate) -> Bool {
+    func canPlan(template: MomentTemplate) -> Bool {
         return currentUserProvider.currentUserId != nil
             && isConfigured
-            && MomentsStoryDraftRules.availability(
+            && MomentsStoryPlanRules.availability(
                 mediaAssets: activeWorkspace?.mediaAssets,
                 template: template
-            ).canDraft
+            ).canPlan
             && !isDrafting
     }
 
-    func generateDraft(
+    func generatePlan(
         momentId: String,
         form: MomentSetupForm,
         selectedMedia: [MomentsSelectedMedia],
-        persistedMedia: [MomentsStoryDraftMedia]? = nil
+        persistedMedia: [MomentsStoryPlanMedia]? = nil
     ) async -> Bool {
         guard let ownerUserId = currentUserProvider.currentUserId else {
-            statusMessage = L10n.string("workflow.story.signInDraft")
+            statusMessage = L10n.string("workflow.story.signInPlan")
             return false
         }
         guard let bearerToken = try? await authTokenProvider.currentBearerToken() else {
-            statusMessage = L10n.string("workflow.story.signInAgainDraft")
+            statusMessage = L10n.string("workflow.story.signInAgainPlan")
             return false
         }
         guard isConfigured else {
@@ -61,7 +61,7 @@ final class StoryDraftWorkflow: WorkspaceObservingWorkflow {
         }
 
         let media = persistedMedia ?? storyMedia(from: selectedMedia, fallbackMediaAssets: activeWorkspace?.mediaAssets)
-        let storyInputSignature = MomentsStoryDraftInputSignature.make(
+        let storyInputSignature = MomentsStoryPlanInputSignature.make(
             momentId: momentId,
             form: form,
             selectedMedia: media
@@ -80,7 +80,7 @@ final class StoryDraftWorkflow: WorkspaceObservingWorkflow {
         statusMessage = nil
 
         do {
-            let draft = try await storyClient.generateDraft(
+            let plan = try await storyClient.generatePlan(
                 momentId: momentId,
                 ownerUserId: ownerUserId,
                 bearerToken: bearerToken,
@@ -88,37 +88,37 @@ final class StoryDraftWorkflow: WorkspaceObservingWorkflow {
                 selectedMedia: media
             )
             guard isCurrentWorkflowGeneration(generation) else { return false }
-            try validateDraftMediaReferences(draft, availableMedia: media)
-            generatedDraft = draft
+            try validatePlanMediaReferences(plan, availableMedia: media)
+            generatedPlan = plan
             do {
-                try await storyDraftSaver.saveStoryDraft(
+                try await storyPlanSaver.saveStoryPlan(
                     ownerUserId: ownerUserId,
                     momentId: momentId,
-                    draft: draft,
+                    plan: plan,
                     storyInputSignature: storyInputSignature
                 )
             } catch {
-                logger.error("Story draft save failed momentId=\(momentId, privacy: .public) error=\(String(describing: error), privacy: .public)")
-                throw StoryDraftWorkflowError.saveFailed
+                logger.error("Story plan save failed momentId=\(momentId, privacy: .public) error=\(String(describing: error), privacy: .public)")
+                throw StoryPlanWorkflowError.saveFailed
             }
             guard isCurrentWorkflowGeneration(generation) else { return false }
             workspaceObserver.observeWorkspace(ownerUserId: ownerUserId, momentId: momentId)
-            statusMessage = draft.helperCopy
-        } catch let error as StoryDraftWorkflowError {
+            statusMessage = plan.helperCopy
+        } catch let error as StoryPlanWorkflowError {
             guard isCurrentWorkflowGeneration(generation) else { return false }
-            logger.error("Story draft workflow failed momentId=\(momentId, privacy: .public) reason=\(error.localizedDescription, privacy: .public)")
+            logger.error("Story plan workflow failed momentId=\(momentId, privacy: .public) reason=\(error.localizedDescription, privacy: .public)")
             statusMessage = error.localizedDescription
             isDrafting = false
             return false
         } catch let error as LocalizedError {
             guard isCurrentWorkflowGeneration(generation) else { return false }
-            logger.error("Story draft request failed momentId=\(momentId, privacy: .public) error=\(String(describing: error), privacy: .public)")
+            logger.error("Story plan request failed momentId=\(momentId, privacy: .public) error=\(String(describing: error), privacy: .public)")
             statusMessage = MomentsRecoveryCopy.storyFailure()
             isDrafting = false
             return false
         } catch {
             guard isCurrentWorkflowGeneration(generation) else { return false }
-            logger.error("Story draft failed momentId=\(momentId, privacy: .public) error=\(String(describing: error), privacy: .public)")
+            logger.error("Story plan failed momentId=\(momentId, privacy: .public) error=\(String(describing: error), privacy: .public)")
             statusMessage = MomentsRecoveryCopy.storyFailure()
             isDrafting = false
             return false
@@ -134,20 +134,20 @@ final class StoryDraftWorkflow: WorkspaceObservingWorkflow {
         advanceWorkflowGeneration()
         isDrafting = false
         clearActiveWorkspace()
-        generatedDraft = nil
+        generatedPlan = nil
         statusMessage = nil
     }
 
     private func storyMedia(
         from selectedMedia: [MomentsSelectedMedia],
         fallbackMediaAssets: [MomentMediaAsset]?
-    ) -> [MomentsStoryDraftMedia] {
+    ) -> [MomentsStoryPlanMedia] {
         if !selectedMedia.isEmpty {
             return selectedMedia
                 .filter(\.selected)
                 .sorted { $0.sortOrder < $1.sortOrder }
                 .map {
-                    MomentsStoryDraftMedia(
+                    MomentsStoryPlanMedia(
                         mediaAssetId: $0.id.uuidString,
                         mediaKind: $0.kind,
                         sortOrder: $0.sortOrder,
@@ -161,7 +161,7 @@ final class StoryDraftWorkflow: WorkspaceObservingWorkflow {
             .filter(\.selected)
             .sorted { $0.sortOrder < $1.sortOrder }
             .map {
-                MomentsStoryDraftMedia(
+                MomentsStoryPlanMedia(
                     mediaAssetId: $0.id,
                     mediaKind: $0.kind,
                     sortOrder: Int($0.sortOrder),
@@ -171,17 +171,17 @@ final class StoryDraftWorkflow: WorkspaceObservingWorkflow {
             }
     }
 
-    private func validateDraftMediaReferences(
-        _ draft: MomentsStoryDraftResponse,
-        availableMedia: [MomentsStoryDraftMedia]
+    private func validatePlanMediaReferences(
+        _ plan: MomentsStoryPlanResponse,
+        availableMedia: [MomentsStoryPlanMedia]
     ) throws {
         let availableMediaIds = Set(availableMedia.map(\.mediaAssetId))
-        let missingMediaIds = draft.scenes
+        let missingMediaIds = plan.scenes
             .flatMap(\.mediaAssetIds)
             .filter { !availableMediaIds.contains($0) }
 
         guard missingMediaIds.isEmpty else {
-            throw StoryDraftWorkflowError.invalidMediaReferences
+            throw StoryPlanWorkflowError.invalidMediaReferences
         }
     }
 
@@ -203,7 +203,7 @@ final class StoryDraftWorkflow: WorkspaceObservingWorkflow {
     }
 }
 
-private enum StoryDraftWorkflowError: LocalizedError {
+private enum StoryPlanWorkflowError: LocalizedError {
     case invalidMediaReferences
     case saveFailed
 

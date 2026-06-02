@@ -1,7 +1,7 @@
 import Foundation
 
 enum MomentsCreateAvailabilityMessageFactory {
-    static func draft(
+    static func setup(
         isDraftLocked: Bool,
         isSignedIn: Bool,
         isMomentCreationConfigured: Bool,
@@ -29,18 +29,18 @@ enum MomentsCreateAvailabilityMessageFactory {
     static func story(
         isSignedIn: Bool,
         hasMomentWorkspace: Bool,
-        isStoryDrafting: Bool,
-        isStoryDraftAvailable: Bool,
-        isStoryDraftConfigured: Bool,
+        isStoryPlaning: Bool,
+        isStoryPlanAvailable: Bool,
+        isStoryPlanConfigured: Bool,
         mediaAssets: [MomentMediaAsset]?,
         selectedMediaCount: Int,
         template: MomentTemplate
     ) -> String? {
         guard isSignedIn else { return MomentsCreateAvailabilityCopy.storySignInRequired }
         guard hasMomentWorkspace else { return MomentsCreateAvailabilityCopy.storyMissingProject }
-        guard isStoryDraftAvailable else { return MomentsCreateAvailabilityCopy.storyUnavailable }
-        if isStoryDrafting { return nil }
-        if !isStoryDraftConfigured { return MomentsCreateAvailabilityCopy.storyNotConfigured }
+        guard isStoryPlanAvailable else { return MomentsCreateAvailabilityCopy.storyUnavailable }
+        if isStoryPlaning { return nil }
+        if !isStoryPlanConfigured { return MomentsCreateAvailabilityCopy.storyNotConfigured }
 
         if selectedMediaCount > 0 {
             let availability = MomentsMediaRules.availability(template: template, selectedCount: selectedMediaCount)
@@ -60,8 +60,8 @@ enum MomentsCreateAvailabilityMessageFactory {
             )
         }
 
-        return MomentsStoryDraftRules.availabilityMessage(
-            MomentsStoryDraftRules.availability(
+        return MomentsStoryPlanRules.availabilityMessage(
+            MomentsStoryPlanRules.availability(
                 mediaAssets: mediaAssets,
                 template: template
             ),

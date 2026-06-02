@@ -6,9 +6,9 @@ struct MomentsCreateAccountState {
 }
 
 struct MomentsCreateMomentCreationState {
-    let isCreatingDraft: Bool
+    let isCreatingMoment: Bool
     let activeMomentId: String?
-    let draftErrorMessage: String?
+    let setupErrorMessage: String?
 }
 
 struct MomentsCreateMediaUploadState {
@@ -18,9 +18,9 @@ struct MomentsCreateMediaUploadState {
     let importProgress: MomentsMediaImportProgress?
 }
 
-struct MomentsCreateStoryDraftState {
+struct MomentsCreateStoryPlanState {
     let savedScenes: [MomentStoryScene]
-    let generatedScenes: [MomentsStoryDraftScene]
+    let generatedScenes: [MomentsStoryPlanScene]
     let statusMessage: String?
     let isDrafting: Bool
 }

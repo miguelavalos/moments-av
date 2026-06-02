@@ -9,18 +9,18 @@ struct MomentsStoryClient {
         URL(string: baseURLString.trimmingCharacters(in: .whitespacesAndNewlines)) != nil
     }
 
-    func generateDraft(
+    func generatePlan(
         momentId: String,
         ownerUserId: String,
         bearerToken: String,
         form: MomentSetupForm,
         mediaAssets: [MomentMediaAsset]
-    ) async throws -> MomentsStoryDraftResponse {
+    ) async throws -> MomentsStoryPlanResponse {
         let selectedMedia = mediaAssets
             .filter(\.selected)
             .sorted { left, right in left.sortOrder < right.sortOrder }
             .map {
-                MomentsStoryDraftMedia(
+                MomentsStoryPlanMedia(
                     mediaAssetId: $0.id,
                     mediaKind: $0.kind,
                     sortOrder: Int($0.sortOrder),
@@ -29,7 +29,7 @@ struct MomentsStoryClient {
                 )
             }
 
-        return try await generateDraft(
+        return try await generatePlan(
             momentId: momentId,
             ownerUserId: ownerUserId,
             bearerToken: bearerToken,
@@ -38,13 +38,13 @@ struct MomentsStoryClient {
         )
     }
 
-    func generateDraft(
+    func generatePlan(
         momentId: String,
         ownerUserId: String,
         bearerToken: String,
         form: MomentSetupForm,
-        selectedMedia: [MomentsStoryDraftMedia]
-    ) async throws -> MomentsStoryDraftResponse {
+        selectedMedia: [MomentsStoryPlanMedia]
+    ) async throws -> MomentsStoryPlanResponse {
         guard let baseURL = URL(string: baseURLString.trimmingCharacters(in: .whitespacesAndNewlines)) else {
             throw MomentsStoryError.apiNotConfigured
         }
@@ -54,9 +54,9 @@ struct MomentsStoryClient {
             .appendingPathComponent("apps")
             .appendingPathComponent("momentsav")
             .appendingPathComponent("story")
-            .appendingPathComponent("drafts")
+            .appendingPathComponent("plans")
 
-        let requestBody = MomentsStoryDraftRequest(
+        let requestBody = MomentsStoryPlanRequest(
             momentId: momentId,
             creationMode: form.creationMode.rawValue,
             look: form.look.rawValue,
@@ -67,7 +67,7 @@ struct MomentsStoryClient {
             occasion: form.occasion,
             details: form.details,
             media: selectedMedia,
-            idempotencyKey: "story:\(momentId):\(MomentsStoryDraftInputSignature.make(momentId: momentId, form: form, selectedMedia: selectedMedia))"
+            idempotencyKey: "story:\(momentId):\(MomentsStoryPlanInputSignature.make(momentId: momentId, form: form, selectedMedia: selectedMedia))"
         )
 
         var request = URLRequest(url: endpoint)
@@ -81,7 +81,7 @@ struct MomentsStoryClient {
             let apiError = MomentsAPIError.decode(
                 from: data,
                 fallbackCode: "moments_story_draft_failed",
-                fallbackMessage: MomentsStoryError.draftFailed.localizedDescription
+                fallbackMessage: MomentsStoryError.planFailed.localizedDescription
             )
             if apiError.code == "moments_review_allowance_exhausted" {
                 throw MomentsStoryError.reviewAllowanceExhausted(apiError.message)
@@ -89,15 +89,15 @@ struct MomentsStoryClient {
             throw apiError
         }
 
-        let draft = try JSONDecoder().decode(MomentsStoryDraftResponse.self, from: data)
-        if draft.status == "blocked" {
-            throw MomentsStoryError.blocked(draft.errorMessage ?? "Avi needs safer inputs before drafting this story.")
+        let plan = try JSONDecoder().decode(MomentsStoryPlanResponse.self, from: data)
+        if plan.status == "blocked" {
+            throw MomentsStoryError.blocked(plan.errorMessage ?? "Avi needs safer inputs before planning this story.")
         }
-        if draft.status == "provider_failed" {
-            throw MomentsStoryError.providerFailed(draft.errorMessage ?? "Story draft failed.")
+        if plan.status == "provider_failed" {
+            throw MomentsStoryError.providerFailed(plan.errorMessage ?? "Story plan failed.")
         }
 
-        return draft
+        return plan
     }
 
     private func retryingData(for request: URLRequest) async throws -> (Data, URLResponse) {
@@ -120,15 +120,15 @@ struct MomentsStoryClient {
 
 enum MomentsStoryError: LocalizedError {
     case apiNotConfigured
-    case draftFailed
+    case planFailed
     case blocked(String)
     case providerFailed(String)
     case reviewAllowanceExhausted(String)
 
     var errorDescription: String? {
         switch self {
-        case .apiNotConfigured: "Story drafting is not configured for this build."
-        case .draftFailed: "Story draft request failed."
+        case .apiNotConfigured: "Story planning is not configured for this build."
+        case .planFailed: "Story plan request failed."
         case .blocked(let message): message
         case .providerFailed(let message): message
         case .reviewAllowanceExhausted(let message): message

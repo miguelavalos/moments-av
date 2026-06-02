@@ -90,7 +90,7 @@ final class MomentsCreditGateTests: XCTestCase {
         let moment = InProgressMoment(
             id: "moment-1",
             template: .birthdayMessage,
-            status: "draft",
+            status: "in_progress",
             title: "Birthday",
             tone: "cinematic",
             tempo: "not-a-tempo",
@@ -128,7 +128,7 @@ final class MomentsCreditGateTests: XCTestCase {
         XCTAssertFalse(MomentsMediaRules.canStartPreview(template: .partyRecap, selectedCount: 21))
     }
 
-    func testStoryDraftRulesUseSelectedConvexMediaCount() {
+    func testStoryPlanRulesUseSelectedConvexMediaCount() {
         let assets = (0..<3).map {
             MomentMediaAsset(
                 id: "media-\($0)",
@@ -143,13 +143,13 @@ final class MomentsCreditGateTests: XCTestCase {
             )
         }
 
-        XCTAssertTrue(MomentsStoryDraftRules.canDraft(mediaAssets: assets, template: .birthdayMessage))
-        XCTAssertTrue(MomentsStoryDraftRules.canDraft(mediaAssets: assets, template: .partyRecap))
+        XCTAssertTrue(MomentsStoryPlanRules.canPlan(mediaAssets: assets, template: .birthdayMessage))
+        XCTAssertTrue(MomentsStoryPlanRules.canPlan(mediaAssets: assets, template: .partyRecap))
     }
 
-    func testStoryDraftInputSignatureTracksMediaOrderAndDirection() {
-        func storyMedia(id: String, sortOrder: Int) -> MomentsStoryDraftMedia {
-            MomentsStoryDraftMedia(
+    func testStoryPlanInputSignatureTracksMediaOrderAndDirection() {
+        func storyMedia(id: String, sortOrder: Int) -> MomentsStoryPlanMedia {
+            MomentsStoryPlanMedia(
                 mediaAssetId: id,
                 mediaKind: "image",
                 sortOrder: sortOrder,
@@ -166,12 +166,12 @@ final class MomentsCreditGateTests: XCTestCase {
             storyMedia(id: "media-b", sortOrder: 1)
         ]
 
-        let baseSignature = MomentsStoryDraftInputSignature.make(
+        let baseSignature = MomentsStoryPlanInputSignature.make(
             momentId: "moment-1",
             form: form,
             selectedMedia: media
         )
-        let sameInputSignature = MomentsStoryDraftInputSignature.make(
+        let sameInputSignature = MomentsStoryPlanInputSignature.make(
             momentId: "moment-1",
             form: form,
             selectedMedia: media.reversed()
@@ -179,7 +179,7 @@ final class MomentsCreditGateTests: XCTestCase {
 
         XCTAssertEqual(baseSignature, sameInputSignature)
 
-        let reorderedSignature = MomentsStoryDraftInputSignature.make(
+        let reorderedSignature = MomentsStoryPlanInputSignature.make(
             momentId: "moment-1",
             form: form,
             selectedMedia: [
@@ -190,7 +190,7 @@ final class MomentsCreditGateTests: XCTestCase {
         XCTAssertNotEqual(baseSignature, reorderedSignature)
 
         form.details = "Use the desert photos and end on the group shot."
-        let changedDirectionSignature = MomentsStoryDraftInputSignature.make(
+        let changedDirectionSignature = MomentsStoryPlanInputSignature.make(
             momentId: "moment-1",
             form: form,
             selectedMedia: media

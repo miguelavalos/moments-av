@@ -1,9 +1,9 @@
 import XCTest
 @testable import MomentsAV
 
-final class StoryDraftPersistenceRequestTests: XCTestCase {
+final class StoryPlanPersistenceRequestTests: XCTestCase {
     func testSceneRequestUsesDraftSceneFieldsAndAviAuthor() {
-        let scene = MomentsStoryDraftScene(
+        let scene = MomentsStoryPlanScene(
             sceneIndex: 1,
             mediaAssetIds: ["media-1", "media-2"],
             caption: "A birthday toast",
@@ -29,9 +29,9 @@ final class StoryDraftPersistenceRequestTests: XCTestCase {
     }
 
     func testReadyRequestApprovesAllowedDrafts() {
-        let draft = makeDraft(moderationStatus: "allowed")
+        let plan = makeDraft(moderationStatus: "allowed")
 
-        let request = StoryReadyPersistenceRequest.draft(draft, storyInputSignature: "signature-1")
+        let request = StoryReadyPersistenceRequest.plan(plan, storyInputSignature: "signature-1")
 
         XCTAssertEqual(request.workflowRunId, "workflow-1")
         XCTAssertEqual(request.moderationStatus, "approved")
@@ -39,14 +39,14 @@ final class StoryDraftPersistenceRequestTests: XCTestCase {
     }
 
     func testReadyRequestBlocksNonAllowedDrafts() {
-        let draft = makeDraft(moderationStatus: "rejected")
+        let plan = makeDraft(moderationStatus: "rejected")
 
-        let request = StoryReadyPersistenceRequest.draft(draft, storyInputSignature: "signature-1")
+        let request = StoryReadyPersistenceRequest.plan(plan, storyInputSignature: "signature-1")
 
         XCTAssertEqual(request.moderationStatus, "blocked")
     }
 
-    private func makeDraft(moderationStatus: String) -> MomentsStoryDraftResponse {
+    private func makeDraft(moderationStatus: String) -> MomentsStoryPlanResponse {
         let json = """
         {
           "appId": "momentsav",
@@ -66,7 +66,7 @@ final class StoryDraftPersistenceRequestTests: XCTestCase {
         """
 
         return try! JSONDecoder().decode(
-            MomentsStoryDraftResponse.self,
+            MomentsStoryPlanResponse.self,
             from: Data(json.utf8)
         )
     }

@@ -28,13 +28,13 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
                 spendPlanDescription: "Buy credits to continue."
             ),
             isDraftLocked: true,
-            isCreatingDraft: true,
+            isCreatingMoment: true,
             canCreateDraft: false,
-            availabilityMessage: "Draft is locked.",
+            availabilityMessage: "Setup is locked.",
             activeMomentId: "moment-1",
             isContinuingMoment: true,
             canStartAnotherProject: true,
-            draftErrorMessage: "Draft failed.",
+            setupErrorMessage: "Setup failed.",
             workspaceSummary: MomentsCreateWorkspaceSummary(mediaCount: 2, sceneCount: 1)
         )
 
@@ -43,12 +43,12 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         XCTAssertEqual(presentation.activeMomentDetail, "Create is attached to this existing Moment.")
         XCTAssertTrue(presentation.showsActiveMoment)
         XCTAssertTrue(presentation.isDraftLocked)
-        XCTAssertTrue(presentation.isCreatingDraft)
+        XCTAssertTrue(presentation.isCreatingMoment)
         XCTAssertFalse(presentation.canCreateDraft)
-        XCTAssertEqual(presentation.availabilityMessage, "Draft is locked.")
+        XCTAssertEqual(presentation.availabilityMessage, "Setup is locked.")
         XCTAssertEqual(presentation.activeMomentId, "moment-1")
         XCTAssertTrue(presentation.canStartAnotherProject)
-        XCTAssertEqual(presentation.draftErrorMessage, "Draft failed.")
+        XCTAssertEqual(presentation.setupErrorMessage, "Setup failed.")
         XCTAssertEqual(presentation.workspaceSummary.mediaCount, 2)
         XCTAssertEqual(presentation.workspaceSummary.sceneCount, 1)
         XCTAssertFalse(presentation.templateSummary.canAfford)
@@ -61,13 +61,13 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
             canAfford: false,
             spendPlanDescription: "Need credits.",
             isDraftLocked: true,
-            isCreatingDraft: false,
+            isCreatingMoment: false,
             canCreateDraft: false,
             availabilityMessage: "Locked.",
             activeMomentId: "moment-1",
             isContinuingMoment: true,
             canStartAnotherProject: true,
-            draftErrorMessage: nil,
+            setupErrorMessage: nil,
             workspaceSummary: MomentsCreateWorkspaceSummary(mediaCount: 1)
         )
 
@@ -136,13 +136,13 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
             previewSummary: previewSummary,
             finalRenderSummary: finalRenderSummary,
             canAddMedia: true,
-            canDraftStory: true,
+            canPlanStory: true,
             canGeneratePreview: true,
             canRefreshPreviewStatus: true,
             canGenerateFinalRender: true,
             canRefreshFinalRenderStatus: true,
             mediaAvailabilityMessage: "Add media.",
-            storyAvailabilityMessage: "Draft story.",
+            storyAvailabilityMessage: "Plan story.",
             previewAvailabilityMessage: "Generate preview.",
             previewRefreshAvailabilityMessage: "Refresh preview.",
             finalRenderAvailabilityMessage: "Generate final.",
@@ -157,13 +157,13 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         XCTAssertEqual(presentation.previewSummary, previewSummary)
         XCTAssertEqual(presentation.finalRenderSummary, finalRenderSummary)
         XCTAssertTrue(presentation.canAddMedia)
-        XCTAssertTrue(presentation.canDraftStory)
+        XCTAssertTrue(presentation.canPlanStory)
         XCTAssertTrue(presentation.canGeneratePreview)
         XCTAssertTrue(presentation.canRefreshPreviewStatus)
         XCTAssertTrue(presentation.canGenerateFinalRender)
         XCTAssertTrue(presentation.canRefreshFinalRenderStatus)
         XCTAssertEqual(presentation.mediaAvailabilityMessage, "Add media.")
-        XCTAssertEqual(presentation.storyAvailabilityMessage, "Draft story.")
+        XCTAssertEqual(presentation.storyAvailabilityMessage, "Plan story.")
         XCTAssertEqual(presentation.previewAvailabilityMessage, "Generate preview.")
         XCTAssertEqual(presentation.previewRefreshAvailabilityMessage, "Refresh preview.")
         XCTAssertEqual(presentation.finalRenderAvailabilityMessage, "Generate final.")
@@ -189,13 +189,13 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
             isBuyingReviewBundle: true,
             availability: MomentsCreateWorkflowAvailability(
                 canAddMedia: true,
-                canDraftStory: false,
+                canPlanStory: false,
                 canGeneratePreview: true,
                 canRefreshPreviewStatus: false,
                 canGenerateFinalRender: true,
                 canRefreshFinalRenderStatus: false,
                 mediaMessage: nil,
-                storyMessage: "Draft story.",
+                storyMessage: "Plan story.",
                 previewMessage: nil,
                 previewRefreshMessage: "Refresh preview.",
                 finalRenderMessage: nil,
@@ -205,13 +205,13 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
 
         XCTAssertTrue(presentation.canAddMedia)
         XCTAssertTrue(presentation.isBuyingReviewBundle)
-        XCTAssertFalse(presentation.canDraftStory)
+        XCTAssertFalse(presentation.canPlanStory)
         XCTAssertTrue(presentation.canGeneratePreview)
         XCTAssertEqual(presentation.creationStyleTitle, "Birthday Story")
         XCTAssertEqual(presentation.toneTitle, "Warm")
         XCTAssertEqual(presentation.tempoTitle, "Balanced")
         XCTAssertEqual(presentation.occasionTitle, "Birthday for Ava")
-        XCTAssertEqual(presentation.storyAvailabilityMessage, "Draft story.")
+        XCTAssertEqual(presentation.storyAvailabilityMessage, "Plan story.")
         XCTAssertEqual(presentation.previewRefreshAvailabilityMessage, "Refresh preview.")
         XCTAssertEqual(presentation.finalRenderRefreshAvailabilityMessage, "Refresh final.")
     }
@@ -237,7 +237,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
             isBuyingReviewBundle: false,
             availability: MomentsCreateWorkflowAvailability(
                 canAddMedia: true,
-                canDraftStory: false,
+                canPlanStory: false,
                 canGeneratePreview: false,
                 canRefreshPreviewStatus: false,
                 canGenerateFinalRender: false,
@@ -346,14 +346,14 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
                 statusMessage: "Drafting."
             ),
             balance: MomentsCreditBalance(proMonthly: 0, promotional: 1, purchased: 0),
-            canDraftStory: true,
+            canPlanStory: true,
             availabilityMessage: "Ready."
         )
 
         XCTAssertEqual(presentation.draftButtonTitle, "Preparing story...")
         XCTAssertEqual(presentation.emptyMessage, "Avi can prepare a story plan from your photos and clips.")
         XCTAssertEqual(presentation.savedScenes.map(\.id), ["scene-1", "scene-2"])
-        XCTAssertTrue(presentation.canDraftStory)
+        XCTAssertTrue(presentation.canPlanStory)
         XCTAssertEqual(presentation.availabilityMessage, "Ready.")
     }
 
