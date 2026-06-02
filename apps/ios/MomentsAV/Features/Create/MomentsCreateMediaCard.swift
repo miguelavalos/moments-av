@@ -242,7 +242,7 @@ private struct MomentsCreateMediaChoiceButtonLabel: View {
     }
 }
 
-private struct MomentsCreateAlbumPickerSheet: View {
+struct MomentsCreateAlbumPickerSheet: View {
     let remainingSlots: Int
     let selectAlbum: (MediaPickerImport.PhotoAlbum) -> Void
 
@@ -405,7 +405,7 @@ private struct MomentsCreateAlbumCover: View {
     }
 }
 
-private struct MomentsCreateMediaManagerSheet: View {
+struct MomentsCreateMediaManagerSheet: View {
     let selectedMedia: [MomentsSelectedMedia]
     let syncedMediaAssets: [MomentMediaAsset]
     let canAddMedia: Bool
