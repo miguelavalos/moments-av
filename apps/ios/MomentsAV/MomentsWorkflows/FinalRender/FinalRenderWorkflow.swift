@@ -81,15 +81,15 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
         allowPreparedStory: Bool = false
     ) async {
         guard let ownerUserId = currentUserProvider.currentUserId else {
-            statusMessage = "Sign in before rendering the final export."
+            statusMessage = L10n.string("workflow.final.signInRender")
             return
         }
         guard let bearerToken = try? await authTokenProvider.currentBearerToken() else {
-            statusMessage = "Sign in again before rendering the final export."
+            statusMessage = L10n.string("workflow.final.signInAgainRender")
             return
         }
         guard isConfigured else {
-            statusMessage = "Final rendering is not configured for this build."
+            statusMessage = L10n.string("workflow.final.notConfigured")
             return
         }
 
@@ -124,11 +124,11 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
 
         let generation = beginWorkflowGeneration()
         isGenerating = true
-        statusMessage = "Avi is preparing the final export."
+        statusMessage = L10n.string("workflow.final.preparing")
 
         do {
             if renderPlan == nil || renderPlan?.projectId != projectId {
-                statusMessage = "Checking the video plan."
+                statusMessage = L10n.string("workflow.final.checkingPlan")
                 let plan = try await finalRenderClient.prepareRenderPlan(
                     projectId: projectId,
                     bearerToken: bearerToken,
@@ -138,11 +138,11 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
                 )
                 renderPlan = plan
                 guard plan.canCreateVideo else {
-                    statusMessage = "Avi needs usable media before creating the video."
+                    statusMessage = L10n.string("workflow.final.needsUsableMedia")
                     isGenerating = false
                     return
                 }
-                statusMessage = "Video plan ready. Review it before creating the video."
+                statusMessage = L10n.string("workflow.final.planReady")
                 isGenerating = false
                 return
             }
@@ -164,7 +164,7 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
             )
             latestFinalJob = startedJob
             latestFinalJobProjectId = projectId
-            statusMessage = "Avi is creating the video. You can check progress here."
+            statusMessage = L10n.string("workflow.final.creatingVideo")
         } catch {
             guard isCurrentWorkflowGeneration(generation) else { return }
             statusMessage = MomentsRecoveryCopy.renderStartFailure()
@@ -230,12 +230,12 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
               let artifact = workspace.latestArtifact(kind: "final_export"),
               artifact.status == "available"
         else {
-            statusMessage = "No final video is ready to download yet."
+            statusMessage = L10n.string("workflow.final.noDownloadReady")
             return
         }
 
         guard !downloadingArtifactIds.contains(artifact.id) else {
-            statusMessage = "Final video download is already in progress."
+            statusMessage = L10n.string("workflow.final.downloadInProgress")
             return
         }
 
@@ -272,12 +272,12 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
         defer { downloadingArtifactIds.remove(artifact.id) }
 
         guard let bearerToken = try? await authTokenProvider.currentBearerToken() else {
-            statusMessage = "Sign in again to save the final video locally."
+            statusMessage = L10n.string("workflow.final.signInAgainSaveLocal")
             return
         }
 
         do {
-            statusMessage = "Saving final video to Gallery."
+            statusMessage = L10n.string("workflow.final.savingToGallery")
             let download = try await finalRenderClient.prepareFinalArtifactDownload(
                 projectId: workspace.project.id,
                 artifactId: artifact.id,
@@ -293,40 +293,40 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
                 createdAt: Date()
             )
             canRetryFinalVideoDownload = false
-            statusMessage = "Final video saved on this device. Finish it into Gallery or create another version."
+            statusMessage = L10n.string("workflow.final.savedLocal")
         } catch {
             canRetryFinalVideoDownload = true
-            statusMessage = "Final video is ready, but it could not be saved locally yet."
+            statusMessage = L10n.string("workflow.final.saveLocalFailed")
         }
     }
 
     func finishFinalExportToGallery() {
         guard let pendingGalleryVideo else {
-            statusMessage = "Download the final video before moving it to Gallery."
+            statusMessage = L10n.string("workflow.final.downloadBeforeGallery")
             return
         }
 
         galleryStore.addRecord(pendingGalleryVideo)
         self.pendingGalleryVideo = nil
         canRetryFinalVideoDownload = false
-        statusMessage = "Final video moved to Gallery."
+        statusMessage = L10n.string("workflow.final.movedToGallery")
     }
 
     private func generateBlockMessage(_ availability: MomentsFinalRenderRules.Availability) -> String {
         MomentsFinalRenderRules.availabilityMessage(
             availability,
-            missingProjectMessage: "Start or continue a project before rendering the final export.",
-            insufficientCreditsMessage: "Add credits before final render."
-        ) ?? "Final export is not ready to render."
+            missingProjectMessage: L10n.string("workflow.final.missingProject"),
+            insufficientCreditsMessage: L10n.string("workflow.final.addCredits")
+        ) ?? L10n.string("workflow.final.notReady")
     }
 
     private var refreshMessages: RenderJobStatusRefreshMessages {
         RenderJobStatusRefreshMessages(
-            signIn: "Sign in before refreshing final render status.",
-            missingProject: "Open a project before refreshing final status.",
-            missingJob: "No final render job is available yet.",
+            signIn: L10n.string("workflow.final.refreshSignIn"),
+            missingProject: L10n.string("workflow.final.refreshMissingProject"),
+            missingJob: L10n.string("workflow.final.refreshMissingJob"),
             missingProviderRequest: MomentsRecoveryCopy.finalRenderStatusMissing(),
-            success: "Video status updated."
+            success: L10n.string("workflow.final.refreshSuccess")
         )
     }
 }

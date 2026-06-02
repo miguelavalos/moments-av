@@ -56,19 +56,19 @@ final class PreviewGenerationWorkflow: WorkspaceObservingWorkflow {
 
     func generatePreview(projectId: String, template: MomentTemplate, form: MomentDraftForm) async {
         guard let ownerUserId = currentUserProvider.currentUserId else {
-            statusMessage = "Sign in before reviewing the story."
+            statusMessage = L10n.string("workflow.preview.signInReview")
             return
         }
         guard let bearerToken = try? await authTokenProvider.currentBearerToken() else {
-            statusMessage = "Sign in again before reviewing the story."
+            statusMessage = L10n.string("workflow.preview.signInAgainReview")
             return
         }
         guard let project = activeWorkspace?.project else {
-            statusMessage = "Create the draft and story before reviewing it."
+            statusMessage = L10n.string("workflow.preview.missingProject")
             return
         }
         guard isConfigured else {
-            statusMessage = "Story Review is not configured for this build."
+            statusMessage = L10n.string("workflow.preview.notConfigured")
             return
         }
 
@@ -84,7 +84,7 @@ final class PreviewGenerationWorkflow: WorkspaceObservingWorkflow {
 
         let generation = beginWorkflowGeneration()
         isGenerating = true
-        statusMessage = "Avi is preparing the story review."
+        statusMessage = L10n.string("workflow.preview.preparing")
 
         do {
             statusMessage = try await PreviewGenerationRun.perform(
@@ -157,18 +157,18 @@ final class PreviewGenerationWorkflow: WorkspaceObservingWorkflow {
     private func generateBlockMessage(_ availability: MomentsPreviewRules.Availability) -> String {
         MomentsPreviewRules.availabilityMessage(
             availability,
-            missingProjectMessage: "Create the draft and story before reviewing it.",
-            insufficientCreditsMessage: "Add credits before reviewing the story."
-        ) ?? "Story review is not ready."
+            missingProjectMessage: L10n.string("workflow.preview.missingProject"),
+            insufficientCreditsMessage: L10n.string("workflow.preview.addCredits")
+        ) ?? L10n.string("workflow.preview.notReady")
     }
 
     private var refreshMessages: RenderJobStatusRefreshMessages {
         RenderJobStatusRefreshMessages(
-            signIn: "Sign in before refreshing story review status.",
-            missingProject: "Open a project before refreshing story review status.",
-            missingJob: "No story review job is available yet.",
+            signIn: L10n.string("workflow.preview.refreshSignIn"),
+            missingProject: L10n.string("workflow.preview.refreshMissingProject"),
+            missingJob: L10n.string("workflow.preview.refreshMissingJob"),
             missingProviderRequest: MomentsRecoveryCopy.previewStatusMissing(),
-            success: "Story review status updated."
+            success: L10n.string("workflow.preview.refreshSuccess")
         )
     }
 }

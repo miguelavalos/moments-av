@@ -50,7 +50,7 @@ final class ProjectCreationWorkflow: ObservableObject {
     func createDraft(form: MomentDraftForm) async -> String? {
         guard !isCreatingDraft else { return nil }
         guard let ownerUserId = currentUserProvider.currentUserId else {
-            errorMessage = "Sign in before starting a project."
+            errorMessage = L10n.string("workflow.project.signInStart")
             return nil
         }
 
@@ -81,7 +81,7 @@ final class ProjectCreationWorkflow: ObservableObject {
 
     func continueProject(_ project: MomentDraftProject) {
         guard let ownerUserId = currentUserProvider.currentUserId else {
-            errorMessage = "Sign in before continuing a project."
+            errorMessage = L10n.string("workflow.project.signInContinue")
             return
         }
 
@@ -104,7 +104,7 @@ final class ProjectCreationWorkflow: ObservableObject {
     func discardActiveDraft(projectId projectIdOverride: String? = nil) async -> Bool {
         guard !isCreatingDraft else { return false }
         guard let ownerUserId = currentUserProvider.currentUserId else {
-            errorMessage = "Sign in before discarding a project."
+            errorMessage = L10n.string("workflow.project.signInDiscard")
             return false
         }
         guard let projectId = projectIdOverride ?? activeProjectId else { return true }
@@ -129,6 +129,6 @@ final class ProjectCreationWorkflow: ObservableObject {
     }
 
     private func createDraftBlockMessage(_ availability: MomentDraftRules.Availability) -> String {
-        MomentDraftRules.availabilityMessage(availability) ?? "Draft is not ready to create."
+        MomentDraftRules.availabilityMessage(availability) ?? L10n.string("workflow.project.draftNotReady")
     }
 }

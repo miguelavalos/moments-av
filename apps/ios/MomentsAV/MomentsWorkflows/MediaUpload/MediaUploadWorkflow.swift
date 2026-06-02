@@ -44,7 +44,7 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
             selectedCount: selectedMediaCount
         )
         guard remainingSlots > 0 else {
-            statusMessage = "Avi has enough media for this video."
+            statusMessage = L10n.string("workflow.media.templateFull")
             return
         }
 
@@ -71,7 +71,7 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
             statusMessage = importStatusMessage(
                 importedCount: uniqueImported.count,
                 skippedDuplicateCount: imported.count - uniqueImported.count,
-                emptyMessage: "No new media added."
+                emptyMessage: L10n.string("workflow.media.noNewMedia")
             )
         } catch {
             guard isCurrentWorkflowGeneration(generation) else { return }
@@ -91,7 +91,7 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
             selectedCount: selectedMediaCount
         )
         guard remainingSlots > 0 else {
-            statusMessage = "Avi has enough media for this video."
+            statusMessage = L10n.string("workflow.media.templateFull")
             return
         }
 
@@ -117,7 +117,7 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
             statusMessage = importStatusMessage(
                 importedCount: uniqueImported.count,
                 skippedDuplicateCount: imported.count - uniqueImported.count,
-                emptyMessage: "No recent photos found."
+                emptyMessage: L10n.string("workflow.media.noRecentPhotos")
             )
         } catch {
             guard isCurrentWorkflowGeneration(generation) else { return }
@@ -138,7 +138,7 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
             selectedCount: selectedMediaCount
         )
         guard remainingSlots > 0 else {
-            statusMessage = "Avi has enough media for this video."
+            statusMessage = L10n.string("workflow.media.templateFull")
             return
         }
 
@@ -165,7 +165,7 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
             statusMessage = importStatusMessage(
                 importedCount: uniqueImported.count,
                 skippedDuplicateCount: imported.count - uniqueImported.count,
-                emptyMessage: "No photos found in that album."
+                emptyMessage: L10n.string("workflow.media.noAlbumPhotos")
             )
         } catch {
             guard isCurrentWorkflowGeneration(generation) else { return }
@@ -226,11 +226,11 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
 
     func persistSelectedMedia(projectId: String) async -> [MomentsStoryDraftMedia]? {
         guard let ownerUserId = currentUserProvider.currentUserId else {
-            statusMessage = "Sign in before preparing the story."
+            statusMessage = L10n.string("workflow.media.signInPrepareStory")
             return nil
         }
         guard let bearerToken = try? await authTokenProvider.currentBearerToken() else {
-            statusMessage = "Sign in again before preparing the story."
+            statusMessage = L10n.string("workflow.media.signInAgainPrepareStory")
             return nil
         }
         let mediaToSave = selectedMedia
@@ -264,7 +264,7 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
         let generation = beginWorkflowGeneration()
         isImporting = true
         importProgress = MomentsMediaImportProgress(completedCount: 0, totalCount: pendingMediaToSave.count)
-        statusMessage = "Uploading media for video creation."
+        statusMessage = L10n.string("workflow.media.uploading")
 
         do {
             let result = try await MediaUploadPersistence.save(
@@ -276,7 +276,11 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
                 mediaAssetSaver: mediaAssetSaver,
                 progress: { [weak self] completedCount, totalCount in
                     self?.updateImportProgress(completedCount: completedCount, totalCount: totalCount)
-                    self?.statusMessage = "Uploading media \(completedCount) of \(totalCount)."
+                    self?.statusMessage = L10n.string(
+                        "workflow.media.uploadingProgress",
+                        completedCount,
+                        totalCount
+                    )
                 },
                 shouldContinue: { isCurrentWorkflowGeneration(generation) }
             )
@@ -320,18 +324,18 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
             if restoredMedia.count == expectedSelectedCount {
                 restoredWorkspaceProjectId = workspace.project.id
                 selectedMedia = restoredMedia
-                statusMessage = "Local media ready for editing."
+                statusMessage = L10n.string("workflow.media.localReady")
             } else if restoredMedia.isEmpty, expectedSelectedCount > 0 {
-                statusMessage = "Saved media is ready for review and video creation."
+                statusMessage = L10n.string("workflow.media.savedReady")
             } else if expectedSelectedCount > 0 {
-                statusMessage = "Saved media is ready. Some local thumbnails may refresh in the background."
+                statusMessage = L10n.string("workflow.media.savedReadyThumbnailsPending")
             }
         } catch MomentsUploadError.photoLibraryAccessDenied {
             guard activeWorkspace?.project.id == workspace.project.id else { return }
-            statusMessage = "Saved media is ready for review and video creation."
+            statusMessage = L10n.string("workflow.media.savedReady")
         } catch {
             guard activeWorkspace?.project.id == workspace.project.id else { return }
-            statusMessage = "Saved media is ready for review and video creation."
+            statusMessage = L10n.string("workflow.media.savedReady")
         }
     }
 

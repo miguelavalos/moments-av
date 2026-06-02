@@ -48,15 +48,15 @@ final class StoryDraftWorkflow: WorkspaceObservingWorkflow {
         persistedMedia: [MomentsStoryDraftMedia]? = nil
     ) async -> Bool {
         guard let ownerUserId = currentUserProvider.currentUserId else {
-            statusMessage = "Sign in before drafting the story."
+            statusMessage = L10n.string("workflow.story.signInDraft")
             return false
         }
         guard let bearerToken = try? await authTokenProvider.currentBearerToken() else {
-            statusMessage = "Sign in again before drafting the story."
+            statusMessage = L10n.string("workflow.story.signInAgainDraft")
             return false
         }
         guard isConfigured else {
-            statusMessage = "Story drafting is not configured yet."
+            statusMessage = L10n.string("workflow.story.notConfigured")
             return false
         }
 
