@@ -475,6 +475,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         let presentation = MomentsCreateFinalRenderPresentation(
             summary: MomentsCreateFinalRenderSummary(
                 creditCost: 2,
+                renderPlan: MomentsCreateTestFixtures.makeRenderPlan(),
                 finalExport: MomentsCreateTestFixtures.makeArtifact(id: "final-1", kind: "final_export"),
                 latestFinalJob: MomentsCreateTestFixtures.makeRenderJob(id: "final-job", kind: "final", status: "running"),
                 isGenerating: true,
@@ -490,7 +491,11 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         XCTAssertEqual(presentation.creditTitle, "2 credits")
         XCTAssertEqual(presentation.refreshButtonTitle, "Refreshing final video...")
         XCTAssertEqual(presentation.generateButtonTitle, "Creating final video...")
-        XCTAssertEqual(presentation.emptyMessage, "The story plan is ready. Create the final video when you are ready.")
+        XCTAssertEqual(presentation.emptyMessage, "The video plan is ready. Create the final video when you are ready.")
+        XCTAssertEqual(
+            presentation.creditPolicyMessage,
+            "Starting the final video reserves 2 credits. Credits are finalized only after the export is delivered."
+        )
         XCTAssertFalse(presentation.showsEmptyState)
         XCTAssertTrue(presentation.canGenerateFinalRender)
         XCTAssertTrue(presentation.canRefreshFinalRenderStatus)
@@ -506,17 +511,58 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
 
         XCTAssertEqual(presentation.creditTitle, "3 credits")
         XCTAssertEqual(presentation.refreshButtonTitle, "Refresh final video")
-        XCTAssertEqual(presentation.generateButtonTitle, "Create final video")
+        XCTAssertEqual(presentation.generateButtonTitle, "Prepare video plan")
         XCTAssertEqual(presentation.emptyMessage, "Prepare the story before creating the final video.")
         XCTAssertTrue(presentation.showsEmptyState)
     }
 
-    func testFinalRenderPresentationUsesCreditCostCopy() {
+    func testFinalRenderPresentationFormatsPlanPreparationState() {
         let presentation = MomentsCreateFinalRenderPresentation(
-            summary: MomentsCreateFinalRenderSummary(creditCost: 2)
+            summary: MomentsCreateFinalRenderSummary(creditCost: 2),
+            canGenerateFinalRender: true
         )
 
         XCTAssertEqual(presentation.creditTitle, "2 credits")
+        XCTAssertEqual(presentation.generateButtonTitle, "Prepare video plan")
+        XCTAssertEqual(presentation.emptyMessage, "Prepare the video plan first. No credits are reserved in this step.")
+        XCTAssertEqual(presentation.creditPolicyMessage, "Preparing the video plan does not reserve credits.")
+    }
+
+    func testFinalVideoActionPresentationSeparatesPlanAndCreditConfirmation() {
+        let planning = MomentsCreateFinalVideoActionPresentation(
+            summary: MomentsCreateFinalRenderSummary(creditCost: 2),
+            template: .birthdayMessage,
+            balance: MomentsCreditBalance(proMonthly: 0, promotional: 3, purchased: 0)
+        )
+
+        XCTAssertFalse(planning.hasRenderPlan)
+        XCTAssertEqual(planning.primaryTitle, "Prepare video plan")
+        XCTAssertEqual(planning.primaryIconName, "checklist")
+        XCTAssertEqual(planning.creditPolicyMessage, "Preparing the video plan does not reserve credits.")
+        XCTAssertTrue(planning.canAffordSelectedCost)
+
+        let ready = MomentsCreateFinalVideoActionPresentation(
+            summary: MomentsCreateFinalRenderSummary(
+                creditCost: 2,
+                renderPlan: MomentsCreateTestFixtures.makeRenderPlan()
+            ),
+            template: .birthdayMessage,
+            balance: MomentsCreditBalance(proMonthly: 0, promotional: 3, purchased: 0),
+            removesWatermark: true
+        )
+
+        XCTAssertTrue(ready.hasRenderPlan)
+        XCTAssertEqual(ready.totalCreditCostTitle, "3 credits")
+        XCTAssertEqual(ready.primaryTitle, "Create video · 3 credits")
+        XCTAssertEqual(ready.primaryIconName, "video.fill")
+        XCTAssertEqual(
+            ready.creditPolicyMessage,
+            "Starting the final video reserves 3 credits. Credits are finalized only after the export is delivered."
+        )
+        XCTAssertEqual(
+            ready.confirmationMessage,
+            "This reserves 3 credits now. Credits are finalized only after the final video is delivered; if creation fails before delivery, the reservation is released."
+        )
     }
 
     func testRealtimeRenderPresentationFormatsActivePhaseAndProgress() {

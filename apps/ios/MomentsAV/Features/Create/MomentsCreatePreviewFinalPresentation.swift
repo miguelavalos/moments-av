@@ -55,16 +55,89 @@ struct MomentsCreateFinalRenderPresentation: Equatable {
     }
 
     var generateButtonTitle: String {
-        summary.isGenerating ? L10n.string("create.final.action.creating") : L10n.string("create.final.action.create")
+        if summary.isGenerating {
+            return L10n.string("create.final.action.creating")
+        }
+        return summary.renderPlan == nil
+            ? L10n.string("create.final.preparePlan")
+            : L10n.string("create.final.createWithCost", creditTitle)
     }
 
     var emptyMessage: String {
-        canGenerateFinalRender
-            ? L10n.string("create.final.empty.ready")
-            : L10n.string("create.final.empty.prepareStory")
+        guard canGenerateFinalRender else {
+            return L10n.string("create.final.empty.prepareStory")
+        }
+        return summary.renderPlan == nil
+            ? L10n.string("create.final.empty.preparePlan")
+            : L10n.string("create.final.empty.ready")
     }
 
     var showsEmptyState: Bool {
         summary.finalExport == nil && summary.latestFinalJob == nil
+    }
+
+    var creditPolicyMessage: String {
+        summary.renderPlan == nil
+            ? L10n.string("create.final.creditPolicy.plan")
+            : L10n.string("create.final.creditPolicy.create", creditTitle)
+    }
+}
+
+struct MomentsCreateFinalVideoActionPresentation: Equatable {
+    var summary: MomentsCreateFinalRenderSummary
+    var template: MomentTemplate
+    var balance: MomentsCreditBalance
+    var removesWatermark = false
+
+    var hasRenderPlan: Bool {
+        summary.renderPlan != nil
+    }
+
+    var totalCreditCost: Int {
+        MomentsCreditGate.finalRenderCreditCost(
+            template: template,
+            removesWatermark: removesWatermark,
+            balance: balance
+        )
+    }
+
+    var totalCreditCostTitle: String {
+        MomentsCreditCopy.countTitle(totalCreditCost)
+    }
+
+    var primaryTitle: String {
+        hasRenderPlan
+            ? L10n.string("create.final.createWithCost", totalCreditCostTitle)
+            : L10n.string("create.final.preparePlan")
+    }
+
+    var primaryIconName: String {
+        hasRenderPlan ? "video.fill" : "checklist"
+    }
+
+    var creditPolicyMessage: String {
+        hasRenderPlan
+            ? L10n.string("create.final.creditPolicy.create", totalCreditCostTitle)
+            : L10n.string("create.final.creditPolicy.plan")
+    }
+
+    var confirmationTitle: String {
+        L10n.string("create.final.confirmTitle")
+    }
+
+    var confirmationActionTitle: String {
+        L10n.string("create.final.createWithCost", totalCreditCostTitle)
+    }
+
+    var confirmationMessage: String {
+        L10n.string("create.final.confirmMessage", totalCreditCostTitle)
+    }
+
+    var canAffordSelectedCost: Bool {
+        MomentsCreditGate.canAffordFinalRender(
+            template: template,
+            removesWatermark: removesWatermark,
+            balance: balance
+        )
     }
 }

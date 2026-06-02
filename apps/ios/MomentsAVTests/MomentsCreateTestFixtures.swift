@@ -108,6 +108,27 @@ enum MomentsCreateTestFixtures {
         )
     }
 
+    static func makeRenderPlan(momentId: String = "moment-1") -> MomentsRenderPlanResponse {
+        MomentsRenderPlanResponse(
+            appId: "momentsav",
+            momentId: momentId,
+            planId: "plan-1",
+            plan: MomentsRenderPlan(
+                targetDurationMs: 30_000,
+                creditCost: 2,
+                secondsPerCredit: 15,
+                plannedAssetCount: 4,
+                usedAssetCount: 3,
+                rejectedAssetCount: 1,
+                rendererMode: "image_to_video",
+                userMessage: "Avi will use the strongest moments.",
+                qualityWarnings: ["One item may be cropped."]
+            ),
+            canCreateVideo: true,
+            generatedAt: "2026-06-02T00:00:00Z"
+        )
+    }
+
     static func makeRefreshAvailability(canRefresh: Bool) -> RenderJobStatusRefreshAvailability {
         RenderJobStatusRefreshAvailability(
             momentId: canRefresh ? "moment-1" : nil,

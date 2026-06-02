@@ -537,7 +537,7 @@
 "moment.summary.status" = "Statut";
 "access.apiURLMissing" = "L'URL API de Moments AV n'est pas configurée.";
 "create.final.createAnother" = "Créer une autre version";
-"create.final.detail" = "Crée le fichier vidéo terminé. Cela utilise 1 crédit.";
+"create.final.detail" = "Crée le fichier vidéo final. Les crédits ne sont finalisés qu'après la livraison d'un export utilisable.";
 "create.final.finishGallery" = "Terminer et déplacer vers Galerie";
 "create.final.ready" = "Export prêt";
 "create.final.retryDownload" = "Réessayer le téléchargement de la vidéo finale";
@@ -596,11 +596,14 @@
 "create.action.notNow" = "Pas maintenant";
 "create.discard.confirmTitle" = "Supprimer le Moment ?";
 "create.discard.keep" = "Garder le Moment";
-"create.final.confirmMessage" = "Cela utilisera %@. Avi montera tes médias sélectionnés en vidéo finale.";
+"create.final.confirmMessage" = "Cela réserve %@ maintenant. Les crédits ne sont finalisés qu'après la livraison de la vidéo finale ; si la création échoue avant, la réservation est libérée.";
 "create.final.confirmTitle" = "Créer la vidéo ?";
 "create.final.createWithCost" = "Créer la vidéo · %@";
 "create.final.preparePlan" = "Préparer le plan vidéo";
-"create.final.summaryTitle" = "Confirme les médias, l’histoire et le timing avant le lancement de la vidéo.";
+"create.final.summaryTitle" = "Vérifie le montage, le plan et le coût avant de lancer la vidéo.";
+"create.final.creditCost" = "%@ nécessaires";
+"create.final.creditPolicy.plan" = "Préparer le plan vidéo ne réserve aucun crédit.";
+"create.final.creditPolicy.create" = "Le lancement de la vidéo finale réserve %@. Les crédits ne sont finalisés qu'après la livraison de l'export.";
 "create.guidance.eyebrow.keepGoing" = "Continuer";
 "create.guidance.eyebrow.prepare" = "Préparer le Moment";
 "create.guidance.eyebrow.warning" = "À vérifier";
@@ -729,10 +732,11 @@
 "create.reviewBeforeCreating.title" = "Check before creating";
 "create.media.itemCount" = "%d éléments";
 "create.final.createVideoTitle" = "Créer la vidéo";
-"create.final.createVideoDetail" = "Avi montera tes vrais médias dans une vidéo de %@. Tu peux revenir en arrière si tu veux d’abord changer l’histoire.";
+"create.final.createVideoDetail" = "Avi montera tes vrais médias dans une vidéo de %@. Prépare d'abord le plan, puis confirme quand tu veux utiliser les crédits.";
 "create.primary.finalReady" = "Vidéo finale prête.";
 "create.primary.videoCreating" = "Avi crée la vidéo. Tu peux suivre la progression ici.";
 "create.primary.previewReady" = "Avi's Cut ready. Check it before the final video.";
+"create.primary.prepareVideoPlan" = "Prépare d'abord le plan vidéo. Aucun crédit n'est encore réservé.";
 "create.primary.reviewBeforeVideo" = "Check Avi's Cut and the video plan before creating the final video.";
 "create.error.storyPreparationNotReady" = "La préparation de l’histoire n’est pas encore prête.";
 "create.availability.momentSignInRequired" = "Connecte-toi avant de démarrer un Moment.";
@@ -888,8 +892,8 @@
 "create.final.action.refreshing" = "Refreshing final video...";
 "create.final.action.refresh" = "Refresh final video";
 "create.final.action.creating" = "Creating final video...";
-"create.final.action.create" = "Create final video";
-"create.final.empty.ready" = "The story plan is ready. Create the final video when you are ready.";
+"create.final.empty.ready" = "Le plan vidéo est prêt. Crée la vidéo finale quand tu es prêt.";
+"create.final.empty.preparePlan" = "Prépare d'abord le plan vidéo. Aucun crédit n'est réservé à cette étape.";
 "create.final.empty.prepareStory" = "Prepare the story before creating the final video.";
 
 "create.mediaCard.import.title" = "Adding moments";
@@ -921,7 +925,7 @@
 "create.workflowContent.assetUsageItems" = "%d of %d items";
 "create.workflowContent.beforeVideo" = "Before video";
 "create.workflowContent.modePending" = "Mode pending";
-"create.workflowContent.renderPlanFallback" = "Avi will prepare the media, duration, and quality checks before the video starts.";
+"create.workflowContent.renderPlanFallback" = "Avi prépare d'abord les médias, la durée et les contrôles qualité. Aucun crédit n'est réservé à cette étape de planification.";
 "create.workflowContent.storyReviewTitle" = "Avi's Cut";
 "create.aviCut.status.ready" = "Avi's Cut is ready. Create the final video or adjust the cut first.";
 "create.aviCut.status.improving" = "Avi is shaping the cut.";
@@ -952,14 +956,14 @@
 "create.workflowContent.mediaSelected" = "Media selected";
 "create.workflowContent.storyPrepared" = "Story prepared";
 "create.workflowContent.credits" = "Credits";
-"create.workflowContent.creditsReserved" = "%@ reserved when video starts";
+"create.workflowContent.creditsNeeded" = "%@ nécessaires quand la vidéo finale démarre";
 "create.workflowContent.itemReady" = "%d item ready";
 "create.workflowContent.itemsReady" = "%d items ready";
 "create.workflowContent.addMediaFirst" = "Add media first";
 "create.workflowContent.sceneReady" = "%d scene ready";
 "create.workflowContent.scenesReady" = "%d scenes ready";
 "create.workflowContent.prepareStoryFirst" = "Prepare the story first";
-"create.workflowContent.preparedBeforeVideo" = "Prepared before video creation";
+"create.workflowContent.preparedBeforeVideo" = "Préparé avant l'utilisation de crédits";
 "create.workflowContent.removeMark" = "Remove Moments AV mark";
 "create.workflowContent.addCreditsForVersion" = "Add %@ to create this version.";
 "create.workflowContent.noMarkWithPro" = "No mark with Pro";
@@ -987,7 +991,7 @@
 "create.workflowContent.tipReviewReady" = "Vérifie Avi's Cut. Si le résultat convient, crée la vidéo finale.";
 "create.workflowContent.tipFinalWorking" = "Avi is finishing the final video. You can refresh when needed.";
 "create.workflowContent.tipPreviewWorking" = "Avi is improving the cut from your selected moments.";
-"create.workflowContent.tipStoryReady" = "The story plan is ready. Next step: create the video.";
+"create.workflowContent.tipStoryReady" = "Avi's Cut est prêt. Étape suivante : préparer le plan vidéo.";
 "create.workflowContent.tipMediaReady" = "Avi will shape these moments into a simple story plan.";
 "create.workflowContent.tipPickMoments" = "Pick the moments. Avi will shape the story, mood, and pacing.";
 "create.workflowContent.planDetail" = "%ds · %d media items";

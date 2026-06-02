@@ -539,7 +539,7 @@
 "moment.summary.status" = "Status";
 "access.apiURLMissing" = "Moments AV API URL is not configured.";
 "create.final.createAnother" = "Create another version";
-"create.final.detail" = "Create the finished video file. This uses 1 credit.";
+"create.final.detail" = "Create the finished video file. Credits are finalized only after a usable export is delivered.";
 "create.final.finishGallery" = "Finish and move to Gallery";
 "create.final.ready" = "Export ready";
 "create.final.retryDownload" = "Retry final video download";
@@ -598,11 +598,14 @@
 "create.action.notNow" = "Not now";
 "create.discard.confirmTitle" = "Discard Moment?";
 "create.discard.keep" = "Keep Moment";
-"create.final.confirmMessage" = "This will use %@. Avi will edit your selected media into the final video.";
+"create.final.confirmMessage" = "This reserves %@ now. Credits are finalized only after the final video is delivered; if creation fails before delivery, the reservation is released.";
 "create.final.confirmTitle" = "Create video?";
 "create.final.createWithCost" = "Create video · %@";
 "create.final.preparePlan" = "Prepare video plan";
-"create.final.summaryTitle" = "Confirm the media, story, and timing before the video starts.";
+"create.final.summaryTitle" = "Review the cut, plan, and credit cost before video creation starts.";
+"create.final.creditCost" = "%@ needed";
+"create.final.creditPolicy.plan" = "Preparing the video plan does not reserve credits.";
+"create.final.creditPolicy.create" = "Starting the final video reserves %@. Credits are finalized only after the export is delivered.";
 "create.guidance.eyebrow.keepGoing" = "Keep going";
 "create.guidance.eyebrow.prepare" = "Prepare moment";
 "create.guidance.eyebrow.warning" = "Needs attention";
@@ -731,10 +734,11 @@
 "create.reviewBeforeCreating.title" = "Check before creating";
 "create.media.itemCount" = "%d items";
 "create.final.createVideoTitle" = "Create the video";
-"create.final.createVideoDetail" = "Avi will edit your real media into a %@ video. You can go back if you want to change the story first.";
+"create.final.createVideoDetail" = "Avi will edit your real media into a %@ video. Prepare the plan first, then confirm when you are ready to use credits.";
 "create.primary.finalReady" = "Final video ready.";
 "create.primary.videoCreating" = "Avi is creating the video. You can check progress here.";
 "create.primary.previewReady" = "Avi's Cut ready. Check it before the final video.";
+"create.primary.prepareVideoPlan" = "Prepare the video plan first. No credits are reserved yet.";
 "create.primary.reviewBeforeVideo" = "Check Avi's Cut and the video plan before creating the final video.";
 "create.error.storyPreparationNotReady" = "Story preparation is not ready yet.";
 "create.availability.momentSignInRequired" = "Sign in before starting a Moment.";
@@ -890,8 +894,8 @@
 "create.final.action.refreshing" = "Refreshing final video...";
 "create.final.action.refresh" = "Refresh final video";
 "create.final.action.creating" = "Creating final video...";
-"create.final.action.create" = "Create final video";
-"create.final.empty.ready" = "The story plan is ready. Create the final video when you are ready.";
+"create.final.empty.ready" = "The video plan is ready. Create the final video when you are ready.";
+"create.final.empty.preparePlan" = "Prepare the video plan first. No credits are reserved in this step.";
 "create.final.empty.prepareStory" = "Prepare the story before creating the final video.";
 
 "create.mediaCard.import.title" = "Adding moments";
@@ -923,7 +927,7 @@
 "create.workflowContent.assetUsageItems" = "%d of %d items";
 "create.workflowContent.beforeVideo" = "Before video";
 "create.workflowContent.modePending" = "Mode pending";
-"create.workflowContent.renderPlanFallback" = "Avi will prepare the media, duration, and quality checks before the video starts.";
+"create.workflowContent.renderPlanFallback" = "Avi will prepare media, duration, and quality checks first. No credits are reserved in this planning step.";
 "create.workflowContent.storyReviewTitle" = "Avi's Cut";
 "create.aviCut.status.ready" = "Avi's Cut is ready. Create the final video or adjust the cut first.";
 "create.aviCut.status.improving" = "Avi is shaping the cut.";
@@ -954,14 +958,14 @@
 "create.workflowContent.mediaSelected" = "Media selected";
 "create.workflowContent.storyPrepared" = "Story prepared";
 "create.workflowContent.credits" = "Credits";
-"create.workflowContent.creditsReserved" = "%@ reserved when video starts";
+"create.workflowContent.creditsNeeded" = "%@ needed when the final video starts";
 "create.workflowContent.itemReady" = "%d item ready";
 "create.workflowContent.itemsReady" = "%d items ready";
 "create.workflowContent.addMediaFirst" = "Add media first";
 "create.workflowContent.sceneReady" = "%d scene ready";
 "create.workflowContent.scenesReady" = "%d scenes ready";
 "create.workflowContent.prepareStoryFirst" = "Prepare the story first";
-"create.workflowContent.preparedBeforeVideo" = "Prepared before video creation";
+"create.workflowContent.preparedBeforeVideo" = "Prepared before credits are used";
 "create.workflowContent.removeMark" = "Remove Moments AV mark";
 "create.workflowContent.addCreditsForVersion" = "Add %@ to create this version.";
 "create.workflowContent.noMarkWithPro" = "No mark with Pro";
@@ -989,7 +993,7 @@
 "create.workflowContent.tipReviewReady" = "Check Avi's Cut. If it feels right, create the final video.";
 "create.workflowContent.tipFinalWorking" = "Avi is finishing the final video. You can refresh when needed.";
 "create.workflowContent.tipPreviewWorking" = "Avi is improving the cut from your selected moments.";
-"create.workflowContent.tipStoryReady" = "The story plan is ready. Next step: create the video.";
+"create.workflowContent.tipStoryReady" = "Avi's Cut is ready. Next step: prepare the video plan.";
 "create.workflowContent.tipMediaReady" = "Avi will shape these moments into a simple story plan.";
 "create.workflowContent.tipPickMoments" = "Pick the moments. Avi will shape the story, mood, and pacing.";
 "create.workflowContent.planDetail" = "%ds · %d media items";

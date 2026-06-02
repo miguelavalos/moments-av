@@ -165,7 +165,7 @@ private struct MomentsCreateMediaFirstWorkspace: View {
                     prepareAviCut: prepareAviCut,
                     generatePreview: generatePreview,
                     refreshPreviewStatus: refreshPreviewStatus,
-                    generateFinalRender: { showsCreateVideoConfirmation = true },
+                    generateFinalRender: primaryFinalRenderAction,
                     refreshFinalRenderStatus: refreshFinalRenderStatus,
                     retryFinalVideoDownload: retryFinalVideoDownload,
                     finishFinalVideoToGallery: finishFinalVideoToGallery,
@@ -177,13 +177,13 @@ private struct MomentsCreateMediaFirstWorkspace: View {
         }
         .scrollIndicators(.hidden)
         .animation(.spring(response: 0.38, dampingFraction: 0.86), value: presentation.storySummary.hasScenes)
-        .alert(L10n.string("create.final.confirmTitle"), isPresented: $showsCreateVideoConfirmation) {
+        .alert(finalVideoAction.confirmationTitle, isPresented: $showsCreateVideoConfirmation) {
             Button(L10n.string("create.action.notNow"), role: .cancel) {}
-            Button(L10n.string("create.final.createWithCost", creditCostTitle)) {
+            Button(finalVideoAction.confirmationActionTitle) {
                 generateFinalRender(false)
             }
         } message: {
-            Text(L10n.string("create.final.confirmMessage", creditCostTitle))
+            Text(finalVideoAction.confirmationMessage)
         }
         .alert(L10n.string("create.discard.confirmTitle"), isPresented: $showsDiscardMomentConfirmation) {
             Button(L10n.string("create.discard.keep"), role: .cancel) {}
@@ -225,8 +225,20 @@ private struct MomentsCreateMediaFirstWorkspace: View {
         generateStoryPlan()
     }
 
-    private var creditCostTitle: String {
-        MomentsCreditCopy.countTitle(presentation.finalRenderSummary.creditCost)
+    private var finalVideoAction: MomentsCreateFinalVideoActionPresentation {
+        MomentsCreateFinalVideoActionPresentation(
+            summary: presentation.finalRenderSummary,
+            template: presentation.template,
+            balance: presentation.balance
+        )
+    }
+
+    private func primaryFinalRenderAction() {
+        if finalVideoAction.hasRenderPlan {
+            showsCreateVideoConfirmation = true
+        } else {
+            generateFinalRender(false)
+        }
     }
 
     private func discardCurrentMoment() {
@@ -887,8 +899,13 @@ private struct MomentsCreateStoryReviewPage: View {
                                 removesWatermark: $removesWatermark
                             )
 
+                            Label(finalVideoAction.creditPolicyMessage, systemImage: finalVideoAction.hasRenderPlan ? "creditcard.fill" : "checklist")
+                                .font(.system(size: 12, weight: .bold))
+                                .foregroundStyle(AVBrandColor.textSecondary)
+                                .fixedSize(horizontal: false, vertical: true)
+
                             Button(action: primaryCreateAction) {
-                                Label(primaryCreateTitle, systemImage: primaryCreateIconName)
+                                Label(finalVideoAction.primaryTitle, systemImage: finalVideoAction.primaryIconName)
                                     .font(.system(size: 15, weight: .black))
                                     .frame(maxWidth: .infinity)
                                     .frame(height: 50)
@@ -920,16 +937,16 @@ private struct MomentsCreateStoryReviewPage: View {
         .background(MomentsTheme.shellBackground.ignoresSafeArea())
         .navigationBarBackButtonHidden(true)
         .toolbar(.hidden, for: .navigationBar)
-        .alert(L10n.string("create.final.confirmTitle"), isPresented: $showsCreateVideoConfirmation) {
+        .alert(finalVideoAction.confirmationTitle, isPresented: $showsCreateVideoConfirmation) {
             Button(L10n.string("create.action.notNow"), role: .cancel) {}
-            Button(L10n.string("create.final.createWithCost", totalCreditCostTitle)) {
+            Button(finalVideoAction.confirmationActionTitle) {
                 dismiss()
                 Task { @MainActor in
                     createVideo(removesWatermark)
                 }
             }
         } message: {
-            Text(L10n.string("create.final.confirmMessage", totalCreditCostTitle))
+            Text(finalVideoAction.confirmationMessage)
         }
         .alert(L10n.string("create.discard.confirmTitle"), isPresented: $showsDiscardMomentConfirmation) {
             Button(L10n.string("create.discard.keep"), role: .cancel) {}
@@ -957,20 +974,17 @@ private struct MomentsCreateStoryReviewPage: View {
         return L10n.string("create.discard.currentMessage")
     }
 
-    private var creditCostTitle: String {
-        MomentsCreditCopy.countTitle(presentation.finalRenderSummary.creditCost)
-    }
-
-    private var totalCreditCost: Int {
-        MomentsCreditGate.finalRenderCreditCost(
+    private var finalVideoAction: MomentsCreateFinalVideoActionPresentation {
+        MomentsCreateFinalVideoActionPresentation(
+            summary: presentation.finalRenderSummary,
             template: presentation.template,
-            removesWatermark: removesWatermark,
-            balance: presentation.balance
+            balance: presentation.balance,
+            removesWatermark: removesWatermark
         )
     }
 
     private var totalCreditCostTitle: String {
-        MomentsCreditCopy.countTitle(totalCreditCost)
+        finalVideoAction.totalCreditCostTitle
     }
 
     private var mediaCountTitle: String {
@@ -978,32 +992,16 @@ private struct MomentsCreateStoryReviewPage: View {
         return "\(count) \(count == 1 ? "item" : "items")"
     }
 
-    private var hasRenderPlan: Bool {
-        presentation.finalRenderSummary.renderPlan != nil
-    }
-
-    private var primaryCreateTitle: String {
-        hasRenderPlan ? L10n.string("create.final.createWithCost", totalCreditCostTitle) : L10n.string("create.final.preparePlan")
-    }
-
-    private var primaryCreateIconName: String {
-        hasRenderPlan ? "video.fill" : "checklist"
-    }
-
     private var isPrimaryCreateDisabled: Bool {
         !presentation.canGenerateFinalRender
             || presentation.mediaSummary.reviewCount == 0
             || !presentation.storySummary.hasScenes
-            || !MomentsCreditGate.canAffordFinalRender(
-                template: presentation.template,
-                removesWatermark: removesWatermark,
-                balance: presentation.balance
-            )
+            || !finalVideoAction.canAffordSelectedCost
     }
 
     private func primaryCreateAction() {
         guard !isPrimaryCreateDisabled else { return }
-        if hasRenderPlan {
+        if finalVideoAction.hasRenderPlan {
             showsCreateVideoConfirmation = true
         } else {
             createVideo(removesWatermark)
@@ -1079,8 +1077,8 @@ private struct MomentsCreateReadinessChecklistCard: View {
                     )
                     MomentsCreateReadinessRow(
                         title: L10n.string("create.workflowContent.credits"),
-                        detail: L10n.string("create.workflowContent.creditsReserved", MomentsCreditCopy.countTitle(presentation.finalRenderSummary.creditCost)),
-                        isReady: presentation.finalRenderSummary.creditCost > 0
+                        detail: creditDetail,
+                        isReady: MomentsCreditGate.canAfford(presentation.template, balance: presentation.balance)
                     )
                 }
             }
@@ -1107,6 +1105,13 @@ private struct MomentsCreateReadinessChecklistCard: View {
         }
         let seconds = plan.targetDurationMs / 1000
         return L10n.string("create.workflowContent.planDetail", seconds, plan.usedAssetCount)
+    }
+
+    private var creditDetail: String {
+        L10n.string(
+            "create.workflowContent.creditsNeeded",
+            MomentsCreditCopy.countTitle(presentation.finalRenderSummary.creditCost)
+        )
     }
 }
 
@@ -1560,7 +1565,7 @@ private struct MomentsCreatePrimaryActionBar: View {
             return presentation.finalRenderSummary.isRefreshingStatus ? L10n.string("create.status.checking") : L10n.string("create.final.checkStatus")
         }
         if presentation.canGenerateFinalRender {
-            return L10n.string("create.final.create")
+            return finalVideoAction.primaryTitle
         }
         if presentation.previewSummary.latestPreview != nil {
             return presentation.finalRenderSummary.isGenerating ? L10n.string("create.final.creating") : L10n.string("create.final.create")
@@ -1583,6 +1588,9 @@ private struct MomentsCreatePrimaryActionBar: View {
         if presentation.finalRenderSummary.finalExport != nil {
             return "checkmark.circle.fill"
         }
+        if presentation.canGenerateFinalRender {
+            return finalVideoAction.primaryIconName
+        }
         if presentation.previewSummary.latestPreview != nil {
             return "wand.and.stars"
         }
@@ -1591,9 +1599,6 @@ private struct MomentsCreatePrimaryActionBar: View {
         }
         if presentation.finalRenderSummary.latestFinalJob != nil {
             return "arrow.clockwise"
-        }
-        if presentation.canGenerateFinalRender {
-            return "video.fill"
         }
         if needsSignInForStory {
             return "person.crop.circle.badge.checkmark"
@@ -1643,7 +1648,9 @@ private struct MomentsCreatePrimaryActionBar: View {
             return L10n.string("create.primary.previewReady")
         }
         if presentation.canGenerateFinalRender {
-            return L10n.string("create.primary.previewReady")
+            return finalVideoAction.hasRenderPlan
+                ? finalVideoAction.creditPolicyMessage
+                : L10n.string("create.primary.prepareVideoPlan")
         }
         if let previewMessage = presentation.previewSummary.statusMessage, !previewMessage.isEmpty {
             return previewMessage
@@ -1716,6 +1723,14 @@ private struct MomentsCreatePrimaryActionBar: View {
             return AVBrandColor.textSecondary
         }
         return AVBrandColor.textPrimary
+    }
+
+    private var finalVideoAction: MomentsCreateFinalVideoActionPresentation {
+        MomentsCreateFinalVideoActionPresentation(
+            summary: presentation.finalRenderSummary,
+            template: presentation.template,
+            balance: presentation.balance
+        )
     }
 
     private var isBusy: Bool {

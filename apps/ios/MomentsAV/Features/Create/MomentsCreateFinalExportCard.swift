@@ -17,7 +17,7 @@ struct MomentsCreateFinalExportCard: View {
                     detail: L10n.string("create.final.detail")
                 )
 
-                Text(presentation.creditTitle)
+                Text(L10n.string("create.final.creditCost", presentation.creditTitle))
                     .font(.caption)
                     .foregroundStyle(.secondary)
 
@@ -67,6 +67,10 @@ struct MomentsCreateFinalExportCard: View {
                         systemImage: "square.and.arrow.up",
                         message: presentation.emptyMessage
                     )
+                }
+
+                if presentation.canGenerateFinalRender {
+                    AVAppShellInlineMessage(message: presentation.creditPolicyMessage)
                 }
 
                 AVAppShellPrimaryButton(
