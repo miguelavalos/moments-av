@@ -17,7 +17,7 @@
 "profile.help.opensource.title" = "Open-source project";
 "profile.help.sourceCode.detail" = "Browse the repository, issues, and contribution guidelines.";
 "profile.help.sourceCode.title" = "Source code";
-"profile.help.subtitle" = "Open project links, support, privacy, and terms from here.";
+"profile.help.subtitle" = "Open support, privacy, terms, and source links from here.";
 "profile.help.support.detail" = "Open Moments AV support.";
 "profile.help.support.title" = "Contact support";
 "profile.help.terms.detail" = "Review the terms that apply to Moments AV.";
@@ -713,7 +713,7 @@
 "create.story.error.invalidMediaReferences" = "Avi prepared the story, but it did not match the saved media. Please save the media again.";
 "create.story.error.saveFailed" = "Avi prepared the story, but couldn’t save it to this Moment. Please try again.";
 "create.media.persistence.added" = "%d %@ added to this Moment.";
-"create.preview.status.readyRefine" = "Story review ready. You can still refine the story before final render.";
+"create.preview.status.readyRefine" = "Story review ready. You can still refine the story before the final video.";
 "create.media.fixture.synced" = "3 assets synced. Avi selected the strongest opening order.";
 "create.story.status.readyToReview" = "Story ready to review.";
 "create.dashboard.title" = "Creation Dashboard";
@@ -801,9 +801,9 @@
 "workflow.preview.refreshMissingMoment" = "Open a moment before refreshing story review status.";
 "workflow.preview.refreshMissingJob" = "No story review job is available yet.";
 "workflow.preview.refreshSuccess" = "Story review status updated.";
-"workflow.final.signInRender" = "Sign in before rendering the final export.";
-"workflow.final.signInAgainRender" = "Sign in again before rendering the final export.";
-"workflow.final.notConfigured" = "Final rendering is not configured for this build.";
+"workflow.final.signInRender" = "Sign in before creating the final video.";
+"workflow.final.signInAgainRender" = "Sign in again before creating the final video.";
+"workflow.final.notConfigured" = "Final video creation is not configured for this build.";
 "workflow.final.preparing" = "Avi is preparing the final export.";
 "workflow.final.checkingPlan" = "Checking the video plan.";
 "workflow.final.needsUsableMedia" = "Avi needs usable media before creating the video.";
@@ -817,12 +817,12 @@
 "workflow.final.saveLocalFailed" = "Final video is ready, but it could not be saved locally yet.";
 "workflow.final.downloadBeforeGallery" = "Download the final video before moving it to Gallery.";
 "workflow.final.movedToGallery" = "Final video moved to Gallery.";
-"workflow.final.missingMoment" = "Start or continue a moment before rendering the final export.";
-"workflow.final.addCredits" = "Add credits before final render.";
-"workflow.final.notReady" = "Final export is not ready to render.";
-"workflow.final.refreshSignIn" = "Sign in before refreshing final render status.";
+"workflow.final.missingMoment" = "Start or continue a Moment before creating the final video.";
+"workflow.final.addCredits" = "Add credits before creating the final video.";
+"workflow.final.notReady" = "Final video is not ready to create.";
+"workflow.final.refreshSignIn" = "Sign in before refreshing final video status.";
 "workflow.final.refreshMissingMoment" = "Open a moment before refreshing final status.";
-"workflow.final.refreshMissingJob" = "No final render job is available yet.";
+"workflow.final.refreshMissingJob" = "No final video job is available yet.";
 "workflow.final.refreshSuccess" = "Video status updated.";
 
 "create.refresh.preview.unavailable" = "Story review refresh is not available yet.";
@@ -1013,8 +1013,8 @@
 "create.setup.editStyle" = "Edit style";
 "create.setup.comingSoon" = "Coming soon";
 "create.setup.notePlaceholder" = "Birthday for Ana, Lisbon trip, for mom...";
-"create.renderRows.renderJob" = "Render job";
-"create.renderRows.waitingStatus" = "Waiting for renderer status.";
+"create.renderRows.renderJob" = "Video job";
+"create.renderRows.waitingStatus" = "Waiting for video status.";
 "create.renderRows.watermark" = "Watermark";
 "create.renderRows.included" = "Included";
 "create.renderRows.none" = "None";
