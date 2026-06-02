@@ -6,7 +6,7 @@ final class MomentsInProgressListPresentationTests: XCTestCase {
         let presentation = MomentsInProgressListPresentation.make(
             momentsSummary: InProgressMomentsSummary.make(from: [
                 makeMoment(id: "active", status: "story_ready", updatedAt: 20),
-                makeMoment(id: "done", status: "completed", updatedAt: 10)
+                makeMoment(id: "done", status: "gallery_ready", updatedAt: 10)
             ]),
             selectedMomentId: nil
         )
@@ -21,7 +21,7 @@ final class MomentsInProgressListPresentationTests: XCTestCase {
             momentsSummary: InProgressMomentsSummary.make(from: [
                 makeMoment(id: "older-active", status: "in_progress", updatedAt: 10),
                 makeMoment(id: "newer-active", status: "story_ready", updatedAt: 30),
-                makeMoment(id: "done", status: "completed", updatedAt: 20)
+                makeMoment(id: "done", status: "gallery_ready", updatedAt: 20)
             ]),
             selectedMomentId: nil
         )
@@ -56,7 +56,7 @@ final class MomentsInProgressListPresentationTests: XCTestCase {
 
     func testFinishedRowUsesFinishedMarkerAndCollapsedAccessoryWhenNotSelected() {
         let row = MomentsInProgressListRowPresentation(
-            moment: makeMoment(id: "done", status: "completed"),
+            moment: makeMoment(id: "done", status: "gallery_ready"),
             isSelected: false
         )
 

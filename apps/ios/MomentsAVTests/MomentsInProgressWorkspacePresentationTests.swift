@@ -22,7 +22,7 @@ final class MomentsInProgressWorkspacePresentationTests: XCTestCase {
         let workspace = makeWorkspace(
             moment: makeMoment(title: "Family Weekend"),
             renderJobs: [
-                makeRenderJob(id: "job-1", kind: "final_render", status: "failed", updatedAt: 20)
+                makeRenderJob(id: "job-1", kind: "final", status: "failed", updatedAt: 20)
             ]
         )
 
@@ -67,7 +67,7 @@ final class MomentsInProgressWorkspacePresentationTests: XCTestCase {
                 ],
                 renderJobs: [
                     makeRenderJob(id: "job-1", kind: "preview", status: "running", updatedAt: 20),
-                    makeRenderJob(id: "job-2", kind: "final_render", status: "queued", updatedAt: 30)
+                    makeRenderJob(id: "job-2", kind: "final", status: "queued", updatedAt: 30)
                 ]
             )
         )
@@ -81,7 +81,7 @@ final class MomentsInProgressWorkspacePresentationTests: XCTestCase {
                 moment: makeMoment(status: "preview_ready"),
                 renderJobs: [
                     makeRenderJob(id: "old", kind: "preview", status: "queued", updatedAt: 10),
-                    makeRenderJob(id: "new", kind: "final_render", status: "failed", updatedAt: 20)
+                    makeRenderJob(id: "new", kind: "final", status: "failed", updatedAt: 20)
                 ],
                 artifacts: [
                     makeArtifact(id: "preview-1", kind: "preview", status: "expired"),

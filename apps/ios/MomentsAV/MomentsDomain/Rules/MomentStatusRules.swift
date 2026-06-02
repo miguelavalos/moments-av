@@ -6,7 +6,7 @@ enum MomentStatusRules {
     }
 
     static func isFinishedStatus(_ status: String) -> Bool {
-        status == "completed"
+        status == "gallery_ready"
     }
 
     static func group(_ moments: [InProgressMoment]) -> InProgressMomentGroups {
@@ -22,10 +22,10 @@ enum MomentStatusRules {
         if status == "preview_ready" {
             return L10n.string("moment.status.storyReady")
         }
-        if status == "final_render_pending" || status == "final_render_running" {
+        if status == "final_render_pending" || status == "final_rendering" {
             return L10n.string("moment.status.creatingVideo")
         }
-        if status == "export_ready" || status == "completed" {
+        if status == "gallery_ready" {
             return L10n.string("moment.status.videoReady")
         }
         return status
@@ -106,7 +106,7 @@ enum MomentStatusRules {
         switch kind {
         case "preview":
             .preview
-        case "final_render":
+        case "final":
             .finalRender
         default:
             .review

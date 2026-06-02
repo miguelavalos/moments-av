@@ -5,7 +5,7 @@ final class MomentStatusRulesTests: XCTestCase {
     func testGroupsCompletedMomentsAsFinished() {
         let plan = makeMoment(id: "in_progress", status: "in_progress", updatedAt: 10)
         let preview = makeMoment(id: "preview", status: "preview_ready", updatedAt: 20)
-        let completed = makeMoment(id: "completed", status: "completed", updatedAt: 30)
+        let completed = makeMoment(id: "completed", status: "gallery_ready", updatedAt: 30)
 
         let groups = MomentStatusRules.group([plan, preview, completed])
 
@@ -16,8 +16,8 @@ final class MomentStatusRulesTests: XCTestCase {
     func testGroupsSortMomentsByLatestUpdateWithinEachSection() {
         let olderInProgress = makeMoment(id: "older-plan", status: "in_progress", updatedAt: 10)
         let newerInProgress = makeMoment(id: "newer-plan", status: "story_ready", updatedAt: 30)
-        let olderFinished = makeMoment(id: "older-finished", status: "completed", updatedAt: 20)
-        let newerFinished = makeMoment(id: "newer-finished", status: "completed", updatedAt: 40)
+        let olderFinished = makeMoment(id: "older-finished", status: "gallery_ready", updatedAt: 20)
+        let newerFinished = makeMoment(id: "newer-finished", status: "gallery_ready", updatedAt: 40)
 
         let groups = MomentStatusRules.group([
             olderInProgress,
@@ -31,9 +31,9 @@ final class MomentStatusRulesTests: XCTestCase {
     }
 
     func testListSummaryCountsAndLatestMomentUseMomentRules() {
-        let oldest = makeMoment(id: "oldest", status: "completed", updatedAt: 10)
+        let oldest = makeMoment(id: "oldest", status: "gallery_ready", updatedAt: 10)
         let newest = makeMoment(id: "newest", status: "story_ready", updatedAt: 30)
-        let middle = makeMoment(id: "middle", status: "completed", updatedAt: 20)
+        let middle = makeMoment(id: "middle", status: "gallery_ready", updatedAt: 20)
 
         let summary = InProgressMomentsSummary.make(from: [oldest, newest, middle])
 
@@ -46,7 +46,7 @@ final class MomentStatusRulesTests: XCTestCase {
 
     func testListSummaryExposesLatestInProgressContinuationRequest() {
         let olderInProgress = makeMoment(id: "older-plan", status: "in_progress", updatedAt: 10)
-        let newestFinished = makeMoment(id: "newest-finished", status: "completed", updatedAt: 30)
+        let newestFinished = makeMoment(id: "newest-finished", status: "gallery_ready", updatedAt: 30)
         let latestInProgress = makeMoment(id: "latest-plan", status: "story_ready", updatedAt: 20)
 
         let summary = InProgressMomentsSummary.make(from: [olderInProgress, newestFinished, latestInProgress])
@@ -72,7 +72,7 @@ final class MomentStatusRulesTests: XCTestCase {
     func testDisplayHelpersFormatBackendValuesForUI() {
         XCTAssertEqual(MomentStatusRules.displayTitle(for: "preview_ready"), "Story Review Ready")
         XCTAssertEqual(MomentStatusRules.displayKind("preview"), "Story Review")
-        XCTAssertEqual(MomentStatusRules.displayKind("final_render"), "Final Render")
+        XCTAssertEqual(MomentStatusRules.displayKind("final"), "Final Render")
     }
 
     func testNextActionAsksForMediaWhenWorkspaceHasNoMedia() {

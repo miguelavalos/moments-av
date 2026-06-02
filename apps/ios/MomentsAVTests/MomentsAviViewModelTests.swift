@@ -21,7 +21,7 @@ final class MomentsAviViewModelTests: XCTestCase {
             isSignedIn: true,
             momentsSummary: InProgressMomentsSummary.make(from: [
                 makeMoment(id: "active-1", status: "story_ready", updatedAt: 20),
-                makeMoment(id: "done-1", status: "completed", updatedAt: 10)
+                makeMoment(id: "done-1", status: "gallery_ready", updatedAt: 10)
             ]),
             creditBalance: .empty
         )

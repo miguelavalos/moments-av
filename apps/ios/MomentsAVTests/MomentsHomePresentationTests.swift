@@ -44,7 +44,7 @@ final class MomentsHomePresentationTests: XCTestCase {
             isSignedIn: true,
             displayName: nil,
             momentsSummary: InProgressMomentsSummary.make(from: [
-                makeMoment(id: "finished", status: "completed", updatedAt: 30),
+                makeMoment(id: "finished", status: "gallery_ready", updatedAt: 30),
                 moment
             ])
         )
@@ -63,7 +63,7 @@ final class MomentsHomePresentationTests: XCTestCase {
             displayName: nil,
             momentsSummary: InProgressMomentsSummary.make(from: [
                 makeMoment(id: "one", status: "in_progress", updatedAt: 10),
-                makeMoment(id: "two", status: "completed", updatedAt: 20)
+                makeMoment(id: "two", status: "gallery_ready", updatedAt: 20)
             ])
         )
 

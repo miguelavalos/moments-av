@@ -96,7 +96,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         let preview = MomentsCreateTestFixtures.makeArtifact(id: "preview-1", kind: "preview")
         let finalExport = MomentsCreateTestFixtures.makeArtifact(id: "final-1", kind: "final_export")
         let latestPreviewJob = MomentsCreateTestFixtures.makeRenderJob(id: "preview-job", kind: "preview", status: "running")
-        let latestFinalJob = MomentsCreateTestFixtures.makeRenderJob(id: "final-job", kind: "final_render", status: "queued")
+        let latestFinalJob = MomentsCreateTestFixtures.makeRenderJob(id: "final-job", kind: "final", status: "queued")
         let mediaSummary = MomentsCreateMediaSummary(
             selectedMedia: [],
             syncedMediaAssets: [MomentsCreateTestFixtures.makeMediaAsset(id: "media-1")],
@@ -404,7 +404,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
             summary: MomentsCreateFinalRenderSummary(
                 creditCost: 2,
                 finalExport: MomentsCreateTestFixtures.makeArtifact(id: "final-1", kind: "final_export"),
-                latestFinalJob: MomentsCreateTestFixtures.makeRenderJob(id: "final-job", kind: "final_render", status: "running"),
+                latestFinalJob: MomentsCreateTestFixtures.makeRenderJob(id: "final-job", kind: "final", status: "running"),
                 isGenerating: true,
                 isRefreshingStatus: true,
                 statusMessage: "Rendering."
@@ -450,7 +450,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
     func testRealtimeRenderPresentationFormatsActivePhaseAndProgress() {
         let job = MomentsCreateTestFixtures.makeRenderJob(
             id: "final-job",
-            kind: "final_render",
+            kind: "final",
             status: "running",
             phase: "rendering",
             progressPercent: 42,
@@ -471,7 +471,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
     func testRealtimeRenderPresentationFormatsFailedStatus() {
         let job = MomentsCreateTestFixtures.makeRenderJob(
             id: "final-job",
-            kind: "final_render",
+            kind: "final",
             status: "failed",
             canEditSetup: true,
             errorMessage: "fal provider request failed with upstream trace id abc123"
@@ -492,7 +492,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
     func testRealtimeRenderPresentationUsesSafeFailedUserMessage() {
         let job = MomentsCreateTestFixtures.makeRenderJob(
             id: "final-job",
-            kind: "final_render",
+            kind: "final",
             status: "failed",
             userMessage: "We couldn’t finish this video. No credits were charged.",
             canEditSetup: true,

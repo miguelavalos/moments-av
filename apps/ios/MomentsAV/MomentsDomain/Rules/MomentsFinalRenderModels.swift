@@ -176,7 +176,7 @@ enum MomentsFinalRenderRules {
         if !MomentsCreditGate.canAfford(template, balance: balance) {
             return Availability(canGenerate: false, blockReason: .insufficientCredits)
         }
-        if moment.status != "story_ready" && moment.status != "preview_ready" && moment.status != "export_ready" {
+        if moment.status != "story_ready" && moment.status != "preview_ready" && moment.status != "gallery_ready" {
             return Availability(canGenerate: false, blockReason: .storyNotReady)
         }
         return Availability(canGenerate: true, blockReason: nil)

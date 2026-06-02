@@ -246,9 +246,9 @@ private struct MomentsInProgressContinueBlock: View {
 
     private func iconName(for moment: InProgressMoment) -> String {
         switch moment.status {
-        case "final_render_pending", "final_render_running":
+        case "final_render_pending", "final_rendering":
             "gearshape.2.fill"
-        case "export_ready", "completed":
+        case "gallery_ready":
             "arrow.down.circle.fill"
         case "preview_ready":
             "text.bubble.fill"
