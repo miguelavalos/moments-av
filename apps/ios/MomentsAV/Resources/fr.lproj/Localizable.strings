@@ -489,7 +489,7 @@
 "create.guidance.addMedia" = "Ajoute des photos ou clips. Avi préparera la première histoire.";
 "create.guidance.chooseTheme" = "Choisis un thème. Moments AV ouvrira ensuite ton espace de travail.";
 "create.guidance.locked" = "%@ est prêt. Ajoute des photos ou clips.";
-"create.guidance.noCredits" = "Ajoute des photos ou clips maintenant. Les crédits seront nécessaires avant la vidéo finale.";
+"create.guidance.noCredits" = "Ajoute des photos ou clips maintenant. Tu peux préparer ce Moment avant d'ajouter des crédits.";
 "create.guidance.retry" = "Quelque chose nécessite une nouvelle tentative. Tu peux réessayer quand tu veux.";
 "create.guidance.signIn" = "Connecte ton compte pour créer ta première vidéo de souvenirs.";
 "create.guidance.styleSet" = "%@ est sélectionné. Ajoute ensuite des photos ou clips.";
@@ -613,7 +613,6 @@
 "create.guidance.eyebrow.keepGoing" = "Continuer";
 "create.guidance.eyebrow.prepare" = "Préparer le Moment";
 "create.guidance.eyebrow.warning" = "À vérifier";
-"create.credits.onlyFinal" = "Les crédits ne sont nécessaires que lorsque tu crées la vidéo finale.";
 "create.form.details" = "Détails pour Avi";
 "create.form.details.placeholder" = "Ajoute des noms, blagues internes, scènes à souligner ou choses à éviter.";
 "create.form.occasion" = "Occasion";
@@ -646,8 +645,7 @@
 "create.noteForAvi" = "Note pour Avi";
 "create.optionalDetails" = "Détails optionnels";
 "create.optionalDetails.summary" = "%ds · %d crédit · ajoute plus maintenant ou plus tard";
-"create.planFirst" = "Planifier d’abord";
-"create.signInLater.detail" = "Tu peux préparer ce Moment maintenant. La connexion est requise avant Avi's Cut ou la création vidéo.";
+"create.signInLater.detail" = "Tu peux choisir des médias maintenant. La connexion est requise avant qu'Avi prépare le montage.";
 "create.story.plan.detail" = "Prépare la structure avant de créer la vidéo finale.";
 "create.story.plan.title" = "Plan d’histoire";
 "create.style.pickFeeling" = "Choisir le ressenti";
@@ -1011,8 +1009,6 @@
 "create.setup.guidance.momentMoving" = "Moment is moving";
 "create.setup.guidance.signIn" = "Sign in to create";
 "create.setup.guidance.preparing" = "Preparing your moment";
-"create.setup.hideDetails" = "Hide details";
-"create.setup.viewDetails" = "View details";
 "create.setup.nextAddMedia" = "Next: add media";
 "create.setup.styleSummary" = "%@ · %ds · %@ · %@";
 "create.setup.compactStyleSummary" = "%ds · %@ · %@";

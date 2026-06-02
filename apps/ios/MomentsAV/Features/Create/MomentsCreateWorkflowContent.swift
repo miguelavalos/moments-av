@@ -70,13 +70,9 @@ struct MomentsCreateWorkflowContent: View {
             canBeginNewMoment: viewModel.canBeginNewMoment,
             beginNewMoment: viewModel.beginNewMomentWithPhotoPicker,
             beginAlbumMoment: viewModel.beginNewMomentWithAlbumPicker,
-            editStyle: viewModel.editNewMomentStyle,
             selectStyle: viewModel.selectCreationStyle,
             selectMusicPreset: viewModel.selectMusicPreset,
-            createMoment: viewModel.createMoment,
-            discardMoment: viewModel.discardMoment,
-            startSignInFlow: startSignInFlow,
-            openCredits: openCredits
+            discardMoment: viewModel.discardMoment
         )
     }
 }

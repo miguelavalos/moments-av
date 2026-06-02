@@ -489,7 +489,7 @@
 "create.guidance.addMedia" = "Afegeix fotos o clips. Avi prepararà la primera història.";
 "create.guidance.chooseTheme" = "Tria un tema. Moments AV obrirà el teu espai de treball després.";
 "create.guidance.locked" = "%@ està a punt. Afegeix fotos o clips.";
-"create.guidance.noCredits" = "Afegeix fotos o clips ara. Els crèdits calen abans del vídeo final.";
+"create.guidance.noCredits" = "Afegeix fotos o clips ara. Pots preparar aquest Moment abans d'afegir crèdits.";
 "create.guidance.retry" = "Alguna cosa necessita un altre intent. Pots tornar-ho a provar quan vulguis.";
 "create.guidance.signIn" = "Connecta el compte per crear el teu primer vídeo de records.";
 "create.guidance.styleSet" = "%@ està seleccionat. Afegeix fotos o clips després.";
@@ -613,7 +613,6 @@
 "create.guidance.eyebrow.keepGoing" = "Continua";
 "create.guidance.eyebrow.prepare" = "Preparar Moment";
 "create.guidance.eyebrow.warning" = "Necessita atenció";
-"create.credits.onlyFinal" = "Els crèdits només calen quan crees el vídeo final.";
 "create.form.details" = "Detalls per a Avi";
 "create.form.details.placeholder" = "Afegeix noms, bromes internes, escenes a destacar o coses a evitar.";
 "create.form.occasion" = "Ocasió";
@@ -646,8 +645,7 @@
 "create.noteForAvi" = "Nota per a Avi";
 "create.optionalDetails" = "Detalls opcionals";
 "create.optionalDetails.summary" = "%ds · %d crèdit · afegeix més ara o després";
-"create.planFirst" = "Planificar primer";
-"create.signInLater.detail" = "Pots preparar aquest Moment ara. Cal iniciar sessió abans d'Avi's Cut o crear vídeo.";
+"create.signInLater.detail" = "Pots triar media ara. Cal iniciar sessió abans que Avi prepari el tall.";
 "create.story.plan.detail" = "Prepara l’estructura abans de crear el vídeo final.";
 "create.story.plan.title" = "Pla d’història";
 "create.style.pickFeeling" = "Tria la sensació";
@@ -1011,8 +1009,6 @@
 "create.setup.guidance.momentMoving" = "Moment is moving";
 "create.setup.guidance.signIn" = "Sign in to create";
 "create.setup.guidance.preparing" = "Preparing your moment";
-"create.setup.hideDetails" = "Hide details";
-"create.setup.viewDetails" = "View details";
 "create.setup.nextAddMedia" = "Next: add media";
 "create.setup.styleSummary" = "%@ · %ds · %@ · %@";
 "create.setup.compactStyleSummary" = "%ds · %@ · %@";

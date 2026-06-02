@@ -28,7 +28,7 @@ final class MomentsCreateAviGuidanceTests: XCTestCase {
         )
 
         XCTAssertEqual(guidance.emotion, .happy)
-        XCTAssertEqual(guidance.message, "Add photos or clips now. Credits are needed before creating the final video.")
+        XCTAssertEqual(guidance.message, "Add photos or clips now. You can prepare this Moment before adding credits.")
         XCTAssertEqual(guidance.actionTitle, "Start Moment")
     }
 

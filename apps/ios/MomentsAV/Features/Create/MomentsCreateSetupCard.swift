@@ -6,7 +6,6 @@ import SwiftUI
 struct MomentsCreateSetupCard: View {
     @Binding var form: MomentSetupForm
     @State private var showsOptions = false
-    @State private var showsMomentSheet = false
     @State private var showsMediaSourceSheet = false
     @State private var pendingInitialMediaSource: MomentsCreateInitialMediaSource?
     let selectedStyle: MomentCreationStyle
@@ -19,13 +18,9 @@ struct MomentsCreateSetupCard: View {
     let canBeginNewMoment: Bool
     let beginNewMoment: () -> Void
     let beginAlbumMoment: () -> Void
-    let editStyle: () -> Void
     let selectStyle: (MomentCreationStyle) -> Void
     let selectMusicPreset: (MomentMusicPreset) -> Void
-    let createMoment: () -> Void
     let discardMoment: () -> Void
-    let startSignInFlow: () -> Void
-    let openCredits: () -> Void
 
     @ViewBuilder
     var body: some View {
@@ -36,7 +31,6 @@ struct MomentsCreateSetupCard: View {
                 MomentsCreateNewMomentStatus(
                     isSignedIn: isSignedIn,
                     balance: balance,
-                    selectedStyle: selectedStyle,
                     guidance: aviGuidance,
                     canBeginNewMoment: canBeginNewMoment,
                     beginNewMoment: {
@@ -45,23 +39,10 @@ struct MomentsCreateSetupCard: View {
                         form.duration = .auto
                         form.mediaUse = .aviPick
                         showsMediaSourceSheet = true
-                    },
-                    planMoment: {
-                        form.creationMode = .planned
-                        showsMomentSheet = true
-                        editStyle()
-                    },
-                    startSignInFlow: startSignInFlow,
-                    openCredits: openCredits
+                    }
                 )
 
                 activeMomentAndErrorContent
-            }
-            .sheet(isPresented: $showsMomentSheet) {
-                styleStep
-                    .padding(20)
-                    .presentationDetents([.large])
-                    .presentationDragIndicator(.visible)
             }
             .sheet(isPresented: $showsMediaSourceSheet) {
                 MomentsCreateMediaSourceSheet { source in
@@ -194,7 +175,6 @@ struct MomentsCreateSetupCard: View {
                 isLocked: presentation.isSetupLocked,
                 selectStyle: {
                     selectStyle($0)
-                    showsMomentSheet = false
                 }
             )
         }
@@ -205,13 +185,9 @@ struct MomentsCreateSetupCard: View {
 private struct MomentsCreateNewMomentStatus: View {
     let isSignedIn: Bool
     let balance: MomentsCreditBalance
-    let selectedStyle: MomentCreationStyle
     let guidance: MomentsCreateAviGuidance
     let canBeginNewMoment: Bool
     let beginNewMoment: () -> Void
-    let planMoment: () -> Void
-    let startSignInFlow: () -> Void
-    let openCredits: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: AVBrandSpacing.lg) {
@@ -223,12 +199,8 @@ private struct MomentsCreateNewMomentStatus: View {
             MomentsCreateNewMomentActionBlock(
                 isSignedIn: isSignedIn,
                 balance: balance,
-                selectedStyle: selectedStyle,
                 canBeginNewMoment: canBeginNewMoment,
-                beginNewMoment: beginNewMoment,
-                planMoment: planMoment,
-                startSignInFlow: startSignInFlow,
-                openCredits: openCredits
+                beginNewMoment: beginNewMoment
             )
         }
     }
@@ -278,31 +250,17 @@ private struct MomentsCreateAviInlineGuide: View {
 private struct MomentsCreateNewMomentActionBlock: View {
     let isSignedIn: Bool
     let balance: MomentsCreditBalance
-    let selectedStyle: MomentCreationStyle
     let canBeginNewMoment: Bool
     let beginNewMoment: () -> Void
-    let planMoment: () -> Void
-    let startSignInFlow: () -> Void
-    let openCredits: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
-            MomentsCreateEconomyPanel(balance: balance, selectedStyle: selectedStyle, isSignedIn: isSignedIn)
-
             AVAppShellPrimaryButton(
                 L10n.string("create.media.choose"),
                 systemImage: "photo.badge.plus",
                 isDisabled: !canBeginNewMoment,
                 action: beginNewMoment
             )
-
-            Button(action: planMoment) {
-                Label(L10n.string("create.planFirst"), systemImage: "slider.horizontal.3")
-                    .font(.system(size: 14, weight: .black))
-                    .frame(maxWidth: .infinity)
-            }
-            .buttonStyle(.bordered)
-            .disabled(!canBeginNewMoment)
 
             if !isSignedIn {
                 AVAppShellInlineMessage(message: L10n.string("create.signInLater.detail"))
@@ -491,102 +449,6 @@ private extension MomentsCreateAviGuidance {
         }
     }
 
-}
-
-private struct MomentsCreateEconomyPanel: View {
-    @State private var showsDetails = false
-    let balance: MomentsCreditBalance
-    let selectedStyle: MomentCreationStyle
-    let isSignedIn: Bool
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack(alignment: .firstTextBaseline) {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(isSignedIn ? L10n.string("credits.available.title") : L10n.string("profile.summary.account.title"))
-                        .font(.system(size: 12, weight: .black))
-                        .foregroundStyle(AVBrandColor.textSecondary)
-                        .textCase(.uppercase)
-
-                    Text(isSignedIn ? "\(balance.spendable)" : L10n.string("common.signIn"))
-                        .font(.system(size: 42, weight: .black))
-                        .foregroundStyle(AVBrandColor.textPrimary)
-                }
-
-                Spacer(minLength: 12)
-
-                VStack(alignment: .trailing, spacing: 4) {
-                    Text(L10n.string("moment.artifact.final.title"))
-                        .font(.system(size: 12, weight: .black))
-                        .foregroundStyle(AVBrandColor.textSecondary)
-                        .textCase(.uppercase)
-
-                    Text(MomentsCreditCopy.countTitle(selectedStyle.creditCost))
-                        .font(AVBrandTypography.bodyStrong)
-                        .foregroundStyle(AVBrandColor.textPrimary)
-                }
-            }
-
-            Text(L10n.string("create.credits.onlyFinal"))
-                .font(AVBrandTypography.captionStrong)
-                .foregroundStyle(AVBrandColor.textSecondary)
-                .fixedSize(horizontal: false, vertical: true)
-
-            if isSignedIn {
-                Button {
-                    withAnimation(.easeInOut(duration: 0.18)) {
-                        showsDetails.toggle()
-                    }
-                } label: {
-                    Label(
-                        showsDetails ? L10n.string("create.setup.hideDetails") : L10n.string("create.setup.viewDetails"),
-                        systemImage: showsDetails ? "chevron.up" : "chevron.down"
-                    )
-                        .font(.system(size: 12, weight: .black, design: .rounded))
-                        .foregroundStyle(AVBrandColor.textSecondary)
-                }
-                .buttonStyle(.plain)
-
-                if showsDetails {
-                    HStack(spacing: 8) {
-                        ForEach(MomentsCreditCopy.detailRows(for: balance)) { row in
-                            MomentsCreateCreditChip(title: row.title, value: row.value)
-                        }
-                    }
-                    .transition(.opacity.combined(with: .move(edge: .top)))
-                }
-            }
-        }
-        .padding(14)
-        .background(
-            RoundedRectangle(cornerRadius: 8, style: .continuous)
-                .fill(AVBrandColor.neutral100)
-        )
-    }
-}
-
-private struct MomentsCreateCreditChip: View {
-    let title: String
-    let value: Int
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text("\(value)")
-                .font(.system(size: 18, weight: .black))
-                .foregroundStyle(AVBrandColor.textPrimary)
-            Text(title)
-                .font(.system(size: 11, weight: .semibold))
-                .foregroundStyle(AVBrandColor.textSecondary)
-                .lineLimit(1)
-                .minimumScaleFactor(0.82)
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(10)
-        .background(
-            RoundedRectangle(cornerRadius: 8, style: .continuous)
-                .fill(.white.opacity(0.72))
-        )
-    }
 }
 
 private struct MomentsCreateStepHeader: View {

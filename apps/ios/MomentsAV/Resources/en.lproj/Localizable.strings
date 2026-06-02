@@ -491,7 +491,7 @@
 "create.guidance.addMedia" = "Add photos or clips. Avi will prepare the first story.";
 "create.guidance.chooseTheme" = "Choose a theme. Moments AV will open your workspace right after.";
 "create.guidance.locked" = "%@ is ready. Add photos or clips.";
-"create.guidance.noCredits" = "Add photos or clips now. Credits are needed before creating the final video.";
+"create.guidance.noCredits" = "Add photos or clips now. You can prepare this Moment before adding credits.";
 "create.guidance.retry" = "Something needs another try. You can retry when you are ready.";
 "create.guidance.signIn" = "Connect your account to start your first memory video.";
 "create.guidance.styleSet" = "%@ is set. Add photos or clips next.";
@@ -615,7 +615,6 @@
 "create.guidance.eyebrow.keepGoing" = "Keep going";
 "create.guidance.eyebrow.prepare" = "Prepare moment";
 "create.guidance.eyebrow.warning" = "Needs attention";
-"create.credits.onlyFinal" = "Credits are only needed when you create the final video.";
 "create.form.details" = "Details for Avi";
 "create.form.details.placeholder" = "Add names, inside jokes, scenes to emphasize, or anything to avoid.";
 "create.form.occasion" = "Occasion";
@@ -648,8 +647,7 @@
 "create.noteForAvi" = "Note for Avi";
 "create.optionalDetails" = "Optional details";
 "create.optionalDetails.summary" = "%ds · %d credit · add more now or later";
-"create.planFirst" = "Plan first";
-"create.signInLater.detail" = "You can set up this Moment now. Sign in is required before Avi's Cut or video creation.";
+"create.signInLater.detail" = "You can choose media now. Sign in is required before Avi prepares the cut.";
 "create.story.plan.detail" = "Prepare the structure before creating the final video.";
 "create.story.plan.title" = "Story plan";
 "create.style.pickFeeling" = "Pick the feeling";
@@ -1013,8 +1011,6 @@
 "create.setup.guidance.momentMoving" = "Moment is moving";
 "create.setup.guidance.signIn" = "Sign in to create";
 "create.setup.guidance.preparing" = "Preparing your moment";
-"create.setup.hideDetails" = "Hide details";
-"create.setup.viewDetails" = "View details";
 "create.setup.nextAddMedia" = "Next: add media";
 "create.setup.styleSummary" = "%@ · %ds · %@ · %@";
 "create.setup.compactStyleSummary" = "%ds · %@ · %@";
