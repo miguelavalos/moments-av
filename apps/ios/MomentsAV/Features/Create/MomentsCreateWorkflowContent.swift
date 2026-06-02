@@ -8,7 +8,6 @@ struct MomentsCreateWorkflowContent: View {
     @Binding var pickerItems: [PhotosPickerItem]
     let startSignInFlow: () -> Void
     let openCredits: () -> Void
-    let cancelCreation: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -36,9 +35,7 @@ struct MomentsCreateWorkflowContent: View {
                     useAutoStyleSuggestion: viewModel.useAutoStyleSuggestion,
                     undoAutoStyleSuggestion: viewModel.undoAutoStyleSuggestion,
                     openPickerRequest: viewModel.mediaPickerOpenRequest,
-                    openAlbumPickerRequest: viewModel.mediaAlbumPickerOpenRequest,
                     consumeOpenPickerRequest: viewModel.consumeMediaPickerOpenRequest,
-                    consumeOpenAlbumPickerRequest: viewModel.consumeMediaAlbumPickerOpenRequest,
                     discardMoment: viewModel.discardMoment,
                     startSignInFlow: startSignInFlow,
                     openCredits: openCredits,
@@ -52,28 +49,9 @@ struct MomentsCreateWorkflowContent: View {
                     createAnotherFinalVideoVersion: viewModel.createAnotherFinalVideoVersion
                 )
             } else {
-                setupCard
+                EmptyView()
             }
         }
-    }
-
-    private var setupCard: some View {
-        MomentsCreateSetupCard(
-            form: $viewModel.form,
-            selectedStyle: viewModel.selectedCreationStyle,
-            styles: viewModel.creationStyles,
-            selectedMusicPreset: viewModel.selectedMusicPreset,
-            presentation: viewModel.setupPresentation,
-            newMomentStep: viewModel.newMomentStep,
-            isSignedIn: viewModel.isSignedIn,
-            balance: viewModel.balance,
-            canBeginNewMoment: viewModel.canBeginNewMoment,
-            beginNewMoment: viewModel.beginNewMomentWithPhotoPicker,
-            beginAlbumMoment: viewModel.beginNewMomentWithAlbumPicker,
-            selectStyle: viewModel.selectCreationStyle,
-            selectMusicPreset: viewModel.selectMusicPreset,
-            discardMoment: viewModel.discardMoment
-        )
     }
 }
 
@@ -100,9 +78,7 @@ private struct MomentsCreateMediaFirstWorkspace: View {
     let useAutoStyleSuggestion: () -> Void
     let undoAutoStyleSuggestion: () -> Void
     let openPickerRequest: Int
-    let openAlbumPickerRequest: Int
     let consumeOpenPickerRequest: () -> Void
-    let consumeOpenAlbumPickerRequest: () -> Void
     let discardMoment: () -> Void
     let startSignInFlow: () -> Void
     let openCredits: () -> Void
@@ -141,9 +117,7 @@ private struct MomentsCreateMediaFirstWorkspace: View {
                     reorderMedia: reorderMedia,
                     restoreLocalMediaForEditing: restoreLocalMediaForEditing,
                     autoPickStrongMoments: autoPickStrongMoments,
-                    consumeOpenPickerRequest: consumeOpenPickerRequest,
-                    openAlbumPickerRequest: openAlbumPickerRequest,
-                    consumeOpenAlbumPickerRequest: consumeOpenAlbumPickerRequest
+                    consumeOpenPickerRequest: consumeOpenPickerRequest
                 )
 
                 if hasMediaSelection {
@@ -3182,9 +3156,7 @@ private struct MomentsCreateWorkflowCards: View {
                     reorderMedia: reorderMedia,
                     restoreLocalMediaForEditing: restoreLocalMediaForEditing,
                     autoPickStrongMoments: autoPickStrongMoments,
-                    consumeOpenPickerRequest: {},
-                    openAlbumPickerRequest: 0,
-                    consumeOpenAlbumPickerRequest: {}
+                    consumeOpenPickerRequest: {}
                 )
                 .id(MomentsCreateSection.media)
 

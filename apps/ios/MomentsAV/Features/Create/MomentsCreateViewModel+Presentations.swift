@@ -36,20 +36,4 @@ extension MomentsCreateViewModel {
         )
     }
 
-    var setupPresentation: MomentsCreateSetupPresentation {
-        MomentsCreateSetupPresentation.make(
-            template: form.template,
-            canAfford: canAfford(form.template),
-            spendPlanDescription: spendPlanDescription(for: form.template),
-            isSetupLocked: isSetupLocked,
-            isCreatingMoment: isCreatingMoment,
-            canCreateMoment: canCreateMoment,
-            availabilityMessage: setupAvailabilityMessage,
-            activeMomentId: activeMomentId,
-            isContinuingMoment: isContinuingMoment,
-            canStartAnotherMoment: canStartAnotherMoment,
-            setupErrorMessage: setupErrorMessage,
-            workspaceSummary: workspaceSummary
-        )
-    }
 }

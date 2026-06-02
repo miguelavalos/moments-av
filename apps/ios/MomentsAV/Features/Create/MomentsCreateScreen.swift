@@ -28,13 +28,20 @@ struct MomentsCreateScreen: View {
             viewModel: viewModel,
             pickerItems: $pickerItems,
             startSignInFlow: startSignInFlow,
-            openCredits: openCredits,
-            cancelCreation: cancelCreation
+            openCredits: openCredits
         )
         .background(MomentsTheme.shellBackground.ignoresSafeArea())
         .safeAreaPadding(.horizontal, 20)
         .safeAreaPadding(.top, 12)
         .safeAreaPadding(.bottom, bottomSafeAreaPadding)
+        .task {
+            redirectEmptyCreateIfNeeded()
+        }
+        .onChange(of: viewModel.workflowPresentation.showsMediaFirstWorkspace) { _, showsWorkspace in
+            if !showsWorkspace {
+                cancelCreation()
+            }
+        }
         .fullScreenCover(
             isPresented: Binding(
                 get: { viewModel.workflowPresentation.showsBlockingPreparation || viewModel.isPreparingStory },
@@ -64,6 +71,11 @@ struct MomentsCreateScreen: View {
         } message: {
             Text(workflowErrorAlertMessage ?? L10n.string("common.tryAgain"))
         }
+    }
+
+    private func redirectEmptyCreateIfNeeded() {
+        guard !viewModel.workflowPresentation.showsMediaFirstWorkspace else { return }
+        cancelCreation()
     }
 }
 

@@ -7,7 +7,6 @@ final class MomentsCreateViewModel: ObservableObject {
     @Published private(set) var balance = MomentsCreditBalance.empty
     @Published private(set) var templates = MomentTemplate.launchTemplates
     @Published private(set) var creationStyles = MomentCreationStyle.launchStyles
-    @Published var newMomentStep: MomentsCreateNewMomentStep = .status
     @Published var selectedCreationStyle = MomentCreationStyle.launchStyles[0]
     @Published var selectedMusicPreset = MomentCreationStyle.launchStyles[0].defaultMusic
     @Published var form = MomentSetupForm(template: MomentTemplate.launchTemplates[0])
@@ -44,7 +43,6 @@ final class MomentsCreateViewModel: ObservableObject {
     @Published var pendingFocus: MomentsContinuationFocus?
     @Published private(set) var continuationFocusHint: MomentsContinuationFocus?
     @Published var mediaPickerOpenRequest = 0
-    @Published var mediaAlbumPickerOpenRequest = 0
 
     private(set) var momentCreationWorkflow: MomentCreationWorkflow?
     private(set) var mediaUploadWorkflow: MediaUploadWorkflow?
@@ -153,10 +151,6 @@ final class MomentsCreateViewModel: ObservableObject {
         canUndoAutoStyleSuggestion = false
         autoStyleUndoSelection = nil
         applyStyleDefaults(style)
-
-        if newMomentStep == .style {
-            beginNewMoment()
-        }
     }
 
     func selectMusicPreset(_ preset: MomentMusicPreset) {
@@ -226,10 +220,6 @@ final class MomentsCreateViewModel: ObservableObject {
 
     func consumeMediaPickerOpenRequest() {
         mediaPickerOpenRequest = 0
-    }
-
-    func consumeMediaAlbumPickerOpenRequest() {
-        mediaAlbumPickerOpenRequest = 0
     }
 
     func applyUITestCreateFixture() {
@@ -356,7 +346,6 @@ final class MomentsCreateViewModel: ObservableObject {
         lastPreparedStoryInputSignature = nil
         hasUserStyleOverride = false
         applyStyleDefaults(selectedCreationStyle)
-        newMomentStep = .status
     }
 
     private func applyStyleDefaults(_ style: MomentCreationStyle) {
@@ -426,12 +415,6 @@ final class MomentsCreateViewModel: ObservableObject {
                 )
             }
     }
-}
-
-enum MomentsCreateNewMomentStep: Equatable {
-    case status
-    case style
-    case summary
 }
 
 extension MomentsCreateViewModel {

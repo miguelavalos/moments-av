@@ -18,46 +18,6 @@ extension MomentsCreateViewModel {
         return true
     }
 
-    func beginNewMomentWithPhotoPicker() {
-        guard beginNewMoment(openMediaPicker: false) else { return }
-        mediaPickerOpenRequest += 1
-    }
-
-    func beginNewMomentWithAlbumPicker() {
-        guard beginNewMoment(openMediaPicker: false) else { return }
-        mediaAlbumPickerOpenRequest += 1
-    }
-
-    func editNewMomentStyle() {
-        guard !isSetupLocked else { return }
-        newMomentStep = .style
-    }
-
-    func editNewMomentsSummary() {
-        guard !isSetupLocked else { return }
-        newMomentStep = .style
-    }
-
-    func createMoment() {
-        createMoment(openMediaPicker: false)
-    }
-
-    func createMoment(openMediaPicker: Bool) {
-        guard canCreateMoment, let momentCreationWorkflow else {
-            updateSetupErrorMessage(setupAvailabilityMessage ?? L10n.string("create.error.startMoment"))
-            return
-        }
-        let form = form
-        prepareNewMomentCreation()
-
-        runOperation {
-            let momentId = await momentCreationWorkflow.createMoment(form: form)
-            if momentId != nil, openMediaPicker {
-                self.mediaPickerOpenRequest += 1
-            }
-        }
-    }
-
     func discardMoment() {
         guard !isBusy else {
             updateSetupErrorMessage(L10n.string("create.error.waitBeforeDiscard"))

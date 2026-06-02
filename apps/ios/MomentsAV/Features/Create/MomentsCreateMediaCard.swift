@@ -11,7 +11,6 @@ struct MomentsCreateMediaCard: View {
     @State private var showsAlbumPicker = false
     @State private var showsMediaManager = false
     @State private var handledOpenPickerRequest = 0
-    @State private var handledOpenAlbumPickerRequest = 0
 
     let openPickerRequest: Int
     let presentation: MomentsCreateMediaPresentation
@@ -24,8 +23,6 @@ struct MomentsCreateMediaCard: View {
     let restoreLocalMediaForEditing: () -> Void
     let autoPickStrongMoments: () -> Void
     let consumeOpenPickerRequest: () -> Void
-    let openAlbumPickerRequest: Int
-    let consumeOpenAlbumPickerRequest: () -> Void
 
     var body: some View {
         AVAppShellCard {
@@ -146,13 +143,9 @@ struct MomentsCreateMediaCard: View {
         }
         .onAppear {
             openPickerIfRequested(openPickerRequest)
-            openAlbumPickerIfRequested(openAlbumPickerRequest)
         }
         .onChange(of: openPickerRequest) { _, newValue in
             openPickerIfRequested(newValue)
-        }
-        .onChange(of: openAlbumPickerRequest) { _, newValue in
-            openAlbumPickerIfRequested(newValue)
         }
     }
 
@@ -182,15 +175,6 @@ struct MomentsCreateMediaCard: View {
         handledOpenPickerRequest = request
         consumeOpenPickerRequest()
         showsPhotoPicker = true
-    }
-
-    private func openAlbumPickerIfRequested(_ request: Int) {
-        guard request > handledOpenAlbumPickerRequest,
-              presentation.canAddMedia,
-              presentation.summary.selectedCount == 0 else { return }
-        handledOpenAlbumPickerRequest = request
-        consumeOpenAlbumPickerRequest()
-        showsAlbumPicker = true
     }
 
     private var summaryText: String {

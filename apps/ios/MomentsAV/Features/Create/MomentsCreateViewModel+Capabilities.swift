@@ -1,19 +1,4 @@
 extension MomentsCreateViewModel {
-    func canAfford(_ template: MomentTemplate) -> Bool {
-        if usesCreateUITestFixture {
-            return MomentsCreditGate.canAfford(template, balance: balance)
-        }
-
-        return momentCreationWorkflow?.canAfford(template) ?? false
-    }
-
-    var canCreateMoment: Bool {
-        !isSetupLocked
-            && isSignedIn
-            && (momentCreationWorkflow?.isConfigured ?? false)
-            && setupFormAvailability.canCreateMoment
-    }
-
     var canBeginNewMoment: Bool {
         !isSetupLocked && !isBusy
     }
@@ -30,10 +15,6 @@ extension MomentsCreateViewModel {
             || isRefreshingPreviewStatus
             || isGeneratingFinalRender
             || isRefreshingFinalRenderStatus
-    }
-
-    var canStartAnotherMoment: Bool {
-        activeMomentId != nil && !isBusy
     }
 
     var canAddMedia: Bool {
@@ -115,17 +96,5 @@ extension MomentsCreateViewModel {
             return true
         }
         return currentStoryPlanInputSignature(momentId: activeMomentId) == preparedSignature
-    }
-
-    func spendPlanDescription(for template: MomentTemplate) -> String {
-        if usesCreateUITestFixture {
-            return MomentsCreateFormatting.spendPlanDescription(
-                MomentsCreditGate.spendPlan(for: template.creditCost, balance: balance)
-            )
-        }
-
-        return MomentsCreateFormatting.spendPlanDescription(
-            momentCreationWorkflow?.spendPlan(for: template)
-        )
     }
 }
