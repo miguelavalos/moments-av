@@ -164,7 +164,7 @@ private struct MomentsCreateMediaFirstWorkspace: View {
             importPickerItems(newItems)
             pickerItems = []
         }
-        .fullScreenCover(isPresented: $showsCompactMediaManager) {
+        .navigationDestination(isPresented: $showsCompactMediaManager) {
             MomentsCreateMediaManagerSheet(
                 selectedMedia: presentation.mediaSummary.selectedMedia,
                 syncedMediaAssets: mediaPresentation.syncedMediaAssets,
