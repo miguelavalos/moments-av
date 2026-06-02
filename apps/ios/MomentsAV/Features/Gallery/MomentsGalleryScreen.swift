@@ -4,7 +4,7 @@ import AVKit
 import SwiftUI
 
 struct MomentsGalleryScreen: View {
-    @EnvironmentObject private var viewModel: MomentsProjectsViewModel
+    @EnvironmentObject private var viewModel: MomentsGalleryViewModel
     @State private var videoPendingDeletion: MomentsGalleryVideoPresentation?
     @State private var selectedVideo: MomentsGalleryVideoPlayerItem?
 
@@ -23,11 +23,11 @@ struct MomentsGalleryScreen: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
 
-            if viewModel.galleryVideos.isEmpty {
+            if viewModel.videos.isEmpty {
                 MomentsGalleryEmptyState()
             } else {
                 LazyVStack(spacing: 12) {
-                    ForEach(viewModel.galleryVideos) { video in
+                    ForEach(viewModel.videos) { video in
                         MomentsGalleryVideoRow(
                             video: video,
                             openVideo: {
@@ -73,7 +73,7 @@ struct MomentsGalleryScreen: View {
 
     private func confirmDeletion() {
         if let videoPendingDeletion {
-            viewModel.deleteGalleryVideo(videoPendingDeletion)
+            viewModel.deleteVideo(videoPendingDeletion)
         }
         videoPendingDeletion = nil
     }
@@ -86,10 +86,7 @@ private struct MomentsGalleryEmptyState: View {
                 .font(.system(size: 34, weight: .bold))
                 .foregroundStyle(AVBrandColor.accent)
                 .frame(width: 74, height: 74)
-                .background(
-                    Circle()
-                        .fill(AVBrandColor.accent.opacity(0.10))
-                )
+                .background(Circle().fill(AVBrandColor.accent.opacity(0.10)))
 
             VStack(spacing: 6) {
                 Text(L10n.string("gallery.empty.title"))

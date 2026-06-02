@@ -354,6 +354,7 @@ final class MomentsAPIClientTests: XCTestCase {
             projectId: "project-1",
             bearerToken: "token-1",
             template: .birthdayMessage,
+            form: MomentDraftForm(template: .birthdayMessage),
             previewIndex: 0
         )
 
@@ -395,6 +396,7 @@ final class MomentsAPIClientTests: XCTestCase {
             projectId: "project-1",
             bearerToken: "token-1",
             template: .birthdayMessage,
+            form: MomentDraftForm(template: .birthdayMessage),
             previewIndex: 0
         )
 
@@ -420,6 +422,7 @@ final class MomentsAPIClientTests: XCTestCase {
                 projectId: "project-1",
                 bearerToken: "token-1",
                 template: .birthdayMessage,
+                form: MomentDraftForm(template: .birthdayMessage),
                 previewIndex: 0
             )
             XCTFail("Expected API error")

@@ -1,9 +1,9 @@
 import XCTest
 @testable import MomentsAV
 
-final class MomentsProjectsPresentationTests: XCTestCase {
+final class MomentsInProgressPresentationTests: XCTestCase {
     func testSignedOutAvailabilityExplainsAccountRequirement() {
-        let presentation = MomentsProjectsPresentation.make(
+        let presentation = MomentsInProgressPresentation.make(
             isSignedIn: false,
             projectSummary: MomentsProjectListSummary(),
             projectPendingDeletion: nil
@@ -12,7 +12,7 @@ final class MomentsProjectsPresentationTests: XCTestCase {
         XCTAssertEqual(
             presentation.availability,
             .signedOut(
-                MomentsProjectsUnavailablePresentation(
+                MomentsInProgressUnavailablePresentation(
                     systemImage: "person.crop.circle.fill",
                     title: "Sign in to make Moments",
                     message: "In Progress and local Gallery unlock once your account is connected."
@@ -22,7 +22,7 @@ final class MomentsProjectsPresentationTests: XCTestCase {
     }
 
     func testEmptySignedInAvailabilityExplainsCreateFirstState() {
-        let presentation = MomentsProjectsPresentation.make(
+        let presentation = MomentsInProgressPresentation.make(
             isSignedIn: true,
             projectSummary: MomentsProjectListSummary(),
             projectPendingDeletion: nil
@@ -31,7 +31,7 @@ final class MomentsProjectsPresentationTests: XCTestCase {
         XCTAssertEqual(
             presentation.availability,
             .empty(
-                MomentsProjectsUnavailablePresentation(
+                MomentsInProgressUnavailablePresentation(
                     systemImage: "rectangle.stack.badge.plus",
                     title: "Nothing here yet",
                     message: "Drafts appear in In Progress. Downloaded final videos appear in Gallery."
@@ -41,7 +41,7 @@ final class MomentsProjectsPresentationTests: XCTestCase {
     }
 
     func testProjectsAvailabilityIsAvailableWhenSignedInWithProjects() {
-        let presentation = MomentsProjectsPresentation.make(
+        let presentation = MomentsInProgressPresentation.make(
             isSignedIn: true,
             projectSummary: MomentsProjectListSummary.make(from: [
                 makeProject(id: "project-1")
@@ -53,13 +53,13 @@ final class MomentsProjectsPresentationTests: XCTestCase {
     }
 
     func testDeletionMessageUsesPendingProjectTitleOrFallback() {
-        let fallback = MomentsProjectsPresentation.make(
+        let fallback = MomentsInProgressPresentation.make(
             isSignedIn: true,
             projectSummary: MomentsProjectListSummary(),
             projectPendingDeletion: nil
         )
         let project = makeProject(id: "project-1", title: "Family Weekend")
-        let titled = MomentsProjectsPresentation.make(
+        let titled = MomentsInProgressPresentation.make(
             isSignedIn: true,
             projectSummary: MomentsProjectListSummary(),
             projectPendingDeletion: project

@@ -15,7 +15,8 @@ final class MomentsDependencyContainer: ObservableObject {
     let finalRenderWorkflow: FinalRenderWorkflow
     let homeViewModel: MomentsHomeViewModel
     let createViewModel: MomentsCreateViewModel
-    let projectsViewModel: MomentsProjectsViewModel
+    let inProgressViewModel: MomentsInProgressViewModel
+    let galleryViewModel: MomentsGalleryViewModel
     let aviViewModel: MomentsAviViewModel
     private var observedOwnerUserId: ObservedOwnerUserId = .unobserved
 
@@ -49,7 +50,8 @@ final class MomentsDependencyContainer: ObservableObject {
         let viewModels = MomentsViewModelBundle(accountController: accountController, workflows: workflows)
         self.homeViewModel = viewModels.home
         self.createViewModel = viewModels.create
-        self.projectsViewModel = viewModels.projects
+        self.inProgressViewModel = viewModels.inProgress
+        self.galleryViewModel = viewModels.gallery
         self.aviViewModel = viewModels.avi
     }
 
@@ -58,7 +60,7 @@ final class MomentsDependencyContainer: ObservableObject {
         guard observedOwnerUserId != nextObservedOwnerUserId else { return }
         observedOwnerUserId = nextObservedOwnerUserId
         projectsListWorkflow.observeProjects(ownerUserId: ownerUserId)
-        projectsViewModel.clearSelection()
+        inProgressViewModel.clearSelection()
         createViewModel.clearSessionState()
         applyUITestFixturesIfNeeded()
     }

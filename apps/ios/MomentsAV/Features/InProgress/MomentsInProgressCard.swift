@@ -3,9 +3,8 @@ import AVBrandFoundation
 import AVKit
 import SwiftUI
 
-struct MomentsProjectsCard: View {
-    let mode: MomentsHubMode
-    let presentation: MomentsProjectsPresentation
+struct MomentsInProgressCard: View {
+    let presentation: MomentsInProgressPresentation
     let balance: MomentsCreditBalance
     let projectSummary: MomentsProjectListSummary
     let selectedProjectId: String?
@@ -13,63 +12,47 @@ struct MomentsProjectsCard: View {
     let activeWorkspace: MomentProjectWorkspace?
     let isDeletingProject: Bool
     let statusMessage: String?
-    let galleryVideos: [MomentsGalleryVideoPresentation]
     let selectProject: (MomentDraftProject) -> Void
     let continueProject: (MomentsProjectContinuationRequest) -> Void
     let startProject: () -> Void
     let startSignInFlow: () -> Void
     let openCredits: () -> Void
-    let requestDeleteGalleryVideo: (MomentsGalleryVideoPresentation) -> Void
     let requestDeleteProject: (MomentDraftProject) -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
-            MomentsHubAviBlock(projectSummary: projectSummary)
+            MomentsInProgressAviBlock(projectSummary: projectSummary)
 
             switch presentation.availability {
             case let .signedOut(unavailable):
-                MomentsHubSignedOutState(
+                MomentsInProgressSignedOutState(
                     unavailable: unavailable,
                     startSignInFlow: startSignInFlow
                 )
             case let .empty(unavailable):
-                MomentsHubCreditStatus(balance: balance, openCredits: openCredits)
-                MomentsHubEmptyContent(
-                    mode: mode,
+                MomentsInProgressCreditStatus(balance: balance, openCredits: openCredits)
+                MomentsInProgressEmptyContent(
                     unavailable: unavailable,
                     startProject: startProject
                 )
             case .available:
-                MomentsHubCreditStatus(balance: balance, openCredits: openCredits)
-                switch mode {
-                case .gallery:
-                    MomentsHubGalleryBlock(
-                        videos: galleryVideos,
-                        requestDeleteGalleryVideo: requestDeleteGalleryVideo
-                    )
-                case .inProgress:
-                    MomentsHubContinueBlock(
-                        projects: continueProjects,
-                        galleryVideos: galleryVideos,
-                        continueProject: continueProject,
-                        requestDeleteProject: requestDeleteProject
-                    )
-                }
-                MomentsProjectsStatusMessage(message: statusMessage)
+                MomentsInProgressCreditStatus(balance: balance, openCredits: openCredits)
+                MomentsInProgressContinueBlock(
+                    projects: continueProjects,
+                    continueProject: continueProject,
+                    requestDeleteProject: requestDeleteProject
+                )
+                MomentsInProgressStatusMessage(message: statusMessage)
             }
         }
     }
 
     private var continueProjects: [MomentDraftProject] {
-        let galleryProjectIds = Set(galleryVideos.map(\.record.projectId))
-        return (projectSummary.groups.inProgress + projectSummary.groups.finished.filter { project in
-            !galleryProjectIds.contains(project.id)
-        })
-        .sorted { $0.updatedAt > $1.updatedAt }
+        projectSummary.groups.inProgress.sorted { $0.updatedAt > $1.updatedAt }
     }
 }
 
-private struct MomentsHubCreditStatus: View {
+private struct MomentsInProgressCreditStatus: View {
     let balance: MomentsCreditBalance
     let openCredits: () -> Void
 
@@ -105,12 +88,12 @@ private struct MomentsHubCreditStatus: View {
     }
 }
 
-private struct MomentsHubSignedOutState: View {
-    let unavailable: MomentsProjectsUnavailablePresentation
+private struct MomentsInProgressSignedOutState: View {
+    let unavailable: MomentsInProgressUnavailablePresentation
     let startSignInFlow: () -> Void
 
     var body: some View {
-        MomentsHubEmptyState(
+        MomentsInProgressInlineEmptyState(
             systemImage: unavailable.systemImage,
             title: unavailable.title,
             message: unavailable.message,
@@ -121,52 +104,23 @@ private struct MomentsHubSignedOutState: View {
     }
 }
 
-private struct MomentsHubEmptyContent: View {
-    let mode: MomentsHubMode
-    let unavailable: MomentsProjectsUnavailablePresentation
+private struct MomentsInProgressEmptyContent: View {
+    let unavailable: MomentsInProgressUnavailablePresentation
     let startProject: () -> Void
 
     var body: some View {
-        switch mode {
-        case .gallery:
-            MomentsHubEmptyState(
-                systemImage: "play.square.stack.fill",
-                title: L10n.string("gallery.empty.shortTitle"),
-                message: L10n.string("gallery.empty.downloadDetail"),
-                actionTitle: nil,
-                actionSystemImage: nil,
-                action: nil
-            )
-        case .inProgress:
-            MomentsHubEmptyState(
-                systemImage: "photo.badge.plus",
-                title: L10n.string("projects.empty.inProgress.title"),
-                message: L10n.string("projects.empty.inProgress.detail"),
-                actionTitle: L10n.string("projects.newMoment"),
-                actionSystemImage: "plus",
-                action: startProject
-            )
-        }
+        MomentsInProgressInlineEmptyState(
+            systemImage: "photo.badge.plus",
+            title: L10n.string("projects.empty.inProgress.title"),
+            message: L10n.string("projects.empty.inProgress.detail"),
+            actionTitle: L10n.string("projects.newMoment"),
+            actionSystemImage: "plus",
+            action: startProject
+        )
     }
 }
 
-enum MomentsHubMode: String, CaseIterable, Identifiable {
-    case inProgress
-    case gallery
-
-    var id: String { rawValue }
-
-    var title: String {
-        switch self {
-        case .inProgress:
-            return L10n.string("projects.mode.inProgress")
-        case .gallery:
-            return L10n.string("projects.mode.gallery")
-        }
-    }
-}
-
-private struct MomentsHubAviBlock: View {
+private struct MomentsInProgressAviBlock: View {
     let projectSummary: MomentsProjectListSummary
 
     var body: some View {
@@ -222,15 +176,14 @@ private struct MomentsHubAviBlock: View {
     }
 }
 
-private struct MomentsHubContinueBlock: View {
+private struct MomentsInProgressContinueBlock: View {
     let projects: [MomentDraftProject]
-    let galleryVideos: [MomentsGalleryVideoPresentation]
     let continueProject: (MomentsProjectContinuationRequest) -> Void
     let requestDeleteProject: (MomentDraftProject) -> Void
 
     var body: some View {
         if projects.isEmpty {
-            MomentsHubEmptyState(
+            MomentsInProgressInlineEmptyState(
                 systemImage: "photo.badge.plus",
                 title: L10n.string("projects.empty.inProgress.title"),
                 message: L10n.string("projects.empty.inProgress.fullDetail"),
@@ -260,7 +213,7 @@ private struct MomentsHubContinueBlock: View {
                                             .foregroundStyle(AVBrandColor.textPrimary)
                                             .lineLimit(2)
 
-                                        Text("\(Self.statusTitle(for: project, galleryVideos: galleryVideos)) · \(Self.creditTitle(project.creditCost))")
+                                        Text("\(MomentsProjectStatusRules.displayTitle(for: project.status)) · \(Self.creditTitle(project.creditCost))")
                                             .font(AVBrandTypography.captionStrong)
                                             .foregroundStyle(AVBrandColor.textSecondary)
                                     }
@@ -304,24 +257,13 @@ private struct MomentsHubContinueBlock: View {
         }
     }
 
-    private static func statusTitle(
-        for project: MomentDraftProject,
-        galleryVideos: [MomentsGalleryVideoPresentation]
-    ) -> String {
-        if MomentsProjectStatusRules.isFinished(project),
-           !galleryVideos.contains(where: { $0.record.projectId == project.id }) {
-            return L10n.string("project.status.videoReadyDownloadNeeded")
-        }
-        return MomentsProjectStatusRules.displayTitle(for: project.status)
-    }
-
     private static func creditTitle(_ creditCost: Double) -> String {
         let count = Int(creditCost.rounded())
         return MomentsCreditCopy.countTitle(count)
     }
 }
 
-private struct MomentsHubEmptyState: View {
+private struct MomentsInProgressInlineEmptyState: View {
     let systemImage: String
     let title: String
     let message: String
@@ -382,9 +324,9 @@ private struct MomentsHubEmptyState: View {
     }
 }
 
-private struct MomentsHubProjectsEmptyState: View {
+private struct MomentsInProgressProjectsEmptyState: View {
     var body: some View {
-        MomentsHubEmptyState(
+        MomentsInProgressInlineEmptyState(
             systemImage: "play.square.stack.fill",
             title: L10n.string("gallery.empty.shortTitle"),
             message: L10n.string("gallery.empty.downloadDetail"),
@@ -395,11 +337,11 @@ private struct MomentsHubProjectsEmptyState: View {
     }
 }
 
-private struct MomentsHubDraftEmptyState: View {
+private struct MomentsInProgressDraftEmptyState: View {
     let startProject: (() -> Void)?
 
     var body: some View {
-        MomentsHubEmptyState(
+        MomentsInProgressInlineEmptyState(
             systemImage: "photo.badge.plus",
             title: L10n.string("projects.empty.inProgress.title"),
             message: L10n.string("projects.empty.inProgress.detail"),
@@ -407,110 +349,5 @@ private struct MomentsHubDraftEmptyState: View {
             actionSystemImage: "plus",
             action: startProject
         )
-    }
-}
-
-private struct MomentsHubGalleryBlock: View {
-    let videos: [MomentsGalleryVideoPresentation]
-    let requestDeleteGalleryVideo: (MomentsGalleryVideoPresentation) -> Void
-    @State private var selectedVideo: MomentsGalleryVideoPlayerItem?
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            AVAppShellSectionHeader(title: L10n.string("gallery.title"))
-            if videos.isEmpty {
-                MomentsHubProjectsEmptyState()
-            } else {
-                AVAppShellCard {
-                    VStack(alignment: .leading, spacing: 12) {
-                        ForEach(videos) { video in
-                            VStack(alignment: .leading, spacing: 10) {
-                                HStack(alignment: .center, spacing: 12) {
-                                    Image(systemName: video.isLocalFileAvailable ? "play.square.fill" : "exclamationmark.triangle.fill")
-                                        .font(.system(size: 22, weight: .bold))
-                                        .foregroundStyle(video.isLocalFileAvailable ? AVBrandColor.accent : AVBrandColor.textSecondary)
-                                        .frame(width: 32)
-
-                                    VStack(alignment: .leading, spacing: 5) {
-                                        Text(video.title)
-                                            .font(.system(size: 17, weight: .black))
-                                            .foregroundStyle(AVBrandColor.textPrimary)
-                                            .lineLimit(2)
-
-                                        Text(video.availabilityTitle)
-                                            .font(AVBrandTypography.captionStrong)
-                                            .foregroundStyle(AVBrandColor.textSecondary)
-                                    }
-
-                                    Spacer(minLength: 0)
-                                }
-
-                                HStack(spacing: 10) {
-                                    Button {
-                                        selectedVideo = MomentsGalleryVideoPlayerItem(video: video)
-                                    } label: {
-                                        Label(L10n.string("common.open"), systemImage: "play.fill")
-                                    }
-                                    .disabled(!video.isLocalFileAvailable)
-
-                                    if video.isLocalFileAvailable {
-                                        ShareLink(item: video.localFileURL) {
-                                            Label(L10n.string("common.share"), systemImage: "square.and.arrow.up")
-                                        }
-                                    }
-
-                                    Button(role: .destructive) {
-                                        requestDeleteGalleryVideo(video)
-                                    } label: {
-                                        Label(L10n.string("common.delete"), systemImage: "trash")
-                                    }
-                                }
-                                .font(.system(size: 13, weight: .bold))
-                                .buttonStyle(.bordered)
-                            }
-                            if video.id != videos.last?.id {
-                                Divider()
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        .sheet(item: $selectedVideo) { item in
-            MomentsGalleryVideoPlayerSheet(item: item)
-        }
-    }
-}
-
-private struct MomentsGalleryVideoPlayerItem: Identifiable {
-    let id: String
-    let title: String
-    let url: URL
-
-    init(video: MomentsGalleryVideoPresentation) {
-        id = video.id
-        title = video.title
-        url = video.localFileURL
-    }
-}
-
-private struct MomentsGalleryVideoPlayerSheet: View {
-    let item: MomentsGalleryVideoPlayerItem
-    @Environment(\.dismiss) private var dismiss
-
-    var body: some View {
-        NavigationStack {
-            VideoPlayer(player: AVPlayer(url: item.url))
-                .ignoresSafeArea(edges: .bottom)
-                .navigationTitle(item.title)
-                .navigationBarTitleDisplayMode(.inline)
-                .toolbar {
-                    ToolbarItem(placement: .topBarTrailing) {
-                        Button(L10n.string("common.done")) {
-                            dismiss()
-                        }
-                    }
-                }
-        }
     }
 }

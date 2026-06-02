@@ -48,7 +48,8 @@ struct MomentsAppBootstrapView: View {
         .environmentObject(dependencies.projectsListWorkflow)
         .environmentObject(dependencies.homeViewModel)
         .environmentObject(dependencies.createViewModel)
-        .environmentObject(dependencies.projectsViewModel)
+        .environmentObject(dependencies.inProgressViewModel)
+        .environmentObject(dependencies.galleryViewModel)
         .environmentObject(dependencies.aviViewModel)
         .task {
             applyLaunchTabIfNeeded()

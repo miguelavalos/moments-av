@@ -10,7 +10,8 @@ struct MomentsAppShellView: View {
 
     @EnvironmentObject private var accountController: AccountController
     @EnvironmentObject private var createViewModel: MomentsCreateViewModel
-    @EnvironmentObject private var projectsViewModel: MomentsProjectsViewModel
+    @EnvironmentObject private var inProgressViewModel: MomentsInProgressViewModel
+    @EnvironmentObject private var galleryViewModel: MomentsGalleryViewModel
     @EnvironmentObject private var aviViewModel: MomentsAviViewModel
     @Environment(\.avCommonAppExperience) private var appExperience
     @State private var chromeItem: AVAppShellChromeItem?
@@ -111,7 +112,7 @@ struct MomentsAppShellView: View {
                 startSignInFlow: startSignInFlow
             )
             .environmentObject(createViewModel)
-            .environmentObject(projectsViewModel)
+            .environmentObject(inProgressViewModel)
         } else {
             switch tab {
             case .home:
@@ -135,8 +136,7 @@ struct MomentsAppShellView: View {
                     bottomSafeAreaPadding: 82
                 )
             case .inProgress:
-                MomentsProjectsScreen(
-                    mode: .inProgress,
+                MomentsInProgressScreen(
                     balance: accountController.creditBalance,
                     continueProject: { request in
                         createViewModel.continueProject(request.project, focus: request.focus)
@@ -150,6 +150,7 @@ struct MomentsAppShellView: View {
                 )
             case .gallery:
                 MomentsGalleryScreen()
+                    .environmentObject(galleryViewModel)
             case .avi:
                 MomentsAviScreen(
                     selectTab: selectRootTab,
@@ -198,7 +199,7 @@ struct MomentsAppShellView: View {
             return
         }
 
-        if let activeProject = projectsViewModel.projectSummary.latestInProgressProject {
+        if let activeProject = inProgressViewModel.projectSummary.latestInProgressProject {
             createViewModel.continueProject(activeProject)
             selectRootTab(.create)
             return

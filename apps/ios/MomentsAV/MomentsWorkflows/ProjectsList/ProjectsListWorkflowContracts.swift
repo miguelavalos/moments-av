@@ -7,7 +7,7 @@ protocol MomentsProjectSummaryProviding: AnyObject {
 }
 
 @MainActor
-protocol MomentsProjectsViewing: MomentsProjectSummaryProviding {
+protocol MomentsInProgressViewing: MomentsProjectSummaryProviding {
     var activeProjectPublisher: AnyPublisher<MomentDraftProject?, Never> { get }
     var activeWorkspacePublisher: AnyPublisher<MomentProjectWorkspace?, Never> { get }
     var isLoadingProjectWorkspacePublisher: AnyPublisher<Bool, Never> { get }

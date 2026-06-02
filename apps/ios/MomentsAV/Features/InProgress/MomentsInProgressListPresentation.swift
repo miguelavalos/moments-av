@@ -1,42 +1,42 @@
 import Foundation
 
-struct MomentsProjectsListPresentation: Equatable {
-    let summaryPills: [MomentsProjectsListSummaryPresentation]
-    let groups: [MomentsProjectsListGroupPresentation]
+struct MomentsInProgressListPresentation: Equatable {
+    let summaryPills: [MomentsProjectListSummaryPresentation]
+    let groups: [MomentsInProgressListGroupPresentation]
 
     static func make(
         projectSummary: MomentsProjectListSummary,
         selectedProjectId: String?
-    ) -> MomentsProjectsListPresentation {
-        MomentsProjectsListPresentation(
+    ) -> MomentsInProgressListPresentation {
+        MomentsInProgressListPresentation(
             summaryPills: [
-                MomentsProjectsListSummaryPresentation(
+                MomentsProjectListSummaryPresentation(
                     title: L10n.string("projects.summary.total"),
                     value: projectSummary.projectCount,
                     systemImage: "rectangle.stack"
                 ),
-                MomentsProjectsListSummaryPresentation(
+                MomentsProjectListSummaryPresentation(
                     title: L10n.string("projects.summary.active"),
                     value: projectSummary.inProgressCount,
                     systemImage: "clock"
                 ),
-                MomentsProjectsListSummaryPresentation(
+                MomentsProjectListSummaryPresentation(
                     title: L10n.string("projects.summary.done"),
                     value: projectSummary.finishedCount,
                     systemImage: "checkmark.circle"
                 )
             ],
             groups: [
-                MomentsProjectsListGroupPresentation(
+                MomentsInProgressListGroupPresentation(
                     title: L10n.string("projects.group.inProgress"),
                     rows: projectSummary.groups.inProgress.map {
-                        MomentsProjectsListRowPresentation(project: $0, isSelected: selectedProjectId == $0.id)
+                        MomentsInProgressListRowPresentation(project: $0, isSelected: selectedProjectId == $0.id)
                     }
                 ),
-                MomentsProjectsListGroupPresentation(
+                MomentsInProgressListGroupPresentation(
                     title: L10n.string("projects.group.finished"),
                     rows: projectSummary.groups.finished.map {
-                        MomentsProjectsListRowPresentation(project: $0, isSelected: selectedProjectId == $0.id)
+                        MomentsInProgressListRowPresentation(project: $0, isSelected: selectedProjectId == $0.id)
                     }
                 )
             ].filter { !$0.rows.isEmpty }
@@ -44,7 +44,7 @@ struct MomentsProjectsListPresentation: Equatable {
     }
 }
 
-struct MomentsProjectsListSummaryPresentation: Identifiable, Equatable {
+struct MomentsProjectListSummaryPresentation: Identifiable, Equatable {
     let title: String
     let value: Int
     let systemImage: String
@@ -52,20 +52,20 @@ struct MomentsProjectsListSummaryPresentation: Identifiable, Equatable {
     var id: String { title }
 }
 
-struct MomentsProjectsListGroupPresentation: Identifiable, Equatable {
+struct MomentsInProgressListGroupPresentation: Identifiable, Equatable {
     let title: String
-    let rows: [MomentsProjectsListRowPresentation]
+    let rows: [MomentsInProgressListRowPresentation]
 
     var id: String { title }
     var count: Int { rows.count }
 }
 
-struct MomentsProjectsListRowPresentation: Identifiable, Equatable {
+struct MomentsInProgressListRowPresentation: Identifiable, Equatable {
     let project: MomentDraftProject
     let title: String
     let statusSystemImage: String
     let isFinished: Bool
-    let metadata: [MomentsProjectsListMetadataPresentation]
+    let metadata: [MomentsInProgressListMetadataPresentation]
     let statusTitle: String
     let creditCostTitle: String
     let accessorySystemImage: String
@@ -79,11 +79,11 @@ struct MomentsProjectsListRowPresentation: Identifiable, Equatable {
         self.isFinished = MomentsProjectStatusRules.isFinished(project)
         self.statusSystemImage = isFinished ? "checkmark.circle.fill" : "circle.dashed"
         self.metadata = [
-            MomentsProjectsListMetadataPresentation(
+            MomentsInProgressListMetadataPresentation(
                 systemImage: "clock",
                 text: MomentsProjectFormatting.updatedAt(project)
             ),
-            MomentsProjectsListMetadataPresentation(
+            MomentsInProgressListMetadataPresentation(
                 systemImage: "text.bubble",
                 text: MomentsProjectFormatting.previewUsage(project)
             )
@@ -100,7 +100,7 @@ struct MomentsProjectsListRowPresentation: Identifiable, Equatable {
     }
 }
 
-struct MomentsProjectsListMetadataPresentation: Identifiable, Equatable {
+struct MomentsInProgressListMetadataPresentation: Identifiable, Equatable {
     let systemImage: String
     let text: String
 

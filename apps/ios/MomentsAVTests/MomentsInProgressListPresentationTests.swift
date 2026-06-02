@@ -1,9 +1,9 @@
 import XCTest
 @testable import MomentsAV
 
-final class MomentsProjectsListPresentationTests: XCTestCase {
+final class MomentsInProgressListPresentationTests: XCTestCase {
     func testSummaryPillsUseProjectSummaryCounts() {
-        let presentation = MomentsProjectsListPresentation.make(
+        let presentation = MomentsInProgressListPresentation.make(
             projectSummary: MomentsProjectListSummary.make(from: [
                 makeProject(id: "active", status: "story_ready", updatedAt: 20),
                 makeProject(id: "done", status: "completed", updatedAt: 10)
@@ -17,7 +17,7 @@ final class MomentsProjectsListPresentationTests: XCTestCase {
     }
 
     func testGroupsOmitEmptySectionsAndPreserveStatusRulesOrder() {
-        let presentation = MomentsProjectsListPresentation.make(
+        let presentation = MomentsInProgressListPresentation.make(
             projectSummary: MomentsProjectListSummary.make(from: [
                 makeProject(id: "older-active", status: "draft_created", updatedAt: 10),
                 makeProject(id: "newer-active", status: "story_ready", updatedAt: 30),
@@ -40,7 +40,7 @@ final class MomentsProjectsListPresentationTests: XCTestCase {
             previewCount: 1,
             previewLimit: 4
         )
-        let row = MomentsProjectsListRowPresentation(project: project, isSelected: true)
+        let row = MomentsInProgressListRowPresentation(project: project, isSelected: true)
 
         XCTAssertEqual(row.id, "project-1")
         XCTAssertEqual(row.title, "Family Weekend")
@@ -55,7 +55,7 @@ final class MomentsProjectsListPresentationTests: XCTestCase {
     }
 
     func testFinishedRowUsesFinishedMarkerAndCollapsedAccessoryWhenNotSelected() {
-        let row = MomentsProjectsListRowPresentation(
+        let row = MomentsInProgressListRowPresentation(
             project: makeProject(id: "done", status: "completed"),
             isSelected: false
         )
@@ -66,7 +66,7 @@ final class MomentsProjectsListPresentationTests: XCTestCase {
     }
 
     func testRowPresentationUsesSingularCreditCopy() {
-        let row = MomentsProjectsListRowPresentation(
+        let row = MomentsInProgressListRowPresentation(
             project: makeProject(id: "one-credit", status: "draft_created", creditCost: 1),
             isSelected: false
         )

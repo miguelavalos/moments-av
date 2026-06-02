@@ -111,7 +111,7 @@ final class ProjectsListWorkflow: ObservableObject {
     }
 }
 
-extension ProjectsListWorkflow: MomentsProjectsViewing {
+extension ProjectsListWorkflow: MomentsInProgressViewing {
     var projectSummaryPublisher: AnyPublisher<MomentsProjectListSummary, Never> {
         $projectSummary.eraseToAnyPublisher()
     }

@@ -2,37 +2,25 @@ import Combine
 import Foundation
 
 @MainActor
-final class MomentsProjectsViewModel: ObservableObject {
+final class MomentsInProgressViewModel: ObservableObject {
     @Published private(set) var projectSummary = MomentsProjectListSummary()
     @Published private(set) var isSignedIn = false
     @Published private(set) var currentUserId: String?
     @Published private(set) var activeProject: MomentDraftProject?
     @Published private(set) var activeWorkspace: MomentProjectWorkspace?
-    @Published private(set) var galleryVideos: [MomentsGalleryVideoPresentation] = []
     @Published private(set) var selectedProjectId: String?
     @Published private(set) var isLoadingProjectWorkspace = false
     @Published private(set) var isDeletingProject = false
     @Published private(set) var statusMessage: String?
 
-    private var workflow: (any MomentsProjectsViewing)?
+    private var workflow: (any MomentsInProgressViewing)?
     private var workflowCancellables = Set<AnyCancellable>()
     private var accountCancellables = Set<AnyCancellable>()
-    private var galleryCancellables = Set<AnyCancellable>()
     private var deletionTask: Task<Void, Never>?
-    private let galleryStore: any MomentsGalleryStoring
 
-    init(galleryStore: any MomentsGalleryStoring = MomentsGalleryStore()) {
-        self.galleryStore = galleryStore
-        refreshGalleryVideos()
-        NotificationCenter.default.publisher(for: MomentsGalleryStore.didChangeNotification)
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] _ in
-                self?.refreshGalleryVideos()
-            }
-            .store(in: &galleryCancellables)
-    }
+    init() {}
 
-    func bind(to workflow: any MomentsProjectsViewing) {
+    func bind(to workflow: any MomentsInProgressViewing) {
         self.workflow = workflow
         workflowCancellables.removeAll()
 
@@ -41,7 +29,6 @@ final class MomentsProjectsViewModel: ObservableObject {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] projectSummary in
                 self?.projectSummary = projectSummary
-                self?.refreshGalleryVideos()
             }
             .store(in: &workflowCancellables)
 
@@ -117,25 +104,6 @@ final class MomentsProjectsViewModel: ObservableObject {
         selectedProjectId = nil
         statusMessage = nil
         workflow?.clearProjectWorkspace()
-    }
-
-    func refreshGalleryVideos() {
-        galleryVideos = galleryStore
-            .loadRecords()
-            .sorted { $0.createdAt > $1.createdAt }
-            .map { record in
-                MomentsGalleryVideoPresentation(
-                    record: record,
-                    isLocalFileAvailable: galleryStore.localFileExists(for: record),
-                    localFileURL: galleryStore.localFileURL(for: record)
-                )
-            }
-    }
-
-    func deleteGalleryVideo(_ video: MomentsGalleryVideoPresentation) {
-        galleryStore.deleteRecord(video.record, deleteLocalFile: true)
-        refreshGalleryVideos()
-        statusMessage = L10n.string("projects.status.galleryDeleted")
     }
 
     func deleteProject(_ project: MomentDraftProject) {

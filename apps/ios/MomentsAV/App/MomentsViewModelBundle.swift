@@ -4,13 +4,15 @@ import Foundation
 struct MomentsViewModelBundle {
     let home: MomentsHomeViewModel
     let create: MomentsCreateViewModel
-    let projects: MomentsProjectsViewModel
+    let inProgress: MomentsInProgressViewModel
+    let gallery: MomentsGalleryViewModel
     let avi: MomentsAviViewModel
 
     init(accountController: AccountController, workflows: MomentsWorkflowBundle) {
         home = MomentsHomeViewModel()
         create = MomentsCreateViewModel()
-        projects = MomentsProjectsViewModel()
+        inProgress = MomentsInProgressViewModel()
+        gallery = MomentsGalleryViewModel()
         avi = MomentsAviViewModel()
 
         home.bind(to: workflows.projectsList)
@@ -23,8 +25,8 @@ struct MomentsViewModelBundle {
             previewGenerationWorkflow: workflows.previewGeneration,
             finalRenderWorkflow: workflows.finalRender
         )
-        projects.bind(to: workflows.projectsList)
-        projects.bind(accountStateProvider: accountController)
+        inProgress.bind(to: workflows.projectsList)
+        inProgress.bind(accountStateProvider: accountController)
         avi.bind(to: workflows.projectsList)
         avi.bind(accountStateProvider: accountController)
     }

@@ -1,19 +1,18 @@
 import AVAppShellFoundation
 import SwiftUI
 
-struct MomentsProjectsScreen: View {
-    @EnvironmentObject private var viewModel: MomentsProjectsViewModel
+struct MomentsInProgressScreen: View {
+    @EnvironmentObject private var viewModel: MomentsInProgressViewModel
     @EnvironmentObject private var createViewModel: MomentsCreateViewModel
     @State private var projectPendingDeletion: MomentDraftProject?
-    @State private var galleryVideoPendingDeletion: MomentsGalleryVideoPresentation?
-    let mode: MomentsHubMode
     let balance: MomentsCreditBalance
     let continueProject: (MomentsProjectContinuationRequest) -> Void
     let startProject: () -> Void
     let startSignInFlow: () -> Void
     let openCredits: () -> Void
-    private var presentation: MomentsProjectsPresentation {
-        MomentsProjectsPresentation.make(
+
+    private var presentation: MomentsInProgressPresentation {
+        MomentsInProgressPresentation.make(
             isSignedIn: viewModel.isSignedIn,
             projectSummary: viewModel.projectSummary,
             projectPendingDeletion: projectPendingDeletion
@@ -21,14 +20,12 @@ struct MomentsProjectsScreen: View {
     }
 
     init(
-        mode: MomentsHubMode = .inProgress,
         balance: MomentsCreditBalance = .empty,
         continueProject: @escaping (MomentsProjectContinuationRequest) -> Void = { _ in },
         startProject: @escaping () -> Void = {},
         startSignInFlow: @escaping () -> Void = {},
         openCredits: @escaping () -> Void = {}
     ) {
-        self.mode = mode
         self.balance = balance
         self.continueProject = continueProject
         self.startProject = startProject
@@ -47,8 +44,7 @@ struct MomentsProjectsScreen: View {
                 )
             }
 
-            MomentsProjectsCard(
-                mode: mode,
+            MomentsInProgressCard(
                 presentation: presentation,
                 balance: balance,
                 projectSummary: viewModel.projectSummary,
@@ -57,15 +53,11 @@ struct MomentsProjectsScreen: View {
                 activeWorkspace: viewModel.activeWorkspace,
                 isDeletingProject: viewModel.isDeletingProject,
                 statusMessage: viewModel.statusMessage,
-                galleryVideos: viewModel.galleryVideos,
                 selectProject: viewModel.selectProject,
                 continueProject: continueProject,
                 startProject: startProject,
                 startSignInFlow: startSignInFlow,
                 openCredits: openCredits,
-                requestDeleteGalleryVideo: { video in
-                    galleryVideoPendingDeletion = video
-                },
                 requestDeleteProject: { project in
                     projectPendingDeletion = project
                 }
@@ -84,20 +76,6 @@ struct MomentsProjectsScreen: View {
             }
         } message: {
             Text(presentation.deletionMessage)
-        }
-        .confirmationDialog(
-            L10n.string("gallery.delete.title"),
-            isPresented: galleryDeletionConfirmationPresented,
-            titleVisibility: .visible
-        ) {
-            Button(L10n.string("gallery.delete.button"), role: .destructive) {
-                confirmGalleryVideoDeletion()
-            }
-            Button(L10n.string("common.cancel"), role: .cancel) {
-                cancelGalleryVideoDeletion()
-            }
-        } message: {
-            Text(L10n.string("gallery.delete.message"))
         }
     }
 
@@ -124,27 +102,5 @@ struct MomentsProjectsScreen: View {
 
     private func cancelProjectDeletion() {
         projectPendingDeletion = nil
-    }
-
-    private var galleryDeletionConfirmationPresented: Binding<Bool> {
-        Binding(
-            get: { galleryVideoPendingDeletion != nil },
-            set: { isPresented in
-                if !isPresented {
-                    galleryVideoPendingDeletion = nil
-                }
-            }
-        )
-    }
-
-    private func confirmGalleryVideoDeletion() {
-        if let galleryVideoPendingDeletion {
-            viewModel.deleteGalleryVideo(galleryVideoPendingDeletion)
-        }
-        galleryVideoPendingDeletion = nil
-    }
-
-    private func cancelGalleryVideoDeletion() {
-        galleryVideoPendingDeletion = nil
     }
 }

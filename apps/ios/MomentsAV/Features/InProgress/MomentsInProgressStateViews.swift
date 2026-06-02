@@ -1,8 +1,8 @@
 import AVAppShellFoundation
 import SwiftUI
 
-struct MomentsProjectsUnavailableState: View {
-    let presentation: MomentsProjectsUnavailablePresentation
+struct MomentsInProgressUnavailableState: View {
+    let presentation: MomentsInProgressUnavailablePresentation
 
     var body: some View {
         AVAppShellInlineMessage(
@@ -16,13 +16,13 @@ struct MomentsProjectsUnavailableState: View {
     }
 }
 
-struct MomentsProjectsEmptyState: View {
-    let presentation: MomentsProjectsUnavailablePresentation
+struct MomentsInProgressEmptyState: View {
+    let presentation: MomentsInProgressUnavailablePresentation
     let startProject: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            MomentsProjectsUnavailableState(presentation: presentation)
+            MomentsInProgressUnavailableState(presentation: presentation)
 
             AVAppShellActionRow(
                 title: L10n.string("projects.empty.create.title"),
@@ -43,7 +43,7 @@ struct MomentsProjectsEmptyState: View {
     }
 }
 
-struct MomentsProjectsStatusMessage: View {
+struct MomentsInProgressStatusMessage: View {
     let message: String?
 
     var body: some View {

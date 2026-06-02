@@ -2,7 +2,7 @@ import AVAppShellFoundation
 import Foundation
 
 struct MomentsProjectWorkspaceSummaryPresentation: Equatable {
-    let tiles: [MomentsProjectSummaryTilePresentation]
+    let tiles: [MomentsInProgressSummaryTilePresentation]
 
     var metrics: [AVAppShellMetric] {
         tiles.map {
@@ -21,22 +21,22 @@ struct MomentsProjectWorkspaceSummaryPresentation: Equatable {
         let latestRenderJob = workspace.latestRenderJob()
 
         tiles = [
-            MomentsProjectSummaryTilePresentation(
+            MomentsInProgressSummaryTilePresentation(
                 title: L10n.string("project.summary.status"),
                 value: MomentsProjectStatusRules.displayTitle(for: workspace.project.status),
                 systemImage: "circle.dashed"
             ),
-            MomentsProjectSummaryTilePresentation(
+            MomentsInProgressSummaryTilePresentation(
                 title: L10n.string("project.kind.storyReview"),
                 value: Self.summaryValue(for: latestPreview),
                 systemImage: "text.bubble"
             ),
-            MomentsProjectSummaryTilePresentation(
+            MomentsInProgressSummaryTilePresentation(
                 title: L10n.string("project.summary.final"),
                 value: Self.summaryValue(for: finalExport),
                 systemImage: "square.and.arrow.up"
             ),
-            MomentsProjectSummaryTilePresentation(
+            MomentsInProgressSummaryTilePresentation(
                 title: L10n.string("project.summary.latestJob"),
                 value: Self.latestJobValue(latestRenderJob),
                 systemImage: "gearshape.2"
@@ -55,7 +55,7 @@ struct MomentsProjectWorkspaceSummaryPresentation: Equatable {
     }
 }
 
-struct MomentsProjectSummaryTilePresentation: Identifiable, Equatable {
+struct MomentsInProgressSummaryTilePresentation: Identifiable, Equatable {
     let title: String
     let value: String
     let systemImage: String

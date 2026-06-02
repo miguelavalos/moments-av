@@ -12,7 +12,7 @@ struct MomentsProfileScreen: View {
 
     @EnvironmentObject private var accountController: AccountController
     @EnvironmentObject private var createViewModel: MomentsCreateViewModel
-    @EnvironmentObject private var projectsViewModel: MomentsProjectsViewModel
+    @EnvironmentObject private var inProgressViewModel: MomentsInProgressViewModel
     @EnvironmentObject private var languageController: AppLanguageController
     @EnvironmentObject private var themeController: AppThemeController
     @Environment(\.avCommonAppExperience) private var appExperience
@@ -440,7 +440,7 @@ struct MomentsProfileScreen: View {
         guard isClearingLocalData == false else { return }
         isClearingLocalData = true
         createViewModel.clearSessionState()
-        projectsViewModel.clearSelection()
+        inProgressViewModel.clearSelection()
         MomentsLocalMediaThumbnailCache.clearAll()
         isClearingLocalData = false
     }

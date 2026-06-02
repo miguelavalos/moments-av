@@ -1,11 +1,11 @@
 import SwiftUI
 
-struct MomentsProjectsList: View {
+struct MomentsInProgressList: View {
     let projectSummary: MomentsProjectListSummary
     let selectedProjectId: String?
     let selectProject: (MomentDraftProject) -> Void
-    private var presentation: MomentsProjectsListPresentation {
-        MomentsProjectsListPresentation.make(
+    private var presentation: MomentsInProgressListPresentation {
+        MomentsInProgressListPresentation.make(
             projectSummary: projectSummary,
             selectedProjectId: selectedProjectId
         )
@@ -13,10 +13,10 @@ struct MomentsProjectsList: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
-            MomentsProjectsListSummaryRow(pills: presentation.summaryPills)
+            MomentsInProgressListSummaryRow(pills: presentation.summaryPills)
 
             ForEach(presentation.groups) { group in
-                MomentsProjectsListGroup(
+                MomentsInProgressListGroup(
                     group: group,
                     selectProject: selectProject
                 )

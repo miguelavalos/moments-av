@@ -1,13 +1,13 @@
 import SwiftUI
 
-struct MomentsProjectsListRow: View {
-    let row: MomentsProjectsListRowPresentation
+struct MomentsInProgressListRow: View {
+    let row: MomentsInProgressListRowPresentation
     let selectProject: () -> Void
 
     var body: some View {
         Button(action: selectProject) {
             HStack(alignment: .top, spacing: 12) {
-                MomentsProjectStatusMarker(row: row)
+                MomentsInProgressStatusMarker(row: row)
 
                 VStack(alignment: .leading, spacing: 8) {
                     Text(row.title)
@@ -17,7 +17,7 @@ struct MomentsProjectsListRow: View {
 
                     HStack(spacing: 8) {
                         ForEach(row.metadata) { metadata in
-                            MomentsProjectListMetadata(metadata: metadata)
+                            MomentsInProgressListMetadata(metadata: metadata)
                         }
                     }
 

@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct MomentsProjectsSelectedDetail: View {
+struct MomentsInProgressSelectedDetail: View {
     let selectedProjectId: String?
     let isLoadingProjectWorkspace: Bool
     let activeWorkspace: MomentProjectWorkspace?

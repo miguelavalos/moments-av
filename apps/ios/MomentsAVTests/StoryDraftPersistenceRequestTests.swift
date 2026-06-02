@@ -8,6 +8,7 @@ final class StoryDraftPersistenceRequestTests: XCTestCase {
             mediaAssetIds: ["media-1", "media-2"],
             caption: "A birthday toast",
             narrationText: "Everyone gathers around the table.",
+            mood: "warm",
             tone: "warm",
             musicCue: "soft piano",
             durationMs: 4_500,
@@ -21,7 +22,7 @@ final class StoryDraftPersistenceRequestTests: XCTestCase {
         XCTAssertEqual(request.mediaAssetIds, ["media-1", "media-2"])
         XCTAssertEqual(request.caption, "A birthday toast")
         XCTAssertEqual(request.narrationText, "Everyone gathers around the table.")
-        XCTAssertEqual(request.tone, "warm")
+        XCTAssertEqual(request.mood, "warm")
         XCTAssertEqual(request.musicCue, "soft piano")
         XCTAssertEqual(request.durationMs, 4_500.0)
         XCTAssertEqual(request.createdBy, "avi")

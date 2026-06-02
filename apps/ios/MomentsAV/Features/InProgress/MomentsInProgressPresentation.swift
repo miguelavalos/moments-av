@@ -1,16 +1,16 @@
 import Foundation
 
-struct MomentsProjectsPresentation: Equatable {
-    let availability: MomentsProjectsAvailability
+struct MomentsInProgressPresentation: Equatable {
+    let availability: MomentsInProgressAvailability
     let deletionMessage: String
 
     static func make(
         isSignedIn: Bool,
         projectSummary: MomentsProjectListSummary,
         projectPendingDeletion: MomentDraftProject?
-    ) -> MomentsProjectsPresentation {
-        MomentsProjectsPresentation(
-            availability: MomentsProjectsAvailability.make(
+    ) -> MomentsInProgressPresentation {
+        MomentsInProgressPresentation(
+            availability: MomentsInProgressAvailability.make(
                 isSignedIn: isSignedIn,
                 projectSummary: projectSummary
             ),
@@ -19,18 +19,18 @@ struct MomentsProjectsPresentation: Equatable {
     }
 }
 
-enum MomentsProjectsAvailability: Equatable {
-    case signedOut(MomentsProjectsUnavailablePresentation)
-    case empty(MomentsProjectsUnavailablePresentation)
+enum MomentsInProgressAvailability: Equatable {
+    case signedOut(MomentsInProgressUnavailablePresentation)
+    case empty(MomentsInProgressUnavailablePresentation)
     case available
 
     static func make(
         isSignedIn: Bool,
         projectSummary: MomentsProjectListSummary
-    ) -> MomentsProjectsAvailability {
+    ) -> MomentsInProgressAvailability {
         if !isSignedIn {
             return .signedOut(
-                MomentsProjectsUnavailablePresentation(
+                MomentsInProgressUnavailablePresentation(
                     systemImage: "person.crop.circle.fill",
                     title: L10n.string("projects.signIn.title"),
                     message: L10n.string("projects.signIn.message")
@@ -40,7 +40,7 @@ enum MomentsProjectsAvailability: Equatable {
 
         if !projectSummary.hasProjects {
             return .empty(
-                MomentsProjectsUnavailablePresentation(
+                MomentsInProgressUnavailablePresentation(
                     systemImage: "rectangle.stack.badge.plus",
                     title: L10n.string("projects.empty.title"),
                     message: L10n.string("projects.empty.message")
@@ -52,7 +52,7 @@ enum MomentsProjectsAvailability: Equatable {
     }
 }
 
-struct MomentsProjectsUnavailablePresentation: Equatable {
+struct MomentsInProgressUnavailablePresentation: Equatable {
     let systemImage: String
     let title: String
     let message: String
