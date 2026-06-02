@@ -115,6 +115,26 @@ struct MomentsCreateFinalVideoActionPresentation: Equatable {
         hasRenderPlan ? "video.fill" : "checklist"
     }
 
+    var stepTitle: String {
+        hasRenderPlan
+            ? L10n.string("create.final.step.create")
+            : L10n.string("create.final.step.plan")
+    }
+
+    var stepDetail: String {
+        hasRenderPlan
+            ? L10n.string("create.final.step.createDetail", totalCreditCostTitle)
+            : L10n.string("create.final.step.planDetail")
+    }
+
+    var stepBadgeTitle: String {
+        hasRenderPlan ? totalCreditCostTitle : L10n.string("create.final.step.noCredits")
+    }
+
+    var stepIconName: String {
+        hasRenderPlan ? "creditcard.fill" : "checklist"
+    }
+
     var creditPolicyMessage: String {
         hasRenderPlan
             ? L10n.string("create.final.creditPolicy.create", totalCreditCostTitle)

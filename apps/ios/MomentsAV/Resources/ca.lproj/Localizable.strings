@@ -605,6 +605,11 @@
 "create.final.creditCost" = "%@ necessaris";
 "create.final.creditPolicy.plan" = "Preparar el pla de vídeo no reserva crèdits.";
 "create.final.creditPolicy.create" = "Iniciar el vídeo final reserva %@. Els crèdits només es finalitzen quan es lliura l'exportació.";
+"create.final.step.plan" = "Pas 2 · Preparar pla";
+"create.final.step.planDetail" = "Avi revisa mitjans, durada i qualitat. Sense crèdits reservats.";
+"create.final.step.noCredits" = "Sense crèdits";
+"create.final.step.create" = "Pas 3 · Llest per crear";
+"create.final.step.createDetail" = "%@ es reserven en iniciar el vídeo.";
 "create.guidance.eyebrow.keepGoing" = "Continua";
 "create.guidance.eyebrow.prepare" = "Preparar Moment";
 "create.guidance.eyebrow.warning" = "Necessita atenció";

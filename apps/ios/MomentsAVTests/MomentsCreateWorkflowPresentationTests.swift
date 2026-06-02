@@ -541,6 +541,10 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         XCTAssertFalse(planning.hasRenderPlan)
         XCTAssertEqual(planning.primaryTitle, "Prepare video plan")
         XCTAssertEqual(planning.primaryIconName, "checklist")
+        XCTAssertEqual(planning.stepTitle, "Step 2 · Plan first")
+        XCTAssertEqual(planning.stepDetail, "Avi checks media, duration, and quality. No credits reserved.")
+        XCTAssertEqual(planning.stepBadgeTitle, "No credits")
+        XCTAssertEqual(planning.stepIconName, "checklist")
         XCTAssertEqual(planning.creditPolicyMessage, "Preparing the video plan does not reserve credits.")
         XCTAssertTrue(planning.canAffordSelectedCost)
 
@@ -558,6 +562,10 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         XCTAssertEqual(ready.totalCreditCostTitle, "3 credits")
         XCTAssertEqual(ready.primaryTitle, "Create video · 3 credits")
         XCTAssertEqual(ready.primaryIconName, "video.fill")
+        XCTAssertEqual(ready.stepTitle, "Step 3 · Ready to create")
+        XCTAssertEqual(ready.stepDetail, "3 credits reserved when video starts.")
+        XCTAssertEqual(ready.stepBadgeTitle, "3 credits")
+        XCTAssertEqual(ready.stepIconName, "creditcard.fill")
         XCTAssertEqual(
             ready.creditPolicyMessage,
             "Starting the final video reserves 3 credits. Credits are finalized only after the export is delivered."

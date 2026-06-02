@@ -607,6 +607,11 @@
 "create.final.creditCost" = "%@ needed";
 "create.final.creditPolicy.plan" = "Preparing the video plan does not reserve credits.";
 "create.final.creditPolicy.create" = "Starting the final video reserves %@. Credits are finalized only after the export is delivered.";
+"create.final.step.plan" = "Step 2 · Plan first";
+"create.final.step.planDetail" = "Avi checks media, duration, and quality. No credits reserved.";
+"create.final.step.noCredits" = "No credits";
+"create.final.step.create" = "Step 3 · Ready to create";
+"create.final.step.createDetail" = "%@ reserved when video starts.";
 "create.guidance.eyebrow.keepGoing" = "Keep going";
 "create.guidance.eyebrow.prepare" = "Prepare moment";
 "create.guidance.eyebrow.warning" = "Needs attention";

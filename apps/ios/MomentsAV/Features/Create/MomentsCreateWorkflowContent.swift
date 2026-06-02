@@ -1514,6 +1514,10 @@ private struct MomentsCreatePrimaryActionBar: View {
                     MomentsCreateRealtimeRenderStatusPanel(status: realtimeStatus)
                 }
 
+                if showsVideoStepCue {
+                    MomentsCreateVideoStepCue(action: finalVideoAction)
+                }
+
                 Button(action: primaryAction) {
                     Label(buttonTitle, systemImage: buttonIconName)
                         .font(.system(size: 15, weight: .black))
@@ -1714,6 +1718,14 @@ private struct MomentsCreatePrimaryActionBar: View {
         return nil
     }
 
+    private var showsVideoStepCue: Bool {
+        presentation.canGenerateFinalRender
+            && !isBusy
+            && presentation.finalRenderSummary.finalExport == nil
+            && presentation.finalRenderSummary.latestFinalJob == nil
+            && presentation.finalRenderSummary.pendingGalleryVideo == nil
+    }
+
     private var statusIconName: String {
         if isBusy {
             return "sparkles"
@@ -1842,6 +1854,70 @@ private struct MomentsCreatePrimaryActionBar: View {
     private var canRefreshFinalRender: Bool {
         presentation.finalRenderSummary.latestFinalJob != nil
             && presentation.canRefreshFinalRenderStatus
+    }
+}
+
+private struct MomentsCreateVideoStepCue: View {
+    let action: MomentsCreateFinalVideoActionPresentation
+
+    var body: some View {
+        HStack(alignment: .center, spacing: 10) {
+            Image(systemName: action.stepIconName)
+                .font(.system(size: 13, weight: .black))
+                .foregroundStyle(iconColor)
+                .frame(width: 24, height: 24)
+                .background(iconColor.opacity(0.12), in: Circle())
+
+            VStack(alignment: .leading, spacing: 3) {
+                Text(action.stepTitle)
+                    .font(.system(size: 13, weight: .black))
+                    .foregroundStyle(AVBrandColor.textPrimary)
+
+                Text(action.stepDetail)
+                    .font(.caption)
+                    .fontWeight(.semibold)
+                    .foregroundStyle(AVBrandColor.textSecondary)
+                    .lineLimit(2)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+
+            Text(action.stepBadgeTitle)
+                .font(.system(size: 11, weight: .black))
+                .foregroundStyle(badgeColor)
+                .lineLimit(1)
+                .minimumScaleFactor(0.78)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 5)
+                .background(badgeBackground, in: Capsule())
+        }
+        .padding(12)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(backgroundColor, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+        .overlay {
+            RoundedRectangle(cornerRadius: 8, style: .continuous)
+                .stroke(borderColor, lineWidth: 1)
+        }
+    }
+
+    private var iconColor: Color {
+        action.hasRenderPlan ? AVBrandColor.accent : AVBrandColor.textSecondary
+    }
+
+    private var badgeColor: Color {
+        action.hasRenderPlan ? AVBrandColor.textPrimary : AVBrandColor.textSecondary
+    }
+
+    private var badgeBackground: Color {
+        action.hasRenderPlan ? AVBrandColor.accent.opacity(0.14) : AVBrandColor.mutedSurface.opacity(0.72)
+    }
+
+    private var backgroundColor: Color {
+        action.hasRenderPlan ? AVBrandColor.accent.opacity(0.08) : AVBrandColor.neutral100.opacity(0.70)
+    }
+
+    private var borderColor: Color {
+        action.hasRenderPlan ? AVBrandColor.accent.opacity(0.22) : AVBrandColor.borderSubtle.opacity(0.42)
     }
 }
 
