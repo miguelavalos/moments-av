@@ -16,7 +16,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
 
         XCTAssertEqual(presentation.createMomentTitle, "Use this theme")
         XCTAssertFalse(presentation.showsActiveMoment)
-        XCTAssertEqual(presentation.templateSummary.creditTitle, "1 cr")
+        XCTAssertEqual(presentation.templateSummary.creditTitle, "2 cr")
         XCTAssertEqual(presentation.templateSummary.metadataTitle, "\(MomentTemplate.birthdayMessage.duration) · \(MomentTemplate.birthdayMessage.mediaRange)")
     }
 
@@ -52,7 +52,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         XCTAssertEqual(presentation.workspaceSummary.mediaCount, 2)
         XCTAssertEqual(presentation.workspaceSummary.sceneCount, 1)
         XCTAssertFalse(presentation.templateSummary.canAfford)
-        XCTAssertEqual(presentation.templateSummary.creditTitle, "1 cr")
+        XCTAssertEqual(presentation.templateSummary.creditTitle, "2 cr")
     }
 
     func testSetupPresentationBuilderCreatesTemplateSummary() {
@@ -311,7 +311,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
 
         XCTAssertEqual(presentation.activeMomentId, "moment-1")
         XCTAssertEqual(presentation.pickerTitle, "Adding media...")
-        XCTAssertEqual(presentation.remainingSlots, 19)
+        XCTAssertEqual(presentation.remainingSlots, 79)
         XCTAssertEqual(presentation.selectedCountTitle, "1 selected")
         XCTAssertEqual(presentation.selectionMessage, "")
         XCTAssertEqual(presentation.syncedMediaAssets.map(\.id), ["first", "second"])
@@ -439,12 +439,12 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         XCTAssertTrue(presentation.showsEmptyState)
     }
 
-    func testFinalRenderPresentationUsesSingularCreditCopy() {
+    func testFinalRenderPresentationUsesCreditCostCopy() {
         let presentation = MomentsCreateFinalRenderPresentation(
-            summary: MomentsCreateFinalRenderSummary(creditCost: 1)
+            summary: MomentsCreateFinalRenderSummary(creditCost: 2)
         )
 
-        XCTAssertEqual(presentation.creditTitle, "1 credit")
+        XCTAssertEqual(presentation.creditTitle, "2 credits")
     }
 
     func testRealtimeRenderPresentationFormatsActivePhaseAndProgress() {

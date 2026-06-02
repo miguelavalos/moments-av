@@ -12,7 +12,7 @@ final class MomentsHomePresentationTests: XCTestCase {
         XCTAssertEqual(presentation.accountTitle, "Account required")
         XCTAssertEqual(
             presentation.accountDetail,
-            "Sign in is required before creating, rendering, and managing Moments."
+            "Sign in is required before creating and saving Moments."
         )
         XCTAssertTrue(presentation.createAction.isDisabled)
         XCTAssertTrue(presentation.reviewInProgressAction.isDisabled)
@@ -73,7 +73,7 @@ final class MomentsHomePresentationTests: XCTestCase {
         )
         XCTAssertEqual(
             presentation.reviewInProgressAction.detail,
-            "Open in-progress moments, active renders, and videos waiting for local download."
+            "Continue Moments that still need action."
         )
     }
 
@@ -92,7 +92,7 @@ final class MomentsHomePresentationTests: XCTestCase {
         )
         XCTAssertEqual(
             presentation.reviewInProgressAction.detail,
-            "Open in-progress moments, active renders, and videos waiting for local download."
+            "Continue Moments that still need action."
         )
     }
 

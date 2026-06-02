@@ -84,9 +84,7 @@ enum L10n {
     private static let userDefaultsKey = "momentsav.appLanguage"
 
     static var locale: Locale {
-        AppLanguage.resolved(
-            from: UserDefaults.standard.string(forKey: userDefaultsKey) ?? Locale.preferredLanguages.first
-        ).locale
+        selectedLanguage.locale
     }
 
     static func string(_ key: String) -> String {
@@ -100,16 +98,20 @@ enum L10n {
     }
 
     private static var bundle: Bundle {
-        let selectedLanguage = AppLanguage.resolved(
-            from: UserDefaults.standard.string(forKey: userDefaultsKey) ?? Locale.preferredLanguages.first
-        )
-
         guard let path = Bundle.main.path(forResource: selectedLanguage.rawValue, ofType: "lproj"),
               let localizedBundle = Bundle(path: path) else {
             return .main
         }
 
         return localizedBundle
+    }
+
+    private static var selectedLanguage: AppLanguage {
+        AppLanguage.resolved(
+            from: ProcessInfo.processInfo.environment["MOMENTSAV_APP_LANGUAGE"]
+                ?? UserDefaults.standard.string(forKey: userDefaultsKey)
+                ?? Locale.preferredLanguages.first
+        )
     }
 }
 

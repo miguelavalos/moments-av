@@ -8,9 +8,9 @@ final class MomentsInProgressArtifactPresentationTests: XCTestCase {
             makeRenderJob(id: "new", kind: "final", status: "failed", updatedAt: 20)
         ])
 
-        XCTAssertEqual(presentation.title, "Render jobs")
+        XCTAssertEqual(presentation.title, "Video activity")
         XCTAssertEqual(presentation.emptySystemImage, "gearshape.2")
-        XCTAssertEqual(presentation.emptyMessage, "Story review and final render jobs will appear here.")
+        XCTAssertEqual(presentation.emptyMessage, "Story reviews and video creation activity will appear here.")
         XCTAssertEqual(presentation.jobs.map(\.id), ["new", "old"])
     }
 
@@ -26,12 +26,12 @@ final class MomentsInProgressArtifactPresentationTests: XCTestCase {
 
         XCTAssertEqual(preview.title, "Story Review")
         XCTAssertEqual(preview.emptySystemImage, "text.bubble")
-        XCTAssertEqual(preview.emptyMessage, "Review the story after the story plan is ready.")
+        XCTAssertEqual(preview.emptyMessage, "Review the story after it is ready.")
         XCTAssertEqual(preview.artifact?.storageKey, "momentsav/preview-2.mp4")
 
-        XCTAssertEqual(finalExport.title, "Final export")
-        XCTAssertEqual(finalExport.emptySystemImage, "square.and.arrow.up")
-        XCTAssertEqual(finalExport.emptyMessage, "Render the final export after approving the story review.")
+        XCTAssertEqual(finalExport.title, "Final video")
+        XCTAssertEqual(finalExport.emptySystemImage, "video.fill")
+        XCTAssertEqual(finalExport.emptyMessage, "Create the final video after reviewing the story.")
         XCTAssertEqual(finalExport.artifact?.storageKey, "momentsav/final-1.mp4")
     }
 
@@ -83,13 +83,13 @@ final class MomentsInProgressArtifactPresentationTests: XCTestCase {
             artifact: makeArtifact(id: "final-4", kind: "final_export", status: "queued")
         )
 
-        XCTAssertEqual(availableFinal.actionDetail, "Your final video is ready to export or share.")
+        XCTAssertEqual(availableFinal.actionDetail, "Your finished video is ready to save or share.")
         XCTAssertEqual(expiredFinal.actionDetail, "Final Export is no longer available. Return to Create and generate it again.")
         XCTAssertEqual(
             failedFinal.actionDetail,
             "Final Export is not available. Credits are only finalized after a usable final video is ready. Please retry in Create or contact support."
         )
-        XCTAssertEqual(queuedFinal.actionDetail, "Final Export is still being prepared. Refresh the moment in a moment.")
+        XCTAssertEqual(queuedFinal.actionDetail, "Final Export is still being prepared. Refresh in a moment.")
     }
 
     func testRenderJobPresentationSortsNewestFirstAndUsesFallbacks() {

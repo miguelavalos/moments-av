@@ -12,7 +12,7 @@ final class MomentMutationRequestsTests: XCTestCase {
 
         let request = MomentCreationRequest.setup(form)
 
-        XCTAssertEqual(request.theme, "party_recap")
+        XCTAssertEqual(request.theme, "celebration")
         XCTAssertEqual(request.title, "Graduation for Ava")
         XCTAssertEqual(request.mood, "cinematic")
         XCTAssertEqual(request.duration, "auto")

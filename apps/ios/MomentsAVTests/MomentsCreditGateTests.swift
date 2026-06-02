@@ -16,11 +16,11 @@ final class MomentsCreditGateTests: XCTestCase {
         )
     }
 
-    func testPartyRecapRequiresOneSpendableCredit() {
+    func testPartyRecapRequiresTwoSpendableCredits() {
         XCTAssertTrue(
             MomentsCreditGate.canAfford(
                 MomentTemplate.partyRecap,
-                balance: MomentsCreditBalance(proMonthly: 0, promotional: 0, purchased: 1)
+                balance: MomentsCreditBalance(proMonthly: 0, promotional: 0, purchased: 2)
             )
         )
     }
@@ -47,20 +47,20 @@ final class MomentsCreditGateTests: XCTestCase {
     }
 
     func testLaunchTemplateDurationsCreditsAndAssetRanges() {
-        XCTAssertEqual(MomentTemplate.birthdayMessage.durationSeconds, 15)
-        XCTAssertEqual(MomentTemplate.birthdayMessage.creditCost, 1)
+        XCTAssertEqual(MomentTemplate.birthdayMessage.durationSeconds, 30)
+        XCTAssertEqual(MomentTemplate.birthdayMessage.creditCost, 2)
         XCTAssertEqual(MomentTemplate.birthdayMessage.minimumAssets, 1)
-        XCTAssertEqual(MomentTemplate.birthdayMessage.maximumAssets, 20)
+        XCTAssertEqual(MomentTemplate.birthdayMessage.maximumAssets, 80)
 
-        XCTAssertEqual(MomentTemplate.partyRecap.durationSeconds, 15)
-        XCTAssertEqual(MomentTemplate.partyRecap.creditCost, 1)
+        XCTAssertEqual(MomentTemplate.partyRecap.durationSeconds, 30)
+        XCTAssertEqual(MomentTemplate.partyRecap.creditCost, 2)
         XCTAssertEqual(MomentTemplate.partyRecap.minimumAssets, 1)
-        XCTAssertEqual(MomentTemplate.partyRecap.maximumAssets, 20)
+        XCTAssertEqual(MomentTemplate.partyRecap.maximumAssets, 80)
 
-        XCTAssertEqual(MomentTemplate.softRoast.durationSeconds, 15)
-        XCTAssertEqual(MomentTemplate.softRoast.creditCost, 1)
+        XCTAssertEqual(MomentTemplate.softRoast.durationSeconds, 30)
+        XCTAssertEqual(MomentTemplate.softRoast.creditCost, 2)
         XCTAssertEqual(MomentTemplate.softRoast.minimumAssets, 1)
-        XCTAssertEqual(MomentTemplate.softRoast.maximumAssets, 20)
+        XCTAssertEqual(MomentTemplate.softRoast.maximumAssets, 80)
     }
 
     func testSetupFormRequiresOccasionBeforeCreate() {
@@ -96,8 +96,8 @@ final class MomentsCreditGateTests: XCTestCase {
             tempo: "not-a-tempo",
             occasion: "Anniversary",
             details: "Use the beach clips.",
-            durationSeconds: 15,
-            creditCost: 1,
+            durationSeconds: 30,
+            creditCost: 2,
             previewCount: 0,
             previewLimit: 3,
             updatedAt: 0
@@ -119,13 +119,13 @@ final class MomentsCreditGateTests: XCTestCase {
     func testMediaRulesEnforceTemplateMinimumsAndMaximums() {
         XCTAssertFalse(MomentsMediaRules.canStartPreview(template: .birthdayMessage, selectedCount: 0))
         XCTAssertTrue(MomentsMediaRules.canStartPreview(template: .birthdayMessage, selectedCount: 1))
-        XCTAssertTrue(MomentsMediaRules.canStartPreview(template: .birthdayMessage, selectedCount: 20))
-        XCTAssertFalse(MomentsMediaRules.canStartPreview(template: .birthdayMessage, selectedCount: 21))
+        XCTAssertTrue(MomentsMediaRules.canStartPreview(template: .birthdayMessage, selectedCount: 80))
+        XCTAssertFalse(MomentsMediaRules.canStartPreview(template: .birthdayMessage, selectedCount: 81))
 
         XCTAssertFalse(MomentsMediaRules.canStartPreview(template: .partyRecap, selectedCount: 0))
         XCTAssertTrue(MomentsMediaRules.canStartPreview(template: .partyRecap, selectedCount: 1))
-        XCTAssertTrue(MomentsMediaRules.canStartPreview(template: .partyRecap, selectedCount: 20))
-        XCTAssertFalse(MomentsMediaRules.canStartPreview(template: .partyRecap, selectedCount: 21))
+        XCTAssertTrue(MomentsMediaRules.canStartPreview(template: .partyRecap, selectedCount: 80))
+        XCTAssertFalse(MomentsMediaRules.canStartPreview(template: .partyRecap, selectedCount: 81))
     }
 
     func testStoryPlanRulesUseSelectedConvexMediaCount() {
@@ -199,7 +199,7 @@ final class MomentsCreditGateTests: XCTestCase {
     }
 
     func testPreviewRulesRequireStoryReadyCreditsAndLimit() {
-        let balance = MomentsCreditBalance(proMonthly: 0, promotional: 0, purchased: 1)
+        let balance = MomentsCreditBalance(proMonthly: 0, promotional: 0, purchased: 2)
         let moment = InProgressMoment(
             id: "moment-1",
             template: .birthdayMessage,
@@ -209,8 +209,8 @@ final class MomentsCreditGateTests: XCTestCase {
             tempo: nil,
             occasion: nil,
             details: nil,
-            durationSeconds: 15,
-            creditCost: 1,
+            durationSeconds: 30,
+            creditCost: 2,
             previewCount: 2,
             previewLimit: 3,
             updatedAt: 0
@@ -253,8 +253,8 @@ final class MomentsCreditGateTests: XCTestCase {
         XCTAssertFalse(MomentsPreviewRules.canGenerate(moment: limitedMoment, template: .birthdayMessage, balance: balance))
     }
 
-    func testFinalRenderRulesRequirePreviewAndCredits() {
-        let balance = MomentsCreditBalance(proMonthly: 0, promotional: 0, purchased: 1)
+    func testFinalRenderRulesRequireReadyStatusAndCredits() {
+        let balance = MomentsCreditBalance(proMonthly: 0, promotional: 0, purchased: 2)
         let moment = InProgressMoment(
             id: "moment-1",
             template: .birthdayMessage,
@@ -264,8 +264,8 @@ final class MomentsCreditGateTests: XCTestCase {
             tempo: nil,
             occasion: nil,
             details: nil,
-            durationSeconds: 15,
-            creditCost: 1,
+            durationSeconds: 30,
+            creditCost: 2,
             previewCount: 1,
             previewLimit: 3,
             updatedAt: 0

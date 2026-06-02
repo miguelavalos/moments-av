@@ -15,7 +15,7 @@ final class MomentsInProgressPresentationTests: XCTestCase {
                 MomentsInProgressUnavailablePresentation(
                     systemImage: "person.crop.circle.fill",
                     title: "Sign in to make Moments",
-                    message: "In Progress and local Gallery unlock once your account is connected."
+                    message: "In Progress and Gallery unlock once your account is connected."
                 )
             )
         )
@@ -34,7 +34,7 @@ final class MomentsInProgressPresentationTests: XCTestCase {
                 MomentsInProgressUnavailablePresentation(
                     systemImage: "rectangle.stack.badge.plus",
                     title: "Nothing here yet",
-                    message: "In-progress moments appear here. Downloaded final videos appear in Gallery."
+                    message: "Active Moments appear in In Progress. Finished videos appear in Gallery."
                 )
             )
         )
@@ -67,11 +67,11 @@ final class MomentsInProgressPresentationTests: XCTestCase {
 
         XCTAssertEqual(
             fallback.deletionMessage,
-            "This removes this moment, including source media records and generated artifacts."
+            "This removes this Moment, including selected media records and generated video files that belong to it."
         )
         XCTAssertEqual(
             titled.deletionMessage,
-            "This removes Family Weekend, including source media records and generated artifacts."
+            "This removes Family Weekend, including selected media records and generated video files that belong to it."
         )
     }
 

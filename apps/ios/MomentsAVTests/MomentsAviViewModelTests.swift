@@ -38,7 +38,7 @@ final class MomentsAviViewModelTests: XCTestCase {
             creditBalance: MomentsCreditBalance(proMonthly: 2, promotional: 1, purchased: 3)
         )
 
-        XCTAssertTrue(presentation.creditGuidanceMessage.contains("6 credits are available"))
+        XCTAssertTrue(presentation.creditGuidanceMessage.contains("6 credits available"))
     }
 
     func testCreditGuidanceUsesSingularSpendableCredit() {
@@ -48,7 +48,7 @@ final class MomentsAviViewModelTests: XCTestCase {
             creditBalance: MomentsCreditBalance(proMonthly: 1, promotional: 0, purchased: 0)
         )
 
-        XCTAssertTrue(presentation.creditGuidanceMessage.contains("1 credit is available"))
+        XCTAssertTrue(presentation.creditGuidanceMessage.contains("1 credit available"))
     }
 
     func testZeroCreditsExplainFinalExportRequirement() {
@@ -60,7 +60,7 @@ final class MomentsAviViewModelTests: XCTestCase {
 
         XCTAssertEqual(
             presentation.creditGuidanceMessage,
-            "No credits are available. Final exports require credits after story review."
+            "No credits are available. Video credits are needed before creating the final video."
         )
     }
 
@@ -82,7 +82,7 @@ final class MomentsAviViewModelTests: XCTestCase {
         )
 
         XCTAssertEqual(viewModel.presentation.workflowFocusTitle, "Review active work")
-        XCTAssertTrue(viewModel.presentation.creditGuidanceMessage.contains("1 credit is available"))
+        XCTAssertTrue(viewModel.presentation.creditGuidanceMessage.contains("1 credit available"))
     }
 
     private func makeMoment(id: String, status: String, updatedAt: Double) -> InProgressMoment {

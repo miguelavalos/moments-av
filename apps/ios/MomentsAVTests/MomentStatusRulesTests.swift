@@ -70,9 +70,9 @@ final class MomentStatusRulesTests: XCTestCase {
     }
 
     func testDisplayHelpersFormatBackendValuesForUI() {
-        XCTAssertEqual(MomentStatusRules.displayTitle(for: "preview_ready"), "Story Review Ready")
+        XCTAssertEqual(MomentStatusRules.displayTitle(for: "preview_ready"), "Story ready")
         XCTAssertEqual(MomentStatusRules.displayKind("preview"), "Story Review")
-        XCTAssertEqual(MomentStatusRules.displayKind("final"), "Final Render")
+        XCTAssertEqual(MomentStatusRules.displayKind("final"), "Final")
     }
 
     func testNextActionAsksForMediaWhenWorkspaceHasNoMedia() {
@@ -87,9 +87,9 @@ final class MomentStatusRulesTests: XCTestCase {
     func testNextActionAsksForStoryWhenMediaExistsWithoutScenes() {
         let action = MomentStatusRules.nextAction(for: makeWorkspace(mediaAssets: [makeMediaAsset()]))
 
-        XCTAssertEqual(action.title, "Generate story")
+        XCTAssertEqual(action.title, "Prepare story")
         XCTAssertEqual(action.systemImage, "text.bubble")
-        XCTAssertEqual(action.primaryButtonTitle, "Generate Story in Create")
+        XCTAssertEqual(action.primaryButtonTitle, "Prepare Story in Create")
         XCTAssertEqual(action.continuationFocus, .story)
     }
 
@@ -116,9 +116,9 @@ final class MomentStatusRulesTests: XCTestCase {
             )
         )
 
-        XCTAssertEqual(action.title, "Render final export")
-        XCTAssertEqual(action.systemImage, "square.and.arrow.up")
-        XCTAssertEqual(action.primaryButtonTitle, "Render Final in Create")
+        XCTAssertEqual(action.title, "Create video")
+        XCTAssertEqual(action.systemImage, "video.fill")
+        XCTAssertEqual(action.primaryButtonTitle, "Create Video in Create")
         XCTAssertEqual(action.continuationFocus, .finalRender)
     }
 
@@ -149,7 +149,7 @@ final class MomentStatusRulesTests: XCTestCase {
             )
         )
 
-        XCTAssertEqual(action.title, "Review render issue")
+        XCTAssertEqual(action.title, "Video needs attention")
         XCTAssertEqual(action.systemImage, "exclamationmark.triangle")
         XCTAssertEqual(action.primaryButtonTitle, "Review in Create")
         XCTAssertEqual(action.continuationFocus, .preview)

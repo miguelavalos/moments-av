@@ -13,7 +13,7 @@ final class MomentsInProgressWorkspacePresentationTests: XCTestCase {
         let presentation = MomentsInProgressWorkspaceDetailPresentation(workspace: workspace)
 
         XCTAssertEqual(presentation.title, "Moment detail")
-        XCTAssertEqual(presentation.nextAction.title, "Generate story")
+        XCTAssertEqual(presentation.nextAction.title, "Prepare story")
         XCTAssertEqual(presentation.continuationRequest.moment, workspace.moment)
         XCTAssertEqual(presentation.continuationRequest.focus, .story)
     }
@@ -28,7 +28,7 @@ final class MomentsInProgressWorkspacePresentationTests: XCTestCase {
 
         let presentation = MomentsInProgressWorkspaceDetailPresentation(workspace: workspace)
 
-        XCTAssertEqual(presentation.nextAction.title, "Review render issue")
+        XCTAssertEqual(presentation.nextAction.title, "Video needs attention")
         XCTAssertEqual(presentation.continuationRequest.focus, .finalRender)
     }
 
@@ -92,8 +92,8 @@ final class MomentsInProgressWorkspacePresentationTests: XCTestCase {
         )
 
         XCTAssertEqual(presentation.tiles.map(\.title), ["Status", "Story Review", "Final", "Latest job"])
-        XCTAssertEqual(presentation.tiles.map(\.value), ["Story Review Ready", "Available", "Available", "Final Render · Failed"])
-        XCTAssertEqual(presentation.tiles.map(\.systemImage), ["circle.dashed", "text.bubble", "square.and.arrow.up", "gearshape.2"])
+        XCTAssertEqual(presentation.tiles.map(\.value), ["Story ready", "Available", "Available", "Final · Failed"])
+        XCTAssertEqual(presentation.tiles.map(\.systemImage), ["circle.dashed", "text.bubble", "video.fill", "gearshape.2"])
     }
 
     func testWorkspaceSummaryPresentationUsesFallbacksWhenNoArtifactsOrJobsExist() {
@@ -101,7 +101,7 @@ final class MomentsInProgressWorkspacePresentationTests: XCTestCase {
             workspace: makeWorkspace(moment: makeMoment(status: "in_progress"))
         )
 
-        XCTAssertEqual(presentation.tiles.map(\.value), ["Moment Created", "Not ready", "Not ready", "Not started"])
+        XCTAssertEqual(presentation.tiles.map(\.value), ["In Progress", "Not ready", "Not ready", "Not started"])
     }
 
     func testMediaSectionPresentationFormatsTitleEmptyStateAndRows() {
@@ -112,7 +112,7 @@ final class MomentsInProgressWorkspacePresentationTests: XCTestCase {
 
         XCTAssertEqual(presentation.title, "Media")
         XCTAssertEqual(presentation.emptySystemImage, "photo.badge.plus")
-        XCTAssertEqual(presentation.emptyMessage, "No media is attached to this Moment yet. Add photos or clips from Create to unlock story planning.")
+        XCTAssertEqual(presentation.emptyMessage, "No media is attached to this Moment yet. Add photos or clips from Create to review the story.")
         XCTAssertEqual(presentation.mediaAssets.map(\.id), ["first", "second"])
     }
 

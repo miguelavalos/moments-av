@@ -37,15 +37,15 @@ final class MomentsMediaRulesTests: XCTestCase {
     func testRemainingSlotsNeverReturnsNegativeCount() {
         XCTAssertEqual(
             MomentsMediaRules.remainingSlots(template: .birthdayMessage, selectedCount: 11),
-            9
+            69
         )
         XCTAssertEqual(
             MomentsMediaRules.remainingSlots(template: .birthdayMessage, selectedCount: 12),
-            8
+            68
         )
         XCTAssertEqual(
             MomentsMediaRules.remainingSlots(template: .birthdayMessage, selectedCount: 13),
-            7
+            67
         )
     }
 

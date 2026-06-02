@@ -34,7 +34,7 @@ struct MomentsInProgressWorkspaceSummaryPresentation: Equatable {
             MomentsInProgressSummaryTilePresentation(
                 title: L10n.string("moment.summary.final"),
                 value: Self.summaryValue(for: finalExport),
-                systemImage: "square.and.arrow.up"
+                systemImage: "video.fill"
             ),
             MomentsInProgressSummaryTilePresentation(
                 title: L10n.string("moment.summary.latestJob"),

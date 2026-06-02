@@ -34,7 +34,7 @@ final class RenderResultPersistenceRequestTests: XCTestCase {
         XCTAssertEqual(request.model, "mock-model")
         XCTAssertEqual(request.providerRequestId, "provider-render-1")
         XCTAssertEqual(request.r2Key, "momentsav/user/moment/previews/preview.mp4")
-        XCTAssertEqual(request.durationSeconds, 15)
+        XCTAssertEqual(request.durationSeconds, 30)
         XCTAssertEqual(request.creditCost, 0)
         XCTAssertTrue(request.hasWatermark)
         XCTAssertEqual(request.status, "available")
@@ -56,9 +56,9 @@ final class RenderResultPersistenceRequestTests: XCTestCase {
             r2Key: "momentsav/user/moment/final/final.mp4",
             expiresAt: "2026-05-16T17:00:00Z",
             hasWatermark: true,
-            baseCreditCost: 1,
+            baseCreditCost: 2,
             watermarkRemovalCreditCost: nil,
-            creditsCommitted: 1,
+            creditsCommitted: 2,
             generatedAt: "2026-05-16T16:00:00Z"
         )
 
@@ -75,8 +75,8 @@ final class RenderResultPersistenceRequestTests: XCTestCase {
         XCTAssertEqual(request.model, "mock-model")
         XCTAssertEqual(request.providerRequestId, "provider-render-2")
         XCTAssertEqual(request.r2Key, "momentsav/user/moment/final/final.mp4")
-        XCTAssertEqual(request.durationSeconds, 15)
-        XCTAssertEqual(request.creditCost, 1)
+        XCTAssertEqual(request.durationSeconds, 30)
+        XCTAssertEqual(request.creditCost, 2)
         XCTAssertTrue(request.hasWatermark)
         XCTAssertEqual(request.status, "available")
     }

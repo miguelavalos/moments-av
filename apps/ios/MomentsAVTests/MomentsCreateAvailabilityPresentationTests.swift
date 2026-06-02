@@ -103,7 +103,7 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
         XCTAssertEqual(MomentsCreateAvailabilityCopy.storyMissingMedia, "Add photos or clips before preparing the story.")
         XCTAssertEqual(
             MomentsCreateAvailabilityCopy.finalRenderMissingWorkspace,
-            "Wait for the moment workspace to sync before rendering the final export."
+            "Wait for this Moment to sync before creating the final video."
         )
         XCTAssertEqual(
             MomentsCreateAvailabilityCopy.previewInsufficientCredits(missingCredits: 1),
@@ -111,7 +111,7 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
         )
         XCTAssertEqual(
             MomentsCreateAvailabilityCopy.finalRenderInsufficientCredits(missingCredits: 2),
-            "Add 2 more credits before final render."
+            "Add 2 more credits before creating the final video."
         )
     }
 
@@ -183,7 +183,7 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
                 template: .birthdayMessage,
                 balance: .empty
             ),
-            "Add 1 more credit before reviewing the story."
+            "Generate a story before reviewing it."
         )
     }
 
@@ -220,6 +220,6 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
         )
 
         XCTAssertEqual(preview.message, "Open a moment before refreshing story review status.")
-        XCTAssertEqual(finalRender.message, "No final render job is available yet.")
+        XCTAssertEqual(finalRender.message, "No final video is available yet.")
     }
 }
