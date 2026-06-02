@@ -1,4 +1,5 @@
 import Foundation
+import OSLog
 
 @MainActor
 final class MomentCreationWorkflow: ObservableObject {
@@ -12,6 +13,7 @@ final class MomentCreationWorkflow: ObservableObject {
     private let momentDeleter: any MomentsDeleting
     private let workspaceObserver: any MomentsActiveWorkspaceObserving
     private var workflowGeneration = WorkflowGeneration()
+    private let logger = Logger(subsystem: "com.avalsys.momentsav", category: "moment-creation")
 
     init(
         currentUserProvider: any MomentsCurrentUserProviding,
@@ -73,6 +75,7 @@ final class MomentCreationWorkflow: ObservableObject {
             return momentId
         } catch {
             guard workflowGeneration.isCurrent(generation) else { return nil }
+            logger.error("Moment creation failed reason=\(String(describing: error), privacy: .public)")
             errorMessage = error.localizedDescription
             isCreatingMoment = false
             return nil

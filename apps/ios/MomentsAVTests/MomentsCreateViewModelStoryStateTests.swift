@@ -1,4 +1,5 @@
 import XCTest
+import Combine
 @testable import MomentsAV
 
 @MainActor
@@ -130,4 +131,275 @@ final class MomentsCreateViewModelStoryStateTests: XCTestCase {
         XCTAssertEqual(viewModel.currentStoryPlanInputSignature(momentId: "moment-1"), expectedLocalSignature)
         XCTAssertNotEqual(viewModel.currentStoryPlanInputSignature(momentId: "moment-1"), backendMediaSignature)
     }
+
+    func testGenerateStoryPlanShowsImmediateMomentCreationError() async {
+        let harness = MomentCreationFailureHarness(error: MomentsSyncError.notConfigured)
+        let viewModel = MomentsCreateViewModel()
+        viewModel.bind(
+            accountStateProvider: harness,
+            momentCreationWorkflow: harness.momentCreationWorkflow,
+            mediaUploadWorkflow: harness.mediaUploadWorkflow,
+            storyPlanWorkflow: harness.storyPlanWorkflow,
+            previewGenerationWorkflow: harness.previewGenerationWorkflow,
+            finalRenderWorkflow: harness.finalRenderWorkflow
+        )
+        await Task.yield()
+        await Task.yield()
+        viewModel.applyAccountState(
+            MomentsCreateAccountState(
+                isSignedIn: true,
+                balance: MomentsCreditBalance(proMonthly: 0, promotional: 15, purchased: 0)
+            )
+        )
+        viewModel.beginNewMoment(openMediaPicker: false)
+        viewModel.applyMediaUploadState(
+            MomentsCreateMediaUploadState(
+                selectedMedia: [
+                    MomentsCreateTestFixtures.makeSelectedMedia(
+                        id: "00000000-0000-0000-0000-000000000001"
+                    )
+                ],
+                statusMessage: nil,
+                isImporting: false,
+                importProgress: nil
+            )
+        )
+
+        viewModel.generateStoryPlan()
+        await fulfillment(of: [harness.createAttemptExpectation], timeout: 1)
+        await waitForStoryStatusMessage(in: viewModel)
+
+        XCTAssertEqual(viewModel.storySummary.statusMessage, MomentsSyncError.notConfigured.localizedDescription)
+    }
+
+    private func waitForStoryStatusMessage(in viewModel: MomentsCreateViewModel) async {
+        for _ in 0..<20 where viewModel.storySummary.statusMessage == nil {
+            try? await Task.sleep(nanoseconds: 25_000_000)
+        }
+    }
+}
+
+@MainActor
+private final class MomentCreationFailureHarness:
+    MomentsAccountStateProviding,
+    MomentsCurrentUserProviding,
+    MomentsAuthTokenProviding,
+    MomentsCreditBalanceProviding,
+    MomentsCreating,
+    MomentsDeleting,
+    MomentsMediaAssetSaving,
+    MomentsStoryPlanSaving,
+    MomentsPreviewResultSaving,
+    MomentsFinalRenderResultSaving,
+    MomentsActiveWorkspaceObserving
+{
+    let createAttemptExpectation = XCTestExpectation(description: "Moment creation attempted")
+    private let creationError: Error
+    private let signedInSubject = CurrentValueSubject<Bool, Never>(true)
+    private let currentUserSubject = CurrentValueSubject<String?, Never>("user-1")
+    private let displayNameSubject = CurrentValueSubject<String?, Never>("Ava")
+    private let balanceSubject = CurrentValueSubject<MomentsCreditBalance, Never>(
+        MomentsCreditBalance(proMonthly: 0, promotional: 15, purchased: 0)
+    )
+    private let workspaceSubject = CurrentValueSubject<MomentWorkspace?, Never>(nil)
+    private let workspaceErrorSubject = CurrentValueSubject<String?, Never>(nil)
+
+    init(error: Error) {
+        creationError = error
+    }
+
+    var momentCreationWorkflow: MomentCreationWorkflow {
+        MomentCreationWorkflow(
+            currentUserProvider: self,
+            creditBalanceProvider: self,
+            momentCreator: self,
+            momentDeleter: self,
+            workspaceObserver: self
+        )
+    }
+
+    var mediaUploadWorkflow: MediaUploadWorkflow {
+        MediaUploadWorkflow(
+            currentUserProvider: self,
+            authTokenProvider: self,
+            mediaAssetSaver: self,
+            workspaceObserver: self,
+            uploadClient: MomentsUploadClient(baseURLString: "https://api.example.com")
+        )
+    }
+
+    var storyPlanWorkflow: StoryPlanWorkflow {
+        StoryPlanWorkflow(
+            currentUserProvider: self,
+            authTokenProvider: self,
+            storyPlanSaver: self,
+            workspaceObserver: self,
+            storyClient: MomentsStoryClient(baseURLString: "https://api.example.com")
+        )
+    }
+
+    var previewGenerationWorkflow: PreviewGenerationWorkflow {
+        PreviewGenerationWorkflow(
+            currentUserProvider: self,
+            authTokenProvider: self,
+            previewResultSaver: self,
+            workspaceObserver: self,
+            previewClient: MomentsPreviewClient(baseURLString: "https://api.example.com"),
+            statusClient: MomentsRenderStatusClient(baseURLString: "https://api.example.com")
+        )
+    }
+
+    var finalRenderWorkflow: FinalRenderWorkflow {
+        FinalRenderWorkflow(
+            currentUserProvider: self,
+            authTokenProvider: self,
+            creditBalanceProvider: self,
+            finalRenderResultSaver: self,
+            workspaceObserver: self,
+            finalRenderClient: MomentsFinalRenderClient(baseURLString: "https://api.example.com"),
+            statusClient: MomentsRenderStatusClient(baseURLString: "https://api.example.com"),
+            galleryStore: TestGalleryStore()
+        )
+    }
+
+    var isSignedInPublisher: AnyPublisher<Bool, Never> {
+        signedInSubject.eraseToAnyPublisher()
+    }
+
+    var currentUserIdPublisher: AnyPublisher<String?, Never> {
+        currentUserSubject.eraseToAnyPublisher()
+    }
+
+    var displayNamePublisher: AnyPublisher<String?, Never> {
+        displayNameSubject.eraseToAnyPublisher()
+    }
+
+    var creditBalancePublisher: AnyPublisher<MomentsCreditBalance, Never> {
+        balanceSubject.eraseToAnyPublisher()
+    }
+
+    var currentUserId: String? {
+        currentUserSubject.value
+    }
+
+    var currentCreditBalance: MomentsCreditBalance {
+        balanceSubject.value
+    }
+
+    var isConfigured: Bool {
+        true
+    }
+
+    var activeWorkspacePublisher: AnyPublisher<MomentWorkspace?, Never> {
+        workspaceSubject.eraseToAnyPublisher()
+    }
+
+    var workspaceErrorPublisher: AnyPublisher<String?, Never> {
+        workspaceErrorSubject.eraseToAnyPublisher()
+    }
+
+    func currentBearerToken() async throws -> String? {
+        "token-1"
+    }
+
+    func createMoment(ownerUserId: String, form: MomentSetupForm) async throws -> String {
+        createAttemptExpectation.fulfill()
+        throw creationError
+    }
+
+    func deleteMoment(ownerUserId: String, momentId: String) async throws {}
+
+    func observeWorkspace(ownerUserId: String?, momentId: String?) {}
+
+    func clearWorkspace() {
+        workspaceSubject.send(nil)
+    }
+
+    func saveMediaAsset(
+        ownerUserId: String,
+        momentId: String,
+        media: MomentsSelectedMedia,
+        preparedUpload: MomentsPreparedUpload
+    ) async throws -> String {
+        media.id.uuidString
+    }
+
+    func saveMediaAssets(
+        ownerUserId: String,
+        momentId: String,
+        mediaAssets: [MediaAssetPersistenceRequest]
+    ) async throws -> [String] {
+        mediaAssets.map(\.platformMediaAssetId)
+    }
+
+    func saveStoryPlan(
+        ownerUserId: String,
+        momentId: String,
+        plan: MomentsStoryPlanResponse,
+        storyInputSignature: String
+    ) async throws {}
+
+    func updateRenderJobStatus(
+        ownerUserId: String,
+        renderJobId: String,
+        status: String,
+        phase: String?,
+        progressPercent: Int?,
+        userMessage: String?,
+        canEditSetup: Bool?,
+        canRetry: Bool?,
+        errorCode: String?,
+        errorMessage: String?
+    ) async throws {}
+
+    func savePreviewResult(
+        ownerUserId: String,
+        momentId: String,
+        preview: MomentsPreviewResponse,
+        template: MomentTemplate
+    ) async throws {}
+
+    func saveStartedFinalRender(
+        ownerUserId: String,
+        momentId: String,
+        reservationId: String,
+        startedWorkflow: MomentsStartWorkflowResponse
+    ) async throws -> String {
+        "render-job-1"
+    }
+
+    func saveFinalRenderResult(
+        ownerUserId: String,
+        momentId: String,
+        finalRender: MomentsFinalRenderResponse,
+        template: MomentTemplate
+    ) async throws {}
+}
+
+private struct TestGalleryStore: MomentsGalleryStoring {
+    func loadRecords() -> [MomentsGalleryVideoRecord] { [] }
+    func saveRecords(_ records: [MomentsGalleryVideoRecord]) {}
+    func localFileExists(for record: MomentsGalleryVideoRecord) -> Bool { false }
+    func localFileURL(for record: MomentsGalleryVideoRecord) -> URL { URL(fileURLWithPath: "/tmp/\(record.id).mp4") }
+    func contains(artifactId: String) -> Bool { false }
+    func saveDownloadedVideo(
+        temporaryFileURL: URL,
+        momentId: String,
+        artifactId: String,
+        title: String,
+        r2Key: String,
+        createdAt: Date
+    ) throws -> MomentsGalleryVideoRecord {
+        MomentsGalleryVideoRecord(
+            id: artifactId,
+            momentId: momentId,
+            artifactId: artifactId,
+            title: title,
+            r2Key: r2Key,
+            localRelativePath: "\(artifactId).mp4",
+            createdAt: createdAt.timeIntervalSince1970 * 1000
+        )
+    }
+    func addRecord(_ record: MomentsGalleryVideoRecord) {}
+    func deleteRecord(_ record: MomentsGalleryVideoRecord, deleteLocalFile: Bool) {}
 }

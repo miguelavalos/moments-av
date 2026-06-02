@@ -139,9 +139,7 @@ extension MomentsCreateViewModel {
             }
 
             guard let momentId else {
-                self.updateStoryStatusMessage(self.setupErrorMessage
-                    ?? MomentsRecoveryCopy.storyStartFailure()
-                )
+                self.updateStoryStatusMessage(self.momentCreationFailureMessage())
                 return
             }
             if self.storySummary.hasScenes,
@@ -218,9 +216,7 @@ extension MomentsCreateViewModel {
             }
 
             guard let momentId else {
-                self.updateStoryStatusMessage(self.setupErrorMessage
-                    ?? MomentsRecoveryCopy.storyStartFailure()
-                )
+                self.updateStoryStatusMessage(self.momentCreationFailureMessage())
                 return
             }
             var inputSignature = self.currentStoryPlanInputSignature(momentId: momentId)
@@ -380,5 +376,11 @@ extension MomentsCreateViewModel {
     private var activeFormContext: (momentId: String, form: MomentSetupForm)? {
         guard let activeMomentId else { return nil }
         return (activeMomentId, form)
+    }
+
+    private func momentCreationFailureMessage() -> String {
+        momentCreationWorkflow?.errorMessage
+            ?? setupErrorMessage
+            ?? MomentsRecoveryCopy.storyStartFailure()
     }
 }
