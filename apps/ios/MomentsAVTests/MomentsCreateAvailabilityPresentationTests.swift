@@ -9,6 +9,7 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
             canPlanStory: false,
             canGeneratePreview: true,
             canRefreshPreviewStatus: false,
+            canPrepareFinalRenderPlan: true,
             canGenerateFinalRender: true,
             canRefreshFinalRenderStatus: false,
             mediaMessage: "Media",
@@ -23,6 +24,7 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
         XCTAssertFalse(availability.canPlanStory)
         XCTAssertTrue(availability.canGeneratePreview)
         XCTAssertFalse(availability.canRefreshPreviewStatus)
+        XCTAssertTrue(availability.canPrepareFinalRenderPlan)
         XCTAssertTrue(availability.canGenerateFinalRender)
         XCTAssertFalse(availability.canRefreshFinalRenderStatus)
         XCTAssertEqual(availability.mediaMessage, "Media")
@@ -55,6 +57,7 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
         XCTAssertFalse(capability.canPlanStory)
         XCTAssertFalse(capability.canGeneratePreview)
         XCTAssertTrue(capability.canRefreshPreviewStatus)
+        XCTAssertFalse(capability.canPrepareFinalRenderPlan)
         XCTAssertFalse(capability.canGenerateFinalRender)
         XCTAssertFalse(capability.canRefreshFinalRenderStatus)
     }

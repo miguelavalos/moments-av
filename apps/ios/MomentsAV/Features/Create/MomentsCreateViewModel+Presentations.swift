@@ -25,6 +25,7 @@ extension MomentsCreateViewModel {
             canPlanStory: canPlanStory,
             canGeneratePreview: canGeneratePreview,
             canRefreshPreviewStatus: canRefreshPreviewStatus,
+            canPrepareFinalRenderPlan: canPrepareFinalRenderPlan,
             canGenerateFinalRender: canGenerateFinalRender,
             canRefreshFinalRenderStatus: canRefreshFinalRenderStatus,
             mediaMessage: mediaAvailabilityMessage,

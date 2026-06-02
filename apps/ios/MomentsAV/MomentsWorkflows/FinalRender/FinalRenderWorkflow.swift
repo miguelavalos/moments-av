@@ -72,6 +72,13 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
             && !isGenerating
     }
 
+    func canPreparePlan() -> Bool {
+        currentUserProvider.currentUserId != nil
+            && isConfigured
+            && MomentsFinalRenderRules.canPreparePlan(moment: activeWorkspace?.moment)
+            && !isGenerating
+    }
+
     func generateFinalRender(
         momentId: String,
         template: MomentTemplate,
@@ -93,21 +100,25 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
             return
         }
 
+        let needsRenderPlan = renderPlan == nil || renderPlan?.momentId != momentId
+
         if allowPreparedStory {
-            guard MomentsCreditGate.canAffordFinalRender(
-                template: template,
-                removesWatermark: removesWatermark,
-                balance: creditBalanceProvider.currentCreditBalance
-            ) else {
-                let requiredCredits = MomentsCreditGate.finalRenderCreditCost(
+            if !needsRenderPlan {
+                guard MomentsCreditGate.canAffordFinalRender(
                     template: template,
                     removesWatermark: removesWatermark,
                     balance: creditBalanceProvider.currentCreditBalance
-                )
-                statusMessage = MomentsCreateAvailabilityCopy.finalRenderInsufficientCredits(
-                    missingCredits: max(0, requiredCredits - creditBalanceProvider.currentCreditBalance.spendable)
-                )
-                return
+                ) else {
+                    let requiredCredits = MomentsCreditGate.finalRenderCreditCost(
+                        template: template,
+                        removesWatermark: removesWatermark,
+                        balance: creditBalanceProvider.currentCreditBalance
+                    )
+                    statusMessage = MomentsCreateAvailabilityCopy.finalRenderInsufficientCredits(
+                        missingCredits: max(0, requiredCredits - creditBalanceProvider.currentCreditBalance.spendable)
+                    )
+                    return
+                }
             }
         } else {
             let availability = MomentsFinalRenderRules.availability(
@@ -127,7 +138,7 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
         statusMessage = L10n.string("workflow.final.preparing")
 
         do {
-            if renderPlan == nil || renderPlan?.momentId != momentId {
+            if needsRenderPlan {
                 statusMessage = L10n.string("workflow.final.checkingPlan")
                 let plan = try await finalRenderClient.prepareRenderPlan(
                     momentId: momentId,

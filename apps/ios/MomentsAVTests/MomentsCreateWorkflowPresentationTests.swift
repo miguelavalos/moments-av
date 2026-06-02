@@ -64,6 +64,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
             canPlanStory: true,
             canGeneratePreview: true,
             canRefreshPreviewStatus: true,
+            canPrepareFinalRenderPlan: true,
             canGenerateFinalRender: true,
             canRefreshFinalRenderStatus: true,
             mediaAvailabilityMessage: "Add media.",
@@ -85,6 +86,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         XCTAssertTrue(presentation.canPlanStory)
         XCTAssertTrue(presentation.canGeneratePreview)
         XCTAssertTrue(presentation.canRefreshPreviewStatus)
+        XCTAssertTrue(presentation.canPrepareFinalRenderPlan)
         XCTAssertTrue(presentation.canGenerateFinalRender)
         XCTAssertTrue(presentation.canRefreshFinalRenderStatus)
         XCTAssertEqual(presentation.mediaAvailabilityMessage, "Add media.")
@@ -116,6 +118,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
                 canPlanStory: false,
                 canGeneratePreview: true,
                 canRefreshPreviewStatus: false,
+                canPrepareFinalRenderPlan: true,
                 canGenerateFinalRender: true,
                 canRefreshFinalRenderStatus: false,
                 mediaMessage: nil,
@@ -130,6 +133,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         XCTAssertTrue(presentation.canAddMedia)
         XCTAssertFalse(presentation.canPlanStory)
         XCTAssertTrue(presentation.canGeneratePreview)
+        XCTAssertTrue(presentation.canPrepareFinalRenderPlan)
         XCTAssertEqual(presentation.creationStyleTitle, "Birthday Story")
         XCTAssertEqual(presentation.toneTitle, "Warm")
         XCTAssertEqual(presentation.tempoTitle, "Balanced")
@@ -162,6 +166,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
                 canPlanStory: false,
                 canGeneratePreview: false,
                 canRefreshPreviewStatus: false,
+                canPrepareFinalRenderPlan: false,
                 canGenerateFinalRender: false,
                 canRefreshFinalRenderStatus: false
             )

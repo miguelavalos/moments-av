@@ -35,6 +35,12 @@ extension MomentsCreateViewModel {
         workflowCapability.canRefreshPreviewStatus
     }
 
+    var canPrepareFinalRenderPlan: Bool {
+        !isFinalRenderEditingLocked
+            && workflowCapability.canPrepareFinalRenderPlan
+            && isStoryPreparedForCurrentInput
+    }
+
     var canGenerateFinalRender: Bool {
         !isFinalRenderEditingLocked
             && workflowCapability.canGenerateFinalRender
@@ -52,6 +58,8 @@ extension MomentsCreateViewModel {
                 canPlanStory: false,
                 canGeneratePreview: false,
                 canRefreshPreviewStatus: false,
+                canPrepareFinalRenderPlan: fixtureMode != .full
+                    && !isBusy,
                 canGenerateFinalRender: fixtureMode != .full
                     && !isBusy
                     && MomentsCreditGate.canAfford(form.template, balance: balance),

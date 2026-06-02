@@ -313,6 +313,7 @@ final class MomentsCreditGateTests: XCTestCase {
                 latestPreview: preview
             )
         )
+        XCTAssertTrue(MomentsFinalRenderRules.canPreparePlan(moment: moment))
         XCTAssertTrue(
             MomentsFinalRenderRules.canGenerate(
                 moment: moment,

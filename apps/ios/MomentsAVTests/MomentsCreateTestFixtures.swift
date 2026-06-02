@@ -2,11 +2,11 @@ import Foundation
 @testable import MomentsAV
 
 enum MomentsCreateTestFixtures {
-    static func makeMoment(id: String) -> InProgressMoment {
+    static func makeMoment(id: String, status: String = "in_progress") -> InProgressMoment {
         InProgressMoment(
             id: id,
             template: .birthdayMessage,
-            status: "in_progress",
+            status: status,
             title: "Family Weekend",
             tone: nil,
             tempo: nil,

@@ -5,6 +5,7 @@ struct MomentsCreateWorkflowAvailability: Equatable {
     var canPlanStory = false
     var canGeneratePreview = false
     var canRefreshPreviewStatus = false
+    var canPrepareFinalRenderPlan = false
     var canGenerateFinalRender = false
     var canRefreshFinalRenderStatus = false
     var mediaMessage: String?
@@ -19,6 +20,7 @@ struct MomentsCreateWorkflowAvailability: Equatable {
         canPlanStory: Bool,
         canGeneratePreview: Bool,
         canRefreshPreviewStatus: Bool,
+        canPrepareFinalRenderPlan: Bool,
         canGenerateFinalRender: Bool,
         canRefreshFinalRenderStatus: Bool,
         mediaMessage: String?,
@@ -33,6 +35,7 @@ struct MomentsCreateWorkflowAvailability: Equatable {
             canPlanStory: canPlanStory,
             canGeneratePreview: canGeneratePreview,
             canRefreshPreviewStatus: canRefreshPreviewStatus,
+            canPrepareFinalRenderPlan: canPrepareFinalRenderPlan,
             canGenerateFinalRender: canGenerateFinalRender,
             canRefreshFinalRenderStatus: canRefreshFinalRenderStatus,
             mediaMessage: mediaMessage,
@@ -44,4 +47,3 @@ struct MomentsCreateWorkflowAvailability: Equatable {
         )
     }
 }
-

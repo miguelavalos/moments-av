@@ -164,6 +164,13 @@ enum MomentsFinalRenderRules {
         ).canGenerate
     }
 
+    static func canPreparePlan(moment: InProgressMoment?) -> Bool {
+        guard let moment else { return false }
+        return moment.status == "story_ready"
+            || moment.status == "preview_ready"
+            || moment.status == "gallery_ready"
+    }
+
     static func availability(
         moment: InProgressMoment?,
         template: MomentTemplate,
@@ -173,11 +180,11 @@ enum MomentsFinalRenderRules {
         guard let moment else {
             return Availability(canGenerate: false, blockReason: .missingMoment)
         }
+        if !canPreparePlan(moment: moment) {
+            return Availability(canGenerate: false, blockReason: .storyNotReady)
+        }
         if !MomentsCreditGate.canAfford(template, balance: balance) {
             return Availability(canGenerate: false, blockReason: .insufficientCredits)
-        }
-        if moment.status != "story_ready" && moment.status != "preview_ready" && moment.status != "gallery_ready" {
-            return Availability(canGenerate: false, blockReason: .storyNotReady)
         }
         return Availability(canGenerate: true, blockReason: nil)
     }

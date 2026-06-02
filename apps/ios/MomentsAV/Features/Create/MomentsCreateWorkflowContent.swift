@@ -1531,8 +1531,8 @@ private struct MomentsCreatePrimaryActionBar: View {
             return canRefreshFinalRender
         }
         return presentation.canGenerateFinalRender
+            || canPrepareVideoPlan
             || presentation.canPlanStory
-            || presentation.storySummary.hasScenes
             || needsSignInForStory
     }
 
@@ -1554,7 +1554,7 @@ private struct MomentsCreatePrimaryActionBar: View {
         if presentation.finalRenderSummary.latestFinalJob != nil {
             return presentation.finalRenderSummary.isRefreshingStatus ? L10n.string("create.status.checking") : L10n.string("create.final.checkStatus")
         }
-        if presentation.canGenerateFinalRender {
+        if presentation.canGenerateFinalRender || canPrepareVideoPlan || finalVideoAction.hasRenderPlan {
             return finalVideoAction.primaryTitle
         }
         if presentation.previewSummary.latestPreview != nil {
@@ -1578,7 +1578,7 @@ private struct MomentsCreatePrimaryActionBar: View {
         if presentation.finalRenderSummary.finalExport != nil {
             return "checkmark.circle.fill"
         }
-        if presentation.canGenerateFinalRender {
+        if presentation.canGenerateFinalRender || canPrepareVideoPlan || finalVideoAction.hasRenderPlan {
             return finalVideoAction.primaryIconName
         }
         if presentation.previewSummary.latestPreview != nil {
@@ -1603,7 +1603,7 @@ private struct MomentsCreatePrimaryActionBar: View {
         if presentation.finalRenderSummary.latestFinalJob != nil {
             return presentation.finalRenderRefreshAvailabilityMessage ?? presentation.finalRenderAvailabilityMessage
         }
-        if presentation.previewSummary.latestPreview != nil || presentation.canGenerateFinalRender {
+        if presentation.previewSummary.latestPreview != nil || presentation.canGenerateFinalRender || canPrepareVideoPlan || finalVideoAction.hasRenderPlan {
             return presentation.finalRenderAvailabilityMessage
         }
         if presentation.previewSummary.latestPreviewJob != nil {
@@ -1642,6 +1642,12 @@ private struct MomentsCreatePrimaryActionBar: View {
                 ? finalVideoAction.creditPolicyMessage
                 : L10n.string("create.primary.prepareVideoPlan")
         }
+        if canPrepareVideoPlan {
+            return L10n.string("create.primary.prepareVideoPlan")
+        }
+        if finalVideoAction.hasRenderPlan {
+            return presentation.finalRenderAvailabilityMessage
+        }
         if let previewMessage = presentation.previewSummary.statusMessage, !previewMessage.isEmpty {
             return previewMessage
         }
@@ -1664,7 +1670,7 @@ private struct MomentsCreatePrimaryActionBar: View {
     }
 
     private var showsVideoStepCue: Bool {
-        presentation.canGenerateFinalRender
+        (presentation.canGenerateFinalRender || presentation.canPrepareFinalRenderPlan || finalVideoAction.hasRenderPlan)
             && !isBusy
             && presentation.finalRenderSummary.finalExport == nil
             && presentation.finalRenderSummary.latestFinalJob == nil
@@ -1762,8 +1768,8 @@ private struct MomentsCreatePrimaryActionBar: View {
             }
         } else if presentation.previewSummary.latestPreview != nil {
             generateFinalRender()
-        } else if presentation.canGenerateFinalRender || presentation.canPlanStory || presentation.storySummary.hasScenes {
-            if presentation.canGenerateFinalRender {
+        } else if presentation.canGenerateFinalRender || canPrepareVideoPlan || presentation.canPlanStory {
+            if presentation.canGenerateFinalRender || canPrepareVideoPlan {
                 generateFinalRender()
             } else {
                 prepareAviCut()
@@ -1794,6 +1800,11 @@ private struct MomentsCreatePrimaryActionBar: View {
         !presentation.isSignedIn
             && presentation.mediaSummary.selectedCount > 0
             && !presentation.storySummary.isPlanning
+    }
+
+    private var canPrepareVideoPlan: Bool {
+        presentation.canPrepareFinalRenderPlan
+            && presentation.finalRenderSummary.renderPlan == nil
     }
 
     private var canRefreshFinalRender: Bool {

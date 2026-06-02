@@ -270,15 +270,25 @@ extension MomentsCreateViewModel {
             updateFinalRenderStatusMessage(L10n.string("create.error.videoCreationNotConfigured"))
             return
         }
-        guard canGenerateFinalRender, isStoryPreparedForCurrentInput else {
-            updateFinalRenderStatusMessage(finalRenderAvailabilityMessage
-                ?? storyAvailabilityMessage
-                ?? L10n.string("create.error.reviewBeforeVideo"))
-            return
-        }
         guard let context = activeTemplateContext else {
             updateFinalRenderStatusMessage(L10n.string("create.error.currentMomentMissing"))
             return
+        }
+        let needsRenderPlan = renderPlan == nil || renderPlan?.momentId != context.momentId
+        if needsRenderPlan {
+            guard canPrepareFinalRenderPlan else {
+                updateFinalRenderStatusMessage(finalRenderAvailabilityMessage
+                    ?? storyAvailabilityMessage
+                    ?? L10n.string("create.error.reviewBeforeVideo"))
+                return
+            }
+        } else {
+            guard canGenerateFinalRender else {
+                updateFinalRenderStatusMessage(finalRenderAvailabilityMessage
+                    ?? storyAvailabilityMessage
+                    ?? L10n.string("create.error.reviewBeforeVideo"))
+                return
+            }
         }
 
         runOperation {

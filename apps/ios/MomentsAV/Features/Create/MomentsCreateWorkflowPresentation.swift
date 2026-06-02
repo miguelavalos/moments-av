@@ -19,6 +19,7 @@ struct MomentsCreateWorkflowPresentation: Equatable {
     var canPlanStory = false
     var canGeneratePreview = false
     var canRefreshPreviewStatus = false
+    var canPrepareFinalRenderPlan = false
     var canGenerateFinalRender = false
     var canRefreshFinalRenderStatus = false
     var mediaAvailabilityMessage: String?
@@ -103,6 +104,7 @@ struct MomentsCreateWorkflowPresentation: Equatable {
             canPlanStory: availability.canPlanStory,
             canGeneratePreview: availability.canGeneratePreview,
             canRefreshPreviewStatus: availability.canRefreshPreviewStatus,
+            canPrepareFinalRenderPlan: availability.canPrepareFinalRenderPlan,
             canGenerateFinalRender: availability.canGenerateFinalRender,
             canRefreshFinalRenderStatus: availability.canRefreshFinalRenderStatus,
             mediaAvailabilityMessage: availability.mediaMessage,

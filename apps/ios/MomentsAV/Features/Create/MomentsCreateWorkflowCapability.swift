@@ -38,6 +38,10 @@ enum MomentsCreateWorkflowCapabilityFactory {
                 template: template
             ),
             canRefreshPreviewStatus: previewRefreshAvailability.canRefresh,
+            canPrepareFinalRenderPlan: canPrepareFinalRenderPlan(
+                activeMomentId: activeMomentId,
+                finalRenderWorkflow: finalRenderWorkflow
+            ),
             canGenerateFinalRender: canGenerateFinalRender(
                 activeMomentId: activeMomentId,
                 finalRenderWorkflow: finalRenderWorkflow,
@@ -81,6 +85,14 @@ enum MomentsCreateWorkflowCapabilityFactory {
     ) -> Bool {
         guard let previewGenerationWorkflow, activeMomentId != nil else { return false }
         return previewGenerationWorkflow.canGenerate(template: template)
+    }
+
+    private static func canPrepareFinalRenderPlan(
+        activeMomentId: String?,
+        finalRenderWorkflow: FinalRenderWorkflow?
+    ) -> Bool {
+        guard let finalRenderWorkflow, activeMomentId != nil else { return false }
+        return finalRenderWorkflow.canPreparePlan()
     }
 
     private static func canGenerateFinalRender(
