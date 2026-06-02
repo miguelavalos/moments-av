@@ -14,7 +14,7 @@ final class MomentsHomeViewModel: ObservableObject {
     func bind(to summaryProvider: any MomentsProjectSummaryProviding) {
         projectCancellables.removeAll()
 
-        summaryProvider.projectSummaryPublisher
+        summaryProvider.inProgressSummaryPublisher
             .removeDuplicates()
             .receive(on: DispatchQueue.main)
             .sink { [weak self] projectSummary in

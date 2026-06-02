@@ -12,7 +12,7 @@ final class MomentsCreateViewModelStoryStateTests: XCTestCase {
         viewModel.applyMomentCreationState(
             MomentsCreateMomentCreationState(
                 isCreatingDraft: false,
-                activeProjectId: "project-1",
+                activeMomentId: "project-1",
                 draftErrorMessage: nil
             )
         )
@@ -59,7 +59,7 @@ final class MomentsCreateViewModelStoryStateTests: XCTestCase {
         viewModel.applyMomentCreationState(
             MomentsCreateMomentCreationState(
                 isCreatingDraft: false,
-                activeProjectId: "project-1",
+                activeMomentId: "project-1",
                 draftErrorMessage: nil
             )
         )

@@ -35,29 +35,29 @@ struct MomentsInProgressNextActionRow: View {
 
 struct MomentsInProgressContinueButton: View {
     let action: MomentsProjectNextAction
-    let continueProject: () -> Void
+    let continueMoment: () -> Void
 
     var body: some View {
         AVAppShellPrimaryButton(
             action.primaryButtonTitle,
             systemImage: "arrow.right.circle",
-            action: continueProject
+            action: continueMoment
         )
     }
 }
 
 struct MomentsInProgressDeleteButton: View {
-    let isDeletingProject: Bool
-    let requestDeleteProject: () -> Void
+    let isDeletingMoment: Bool
+    let requestDeleteMoment: () -> Void
 
     var body: some View {
         Button(role: .destructive) {
-            requestDeleteProject()
+            requestDeleteMoment()
         } label: {
-            Label(isDeletingProject ? L10n.string("inProgress.deleteMoment.deleting") : L10n.string("inProgress.deleteMoment.shortButton"), systemImage: "trash")
+            Label(isDeletingMoment ? L10n.string("inProgress.deleteMoment.deleting") : L10n.string("inProgress.deleteMoment.shortButton"), systemImage: "trash")
                 .frame(maxWidth: .infinity)
         }
         .buttonStyle(.bordered)
-        .disabled(isDeletingProject)
+        .disabled(isDeletingMoment)
     }
 }

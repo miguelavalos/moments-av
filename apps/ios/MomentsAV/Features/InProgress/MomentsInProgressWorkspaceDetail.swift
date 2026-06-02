@@ -2,9 +2,9 @@ import SwiftUI
 
 struct MomentsInProgressWorkspaceDetail: View {
     let workspace: MomentProjectWorkspace
-    let isDeletingProject: Bool
-    let continueProject: (MomentsProjectContinuationRequest) -> Void
-    let requestDeleteProject: (MomentDraftProject) -> Void
+    let isDeletingMoment: Bool
+    let continueMoment: (MomentsProjectContinuationRequest) -> Void
+    let requestDeleteMoment: (MomentDraftProject) -> Void
     private var presentation: MomentsInProgressWorkspaceDetailPresentation {
         MomentsInProgressWorkspaceDetailPresentation(workspace: workspace)
     }
@@ -26,10 +26,10 @@ struct MomentsInProgressWorkspaceDetail: View {
             MomentsInProgressStorySection(storyScenes: workspace.storyScenes)
             MomentsInProgressRenderJobsSection(renderJobs: workspace.renderJobs)
             MomentsInProgressContinueButton(action: presentation.nextAction) {
-                continueProject(presentation.continuationRequest)
+                continueMoment(presentation.continuationRequest)
             }
-            MomentsInProgressDeleteButton(isDeletingProject: isDeletingProject) {
-                requestDeleteProject(workspace.project)
+            MomentsInProgressDeleteButton(isDeletingMoment: isDeletingMoment) {
+                requestDeleteMoment(workspace.project)
             }
         }
     }

@@ -19,7 +19,7 @@ extension MomentsCreateViewModel {
     }
 
     var isDraftLocked: Bool {
-        activeProjectId != nil
+        activeMomentId != nil
     }
 
     var isBusy: Bool {
@@ -33,7 +33,7 @@ extension MomentsCreateViewModel {
     }
 
     var canStartAnotherProject: Bool {
-        activeProjectId != nil && !isBusy
+        activeMomentId != nil && !isBusy
     }
 
     var canAddMedia: Bool {
@@ -66,7 +66,7 @@ extension MomentsCreateViewModel {
 
     var workflowCapability: MomentsCreateWorkflowCapability {
         MomentsCreateWorkflowCapabilityFactory.make(
-            activeProjectId: activeProjectId,
+            activeMomentId: activeMomentId,
             isSignedIn: isSignedIn,
             hasMomentWorkspace: hasMomentWorkspace,
             isImportingMedia: isImportingMedia,
@@ -96,12 +96,12 @@ extension MomentsCreateViewModel {
             return true
         }
         guard storySummary.hasScenes else { return false }
-        guard let activeProjectId else { return false }
+        guard let activeMomentId else { return false }
         let preparedSignature = lastPreparedStoryInputSignature ?? effectiveActiveWorkspace?.project.storyInputSignature
         guard let preparedSignature else {
             return true
         }
-        return currentStoryInputSignature(projectId: activeProjectId) == preparedSignature
+        return currentStoryInputSignature(projectId: activeMomentId) == preparedSignature
     }
 
     func spendPlanDescription(for template: MomentTemplate) -> String {

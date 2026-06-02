@@ -4,7 +4,7 @@ import Foundation
 @MainActor
 final class InProgressMomentsWorkflow: ObservableObject {
     @Published private(set) var projectSummary = MomentsProjectListSummary()
-    @Published private(set) var isDeletingProject = false
+    @Published private(set) var isDeletingMoment = false
     @Published private(set) var errorMessage: String?
 
     private let projectsObserver: any MomentsActiveProjectsObserving
@@ -36,10 +36,10 @@ final class InProgressMomentsWorkflow: ObservableObject {
             }
             .store(in: &cancellables)
 
-        momentDeletionWorkflow.isDeletingProjectPublisher
+        momentDeletionWorkflow.isDeletingMomentPublisher
             .receive(on: DispatchQueue.main)
             .sink { [weak self] isDeleting in
-                self?.isDeletingProject = isDeleting
+                self?.isDeletingMoment = isDeleting
             }
             .store(in: &cancellables)
 
@@ -80,9 +80,9 @@ final class InProgressMomentsWorkflow: ObservableObject {
         clearActiveProject()
     }
 
-    func deleteProject(_ project: MomentDraftProject) async -> Bool {
+    func deleteMoment(_ project: MomentDraftProject) async -> Bool {
         errorMessage = nil
-        let didDelete = await momentDeletionWorkflow.deleteProject(project)
+        let didDelete = await momentDeletionWorkflow.deleteMoment(project)
         guard didDelete else { return false }
 
         if workspaceSelectionWorkflow.activeProject?.id == project.id {
@@ -112,7 +112,7 @@ final class InProgressMomentsWorkflow: ObservableObject {
 }
 
 extension InProgressMomentsWorkflow: MomentsInProgressViewing {
-    var projectSummaryPublisher: AnyPublisher<MomentsProjectListSummary, Never> {
+    var inProgressSummaryPublisher: AnyPublisher<MomentsProjectListSummary, Never> {
         $projectSummary.eraseToAnyPublisher()
     }
 
@@ -128,11 +128,11 @@ extension InProgressMomentsWorkflow: MomentsInProgressViewing {
         workspaceSelectionWorkflow.isLoadingProjectWorkspacePublisher
     }
 
-    var isDeletingProjectPublisher: AnyPublisher<Bool, Never> {
-        $isDeletingProject.eraseToAnyPublisher()
+    var isDeletingMomentPublisher: AnyPublisher<Bool, Never> {
+        $isDeletingMoment.eraseToAnyPublisher()
     }
 
-    var projectErrorMessagePublisher: AnyPublisher<String?, Never> {
+    var inProgressErrorMessagePublisher: AnyPublisher<String?, Never> {
         $errorMessage.eraseToAnyPublisher()
     }
 }

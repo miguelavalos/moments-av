@@ -18,12 +18,12 @@ extension MomentsCreateViewModel {
 
     func editNewProjectStyle() {
         guard !isDraftLocked else { return }
-        newProjectStep = .style
+        newMomentStep = .style
     }
 
     func editNewProjectSummary() {
         guard !isDraftLocked else { return }
-        newProjectStep = .style
+        newMomentStep = .style
     }
 
     func createDraft() {
@@ -65,7 +65,7 @@ extension MomentsCreateViewModel {
         }
 
         runOperation {
-            let discarded = await momentCreationWorkflow.discardActiveDraft(projectId: self.activeProjectId)
+            let discarded = await momentCreationWorkflow.discardActiveDraft(projectId: self.activeMomentId)
             if discarded {
                 self.resetActiveProject(force: true)
             } else if let message = momentCreationWorkflow.errorMessage {
@@ -87,7 +87,7 @@ extension MomentsCreateViewModel {
             await mediaUploadWorkflow.importPickerItems(
                 items,
                 template: template,
-                projectId: self.activeProjectId
+                projectId: self.activeMomentId
             )
         }
     }
@@ -102,7 +102,7 @@ extension MomentsCreateViewModel {
         runOperation {
             await mediaUploadWorkflow.importLatestPhotos(
                 template: template,
-                projectId: self.activeProjectId
+                projectId: self.activeMomentId
             )
         }
     }
@@ -118,7 +118,7 @@ extension MomentsCreateViewModel {
             await mediaUploadWorkflow.importPhotoAlbum(
                 id: albumId,
                 template: template,
-                projectId: self.activeProjectId
+                projectId: self.activeMomentId
             )
         }
     }
@@ -155,8 +155,8 @@ extension MomentsCreateViewModel {
         runOperation {
             defer { self.isPreparingStory = false }
             let projectId: String?
-            if let activeProjectId = self.activeProjectId {
-                projectId = activeProjectId
+            if let activeMomentId = self.activeMomentId {
+                projectId = activeMomentId
             } else if let momentCreationWorkflow = self.momentCreationWorkflow {
                 projectId = await momentCreationWorkflow.createDraft(form: form)
                 if projectId != nil {
@@ -266,8 +266,8 @@ extension MomentsCreateViewModel {
         runOperation {
             defer { self.isPreparingStory = false }
             let projectId: String?
-            if let activeProjectId = self.activeProjectId {
-                projectId = activeProjectId
+            if let activeMomentId = self.activeMomentId {
+                projectId = activeMomentId
             } else if let momentCreationWorkflow = self.momentCreationWorkflow {
                 projectId = await momentCreationWorkflow.createDraft(form: form)
                 if projectId != nil {
@@ -433,12 +433,12 @@ extension MomentsCreateViewModel {
     }
 
     private var activeTemplateContext: (projectId: String, template: MomentTemplate)? {
-        guard let activeProjectId else { return nil }
-        return (activeProjectId, form.template)
+        guard let activeMomentId else { return nil }
+        return (activeMomentId, form.template)
     }
 
     private var activeFormContext: (projectId: String, form: MomentDraftForm)? {
-        guard let activeProjectId else { return nil }
-        return (activeProjectId, form)
+        guard let activeMomentId else { return nil }
+        return (activeMomentId, form)
     }
 }

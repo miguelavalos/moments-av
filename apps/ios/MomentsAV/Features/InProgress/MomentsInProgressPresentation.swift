@@ -7,14 +7,14 @@ struct MomentsInProgressPresentation: Equatable {
     static func make(
         isSignedIn: Bool,
         projectSummary: MomentsProjectListSummary,
-        projectPendingDeletion: MomentDraftProject?
+        momentPendingDeletion: MomentDraftProject?
     ) -> MomentsInProgressPresentation {
         MomentsInProgressPresentation(
             availability: MomentsInProgressAvailability.make(
                 isSignedIn: isSignedIn,
                 projectSummary: projectSummary
             ),
-            deletionMessage: L10n.string("inProgress.deleteMoment.message", projectPendingDeletion?.title ?? L10n.string("moment.this"))
+            deletionMessage: L10n.string("inProgress.deleteMoment.message", momentPendingDeletion?.title ?? L10n.string("moment.this"))
         )
     }
 }

@@ -8,7 +8,7 @@ final class MomentsInProgressListPresentationTests: XCTestCase {
                 makeProject(id: "active", status: "story_ready", updatedAt: 20),
                 makeProject(id: "done", status: "completed", updatedAt: 10)
             ]),
-            selectedProjectId: nil
+            selectedMomentId: nil
         )
 
         XCTAssertEqual(presentation.summaryPills.map(\.title), ["Total", "Active", "Done"])
@@ -23,7 +23,7 @@ final class MomentsInProgressListPresentationTests: XCTestCase {
                 makeProject(id: "newer-active", status: "story_ready", updatedAt: 30),
                 makeProject(id: "done", status: "completed", updatedAt: 20)
             ]),
-            selectedProjectId: nil
+            selectedMomentId: nil
         )
 
         XCTAssertEqual(presentation.groups.map(\.title), ["In progress", "Finished"])

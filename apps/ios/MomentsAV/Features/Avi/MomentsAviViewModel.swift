@@ -21,7 +21,7 @@ final class MomentsAviViewModel: ObservableObject {
     func bind(to summaryProvider: any MomentsProjectSummaryProviding) {
         projectCancellables.removeAll()
 
-        summaryProvider.projectSummaryPublisher
+        summaryProvider.inProgressSummaryPublisher
             .removeDuplicates()
             .sink { [weak self] projectSummary in
                 self?.projectSummary = projectSummary

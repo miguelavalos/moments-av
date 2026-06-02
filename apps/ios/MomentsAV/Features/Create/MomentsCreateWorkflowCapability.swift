@@ -3,7 +3,7 @@ import Foundation
 @MainActor
 enum MomentsCreateWorkflowCapabilityFactory {
     static func make(
-        activeProjectId: String?,
+        activeMomentId: String?,
         isSignedIn: Bool,
         hasMomentWorkspace: Bool,
         isImportingMedia: Bool,
@@ -33,13 +33,13 @@ enum MomentsCreateWorkflowCapabilityFactory {
                 selectedMediaCount: selectedMediaCount
             ),
             canGeneratePreview: canGeneratePreview(
-                activeProjectId: activeProjectId,
+                activeMomentId: activeMomentId,
                 previewGenerationWorkflow: previewGenerationWorkflow,
                 template: template
             ),
             canRefreshPreviewStatus: previewRefreshAvailability.canRefresh,
             canGenerateFinalRender: canGenerateFinalRender(
-                activeProjectId: activeProjectId,
+                activeMomentId: activeMomentId,
                 finalRenderWorkflow: finalRenderWorkflow,
                 template: template,
                 latestPreview: latestPreview
@@ -75,21 +75,21 @@ enum MomentsCreateWorkflowCapabilityFactory {
     }
 
     private static func canGeneratePreview(
-        activeProjectId: String?,
+        activeMomentId: String?,
         previewGenerationWorkflow: PreviewGenerationWorkflow?,
         template: MomentTemplate
     ) -> Bool {
-        guard let previewGenerationWorkflow, activeProjectId != nil else { return false }
+        guard let previewGenerationWorkflow, activeMomentId != nil else { return false }
         return previewGenerationWorkflow.canGenerate(template: template)
     }
 
     private static func canGenerateFinalRender(
-        activeProjectId: String?,
+        activeMomentId: String?,
         finalRenderWorkflow: FinalRenderWorkflow?,
         template: MomentTemplate,
         latestPreview: MomentArtifact?
     ) -> Bool {
-        guard let finalRenderWorkflow, activeProjectId != nil else { return false }
+        guard let finalRenderWorkflow, activeMomentId != nil else { return false }
         return finalRenderWorkflow.canGenerate(
             template: template,
             latestPreview: latestPreview

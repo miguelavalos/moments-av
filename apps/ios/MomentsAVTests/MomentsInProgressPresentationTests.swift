@@ -6,7 +6,7 @@ final class MomentsInProgressPresentationTests: XCTestCase {
         let presentation = MomentsInProgressPresentation.make(
             isSignedIn: false,
             projectSummary: MomentsProjectListSummary(),
-            projectPendingDeletion: nil
+            momentPendingDeletion: nil
         )
 
         XCTAssertEqual(
@@ -25,7 +25,7 @@ final class MomentsInProgressPresentationTests: XCTestCase {
         let presentation = MomentsInProgressPresentation.make(
             isSignedIn: true,
             projectSummary: MomentsProjectListSummary(),
-            projectPendingDeletion: nil
+            momentPendingDeletion: nil
         )
 
         XCTAssertEqual(
@@ -46,7 +46,7 @@ final class MomentsInProgressPresentationTests: XCTestCase {
             projectSummary: MomentsProjectListSummary.make(from: [
                 makeProject(id: "project-1")
             ]),
-            projectPendingDeletion: nil
+            momentPendingDeletion: nil
         )
 
         XCTAssertEqual(presentation.availability, .available)
@@ -56,13 +56,13 @@ final class MomentsInProgressPresentationTests: XCTestCase {
         let fallback = MomentsInProgressPresentation.make(
             isSignedIn: true,
             projectSummary: MomentsProjectListSummary(),
-            projectPendingDeletion: nil
+            momentPendingDeletion: nil
         )
         let project = makeProject(id: "project-1", title: "Family Weekend")
         let titled = MomentsInProgressPresentation.make(
             isSignedIn: true,
             projectSummary: MomentsProjectListSummary(),
-            projectPendingDeletion: project
+            momentPendingDeletion: project
         )
 
         XCTAssertEqual(

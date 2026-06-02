@@ -35,15 +35,15 @@ extension MomentsCreateViewModel {
     private func bindMomentCreation(_ workflow: MomentCreationWorkflow) {
         Publishers.CombineLatest3(
             workflow.$isCreatingDraft,
-            workflow.$activeProjectId,
+            workflow.$activeMomentId,
             workflow.$errorMessage
         )
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] isCreatingDraft, activeProjectId, draftErrorMessage in
+            .sink { [weak self] isCreatingDraft, activeMomentId, draftErrorMessage in
                 self?.applyMomentCreationState(
                     MomentsCreateMomentCreationState(
                         isCreatingDraft: isCreatingDraft,
-                        activeProjectId: activeProjectId,
+                        activeMomentId: activeMomentId,
                         draftErrorMessage: draftErrorMessage
                     )
                 )

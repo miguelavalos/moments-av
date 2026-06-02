@@ -315,7 +315,7 @@
 "home.avi.signIn.title" = "Connecte-toi pour créer";
 "home.avi.storyReviewReady.detail" = "Ton histoire est prête à relire avant de créer la vidéo.";
 "home.avi.storyReviewReady.title" = "Revue d’histoire prête";
-"home.aviBrief.continueProject" = "Continue %@ depuis la prochaine étape inachevée.";
+"home.aviBrief.continueMoment" = "Continue %@ depuis la prochaine étape inachevée.";
 "home.aviBrief.firstMemory" = "Planifie le premier film souvenir avant d’ajouter des médias.";
 "home.aviBrief.reviewInProgress" = "Revois En cours et continue la prochaine étape inachevée.";
 "home.aviBrief.signIn" = "Connecte-toi pour créer des Moments, enregistrer des vidéos et garder les crédits avec ton compte.";
@@ -472,7 +472,7 @@
 "common.close" = "Fermer";
 "common.ok" = "OK";
 "common.tryAgain" = "Réessaie.";
-"create.action.startProject" = "Démarrer le Moment";
+"create.action.startMoment" = "Démarrer le Moment";
 "create.continuation.dismiss" = "Fermer l'indice de reprise";
 "create.continuation.final.message" = "Crée ou mets à jour la vidéo terminée.";
 "create.continuation.final.title" = "Continuer avec la vidéo";

@@ -7,7 +7,7 @@ struct MomentsCreateAccountState {
 
 struct MomentsCreateMomentCreationState {
     let isCreatingDraft: Bool
-    let activeProjectId: String?
+    let activeMomentId: String?
     let draftErrorMessage: String?
 }
 

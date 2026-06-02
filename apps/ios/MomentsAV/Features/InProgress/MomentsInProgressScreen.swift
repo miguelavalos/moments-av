@@ -4,10 +4,10 @@ import SwiftUI
 struct MomentsInProgressScreen: View {
     @EnvironmentObject private var viewModel: MomentsInProgressViewModel
     @EnvironmentObject private var createViewModel: MomentsCreateViewModel
-    @State private var projectPendingDeletion: MomentDraftProject?
+    @State private var momentPendingDeletion: MomentDraftProject?
     let balance: MomentsCreditBalance
-    let continueProject: (MomentsProjectContinuationRequest) -> Void
-    let startProject: () -> Void
+    let continueMoment: (MomentsProjectContinuationRequest) -> Void
+    let startMoment: () -> Void
     let startSignInFlow: () -> Void
     let openCredits: () -> Void
 
@@ -15,20 +15,20 @@ struct MomentsInProgressScreen: View {
         MomentsInProgressPresentation.make(
             isSignedIn: viewModel.isSignedIn,
             projectSummary: viewModel.projectSummary,
-            projectPendingDeletion: projectPendingDeletion
+            momentPendingDeletion: momentPendingDeletion
         )
     }
 
     init(
         balance: MomentsCreditBalance = .empty,
-        continueProject: @escaping (MomentsProjectContinuationRequest) -> Void = { _ in },
-        startProject: @escaping () -> Void = {},
+        continueMoment: @escaping (MomentsProjectContinuationRequest) -> Void = { _ in },
+        startMoment: @escaping () -> Void = {},
         startSignInFlow: @escaping () -> Void = {},
         openCredits: @escaping () -> Void = {}
     ) {
         self.balance = balance
-        self.continueProject = continueProject
-        self.startProject = startProject
+        self.continueMoment = continueMoment
+        self.startMoment = startMoment
         self.startSignInFlow = startSignInFlow
         self.openCredits = openCredits
     }
@@ -40,7 +40,7 @@ struct MomentsInProgressScreen: View {
             if createViewModel.hasLocalMomentWorkspace {
                 MomentsCurrentCreationCard(
                     selectedCount: createViewModel.mediaSelectedCount,
-                    continueCreation: startProject
+                    continueCreation: startMoment
                 )
             }
 
@@ -48,18 +48,18 @@ struct MomentsInProgressScreen: View {
                 presentation: presentation,
                 balance: balance,
                 projectSummary: viewModel.projectSummary,
-                selectedProjectId: viewModel.selectedProjectId,
+                selectedMomentId: viewModel.selectedMomentId,
                 isLoadingProjectWorkspace: viewModel.isLoadingProjectWorkspace,
                 activeWorkspace: viewModel.activeWorkspace,
-                isDeletingProject: viewModel.isDeletingProject,
+                isDeletingMoment: viewModel.isDeletingMoment,
                 statusMessage: viewModel.statusMessage,
                 selectProject: viewModel.selectProject,
-                continueProject: continueProject,
-                startProject: startProject,
+                continueMoment: continueMoment,
+                startMoment: startMoment,
                 startSignInFlow: startSignInFlow,
                 openCredits: openCredits,
-                requestDeleteProject: { project in
-                    projectPendingDeletion = project
+                requestDeleteMoment: { project in
+                    momentPendingDeletion = project
                 }
             )
         }
@@ -81,26 +81,26 @@ struct MomentsInProgressScreen: View {
 
     private var deletionConfirmationPresented: Binding<Bool> {
         Binding(
-            get: { projectPendingDeletion != nil },
+            get: { momentPendingDeletion != nil },
             set: { isPresented in
                 if !isPresented {
-                    projectPendingDeletion = nil
+                    momentPendingDeletion = nil
                 }
             }
         )
     }
 
     private func confirmMomentDeletion() {
-        if let projectPendingDeletion {
-            if createViewModel.activeProjectId == projectPendingDeletion.id {
+        if let momentPendingDeletion {
+            if createViewModel.activeMomentId == momentPendingDeletion.id {
                 createViewModel.clearSessionState()
             }
-            viewModel.deleteProject(projectPendingDeletion)
+            viewModel.deleteMoment(momentPendingDeletion)
         }
-        projectPendingDeletion = nil
+        momentPendingDeletion = nil
     }
 
     private func cancelMomentDeletion() {
-        projectPendingDeletion = nil
+        momentPendingDeletion = nil
     }
 }

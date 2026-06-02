@@ -123,8 +123,8 @@ struct MomentsAppShellView: View {
                     openCredits: openCredits,
                     selectTab: selectRootTab,
                     startMoment: startOrContinueMoment,
-                    continueProject: { request in
-                        createViewModel.continueProject(request.project, focus: request.focus)
+                    continueMoment: { request in
+                        createViewModel.continueMoment(request.project, focus: request.focus)
                         selectRootTab(.create)
                     }
                 )
@@ -138,11 +138,11 @@ struct MomentsAppShellView: View {
             case .inProgress:
                 MomentsInProgressScreen(
                     balance: accountController.creditBalance,
-                    continueProject: { request in
-                        createViewModel.continueProject(request.project, focus: request.focus)
+                    continueMoment: { request in
+                        createViewModel.continueMoment(request.project, focus: request.focus)
                         selectedTab = .create
                     },
-                    startProject: {
+                    startMoment: {
                         startOrContinueMoment()
                     },
                     startSignInFlow: startSignInFlow,
@@ -200,7 +200,7 @@ struct MomentsAppShellView: View {
         }
 
         if let activeProject = inProgressViewModel.projectSummary.latestInProgressProject {
-            createViewModel.continueProject(activeProject)
+            createViewModel.continueMoment(activeProject)
             selectRootTab(.create)
             return
         }
@@ -217,7 +217,7 @@ struct MomentsAppShellView: View {
             return
         }
 
-        if createViewModel.activeProjectId != nil {
+        if createViewModel.activeMomentId != nil {
             createViewModel.clearSessionState()
         }
 

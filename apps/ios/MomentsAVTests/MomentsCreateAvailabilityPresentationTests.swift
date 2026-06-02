@@ -35,7 +35,7 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
 
     func testWorkflowCapabilityFactoryFormatsMediaAndRefreshCapabilities() {
         let capability = MomentsCreateWorkflowCapabilityFactory.make(
-            activeProjectId: "project-1",
+            activeMomentId: "project-1",
             isSignedIn: true,
             hasMomentWorkspace: true,
             isImportingMedia: false,
@@ -61,7 +61,7 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
 
     func testWorkflowCapabilityFactoryBlocksMediaWithoutSlotsOrProject() {
         let withoutSlots = MomentsCreateWorkflowCapabilityFactory.make(
-            activeProjectId: "project-1",
+            activeMomentId: "project-1",
             isSignedIn: true,
             hasMomentWorkspace: true,
             isImportingMedia: false,
@@ -77,7 +77,7 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
             selectedMediaCount: 0
         )
         let withoutProject = MomentsCreateWorkflowCapabilityFactory.make(
-            activeProjectId: nil,
+            activeMomentId: nil,
             isSignedIn: true,
             hasMomentWorkspace: false,
             isImportingMedia: false,
@@ -175,7 +175,7 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
     func testAvailabilityMessageFactoryFormatsPreviewCreditStates() {
         XCTAssertEqual(
             MomentsCreateAvailabilityMessageFactory.preview(
-                activeProjectId: "project-1",
+                activeMomentId: "project-1",
                 isPreviewGenerationAvailable: true,
                 isPreviewGenerating: false,
                 isPreviewGenerationConfigured: true,
@@ -190,7 +190,7 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
     func testAvailabilityMessageFactoryFormatsFinalRenderPreviewRequirement() {
         XCTAssertEqual(
             MomentsCreateAvailabilityMessageFactory.finalRender(
-                activeProjectId: "project-1",
+                activeMomentId: "project-1",
                 isFinalRenderAvailable: true,
                 isFinalRenderGenerating: false,
                 isFinalRenderConfigured: true,

@@ -1,7 +1,7 @@
 extension MomentsCreateViewModel {
     var workflowPresentation: MomentsCreateWorkflowPresentation {
         MomentsCreateWorkflowPresentation.make(
-            activeProjectId: activeProjectId,
+            activeMomentId: activeMomentId,
             isSignedIn: isSignedIn,
             hasMomentWorkspace: hasMomentWorkspace,
             hasUnsavedLocalMoment: hasLocalMomentWorkspace,
@@ -46,8 +46,8 @@ extension MomentsCreateViewModel {
             isCreatingDraft: isCreatingDraft,
             canCreateDraft: canCreateDraft,
             availabilityMessage: draftAvailabilityMessage,
-            activeProjectId: activeProjectId,
-            isContinuingProject: isContinuingProject,
+            activeMomentId: activeMomentId,
+            isContinuingMoment: isContinuingMoment,
             canStartAnotherProject: canStartAnotherProject,
             draftErrorMessage: draftErrorMessage,
             workspaceSummary: workspaceSummary

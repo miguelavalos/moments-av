@@ -317,7 +317,7 @@
 "home.avi.signIn.title" = "Sign in to create";
 "home.avi.storyReviewReady.detail" = "Your story is ready to review before creating the video.";
 "home.avi.storyReviewReady.title" = "Story review ready";
-"home.aviBrief.continueProject" = "Continue %@ from the next unfinished step.";
+"home.aviBrief.continueMoment" = "Continue %@ from the next unfinished step.";
 "home.aviBrief.firstMemory" = "Plan the first memory film before adding media.";
 "home.aviBrief.reviewInProgress" = "Review In Progress and continue the next unfinished step.";
 "home.aviBrief.signIn" = "Sign in to create Moments, save videos, and keep credits with your account.";
@@ -474,7 +474,7 @@
 "common.close" = "Close";
 "common.ok" = "OK";
 "common.tryAgain" = "Please try again.";
-"create.action.startProject" = "Start project";
+"create.action.startMoment" = "Start Moment";
 "create.continuation.dismiss" = "Dismiss continuation hint";
 "create.continuation.final.message" = "Create or refresh the finished video.";
 "create.continuation.final.title" = "Continue with video";

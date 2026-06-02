@@ -18,7 +18,7 @@ struct MomentsInProgressUnavailableState: View {
 
 struct MomentsInProgressEmptyState: View {
     let presentation: MomentsInProgressUnavailablePresentation
-    let startProject: () -> Void
+    let startMoment: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -30,7 +30,7 @@ struct MomentsInProgressEmptyState: View {
                 systemImage: "plus.app.fill",
                 isProminent: true,
                 accessibilityIdentifier: "moments.inProgress.empty.create",
-                action: startProject
+                action: startMoment
             )
 
             AVAppShellInlineMessage(

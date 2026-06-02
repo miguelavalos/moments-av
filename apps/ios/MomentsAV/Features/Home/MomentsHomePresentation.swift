@@ -78,7 +78,7 @@ struct MomentsHomePresentation {
         }
 
         if let latestProject = projectSummary.latestInProgressProject {
-            return L10n.string("home.aviBrief.continueProject", latestProject.title)
+            return L10n.string("home.aviBrief.continueMoment", latestProject.title)
         }
 
         if projectSummary.hasProjects {

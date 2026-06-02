@@ -107,7 +107,7 @@ final class MomentsAviViewModelTests: XCTestCase {
 private final class AviProjectSummaryProvider: MomentsProjectSummaryProviding {
     let summary = CurrentValueSubject<MomentsProjectListSummary, Never>(MomentsProjectListSummary())
 
-    var projectSummaryPublisher: AnyPublisher<MomentsProjectListSummary, Never> {
+    var inProgressSummaryPublisher: AnyPublisher<MomentsProjectListSummary, Never> {
         summary.eraseToAnyPublisher()
     }
 }

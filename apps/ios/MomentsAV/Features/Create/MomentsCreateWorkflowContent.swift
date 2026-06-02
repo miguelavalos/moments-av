@@ -63,7 +63,7 @@ struct MomentsCreateWorkflowContent: View {
             styles: viewModel.creationStyles,
             selectedMusicPreset: viewModel.selectedMusicPreset,
             presentation: viewModel.draftSetupPresentation,
-            newProjectStep: viewModel.newProjectStep,
+            newMomentStep: viewModel.newMomentStep,
             isSignedIn: viewModel.isSignedIn,
             balance: viewModel.balance,
             canBeginNewProject: viewModel.canBeginNewProject,
@@ -226,7 +226,7 @@ private struct MomentsCreateMediaFirstWorkspace: View {
 
     private var mediaPresentation: MomentsCreateMediaPresentation {
         MomentsCreateMediaPresentation(
-            activeProjectId: presentation.activeProjectId,
+            activeMomentId: presentation.activeMomentId,
             template: presentation.template,
             summary: presentation.mediaSummary,
             canAddMedia: presentation.canAddMedia,
@@ -3040,7 +3040,7 @@ private struct MomentsCreateWorkflowCards: View {
                     pickerItems: $pickerItems,
                     openPickerRequest: openPickerRequest,
                     presentation: MomentsCreateMediaPresentation(
-                        activeProjectId: presentation.activeProjectId,
+                        activeMomentId: presentation.activeMomentId,
                         template: presentation.template,
                         summary: presentation.mediaSummary,
                         canAddMedia: presentation.canAddMedia,

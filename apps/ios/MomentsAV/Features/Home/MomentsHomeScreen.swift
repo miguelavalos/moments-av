@@ -14,7 +14,7 @@ struct MomentsHomeScreen: View {
     let openCredits: () -> Void
     let selectTab: (MomentsRootTab) -> Void
     let startMoment: () -> Void
-    let continueProject: (MomentsProjectContinuationRequest) -> Void
+    let continueMoment: (MomentsProjectContinuationRequest) -> Void
     private var projectSummary: MomentsProjectListSummary { viewModel.projectSummary }
     private var presentation: MomentsHomePresentation {
         MomentsHomePresentation.make(
@@ -31,7 +31,7 @@ struct MomentsHomeScreen: View {
         openCredits: @escaping () -> Void,
         selectTab: @escaping (MomentsRootTab) -> Void,
         startMoment: @escaping () -> Void,
-        continueProject: @escaping (MomentsProjectContinuationRequest) -> Void
+        continueMoment: @escaping (MomentsProjectContinuationRequest) -> Void
     ) {
         self.openSettings = openSettings
         self.openAccount = openAccount
@@ -39,7 +39,7 @@ struct MomentsHomeScreen: View {
         self.openCredits = openCredits
         self.selectTab = selectTab
         self.startMoment = startMoment
-        self.continueProject = continueProject
+        self.continueMoment = continueMoment
     }
 
     var body: some View {
@@ -84,7 +84,7 @@ struct MomentsHomeScreen: View {
 
             MomentsHomeNextActionsCard(
                 presentation: presentation,
-                continueProject: continueProject,
+                continueMoment: continueMoment,
                 startMoment: startMoment,
                 selectTab: selectTab
             )

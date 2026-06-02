@@ -70,7 +70,7 @@ enum MomentsCreateAvailabilityMessageFactory {
     }
 
     static func preview(
-        activeProjectId: String?,
+        activeMomentId: String?,
         isPreviewGenerationAvailable: Bool,
         isPreviewGenerating: Bool,
         isPreviewGenerationConfigured: Bool,
@@ -78,7 +78,7 @@ enum MomentsCreateAvailabilityMessageFactory {
         template: MomentTemplate,
         balance: MomentsCreditBalance
     ) -> String? {
-        guard activeProjectId != nil else { return MomentsCreateAvailabilityCopy.previewMissingProject }
+        guard activeMomentId != nil else { return MomentsCreateAvailabilityCopy.previewMissingProject }
         guard isPreviewGenerationAvailable else { return MomentsCreateAvailabilityCopy.previewUnavailable }
         if isPreviewGenerating { return nil }
         if !isPreviewGenerationConfigured { return MomentsCreateAvailabilityCopy.previewNotConfigured }
@@ -96,7 +96,7 @@ enum MomentsCreateAvailabilityMessageFactory {
     }
 
     static func finalRender(
-        activeProjectId: String?,
+        activeMomentId: String?,
         isFinalRenderAvailable: Bool,
         isFinalRenderGenerating: Bool,
         isFinalRenderConfigured: Bool,
@@ -105,7 +105,7 @@ enum MomentsCreateAvailabilityMessageFactory {
         balance: MomentsCreditBalance,
         latestPreview: MomentArtifact?
     ) -> String? {
-        guard activeProjectId != nil else { return MomentsCreateAvailabilityCopy.finalRenderMissingProject }
+        guard activeMomentId != nil else { return MomentsCreateAvailabilityCopy.finalRenderMissingProject }
         guard isFinalRenderAvailable else { return MomentsCreateAvailabilityCopy.finalRenderUnavailable }
         if isFinalRenderGenerating { return nil }
         if !isFinalRenderConfigured { return MomentsCreateAvailabilityCopy.finalRenderNotConfigured }

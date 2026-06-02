@@ -107,7 +107,7 @@ struct MomentsHomeMomentStatusCard: View {
 
 struct MomentsHomeNextActionsCard: View {
     let presentation: MomentsHomePresentation
-    let continueProject: (MomentsProjectContinuationRequest) -> Void
+    let continueMoment: (MomentsProjectContinuationRequest) -> Void
     let startMoment: () -> Void
     let selectTab: (MomentsRootTab) -> Void
 
@@ -151,7 +151,7 @@ struct MomentsHomeNextActionsCard: View {
 
     private func continueLatestMoment() {
         if let request = presentation.latestInProgressContinuationRequest {
-            continueProject(request)
+            continueMoment(request)
         }
     }
 }

@@ -11,7 +11,7 @@ struct MomentsCreateDraftSetupCard: View {
     let styles: [MomentCreationStyle]
     let selectedMusicPreset: MomentMusicPreset
     let presentation: MomentsCreateDraftSetupPresentation
-    let newProjectStep: MomentsCreateNewProjectStep
+    let newMomentStep: MomentsCreateNewMomentStep
     let isSignedIn: Bool
     let balance: MomentsCreditBalance
     let canBeginNewProject: Bool
@@ -28,7 +28,7 @@ struct MomentsCreateDraftSetupCard: View {
     var body: some View {
         if presentation.isDraftLocked {
             lockedProjectContent
-        } else if newProjectStep == .status {
+        } else if newMomentStep == .status {
             VStack(alignment: .leading, spacing: AVBrandSpacing.lg) {
                 MomentsCreateNewProjectStatus(
                     isSignedIn: isSignedIn,
@@ -63,7 +63,7 @@ struct MomentsCreateDraftSetupCard: View {
         } else {
             AVAppShellCard {
                 VStack(alignment: .leading, spacing: 16) {
-                    switch newProjectStep {
+                    switch newMomentStep {
                     case .status:
                         EmptyView()
                     case .style:
@@ -83,7 +83,7 @@ struct MomentsCreateDraftSetupCard: View {
             isSignedIn: isSignedIn,
             balance: balance,
             selectedStyle: selectedStyle,
-            step: newProjectStep,
+            step: newMomentStep,
             isDraftLocked: presentation.isDraftLocked,
             draftErrorMessage: presentation.draftErrorMessage
         )

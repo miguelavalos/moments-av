@@ -7,17 +7,17 @@ struct MomentsInProgressCard: View {
     let presentation: MomentsInProgressPresentation
     let balance: MomentsCreditBalance
     let projectSummary: MomentsProjectListSummary
-    let selectedProjectId: String?
+    let selectedMomentId: String?
     let isLoadingProjectWorkspace: Bool
     let activeWorkspace: MomentProjectWorkspace?
-    let isDeletingProject: Bool
+    let isDeletingMoment: Bool
     let statusMessage: String?
     let selectProject: (MomentDraftProject) -> Void
-    let continueProject: (MomentsProjectContinuationRequest) -> Void
-    let startProject: () -> Void
+    let continueMoment: (MomentsProjectContinuationRequest) -> Void
+    let startMoment: () -> Void
     let startSignInFlow: () -> Void
     let openCredits: () -> Void
-    let requestDeleteProject: (MomentDraftProject) -> Void
+    let requestDeleteMoment: (MomentDraftProject) -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
@@ -33,21 +33,21 @@ struct MomentsInProgressCard: View {
                 MomentsInProgressCreditStatus(balance: balance, openCredits: openCredits)
                 MomentsInProgressEmptyContent(
                     unavailable: unavailable,
-                    startProject: startProject
+                    startMoment: startMoment
                 )
             case .available:
                 MomentsInProgressCreditStatus(balance: balance, openCredits: openCredits)
                 MomentsInProgressContinueBlock(
-                    projects: continueProjects,
-                    continueProject: continueProject,
-                    requestDeleteProject: requestDeleteProject
+                    projects: continueMoments,
+                    continueMoment: continueMoment,
+                    requestDeleteMoment: requestDeleteMoment
                 )
                 MomentsInProgressStatusMessage(message: statusMessage)
             }
         }
     }
 
-    private var continueProjects: [MomentDraftProject] {
+    private var continueMoments: [MomentDraftProject] {
         projectSummary.groups.inProgress.sorted { $0.updatedAt > $1.updatedAt }
     }
 }
@@ -106,7 +106,7 @@ private struct MomentsInProgressSignedOutState: View {
 
 private struct MomentsInProgressEmptyContent: View {
     let unavailable: MomentsInProgressUnavailablePresentation
-    let startProject: () -> Void
+    let startMoment: () -> Void
 
     var body: some View {
         MomentsInProgressInlineEmptyState(
@@ -115,7 +115,7 @@ private struct MomentsInProgressEmptyContent: View {
             message: L10n.string("inProgress.empty.inProgress.detail"),
             actionTitle: L10n.string("inProgress.newMoment"),
             actionSystemImage: "plus",
-            action: startProject
+            action: startMoment
         )
     }
 }
@@ -178,8 +178,8 @@ private struct MomentsInProgressAviBlock: View {
 
 private struct MomentsInProgressContinueBlock: View {
     let projects: [MomentDraftProject]
-    let continueProject: (MomentsProjectContinuationRequest) -> Void
-    let requestDeleteProject: (MomentDraftProject) -> Void
+    let continueMoment: (MomentsProjectContinuationRequest) -> Void
+    let requestDeleteMoment: (MomentDraftProject) -> Void
 
     var body: some View {
         if projects.isEmpty {
@@ -199,7 +199,7 @@ private struct MomentsInProgressContinueBlock: View {
                     ForEach(projects) { project in
                         VStack(spacing: 10) {
                             Button {
-                                continueProject(MomentsProjectContinuationRequest(project: project))
+                                continueMoment(MomentsProjectContinuationRequest(project: project))
                             } label: {
                                 HStack(alignment: .center, spacing: 12) {
                                     Image(systemName: iconName(for: project))
@@ -228,7 +228,7 @@ private struct MomentsInProgressContinueBlock: View {
                             .buttonStyle(.plain)
 
                             Button(role: .destructive) {
-                                requestDeleteProject(project)
+                                requestDeleteMoment(project)
                             } label: {
                                 Label(L10n.string("common.discard"), systemImage: "trash")
                                     .frame(maxWidth: .infinity)
@@ -338,16 +338,16 @@ private struct MomentsInProgressProjectsEmptyState: View {
 }
 
 private struct MomentsInProgressDraftEmptyState: View {
-    let startProject: (() -> Void)?
+    let startMoment: (() -> Void)?
 
     var body: some View {
         MomentsInProgressInlineEmptyState(
             systemImage: "photo.badge.plus",
             title: L10n.string("inProgress.empty.inProgress.title"),
             message: L10n.string("inProgress.empty.inProgress.detail"),
-            actionTitle: startProject == nil ? nil : L10n.string("inProgress.newMoment"),
+            actionTitle: startMoment == nil ? nil : L10n.string("inProgress.newMoment"),
             actionSystemImage: "plus",
-            action: startProject
+            action: startMoment
         )
     }
 }

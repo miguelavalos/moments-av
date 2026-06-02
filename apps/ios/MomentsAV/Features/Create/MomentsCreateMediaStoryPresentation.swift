@@ -1,7 +1,7 @@
 import Foundation
 
 struct MomentsCreateMediaPresentation: Equatable {
-    var activeProjectId: String?
+    var activeMomentId: String?
     var template: MomentTemplate
     var summary: MomentsCreateMediaSummary
     var canAddMedia = false

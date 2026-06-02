@@ -6,8 +6,8 @@ struct MomentsCreateDraftSetupPresentation: Equatable {
     var isCreatingDraft = false
     var canCreateDraft = false
     var availabilityMessage: String?
-    var activeProjectId: String?
-    var isContinuingProject = false
+    var activeMomentId: String?
+    var isContinuingMoment = false
     var canStartAnotherProject = false
     var draftErrorMessage: String?
     var workspaceSummary: MomentsCreateWorkspaceSummary
@@ -17,17 +17,17 @@ struct MomentsCreateDraftSetupPresentation: Equatable {
     }
 
     var activeProjectLabel: String {
-        isContinuingProject ? L10n.string("create.draft.active.continuing") : L10n.string("create.draft.active.ready")
+        isContinuingMoment ? L10n.string("create.draft.active.continuing") : L10n.string("create.draft.active.ready")
     }
 
     var activeProjectDetail: String {
-        isContinuingProject
+        isContinuingMoment
             ? L10n.string("create.draft.active.attached")
             : L10n.string("create.draft.active.nextMedia")
     }
 
     var showsActiveProject: Bool {
-        activeProjectId != nil
+        activeMomentId != nil
     }
 
     static func make(
@@ -38,8 +38,8 @@ struct MomentsCreateDraftSetupPresentation: Equatable {
         isCreatingDraft: Bool,
         canCreateDraft: Bool,
         availabilityMessage: String?,
-        activeProjectId: String?,
-        isContinuingProject: Bool,
+        activeMomentId: String?,
+        isContinuingMoment: Bool,
         canStartAnotherProject: Bool,
         draftErrorMessage: String?,
         workspaceSummary: MomentsCreateWorkspaceSummary
@@ -54,8 +54,8 @@ struct MomentsCreateDraftSetupPresentation: Equatable {
             isCreatingDraft: isCreatingDraft,
             canCreateDraft: canCreateDraft,
             availabilityMessage: availabilityMessage,
-            activeProjectId: activeProjectId,
-            isContinuingProject: isContinuingProject,
+            activeMomentId: activeMomentId,
+            isContinuingMoment: isContinuingMoment,
             canStartAnotherProject: canStartAnotherProject,
             draftErrorMessage: draftErrorMessage,
             workspaceSummary: workspaceSummary

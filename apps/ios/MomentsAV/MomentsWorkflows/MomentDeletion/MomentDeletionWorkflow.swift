@@ -3,7 +3,7 @@ import Foundation
 
 @MainActor
 final class MomentDeletionWorkflow: ObservableObject {
-    @Published private(set) var isDeletingProject = false
+    @Published private(set) var isDeletingMoment = false
     @Published private(set) var errorMessage: String?
 
     private let currentUserProvider: any MomentsCurrentUserProviding
@@ -18,22 +18,22 @@ final class MomentDeletionWorkflow: ObservableObject {
         self.projectDeleter = projectDeleter
     }
 
-    var isDeletingProjectPublisher: AnyPublisher<Bool, Never> {
-        $isDeletingProject.eraseToAnyPublisher()
+    var isDeletingMomentPublisher: AnyPublisher<Bool, Never> {
+        $isDeletingMoment.eraseToAnyPublisher()
     }
 
     var deletionErrorPublisher: AnyPublisher<String?, Never> {
         $errorMessage.eraseToAnyPublisher()
     }
 
-    func deleteProject(_ project: MomentDraftProject) async -> Bool {
-        guard !isDeletingProject else { return false }
+    func deleteMoment(_ project: MomentDraftProject) async -> Bool {
+        guard !isDeletingMoment else { return false }
         guard let ownerUserId = currentUserProvider.currentUserId else {
             errorMessage = "Sign in before deleting a project."
             return false
         }
 
-        isDeletingProject = true
+        isDeletingMoment = true
         errorMessage = nil
         deletionGeneration += 1
         let generation = deletionGeneration
@@ -41,12 +41,12 @@ final class MomentDeletionWorkflow: ObservableObject {
         do {
             try await projectDeleter.deleteProject(ownerUserId: ownerUserId, projectId: project.id)
             guard deletionGeneration == generation else { return false }
-            isDeletingProject = false
+            isDeletingMoment = false
             return true
         } catch {
             guard deletionGeneration == generation else { return false }
             errorMessage = error.localizedDescription
-            isDeletingProject = false
+            isDeletingMoment = false
             return false
         }
     }

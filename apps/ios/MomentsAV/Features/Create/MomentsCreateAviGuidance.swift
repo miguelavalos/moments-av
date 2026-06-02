@@ -22,7 +22,7 @@ enum MomentsCreateAviGuidanceResolver {
         isSignedIn: Bool,
         balance: MomentsCreditBalance,
         selectedStyle: MomentCreationStyle,
-        step: MomentsCreateNewProjectStep,
+        step: MomentsCreateNewMomentStep,
         isDraftLocked: Bool,
         draftErrorMessage: String?
     ) -> MomentsCreateAviGuidance {
@@ -57,7 +57,7 @@ enum MomentsCreateAviGuidanceResolver {
             return MomentsCreateAviGuidance(
                 emotion: .happy,
                 message: L10n.string("create.guidance.noCredits"),
-                actionTitle: L10n.string("create.action.startProject"),
+                actionTitle: L10n.string("create.action.startMoment"),
                 reaction: .positive
             )
         }
@@ -67,7 +67,7 @@ enum MomentsCreateAviGuidanceResolver {
             return MomentsCreateAviGuidance(
                 emotion: .happy,
                 message: L10n.string("create.guidance.addMedia"),
-                actionTitle: L10n.string("create.action.startProject"),
+                actionTitle: L10n.string("create.action.startMoment"),
                 reaction: .positive
             )
         case .style:

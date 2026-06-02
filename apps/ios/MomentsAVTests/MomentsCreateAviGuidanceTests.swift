@@ -29,7 +29,7 @@ final class MomentsCreateAviGuidanceTests: XCTestCase {
 
         XCTAssertEqual(guidance.emotion, .happy)
         XCTAssertEqual(guidance.message, "Add photos or clips now. Credits are needed before creating the final video.")
-        XCTAssertEqual(guidance.actionTitle, "Start project")
+        XCTAssertEqual(guidance.actionTitle, "Start Moment")
     }
 
     func testReadyStateStartsWithStyleGuidance() {
@@ -44,7 +44,7 @@ final class MomentsCreateAviGuidanceTests: XCTestCase {
 
         XCTAssertEqual(guidance.emotion, .happy)
         XCTAssertEqual(guidance.message, "Add photos or clips. Avi will prepare the first story.")
-        XCTAssertEqual(guidance.actionTitle, "Start project")
+        XCTAssertEqual(guidance.actionTitle, "Start Moment")
     }
 
     func testSummaryMentionsSelectedStyleAndOptionalDetail() {

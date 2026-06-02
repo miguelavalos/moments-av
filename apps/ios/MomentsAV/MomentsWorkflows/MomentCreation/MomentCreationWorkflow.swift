@@ -3,7 +3,7 @@ import Foundation
 @MainActor
 final class MomentCreationWorkflow: ObservableObject {
     @Published private(set) var isCreatingDraft = false
-    @Published private(set) var activeProjectId: String?
+    @Published private(set) var activeMomentId: String?
     @Published private(set) var errorMessage: String?
 
     private let currentUserProvider: any MomentsCurrentUserProviding
@@ -67,7 +67,7 @@ final class MomentCreationWorkflow: ObservableObject {
         do {
             let projectId = try await projectCreator.createDraft(ownerUserId: ownerUserId, form: form)
             guard workflowGeneration.isCurrent(generation) else { return nil }
-            activeProjectId = projectId
+            activeMomentId = projectId
             workspaceObserver.observeWorkspace(ownerUserId: ownerUserId, projectId: projectId)
             isCreatingDraft = false
             return projectId
@@ -79,7 +79,7 @@ final class MomentCreationWorkflow: ObservableObject {
         }
     }
 
-    func continueProject(_ project: MomentDraftProject) {
+    func continueMoment(_ project: MomentDraftProject) {
         guard let ownerUserId = currentUserProvider.currentUserId else {
             errorMessage = L10n.string("workflow.moment.signInContinue")
             return
@@ -87,7 +87,7 @@ final class MomentCreationWorkflow: ObservableObject {
 
         workflowGeneration.advance()
         isCreatingDraft = false
-        activeProjectId = project.id
+        activeMomentId = project.id
         errorMessage = nil
         workspaceObserver.observeWorkspace(ownerUserId: ownerUserId, projectId: project.id)
     }
@@ -96,7 +96,7 @@ final class MomentCreationWorkflow: ObservableObject {
         guard force || !isCreatingDraft else { return }
         workflowGeneration.advance()
         isCreatingDraft = false
-        activeProjectId = nil
+        activeMomentId = nil
         errorMessage = nil
         workspaceObserver.clearWorkspace()
     }
@@ -107,7 +107,7 @@ final class MomentCreationWorkflow: ObservableObject {
             errorMessage = L10n.string("workflow.moment.signInDiscard")
             return false
         }
-        guard let projectId = projectIdOverride ?? activeProjectId else { return true }
+        guard let projectId = projectIdOverride ?? activeMomentId else { return true }
 
         let generation = workflowGeneration.begin()
         isCreatingDraft = true
@@ -117,7 +117,7 @@ final class MomentCreationWorkflow: ObservableObject {
             try await projectDeleter.deleteProject(ownerUserId: ownerUserId, projectId: projectId)
             guard workflowGeneration.isCurrent(generation) else { return false }
             isCreatingDraft = false
-            self.activeProjectId = nil
+            self.activeMomentId = nil
             workspaceObserver.clearWorkspace()
             return true
         } catch {

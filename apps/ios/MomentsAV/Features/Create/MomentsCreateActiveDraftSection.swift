@@ -7,7 +7,7 @@ struct MomentsCreateActiveDraftSection: View {
 
     @ViewBuilder
     var body: some View {
-        if presentation.activeProjectId != nil {
+        if presentation.activeMomentId != nil {
             Label(presentation.activeProjectLabel, systemImage: "checkmark.circle.fill")
                 .font(.subheadline.weight(.semibold))
                 .foregroundStyle(.green)

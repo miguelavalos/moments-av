@@ -6,7 +6,7 @@ struct MomentsInProgressListPresentation: Equatable {
 
     static func make(
         projectSummary: MomentsProjectListSummary,
-        selectedProjectId: String?
+        selectedMomentId: String?
     ) -> MomentsInProgressListPresentation {
         MomentsInProgressListPresentation(
             summaryPills: [
@@ -30,13 +30,13 @@ struct MomentsInProgressListPresentation: Equatable {
                 MomentsInProgressListGroupPresentation(
                     title: L10n.string("inProgress.group.inProgress"),
                     rows: projectSummary.groups.inProgress.map {
-                        MomentsInProgressListRowPresentation(project: $0, isSelected: selectedProjectId == $0.id)
+                        MomentsInProgressListRowPresentation(project: $0, isSelected: selectedMomentId == $0.id)
                     }
                 ),
                 MomentsInProgressListGroupPresentation(
                     title: L10n.string("inProgress.group.finished"),
                     rows: projectSummary.groups.finished.map {
-                        MomentsInProgressListRowPresentation(project: $0, isSelected: selectedProjectId == $0.id)
+                        MomentsInProgressListRowPresentation(project: $0, isSelected: selectedMomentId == $0.id)
                     }
                 )
             ].filter { !$0.rows.isEmpty }

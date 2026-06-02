@@ -1,7 +1,7 @@
 import Foundation
 
 struct MomentsCreateWorkflowPresentation: Equatable {
-    var activeProjectId: String?
+    var activeMomentId: String?
     var isSignedIn = false
     var hasMomentWorkspace = false
     var hasUnsavedLocalMoment = false
@@ -69,7 +69,7 @@ struct MomentsCreateWorkflowPresentation: Equatable {
     }
 
     static func make(
-        activeProjectId: String?,
+        activeMomentId: String?,
         isSignedIn: Bool,
         hasMomentWorkspace: Bool,
         hasUnsavedLocalMoment: Bool,
@@ -87,7 +87,7 @@ struct MomentsCreateWorkflowPresentation: Equatable {
         availability: MomentsCreateWorkflowAvailability
     ) -> MomentsCreateWorkflowPresentation {
         MomentsCreateWorkflowPresentation(
-            activeProjectId: activeProjectId,
+            activeMomentId: activeMomentId,
             isSignedIn: isSignedIn,
             hasMomentWorkspace: hasMomentWorkspace,
             hasUnsavedLocalMoment: hasUnsavedLocalMoment,

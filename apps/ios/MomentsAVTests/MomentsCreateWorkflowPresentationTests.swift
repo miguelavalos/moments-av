@@ -31,8 +31,8 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
             isCreatingDraft: true,
             canCreateDraft: false,
             availabilityMessage: "Draft is locked.",
-            activeProjectId: "project-1",
-            isContinuingProject: true,
+            activeMomentId: "project-1",
+            isContinuingMoment: true,
             canStartAnotherProject: true,
             draftErrorMessage: "Draft failed.",
             workspaceSummary: MomentsCreateWorkspaceSummary(mediaCount: 2, sceneCount: 1)
@@ -46,7 +46,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         XCTAssertTrue(presentation.isCreatingDraft)
         XCTAssertFalse(presentation.canCreateDraft)
         XCTAssertEqual(presentation.availabilityMessage, "Draft is locked.")
-        XCTAssertEqual(presentation.activeProjectId, "project-1")
+        XCTAssertEqual(presentation.activeMomentId, "project-1")
         XCTAssertTrue(presentation.canStartAnotherProject)
         XCTAssertEqual(presentation.draftErrorMessage, "Draft failed.")
         XCTAssertEqual(presentation.workspaceSummary.mediaCount, 2)
@@ -64,8 +64,8 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
             isCreatingDraft: false,
             canCreateDraft: false,
             availabilityMessage: "Locked.",
-            activeProjectId: "project-1",
-            isContinuingProject: true,
+            activeMomentId: "project-1",
+            isContinuingMoment: true,
             canStartAnotherProject: true,
             draftErrorMessage: nil,
             workspaceSummary: MomentsCreateWorkspaceSummary(mediaCount: 1)
@@ -74,13 +74,13 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         XCTAssertEqual(presentation.templateSummary.template, .partyRecap)
         XCTAssertFalse(presentation.templateSummary.canAfford)
         XCTAssertEqual(presentation.templateSummary.spendPlanDescription, "Need credits.")
-        XCTAssertEqual(presentation.activeProjectId, "project-1")
+        XCTAssertEqual(presentation.activeMomentId, "project-1")
         XCTAssertEqual(presentation.workspaceSummary.mediaCount, 1)
     }
 
     func testWorkflowPresentationHidesWorkflowCardsWithoutProject() {
         let presentation = MomentsCreateWorkflowPresentation(
-            activeProjectId: nil,
+            activeMomentId: nil,
             template: .birthdayMessage,
             balance: .empty,
             mediaSummary: MomentsCreateMediaSummary(),
@@ -127,7 +127,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         )
 
         let presentation = MomentsCreateWorkflowPresentation(
-            activeProjectId: "project-1",
+            activeMomentId: "project-1",
             hasMomentWorkspace: true,
             template: .birthdayMessage,
             balance: MomentsCreditBalance(proMonthly: 0, promotional: 2, purchased: 0),
@@ -150,7 +150,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         )
 
         XCTAssertTrue(presentation.showsWorkflowCards)
-        XCTAssertEqual(presentation.activeProjectId, "project-1")
+        XCTAssertEqual(presentation.activeMomentId, "project-1")
         XCTAssertEqual(presentation.template, .birthdayMessage)
         XCTAssertEqual(presentation.mediaSummary, mediaSummary)
         XCTAssertEqual(presentation.storySummary, storySummary)
@@ -172,7 +172,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
 
     func testWorkflowPresentationBuilderAppliesAvailabilityState() {
         let presentation = MomentsCreateWorkflowPresentation.make(
-            activeProjectId: "project-1",
+            activeMomentId: "project-1",
             isSignedIn: true,
             hasMomentWorkspace: true,
             hasUnsavedLocalMoment: false,
@@ -218,7 +218,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
 
     func testWorkflowPresentationCarriesUnsavedLocalMomentContainmentState() {
         let presentation = MomentsCreateWorkflowPresentation.make(
-            activeProjectId: nil,
+            activeMomentId: nil,
             isSignedIn: true,
             hasMomentWorkspace: true,
             hasUnsavedLocalMoment: true,
@@ -252,7 +252,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
 
     func testWorkflowPresentationShowsBlockingPreparationForCriticalWork() {
         var presentation = MomentsCreateWorkflowPresentation(
-            activeProjectId: "project-1",
+            activeMomentId: "project-1",
             template: .birthdayMessage,
             balance: .empty,
             mediaSummary: MomentsCreateMediaSummary(isImporting: true),
@@ -294,7 +294,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
 
     func testMediaPresentationFormatsSelectionAndSortsSyncedMedia() {
         let presentation = MomentsCreateMediaPresentation(
-            activeProjectId: "project-1",
+            activeMomentId: "project-1",
             template: .birthdayMessage,
             summary: MomentsCreateMediaSummary(
                 selectedMedia: [MomentsCreateTestFixtures.makeSelectedMedia(id: "00000000-0000-0000-0000-000000000001")],
@@ -309,7 +309,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
             availabilityMessage: "Add media."
         )
 
-        XCTAssertEqual(presentation.activeProjectId, "project-1")
+        XCTAssertEqual(presentation.activeMomentId, "project-1")
         XCTAssertEqual(presentation.pickerTitle, "Adding media...")
         XCTAssertEqual(presentation.remainingSlots, 19)
         XCTAssertEqual(presentation.selectedCountTitle, "1 selected")
@@ -321,7 +321,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
 
     func testMediaPresentationUsesSingularMissingMediaCopy() {
         let presentation = MomentsCreateMediaPresentation(
-            activeProjectId: "project-1",
+            activeMomentId: "project-1",
             template: .birthdayMessage,
             summary: MomentsCreateMediaSummary(
                 selectedMedia: [

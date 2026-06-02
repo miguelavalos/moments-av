@@ -32,7 +32,7 @@ extension MomentsCreateViewModel {
 
     var previewAvailabilityMessage: String? {
         MomentsCreateAvailabilityMessageFactory.preview(
-            activeProjectId: activeProjectId,
+            activeMomentId: activeMomentId,
             isPreviewGenerationAvailable: previewGenerationWorkflow != nil,
             isPreviewGenerating: previewGenerationWorkflow?.isGenerating ?? false,
             isPreviewGenerationConfigured: previewGenerationWorkflow?.isConfigured ?? false,
@@ -48,7 +48,7 @@ extension MomentsCreateViewModel {
 
     var finalRenderAvailabilityMessage: String? {
         MomentsCreateAvailabilityMessageFactory.finalRender(
-            activeProjectId: activeProjectId,
+            activeMomentId: activeMomentId,
             isFinalRenderAvailable: finalRenderWorkflow != nil,
             isFinalRenderGenerating: finalRenderWorkflow?.isGenerating ?? false,
             isFinalRenderConfigured: finalRenderWorkflow?.isConfigured ?? false,
@@ -69,7 +69,7 @@ extension MomentsCreateViewModel {
 
     var previewRefreshAvailability: RenderJobStatusRefreshAvailability {
         MomentsCreateRefreshAvailabilityFactory.preview(
-            projectId: activeProjectId,
+            projectId: activeMomentId,
             job: effectiveLatestPreviewJob,
             isAvailable: previewGenerationWorkflow != nil,
             isConfigured: previewGenerationWorkflow?.isConfigured ?? false,
@@ -79,7 +79,7 @@ extension MomentsCreateViewModel {
 
     var finalRenderRefreshAvailability: RenderJobStatusRefreshAvailability {
         MomentsCreateRefreshAvailabilityFactory.finalRender(
-            projectId: activeProjectId,
+            projectId: activeMomentId,
             job: effectiveLatestFinalJob,
             isAvailable: finalRenderWorkflow != nil,
             isConfigured: finalRenderWorkflow?.isConfigured ?? false,

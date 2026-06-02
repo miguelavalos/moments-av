@@ -7,14 +7,14 @@ final class MomentsCreateViewModel: ObservableObject {
     @Published private(set) var balance = MomentsCreditBalance.empty
     @Published private(set) var templates = MomentTemplate.launchTemplates
     @Published private(set) var creationStyles = MomentCreationStyle.launchStyles
-    @Published var newProjectStep: MomentsCreateNewProjectStep = .status
+    @Published var newMomentStep: MomentsCreateNewMomentStep = .status
     @Published var selectedCreationStyle = MomentCreationStyle.launchStyles[0]
     @Published var selectedMusicPreset = MomentCreationStyle.launchStyles[0].defaultMusic
     @Published var form = MomentDraftForm(template: MomentTemplate.launchTemplates[0])
     @Published private(set) var isCreatingDraft = false
-    @Published private(set) var isContinuingProject = false
+    @Published private(set) var isContinuingMoment = false
     @Published var isLocalMomentStarted = false
-    @Published private(set) var workflowActiveProjectId: String?
+    @Published private(set) var workflowActiveMomentId: String?
     @Published private(set) var draftErrorMessage: String?
     @Published private(set) var selectedMedia: [MomentsSelectedMedia] = []
     @Published private(set) var mediaStatusMessage: String?
@@ -67,16 +67,16 @@ final class MomentsCreateViewModel: ObservableObject {
         return activeWorkspace?.project
     }
 
-    var activeProjectId: String? {
-        activeProject?.id ?? workflowActiveProjectId
+    var activeMomentId: String? {
+        activeProject?.id ?? workflowActiveMomentId
     }
 
     var hasMomentWorkspace: Bool {
-        activeProjectId != nil || isLocalMomentStarted
+        activeMomentId != nil || isLocalMomentStarted
     }
 
     var hasRecoverableMomentContext: Bool {
-        activeProjectId != nil
+        activeMomentId != nil
             || !selectedMedia.isEmpty
             || isImportingMedia
             || isDraftingStory
@@ -90,7 +90,7 @@ final class MomentsCreateViewModel: ObservableObject {
     }
 
     var hasLocalMomentWorkspace: Bool {
-        activeProjectId == nil && isLocalMomentStarted
+        activeMomentId == nil && isLocalMomentStarted
     }
 
     var workflowErrorAlertMessage: String? {
@@ -156,7 +156,7 @@ final class MomentsCreateViewModel: ObservableObject {
         autoStyleUndoSelection = nil
         applyStyleDefaults(style)
 
-        if newProjectStep == .style {
+        if newMomentStep == .style {
             beginNewProject()
         }
     }
@@ -199,14 +199,14 @@ final class MomentsCreateViewModel: ObservableObject {
     }
 
     func prepareNewDraftCreation() {
-        isContinuingProject = false
+        isContinuingMoment = false
         continuationFocusHint = nil
         isLocalMomentStarted = false
     }
 
-    func continueProject(_ project: MomentDraftProject, focus: MomentsProjectContinuationFocus = .review) {
+    func continueMoment(_ project: MomentDraftProject, focus: MomentsProjectContinuationFocus = .review) {
         cancelOperations()
-        isContinuingProject = true
+        isContinuingMoment = true
         isLocalMomentStarted = false
         pendingFocus = focus
         continuationFocusHint = focus
@@ -215,7 +215,7 @@ final class MomentsCreateViewModel: ObservableObject {
             form = continuedForm
         }
 
-        momentCreationWorkflow?.continueProject(project)
+        momentCreationWorkflow?.continueMoment(project)
     }
 
     func consumePendingFocus() {
@@ -245,8 +245,8 @@ final class MomentsCreateViewModel: ObservableObject {
         )
         isSignedIn = true
         balance = MomentsCreateUITestFixtures.balance
-        isContinuingProject = true
-        workflowActiveProjectId = workspace.project.id
+        isContinuingMoment = true
+        workflowActiveMomentId = workspace.project.id
         draftErrorMessage = nil
         selectedMedia = MomentsCreateUITestFixtures.selectedMedia
         mediaStatusMessage = L10n.string("create.media.fixture.synced")
@@ -315,7 +315,7 @@ final class MomentsCreateViewModel: ObservableObject {
 
     func resetActiveProject(force: Bool) {
         cancelOperations()
-        isContinuingProject = false
+        isContinuingMoment = false
         isLocalMomentStarted = false
         pendingFocus = nil
         continuationFocusHint = nil
@@ -338,7 +338,7 @@ final class MomentsCreateViewModel: ObservableObject {
         hasUserStyleOverride = false
         isBuyingReviewBundle = false
         applyStyleDefaults(selectedCreationStyle)
-        newProjectStep = .status
+        newMomentStep = .status
     }
 
     private func applyStyleDefaults(_ style: MomentCreationStyle) {
@@ -410,7 +410,7 @@ final class MomentsCreateViewModel: ObservableObject {
     }
 }
 
-enum MomentsCreateNewProjectStep: Equatable {
+enum MomentsCreateNewMomentStep: Equatable {
     case status
     case style
     case summary
@@ -424,12 +424,12 @@ extension MomentsCreateViewModel {
 
     func applyMomentCreationState(_ state: MomentsCreateMomentCreationState) {
         guard !usesFullUITestFixture else { return }
-        let previousActiveProjectId = workflowActiveProjectId
+        let previousActiveProjectId = workflowActiveMomentId
         isCreatingDraft = state.isCreatingDraft
-        workflowActiveProjectId = state.activeProjectId
+        workflowActiveMomentId = state.activeMomentId
         draftErrorMessage = state.draftErrorMessage
 
-        if previousActiveProjectId == nil, state.activeProjectId != nil {
+        if previousActiveProjectId == nil, state.activeMomentId != nil {
             pendingFocus = .media
             continuationFocusHint = nil
         }
@@ -452,10 +452,10 @@ extension MomentsCreateViewModel {
 
         let hasStoryScenes = !state.savedScenes.isEmpty || !state.generatedScenes.isEmpty
         if hasStoryScenes {
-            if let activeProjectId {
+            if let activeMomentId {
                 lastPreparedStoryInputSignature = effectiveActiveWorkspace?.project.storyInputSignature
                     ?? lastPreparedStoryInputSignature
-                    ?? currentStoryInputSignature(projectId: activeProjectId)
+                    ?? currentStoryInputSignature(projectId: activeMomentId)
             }
             storyStatusMessage = nil
         } else {
@@ -504,7 +504,7 @@ extension MomentsCreateViewModel {
 
     private func syncFormWithActiveWorkspace(_ workspace: MomentProjectWorkspace?) {
         guard let project = workspace?.project else { return }
-        guard project.id == activeProjectId else { return }
+        guard project.id == activeMomentId else { return }
         guard let continuedForm = MomentDraftForm.continuing(project: project, templates: templates) else { return }
 
         form = continuedForm

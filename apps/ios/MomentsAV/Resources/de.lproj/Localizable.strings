@@ -205,7 +205,7 @@
 "home.avi.signIn.title" = "Anmelden zum Erstellen";
 "home.avi.storyReviewReady.detail" = "Deine Story ist bereit zur Prüfung, bevor das Video erstellt wird.";
 "home.avi.storyReviewReady.title" = "Story-Prüfung bereit";
-"home.aviBrief.continueProject" = "Fahre mit %@ beim nächsten offenen Schritt fort.";
+"home.aviBrief.continueMoment" = "Fahre mit %@ beim nächsten offenen Schritt fort.";
 "home.aviBrief.firstMemory" = "Plane den ersten Erinnerungsfilm, bevor du Medien hinzufügst.";
 "home.aviBrief.reviewInProgress" = "Prüfe In Arbeit und fahre mit dem nächsten offenen Schritt fort.";
 "home.aviBrief.signIn" = "Melde dich an, um Moments zu erstellen, Videos zu speichern und Credits im Konto zu behalten.";
@@ -474,7 +474,7 @@
 "common.close" = "Schließen";
 "common.ok" = "OK";
 "common.tryAgain" = "Bitte versuche es erneut.";
-"create.action.startProject" = "Projekt starten";
+"create.action.startMoment" = "Moment starten";
 "create.continuation.dismiss" = "Fortsetzungshinweis schließen";
 "create.continuation.final.message" = "Erstelle oder aktualisiere das fertige Video.";
 "create.continuation.final.title" = "Mit Video fortfahren";

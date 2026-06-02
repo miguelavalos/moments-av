@@ -8,9 +8,9 @@ final class MomentsInProgressViewModel: ObservableObject {
     @Published private(set) var currentUserId: String?
     @Published private(set) var activeProject: MomentDraftProject?
     @Published private(set) var activeWorkspace: MomentProjectWorkspace?
-    @Published private(set) var selectedProjectId: String?
+    @Published private(set) var selectedMomentId: String?
     @Published private(set) var isLoadingProjectWorkspace = false
-    @Published private(set) var isDeletingProject = false
+    @Published private(set) var isDeletingMoment = false
     @Published private(set) var statusMessage: String?
 
     private var workflow: (any MomentsInProgressViewing)?
@@ -24,7 +24,7 @@ final class MomentsInProgressViewModel: ObservableObject {
         self.workflow = workflow
         workflowCancellables.removeAll()
 
-        workflow.projectSummaryPublisher
+        workflow.inProgressSummaryPublisher
             .removeDuplicates()
             .receive(on: DispatchQueue.main)
             .sink { [weak self] projectSummary in
@@ -53,14 +53,14 @@ final class MomentsInProgressViewModel: ObservableObject {
             }
             .store(in: &workflowCancellables)
 
-        workflow.isDeletingProjectPublisher
+        workflow.isDeletingMomentPublisher
             .receive(on: DispatchQueue.main)
             .sink { [weak self] isDeleting in
-                self?.isDeletingProject = isDeleting
+                self?.isDeletingMoment = isDeleting
             }
             .store(in: &workflowCancellables)
 
-        workflow.projectErrorMessagePublisher
+        workflow.inProgressErrorMessagePublisher
             .receive(on: DispatchQueue.main)
             .sink { [weak self] errorMessage in
                 self?.statusMessage = errorMessage
@@ -84,37 +84,37 @@ final class MomentsInProgressViewModel: ObservableObject {
     }
 
     func selectProject(_ project: MomentDraftProject) {
-        if selectedProjectId == project.id {
-            selectedProjectId = nil
+        if selectedMomentId == project.id {
+            selectedMomentId = nil
             workflow?.clearProjectWorkspace()
             return
         }
 
-        selectedProjectId = project.id
+        selectedMomentId = project.id
         workflow?.observeProjectWorkspace(ownerUserId: currentUserId, projectId: project.id)
     }
 
     func isSelected(_ project: MomentDraftProject) -> Bool {
-        selectedProjectId == project.id
+        selectedMomentId == project.id
     }
 
     func clearSelection() {
         deletionTask?.cancel()
         deletionTask = nil
-        selectedProjectId = nil
+        selectedMomentId = nil
         statusMessage = nil
         workflow?.clearProjectWorkspace()
     }
 
-    func deleteProject(_ project: MomentDraftProject) {
+    func deleteMoment(_ project: MomentDraftProject) {
         guard let workflow else { return }
 
         deletionTask?.cancel()
         deletionTask = Task { [weak self] in
-            let didDelete = await workflow.deleteProject(project)
+            let didDelete = await workflow.deleteMoment(project)
             guard !Task.isCancelled else { return }
             if didDelete {
-                self?.selectedProjectId = nil
+                self?.selectedMomentId = nil
                 self?.activeProject = nil
                 self?.activeWorkspace = nil
                 self?.projectSummary = self?.projectSummary.removing(projectId: project.id) ?? MomentsProjectListSummary()
