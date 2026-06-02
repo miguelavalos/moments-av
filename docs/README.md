@@ -10,6 +10,10 @@ handoff values belong in the private AVALSYS suite.
 
 ## Included Here
 
+- Shared Apple app pattern: Moments AV follows the public
+  [Apps AV Apple Product App Patterns](https://github.com/miguelavalos/apps-av/blob/main/docs/apple-product-app-patterns.md)
+  guide for Account AV, app shell, settings, config hygiene, and shared package
+  usage.
 - [install-ios.md](install-ios.md): local iOS setup and compile checks.
 - [production-config.md](production-config.md): public runtime-config hygiene,
   with no production values.
