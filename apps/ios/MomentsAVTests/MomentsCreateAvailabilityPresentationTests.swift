@@ -59,7 +59,7 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
         XCTAssertFalse(capability.canRefreshFinalRenderStatus)
     }
 
-    func testWorkflowCapabilityFactoryBlocksMediaWithoutSlotsOrProject() {
+    func testWorkflowCapabilityFactoryBlocksMediaWithoutSlotsOrMoment() {
         let withoutSlots = MomentsCreateWorkflowCapabilityFactory.make(
             activeMomentId: "moment-1",
             isSignedIn: true,
@@ -76,7 +76,7 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
             latestPreview: nil,
             selectedMediaCount: 0
         )
-        let withoutProject = MomentsCreateWorkflowCapabilityFactory.make(
+        let withoutMoment = MomentsCreateWorkflowCapabilityFactory.make(
             activeMomentId: nil,
             isSignedIn: true,
             hasMomentWorkspace: false,
@@ -94,7 +94,7 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
         )
 
         XCTAssertFalse(withoutSlots.canAddMedia)
-        XCTAssertFalse(withoutProject.canAddMedia)
+        XCTAssertFalse(withoutMoment.canAddMedia)
     }
 
     func testAvailabilityCopyUsesSingularAndPluralCreditMessages() {

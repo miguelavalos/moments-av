@@ -6,7 +6,7 @@ enum MomentsCreateTestFixtures {
         InProgressMoment(
             id: id,
             template: .birthdayMessage,
-            status: "draft_created",
+            status: "in_progress",
             title: "Family Weekend",
             tone: nil,
             tempo: nil,

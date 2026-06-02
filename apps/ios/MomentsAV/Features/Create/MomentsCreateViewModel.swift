@@ -198,7 +198,7 @@ final class MomentsCreateViewModel: ObservableObject {
         resetActiveMoment(force: true)
     }
 
-    func prepareNewDraftCreation() {
+    func prepareNewMomentCreation() {
         isContinuingMoment = false
         continuationFocusHint = nil
         isLocalMomentStarted = false

@@ -2,7 +2,7 @@ import XCTest
 @testable import MomentsAV
 
 final class MomentsHomePresentationTests: XCTestCase {
-    func testSignedOutStateRequiresAccountAndDisablesProjectActions() {
+    func testSignedOutStateRequiresAccountAndDisablesMomentActions() {
         let presentation = MomentsHomePresentation.make(
             isSignedIn: false,
             displayName: nil,
@@ -34,11 +34,11 @@ final class MomentsHomePresentationTests: XCTestCase {
         XCTAssertFalse(presentation.createAction.isDisabled)
         XCTAssertEqual(
             presentation.reviewInProgressAction.detail,
-            "Drafts appear after you start a Moment."
+            "Moments appear after you start one."
         )
     }
 
-    func testLatestInProgressProjectAddsContinuationAction() {
+    func testLatestInProgressMomentAddsContinuationAction() {
         let moment = makeMoment(id: "latest-plan", status: "story_ready", updatedAt: 20)
         let presentation = MomentsHomePresentation.make(
             isSignedIn: true,
@@ -57,12 +57,12 @@ final class MomentsHomePresentationTests: XCTestCase {
         XCTAssertEqual(presentation.latestInProgressContinuationRequest?.focus, .review)
     }
 
-    func testProjectCountDrivesStatusAndReviewDetail() {
+    func testMomentCountDrivesStatusAndReviewDetail() {
         let presentation = MomentsHomePresentation.make(
             isSignedIn: true,
             displayName: nil,
             momentsSummary: InProgressMomentsSummary.make(from: [
-                makeMoment(id: "one", status: "draft_created", updatedAt: 10),
+                makeMoment(id: "one", status: "in_progress", updatedAt: 10),
                 makeMoment(id: "two", status: "completed", updatedAt: 20)
             ])
         )
@@ -73,16 +73,16 @@ final class MomentsHomePresentationTests: XCTestCase {
         )
         XCTAssertEqual(
             presentation.reviewInProgressAction.detail,
-            "Open drafts, active renders, and videos waiting for local download."
+            "Open in-progress moments, active renders, and videos waiting for local download."
         )
     }
 
-    func testSingleProjectUsesSingularProjectCopy() {
+    func testSingleMomentUsesSingularMomentCopy() {
         let presentation = MomentsHomePresentation.make(
             isSignedIn: true,
             displayName: nil,
             momentsSummary: InProgressMomentsSummary.make(from: [
-                makeMoment(id: "one", status: "draft_created", updatedAt: 10)
+                makeMoment(id: "one", status: "in_progress", updatedAt: 10)
             ])
         )
 
@@ -92,7 +92,7 @@ final class MomentsHomePresentationTests: XCTestCase {
         )
         XCTAssertEqual(
             presentation.reviewInProgressAction.detail,
-            "Open drafts, active renders, and videos waiting for local download."
+            "Open in-progress moments, active renders, and videos waiting for local download."
         )
     }
 

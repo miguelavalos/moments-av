@@ -78,7 +78,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         XCTAssertEqual(presentation.workspaceSummary.mediaCount, 1)
     }
 
-    func testWorkflowPresentationHidesWorkflowCardsWithoutProject() {
+    func testWorkflowPresentationHidesWorkflowCardsWithoutMoment() {
         let presentation = MomentsCreateWorkflowPresentation(
             activeMomentId: nil,
             template: .birthdayMessage,
@@ -107,7 +107,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
             savedScenes: [MomentsCreateTestFixtures.makeScene(id: "scene-1")],
             generatedScenes: [],
             isPlanning: true,
-            statusMessage: "Drafting story."
+            statusMessage: "Planning story."
         )
         let previewSummary = MomentsCreatePreviewSummary(
             activeMoment: MomentsCreateTestFixtures.makeMoment(id: "moment-1"),
@@ -334,7 +334,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         XCTAssertEqual(presentation.selectionMessage, "")
     }
 
-    func testStoryPresentationFormatsDraftStateAndSortsSavedScenes() {
+    func testStoryPresentationFormatsPlanStateAndSortsSavedScenes() {
         let presentation = MomentsCreateStoryPresentation(
             summary: MomentsCreateStorySummary(
                 savedScenes: [
@@ -343,7 +343,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
                 ],
                 generatedScenes: [],
                 isPlanning: true,
-                statusMessage: "Drafting."
+                statusMessage: "Planning."
             ),
             balance: MomentsCreditBalance(proMonthly: 0, promotional: 1, purchased: 0),
             canPlanStory: true,

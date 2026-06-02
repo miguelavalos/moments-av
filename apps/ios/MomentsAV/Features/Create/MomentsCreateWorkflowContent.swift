@@ -51,18 +51,18 @@ struct MomentsCreateWorkflowContent: View {
                     createAnotherFinalVideoVersion: viewModel.createAnotherFinalVideoVersion
                 )
             } else {
-                draftSetupCard
+                setupCard
             }
         }
     }
 
-    private var draftSetupCard: some View {
+    private var setupCard: some View {
         MomentsCreateSetupCard(
             form: $viewModel.form,
             selectedStyle: viewModel.selectedCreationStyle,
             styles: viewModel.creationStyles,
             selectedMusicPreset: viewModel.selectedMusicPreset,
-            presentation: viewModel.draftSetupPresentation,
+            presentation: viewModel.setupPresentation,
             newMomentStep: viewModel.newMomentStep,
             isSignedIn: viewModel.isSignedIn,
             balance: viewModel.balance,
@@ -118,9 +118,9 @@ private struct MomentsCreateMediaFirstWorkspace: View {
 
     @State private var showsAviOptions = false
     @State private var showsStoryReview = false
-    @State private var opensStoryReviewAfterDraft = false
+    @State private var opensStoryReviewAfterPlan = false
     @State private var showsCreateVideoConfirmation = false
-    @State private var showsDiscardDraftConfirmation = false
+    @State private var showsDiscardMomentConfirmation = false
 
     var body: some View {
         ScrollView {
@@ -158,7 +158,7 @@ private struct MomentsCreateMediaFirstWorkspace: View {
 
                 MomentsCreatePrimaryActionBar(
                     presentation: presentation,
-                    discardMoment: { showsDiscardDraftConfirmation = true },
+                    discardMoment: { showsDiscardMomentConfirmation = true },
                     startSignInFlow: startSignInFlow,
                     reviewStoryFirst: reviewStoryFirst,
                     generatePreview: generatePreview,
@@ -176,8 +176,8 @@ private struct MomentsCreateMediaFirstWorkspace: View {
         .scrollIndicators(.hidden)
         .animation(.spring(response: 0.38, dampingFraction: 0.86), value: presentation.storySummary.hasScenes)
         .onChange(of: presentation.storySummary.hasScenes) { _, hasScenes in
-            guard hasScenes, opensStoryReviewAfterDraft else { return }
-            opensStoryReviewAfterDraft = false
+            guard hasScenes, opensStoryReviewAfterPlan else { return }
+            opensStoryReviewAfterPlan = false
             showsStoryReview = true
         }
         .alert(L10n.string("create.final.confirmTitle"), isPresented: $showsCreateVideoConfirmation) {
@@ -188,10 +188,10 @@ private struct MomentsCreateMediaFirstWorkspace: View {
         } message: {
             Text(L10n.string("create.final.confirmMessage", creditCostTitle))
         }
-        .alert(L10n.string("create.discard.confirmTitle"), isPresented: $showsDiscardDraftConfirmation) {
+        .alert(L10n.string("create.discard.confirmTitle"), isPresented: $showsDiscardMomentConfirmation) {
             Button(L10n.string("create.discard.keep"), role: .cancel) {}
             Button(discardConfirmationActionTitle, role: .destructive) {
-                discardCurrentDraft()
+                discardCurrentMoment()
             }
         } message: {
             Text(discardConfirmationMessage)
@@ -218,7 +218,7 @@ private struct MomentsCreateMediaFirstWorkspace: View {
                     createVideo: generateFinalRender,
                     buyReviewBundle: buyReviewBundle,
                     openCredits: openCredits,
-                discardMoment: discardCurrentDraft,
+                discardMoment: discardCurrentMoment,
                 dismiss: { showsStoryReview = false }
             )
         }
@@ -239,7 +239,7 @@ private struct MomentsCreateMediaFirstWorkspace: View {
             showsStoryReview = true
             return
         }
-        opensStoryReviewAfterDraft = true
+        opensStoryReviewAfterPlan = true
         generateStoryPlan()
     }
 
@@ -247,7 +247,7 @@ private struct MomentsCreateMediaFirstWorkspace: View {
         MomentsCreditCopy.countTitle(presentation.finalRenderSummary.creditCost)
     }
 
-    private func discardCurrentDraft() {
+    private func discardCurrentMoment() {
         showsStoryReview = false
         showsAviOptions = false
         discardMoment()
@@ -719,7 +719,7 @@ private struct MomentsCreateStoryReviewPage: View {
     let dismiss: () -> Void
 
     @State private var showsCreateVideoConfirmation = false
-    @State private var showsDiscardDraftConfirmation = false
+    @State private var showsDiscardMomentConfirmation = false
     @State private var removesWatermark = false
 
     var body: some View {
@@ -827,7 +827,7 @@ private struct MomentsCreateStoryReviewPage: View {
                             .disabled(isPrimaryCreateDisabled)
 
                             HStack(spacing: 14) {
-                                Button(action: { showsDiscardDraftConfirmation = true }) {
+                                Button(action: { showsDiscardMomentConfirmation = true }) {
                                     Label(L10n.string("create.workflowContent.discardMoment"), systemImage: "trash.fill")
                                 }
                                 .buttonStyle(MomentsCreateDestructiveInlineButtonStyle())
@@ -861,7 +861,7 @@ private struct MomentsCreateStoryReviewPage: View {
         } message: {
             Text(L10n.string("create.final.confirmMessage", totalCreditCostTitle))
         }
-        .alert(L10n.string("create.discard.confirmTitle"), isPresented: $showsDiscardDraftConfirmation) {
+        .alert(L10n.string("create.discard.confirmTitle"), isPresented: $showsDiscardMomentConfirmation) {
             Button(L10n.string("create.discard.keep"), role: .cancel) {}
             Button(discardConfirmationActionTitle, role: .destructive) {
                 discardMoment()

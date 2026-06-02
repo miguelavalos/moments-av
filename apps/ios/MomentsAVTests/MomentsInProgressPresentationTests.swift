@@ -34,13 +34,13 @@ final class MomentsInProgressPresentationTests: XCTestCase {
                 MomentsInProgressUnavailablePresentation(
                     systemImage: "rectangle.stack.badge.plus",
                     title: "Nothing here yet",
-                    message: "Drafts appear in In Progress. Downloaded final videos appear in Gallery."
+                    message: "In-progress moments appear here. Downloaded final videos appear in Gallery."
                 )
             )
         )
     }
 
-    func testProjectsAvailabilityIsAvailableWhenSignedInWithProjects() {
+    func testMomentsAvailabilityIsAvailableWhenSignedInWithMoments() {
         let presentation = MomentsInProgressPresentation.make(
             isSignedIn: true,
             momentsSummary: InProgressMomentsSummary.make(from: [
@@ -52,7 +52,7 @@ final class MomentsInProgressPresentationTests: XCTestCase {
         XCTAssertEqual(presentation.availability, .available)
     }
 
-    func testDeletionMessageUsesPendingProjectTitleOrFallback() {
+    func testDeletionMessageUsesPendingMomentTitleOrFallback() {
         let fallback = MomentsInProgressPresentation.make(
             isSignedIn: true,
             momentsSummary: InProgressMomentsSummary(),
@@ -78,7 +78,7 @@ final class MomentsInProgressPresentationTests: XCTestCase {
     private func makeMoment(
         id: String,
         title: String? = nil,
-        status: String = "draft_created",
+        status: String = "in_progress",
         updatedAt: Double = 10
     ) -> InProgressMoment {
         InProgressMoment(

@@ -98,7 +98,7 @@ final class MomentsInProgressWorkspacePresentationTests: XCTestCase {
 
     func testWorkspaceSummaryPresentationUsesFallbacksWhenNoArtifactsOrJobsExist() {
         let presentation = MomentsInProgressWorkspaceSummaryPresentation(
-            workspace: makeWorkspace(moment: makeMoment(status: "draft_created"))
+            workspace: makeWorkspace(moment: makeMoment(status: "in_progress"))
         )
 
         XCTAssertEqual(presentation.tiles.map(\.value), ["Moment Created", "Not ready", "Not ready", "Not started"])
@@ -177,7 +177,7 @@ final class MomentsInProgressWorkspacePresentationTests: XCTestCase {
     }
 
     private func makeMoment(
-        status: String = "draft_created",
+        status: String = "in_progress",
         title: String = "moment-1",
         updatedAt: Double = 10
     ) -> InProgressMoment {

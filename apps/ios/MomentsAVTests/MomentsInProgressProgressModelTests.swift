@@ -2,7 +2,7 @@ import XCTest
 @testable import MomentsAV
 
 final class MomentsInProgressProgressModelTests: XCTestCase {
-    func testEmptyWorkspaceMarksDraftCompleteAndRemainingStepsWaiting() {
+    func testEmptyWorkspaceMarksMomentCreatedAndRemainingStepsWaiting() {
         let model = MomentsInProgressProgressModel(workspace: makeWorkspace())
 
         XCTAssertEqual(model.phases.map(\.title), ["Moment", "Media", "Story", "Story Review", "Final"])
@@ -10,7 +10,7 @@ final class MomentsInProgressProgressModelTests: XCTestCase {
         XCTAssertEqual(model.phases.map(\.detail), [
             "Moment Created",
             "No media yet",
-            "Not drafted",
+            "Not planned",
             "Not reviewed",
             "Not rendered"
         ])
@@ -46,7 +46,7 @@ final class MomentsInProgressProgressModelTests: XCTestCase {
         artifacts: [MomentArtifact] = []
     ) -> MomentWorkspace {
         MomentWorkspace(
-            moment: makeMoment(id: "moment-1", status: "draft_created", updatedAt: 10),
+            moment: makeMoment(id: "moment-1", status: "in_progress", updatedAt: 10),
             mediaAssets: mediaAssets,
             storyScenes: storyScenes,
             renderJobs: renderJobs,

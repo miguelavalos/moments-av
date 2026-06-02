@@ -28,14 +28,14 @@ final class MomentsDependencyContainer: ObservableObject {
     ) {
         let clients = MomentsWorkflowClients(baseURLString: AppConfig.momentsAPIBaseURL)
         self.accountController = accountController
-        let resolvedProjectsObserver = momentsObserver ?? InProgressMomentsObserver(momentsRepository: momentsRepository)
+        let resolvedMomentsObserver = momentsObserver ?? InProgressMomentsObserver(momentsRepository: momentsRepository)
         let resolvedWorkspaceObserver = workspaceObserver ?? MomentsWorkspaceObserver(momentsRepository: momentsRepository)
-        self.momentsObserver = resolvedProjectsObserver
+        self.momentsObserver = resolvedMomentsObserver
         self.workspaceObserver = resolvedWorkspaceObserver
         let workflows = MomentsWorkflowBundle(
             accountController: accountController,
             momentsRepository: momentsRepository,
-            momentsObserver: resolvedProjectsObserver,
+            momentsObserver: resolvedMomentsObserver,
             workspaceObserver: resolvedWorkspaceObserver,
             clients: clients
         )

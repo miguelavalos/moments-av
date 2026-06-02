@@ -73,7 +73,7 @@ final class MomentsCreditGateTests: XCTestCase {
         XCTAssertFalse(form.canCreateMoment)
     }
 
-    func testDraftAvailabilityAllowsSetupWithoutCredits() {
+    func testSetupAvailabilityAllowsSetupWithoutCredits() {
         var form = MomentSetupForm(template: .birthdayMessage)
         form.occasion = "Birthday"
 
@@ -218,7 +218,7 @@ final class MomentsCreditGateTests: XCTestCase {
 
         XCTAssertTrue(MomentsPreviewRules.canGenerate(moment: moment, template: .birthdayMessage, balance: balance))
 
-        let previewReadyProject = InProgressMoment(
+        let previewReadyMoment = InProgressMoment(
             id: moment.id,
             template: moment.template,
             status: "preview_ready",
@@ -233,9 +233,9 @@ final class MomentsCreditGateTests: XCTestCase {
             previewLimit: moment.previewLimit,
             updatedAt: moment.updatedAt
         )
-        XCTAssertTrue(MomentsPreviewRules.canGenerate(moment: previewReadyProject, template: .birthdayMessage, balance: balance))
+        XCTAssertTrue(MomentsPreviewRules.canGenerate(moment: previewReadyMoment, template: .birthdayMessage, balance: balance))
 
-        let limitedProject = InProgressMoment(
+        let limitedMoment = InProgressMoment(
             id: moment.id,
             template: moment.template,
             status: moment.status,
@@ -250,7 +250,7 @@ final class MomentsCreditGateTests: XCTestCase {
             previewLimit: 3,
             updatedAt: moment.updatedAt
         )
-        XCTAssertFalse(MomentsPreviewRules.canGenerate(moment: limitedProject, template: .birthdayMessage, balance: balance))
+        XCTAssertFalse(MomentsPreviewRules.canGenerate(moment: limitedMoment, template: .birthdayMessage, balance: balance))
     }
 
     func testFinalRenderRulesRequirePreviewAndCredits() {

@@ -19,7 +19,7 @@ final class MomentsInProgressListPresentationTests: XCTestCase {
     func testGroupsOmitEmptySectionsAndPreserveStatusRulesOrder() {
         let presentation = MomentsInProgressListPresentation.make(
             momentsSummary: InProgressMomentsSummary.make(from: [
-                makeMoment(id: "older-active", status: "draft_created", updatedAt: 10),
+                makeMoment(id: "older-active", status: "in_progress", updatedAt: 10),
                 makeMoment(id: "newer-active", status: "story_ready", updatedAt: 30),
                 makeMoment(id: "done", status: "completed", updatedAt: 20)
             ]),
@@ -31,7 +31,7 @@ final class MomentsInProgressListPresentationTests: XCTestCase {
         XCTAssertEqual(presentation.groups[1].rows.map(\.id), ["done"])
     }
 
-    func testRowPresentationFormatsProjectMetadataAndSelection() {
+    func testRowPresentationFormatsMomentMetadataAndSelection() {
         let moment = makeMoment(
             id: "moment-1",
             status: "preview_ready",
@@ -67,7 +67,7 @@ final class MomentsInProgressListPresentationTests: XCTestCase {
 
     func testRowPresentationUsesSingularCreditCopy() {
         let row = MomentsInProgressListRowPresentation(
-            moment: makeMoment(id: "one-credit", status: "draft_created", creditCost: 1),
+            moment: makeMoment(id: "one-credit", status: "in_progress", creditCost: 1),
             isSelected: false
         )
 

@@ -337,7 +337,7 @@ private struct MomentsInProgressGalleryEmptyState: View {
     }
 }
 
-private struct MomentsInProgressDraftEmptyState: View {
+private struct MomentsInProgressNoMomentsEmptyState: View {
     let startMoment: (() -> Void)?
 
     var body: some View {

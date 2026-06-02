@@ -43,7 +43,7 @@ struct MomentsCreateSetupCard: View {
                         form.mediaUse = .aviPick
                         beginNewMoment()
                     },
-                    planProject: {
+                    planMoment: {
                         form.creationMode = .planned
                         showsMomentSheet = true
                         editStyle()
@@ -52,7 +52,7 @@ struct MomentsCreateSetupCard: View {
                     openCredits: openCredits
                 )
 
-                activeDraftAndErrorContent
+                activeMomentAndErrorContent
             }
             .sheet(isPresented: $showsMomentSheet) {
                 styleStep
@@ -126,7 +126,7 @@ struct MomentsCreateSetupCard: View {
         }
     }
 
-    private var activeDraftAndErrorContent: some View {
+    private var activeMomentAndErrorContent: some View {
         VStack(alignment: .leading, spacing: 16) {
             if presentation.showsActiveMoment {
                 Button(action: discardMoment) {
@@ -184,7 +184,7 @@ private struct MomentsCreateNewMomentStatus: View {
     let guidance: MomentsCreateAviGuidance
     let canBeginNewMoment: Bool
     let beginNewMoment: () -> Void
-    let planProject: () -> Void
+    let planMoment: () -> Void
     let startSignInFlow: () -> Void
     let openCredits: () -> Void
 
@@ -201,7 +201,7 @@ private struct MomentsCreateNewMomentStatus: View {
                 selectedStyle: selectedStyle,
                 canBeginNewMoment: canBeginNewMoment,
                 beginNewMoment: beginNewMoment,
-                planProject: planProject,
+                planMoment: planMoment,
                 startSignInFlow: startSignInFlow,
                 openCredits: openCredits
             )
@@ -256,7 +256,7 @@ private struct MomentsCreateNewMomentActionBlock: View {
     let selectedStyle: MomentCreationStyle
     let canBeginNewMoment: Bool
     let beginNewMoment: () -> Void
-    let planProject: () -> Void
+    let planMoment: () -> Void
     let startSignInFlow: () -> Void
     let openCredits: () -> Void
 
@@ -271,7 +271,7 @@ private struct MomentsCreateNewMomentActionBlock: View {
                 action: beginNewMoment
             )
 
-            Button(action: planProject) {
+            Button(action: planMoment) {
                 Label(L10n.string("create.planFirst"), systemImage: "slider.horizontal.3")
                     .font(.system(size: 14, weight: .black))
                     .frame(maxWidth: .infinity)

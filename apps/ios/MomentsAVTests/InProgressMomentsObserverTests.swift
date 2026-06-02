@@ -4,7 +4,7 @@ import XCTest
 
 @MainActor
 final class InProgressMomentsObserverTests: XCTestCase {
-    func testProjectsObserverPublishesProjectUpdates() async throws {
+    func testMomentsObserverPublishesMomentUpdates() async throws {
         let repository = MockMomentsRepository()
         let observer = InProgressMomentsObserver(momentsRepository: repository)
 
@@ -18,7 +18,7 @@ final class InProgressMomentsObserverTests: XCTestCase {
         XCTAssertEqual(repository.observedOwnerUserIds, ["user-1"])
     }
 
-    func testProjectsObserverClearsStateWhenOwnerIsMissing() async {
+    func testMomentsObserverClearsStateWhenOwnerIsMissing() async {
         let repository = MockMomentsRepository()
         let observer = InProgressMomentsObserver(momentsRepository: repository)
 
@@ -33,7 +33,7 @@ final class InProgressMomentsObserverTests: XCTestCase {
         XCTAssertEqual(repository.observedOwnerUserIds, ["user-1"])
     }
 
-    func testProjectsObserverPublishesObservationErrors() {
+    func testMomentsObserverPublishesObservationErrors() {
         let repository = MockMomentsRepository(momentsError: TestObservationError.moments)
         let observer = InProgressMomentsObserver(momentsRepository: repository)
 
@@ -43,7 +43,7 @@ final class InProgressMomentsObserverTests: XCTestCase {
         XCTAssertEqual(observer.errorMessage, TestObservationError.moments.localizedDescription)
     }
 
-    func testProjectsObserverIgnoresStaleProjectUpdatesAfterChangingOwner() async {
+    func testMomentsObserverIgnoresStaleMomentUpdatesAfterChangingOwner() async {
         let repository = MockMomentsRepository()
         let observer = InProgressMomentsObserver(momentsRepository: repository)
 
@@ -108,7 +108,7 @@ final class InProgressMomentsObserverTests: XCTestCase {
         XCTAssertEqual(observer.errorMessage, TestObservationError.workspace.localizedDescription)
     }
 
-    func testWorkspaceObserverIgnoresStaleWorkspaceUpdatesAfterChangingProject() async {
+    func testWorkspaceObserverIgnoresStaleWorkspaceUpdatesAfterChangingMoment() async {
         let repository = MockWorkspaceRepository()
         let observer = MomentsWorkspaceObserver(momentsRepository: repository)
 
@@ -160,7 +160,7 @@ final class InProgressMomentsObserverTests: XCTestCase {
         InProgressMoment(
             id: id,
             template: .birthdayMessage,
-            status: "draft_created",
+            status: "in_progress",
             title: "Family Weekend",
             tone: nil,
             tempo: nil,

@@ -8,7 +8,7 @@ extension MomentsCreateViewModel {
             updateSetupErrorMessage(setupAvailabilityMessage ?? L10n.string("create.error.startWhenReady"))
             return
         }
-        prepareNewDraftCreation()
+        prepareNewMomentCreation()
         isLocalMomentStarted = true
         pendingFocus = .media
         if openMediaPicker {
@@ -36,7 +36,7 @@ extension MomentsCreateViewModel {
             return
         }
         let form = form
-        prepareNewDraftCreation()
+        prepareNewMomentCreation()
 
         runOperation {
             let momentId = await momentCreationWorkflow.createMoment(form: form)

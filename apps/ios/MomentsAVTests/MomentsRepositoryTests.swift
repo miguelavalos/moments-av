@@ -15,7 +15,7 @@ final class MomentsRepositoryTests: XCTestCase {
         XCTAssertTrue(repository.isConfigured)
     }
 
-    func testCreateDraftThrowsNotConfiguredWhenConvexIsNotConfigured() async {
+    func testCreateMomentThrowsNotConfiguredWhenConvexIsNotConfigured() async {
         let repository = MomentsRepository(deploymentURL: "")
 
         do {
@@ -29,7 +29,7 @@ final class MomentsRepositoryTests: XCTestCase {
         }
     }
 
-    func testCreateDraftThrowsInvalidFormBeforeRemoteCall() async {
+    func testCreateMomentThrowsInvalidFormBeforeRemoteCall() async {
         let repository = MomentsRepository(deploymentURL: "")
         var form = MomentSetupForm(template: .birthdayMessage)
         form.occasion = "  "

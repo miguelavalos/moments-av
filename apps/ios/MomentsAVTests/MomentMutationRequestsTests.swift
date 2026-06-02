@@ -2,7 +2,7 @@ import XCTest
 @testable import MomentsAV
 
 final class MomentMutationRequestsTests: XCTestCase {
-    func testDraftCreationRequestUsesFormValues() {
+    func testMomentCreationRequestUsesFormValues() {
         var form = MomentSetupForm(template: .partyRecap)
         form.recipient = "Ava"
         form.occasion = "Graduation"
@@ -20,7 +20,7 @@ final class MomentMutationRequestsTests: XCTestCase {
         XCTAssertEqual(request.details, "Use the beach photos first.")
     }
 
-    func testDraftCreationRequestUsesOccasionWhenRecipientIsEmpty() {
+    func testMomentCreationRequestUsesOccasionWhenRecipientIsEmpty() {
         var form = MomentSetupForm(template: .softRoast)
         form.occasion = "Team dinner"
         form.recipient = "  "
@@ -30,7 +30,7 @@ final class MomentMutationRequestsTests: XCTestCase {
         XCTAssertEqual(request.title, "Team dinner")
     }
 
-    func testMomentDeletionRequestDeletesProjectTreeForUserRequest() {
+    func testMomentDeletionRequestDeletesMomentTreeForUserRequest() {
         let request = MomentDeletionRequest.userRequested(momentId: "moment-1")
 
         XCTAssertEqual(request.momentId, "moment-1")

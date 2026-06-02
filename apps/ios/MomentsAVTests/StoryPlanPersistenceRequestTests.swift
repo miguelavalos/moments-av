@@ -2,7 +2,7 @@ import XCTest
 @testable import MomentsAV
 
 final class StoryPlanPersistenceRequestTests: XCTestCase {
-    func testSceneRequestUsesDraftSceneFieldsAndAviAuthor() {
+    func testSceneRequestUsesPlanSceneFieldsAndAviAuthor() {
         let scene = MomentsStoryPlanScene(
             sceneIndex: 1,
             mediaAssetIds: ["media-1", "media-2"],
@@ -28,8 +28,8 @@ final class StoryPlanPersistenceRequestTests: XCTestCase {
         XCTAssertEqual(request.createdBy, "avi")
     }
 
-    func testReadyRequestApprovesAllowedDrafts() {
-        let plan = makeDraft(moderationStatus: "allowed")
+    func testReadyRequestApprovesAllowedPlans() {
+        let plan = makePlan(moderationStatus: "allowed")
 
         let request = StoryReadyPersistenceRequest.plan(plan, storyInputSignature: "signature-1")
 
@@ -38,15 +38,15 @@ final class StoryPlanPersistenceRequestTests: XCTestCase {
         XCTAssertEqual(request.storyInputSignature, "signature-1")
     }
 
-    func testReadyRequestBlocksNonAllowedDrafts() {
-        let plan = makeDraft(moderationStatus: "rejected")
+    func testReadyRequestBlocksNonAllowedPlans() {
+        let plan = makePlan(moderationStatus: "rejected")
 
         let request = StoryReadyPersistenceRequest.plan(plan, storyInputSignature: "signature-1")
 
         XCTAssertEqual(request.moderationStatus, "blocked")
     }
 
-    private func makeDraft(moderationStatus: String) -> MomentsStoryPlanResponse {
+    private func makePlan(moderationStatus: String) -> MomentsStoryPlanResponse {
         let json = """
         {
           "appId": "momentsav",

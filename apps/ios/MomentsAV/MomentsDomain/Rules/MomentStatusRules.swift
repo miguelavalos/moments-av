@@ -10,11 +10,11 @@ enum MomentStatusRules {
     }
 
     static func group(_ moments: [InProgressMoment]) -> InProgressMomentGroups {
-        let sortedProjects = moments.sortedByLatestUpdate()
+        let sortedMoments = moments.sortedByLatestUpdate()
 
         return InProgressMomentGroups(
-            inProgress: sortedProjects.filter { !isFinished($0) },
-            finished: sortedProjects.filter(isFinished)
+            inProgress: sortedMoments.filter { !isFinished($0) },
+            finished: sortedMoments.filter(isFinished)
         )
     }
 
