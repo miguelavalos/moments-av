@@ -19,7 +19,7 @@ struct MomentsRemoteClient {
         let client = try requireClient()
 
         return client.subscribe(
-            to: "moments:listProjects",
+            to: "moments:listInProgressMoments",
             with: ["ownerUserId": ownerUserId],
             yielding: [InProgressMoment].self
         )
@@ -34,7 +34,7 @@ struct MomentsRemoteClient {
         let client = try requireClient()
 
         return client.subscribe(
-            to: "moments:getProjectWorkspace",
+            to: "moments:getMomentWorkspace",
             with: [
                 "ownerUserId": ownerUserId,
                 "momentId": momentId
@@ -89,7 +89,7 @@ struct MomentsRemoteClient {
     ) async throws {
         let client = try requireClient()
 
-        let deletedProjectId: String? = try await retryingMutation(
+        let deletedMomentId: String? = try await retryingMutation(
             client: client,
             name: "moments:deleteMoment",
             args: [
@@ -101,7 +101,7 @@ struct MomentsRemoteClient {
             ]
         )
 
-        guard deletedProjectId != nil else {
+        guard deletedMomentId != nil else {
             throw MomentsSyncError.unexpectedResponse
         }
     }

@@ -33,7 +33,7 @@ struct MomentsPreviewResponse: Decodable, Equatable {
 
 enum MomentsPreviewRules {
     enum BlockReason {
-        case missingProject
+        case missingMoment
         case previewLimitReached
         case insufficientCredits
         case storyNotReady
@@ -54,7 +54,7 @@ enum MomentsPreviewRules {
         balance: MomentsCreditBalance
     ) -> Availability {
         guard let moment else {
-            return Availability(canGenerate: false, blockReason: .missingProject)
+            return Availability(canGenerate: false, blockReason: .missingMoment)
         }
         if Int(moment.previewCount) >= Int(moment.previewLimit) {
             return Availability(canGenerate: false, blockReason: .previewLimitReached)
@@ -73,7 +73,7 @@ enum MomentsPreviewRules {
         switch availability.blockReason {
         case nil:
             return nil
-        case .missingProject:
+        case .missingMoment:
             return missingMomentMessage
         case .previewLimitReached:
             return "Story Review limit reached for this Moment."

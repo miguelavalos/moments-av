@@ -165,7 +165,7 @@ final class PreviewGenerationWorkflow: WorkspaceObservingWorkflow {
     private var refreshMessages: RenderJobStatusRefreshMessages {
         RenderJobStatusRefreshMessages(
             signIn: L10n.string("workflow.preview.refreshSignIn"),
-            missingProject: L10n.string("workflow.preview.refreshMissingProject"),
+            missingMoment: L10n.string("workflow.preview.refreshMissingMoment"),
             missingJob: L10n.string("workflow.preview.refreshMissingJob"),
             missingProviderRequest: MomentsRecoveryCopy.previewStatusMissing(),
             success: L10n.string("workflow.preview.refreshSuccess")

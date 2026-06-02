@@ -44,7 +44,7 @@ protocol MomentsRenderJobStatusUpdating {
         phase: String?,
         progressPercent: Int?,
         userMessage: String?,
-        canEditDraft: Bool?,
+        canEditSetup: Bool?,
         canRetry: Bool?,
         errorCode: String?,
         errorMessage: String?

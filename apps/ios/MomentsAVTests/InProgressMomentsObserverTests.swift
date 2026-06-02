@@ -5,12 +5,12 @@ import XCTest
 @MainActor
 final class InProgressMomentsObserverTests: XCTestCase {
     func testProjectsObserverPublishesProjectUpdates() async throws {
-        let repository = MockProjectsRepository()
+        let repository = MockMomentsRepository()
         let observer = InProgressMomentsObserver(momentsRepository: repository)
 
         observer.observeInProgressMoments(ownerUserId: "user-1")
         let moment = makeMoment(id: "moment-1")
-        repository.sendProjects([moment])
+        repository.sendMoments([moment])
         await waitUntil { observer.moments == [moment] }
 
         XCTAssertEqual(observer.moments, [moment])
@@ -19,11 +19,11 @@ final class InProgressMomentsObserverTests: XCTestCase {
     }
 
     func testProjectsObserverClearsStateWhenOwnerIsMissing() async {
-        let repository = MockProjectsRepository()
+        let repository = MockMomentsRepository()
         let observer = InProgressMomentsObserver(momentsRepository: repository)
 
         observer.observeInProgressMoments(ownerUserId: "user-1")
-        repository.sendProjects([makeMoment(id: "moment-1")])
+        repository.sendMoments([makeMoment(id: "moment-1")])
         await waitUntil { !observer.moments.isEmpty }
 
         observer.observeInProgressMoments(ownerUserId: nil)
@@ -34,7 +34,7 @@ final class InProgressMomentsObserverTests: XCTestCase {
     }
 
     func testProjectsObserverPublishesObservationErrors() {
-        let repository = MockProjectsRepository(projectsError: TestObservationError.moments)
+        let repository = MockMomentsRepository(momentsError: TestObservationError.moments)
         let observer = InProgressMomentsObserver(momentsRepository: repository)
 
         observer.observeInProgressMoments(ownerUserId: "user-1")
@@ -44,24 +44,24 @@ final class InProgressMomentsObserverTests: XCTestCase {
     }
 
     func testProjectsObserverIgnoresStaleProjectUpdatesAfterChangingOwner() async {
-        let repository = MockProjectsRepository()
+        let repository = MockMomentsRepository()
         let observer = InProgressMomentsObserver(momentsRepository: repository)
 
         observer.observeInProgressMoments(ownerUserId: "user-1")
-        let firstSubject = repository.projectsSubjects[0]
-        let firstProject = makeMoment(id: "moment-1")
-        firstSubject.send([firstProject])
-        await waitUntil { observer.moments == [firstProject] }
+        let firstSubject = repository.momentsSubjects[0]
+        let firstMoment = makeMoment(id: "moment-1")
+        firstSubject.send([firstMoment])
+        await waitUntil { observer.moments == [firstMoment] }
 
         observer.observeInProgressMoments(ownerUserId: "user-2")
-        let secondProject = makeMoment(id: "moment-2")
-        repository.sendProjects([secondProject])
-        await waitUntil { observer.moments == [secondProject] }
+        let secondMoment = makeMoment(id: "moment-2")
+        repository.sendMoments([secondMoment])
+        await waitUntil { observer.moments == [secondMoment] }
 
         firstSubject.send([makeMoment(id: "stale-moment")])
         try? await Task.sleep(nanoseconds: 20_000_000)
 
-        XCTAssertEqual(observer.moments, [secondProject])
+        XCTAssertEqual(observer.moments, [secondMoment])
         XCTAssertEqual(repository.observedOwnerUserIds, ["user-1", "user-2"])
     }
 
@@ -176,27 +176,27 @@ final class InProgressMomentsObserverTests: XCTestCase {
 }
 
 @MainActor
-private final class MockProjectsRepository: InProgressMomentsObserving {
-    private(set) var projectsSubjects: [CurrentValueSubject<[InProgressMoment], Error>] = []
+private final class MockMomentsRepository: InProgressMomentsObserving {
+    private(set) var momentsSubjects: [CurrentValueSubject<[InProgressMoment], Error>] = []
     private(set) var observedOwnerUserIds: [String] = []
-    private let projectsError: Error?
+    private let momentsError: Error?
 
-    init(projectsError: Error? = nil) {
-        self.projectsError = projectsError
+    init(momentsError: Error? = nil) {
+        self.momentsError = momentsError
     }
 
     func observeInProgressMoments(ownerUserId: String) throws -> AnyPublisher<[InProgressMoment], Error> {
         observedOwnerUserIds.append(ownerUserId)
-        if let projectsError {
-            throw projectsError
+        if let momentsError {
+            throw momentsError
         }
         let subject = CurrentValueSubject<[InProgressMoment], Error>([])
-        projectsSubjects.append(subject)
+        momentsSubjects.append(subject)
         return subject.eraseToAnyPublisher()
     }
 
-    func sendProjects(_ moments: [InProgressMoment]) {
-        projectsSubjects.last?.send(moments)
+    func sendMoments(_ moments: [InProgressMoment]) {
+        momentsSubjects.last?.send(moments)
     }
 }
 

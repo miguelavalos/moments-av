@@ -626,7 +626,7 @@ final class MomentsAPIClientTests: XCTestCase {
               "hasProFeatures": true,
               "proSource": "promo",
               "proExpiresAt": "2026-06-25T00:00:00.000Z",
-              "canStartProject": true,
+              "canStartMoment": true,
               "minimumRenderCredits": 1,
               "generatedAt": "2026-05-26T10:00:00.000Z"
             }
@@ -664,7 +664,7 @@ final class MomentsAPIClientTests: XCTestCase {
                 "hasProFeatures": false,
                 "proSource": "none",
                 "proExpiresAt": null,
-                "canStartProject": true,
+                "canStartMoment": true,
                 "minimumRenderCredits": 1,
                 "generatedAt": "2026-05-27T10:00:00.000Z"
               },
@@ -713,7 +713,7 @@ final class MomentsAPIClientTests: XCTestCase {
                 "reviewBundleReviewCount": 2,
                 "watermarkRemovalCreditCost": 1,
                 "watermarkFreeIncluded": false,
-                "canStartProject": true,
+                "canStartMoment": true,
                 "minimumRenderCredits": 1,
                 "generatedAt": "2026-05-29T10:00:00.000Z"
               },

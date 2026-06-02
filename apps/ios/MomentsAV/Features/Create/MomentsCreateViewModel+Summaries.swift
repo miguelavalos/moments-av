@@ -21,7 +21,7 @@ extension MomentsCreateViewModel {
         MomentsCreateStorySummary(
             savedScenes: effectiveSavedScenes,
             generatedScenes: generatedScenes,
-            isDrafting: isDraftingStory,
+            isPlanning: isPlanningStory,
             statusMessage: storyStatusMessage
         )
     }

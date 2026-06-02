@@ -32,7 +32,7 @@ struct MomentsRepository {
     }
 
     func createMoment(ownerUserId: String, form: MomentSetupForm) async throws -> String {
-        guard form.canCreateDraft else {
+        guard form.canCreateMoment else {
             throw MomentsSyncError.invalidForm
         }
 
@@ -49,7 +49,7 @@ struct MomentsRepository {
         phase: String?,
         progressPercent: Int?,
         userMessage: String?,
-        canEditDraft: Bool?,
+        canEditSetup: Bool?,
         canRetry: Bool?,
         errorCode: String?,
         errorMessage: String?
@@ -61,7 +61,7 @@ struct MomentsRepository {
             phase: phase,
             progressPercent: progressPercent,
             userMessage: userMessage,
-            canEditDraft: canEditDraft,
+            canEditSetup: canEditSetup,
             canRetry: canRetry,
             errorCode: errorCode,
             errorMessage: errorMessage

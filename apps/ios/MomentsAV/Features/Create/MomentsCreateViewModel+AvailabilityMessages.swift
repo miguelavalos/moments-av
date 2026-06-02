@@ -1,7 +1,7 @@
 extension MomentsCreateViewModel {
     var setupAvailabilityMessage: String? {
         MomentsCreateAvailabilityMessageFactory.setup(
-            isDraftLocked: isDraftLocked,
+            isSetupLocked: isSetupLocked,
             isSignedIn: isSignedIn,
             isMomentCreationConfigured: momentCreationWorkflow?.isConfigured ?? false,
             setupFormAvailability: setupFormAvailability
@@ -21,7 +21,7 @@ extension MomentsCreateViewModel {
         MomentsCreateAvailabilityMessageFactory.story(
             isSignedIn: isSignedIn,
             hasMomentWorkspace: hasMomentWorkspace,
-            isStoryPlaning: storyPlanWorkflow?.isDrafting ?? false,
+            isStoryPlanning: storyPlanWorkflow?.isPlanning ?? false,
             isStoryPlanAvailable: storyPlanWorkflow != nil,
             isStoryPlanConfigured: storyPlanWorkflow?.isConfigured ?? false,
             mediaAssets: effectiveActiveWorkspace?.mediaAssets,

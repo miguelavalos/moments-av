@@ -2,13 +2,13 @@ import Foundation
 
 struct MomentsCreateSetupPresentation: Equatable {
     var templateSummary: MomentsCreateTemplateSummaryPresentation
-    var isDraftLocked = false
+    var isSetupLocked = false
     var isCreatingMoment = false
-    var canCreateDraft = false
+    var canCreateMoment = false
     var availabilityMessage: String?
     var activeMomentId: String?
     var isContinuingMoment = false
-    var canStartAnotherProject = false
+    var canStartAnotherMoment = false
     var setupErrorMessage: String?
     var workspaceSummary: MomentsCreateWorkspaceSummary
 
@@ -34,13 +34,13 @@ struct MomentsCreateSetupPresentation: Equatable {
         template: MomentTemplate,
         canAfford: Bool,
         spendPlanDescription: String,
-        isDraftLocked: Bool,
+        isSetupLocked: Bool,
         isCreatingMoment: Bool,
-        canCreateDraft: Bool,
+        canCreateMoment: Bool,
         availabilityMessage: String?,
         activeMomentId: String?,
         isContinuingMoment: Bool,
-        canStartAnotherProject: Bool,
+        canStartAnotherMoment: Bool,
         setupErrorMessage: String?,
         workspaceSummary: MomentsCreateWorkspaceSummary
     ) -> MomentsCreateSetupPresentation {
@@ -50,13 +50,13 @@ struct MomentsCreateSetupPresentation: Equatable {
                 canAfford: canAfford,
                 spendPlanDescription: spendPlanDescription
             ),
-            isDraftLocked: isDraftLocked,
+            isSetupLocked: isSetupLocked,
             isCreatingMoment: isCreatingMoment,
-            canCreateDraft: canCreateDraft,
+            canCreateMoment: canCreateMoment,
             availabilityMessage: availabilityMessage,
             activeMomentId: activeMomentId,
             isContinuingMoment: isContinuingMoment,
-            canStartAnotherProject: canStartAnotherProject,
+            canStartAnotherMoment: canStartAnotherMoment,
             setupErrorMessage: setupErrorMessage,
             workspaceSummary: workspaceSummary
         )

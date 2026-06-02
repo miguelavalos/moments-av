@@ -77,7 +77,7 @@ extension MomentsRemoteClient {
         phase: String?,
         progressPercent: Int?,
         userMessage: String?,
-        canEditDraft: Bool?,
+        canEditSetup: Bool?,
         canRetry: Bool?,
         errorCode: String?,
         errorMessage: String?
@@ -103,8 +103,8 @@ extension MomentsRemoteClient {
         if let userMessage {
             args["userMessage"] = userMessage as ConvexEncodable
         }
-        if let canEditDraft {
-            args["canEditDraft"] = canEditDraft as ConvexEncodable
+        if let canEditSetup {
+            args["canEditSetup"] = canEditSetup as ConvexEncodable
         }
         if let canRetry {
             args["canRetry"] = canRetry as ConvexEncodable

@@ -7,32 +7,32 @@ extension MomentsCreateViewModel {
         return momentCreationWorkflow?.canAfford(template) ?? false
     }
 
-    var canCreateDraft: Bool {
-        !isDraftLocked
+    var canCreateMoment: Bool {
+        !isSetupLocked
             && isSignedIn
             && (momentCreationWorkflow?.isConfigured ?? false)
-            && setupFormAvailability.canCreateDraft
+            && setupFormAvailability.canCreateMoment
     }
 
-    var canBeginNewProject: Bool {
-        !isDraftLocked && !isBusy
+    var canBeginNewMoment: Bool {
+        !isSetupLocked && !isBusy
     }
 
-    var isDraftLocked: Bool {
+    var isSetupLocked: Bool {
         activeMomentId != nil
     }
 
     var isBusy: Bool {
         isCreatingMoment
             || isImportingMedia
-            || isDraftingStory
+            || isPlanningStory
             || isGeneratingPreview
             || isRefreshingPreviewStatus
             || isGeneratingFinalRender
             || isRefreshingFinalRenderStatus
     }
 
-    var canStartAnotherProject: Bool {
+    var canStartAnotherMoment: Bool {
         activeMomentId != nil && !isBusy
     }
 
@@ -88,7 +88,7 @@ extension MomentsCreateViewModel {
               latestFinalJob.isActiveRender else {
             return false
         }
-        return latestFinalJob.canEditDraft != true
+        return latestFinalJob.canEditSetup != true
     }
 
     var isStoryPreparedForCurrentInput: Bool {

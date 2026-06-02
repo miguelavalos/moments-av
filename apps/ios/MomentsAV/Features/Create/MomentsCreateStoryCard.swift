@@ -25,9 +25,9 @@ struct MomentsCreateStoryCard: View {
                 )
 
                 AVAppShellPrimaryButton(
-                    presentation.draftButtonTitle,
+                    presentation.planButtonTitle,
                     systemImage: "text.bubble.fill",
-                    isDisabled: !presentation.canPlanStory || presentation.summary.isDrafting || presentation.isBuyingReviewBundle,
+                    isDisabled: !presentation.canPlanStory || presentation.summary.isPlanning || presentation.isBuyingReviewBundle,
                     action: generateStoryPlan
                 )
 

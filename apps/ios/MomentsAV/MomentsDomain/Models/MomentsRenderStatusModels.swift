@@ -10,7 +10,7 @@ struct MomentsRenderStatusResponse: Decodable, Equatable {
     let phase: String?
     let progressPercent: Int
     let userMessage: String?
-    let canEditDraft: Bool?
+    let canEditSetup: Bool?
     let canRetry: Bool?
     let artifactId: String?
     let artifactKind: String?

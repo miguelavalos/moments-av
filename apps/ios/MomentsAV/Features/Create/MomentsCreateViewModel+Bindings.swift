@@ -77,16 +77,16 @@ extension MomentsCreateViewModel {
             workflow.$activeWorkspace.map { $0?.storyScenes ?? [] },
             workflow.$generatedPlan.map { $0?.scenes ?? [] },
             workflow.$statusMessage,
-            workflow.$isDrafting
+            workflow.$isPlanning
         )
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] savedScenes, generatedScenes, statusMessage, isDrafting in
+            .sink { [weak self] savedScenes, generatedScenes, statusMessage, isPlanning in
                 self?.applyStoryPlanState(
                     MomentsCreateStoryPlanState(
                         savedScenes: savedScenes,
                         generatedScenes: generatedScenes,
                         statusMessage: statusMessage,
-                        isDrafting: isDrafting
+                        isPlanning: isPlanning
                     )
                 )
             }

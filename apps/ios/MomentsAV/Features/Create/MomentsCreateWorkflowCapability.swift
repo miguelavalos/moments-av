@@ -70,7 +70,7 @@ enum MomentsCreateWorkflowCapabilityFactory {
         guard isSignedIn else { return false }
         guard let storyPlanWorkflow, hasMomentWorkspace else { return false }
         return storyPlanWorkflow.isConfigured
-            && !storyPlanWorkflow.isDrafting
+            && !storyPlanWorkflow.isPlanning
             && MomentsMediaRules.availability(template: template, selectedCount: selectedMediaCount).canUseSelection
     }
 

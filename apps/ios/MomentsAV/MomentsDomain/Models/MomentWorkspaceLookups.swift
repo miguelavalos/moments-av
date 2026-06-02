@@ -24,9 +24,9 @@ extension MomentWorkspace {
         }
     }
 
-    var canEditDraftDuringRender: Bool {
+    var canEditSetupDuringRender: Bool {
         guard let activeFinalRenderJob else { return true }
-        return activeFinalRenderJob.canEditDraft ?? false
+        return activeFinalRenderJob.canEditSetup ?? false
     }
 }
 

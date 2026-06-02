@@ -80,7 +80,7 @@ struct MomentsStoryClient {
         guard let httpResponse = response as? HTTPURLResponse, 200..<300 ~= httpResponse.statusCode else {
             let apiError = MomentsAPIError.decode(
                 from: data,
-                fallbackCode: "moments_story_draft_failed",
+                fallbackCode: "moments_story_plan_failed",
                 fallbackMessage: MomentsStoryError.planFailed.localizedDescription
             )
             if apiError.code == "moments_review_allowance_exhausted" {

@@ -42,13 +42,13 @@ extension MomentsCreateViewModel {
             template: form.template,
             canAfford: canAfford(form.template),
             spendPlanDescription: spendPlanDescription(for: form.template),
-            isDraftLocked: isDraftLocked,
+            isSetupLocked: isSetupLocked,
             isCreatingMoment: isCreatingMoment,
-            canCreateDraft: canCreateDraft,
+            canCreateMoment: canCreateMoment,
             availabilityMessage: setupAvailabilityMessage,
             activeMomentId: activeMomentId,
             isContinuingMoment: isContinuingMoment,
-            canStartAnotherProject: canStartAnotherProject,
+            canStartAnotherMoment: canStartAnotherMoment,
             setupErrorMessage: setupErrorMessage,
             workspaceSummary: workspaceSummary
         )

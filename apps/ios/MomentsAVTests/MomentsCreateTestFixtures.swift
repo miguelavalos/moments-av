@@ -86,7 +86,7 @@ enum MomentsCreateTestFixtures {
         phase: String? = nil,
         progressPercent: Double? = nil,
         userMessage: String? = nil,
-        canEditDraft: Bool? = nil,
+        canEditSetup: Bool? = nil,
         errorMessage: String? = nil
     ) -> MomentRenderJob {
         MomentRenderJob(
@@ -96,7 +96,7 @@ enum MomentsCreateTestFixtures {
             phase: phase,
             progressPercent: progressPercent,
             userMessage: userMessage,
-            canEditDraft: canEditDraft,
+            canEditSetup: canEditSetup,
             workflowRunId: "workflow-\(id)",
             provider: "mock-provider",
             model: "mock-model",

@@ -25,7 +25,7 @@ final class MomentsCreateViewModel: ObservableObject {
     @Published private(set) var savedScenes: [MomentStoryScene] = []
     @Published private(set) var generatedScenes: [MomentsStoryPlanScene] = []
     @Published private(set) var storyStatusMessage: String?
-    @Published private(set) var isDraftingStory = false
+    @Published private(set) var isPlanningStory = false
     @Published var isBuyingReviewBundle = false
     @Published var isPreparingStory = false
     @Published private(set) var activeWorkspace: MomentWorkspace?
@@ -79,7 +79,7 @@ final class MomentsCreateViewModel: ObservableObject {
         activeMomentId != nil
             || !selectedMedia.isEmpty
             || isImportingMedia
-            || isDraftingStory
+            || isPlanningStory
             || !savedScenes.isEmpty
             || !generatedScenes.isEmpty
             || latestPreview != nil
@@ -141,7 +141,7 @@ final class MomentsCreateViewModel: ObservableObject {
     }
 
     func selectTemplate(id: MomentTemplateID) {
-        guard !isDraftLocked else { return }
+        guard !isSetupLocked else { return }
         guard let template = templates.first(where: { $0.id == id }) else { return }
         form.template = template
     }
@@ -157,7 +157,7 @@ final class MomentsCreateViewModel: ObservableObject {
         applyStyleDefaults(style)
 
         if newMomentStep == .style {
-            beginNewProject()
+            beginNewMoment()
         }
     }
 
@@ -293,7 +293,7 @@ final class MomentsCreateViewModel: ObservableObject {
 
     private var canEditCreationOptions: Bool {
         if isBusy { return false }
-        if effectiveActiveWorkspace?.canEditDraftDuringRender == false {
+        if effectiveActiveWorkspace?.canEditSetupDuringRender == false {
             return false
         }
         if effectiveLatestPreview != nil || effectiveLatestPreviewJob != nil {
@@ -319,7 +319,7 @@ final class MomentsCreateViewModel: ObservableObject {
         isLocalMomentStarted = false
         pendingFocus = nil
         continuationFocusHint = nil
-        momentCreationWorkflow?.resetDraft(force: force)
+        momentCreationWorkflow?.resetMomentSetup(force: force)
         mediaUploadWorkflow?.reset(force: force)
         storyPlanWorkflow?.reset(force: force)
         previewGenerationWorkflow?.reset(force: force)
@@ -448,7 +448,7 @@ extension MomentsCreateViewModel {
         guard !usesFullUITestFixture else { return }
         savedScenes = state.savedScenes
         generatedScenes = state.generatedScenes
-        isDraftingStory = state.isDrafting
+        isPlanningStory = state.isPlanning
 
         let hasStoryScenes = !state.savedScenes.isEmpty || !state.generatedScenes.isEmpty
         if hasStoryScenes {

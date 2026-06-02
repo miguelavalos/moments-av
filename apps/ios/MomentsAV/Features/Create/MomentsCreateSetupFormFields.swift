@@ -5,7 +5,7 @@ struct MomentsCreateSetupFormFields: View {
     @Binding var form: MomentSetupForm
     let templateSelection: Binding<MomentTemplateID>
     let templates: [MomentTemplate]
-    let isDraftLocked: Bool
+    let isSetupLocked: Bool
 
     private var selectedTemplateTitle: String {
         templates.first(where: { $0.id == templateSelection.wrappedValue })?.title ?? L10n.string("create.form.template.choose")
@@ -17,7 +17,7 @@ struct MomentsCreateSetupFormFields: View {
                 title: L10n.string("create.form.template"),
                 value: selectedTemplateTitle,
                 systemImage: "sparkles.rectangle.stack",
-                isDisabled: isDraftLocked
+                isDisabled: isSetupLocked
             ) {
                 ForEach(templates) { template in
                     Button(template.title) {
@@ -32,7 +32,7 @@ struct MomentsCreateSetupFormFields: View {
                 placeholder: L10n.string("create.form.occasion.placeholder"),
                 systemImage: "calendar",
                 text: $form.occasion,
-                isDisabled: isDraftLocked
+                isDisabled: isSetupLocked
             )
             .accessibilityIdentifier("moments.create.occasion")
 
@@ -41,7 +41,7 @@ struct MomentsCreateSetupFormFields: View {
                 placeholder: L10n.string("create.form.recipient.placeholder"),
                 systemImage: "person.crop.circle",
                 text: $form.recipient,
-                isDisabled: isDraftLocked
+                isDisabled: isSetupLocked
             )
             .accessibilityIdentifier("moments.create.recipient")
 
@@ -50,7 +50,7 @@ struct MomentsCreateSetupFormFields: View {
                     title: L10n.string("create.form.tone"),
                     value: form.tone.title,
                     systemImage: "quote.bubble.fill",
-                    isDisabled: isDraftLocked
+                    isDisabled: isSetupLocked
                 ) {
                     ForEach(MomentSetupTone.allCases) { tone in
                         Button(tone.title) {
@@ -64,7 +64,7 @@ struct MomentsCreateSetupFormFields: View {
                     title: L10n.string("create.form.tempo"),
                     value: form.tempo.title,
                     systemImage: "metronome.fill",
-                    isDisabled: isDraftLocked
+                    isDisabled: isSetupLocked
                 ) {
                     ForEach(MomentSetupTempo.allCases) { tempo in
                         Button(tempo.title) {
@@ -80,7 +80,7 @@ struct MomentsCreateSetupFormFields: View {
                 placeholder: L10n.string("create.form.details.placeholder"),
                 systemImage: "wand.and.stars",
                 text: $form.details,
-                isDisabled: isDraftLocked
+                isDisabled: isSetupLocked
             )
             .accessibilityIdentifier("moments.create.details")
         }

@@ -102,7 +102,7 @@ struct MomentsHomeScreen: View {
             if createViewModel.previewSummary.isGenerating {
                 return L10n.string("home.avi.creating.title")
             }
-            if createViewModel.storySummary.isDrafting {
+            if createViewModel.storySummary.isPlanning {
                 return L10n.string("home.avi.preparing.title")
             }
             return L10n.string("home.avi.currentMoment.title")
@@ -122,7 +122,7 @@ struct MomentsHomeScreen: View {
             if createViewModel.previewSummary.isGenerating {
                 return L10n.string("home.avi.creating.detail")
             }
-            if createViewModel.storySummary.isDrafting {
+            if createViewModel.storySummary.isPlanning {
                 return L10n.string("home.avi.preparing.detail")
             }
             if count > 0 {

@@ -63,7 +63,7 @@ struct MomentsCreateWorkflowPresentation: Equatable {
 
     var showsBlockingPreparation: Bool {
         mediaSummary.isImporting
-            || storySummary.isDrafting
+            || storySummary.isPlanning
             || previewSummary.isGenerating
             || finalRenderSummary.isGenerating
     }

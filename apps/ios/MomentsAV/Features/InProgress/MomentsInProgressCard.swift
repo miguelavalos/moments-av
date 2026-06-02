@@ -12,7 +12,7 @@ struct MomentsInProgressCard: View {
     let activeWorkspace: MomentWorkspace?
     let isDeletingMoment: Bool
     let statusMessage: String?
-    let selectProject: (InProgressMoment) -> Void
+    let selectMoment: (InProgressMoment) -> Void
     let continueMoment: (MomentsContinuationRequest) -> Void
     let startMoment: () -> Void
     let startSignInFlow: () -> Void

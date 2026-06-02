@@ -150,7 +150,7 @@ enum MomentsCreateUITestFixtures {
             phase: status == "completed" ? "completed" : "queued",
             progressPercent: status == "completed" ? 100 : 10,
             userMessage: status == "completed" ? "Your video is ready." : "Avi has started creating the video.",
-            canEditDraft: status != "running",
+            canEditSetup: status != "running",
             canRetry: status == "failed",
             targetDurationMs: 15_000,
             plannedAssetCount: 10,

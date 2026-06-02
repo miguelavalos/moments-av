@@ -74,7 +74,7 @@ enum FinalRenderGenerationRun {
             phase: "queued",
             progressPercent: 10,
             userMessage: "Avi has started creating the video.",
-            canEditDraft: false,
+            canEditSetup: false,
             canRetry: false,
             targetDurationMs: nil,
             plannedAssetCount: nil,

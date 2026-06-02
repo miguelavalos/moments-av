@@ -3,7 +3,7 @@ import SwiftUI
 struct MomentsCreateActiveMomentSection: View {
     let presentation: MomentsCreateSetupPresentation
     let minimumMediaCount: Int
-    let discardDraft: () -> Void
+    let discardMoment: () -> Void
 
     @ViewBuilder
     var body: some View {
@@ -23,12 +23,12 @@ struct MomentsCreateActiveMomentSection: View {
                 minimumMediaCount: minimumMediaCount
             )
 
-            Button(action: discardDraft) {
+            Button(action: discardMoment) {
                 Label(L10n.string("create.workflowContent.discardMoment"), systemImage: "trash")
                     .frame(maxWidth: .infinity)
             }
             .buttonStyle(.bordered)
-            .disabled(!presentation.canStartAnotherProject)
+            .disabled(!presentation.canStartAnotherMoment)
         }
     }
 }

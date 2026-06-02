@@ -11,7 +11,7 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
     @Published private(set) var canRetryFinalVideoDownload = false
     @Published private(set) var statusMessage: String?
 
-    private var latestFinalJobProjectId: String?
+    private var latestFinalJobMomentId: String?
 
     private let currentUserProvider: any MomentsCurrentUserProviding
     private let authTokenProvider: any MomentsAuthTokenProviding
@@ -47,10 +47,10 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
         let momentId = workspace?.moment.id
         if let workspaceFinalJob = workspace?.latestRenderJob(kind: "final") {
             latestFinalJob = workspaceFinalJob
-            latestFinalJobProjectId = momentId
-        } else if momentId == nil || latestFinalJobProjectId != momentId {
+            latestFinalJobMomentId = momentId
+        } else if momentId == nil || latestFinalJobMomentId != momentId {
             latestFinalJob = nil
-            latestFinalJobProjectId = momentId
+            latestFinalJobMomentId = momentId
         }
         scheduleLocalGalleryDownloadIfNeeded(workspace: workspace)
     }
@@ -163,7 +163,7 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
                 shouldContinue: { isCurrentWorkflowGeneration(generation) }
             )
             latestFinalJob = startedJob
-            latestFinalJobProjectId = momentId
+            latestFinalJobMomentId = momentId
             statusMessage = L10n.string("workflow.final.creatingVideo")
         } catch {
             guard isCurrentWorkflowGeneration(generation) else { return }
@@ -218,7 +218,7 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
         clearActiveWorkspace()
         finalExport = nil
         latestFinalJob = nil
-        latestFinalJobProjectId = nil
+        latestFinalJobMomentId = nil
         renderPlan = nil
         pendingGalleryVideo = nil
         canRetryFinalVideoDownload = false
@@ -315,7 +315,7 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
     private func generateBlockMessage(_ availability: MomentsFinalRenderRules.Availability) -> String {
         MomentsFinalRenderRules.availabilityMessage(
             availability,
-            missingMomentMessage: L10n.string("workflow.final.missingProject"),
+            missingMomentMessage: L10n.string("workflow.final.missingMoment"),
             insufficientCreditsMessage: L10n.string("workflow.final.addCredits")
         ) ?? L10n.string("workflow.final.notReady")
     }
@@ -323,7 +323,7 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
     private var refreshMessages: RenderJobStatusRefreshMessages {
         RenderJobStatusRefreshMessages(
             signIn: L10n.string("workflow.final.refreshSignIn"),
-            missingProject: L10n.string("workflow.final.refreshMissingProject"),
+            missingMoment: L10n.string("workflow.final.refreshMissingMoment"),
             missingJob: L10n.string("workflow.final.refreshMissingJob"),
             missingProviderRequest: MomentsRecoveryCopy.finalRenderStatusMissing(),
             success: L10n.string("workflow.final.refreshSuccess")

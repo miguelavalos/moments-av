@@ -66,11 +66,11 @@ final class MomentsCreditGateTests: XCTestCase {
     func testSetupFormRequiresOccasionBeforeCreate() {
         var form = MomentSetupForm(template: .birthdayMessage)
 
-        XCTAssertTrue(form.canCreateDraft)
+        XCTAssertTrue(form.canCreateMoment)
 
         form.occasion = "  "
 
-        XCTAssertFalse(form.canCreateDraft)
+        XCTAssertFalse(form.canCreateMoment)
     }
 
     func testDraftAvailabilityAllowsSetupWithoutCredits() {
@@ -82,7 +82,7 @@ final class MomentsCreditGateTests: XCTestCase {
             balance: .empty
         )
 
-        XCTAssertTrue(availability.canCreateDraft)
+        XCTAssertTrue(availability.canCreateMoment)
         XCTAssertNil(MomentSetupRules.availabilityMessage(availability))
     }
 

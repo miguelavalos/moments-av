@@ -13,7 +13,7 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
     private let authTokenProvider: any MomentsAuthTokenProviding
     private let mediaAssetSaver: any MomentsMediaAssetSaving
     private let uploadClient: MomentsUploadClient
-    private var restoredWorkspaceProjectId: String?
+    private var restoredWorkspaceMomentId: String?
 
     init(
         currentUserProvider: any MomentsCurrentUserProviding,
@@ -205,7 +205,7 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
     override func workspaceDidChange(_ workspace: MomentWorkspace?) {
         guard selectedMedia.isEmpty,
               let workspace,
-              restoredWorkspaceProjectId != workspace.moment.id,
+              restoredWorkspaceMomentId != workspace.moment.id,
               !workspace.mediaAssets.isEmpty else { return }
 
         Task { [weak self] in
@@ -216,7 +216,7 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
     func restoreLocalMediaForEditing() {
         guard selectedMedia.isEmpty,
               let activeWorkspace,
-              restoredWorkspaceProjectId != activeWorkspace.moment.id,
+              restoredWorkspaceMomentId != activeWorkspace.moment.id,
               !activeWorkspace.mediaAssets.isEmpty else { return }
 
         Task { [weak self, activeWorkspace] in
@@ -311,7 +311,7 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
         importProgress = nil
         selectedMedia = []
         statusMessage = nil
-        restoredWorkspaceProjectId = nil
+        restoredWorkspaceMomentId = nil
         clearActiveWorkspace()
     }
 
@@ -322,7 +322,7 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
             let restoredMedia = try await MediaPickerImport.loadLocalMediaAssets(workspace.mediaAssets)
             guard activeWorkspace?.moment.id == workspace.moment.id, selectedMedia.isEmpty else { return }
             if restoredMedia.count == expectedSelectedCount {
-                restoredWorkspaceProjectId = workspace.moment.id
+                restoredWorkspaceMomentId = workspace.moment.id
                 selectedMedia = restoredMedia
                 statusMessage = L10n.string("workflow.media.localReady")
             } else if restoredMedia.isEmpty, expectedSelectedCount > 0 {

@@ -10,7 +10,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
                 canAfford: true,
                 spendPlanDescription: "Uses 1 monthly credit."
             ),
-            canCreateDraft: true,
+            canCreateMoment: true,
             workspaceSummary: MomentsCreateWorkspaceSummary()
         )
 
@@ -27,13 +27,13 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
                 canAfford: false,
                 spendPlanDescription: "Buy credits to continue."
             ),
-            isDraftLocked: true,
+            isSetupLocked: true,
             isCreatingMoment: true,
-            canCreateDraft: false,
+            canCreateMoment: false,
             availabilityMessage: "Setup is locked.",
             activeMomentId: "moment-1",
             isContinuingMoment: true,
-            canStartAnotherProject: true,
+            canStartAnotherMoment: true,
             setupErrorMessage: "Setup failed.",
             workspaceSummary: MomentsCreateWorkspaceSummary(mediaCount: 2, sceneCount: 1)
         )
@@ -42,12 +42,12 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         XCTAssertEqual(presentation.activeMomentLabel, "Continuing moment")
         XCTAssertEqual(presentation.activeMomentDetail, "Create is attached to this existing Moment.")
         XCTAssertTrue(presentation.showsActiveMoment)
-        XCTAssertTrue(presentation.isDraftLocked)
+        XCTAssertTrue(presentation.isSetupLocked)
         XCTAssertTrue(presentation.isCreatingMoment)
-        XCTAssertFalse(presentation.canCreateDraft)
+        XCTAssertFalse(presentation.canCreateMoment)
         XCTAssertEqual(presentation.availabilityMessage, "Setup is locked.")
         XCTAssertEqual(presentation.activeMomentId, "moment-1")
-        XCTAssertTrue(presentation.canStartAnotherProject)
+        XCTAssertTrue(presentation.canStartAnotherMoment)
         XCTAssertEqual(presentation.setupErrorMessage, "Setup failed.")
         XCTAssertEqual(presentation.workspaceSummary.mediaCount, 2)
         XCTAssertEqual(presentation.workspaceSummary.sceneCount, 1)
@@ -60,13 +60,13 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
             template: .partyRecap,
             canAfford: false,
             spendPlanDescription: "Need credits.",
-            isDraftLocked: true,
+            isSetupLocked: true,
             isCreatingMoment: false,
-            canCreateDraft: false,
+            canCreateMoment: false,
             availabilityMessage: "Locked.",
             activeMomentId: "moment-1",
             isContinuingMoment: true,
-            canStartAnotherProject: true,
+            canStartAnotherMoment: true,
             setupErrorMessage: nil,
             workspaceSummary: MomentsCreateWorkspaceSummary(mediaCount: 1)
         )
@@ -106,7 +106,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         let storySummary = MomentsCreateStorySummary(
             savedScenes: [MomentsCreateTestFixtures.makeScene(id: "scene-1")],
             generatedScenes: [],
-            isDrafting: true,
+            isPlanning: true,
             statusMessage: "Drafting story."
         )
         let previewSummary = MomentsCreatePreviewSummary(
@@ -264,7 +264,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         XCTAssertTrue(presentation.showsBlockingPreparation)
 
         presentation.mediaSummary = MomentsCreateMediaSummary()
-        presentation.storySummary = MomentsCreateStorySummary(isDrafting: true)
+        presentation.storySummary = MomentsCreateStorySummary(isPlanning: true)
         XCTAssertTrue(presentation.showsBlockingPreparation)
 
         presentation.storySummary = MomentsCreateStorySummary()
@@ -342,7 +342,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
                     MomentsCreateTestFixtures.makeScene(id: "scene-1", sceneIndex: 0)
                 ],
                 generatedScenes: [],
-                isDrafting: true,
+                isPlanning: true,
                 statusMessage: "Drafting."
             ),
             balance: MomentsCreditBalance(proMonthly: 0, promotional: 1, purchased: 0),
@@ -350,7 +350,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
             availabilityMessage: "Ready."
         )
 
-        XCTAssertEqual(presentation.draftButtonTitle, "Preparing story...")
+        XCTAssertEqual(presentation.planButtonTitle, "Preparing story...")
         XCTAssertEqual(presentation.emptyMessage, "Avi can prepare a story plan from your photos and clips.")
         XCTAssertEqual(presentation.savedScenes.map(\.id), ["scene-1", "scene-2"])
         XCTAssertTrue(presentation.canPlanStory)
@@ -455,7 +455,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
             phase: "rendering",
             progressPercent: 42,
             userMessage: "Rendering your video.",
-            canEditDraft: false
+            canEditSetup: false
         )
 
         let presentation = MomentsRenderRealtimePresentation(renderJob: job)
@@ -465,7 +465,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         XCTAssertEqual(presentation.progressFraction ?? -1, 0.42, accuracy: 0.001)
         XCTAssertEqual(presentation.systemImage, "gearshape.2.fill")
         XCTAssertTrue(presentation.isActive)
-        XCTAssertFalse(presentation.canEditDraft)
+        XCTAssertFalse(presentation.canEditSetup)
     }
 
     func testRealtimeRenderPresentationFormatsFailedStatus() {
@@ -473,7 +473,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
             id: "final-job",
             kind: "final_render",
             status: "failed",
-            canEditDraft: true,
+            canEditSetup: true,
             errorMessage: "fal provider request failed with upstream trace id abc123"
         )
 
@@ -486,7 +486,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         )
         XCTAssertEqual(presentation.systemImage, "exclamationmark.triangle.fill")
         XCTAssertFalse(presentation.isActive)
-        XCTAssertTrue(presentation.canEditDraft)
+        XCTAssertTrue(presentation.canEditSetup)
     }
 
     func testRealtimeRenderPresentationUsesSafeFailedUserMessage() {
@@ -495,7 +495,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
             kind: "final_render",
             status: "failed",
             userMessage: "We couldn’t finish this video. No credits were charged.",
-            canEditDraft: true,
+            canEditSetup: true,
             errorMessage: "provider stack trace"
         )
 

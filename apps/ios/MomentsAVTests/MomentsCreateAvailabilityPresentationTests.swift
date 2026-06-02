@@ -98,7 +98,7 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
     }
 
     func testAvailabilityCopyUsesSingularAndPluralCreditMessages() {
-        XCTAssertEqual(MomentsCreateAvailabilityCopy.draftSignInRequired, "Sign in before starting a Moment.")
+        XCTAssertEqual(MomentsCreateAvailabilityCopy.momentSignInRequired, "Sign in before starting a Moment.")
         XCTAssertEqual(MomentsCreateAvailabilityCopy.mediaTemplateFull, "Avi has enough media for this video.")
         XCTAssertEqual(MomentsCreateAvailabilityCopy.storyMissingMedia, "Add photos or clips before preparing the story.")
         XCTAssertEqual(
@@ -123,7 +123,7 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
                 isMediaUploadConfigured: true,
                 mediaRemainingSlots: 2
             ),
-            MomentsCreateAvailabilityCopy.mediaMissingProject
+            MomentsCreateAvailabilityCopy.mediaMissingMoment
         )
         XCTAssertNil(
             MomentsCreateAvailabilityMessageFactory.media(
@@ -149,7 +149,7 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
             MomentsCreateAvailabilityMessageFactory.story(
                 isSignedIn: true,
                 hasMomentWorkspace: true,
-                isStoryPlaning: false,
+                isStoryPlanning: false,
                 isStoryPlanAvailable: true,
                 isStoryPlanConfigured: true,
                 mediaAssets: [],
@@ -162,7 +162,7 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
             MomentsCreateAvailabilityMessageFactory.story(
                 isSignedIn: true,
                 hasMomentWorkspace: true,
-                isStoryPlaning: true,
+                isStoryPlanning: true,
                 isStoryPlanAvailable: true,
                 isStoryPlanConfigured: false,
                 mediaAssets: [],

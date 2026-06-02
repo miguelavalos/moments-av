@@ -2,13 +2,13 @@ import Foundation
 
 enum MomentsCreateAvailabilityMessageFactory {
     static func setup(
-        isDraftLocked: Bool,
+        isSetupLocked: Bool,
         isSignedIn: Bool,
         isMomentCreationConfigured: Bool,
         setupFormAvailability: MomentSetupRules.Availability
     ) -> String? {
-        if isDraftLocked { return nil }
-        if !isSignedIn { return MomentsCreateAvailabilityCopy.draftSignInRequired }
+        if isSetupLocked { return nil }
+        if !isSignedIn { return MomentsCreateAvailabilityCopy.momentSignInRequired }
         if !isMomentCreationConfigured { return MomentsCreateAvailabilityCopy.momentSyncNotConfigured }
         return MomentSetupRules.availabilityMessage(setupFormAvailability)
     }
@@ -19,7 +19,7 @@ enum MomentsCreateAvailabilityMessageFactory {
         isMediaUploadConfigured: Bool,
         mediaRemainingSlots: Int
     ) -> String? {
-        if !hasMomentWorkspace { return MomentsCreateAvailabilityCopy.mediaMissingProject }
+        if !hasMomentWorkspace { return MomentsCreateAvailabilityCopy.mediaMissingMoment }
         if isImportingMedia { return nil }
         if !isMediaUploadConfigured { return MomentsCreateAvailabilityCopy.mediaUploadNotConfigured }
         if mediaRemainingSlots == 0 { return MomentsCreateAvailabilityCopy.mediaTemplateFull }
@@ -29,7 +29,7 @@ enum MomentsCreateAvailabilityMessageFactory {
     static func story(
         isSignedIn: Bool,
         hasMomentWorkspace: Bool,
-        isStoryPlaning: Bool,
+        isStoryPlanning: Bool,
         isStoryPlanAvailable: Bool,
         isStoryPlanConfigured: Bool,
         mediaAssets: [MomentMediaAsset]?,
@@ -37,9 +37,9 @@ enum MomentsCreateAvailabilityMessageFactory {
         template: MomentTemplate
     ) -> String? {
         guard isSignedIn else { return MomentsCreateAvailabilityCopy.storySignInRequired }
-        guard hasMomentWorkspace else { return MomentsCreateAvailabilityCopy.storyMissingProject }
+        guard hasMomentWorkspace else { return MomentsCreateAvailabilityCopy.storyMissingMoment }
         guard isStoryPlanAvailable else { return MomentsCreateAvailabilityCopy.storyUnavailable }
-        if isStoryPlaning { return nil }
+        if isStoryPlanning { return nil }
         if !isStoryPlanConfigured { return MomentsCreateAvailabilityCopy.storyNotConfigured }
 
         if selectedMediaCount > 0 {
@@ -78,7 +78,7 @@ enum MomentsCreateAvailabilityMessageFactory {
         template: MomentTemplate,
         balance: MomentsCreditBalance
     ) -> String? {
-        guard activeMomentId != nil else { return MomentsCreateAvailabilityCopy.previewMissingProject }
+        guard activeMomentId != nil else { return MomentsCreateAvailabilityCopy.previewMissingMoment }
         guard isPreviewGenerationAvailable else { return MomentsCreateAvailabilityCopy.previewUnavailable }
         if isPreviewGenerating { return nil }
         if !isPreviewGenerationConfigured { return MomentsCreateAvailabilityCopy.previewNotConfigured }
@@ -105,7 +105,7 @@ enum MomentsCreateAvailabilityMessageFactory {
         balance: MomentsCreditBalance,
         latestPreview: MomentArtifact?
     ) -> String? {
-        guard activeMomentId != nil else { return MomentsCreateAvailabilityCopy.finalRenderMissingProject }
+        guard activeMomentId != nil else { return MomentsCreateAvailabilityCopy.finalRenderMissingMoment }
         guard isFinalRenderAvailable else { return MomentsCreateAvailabilityCopy.finalRenderUnavailable }
         if isFinalRenderGenerating { return nil }
         if !isFinalRenderConfigured { return MomentsCreateAvailabilityCopy.finalRenderNotConfigured }

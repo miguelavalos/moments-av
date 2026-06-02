@@ -8,7 +8,7 @@ final class MomentsCreateAviGuidanceTests: XCTestCase {
             balance: .empty,
             selectedStyle: MomentCreationStyle.launchStyles[0],
             step: .status,
-            isDraftLocked: false,
+            isSetupLocked: false,
             setupErrorMessage: nil
         )
 
@@ -23,7 +23,7 @@ final class MomentsCreateAviGuidanceTests: XCTestCase {
             balance: .empty,
             selectedStyle: MomentCreationStyle.launchStyles[0],
             step: .status,
-            isDraftLocked: false,
+            isSetupLocked: false,
             setupErrorMessage: nil
         )
 
@@ -38,7 +38,7 @@ final class MomentsCreateAviGuidanceTests: XCTestCase {
             balance: MomentsCreditBalance(proMonthly: 0, promotional: 1, purchased: 0),
             selectedStyle: MomentCreationStyle.launchStyles[0],
             step: .status,
-            isDraftLocked: false,
+            isSetupLocked: false,
             setupErrorMessage: nil
         )
 
@@ -54,7 +54,7 @@ final class MomentsCreateAviGuidanceTests: XCTestCase {
             balance: MomentsCreditBalance(proMonthly: 0, promotional: 1, purchased: 0),
             selectedStyle: style,
             step: .summary,
-            isDraftLocked: false,
+            isSetupLocked: false,
             setupErrorMessage: nil
         )
 

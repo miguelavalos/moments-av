@@ -23,7 +23,7 @@ enum MomentsCreateAviGuidanceResolver {
         balance: MomentsCreditBalance,
         selectedStyle: MomentCreationStyle,
         step: MomentsCreateNewMomentStep,
-        isDraftLocked: Bool,
+        isSetupLocked: Bool,
         setupErrorMessage: String?
     ) -> MomentsCreateAviGuidance {
         if setupErrorMessage != nil {
@@ -35,7 +35,7 @@ enum MomentsCreateAviGuidanceResolver {
             )
         }
 
-        if isDraftLocked {
+        if isSetupLocked {
             return MomentsCreateAviGuidance(
                 emotion: .focused,
                 message: L10n.string("create.guidance.locked", selectedStyle.title),

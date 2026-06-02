@@ -3,8 +3,8 @@ import PhotosUI
 import SwiftUI
 
 extension MomentsCreateViewModel {
-    func beginNewProject(openMediaPicker: Bool = true) {
-        guard canBeginNewProject else {
+    func beginNewMoment(openMediaPicker: Bool = true) {
+        guard canBeginNewMoment else {
             updateSetupErrorMessage(setupAvailabilityMessage ?? L10n.string("create.error.startWhenReady"))
             return
         }
@@ -17,12 +17,12 @@ extension MomentsCreateViewModel {
     }
 
     func editNewMomentStyle() {
-        guard !isDraftLocked else { return }
+        guard !isSetupLocked else { return }
         newMomentStep = .style
     }
 
     func editNewMomentsSummary() {
-        guard !isDraftLocked else { return }
+        guard !isSetupLocked else { return }
         newMomentStep = .style
     }
 
@@ -31,7 +31,7 @@ extension MomentsCreateViewModel {
     }
 
     func createMoment(openMediaPicker: Bool) {
-        guard canCreateDraft, let momentCreationWorkflow else {
+        guard canCreateMoment, let momentCreationWorkflow else {
             updateSetupErrorMessage(setupAvailabilityMessage ?? L10n.string("create.error.startMoment"))
             return
         }
@@ -46,7 +46,7 @@ extension MomentsCreateViewModel {
         }
     }
 
-    func discardDraft() {
+    func discardMoment() {
         guard !isBusy else {
             updateSetupErrorMessage(L10n.string("create.error.waitBeforeDiscard"))
             return

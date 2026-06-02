@@ -73,7 +73,7 @@ struct MomentSetupForm: Equatable {
         return trimmedRecipient.isEmpty ? momentTitle : "\(momentTitle) for \(trimmedRecipient)"
     }
 
-    var canCreateDraft: Bool {
+    var canCreateMoment: Bool {
         !occasion.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
@@ -108,7 +108,7 @@ enum MomentSetupRules {
     }
 
     struct Availability {
-        let canCreateDraft: Bool
+        let canCreateMoment: Bool
         let blockReason: BlockReason?
     }
 
@@ -117,10 +117,10 @@ enum MomentSetupRules {
         balance: MomentsCreditBalance
     ) -> Availability {
         guard !form.occasion.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
-            return Availability(canCreateDraft: false, blockReason: .missingOccasion)
+            return Availability(canCreateMoment: false, blockReason: .missingOccasion)
         }
 
-        return Availability(canCreateDraft: true, blockReason: nil)
+        return Availability(canCreateMoment: true, blockReason: nil)
     }
 
     static func availabilityMessage(_ availability: Availability) -> String? {

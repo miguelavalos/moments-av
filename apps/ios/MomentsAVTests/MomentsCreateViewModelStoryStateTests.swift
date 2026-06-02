@@ -29,7 +29,7 @@ final class MomentsCreateViewModelStoryStateTests: XCTestCase {
                 savedScenes: [],
                 generatedScenes: [],
                 statusMessage: MomentsRecoveryCopy.storyFailure(),
-                isDrafting: false
+                isPlanning: false
             )
         )
 
@@ -41,7 +41,7 @@ final class MomentsCreateViewModelStoryStateTests: XCTestCase {
                 savedScenes: [MomentsCreateTestFixtures.makeScene(id: "scene-1")],
                 generatedScenes: [],
                 statusMessage: MomentsRecoveryCopy.storyFailure(),
-                isDrafting: false
+                isPlanning: false
             )
         )
 

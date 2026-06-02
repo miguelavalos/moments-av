@@ -282,7 +282,7 @@ struct MomentsCreateMediaDetailSheet: View {
             }
 
             Button(role: .destructive, action: remove) {
-                Label(L10n.string("create.mediaRows.removeFromProject"), systemImage: "trash")
+                Label(L10n.string("create.mediaRows.removeFromMoment"), systemImage: "trash")
                     .frame(maxWidth: .infinity)
             }
             .buttonStyle(.bordered)

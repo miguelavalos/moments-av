@@ -44,8 +44,8 @@ struct MomentsCreateStoryPresentation: Equatable {
     var isBuyingReviewBundle = false
     var availabilityMessage: String?
 
-    var draftButtonTitle: String {
-        summary.isDrafting ? L10n.string("create.story.action.preparing") : L10n.string("create.story.action.prepare")
+    var planButtonTitle: String {
+        summary.isPlanning ? L10n.string("create.story.action.preparing") : L10n.string("create.story.action.prepare")
     }
 
     var emptyMessage: String {

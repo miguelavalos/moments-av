@@ -37,7 +37,7 @@ struct MomentsCreateWorkflowContent: View {
                     undoAutoStyleSuggestion: viewModel.undoAutoStyleSuggestion,
                     openPickerRequest: viewModel.mediaPickerOpenRequest,
                     consumeOpenPickerRequest: viewModel.consumeMediaPickerOpenRequest,
-                    discardDraft: viewModel.discardDraft,
+                    discardMoment: viewModel.discardMoment,
                     startSignInFlow: startSignInFlow,
                     openCredits: openCredits,
                     generateStoryPlan: viewModel.generateStoryPlan,
@@ -66,13 +66,13 @@ struct MomentsCreateWorkflowContent: View {
             newMomentStep: viewModel.newMomentStep,
             isSignedIn: viewModel.isSignedIn,
             balance: viewModel.balance,
-            canBeginNewProject: viewModel.canBeginNewProject,
-            beginNewProject: { viewModel.beginNewProject() },
+            canBeginNewMoment: viewModel.canBeginNewMoment,
+            beginNewMoment: { viewModel.beginNewMoment() },
             editStyle: viewModel.editNewMomentStyle,
             selectStyle: viewModel.selectCreationStyle,
             selectMusicPreset: viewModel.selectMusicPreset,
             createMoment: viewModel.createMoment,
-            discardDraft: viewModel.discardDraft,
+            discardMoment: viewModel.discardMoment,
             startSignInFlow: startSignInFlow,
             openCredits: openCredits
         )
@@ -103,7 +103,7 @@ private struct MomentsCreateMediaFirstWorkspace: View {
     let undoAutoStyleSuggestion: () -> Void
     let openPickerRequest: Int
     let consumeOpenPickerRequest: () -> Void
-    let discardDraft: () -> Void
+    let discardMoment: () -> Void
     let startSignInFlow: () -> Void
     let openCredits: () -> Void
     let generateStoryPlan: () -> Void
@@ -158,7 +158,7 @@ private struct MomentsCreateMediaFirstWorkspace: View {
 
                 MomentsCreatePrimaryActionBar(
                     presentation: presentation,
-                    discardDraft: { showsDiscardDraftConfirmation = true },
+                    discardMoment: { showsDiscardDraftConfirmation = true },
                     startSignInFlow: startSignInFlow,
                     reviewStoryFirst: reviewStoryFirst,
                     generatePreview: generatePreview,
@@ -218,7 +218,7 @@ private struct MomentsCreateMediaFirstWorkspace: View {
                     createVideo: generateFinalRender,
                     buyReviewBundle: buyReviewBundle,
                     openCredits: openCredits,
-                discardDraft: discardCurrentDraft,
+                discardMoment: discardCurrentDraft,
                 dismiss: { showsStoryReview = false }
             )
         }
@@ -250,7 +250,7 @@ private struct MomentsCreateMediaFirstWorkspace: View {
     private func discardCurrentDraft() {
         showsStoryReview = false
         showsAviOptions = false
-        discardDraft()
+        discardMoment()
     }
 
     private var discardConfirmationActionTitle: String {
@@ -395,7 +395,7 @@ struct MomentsCreateBlockingPreparationView: View {
         if presentation.previewSummary.isGenerating {
             return .createPreview
         }
-        if presentation.storySummary.isDrafting {
+        if presentation.storySummary.isPlanning {
             return .prepareStory
         }
         if isPreparingStory {
@@ -715,7 +715,7 @@ private struct MomentsCreateStoryReviewPage: View {
     let createVideo: (Bool) -> Void
     let buyReviewBundle: () -> Void
     let openCredits: () -> Void
-    let discardDraft: () -> Void
+    let discardMoment: () -> Void
     let dismiss: () -> Void
 
     @State private var showsCreateVideoConfirmation = false
@@ -864,7 +864,7 @@ private struct MomentsCreateStoryReviewPage: View {
         .alert(L10n.string("create.discard.confirmTitle"), isPresented: $showsDiscardDraftConfirmation) {
             Button(L10n.string("create.discard.keep"), role: .cancel) {}
             Button(discardConfirmationActionTitle, role: .destructive) {
-                discardDraft()
+                discardMoment()
             }
         } message: {
             Text(discardConfirmationMessage)
@@ -1385,7 +1385,7 @@ private struct MomentsCreateCompactAviGuide: View {
         if presentation.previewSummary.isGenerating {
             return L10n.string("create.aviStatus.reviewing.title")
         }
-        if presentation.storySummary.isDrafting {
+        if presentation.storySummary.isPlanning {
             return L10n.string("create.aviStatus.preparing.title")
         }
         if presentation.previewSummary.latestPreviewJob != nil || presentation.finalRenderSummary.latestFinalJob != nil {
@@ -1410,7 +1410,7 @@ private struct MomentsCreateCompactAviGuide: View {
         if presentation.previewSummary.isGenerating {
             return presentation.previewSummary.statusMessage ?? L10n.string("create.aviStatus.reviewing.detail")
         }
-        if presentation.storySummary.isDrafting {
+        if presentation.storySummary.isPlanning {
             return presentation.storySummary.statusMessage ?? L10n.string("create.aviStatus.preparing.detail")
         }
         if let realtimeStatus = presentation.finalRenderSummary.realtimeStatus {
@@ -1431,7 +1431,7 @@ private struct MomentsCreateCompactAviGuide: View {
 
 private struct MomentsCreatePrimaryActionBar: View {
     let presentation: MomentsCreateWorkflowPresentation
-    let discardDraft: () -> Void
+    let discardMoment: () -> Void
     let startSignInFlow: () -> Void
     let reviewStoryFirst: () -> Void
     let generatePreview: () -> Void
@@ -1516,7 +1516,7 @@ private struct MomentsCreatePrimaryActionBar: View {
                 }
 
                 HStack(spacing: 14) {
-                    Button(action: discardDraft) {
+                    Button(action: discardMoment) {
                         Label(discardTitle, systemImage: "trash.fill")
                     }
                     .buttonStyle(MomentsCreateDestructiveInlineButtonStyle())
@@ -1631,7 +1631,7 @@ private struct MomentsCreatePrimaryActionBar: View {
         if presentation.previewSummary.isGenerating {
             return presentation.previewSummary.statusMessage ?? L10n.string("create.preview.action.reviewing")
         }
-        if presentation.storySummary.isDrafting {
+        if presentation.storySummary.isPlanning {
             return presentation.storySummary.statusMessage ?? L10n.string("create.preparation.prepareStory.progress")
         }
         if presentation.finalRenderSummary.finalExport != nil {
@@ -1722,7 +1722,7 @@ private struct MomentsCreatePrimaryActionBar: View {
     }
 
     private var isBusy: Bool {
-        presentation.storySummary.isDrafting
+        presentation.storySummary.isPlanning
             || presentation.mediaSummary.isImporting
             || presentation.previewSummary.isGenerating
             || presentation.previewSummary.isRefreshingStatus
@@ -1779,7 +1779,7 @@ private struct MomentsCreatePrimaryActionBar: View {
     private var needsSignInForStory: Bool {
         !presentation.isSignedIn
             && presentation.mediaSummary.selectedCount > 0
-            && !presentation.storySummary.isDrafting
+            && !presentation.storySummary.isPlanning
     }
 
     private var canRefreshFinalRender: Bool {
@@ -1820,7 +1820,7 @@ private struct MomentsCreateRealtimeRenderStatusPanel: View {
                     .accessibilityValue("\(Int((progressFraction * 100).rounded())) percent")
             }
 
-            if status.isActive && !status.canEditDraft {
+            if status.isActive && !status.canEditSetup {
                 Label(L10n.string("create.workflowContent.editingLocked"), systemImage: "lock.fill")
                     .font(.caption2)
                     .fontWeight(.bold)

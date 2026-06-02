@@ -53,7 +53,7 @@ struct MomentsInProgressScreen: View {
                 activeWorkspace: viewModel.activeWorkspace,
                 isDeletingMoment: viewModel.isDeletingMoment,
                 statusMessage: viewModel.statusMessage,
-                selectProject: viewModel.selectProject,
+                selectMoment: viewModel.selectMoment,
                 continueMoment: continueMoment,
                 startMoment: startMoment,
                 startSignInFlow: startSignInFlow,

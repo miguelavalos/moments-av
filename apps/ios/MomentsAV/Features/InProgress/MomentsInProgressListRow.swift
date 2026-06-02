@@ -2,10 +2,10 @@ import SwiftUI
 
 struct MomentsInProgressListRow: View {
     let row: MomentsInProgressListRowPresentation
-    let selectProject: () -> Void
+    let selectMoment: () -> Void
 
     var body: some View {
-        Button(action: selectProject) {
+        Button(action: selectMoment) {
             HStack(alignment: .top, spacing: 12) {
                 MomentsInProgressStatusMarker(row: row)
 

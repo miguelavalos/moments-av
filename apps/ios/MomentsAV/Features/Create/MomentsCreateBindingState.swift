@@ -22,7 +22,7 @@ struct MomentsCreateStoryPlanState {
     let savedScenes: [MomentStoryScene]
     let generatedScenes: [MomentsStoryPlanScene]
     let statusMessage: String?
-    let isDrafting: Bool
+    let isPlanning: Bool
 }
 
 struct MomentsCreatePreviewGenerationState {

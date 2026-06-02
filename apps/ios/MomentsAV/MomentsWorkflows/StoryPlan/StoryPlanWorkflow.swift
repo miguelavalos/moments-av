@@ -4,7 +4,7 @@ import OSLog
 @MainActor
 final class StoryPlanWorkflow: WorkspaceObservingWorkflow {
     @Published private(set) var generatedPlan: MomentsStoryPlanResponse?
-    @Published private(set) var isDrafting = false
+    @Published private(set) var isPlanning = false
     @Published private(set) var statusMessage: String?
 
     private let currentUserProvider: any MomentsCurrentUserProviding
@@ -38,7 +38,7 @@ final class StoryPlanWorkflow: WorkspaceObservingWorkflow {
                 mediaAssets: activeWorkspace?.mediaAssets,
                 template: template
             ).canPlan
-            && !isDrafting
+            && !isPlanning
     }
 
     func generatePlan(
@@ -76,7 +76,7 @@ final class StoryPlanWorkflow: WorkspaceObservingWorkflow {
         }
 
         let generation = beginWorkflowGeneration()
-        isDrafting = true
+        isPlanning = true
         statusMessage = nil
 
         do {
@@ -108,31 +108,31 @@ final class StoryPlanWorkflow: WorkspaceObservingWorkflow {
             guard isCurrentWorkflowGeneration(generation) else { return false }
             logger.error("Story plan workflow failed momentId=\(momentId, privacy: .public) reason=\(error.localizedDescription, privacy: .public)")
             statusMessage = error.localizedDescription
-            isDrafting = false
+            isPlanning = false
             return false
         } catch let error as LocalizedError {
             guard isCurrentWorkflowGeneration(generation) else { return false }
             logger.error("Story plan request failed momentId=\(momentId, privacy: .public) error=\(String(describing: error), privacy: .public)")
             statusMessage = MomentsRecoveryCopy.storyFailure()
-            isDrafting = false
+            isPlanning = false
             return false
         } catch {
             guard isCurrentWorkflowGeneration(generation) else { return false }
             logger.error("Story plan failed momentId=\(momentId, privacy: .public) error=\(String(describing: error), privacy: .public)")
             statusMessage = MomentsRecoveryCopy.storyFailure()
-            isDrafting = false
+            isPlanning = false
             return false
         }
 
         guard isCurrentWorkflowGeneration(generation) else { return false }
-        isDrafting = false
+        isPlanning = false
         return true
     }
 
     func reset(force: Bool = false) {
-        guard force || !isDrafting else { return }
+        guard force || !isPlanning else { return }
         advanceWorkflowGeneration()
-        isDrafting = false
+        isPlanning = false
         clearActiveWorkspace()
         generatedPlan = nil
         statusMessage = nil

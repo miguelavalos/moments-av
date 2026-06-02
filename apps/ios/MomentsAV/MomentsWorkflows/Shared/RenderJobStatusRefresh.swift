@@ -45,7 +45,7 @@ struct RenderJobStatusRefresh {
         let refresh = try make(
             momentId: momentId,
             job: job,
-            missingMomentMessage: messages.missingProject,
+            missingMomentMessage: messages.missingMoment,
             missingJobMessage: messages.missingJob,
             missingProviderRequestMessage: messages.missingProviderRequest
         )
@@ -89,7 +89,7 @@ struct RenderJobStatusRefresh {
             phase: status.phase,
             progressPercent: status.progressPercent,
             userMessage: status.userMessage,
-            canEditDraft: status.canEditDraft,
+            canEditSetup: status.canEditSetup,
             canRetry: status.canRetry,
             errorCode: status.errorCode,
             errorMessage: status.errorMessage

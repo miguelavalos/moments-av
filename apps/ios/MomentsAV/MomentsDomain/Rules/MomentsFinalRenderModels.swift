@@ -140,7 +140,7 @@ struct MomentsRenderPlan: Decodable, Equatable {
 
 enum MomentsFinalRenderRules {
     enum BlockReason {
-        case missingProject
+        case missingMoment
         case insufficientCredits
         case storyNotReady
     }
@@ -171,7 +171,7 @@ enum MomentsFinalRenderRules {
         latestPreview: MomentArtifact?
     ) -> Availability {
         guard let moment else {
-            return Availability(canGenerate: false, blockReason: .missingProject)
+            return Availability(canGenerate: false, blockReason: .missingMoment)
         }
         if !MomentsCreditGate.canAfford(template, balance: balance) {
             return Availability(canGenerate: false, blockReason: .insufficientCredits)
@@ -190,7 +190,7 @@ enum MomentsFinalRenderRules {
         switch availability.blockReason {
         case nil:
             return nil
-        case .missingProject:
+        case .missingMoment:
             return missingMomentMessage
         case .insufficientCredits:
             return insufficientCreditsMessage

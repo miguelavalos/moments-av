@@ -83,7 +83,7 @@ final class MomentsInProgressViewModel: ObservableObject {
         .store(in: &accountCancellables)
     }
 
-    func selectProject(_ moment: InProgressMoment) {
+    func selectMoment(_ moment: InProgressMoment) {
         if selectedMomentId == moment.id {
             selectedMomentId = nil
             workflow?.clearMomentWorkspace()

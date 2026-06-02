@@ -55,7 +55,7 @@ final class MomentCreationWorkflow: ObservableObject {
         }
 
         let availability = MomentSetupRules.availability(form: form, balance: balance)
-        guard availability.canCreateDraft else {
+        guard availability.canCreateMoment else {
             errorMessage = createMomentBlockMessage(availability)
             return nil
         }
@@ -92,7 +92,7 @@ final class MomentCreationWorkflow: ObservableObject {
         workspaceObserver.observeWorkspace(ownerUserId: ownerUserId, momentId: moment.id)
     }
 
-    func resetDraft(force: Bool = false) {
+    func resetMomentSetup(force: Bool = false) {
         guard force || !isCreatingMoment else { return }
         workflowGeneration.advance()
         isCreatingMoment = false

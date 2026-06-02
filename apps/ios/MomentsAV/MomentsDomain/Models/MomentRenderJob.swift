@@ -7,7 +7,7 @@ struct MomentRenderJob: Identifiable, Decodable, Equatable {
     let phase: String?
     let progressPercent: Double?
     let userMessage: String?
-    let canEditDraft: Bool?
+    let canEditSetup: Bool?
     let canRetry: Bool?
     let targetDurationMs: Double?
     let plannedAssetCount: Double?
@@ -30,7 +30,7 @@ struct MomentRenderJob: Identifiable, Decodable, Equatable {
         phase: String? = nil,
         progressPercent: Double? = nil,
         userMessage: String? = nil,
-        canEditDraft: Bool? = nil,
+        canEditSetup: Bool? = nil,
         canRetry: Bool? = nil,
         targetDurationMs: Double? = nil,
         plannedAssetCount: Double? = nil,
@@ -52,7 +52,7 @@ struct MomentRenderJob: Identifiable, Decodable, Equatable {
         self.phase = phase
         self.progressPercent = progressPercent
         self.userMessage = userMessage
-        self.canEditDraft = canEditDraft
+        self.canEditSetup = canEditSetup
         self.canRetry = canRetry
         self.targetDurationMs = targetDurationMs
         self.plannedAssetCount = plannedAssetCount
@@ -76,7 +76,7 @@ struct MomentRenderJob: Identifiable, Decodable, Equatable {
         case phase
         case progressPercent
         case userMessage
-        case canEditDraft
+        case canEditSetup
         case canRetry
         case targetDurationMs
         case plannedAssetCount

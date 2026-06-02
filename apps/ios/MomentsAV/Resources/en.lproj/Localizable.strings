@@ -747,21 +747,21 @@
 "create.primary.previewReady" = "Story review ready. Check it before final video.";
 "create.primary.reviewBeforeVideo" = "Review the story and video plan before creating the final video.";
 "create.error.storyPreparationNotReady" = "Story preparation is not ready yet.";
-"create.availability.draftSignInRequired" = "Sign in before starting a Moment.";
+"create.availability.momentSignInRequired" = "Sign in before starting a Moment.";
 "create.availability.momentSyncNotConfigured" = "Moment sync is not configured for this build.";
-"create.availability.mediaMissingProject" = "Start or continue a moment before adding media.";
+"create.availability.mediaMissingMoment" = "Start or continue a moment before adding media.";
 "create.availability.mediaUploadNotConfigured" = "Media upload is not configured for this build.";
 "create.availability.mediaTemplateFull" = "Avi has enough media for this video.";
 "create.availability.storySignInRequired" = "Sign in before preparing the story.";
-"create.availability.storyMissingProject" = "Start or continue a moment before preparing the story.";
+"create.availability.storyMissingMoment" = "Start or continue a moment before preparing the story.";
 "create.availability.storyUnavailable" = "Story preparation is not available yet.";
 "create.availability.storyNotConfigured" = "Story preparation is not configured for this build.";
 "create.availability.storyMissingMedia" = "Add photos or clips before preparing the story.";
-"create.availability.previewMissingProject" = "Start or continue a moment before reviewing the story.";
+"create.availability.previewMissingMoment" = "Start or continue a moment before reviewing the story.";
 "create.availability.previewUnavailable" = "Story Review is not available yet.";
 "create.availability.previewNotConfigured" = "Story Review is not configured for this build.";
 "create.availability.previewMissingWorkspace" = "Wait for the moment workspace to sync before reviewing the story.";
-"create.availability.finalRenderMissingProject" = "Start or continue a Moment before creating the final video.";
+"create.availability.finalRenderMissingMoment" = "Start or continue a Moment before creating the final video.";
 "create.availability.finalRenderUnavailable" = "Final video creation is not available yet.";
 "create.availability.finalRenderNotConfigured" = "Final video creation is not configured for this build.";
 "create.availability.finalRenderMissingWorkspace" = "Wait for this Moment to sync before creating the final video.";
@@ -789,7 +789,7 @@
 "workflow.media.savedReadyThumbnailsPending" = "Saved media is ready. Some local thumbnails may refresh in the background.";
 "workflow.story.signInPlan" = "Sign in before planning the story.";
 "workflow.story.signInAgainPlan" = "Sign in again before planning the story.";
-"workflow.story.notConfigured" = "Story planing is not configured yet.";
+"workflow.story.notConfigured" = "Story planning is not configured yet.";
 "workflow.preview.signInReview" = "Sign in before reviewing the story.";
 "workflow.preview.signInAgainReview" = "Sign in again before reviewing the story.";
 "workflow.preview.missingMoment" = "Create the moment setup and story before reviewing it.";
@@ -798,7 +798,7 @@
 "workflow.preview.addCredits" = "Add credits before reviewing the story.";
 "workflow.preview.notReady" = "Story review is not ready.";
 "workflow.preview.refreshSignIn" = "Sign in before refreshing story review status.";
-"workflow.preview.refreshMissingProject" = "Open a moment before refreshing story review status.";
+"workflow.preview.refreshMissingMoment" = "Open a moment before refreshing story review status.";
 "workflow.preview.refreshMissingJob" = "No story review job is available yet.";
 "workflow.preview.refreshSuccess" = "Story review status updated.";
 "workflow.final.signInRender" = "Sign in before rendering the final export.";
@@ -817,11 +817,11 @@
 "workflow.final.saveLocalFailed" = "Final video is ready, but it could not be saved locally yet.";
 "workflow.final.downloadBeforeGallery" = "Download the final video before moving it to Gallery.";
 "workflow.final.movedToGallery" = "Final video moved to Gallery.";
-"workflow.final.missingProject" = "Start or continue a moment before rendering the final export.";
+"workflow.final.missingMoment" = "Start or continue a moment before rendering the final export.";
 "workflow.final.addCredits" = "Add credits before final render.";
 "workflow.final.notReady" = "Final export is not ready to render.";
 "workflow.final.refreshSignIn" = "Sign in before refreshing final render status.";
-"workflow.final.refreshMissingProject" = "Open a moment before refreshing final status.";
+"workflow.final.refreshMissingMoment" = "Open a moment before refreshing final status.";
 "workflow.final.refreshMissingJob" = "No final render job is available yet.";
 "workflow.final.refreshSuccess" = "Video status updated.";
 
@@ -931,7 +931,7 @@
 "create.mediaCard.backToDashboard" = "Back to dashboard";
 "create.mediaCard.mediaAccessibility" = "%@ %d";
 "create.mediaRows.removeNamed" = "Remove %@";
-"create.mediaRows.removeFromProject" = "Remove from moment";
+"create.mediaRows.removeFromMoment" = "Remove from moment";
 "create.workflowContent.videoPlan" = "Video plan";
 "create.workflowContent.preparedVideoPlan" = "Prepared video plan";
 "create.workflowContent.needsPlan" = "Needs plan";

@@ -25,7 +25,7 @@ extension MomentsRepository {
             phase: "queued",
             progressPercent: 10,
             userMessage: "Avi has started creating the video.",
-            canEditDraft: false,
+            canEditSetup: false,
             canRetry: false,
             errorCode: nil,
             errorMessage: nil
@@ -94,7 +94,7 @@ extension MomentsRepository {
             phase: request.status == "completed" ? "completed" : nil,
             progressPercent: request.status == "completed" ? 100 : nil,
             userMessage: request.status == "completed" ? "Your video is ready." : nil,
-            canEditDraft: true,
+            canEditSetup: true,
             canRetry: false,
             errorCode: nil,
             errorMessage: nil

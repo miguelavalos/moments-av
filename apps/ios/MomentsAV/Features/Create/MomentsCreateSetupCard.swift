@@ -14,19 +14,19 @@ struct MomentsCreateSetupCard: View {
     let newMomentStep: MomentsCreateNewMomentStep
     let isSignedIn: Bool
     let balance: MomentsCreditBalance
-    let canBeginNewProject: Bool
-    let beginNewProject: () -> Void
+    let canBeginNewMoment: Bool
+    let beginNewMoment: () -> Void
     let editStyle: () -> Void
     let selectStyle: (MomentCreationStyle) -> Void
     let selectMusicPreset: (MomentMusicPreset) -> Void
     let createMoment: () -> Void
-    let discardDraft: () -> Void
+    let discardMoment: () -> Void
     let startSignInFlow: () -> Void
     let openCredits: () -> Void
 
     @ViewBuilder
     var body: some View {
-        if presentation.isDraftLocked {
+        if presentation.isSetupLocked {
             lockedMomentContent
         } else if newMomentStep == .status {
             VStack(alignment: .leading, spacing: AVBrandSpacing.lg) {
@@ -35,13 +35,13 @@ struct MomentsCreateSetupCard: View {
                     balance: balance,
                     selectedStyle: selectedStyle,
                     guidance: aviGuidance,
-                    canBeginNewProject: canBeginNewProject,
-                    beginNewProject: {
+                    canBeginNewMoment: canBeginNewMoment,
+                    beginNewMoment: {
                         form.creationMode = .quick
                         form.look = .real
                         form.duration = .auto
                         form.mediaUse = .aviPick
-                        beginNewProject()
+                        beginNewMoment()
                     },
                     planProject: {
                         form.creationMode = .planned
@@ -84,7 +84,7 @@ struct MomentsCreateSetupCard: View {
             balance: balance,
             selectedStyle: selectedStyle,
             step: newMomentStep,
-            isDraftLocked: presentation.isDraftLocked,
+            isSetupLocked: presentation.isSetupLocked,
             setupErrorMessage: presentation.setupErrorMessage
         )
     }
@@ -129,12 +129,12 @@ struct MomentsCreateSetupCard: View {
     private var activeDraftAndErrorContent: some View {
         VStack(alignment: .leading, spacing: 16) {
             if presentation.showsActiveMoment {
-                Button(action: discardDraft) {
+                Button(action: discardMoment) {
                     Label(L10n.string("create.discard.current"), systemImage: "trash")
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.bordered)
-                .disabled(!presentation.canStartAnotherProject)
+                .disabled(!presentation.canStartAnotherMoment)
             }
 
             if let setupErrorMessage = presentation.setupErrorMessage {
@@ -166,7 +166,7 @@ struct MomentsCreateSetupCard: View {
             MomentsCreateStyleGrid(
                 styles: styles,
                 selectedStyle: selectedStyle,
-                isLocked: presentation.isDraftLocked,
+                isLocked: presentation.isSetupLocked,
                 selectStyle: {
                     selectStyle($0)
                     showsMomentSheet = false
@@ -182,8 +182,8 @@ private struct MomentsCreateNewMomentStatus: View {
     let balance: MomentsCreditBalance
     let selectedStyle: MomentCreationStyle
     let guidance: MomentsCreateAviGuidance
-    let canBeginNewProject: Bool
-    let beginNewProject: () -> Void
+    let canBeginNewMoment: Bool
+    let beginNewMoment: () -> Void
     let planProject: () -> Void
     let startSignInFlow: () -> Void
     let openCredits: () -> Void
@@ -199,8 +199,8 @@ private struct MomentsCreateNewMomentStatus: View {
                 isSignedIn: isSignedIn,
                 balance: balance,
                 selectedStyle: selectedStyle,
-                canBeginNewProject: canBeginNewProject,
-                beginNewProject: beginNewProject,
+                canBeginNewMoment: canBeginNewMoment,
+                beginNewMoment: beginNewMoment,
                 planProject: planProject,
                 startSignInFlow: startSignInFlow,
                 openCredits: openCredits
@@ -254,8 +254,8 @@ private struct MomentsCreateNewMomentActionBlock: View {
     let isSignedIn: Bool
     let balance: MomentsCreditBalance
     let selectedStyle: MomentCreationStyle
-    let canBeginNewProject: Bool
-    let beginNewProject: () -> Void
+    let canBeginNewMoment: Bool
+    let beginNewMoment: () -> Void
     let planProject: () -> Void
     let startSignInFlow: () -> Void
     let openCredits: () -> Void
@@ -267,8 +267,8 @@ private struct MomentsCreateNewMomentActionBlock: View {
             AVAppShellPrimaryButton(
                 L10n.string("create.media.choose"),
                 systemImage: "photo.badge.plus",
-                isDisabled: !canBeginNewProject,
-                action: beginNewProject
+                isDisabled: !canBeginNewMoment,
+                action: beginNewMoment
             )
 
             Button(action: planProject) {
@@ -277,7 +277,7 @@ private struct MomentsCreateNewMomentActionBlock: View {
                     .frame(maxWidth: .infinity)
             }
             .buttonStyle(.bordered)
-            .disabled(!canBeginNewProject)
+            .disabled(!canBeginNewMoment)
 
             if !isSignedIn {
                 AVAppShellInlineMessage(message: L10n.string("create.signInLater.detail"))

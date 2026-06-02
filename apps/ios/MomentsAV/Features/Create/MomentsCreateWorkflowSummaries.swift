@@ -91,7 +91,7 @@ struct MomentsMediaImportProgress: Equatable {
 struct MomentsCreateStorySummary: Equatable {
     var savedScenes: [MomentStoryScene] = []
     var generatedScenes: [MomentsStoryPlanScene] = []
-    var isDrafting = false
+    var isPlanning = false
     var statusMessage: String?
 
     var hasScenes: Bool {
@@ -174,11 +174,11 @@ struct MomentsRenderRealtimePresentation: Equatable {
     let progressFraction: Double?
     let systemImage: String
     let isActive: Bool
-    let canEditDraft: Bool
+    let canEditSetup: Bool
 
     init(renderJob: MomentRenderJob) {
         isActive = renderJob.isActiveRender
-        canEditDraft = renderJob.canEditDraft ?? !renderJob.isActiveRender
+        canEditSetup = renderJob.canEditSetup ?? !renderJob.isActiveRender
         title = Self.title(status: renderJob.status, phase: renderJob.phase)
         detail = Self.detail(renderJob)
         progressFraction = Self.progressFraction(renderJob.progressPercent)

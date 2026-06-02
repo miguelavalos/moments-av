@@ -205,8 +205,8 @@ struct MomentsAppShellView: View {
             return
         }
 
-        if createViewModel.canBeginNewProject {
-            createViewModel.beginNewProject(openMediaPicker: true)
+        if createViewModel.canBeginNewMoment {
+            createViewModel.beginNewMoment(openMediaPicker: true)
         }
         selectRootTab(.create)
     }
@@ -221,8 +221,8 @@ struct MomentsAppShellView: View {
             createViewModel.clearSessionState()
         }
 
-        if createViewModel.canBeginNewProject {
-            createViewModel.beginNewProject(openMediaPicker: true)
+        if createViewModel.canBeginNewMoment {
+            createViewModel.beginNewMoment(openMediaPicker: true)
         }
         selectRootTab(.create)
     }
