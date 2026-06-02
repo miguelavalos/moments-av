@@ -765,3 +765,8 @@
 "create.availability.finalRenderMissingWorkspace" = "Attends que ce Moment soit synchronisé avant de créer la vidéo finale.";
 "create.availability.previewInsufficientCredits" = "Ajoute %d %@ de plus avant de relire l’histoire.";
 "create.availability.finalRenderInsufficientCredits" = "Ajoute %d %@ de plus avant de créer la vidéo finale.";
+"account.error.unavailable" = "La connexion au compte n’est pas configurée pour cette build.";
+"account.displayName.user" = "Utilisateur Moments AV";
+"purchase.error.notConfigured" = "Les achats ne sont pas configurés pour cette build.";
+"purchase.error.offeringUnavailable" = "Les achats ne sont pas disponibles pour le moment. Réessaie plus tard.";
+"purchase.error.productUnavailable" = "Ce produit n’est pas disponible pour le moment. Réessaie plus tard.";

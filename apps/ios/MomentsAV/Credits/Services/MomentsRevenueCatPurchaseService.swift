@@ -42,11 +42,11 @@ enum MomentsPurchaseError: LocalizedError, Equatable {
     var errorDescription: String? {
         switch self {
         case .notConfigured:
-            return "Purchases are not configured for this build."
+            return L10n.string("purchase.error.notConfigured")
         case .offeringUnavailable:
-            return "Purchases are not available right now. Try again later."
+            return L10n.string("purchase.error.offeringUnavailable")
         case .productUnavailable:
-            return "This product is not available right now. Try again later."
+            return L10n.string("purchase.error.productUnavailable")
         }
     }
 }

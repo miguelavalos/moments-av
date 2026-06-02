@@ -18,7 +18,7 @@ enum AVAccountServiceError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .unavailable:
-            "Account sign-in is not configured for this build."
+            L10n.string("account.error.unavailable")
         }
     }
 }
@@ -26,7 +26,7 @@ enum AVAccountServiceError: LocalizedError {
 struct DefaultAVAccountService: AVAccountService {
     private let accountService = ClerkAccountAVService(
         publishableKeyProvider: { AppConfig.avAccountKey },
-        fallbackDisplayName: "Moments AV user",
+        fallbackDisplayName: L10n.string("account.displayName.user"),
         loggerSubsystem: "com.avalsys.momentsav"
     )
 

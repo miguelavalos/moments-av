@@ -767,3 +767,8 @@
 "create.availability.finalRenderMissingWorkspace" = "Wait for this Moment to sync before creating the final video.";
 "create.availability.previewInsufficientCredits" = "Add %d more %@ before reviewing the story.";
 "create.availability.finalRenderInsufficientCredits" = "Add %d more %@ before creating the final video.";
+"account.error.unavailable" = "Account sign-in is not configured for this build.";
+"account.displayName.user" = "Moments AV user";
+"purchase.error.notConfigured" = "Purchases are not configured for this build.";
+"purchase.error.offeringUnavailable" = "Purchases are not available right now. Try again later.";
+"purchase.error.productUnavailable" = "This product is not available right now. Try again later.";
