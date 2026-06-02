@@ -150,12 +150,16 @@ struct MomentsCreateSetupCard: View {
     private var activeMomentAndErrorContent: some View {
         VStack(alignment: .leading, spacing: 16) {
             if presentation.showsActiveMoment {
-                Button(action: discardMoment) {
-                    Label(L10n.string("create.discard.current"), systemImage: "trash")
-                        .frame(maxWidth: .infinity)
+                HStack {
+                    Spacer(minLength: 0)
+
+                    Button(action: discardMoment) {
+                        Label(L10n.string("create.discard.current"), systemImage: "trash")
+                    }
+                    .font(.system(size: 13, weight: .bold))
+                    .buttonStyle(MomentsCreateNeutralInlineButtonStyle())
+                    .disabled(!presentation.canStartAnotherMoment)
                 }
-                .buttonStyle(.bordered)
-                .disabled(!presentation.canStartAnotherMoment)
             }
 
             if let setupErrorMessage = presentation.setupErrorMessage {

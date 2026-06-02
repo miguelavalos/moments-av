@@ -95,7 +95,7 @@ struct MomentsCreateAviCutPresentation: Equatable {
 
     var mediaCountTitle: String {
         L10n.string(
-            mediaCount == 1 ? "create.aviCut.moment.singular" : "create.aviCut.moment.plural",
+            mediaCount == 1 ? "create.workflowContent.itemCount" : "create.workflowContent.itemsCount",
             mediaCount
         )
     }

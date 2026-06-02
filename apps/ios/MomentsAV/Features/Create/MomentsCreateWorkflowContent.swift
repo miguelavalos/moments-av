@@ -928,15 +928,17 @@ private struct MomentsCreateStoryReviewPage: View {
                             .disabled(isPrimaryCreateDisabled)
 
                             HStack(spacing: 14) {
-                                Button(action: { showsDiscardMomentConfirmation = true }) {
-                                    Label(L10n.string("create.workflowContent.discardMoment"), systemImage: "trash.fill")
-                                }
-                                .buttonStyle(MomentsCreateDestructiveInlineButtonStyle())
-
                                 Button(action: dismiss) {
                                     Label(L10n.string("create.workflowContent.changeMediaOrStyle"), systemImage: "slider.horizontal.3")
                                 }
-                                    .buttonStyle(MomentsCreateNeutralInlineButtonStyle())
+                                .buttonStyle(MomentsCreateNeutralInlineButtonStyle())
+
+                                Spacer(minLength: 0)
+
+                                Button(action: { showsDiscardMomentConfirmation = true }) {
+                                    Label(discardActionTitle, systemImage: discardActionIconName)
+                                }
+                                .buttonStyle(MomentsCreateNeutralInlineButtonStyle())
                             }
                             .font(.system(size: 13, weight: .bold))
                             .frame(maxWidth: .infinity)
@@ -978,6 +980,14 @@ private struct MomentsCreateStoryReviewPage: View {
 
     private var discardConfirmationActionTitle: String {
         presentation.hasUnsavedLocalMoment ? L10n.string("create.discard.local") : L10n.string("create.discard.current")
+    }
+
+    private var discardActionTitle: String {
+        presentation.hasUnsavedLocalMoment ? L10n.string("create.discard.closeDraft") : L10n.string("create.discard.current")
+    }
+
+    private var discardActionIconName: String {
+        presentation.hasUnsavedLocalMoment ? "xmark.circle" : "trash"
     }
 
     private var discardConfirmationMessage: String {
@@ -1530,17 +1540,19 @@ private struct MomentsCreatePrimaryActionBar: View {
                 }
 
                 HStack(spacing: 14) {
-                    Button(action: discardMoment) {
-                        Label(discardTitle, systemImage: "trash.fill")
-                    }
-                    .buttonStyle(MomentsCreateDestructiveInlineButtonStyle())
-
                     if let secondaryActionTitle {
                         Button(action: secondaryAction) {
                             Label(secondaryActionTitle, systemImage: secondaryActionIconName)
                         }
-                            .buttonStyle(MomentsCreateNeutralInlineButtonStyle())
+                        .buttonStyle(MomentsCreateNeutralInlineButtonStyle())
                     }
+
+                    Spacer(minLength: 0)
+
+                    Button(action: discardMoment) {
+                        Label(discardActionTitle, systemImage: discardActionIconName)
+                    }
+                    .buttonStyle(MomentsCreateNeutralInlineButtonStyle())
                 }
                 .font(.system(size: 13, weight: .bold))
                 .frame(maxWidth: .infinity)
@@ -1564,8 +1576,12 @@ private struct MomentsCreatePrimaryActionBar: View {
             || needsSignInForStory
     }
 
-    private var discardTitle: String {
-        presentation.hasUnsavedLocalMoment ? L10n.string("create.discard.local") : L10n.string("create.discard.current")
+    private var discardActionTitle: String {
+        presentation.hasUnsavedLocalMoment ? L10n.string("create.discard.closeDraft") : L10n.string("create.discard.current")
+    }
+
+    private var discardActionIconName: String {
+        presentation.hasUnsavedLocalMoment ? "xmark.circle" : "trash"
     }
 
     private var buttonTitle: String {

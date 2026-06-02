@@ -314,7 +314,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
             "Avi's Cut is ready. Create the final video or adjust the cut first."
         )
         XCTAssertEqual(presentation.modeTitle, "Avi's choice")
-        XCTAssertEqual(presentation.mediaCountTitle, "2 moments")
+        XCTAssertEqual(presentation.mediaCountTitle, "2 items")
         XCTAssertEqual(presentation.primaryActionTitle, "Improve with Avi")
         XCTAssertEqual(presentation.editActionTitle, "Edit Cut")
         XCTAssertTrue(presentation.canRunPrimaryAction)
@@ -355,7 +355,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
 
         XCTAssertEqual(presentation.statusMessage, "Ready for Avi to prepare a first cut.")
         XCTAssertEqual(presentation.modeTitle, "Ready")
-        XCTAssertEqual(presentation.mediaCountTitle, "1 moment")
+        XCTAssertEqual(presentation.mediaCountTitle, "1 item")
         XCTAssertEqual(presentation.primaryActionTitle, "Prepare Avi's Cut")
         XCTAssertTrue(presentation.canRunPrimaryAction)
 

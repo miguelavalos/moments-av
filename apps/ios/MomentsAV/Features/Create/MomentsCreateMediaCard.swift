@@ -1274,25 +1274,6 @@ struct MomentsCreateNeutralInlineButtonStyle: ButtonStyle {
     }
 }
 
-struct MomentsCreateDestructiveInlineButtonStyle: ButtonStyle {
-    @Environment(\.isEnabled) private var isEnabled
-
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .foregroundStyle(isEnabled ? AVBrandColor.textSecondary.opacity(0.92) : AVBrandColor.textSecondary.opacity(0.45))
-            .padding(.horizontal, AVBrandSpacing.sm)
-            .padding(.vertical, 6)
-            .background(
-                isEnabled ? Color.red.opacity(configuration.isPressed ? 0.11 : 0.07) : AVBrandColor.mutedSurface.opacity(0.42),
-                in: Capsule()
-            )
-            .overlay {
-                Capsule()
-                    .stroke(Color.red.opacity(isEnabled ? 0.16 : 0.08), lineWidth: 1)
-            }
-    }
-}
-
 struct MomentsCreateEditorPageHeader: View {
     let title: String
     let dismiss: () -> Void
