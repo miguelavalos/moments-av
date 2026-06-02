@@ -318,8 +318,9 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         XCTAssertEqual(presentation.primaryActionTitle, "Improve with Avi")
         XCTAssertEqual(presentation.editActionTitle, "Edit Cut")
         XCTAssertTrue(presentation.canRunPrimaryAction)
-        XCTAssertEqual(presentation.visibleScenes.count, 3)
-        XCTAssertEqual(presentation.remainingSceneTitle, "1 more scene in this cut")
+        XCTAssertTrue(presentation.canShowImproveAction)
+        XCTAssertEqual(presentation.visibleScenes.count, 2)
+        XCTAssertEqual(presentation.remainingSceneTitle, "2 more scenes in this cut")
     }
 
     func testAviCutPresentationKeepsFinalPathNonBlockingWhenImproveIsUnavailable() {
@@ -341,6 +342,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         )
         XCTAssertEqual(presentation.primaryActionTitle, "Improve with Avi")
         XCTAssertFalse(presentation.canRunPrimaryAction)
+        XCTAssertFalse(presentation.canShowImproveAction)
     }
 
     func testAviCutPresentationFormatsPendingAndUnavailableStates() {
@@ -358,6 +360,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         XCTAssertEqual(presentation.mediaCountTitle, "1 item")
         XCTAssertEqual(presentation.primaryActionTitle, "Prepare Avi's Cut")
         XCTAssertTrue(presentation.canRunPrimaryAction)
+        XCTAssertFalse(presentation.canShowImproveAction)
 
         presentation.canImproveWithAvi = false
         presentation.availabilityMessage = "Sign in before preparing Avi's Cut."

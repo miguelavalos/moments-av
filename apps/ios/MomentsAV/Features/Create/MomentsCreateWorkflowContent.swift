@@ -684,22 +684,36 @@ private struct MomentsCreateAviCutCard: View {
                         .fixedSize(horizontal: false, vertical: true)
                 }
 
-                HStack(spacing: 10) {
-                    Button(action: primaryAction) {
-                        Label(aviCut.primaryActionTitle, systemImage: aviCut.primaryActionIconName)
-                            .frame(maxWidth: .infinity)
-                    }
-                    .buttonStyle(MomentsCreateNeutralInlineButtonStyle())
-                    .disabled(!aviCut.canRunPrimaryAction)
+                actions
+                    .font(.system(size: 13, weight: .black))
+            }
+        }
+    }
 
-                    Button(action: openOptions) {
-                        Label(aviCut.editActionTitle, systemImage: "slider.horizontal.3")
-                            .frame(maxWidth: .infinity)
+    @ViewBuilder
+    private var actions: some View {
+        if presentation.storySummary.hasScenes {
+            HStack(spacing: 10) {
+                Button(action: openOptions) {
+                    Label(aviCut.editActionTitle, systemImage: "slider.horizontal.3")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(MomentsCreateSoftActionButtonStyle())
+
+                if aviCut.canShowImproveAction {
+                    Button(action: prepareCut) {
+                        Label(aviCut.primaryActionTitle, systemImage: aviCut.primaryActionIconName)
                     }
                     .buttonStyle(MomentsCreateNeutralInlineButtonStyle())
                 }
-                .font(.system(size: 13, weight: .black))
             }
+        } else {
+            Button(action: prepareCut) {
+                Label(aviCut.primaryActionTitle, systemImage: aviCut.primaryActionIconName)
+                    .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(MomentsCreateNeutralInlineButtonStyle())
+            .disabled(!aviCut.canRunPrimaryAction)
         }
     }
 
@@ -717,9 +731,6 @@ private struct MomentsCreateAviCutCard: View {
         )
     }
 
-    private func primaryAction() {
-        prepareCut()
-    }
 }
 
 private struct MomentsCreateRenderPlanSummary: View {

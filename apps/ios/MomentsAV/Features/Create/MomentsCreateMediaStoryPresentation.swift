@@ -130,8 +130,12 @@ struct MomentsCreateAviCutPresentation: Equatable {
             && canImproveWithAvi
     }
 
+    var canShowImproveAction: Bool {
+        storySummary.hasScenes && canRunPrimaryAction
+    }
+
     var visibleScenes: [MomentsCreateStoryReviewScene] {
-        Array(storySummary.reviewScenes.prefix(3))
+        Array(storySummary.reviewScenes.prefix(2))
     }
 
     var remainingSceneCount: Int {
