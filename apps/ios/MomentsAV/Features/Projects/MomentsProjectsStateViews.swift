@@ -25,8 +25,8 @@ struct MomentsProjectsEmptyState: View {
             MomentsProjectsUnavailableState(presentation: presentation)
 
             AVAppShellActionRow(
-                title: MomentsL10n.string("projects.empty.create.title"),
-                detail: MomentsL10n.string("projects.empty.create.detail"),
+                title: L10n.string("projects.empty.create.title"),
+                detail: L10n.string("projects.empty.create.detail"),
                 systemImage: "plus.app.fill",
                 isProminent: true,
                 accessibilityIdentifier: "moments.projects.empty.create",
@@ -34,8 +34,8 @@ struct MomentsProjectsEmptyState: View {
             )
 
             AVAppShellInlineMessage(
-                title: MomentsL10n.string("projects.empty.whatAppears.title"),
-                message: MomentsL10n.string("projects.empty.whatAppears.message"),
+                title: L10n.string("projects.empty.whatAppears.title"),
+                message: L10n.string("projects.empty.whatAppears.message"),
                 systemImage: "checkmark.circle",
                 usesAccentIcon: true
             )

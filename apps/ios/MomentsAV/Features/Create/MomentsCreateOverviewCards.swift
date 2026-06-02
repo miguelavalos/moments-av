@@ -8,10 +8,10 @@ struct MomentsCreateIntroCard: View {
     var body: some View {
         AVAppShellCard {
             AVAppShellContentHeader(
-                title: MomentsL10n.string("create.intro.title"),
-                detail: MomentsL10n.string("create.intro.detail")
+                title: L10n.string("create.intro.title"),
+                detail: L10n.string("create.intro.detail")
             )
-            AVStatusPill(title: isSignedIn ? MomentsL10n.string("create.status.ready") : MomentsL10n.string("create.status.loginRequired"), isUppercased: false)
+            AVStatusPill(title: isSignedIn ? L10n.string("create.status.ready") : L10n.string("create.status.loginRequired"), isUppercased: false)
         }
     }
 }
@@ -51,7 +51,7 @@ struct MomentsCreateContinuationHintCard: View {
                     }
                     .buttonStyle(.plain)
                     .foregroundStyle(.secondary)
-                    .accessibilityLabel(MomentsL10n.string("create.continuation.dismiss"))
+                    .accessibilityLabel(L10n.string("create.continuation.dismiss"))
                 }
             }
         }
@@ -64,12 +64,12 @@ struct MomentsCreateCreditsCard: View {
     var body: some View {
         AVAppShellCard {
             AVAppShellContentHeader(
-                title: MomentsL10n.string("credits.available.title"),
-                detail: MomentsL10n.string("create.credits.detail")
+                title: L10n.string("credits.available.title"),
+                detail: L10n.string("create.credits.detail")
             )
             AVAppShellInfoRow(
                 title: MomentsCreditCopy.countTitle(balance.spendable),
-                detail: balance.spendable > 0 ? MomentsL10n.string("create.credits.ready") : MomentsL10n.string("create.credits.setupNow"),
+                detail: balance.spendable > 0 ? L10n.string("create.credits.ready") : L10n.string("create.credits.setupNow"),
                 systemImage: "creditcard"
             )
         }
@@ -91,7 +91,7 @@ struct MomentsCurrentCreationCard: View {
                         .background(AVBrandColor.accent.opacity(0.10), in: Circle())
 
                     VStack(alignment: .leading, spacing: 3) {
-                        Text(MomentsL10n.string("create.current.continue"))
+                        Text(L10n.string("create.current.continue"))
                             .font(.system(size: 14, weight: .black))
                             .foregroundStyle(AVBrandColor.textPrimary)
                         Text(detail)
@@ -113,8 +113,8 @@ struct MomentsCurrentCreationCard: View {
 
     private var detail: String {
         selectedCount == 0
-            ? MomentsL10n.string("create.current.addMedia")
-            : MomentsL10n.string("create.current.selected", selectedCount)
+            ? L10n.string("create.current.addMedia")
+            : L10n.string("create.current.selected", selectedCount)
     }
 }
 
@@ -122,30 +122,30 @@ private extension MomentsProjectContinuationFocus {
     var title: String {
         switch self {
         case .review:
-            MomentsL10n.string("create.continuation.review.title")
+            L10n.string("create.continuation.review.title")
         case .media:
-            MomentsL10n.string("create.continuation.media.title")
+            L10n.string("create.continuation.media.title")
         case .story:
-            MomentsL10n.string("create.continuation.story.title")
+            L10n.string("create.continuation.story.title")
         case .preview:
-            MomentsL10n.string("create.continuation.preview.title")
+            L10n.string("create.continuation.preview.title")
         case .finalRender:
-            MomentsL10n.string("create.continuation.final.title")
+            L10n.string("create.continuation.final.title")
         }
     }
 
     var message: String {
         switch self {
         case .review:
-            MomentsL10n.string("create.continuation.review.message")
+            L10n.string("create.continuation.review.message")
         case .media:
-            MomentsL10n.string("create.continuation.media.message")
+            L10n.string("create.continuation.media.message")
         case .story:
-            MomentsL10n.string("create.continuation.story.message")
+            L10n.string("create.continuation.story.message")
         case .preview:
-            MomentsL10n.string("create.continuation.preview.message")
+            L10n.string("create.continuation.preview.message")
         case .finalRender:
-            MomentsL10n.string("create.continuation.final.message")
+            L10n.string("create.continuation.final.message")
         }
     }
 

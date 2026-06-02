@@ -72,32 +72,32 @@ struct MomentsProjectsScreen: View {
             )
         }
         .confirmationDialog(
-            MomentsL10n.string("projects.deleteProject.title"),
+            L10n.string("projects.deleteProject.title"),
             isPresented: deletionConfirmationPresented,
             titleVisibility: .visible
         ) {
-            Button(MomentsL10n.string("projects.deleteProject.button"), role: .destructive) {
+            Button(L10n.string("projects.deleteProject.button"), role: .destructive) {
                 confirmProjectDeletion()
             }
-            Button(MomentsL10n.string("common.cancel"), role: .cancel) {
+            Button(L10n.string("common.cancel"), role: .cancel) {
                 cancelProjectDeletion()
             }
         } message: {
             Text(presentation.deletionMessage)
         }
         .confirmationDialog(
-            MomentsL10n.string("gallery.delete.title"),
+            L10n.string("gallery.delete.title"),
             isPresented: galleryDeletionConfirmationPresented,
             titleVisibility: .visible
         ) {
-            Button(MomentsL10n.string("gallery.delete.button"), role: .destructive) {
+            Button(L10n.string("gallery.delete.button"), role: .destructive) {
                 confirmGalleryVideoDeletion()
             }
-            Button(MomentsL10n.string("common.cancel"), role: .cancel) {
+            Button(L10n.string("common.cancel"), role: .cancel) {
                 cancelGalleryVideoDeletion()
             }
         } message: {
-            Text(MomentsL10n.string("gallery.delete.message"))
+            Text(L10n.string("gallery.delete.message"))
         }
     }
 

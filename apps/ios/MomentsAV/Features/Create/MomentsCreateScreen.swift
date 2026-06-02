@@ -50,7 +50,7 @@ struct MomentsCreateScreen: View {
         .onChange(of: viewModel.workflowErrorAlertMessage) { _, message in
             workflowErrorAlertMessage = message
         }
-        .alert(MomentsL10n.string("access.error.title"), isPresented: Binding(
+        .alert(L10n.string("access.error.title"), isPresented: Binding(
             get: { workflowErrorAlertMessage != nil },
             set: { isPresented in
                 if !isPresented {
@@ -58,11 +58,11 @@ struct MomentsCreateScreen: View {
                 }
             }
         )) {
-            Button(MomentsL10n.string("common.ok"), role: .cancel) {
+            Button(L10n.string("common.ok"), role: .cancel) {
                 workflowErrorAlertMessage = nil
             }
         } message: {
-            Text(workflowErrorAlertMessage ?? MomentsL10n.string("common.tryAgain"))
+            Text(workflowErrorAlertMessage ?? L10n.string("common.tryAgain"))
         }
     }
 }

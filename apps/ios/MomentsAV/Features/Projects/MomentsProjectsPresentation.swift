@@ -14,7 +14,7 @@ struct MomentsProjectsPresentation: Equatable {
                 isSignedIn: isSignedIn,
                 projectSummary: projectSummary
             ),
-            deletionMessage: MomentsL10n.string("projects.deleteProject.message", projectPendingDeletion?.title ?? MomentsL10n.string("moment.this"))
+            deletionMessage: L10n.string("projects.deleteProject.message", projectPendingDeletion?.title ?? L10n.string("moment.this"))
         )
     }
 }
@@ -32,8 +32,8 @@ enum MomentsProjectsAvailability: Equatable {
             return .signedOut(
                 MomentsProjectsUnavailablePresentation(
                     systemImage: "person.crop.circle.fill",
-                    title: MomentsL10n.string("projects.signIn.title"),
-                    message: MomentsL10n.string("projects.signIn.message")
+                    title: L10n.string("projects.signIn.title"),
+                    message: L10n.string("projects.signIn.message")
                 )
             )
         }
@@ -42,8 +42,8 @@ enum MomentsProjectsAvailability: Equatable {
             return .empty(
                 MomentsProjectsUnavailablePresentation(
                     systemImage: "rectangle.stack.badge.plus",
-                    title: MomentsL10n.string("projects.empty.title"),
-                    message: MomentsL10n.string("projects.empty.message")
+                    title: L10n.string("projects.empty.title"),
+                    message: L10n.string("projects.empty.message")
                 )
             )
         }

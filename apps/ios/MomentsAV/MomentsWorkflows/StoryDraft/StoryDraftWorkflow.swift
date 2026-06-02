@@ -188,17 +188,17 @@ final class StoryDraftWorkflow: WorkspaceObservingWorkflow {
     private func generateBlockMessage(_ availability: MomentsMediaRules.Availability) -> String {
         switch availability.blockReason {
         case nil:
-            return MomentsL10n.string("create.story.status.ready")
+            return L10n.string("create.story.status.ready")
         case .tooFewSelected(let missingCount):
             let label = missingCount == 1
-                ? MomentsL10n.string("media.photoOrClip.singular")
-                : MomentsL10n.string("media.photoOrClip.plural")
-            return MomentsL10n.string("create.story.status.tooFew", missingCount, label)
+                ? L10n.string("media.photoOrClip.singular")
+                : L10n.string("media.photoOrClip.plural")
+            return L10n.string("create.story.status.tooFew", missingCount, label)
         case .tooManySelected(let extraCount):
             let label = extraCount == 1
-                ? MomentsL10n.string("media.photoOrClip.singular")
-                : MomentsL10n.string("media.photoOrClip.plural")
-            return MomentsL10n.string("create.story.status.tooMany", extraCount, label)
+                ? L10n.string("media.photoOrClip.singular")
+                : L10n.string("media.photoOrClip.plural")
+            return L10n.string("create.story.status.tooMany", extraCount, label)
         }
     }
 }
@@ -210,9 +210,9 @@ private enum StoryDraftWorkflowError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .invalidMediaReferences:
-            MomentsL10n.string("create.story.error.invalidMediaReferences")
+            L10n.string("create.story.error.invalidMediaReferences")
         case .saveFailed:
-            MomentsL10n.string("create.story.error.saveFailed")
+            L10n.string("create.story.error.saveFailed")
         }
     }
 }

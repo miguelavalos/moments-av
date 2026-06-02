@@ -10,8 +10,8 @@ struct MomentsCreatePreviewCard: View {
         AVAppShellCard {
             VStack(alignment: .leading, spacing: 14) {
                 AVAppShellContentHeader(
-                    title: MomentsL10n.string("create.preview.title"),
-                    detail: MomentsL10n.string("create.preview.detail")
+                    title: L10n.string("create.preview.title"),
+                    detail: L10n.string("create.preview.detail")
                 )
 
                 if let usageTitle = presentation.usageTitle {
@@ -22,7 +22,7 @@ struct MomentsCreatePreviewCard: View {
 
                 if let latestPreview = presentation.summary.latestPreview {
                     MomentsCreateArtifactStatusCard(
-                        title: MomentsL10n.string("create.preview.ready"),
+                        title: L10n.string("create.preview.ready"),
                         systemImage: "list.bullet.rectangle.portrait",
                         artifact: latestPreview,
                         detail: presentation.previewArtifactMessage

@@ -25,10 +25,10 @@ struct MomentsCreditPaywallProduct: Identifiable, Equatable {
         MomentsCreditPaywallProduct(
         id: MomentsCreditProductID.proMonthlyProduct,
         kind: .subscription,
-        eyebrow: MomentsL10n.string("paywall.product.bestValue"),
-        title: MomentsL10n.string("paywall.product.pro.title"),
-        detail: MomentsL10n.string("paywall.product.pro.detail"),
-        buttonTitle: MomentsL10n.string("paywall.product.pro.button"),
+        eyebrow: L10n.string("paywall.product.bestValue"),
+        title: L10n.string("paywall.product.pro.title"),
+        detail: L10n.string("paywall.product.pro.detail"),
+        buttonTitle: L10n.string("paywall.product.pro.button"),
         systemImage: "sparkles",
         isRecommended: true
         )
@@ -38,10 +38,10 @@ struct MomentsCreditPaywallProduct: Identifiable, Equatable {
         MomentsCreditPaywallProduct(
         id: MomentsCreditProductID.starterPackProduct,
         kind: .consumableCredits(5),
-        eyebrow: MomentsL10n.string("paywall.product.starter.eyebrow"),
-        title: MomentsL10n.string("paywall.product.starter.title"),
-        detail: MomentsL10n.string("paywall.product.starter.detail"),
-        buttonTitle: MomentsL10n.string("paywall.product.starter.button"),
+        eyebrow: L10n.string("paywall.product.starter.eyebrow"),
+        title: L10n.string("paywall.product.starter.title"),
+        detail: L10n.string("paywall.product.starter.detail"),
+        buttonTitle: L10n.string("paywall.product.starter.button"),
         systemImage: "plus.circle.fill",
         isRecommended: false
         )
@@ -51,10 +51,10 @@ struct MomentsCreditPaywallProduct: Identifiable, Equatable {
         MomentsCreditPaywallProduct(
         id: MomentsCreditProductID.creatorPackProduct,
         kind: .consumableCredits(20),
-        eyebrow: MomentsL10n.string("paywall.product.bestValue"),
-        title: MomentsL10n.string("paywall.product.creator.title"),
-        detail: MomentsL10n.string("paywall.product.creator.detail"),
-        buttonTitle: MomentsL10n.string("paywall.product.creator.button"),
+        eyebrow: L10n.string("paywall.product.bestValue"),
+        title: L10n.string("paywall.product.creator.title"),
+        detail: L10n.string("paywall.product.creator.detail"),
+        buttonTitle: L10n.string("paywall.product.creator.button"),
         systemImage: "square.stack.3d.up.fill",
         isRecommended: false
         )

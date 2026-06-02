@@ -2,8 +2,8 @@ import SwiftUI
 
 @main
 struct MomentsAVApp: App {
-    @StateObject private var languageController = MomentsAppLanguageController()
-    @StateObject private var themeController = MomentsAppThemeController()
+    @StateObject private var languageController = AppLanguageController()
+    @StateObject private var themeController = AppThemeController()
 
     init() {
         AppConfig.configureAVAccountIfPossible()

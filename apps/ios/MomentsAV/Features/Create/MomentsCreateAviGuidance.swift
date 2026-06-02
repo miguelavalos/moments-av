@@ -29,7 +29,7 @@ enum MomentsCreateAviGuidanceResolver {
         if draftErrorMessage != nil {
             return MomentsCreateAviGuidance(
                 emotion: .warning,
-                message: MomentsL10n.string("create.guidance.retry"),
+                message: L10n.string("create.guidance.retry"),
                 actionTitle: nil,
                 reaction: .negative
             )
@@ -38,7 +38,7 @@ enum MomentsCreateAviGuidanceResolver {
         if isDraftLocked {
             return MomentsCreateAviGuidance(
                 emotion: .focused,
-                message: MomentsL10n.string("create.guidance.locked", selectedStyle.title),
+                message: L10n.string("create.guidance.locked", selectedStyle.title),
                 actionTitle: nil,
                 reaction: .affirm
             )
@@ -47,8 +47,8 @@ enum MomentsCreateAviGuidanceResolver {
         guard isSignedIn else {
             return MomentsCreateAviGuidance(
                 emotion: .curious,
-                message: MomentsL10n.string("create.guidance.signIn"),
-                actionTitle: MomentsL10n.string("common.signIn"),
+                message: L10n.string("create.guidance.signIn"),
+                actionTitle: L10n.string("common.signIn"),
                 reaction: .selection
             )
         }
@@ -56,8 +56,8 @@ enum MomentsCreateAviGuidanceResolver {
         if balance.spendable <= 0 {
             return MomentsCreateAviGuidance(
                 emotion: .happy,
-                message: MomentsL10n.string("create.guidance.noCredits"),
-                actionTitle: MomentsL10n.string("create.action.startProject"),
+                message: L10n.string("create.guidance.noCredits"),
+                actionTitle: L10n.string("create.action.startProject"),
                 reaction: .positive
             )
         }
@@ -66,21 +66,21 @@ enum MomentsCreateAviGuidanceResolver {
         case .status:
             return MomentsCreateAviGuidance(
                 emotion: .happy,
-                message: MomentsL10n.string("create.guidance.addMedia"),
-                actionTitle: MomentsL10n.string("create.action.startProject"),
+                message: L10n.string("create.guidance.addMedia"),
+                actionTitle: L10n.string("create.action.startProject"),
                 reaction: .positive
             )
         case .style:
             return MomentsCreateAviGuidance(
                 emotion: .curious,
-                message: MomentsL10n.string("create.guidance.chooseTheme"),
+                message: L10n.string("create.guidance.chooseTheme"),
                 actionTitle: nil,
                 reaction: .selection
             )
         case .summary:
             return MomentsCreateAviGuidance(
                 emotion: .focused,
-                message: MomentsL10n.string("create.guidance.styleSet", selectedStyle.title),
+                message: L10n.string("create.guidance.styleSet", selectedStyle.title),
                 actionTitle: nil,
                 reaction: .affirm
             )

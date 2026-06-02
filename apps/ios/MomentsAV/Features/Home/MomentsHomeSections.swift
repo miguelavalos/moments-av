@@ -7,13 +7,13 @@ struct MomentsHomeAccountCard: View {
 
     var body: some View {
         AVAppShellDashboardSection(
-            title: MomentsL10n.string("credits.title"),
+            title: L10n.string("credits.title"),
             detail: creditDetail
         ) {
             AVAppShellMetricStrip(metrics: creditMetrics)
             AVAppShellActionRow(
-                title: creditBalance.spendable > 0 ? MomentsL10n.string("credits.manage.title") : MomentsL10n.string("credits.get.title"),
-                detail: creditBalance.spendable > 0 ? MomentsL10n.string("credits.manage.detail") : MomentsL10n.string("credits.get.detail"),
+                title: creditBalance.spendable > 0 ? L10n.string("credits.manage.title") : L10n.string("credits.get.title"),
+                detail: creditBalance.spendable > 0 ? L10n.string("credits.manage.detail") : L10n.string("credits.get.detail"),
                 systemImage: creditBalance.spendable > 0 ? "creditcard.fill" : "plus.circle.fill",
                 isProminent: creditBalance.spendable == 0,
                 accessibilityIdentifier: "moments.home.credits.open",
@@ -26,7 +26,7 @@ struct MomentsHomeAccountCard: View {
         [
             AVAppShellMetric(
                 id: "spendable",
-                title: MomentsL10n.string("credits.available.title"),
+                title: L10n.string("credits.available.title"),
                 value: "\(creditBalance.spendable)",
                 systemImage: "creditcard"
             )
@@ -35,10 +35,10 @@ struct MomentsHomeAccountCard: View {
 
     private var creditDetail: String {
         if creditBalance.spendable == 0 {
-            return MomentsL10n.string("credits.home.none")
+            return L10n.string("credits.home.none")
         }
 
-        return MomentsL10n.string("credits.home.ready")
+        return L10n.string("credits.home.ready")
     }
 }
 
@@ -47,12 +47,12 @@ struct MomentsHomeSignInCard: View {
 
     var body: some View {
         AVAppShellDashboardSection(
-            title: MomentsL10n.string("home.signIn.title"),
-            detail: MomentsL10n.string("home.signIn.detail")
+            title: L10n.string("home.signIn.title"),
+            detail: L10n.string("home.signIn.detail")
         ) {
             AVAppShellActionRow(
-                title: MomentsL10n.string("common.signIn"),
-                detail: MomentsL10n.string("home.signIn.action.detail"),
+                title: L10n.string("common.signIn"),
+                detail: L10n.string("home.signIn.action.detail"),
                 systemImage: "person.crop.circle.fill",
                 isProminent: true,
                 accessibilityIdentifier: "moments.home.signin",
@@ -70,7 +70,7 @@ struct MomentsHomeProjectStatusCard: View {
 
     var body: some View {
         AVAppShellDashboardSection(
-            title: MomentsL10n.string("projects.inProgressAndGallery.title"),
+            title: L10n.string("projects.inProgressAndGallery.title"),
             detail: presentation.projectStatusDetail
         ) {
             if let latestProject = projectSummary.latestProject {
@@ -91,13 +91,13 @@ struct MomentsHomeProjectStatusCard: View {
         [
             AVAppShellMetric(
                 id: "in-progress",
-                title: MomentsL10n.string("projects.inProgress.title"),
+                title: L10n.string("projects.inProgress.title"),
                 value: "\(projectSummary.inProgressCount)",
                 systemImage: "clock"
             ),
             AVAppShellMetric(
                 id: "finished",
-                title: MomentsL10n.string("projects.finished.title"),
+                title: L10n.string("projects.finished.title"),
                 value: "\(projectSummary.finishedCount)",
                 systemImage: "checkmark.circle"
             )
@@ -113,8 +113,8 @@ struct MomentsHomeNextActionsCard: View {
 
     var body: some View {
         AVAppShellDashboardSection(
-            title: MomentsL10n.string("home.nextActions.title"),
-            detail: MomentsL10n.string("home.nextActions.detail")
+            title: L10n.string("home.nextActions.title"),
+            detail: L10n.string("home.nextActions.detail")
         ) {
             VStack(spacing: 10) {
                 if let latestInProgressAction = presentation.latestInProgressAction {

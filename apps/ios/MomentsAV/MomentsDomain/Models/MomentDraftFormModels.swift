@@ -11,11 +11,11 @@ enum MomentDraftTone: String, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .warm: MomentsL10n.string("create.tone.warm.title")
-        case .playful: MomentsL10n.string("create.tone.playful.title")
-        case .cinematic: MomentsL10n.string("create.tone.cinematic.title")
-        case .calm: MomentsL10n.string("create.tone.calm.title")
-        case .upbeat: MomentsL10n.string("create.tone.upbeat.title")
+        case .warm: L10n.string("create.tone.warm.title")
+        case .playful: L10n.string("create.tone.playful.title")
+        case .cinematic: L10n.string("create.tone.cinematic.title")
+        case .calm: L10n.string("create.tone.calm.title")
+        case .upbeat: L10n.string("create.tone.upbeat.title")
         }
     }
 }
@@ -29,9 +29,9 @@ enum MomentDraftTempo: String, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .gentle: MomentsL10n.string("create.tempo.gentle.title")
-        case .balanced: MomentsL10n.string("create.tempo.balanced.title")
-        case .upbeat: MomentsL10n.string("create.tempo.upbeat.title")
+        case .gentle: L10n.string("create.tempo.gentle.title")
+        case .balanced: L10n.string("create.tempo.balanced.title")
+        case .upbeat: L10n.string("create.tempo.upbeat.title")
         }
     }
 }
@@ -128,7 +128,7 @@ enum MomentDraftRules {
         case nil:
             return nil
         case .missingOccasion:
-            return MomentsL10n.string("create.rules.missingOccasion")
+            return L10n.string("create.rules.missingOccasion")
         }
     }
 }

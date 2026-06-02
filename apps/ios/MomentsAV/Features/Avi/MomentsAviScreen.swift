@@ -16,13 +16,13 @@ struct MomentsAviScreen: View {
 
     private var landingContent: AVAviLandingContent {
         AVAviLandingContent(
-            eyebrow: MomentsL10n.string("avi.landing.eyebrow"),
-            title: MomentsL10n.string("avi.landing.title"),
-            detail: MomentsL10n.string("avi.landing.detail"),
+            eyebrow: L10n.string("avi.landing.eyebrow"),
+            title: L10n.string("avi.landing.title"),
+            detail: L10n.string("avi.landing.detail"),
             chips: [
-                AVAviLandingChip(title: MomentsL10n.string("avi.landing.choose"), systemImage: "photo.on.rectangle"),
-                AVAviLandingChip(title: MomentsL10n.string("avi.landing.review"), systemImage: "text.bubble"),
-                AVAviLandingChip(title: MomentsL10n.string("avi.landing.create"), systemImage: "video.fill")
+                AVAviLandingChip(title: L10n.string("avi.landing.choose"), systemImage: "photo.on.rectangle"),
+                AVAviLandingChip(title: L10n.string("avi.landing.review"), systemImage: "text.bubble"),
+                AVAviLandingChip(title: L10n.string("avi.landing.create"), systemImage: "video.fill")
             ],
             accessibilityIdentifier: "moments.avi.hero"
         )
@@ -31,8 +31,8 @@ struct MomentsAviScreen: View {
     var body: some View {
         AVAviGuidanceScreenScaffold(
             identity: appExperience.identity,
-            summary: MomentsL10n.string("avi.summary"),
-            status: MomentsL10n.string("avi.status"),
+            summary: L10n.string("avi.summary"),
+            status: L10n.string("avi.status"),
             headerAccessibilityIdentifier: "moments.avi.header",
             landingContent: landingContent,
             backgroundStyle: AnyShapeStyle(MomentsTheme.shellBackground)
@@ -99,13 +99,13 @@ private struct MomentsAviSignInCard: View {
         AVAppShellCard {
             VStack(alignment: .leading, spacing: 12) {
                 AVAppShellContentHeader(
-                    title: MomentsL10n.string("avi.signIn.title"),
-                    detail: MomentsL10n.string("avi.signIn.detail")
+                    title: L10n.string("avi.signIn.title"),
+                    detail: L10n.string("avi.signIn.detail")
                 )
 
                 AVAppShellActionRow(
-                    title: MomentsL10n.string("common.signIn"),
-                    detail: MomentsL10n.string("avi.signIn.action.detail"),
+                    title: L10n.string("common.signIn"),
+                    detail: L10n.string("avi.signIn.action.detail"),
                     systemImage: "person.crop.circle.fill",
                     isProminent: true,
                     accessibilityIdentifier: "moments.avi.signin",

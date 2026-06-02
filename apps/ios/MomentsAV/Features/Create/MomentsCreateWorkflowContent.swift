@@ -180,16 +180,16 @@ private struct MomentsCreateMediaFirstWorkspace: View {
             opensStoryReviewAfterDraft = false
             showsStoryReview = true
         }
-        .alert(MomentsL10n.string("create.final.confirmTitle"), isPresented: $showsCreateVideoConfirmation) {
-            Button(MomentsL10n.string("create.action.notNow"), role: .cancel) {}
-            Button(MomentsL10n.string("create.final.createWithCost", creditCostTitle)) {
+        .alert(L10n.string("create.final.confirmTitle"), isPresented: $showsCreateVideoConfirmation) {
+            Button(L10n.string("create.action.notNow"), role: .cancel) {}
+            Button(L10n.string("create.final.createWithCost", creditCostTitle)) {
                 generateFinalRender(false)
             }
         } message: {
-            Text(MomentsL10n.string("create.final.confirmMessage", creditCostTitle))
+            Text(L10n.string("create.final.confirmMessage", creditCostTitle))
         }
-        .alert(MomentsL10n.string("create.discard.confirmTitle"), isPresented: $showsDiscardDraftConfirmation) {
-            Button(MomentsL10n.string("create.discard.keep"), role: .cancel) {}
+        .alert(L10n.string("create.discard.confirmTitle"), isPresented: $showsDiscardDraftConfirmation) {
+            Button(L10n.string("create.discard.keep"), role: .cancel) {}
             Button(discardConfirmationActionTitle, role: .destructive) {
                 discardCurrentDraft()
             }
@@ -254,15 +254,15 @@ private struct MomentsCreateMediaFirstWorkspace: View {
     }
 
     private var discardConfirmationActionTitle: String {
-        presentation.hasUnsavedLocalMoment ? MomentsL10n.string("create.discard.local") : MomentsL10n.string("create.discard.current")
+        presentation.hasUnsavedLocalMoment ? L10n.string("create.discard.local") : L10n.string("create.discard.current")
     }
 
     private var discardConfirmationMessage: String {
         if presentation.hasUnsavedLocalMoment {
-            return MomentsL10n.string("create.discard.localMessage")
+            return L10n.string("create.discard.localMessage")
         }
 
-        return MomentsL10n.string("create.discard.currentMessage")
+        return L10n.string("create.discard.currentMessage")
     }
 }
 
@@ -271,7 +271,7 @@ private struct MomentsCreateDashboardHeader: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
-            Text(MomentsL10n.string("create.dashboard.title"))
+            Text(L10n.string("create.dashboard.title"))
                 .font(.system(size: 22, weight: .black))
                 .foregroundStyle(AVBrandColor.textPrimary)
 
@@ -284,15 +284,15 @@ private struct MomentsCreateDashboardHeader: View {
 
     private var subtitle: String {
         if presentation.finalRenderSummary.finalExport != nil {
-            return MomentsL10n.string("create.dashboard.subtitle.finalReady")
+            return L10n.string("create.dashboard.subtitle.finalReady")
         }
         if let realtimeStatus = presentation.finalRenderSummary.realtimeStatus {
             return realtimeStatus.detail
         }
         if presentation.storySummary.hasScenes {
-            return MomentsL10n.string("create.dashboard.subtitle.storyPlan")
+            return L10n.string("create.dashboard.subtitle.storyPlan")
         }
-        return MomentsL10n.string("create.dashboard.subtitle.default")
+        return L10n.string("create.dashboard.subtitle.default")
     }
 }
 
@@ -414,15 +414,15 @@ struct MomentsCreateBlockingPreparationView: View {
         var title: String {
             switch self {
             case .importMedia:
-                return MomentsL10n.string("create.preparation.importMedia.title")
+                return L10n.string("create.preparation.importMedia.title")
             case .prepareStory:
-                return MomentsL10n.string("create.preparation.prepareStory.title")
+                return L10n.string("create.preparation.prepareStory.title")
             case .uploadForVideo:
-                return MomentsL10n.string("create.preparation.uploadForVideo.title")
+                return L10n.string("create.preparation.uploadForVideo.title")
             case .createVideo:
-                return MomentsL10n.string("create.preparation.createVideo.title")
+                return L10n.string("create.preparation.createVideo.title")
             case .createPreview:
-                return MomentsL10n.string("create.preparation.createPreview.title")
+                return L10n.string("create.preparation.createPreview.title")
             }
         }
 
@@ -457,25 +457,25 @@ struct MomentsCreateBlockingPreparationView: View {
             case .importMedia:
                 if let itemCount, itemCount > 0 {
                     let itemWord = itemCount == 1
-                        ? MomentsL10n.string("media.item.singular")
-                        : MomentsL10n.string("media.item.plural")
-                    return MomentsL10n.string("create.preparation.importMedia.detailWithCount", itemCount, itemWord)
+                        ? L10n.string("media.item.singular")
+                        : L10n.string("media.item.plural")
+                    return L10n.string("create.preparation.importMedia.detailWithCount", itemCount, itemWord)
                 }
-                return MomentsL10n.string("create.preparation.importMedia.detail")
+                return L10n.string("create.preparation.importMedia.detail")
             case .prepareStory:
-                return MomentsL10n.string("create.preparation.prepareStory.detail")
+                return L10n.string("create.preparation.prepareStory.detail")
             case .uploadForVideo:
                 if let itemCount, itemCount > 0 {
                     let itemWord = itemCount == 1
-                        ? MomentsL10n.string("media.item.singular")
-                        : MomentsL10n.string("media.item.plural")
-                    return MomentsL10n.string("create.preparation.uploadForVideo.detailWithCount", itemCount, itemWord)
+                        ? L10n.string("media.item.singular")
+                        : L10n.string("media.item.plural")
+                    return L10n.string("create.preparation.uploadForVideo.detailWithCount", itemCount, itemWord)
                 }
-                return MomentsL10n.string("create.preparation.uploadForVideo.detail")
+                return L10n.string("create.preparation.uploadForVideo.detail")
             case .createVideo:
-                return MomentsL10n.string("create.preparation.createVideo.detail")
+                return L10n.string("create.preparation.createVideo.detail")
             case .createPreview:
-                return MomentsL10n.string("create.preparation.createPreview.detail")
+                return L10n.string("create.preparation.createPreview.detail")
             }
         }
     }
@@ -494,7 +494,7 @@ private struct MomentsCreateOptionsSummaryCard: View {
             AVAppShellCard {
                 VStack(alignment: .leading, spacing: 10) {
                     HStack(spacing: 10) {
-                        Text(MomentsL10n.string("create.options.title"))
+                        Text(L10n.string("create.options.title"))
                             .font(.system(size: 13, weight: .black))
                             .foregroundStyle(AVBrandColor.textPrimary)
 
@@ -507,7 +507,7 @@ private struct MomentsCreateOptionsSummaryCard: View {
                     HStack(spacing: 8) {
                         MomentsCreateOptionPill(title: selectedStyle.title, systemImage: "sparkles")
                         MomentsCreateOptionPill(title: selectedMusicPreset.title, systemImage: "music.note")
-                        MomentsCreateOptionPill(title: MomentsL10n.string("create.duration.auto.title"), systemImage: "timer")
+                        MomentsCreateOptionPill(title: L10n.string("create.duration.auto.title"), systemImage: "timer")
                     }
 
                     if let suggestionText {
@@ -537,32 +537,32 @@ private struct MomentsCreateOptionsSummaryCard: View {
             }
         }
         .buttonStyle(.plain)
-        .accessibilityLabel(MomentsL10n.string("create.options.edit"))
+        .accessibilityLabel(L10n.string("create.options.edit"))
     }
 
     private var detailText: String {
         guard autoStyleSuggestion != nil else {
-            return MomentsL10n.string("create.options.detail")
+            return L10n.string("create.options.detail")
         }
 
         if canUndoAutoStyleSuggestion {
-            return MomentsL10n.string("create.options.suggestionActive")
+            return L10n.string("create.options.suggestionActive")
         }
 
-        return MomentsL10n.string("create.options.suggestionAvailable")
+        return L10n.string("create.options.suggestionAvailable")
     }
 
     private var suggestionText: String? {
         guard let autoStyleSuggestion else { return nil }
         let styleTitle = styles.first(where: { $0.id == autoStyleSuggestion.styleID })?.title
-            ?? MomentsL10n.string("create.options.anotherTheme")
+            ?? L10n.string("create.options.anotherTheme")
         if canUndoAutoStyleSuggestion {
-            return MomentsL10n.string("create.options.suggestionUsing", styleTitle, autoStyleSuggestion.musicPreset.title)
+            return L10n.string("create.options.suggestionUsing", styleTitle, autoStyleSuggestion.musicPreset.title)
         }
         guard selectedStyle.id != autoStyleSuggestion.styleID || selectedMusicPreset != autoStyleSuggestion.musicPreset else {
             return nil
         }
-        return MomentsL10n.string("create.options.suggestion", styleTitle, autoStyleSuggestion.musicPreset.title)
+        return L10n.string("create.options.suggestion", styleTitle, autoStyleSuggestion.musicPreset.title)
     }
 }
 
@@ -573,7 +573,7 @@ private struct MomentsCreateStoryReviewCard: View {
         AVAppShellCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(spacing: 10) {
-                    Text(MomentsL10n.string("create.storyDirection.title"))
+                    Text(L10n.string("create.storyDirection.title"))
                         .font(.system(size: 13, weight: .black))
                         .foregroundStyle(AVBrandColor.textPrimary)
 
@@ -584,14 +584,14 @@ private struct MomentsCreateStoryReviewCard: View {
                         .foregroundStyle(AVBrandColor.accent)
                 }
 
-                Text(MomentsL10n.string("create.storyDirection.detail"))
+                Text(L10n.string("create.storyDirection.detail"))
                     .font(.caption)
                     .fontWeight(.semibold)
                     .foregroundStyle(AVBrandColor.textSecondary)
 
                 VStack(alignment: .leading, spacing: 10) {
                     if presentation.storySummary.reviewScenes.isEmpty {
-                        Label(MomentsL10n.string("create.storyDirection.needsStory"), systemImage: "text.bubble.fill")
+                        Label(L10n.string("create.storyDirection.needsStory"), systemImage: "text.bubble.fill")
                             .font(.system(size: 12, weight: .bold))
                             .foregroundStyle(AVBrandColor.textSecondary)
                             .fixedSize(horizontal: false, vertical: true)
@@ -754,7 +754,7 @@ private struct MomentsCreateStoryReviewPage: View {
                             .frame(width: 98, height: 98)
 
                             VStack(alignment: .leading, spacing: 8) {
-                                Text(MomentsL10n.string("create.reviewBeforeCreating.title"))
+                                Text(L10n.string("create.reviewBeforeCreating.title"))
                                     .font(.system(size: 18, weight: .black))
                                     .foregroundStyle(AVBrandColor.textPrimary)
 
@@ -765,7 +765,7 @@ private struct MomentsCreateStoryReviewPage: View {
                                     .fixedSize(horizontal: false, vertical: true)
 
                                 HStack(spacing: 8) {
-                                    MomentsCreateOptionPill(title: MomentsL10n.string("create.media.itemCount", presentation.mediaSummary.reviewCount), systemImage: "photo.on.rectangle")
+                                    MomentsCreateOptionPill(title: L10n.string("create.media.itemCount", presentation.mediaSummary.reviewCount), systemImage: "photo.on.rectangle")
                                     MomentsCreateOptionPill(title: "\(presentation.template.duration)", systemImage: "timer")
                                     MomentsCreateOptionPill(title: "\(totalCreditCostTitle)", systemImage: "creditcard.fill")
                                 }
@@ -798,11 +798,11 @@ private struct MomentsCreateStoryReviewPage: View {
                                     .background(AVBrandColor.textPrimary, in: Circle())
 
                                 VStack(alignment: .leading, spacing: 5) {
-                                    Text(MomentsL10n.string("create.final.createVideoTitle"))
+                                    Text(L10n.string("create.final.createVideoTitle"))
                                         .font(.system(size: 17, weight: .black))
                                         .foregroundStyle(AVBrandColor.textPrimary)
 
-                                    Text(MomentsL10n.string("create.final.createVideoDetail", presentation.template.duration))
+                                    Text(L10n.string("create.final.createVideoDetail", presentation.template.duration))
                                         .font(.system(size: 13, weight: .semibold))
                                         .foregroundStyle(AVBrandColor.textSecondary)
                                         .fixedSize(horizontal: false, vertical: true)
@@ -850,19 +850,19 @@ private struct MomentsCreateStoryReviewPage: View {
         .background(MomentsTheme.shellBackground.ignoresSafeArea())
         .navigationBarBackButtonHidden(true)
         .toolbar(.hidden, for: .navigationBar)
-        .alert(MomentsL10n.string("create.final.confirmTitle"), isPresented: $showsCreateVideoConfirmation) {
-            Button(MomentsL10n.string("create.action.notNow"), role: .cancel) {}
-            Button(MomentsL10n.string("create.final.createWithCost", totalCreditCostTitle)) {
+        .alert(L10n.string("create.final.confirmTitle"), isPresented: $showsCreateVideoConfirmation) {
+            Button(L10n.string("create.action.notNow"), role: .cancel) {}
+            Button(L10n.string("create.final.createWithCost", totalCreditCostTitle)) {
                 dismiss()
                 Task { @MainActor in
                     createVideo(removesWatermark)
                 }
             }
         } message: {
-            Text(MomentsL10n.string("create.final.confirmMessage", totalCreditCostTitle))
+            Text(L10n.string("create.final.confirmMessage", totalCreditCostTitle))
         }
-        .alert(MomentsL10n.string("create.discard.confirmTitle"), isPresented: $showsDiscardDraftConfirmation) {
-            Button(MomentsL10n.string("create.discard.keep"), role: .cancel) {}
+        .alert(L10n.string("create.discard.confirmTitle"), isPresented: $showsDiscardDraftConfirmation) {
+            Button(L10n.string("create.discard.keep"), role: .cancel) {}
             Button(discardConfirmationActionTitle, role: .destructive) {
                 discardDraft()
             }
@@ -872,19 +872,19 @@ private struct MomentsCreateStoryReviewPage: View {
     }
 
     private var summaryTitle: String {
-        MomentsL10n.string("create.final.summaryTitle")
+        L10n.string("create.final.summaryTitle")
     }
 
     private var discardConfirmationActionTitle: String {
-        presentation.hasUnsavedLocalMoment ? MomentsL10n.string("create.discard.local") : MomentsL10n.string("create.discard.current")
+        presentation.hasUnsavedLocalMoment ? L10n.string("create.discard.local") : L10n.string("create.discard.current")
     }
 
     private var discardConfirmationMessage: String {
         if presentation.hasUnsavedLocalMoment {
-            return MomentsL10n.string("create.discard.localMessage")
+            return L10n.string("create.discard.localMessage")
         }
 
-        return MomentsL10n.string("create.discard.currentMessage")
+        return L10n.string("create.discard.currentMessage")
     }
 
     private var creditCostTitle: String {
@@ -913,7 +913,7 @@ private struct MomentsCreateStoryReviewPage: View {
     }
 
     private var primaryCreateTitle: String {
-        hasRenderPlan ? MomentsL10n.string("create.final.createWithCost", totalCreditCostTitle) : MomentsL10n.string("create.final.preparePlan")
+        hasRenderPlan ? L10n.string("create.final.createWithCost", totalCreditCostTitle) : L10n.string("create.final.preparePlan")
     }
 
     private var primaryCreateIconName: String {
@@ -1366,58 +1366,58 @@ private struct MomentsCreateCompactAviGuide: View {
 
     private var title: String {
         if presentation.finalRenderSummary.finalExport != nil {
-            return MomentsL10n.string("create.aviStatus.ready.title")
+            return L10n.string("create.aviStatus.ready.title")
         }
         if let realtimeStatus = presentation.finalRenderSummary.realtimeStatus {
             return realtimeStatus.title
         }
         if presentation.previewSummary.latestPreview != nil {
-            return MomentsL10n.string("create.aviStatus.reviewReady.title")
+            return L10n.string("create.aviStatus.reviewReady.title")
         }
         if presentation.previewSummary.isGenerating {
-            return MomentsL10n.string("create.aviStatus.reviewing.title")
+            return L10n.string("create.aviStatus.reviewing.title")
         }
         if presentation.storySummary.isDrafting {
-            return MomentsL10n.string("create.aviStatus.preparing.title")
+            return L10n.string("create.aviStatus.preparing.title")
         }
         if presentation.previewSummary.latestPreviewJob != nil || presentation.finalRenderSummary.latestFinalJob != nil {
-            return MomentsL10n.string("create.aviStatus.working.title")
+            return L10n.string("create.aviStatus.working.title")
         }
         if presentation.canGeneratePreview {
-            return MomentsL10n.string("create.aviStatus.storyReady.title")
+            return L10n.string("create.aviStatus.storyReady.title")
         }
         if presentation.mediaSummary.selectedCount > 0 || !presentation.mediaSummary.syncedMediaAssets.isEmpty {
-            return MomentsL10n.string("create.aviStatus.goodSelection.title")
+            return L10n.string("create.aviStatus.goodSelection.title")
         }
-        return MomentsL10n.string("create.aviStatus.startMedia.title")
+        return L10n.string("create.aviStatus.startMedia.title")
     }
 
     private var message: String {
         if presentation.finalRenderSummary.finalExport != nil {
-            return MomentsL10n.string("create.aviStatus.exportReady.detail")
+            return L10n.string("create.aviStatus.exportReady.detail")
         }
         if presentation.previewSummary.latestPreview != nil {
-            return MomentsL10n.string("create.aviStatus.previewReady.detail")
+            return L10n.string("create.aviStatus.previewReady.detail")
         }
         if presentation.previewSummary.isGenerating {
-            return presentation.previewSummary.statusMessage ?? MomentsL10n.string("create.aviStatus.reviewing.detail")
+            return presentation.previewSummary.statusMessage ?? L10n.string("create.aviStatus.reviewing.detail")
         }
         if presentation.storySummary.isDrafting {
-            return presentation.storySummary.statusMessage ?? MomentsL10n.string("create.aviStatus.preparing.detail")
+            return presentation.storySummary.statusMessage ?? L10n.string("create.aviStatus.preparing.detail")
         }
         if let realtimeStatus = presentation.finalRenderSummary.realtimeStatus {
             return realtimeStatus.detail
         }
         if presentation.previewSummary.latestPreviewJob != nil {
-            return MomentsL10n.string("create.aviStatus.reviewing.detail")
+            return L10n.string("create.aviStatus.reviewing.detail")
         }
         if presentation.canGeneratePreview {
-            return MomentsL10n.string("create.aviStatus.storyReady.detail")
+            return L10n.string("create.aviStatus.storyReady.detail")
         }
         if presentation.mediaSummary.selectedCount > 0 || !presentation.mediaSummary.syncedMediaAssets.isEmpty {
-            return MomentsL10n.string("create.aviStatus.goodSelection.detail")
+            return L10n.string("create.aviStatus.goodSelection.detail")
         }
-        return MomentsL10n.string("create.aviStatus.startMedia.detail")
+        return L10n.string("create.aviStatus.startMedia.detail")
     }
 }
 
@@ -1486,13 +1486,13 @@ private struct MomentsCreatePrimaryActionBar: View {
                 if presentation.finalRenderSummary.pendingGalleryVideo != nil {
                     VStack(spacing: 10) {
                         Button(action: finishFinalVideoToGallery) {
-                            Label(MomentsL10n.string("create.final.finishGallery"), systemImage: "checkmark.circle.fill")
+                            Label(L10n.string("create.final.finishGallery"), systemImage: "checkmark.circle.fill")
                                 .frame(maxWidth: .infinity)
                         }
                         .buttonStyle(MomentsCreateSoftActionButtonStyle())
 
                         Button(action: createAnotherFinalVideoVersion) {
-                            Label(MomentsL10n.string("create.final.createAnother"), systemImage: "plus.rectangle.on.rectangle")
+                            Label(L10n.string("create.final.createAnother"), systemImage: "plus.rectangle.on.rectangle")
                                 .frame(maxWidth: .infinity)
                         }
                         .buttonStyle(MomentsCreateNeutralInlineButtonStyle())
@@ -1543,32 +1543,32 @@ private struct MomentsCreatePrimaryActionBar: View {
     }
 
     private var discardTitle: String {
-        presentation.hasUnsavedLocalMoment ? MomentsL10n.string("create.discard.local") : MomentsL10n.string("create.discard.current")
+        presentation.hasUnsavedLocalMoment ? L10n.string("create.discard.local") : L10n.string("create.discard.current")
     }
 
     private var buttonTitle: String {
         if presentation.finalRenderSummary.pendingGalleryVideo != nil {
-            return MomentsL10n.string("create.final.chooseDestination")
+            return L10n.string("create.final.chooseDestination")
         }
         if presentation.finalRenderSummary.finalExport != nil {
-            return MomentsL10n.string("create.final.videoReady")
+            return L10n.string("create.final.videoReady")
         }
         if presentation.finalRenderSummary.latestFinalJob != nil {
-            return presentation.finalRenderSummary.isRefreshingStatus ? MomentsL10n.string("create.status.checking") : MomentsL10n.string("create.final.checkStatus")
+            return presentation.finalRenderSummary.isRefreshingStatus ? L10n.string("create.status.checking") : L10n.string("create.final.checkStatus")
         }
         if presentation.canGenerateFinalRender {
-            return MomentsL10n.string("create.preview.view")
+            return L10n.string("create.preview.view")
         }
         if presentation.previewSummary.latestPreview != nil {
-            return presentation.finalRenderSummary.isGenerating ? MomentsL10n.string("create.final.creating") : MomentsL10n.string("create.final.create")
+            return presentation.finalRenderSummary.isGenerating ? L10n.string("create.final.creating") : L10n.string("create.final.create")
         }
         if presentation.previewSummary.latestPreviewJob != nil {
-            return presentation.previewSummary.isRefreshingStatus ? MomentsL10n.string("create.status.refreshing") : MomentsL10n.string("create.preview.refresh")
+            return presentation.previewSummary.isRefreshingStatus ? L10n.string("create.status.refreshing") : L10n.string("create.preview.refresh")
         }
         if needsSignInForStory {
-            return MomentsL10n.string("common.signIn")
+            return L10n.string("common.signIn")
         }
-        return presentation.finalRenderSummary.isGenerating ? MomentsL10n.string("create.preview.preparing") : MomentsL10n.string("create.preview.reviewFirst")
+        return presentation.finalRenderSummary.isGenerating ? L10n.string("create.preview.preparing") : L10n.string("create.preview.reviewFirst")
     }
 
     private var buttonIconName: String {
@@ -1624,21 +1624,21 @@ private struct MomentsCreatePrimaryActionBar: View {
             return presentation.previewSummary.statusMessage ?? "Reviewing story..."
         }
         if presentation.storySummary.isDrafting {
-            return presentation.storySummary.statusMessage ?? MomentsL10n.string("create.preparation.prepareStory.progress")
+            return presentation.storySummary.statusMessage ?? L10n.string("create.preparation.prepareStory.progress")
         }
         if presentation.finalRenderSummary.finalExport != nil {
-            return MomentsL10n.string("create.primary.finalReady")
+            return L10n.string("create.primary.finalReady")
         }
         if presentation.finalRenderSummary.latestFinalJob != nil {
             return presentation.finalRenderSummary.realtimeStatus?.detail
                 ?? presentation.finalRenderSummary.statusMessage
-                ?? MomentsL10n.string("create.primary.videoCreating")
+                ?? L10n.string("create.primary.videoCreating")
         }
         if presentation.previewSummary.latestPreview != nil {
-            return MomentsL10n.string("create.primary.previewReady")
+            return L10n.string("create.primary.previewReady")
         }
         if presentation.canGenerateFinalRender {
-            return MomentsL10n.string("create.primary.reviewBeforeVideo")
+            return L10n.string("create.primary.reviewBeforeVideo")
         }
         if let previewMessage = presentation.previewSummary.statusMessage, !previewMessage.isEmpty {
             return previewMessage
@@ -1656,7 +1656,7 @@ private struct MomentsCreatePrimaryActionBar: View {
             return presentation.storyAvailabilityMessage
         }
         if presentation.canDraftStory {
-            return MomentsL10n.string("create.primary.storyReady.detail")
+            return L10n.string("create.primary.storyReady.detail")
         }
         return nil
     }
@@ -1759,9 +1759,9 @@ private struct MomentsCreatePrimaryActionBar: View {
 
     private var title: String {
         if presentation.finalRenderSummary.finalExport != nil || presentation.finalRenderSummary.latestFinalJob != nil {
-            return MomentsL10n.string("create.final.video")
+            return L10n.string("create.final.video")
         }
-        return MomentsL10n.string("project.nextAction.createVideo.title")
+        return L10n.string("project.nextAction.createVideo.title")
     }
 
     private var creditCostTitle: String {
@@ -1889,10 +1889,10 @@ private struct MomentsCreateLegacyCompactAviGuide: View {
             return "Working"
         }
         if presentation.canGeneratePreview {
-            return MomentsL10n.string("create.aviStatus.storyReady.title")
+            return L10n.string("create.aviStatus.storyReady.title")
         }
         if presentation.mediaSummary.selectedCount > 0 || !presentation.mediaSummary.syncedMediaAssets.isEmpty {
-            return MomentsL10n.string("create.aviStatus.goodSelection.title")
+            return L10n.string("create.aviStatus.goodSelection.title")
         }
         return "Avi tip"
     }
@@ -1942,7 +1942,7 @@ private struct MomentsCreateAviOptionsSheet: View {
     var body: some View {
         VStack(spacing: 0) {
             MomentsCreateEditorPageHeader(
-                title: MomentsL10n.string("create.guide.title"),
+                title: L10n.string("create.guide.title"),
                 dismiss: dismiss
             )
             .padding(.horizontal, 20)
@@ -2040,13 +2040,13 @@ private struct MomentsCreateGuideSummaryCard: View {
     var body: some View {
         AVAppShellCard {
             VStack(alignment: .leading, spacing: 8) {
-                Text(MomentsL10n.string("create.guide.videoSetup.title"))
+                Text(L10n.string("create.guide.videoSetup.title"))
                     .font(.system(size: 13, weight: .black))
                     .foregroundStyle(AVBrandColor.textPrimary)
 
                 VStack(spacing: 0) {
                     MomentsCreateEditableOptionRow(
-                        title: MomentsL10n.string("create.guide.theme.title"),
+                        title: L10n.string("create.guide.theme.title"),
                         value: style.title,
                         detail: style.subtitle,
                         systemImage: "paintpalette.fill",
@@ -2056,7 +2056,7 @@ private struct MomentsCreateGuideSummaryCard: View {
                     MomentsCreateOptionDivider()
 
                     MomentsCreateEditableOptionRow(
-                        title: MomentsL10n.string("create.guide.look.title"),
+                        title: L10n.string("create.guide.look.title"),
                         value: form.look.title,
                         detail: form.look.subtitle,
                         systemImage: form.look.systemImage,
@@ -2066,9 +2066,9 @@ private struct MomentsCreateGuideSummaryCard: View {
                     MomentsCreateOptionDivider()
 
                     MomentsCreateEditableOptionRow(
-                        title: MomentsL10n.string("create.guide.mood.title"),
+                        title: L10n.string("create.guide.mood.title"),
                         value: selectedMusicPreset.title,
-                        detail: MomentsL10n.string("create.guide.mood.detail"),
+                        detail: L10n.string("create.guide.mood.detail"),
                         systemImage: "sparkles",
                         action: changeMood
                     )
@@ -2076,7 +2076,7 @@ private struct MomentsCreateGuideSummaryCard: View {
                     MomentsCreateOptionDivider()
 
                     MomentsCreateEditableOptionRow(
-                        title: MomentsL10n.string("create.guide.length.title"),
+                        title: L10n.string("create.guide.length.title"),
                         value: form.duration.title,
                         detail: lengthDetail,
                         systemImage: "timer",
@@ -2090,13 +2090,13 @@ private struct MomentsCreateGuideSummaryCard: View {
     private var lengthDetail: String {
         switch form.duration {
         case .auto:
-            return MomentsL10n.string("create.guide.length.auto.detail")
+            return L10n.string("create.guide.length.auto.detail")
         case .short:
-            return MomentsL10n.string("create.guide.length.short.detail")
+            return L10n.string("create.guide.length.short.detail")
         case .standard:
-            return MomentsL10n.string("create.guide.length.standard.detail")
+            return L10n.string("create.guide.length.standard.detail")
         case .extended:
-            return MomentsL10n.string("create.guide.length.extended.detail")
+            return L10n.string("create.guide.length.extended.detail")
         }
     }
 }
@@ -2183,7 +2183,7 @@ private struct MomentsCreateOptionsAviPanel: View {
                     .accessibilityHidden(true)
 
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(MomentsL10n.string("create.aviDirection.title"))
+                    Text(L10n.string("create.aviDirection.title"))
                         .font(.system(size: 14, weight: .black))
                         .foregroundStyle(AVBrandColor.textPrimary)
 
@@ -2198,13 +2198,13 @@ private struct MomentsCreateOptionsAviPanel: View {
                         HStack(spacing: 8) {
                             if canUndoAutoStyleSuggestion {
                                 MomentsCreateAviSuggestionButton(
-                                    title: MomentsL10n.string("create.aviDirection.undoSuggestion"),
+                                    title: L10n.string("create.aviDirection.undoSuggestion"),
                                     systemImage: "arrow.uturn.backward",
                                     action: undoAutoStyleSuggestion
                                 )
                             } else if showsUseAviSuggestion {
                                 MomentsCreateAviSuggestionButton(
-                                    title: MomentsL10n.string("create.aviDirection.useSuggestion"),
+                                    title: L10n.string("create.aviDirection.useSuggestion"),
                                     systemImage: "sparkles",
                                     action: useAutoStyleSuggestion
                                 )
@@ -2221,19 +2221,19 @@ private struct MomentsCreateOptionsAviPanel: View {
 
     private var message: String {
         guard let autoStyleSuggestion else {
-            return MomentsL10n.string("create.aviDirection.defaultMessage")
+            return L10n.string("create.aviDirection.defaultMessage")
         }
 
         if isUsingAviSuggestion {
-            return MomentsL10n.string("create.aviDirection.usingSuggestion", selectedStyle.title.lowercased())
+            return L10n.string("create.aviDirection.usingSuggestion", selectedStyle.title.lowercased())
         }
 
         if isUsingAviDirection {
-            return MomentsL10n.string("create.aviDirection.changedMusic", selectedStyle.title.lowercased())
+            return L10n.string("create.aviDirection.changedMusic", selectedStyle.title.lowercased())
         }
 
         let suggestedTitle = suggestedStyleTitle(for: autoStyleSuggestion.styleID)
-        return MomentsL10n.string("create.aviDirection.changedDirection", selectedStyle.title.lowercased(), suggestedTitle.lowercased())
+        return L10n.string("create.aviDirection.changedDirection", selectedStyle.title.lowercased(), suggestedTitle.lowercased())
     }
 
     private var isUsingAviSuggestion: Bool {
@@ -2253,14 +2253,14 @@ private struct MomentsCreateOptionsAviPanel: View {
 
     private func suggestedStyleTitle(for id: MomentCreationStyleID) -> String {
         switch id {
-        case .celebration: MomentsL10n.string("create.theme.celebration.title")
-        case .eventRecap: MomentsL10n.string("create.theme.eventRecap.title")
-        case .travel: MomentsL10n.string("create.theme.travel.title")
-        case .favoritePeople: MomentsL10n.string("create.theme.favoritePeople.title")
-        case .birthday: MomentsL10n.string("create.theme.birthday.title")
-        case .familyMoments: MomentsL10n.string("create.theme.familyMoments.title")
-        case .softRoast: MomentsL10n.string("create.theme.softRoast.title")
-        case .milestone: MomentsL10n.string("create.theme.milestone.title")
+        case .celebration: L10n.string("create.theme.celebration.title")
+        case .eventRecap: L10n.string("create.theme.eventRecap.title")
+        case .travel: L10n.string("create.theme.travel.title")
+        case .favoritePeople: L10n.string("create.theme.favoritePeople.title")
+        case .birthday: L10n.string("create.theme.birthday.title")
+        case .familyMoments: L10n.string("create.theme.familyMoments.title")
+        case .softRoast: L10n.string("create.theme.softRoast.title")
+        case .milestone: L10n.string("create.theme.milestone.title")
         }
     }
 }
@@ -2289,7 +2289,7 @@ private struct MomentsCreateAviNoteField: View {
     var body: some View {
         AVAppShellCard {
             VStack(alignment: .leading, spacing: 12) {
-                Text(MomentsL10n.string("create.note.title"))
+                Text(L10n.string("create.note.title"))
                     .font(.system(size: 13, weight: .black))
                     .foregroundStyle(AVBrandColor.textPrimary)
 
@@ -2298,12 +2298,12 @@ private struct MomentsCreateAviNoteField: View {
                         MomentsCreateGuideFieldIcon(systemImage: "text.bubble.fill")
 
                         VStack(alignment: .leading, spacing: 2) {
-                            Text(MomentsL10n.string("create.note.field.title"))
+                            Text(L10n.string("create.note.field.title"))
                                 .font(.system(size: 11, weight: .black))
                                 .foregroundStyle(AVBrandColor.textSecondary)
                                 .textCase(.uppercase)
 
-                            Text(MomentsL10n.string("create.note.field.subtitle"))
+                            Text(L10n.string("create.note.field.subtitle"))
                                 .font(.caption2)
                                 .fontWeight(.semibold)
                                 .foregroundStyle(AVBrandColor.textSecondary.opacity(0.82))
@@ -2321,10 +2321,10 @@ private struct MomentsCreateAviNoteField: View {
                         }
                         .buttonStyle(.plain)
                         .disabled(true)
-                        .accessibilityLabel(MomentsL10n.string("create.note.voice.accessibility"))
+                        .accessibilityLabel(L10n.string("create.note.voice.accessibility"))
                     }
 
-                    TextField(MomentsL10n.string("create.note.placeholder"), text: $text, axis: .vertical)
+                    TextField(L10n.string("create.note.placeholder"), text: $text, axis: .vertical)
                         .font(AVBrandTypography.body)
                         .foregroundStyle(AVBrandColor.textPrimary)
                         .lineLimit(2...4)
@@ -2421,7 +2421,7 @@ private struct MomentsCreateLookChooserPage: View {
     var body: some View {
         VStack(spacing: 0) {
             MomentsCreateChooserHeader(
-                title: MomentsL10n.string("create.selector.look.title"),
+                title: L10n.string("create.selector.look.title"),
                 dismiss: dismiss
             )
             .padding(.horizontal, 20)
@@ -2441,11 +2441,11 @@ private struct MomentsCreateLookChooserPage: View {
                                 .accessibilityHidden(true)
 
                             VStack(alignment: .leading, spacing: 4) {
-                                Text(MomentsL10n.string("create.selector.look.intro.title"))
+                                Text(L10n.string("create.selector.look.intro.title"))
                                     .font(.system(size: 14, weight: .black))
                                     .foregroundStyle(AVBrandColor.textPrimary)
 
-                                Text(MomentsL10n.string("create.selector.look.intro.detail"))
+                                Text(L10n.string("create.selector.look.intro.detail"))
                                     .font(.caption)
                                     .fontWeight(.semibold)
                                     .foregroundStyle(AVBrandColor.textSecondary)
@@ -2495,7 +2495,7 @@ private struct MomentsCreateLookImageTile: View {
                 tileContent(width: proxy.size.width)
             }
             .buttonStyle(.plain)
-            .accessibilityLabel(MomentsL10n.string("create.selector.look.accessibility", look.title))
+            .accessibilityLabel(L10n.string("create.selector.look.accessibility", look.title))
         }
         .frame(height: tileHeight)
     }
@@ -2559,9 +2559,9 @@ private struct MomentsCreateLengthChooserPage: View {
 
     var body: some View {
         MomentsCreateVisualOptionChooserPage(
-            title: MomentsL10n.string("create.selector.length.title"),
-            introTitle: MomentsL10n.string("create.selector.length.intro.title"),
-            introDetail: MomentsL10n.string("create.selector.length.intro.detail"),
+            title: L10n.string("create.selector.length.title"),
+            introTitle: L10n.string("create.selector.length.intro.title"),
+            introDetail: L10n.string("create.selector.length.intro.detail"),
             dismiss: dismiss
         ) {
             MomentsCreateTwoColumnGrid(items: MomentDuration.allCases) { duration in
@@ -2579,13 +2579,13 @@ private struct MomentsCreateLengthChooserPage: View {
     private func detail(for duration: MomentDuration) -> String {
         switch duration {
         case .auto:
-            return MomentsL10n.string("create.selector.length.auto.detail")
+            return L10n.string("create.selector.length.auto.detail")
         case .short:
-            return MomentsL10n.string("create.selector.length.short.detail")
+            return L10n.string("create.selector.length.short.detail")
         case .standard:
-            return MomentsL10n.string("create.selector.length.standard.detail")
+            return L10n.string("create.selector.length.standard.detail")
         case .extended:
-            return MomentsL10n.string("create.selector.length.extended.detail")
+            return L10n.string("create.selector.length.extended.detail")
         }
     }
 }
@@ -2598,9 +2598,9 @@ private struct MomentsCreateMoodChooserPage: View {
 
     var body: some View {
         MomentsCreateVisualOptionChooserPage(
-            title: MomentsL10n.string("create.selector.mood.title"),
-            introTitle: MomentsL10n.string("create.selector.mood.intro.title"),
-            introDetail: MomentsL10n.string("create.selector.mood.intro.detail"),
+            title: L10n.string("create.selector.mood.title"),
+            introTitle: L10n.string("create.selector.mood.intro.title"),
+            introDetail: L10n.string("create.selector.mood.intro.detail"),
             dismiss: dismiss
         ) {
             MomentsCreateTwoColumnGrid(items: allowedMusic) { preset in
@@ -2618,15 +2618,15 @@ private struct MomentsCreateMoodChooserPage: View {
     private func detail(for preset: MomentMusicPreset) -> String {
         switch preset {
         case .warm:
-            return MomentsL10n.string("create.selector.mood.warm.detail")
+            return L10n.string("create.selector.mood.warm.detail")
         case .fun:
-            return MomentsL10n.string("create.selector.mood.fun.detail")
+            return L10n.string("create.selector.mood.fun.detail")
         case .cinematic:
-            return MomentsL10n.string("create.selector.mood.cinematic.detail")
+            return L10n.string("create.selector.mood.cinematic.detail")
         case .calm:
-            return MomentsL10n.string("create.selector.mood.calm.detail")
+            return L10n.string("create.selector.mood.calm.detail")
         case .upbeat:
-            return MomentsL10n.string("create.selector.mood.upbeat.detail")
+            return L10n.string("create.selector.mood.upbeat.detail")
         }
     }
 }
@@ -2815,11 +2815,11 @@ private struct MomentsCreateThemeChooserPage: View {
                                 .accessibilityHidden(true)
 
                             VStack(alignment: .leading, spacing: 4) {
-                                Text(MomentsL10n.string("create.selector.theme.intro.title"))
+                                Text(L10n.string("create.selector.theme.intro.title"))
                                     .font(.system(size: 14, weight: .black))
                                     .foregroundStyle(AVBrandColor.textPrimary)
 
-                                Text(MomentsL10n.string("create.selector.theme.intro.detail"))
+                                Text(L10n.string("create.selector.theme.intro.detail"))
                                     .font(.caption)
                                     .fontWeight(.semibold)
                                     .foregroundStyle(AVBrandColor.textSecondary)
@@ -2870,9 +2870,9 @@ private struct MomentsCreateThemeChooserHeader: View {
                     .shadow(color: AVBrandColor.ink.opacity(0.08), radius: 10, x: 0, y: 4)
                     .contentShape(Circle())
             }
-            .accessibilityLabel(MomentsL10n.string("common.back"))
+            .accessibilityLabel(L10n.string("common.back"))
 
-            Text(MomentsL10n.string("create.selector.theme.title"))
+            Text(L10n.string("create.selector.theme.title"))
                 .font(.system(size: 18, weight: .black))
                 .foregroundStyle(AVBrandColor.textPrimary)
                 .frame(maxWidth: .infinity)
@@ -2898,7 +2898,7 @@ private struct MomentsCreateChooserHeader: View {
                     .shadow(color: AVBrandColor.ink.opacity(0.08), radius: 10, x: 0, y: 4)
                     .contentShape(Circle())
             }
-            .accessibilityLabel(MomentsL10n.string("common.back"))
+            .accessibilityLabel(L10n.string("common.back"))
 
             Text(title)
                 .font(.system(size: 18, weight: .black))
@@ -2932,9 +2932,9 @@ private struct MomentsCreateThemeImageTile: View {
 
     private var accessibilityLabel: String {
         if style.isEnabled {
-            return MomentsL10n.string("create.selector.theme.accessibility", style.title)
+            return L10n.string("create.selector.theme.accessibility", style.title)
         }
-        return MomentsL10n.string("create.selector.theme.accessibilitySoon", style.title)
+        return L10n.string("create.selector.theme.accessibilitySoon", style.title)
     }
 
     private func tileContent(width: CGFloat) -> some View {
@@ -2969,7 +2969,7 @@ private struct MomentsCreateThemeImageTile: View {
                             .minimumScaleFactor(0.72)
 
                         if !style.isEnabled {
-                            Text(MomentsL10n.string("common.soon"))
+                            Text(L10n.string("common.soon"))
                                 .font(.system(size: 9, weight: .black))
                                 .foregroundStyle(.white)
                                 .padding(.horizontal, 6)

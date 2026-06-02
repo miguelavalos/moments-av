@@ -249,10 +249,10 @@ final class MomentsCreateViewModel: ObservableObject {
         workflowActiveProjectId = workspace.project.id
         draftErrorMessage = nil
         selectedMedia = MomentsCreateUITestFixtures.selectedMedia
-        mediaStatusMessage = MomentsL10n.string("create.media.fixture.synced")
+        mediaStatusMessage = L10n.string("create.media.fixture.synced")
         savedScenes = workspace.storyScenes
         generatedScenes = []
-        storyStatusMessage = MomentsL10n.string("create.story.status.readyToReview")
+        storyStatusMessage = L10n.string("create.story.status.readyToReview")
         lastPreparedStoryInputSignature = workspace.project.storyInputSignature
             ?? currentStoryInputSignature(projectId: workspace.project.id)
         activeWorkspace = workspace

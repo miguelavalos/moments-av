@@ -5,7 +5,7 @@ import SwiftUI
 extension MomentsCreateViewModel {
     func beginNewProject(openMediaPicker: Bool = true) {
         guard canBeginNewProject else {
-            updateDraftErrorMessage(draftAvailabilityMessage ?? MomentsL10n.string("create.error.startWhenReady"))
+            updateDraftErrorMessage(draftAvailabilityMessage ?? L10n.string("create.error.startWhenReady"))
             return
         }
         prepareNewDraftCreation()
@@ -32,7 +32,7 @@ extension MomentsCreateViewModel {
 
     func createDraft(openMediaPicker: Bool) {
         guard canCreateDraft, let projectCreationWorkflow else {
-            updateDraftErrorMessage(draftAvailabilityMessage ?? MomentsL10n.string("create.error.startMoment"))
+            updateDraftErrorMessage(draftAvailabilityMessage ?? L10n.string("create.error.startMoment"))
             return
         }
         let form = form
@@ -48,11 +48,11 @@ extension MomentsCreateViewModel {
 
     func discardDraft() {
         guard !isBusy else {
-            updateDraftErrorMessage(MomentsL10n.string("create.error.waitBeforeDiscard"))
+            updateDraftErrorMessage(L10n.string("create.error.waitBeforeDiscard"))
             return
         }
         guard hasMomentWorkspace || hasRecoverableMomentContext else {
-            updateDraftErrorMessage(MomentsL10n.string("create.error.noActiveMoment"))
+            updateDraftErrorMessage(L10n.string("create.error.noActiveMoment"))
             return
         }
         if hasLocalMomentWorkspace {
@@ -71,14 +71,14 @@ extension MomentsCreateViewModel {
             } else if let message = projectCreationWorkflow.errorMessage {
                 self.updateDraftErrorMessage(message)
             } else {
-                self.updateDraftErrorMessage(MomentsL10n.string("create.error.discardMoment"))
+                self.updateDraftErrorMessage(L10n.string("create.error.discardMoment"))
             }
         }
     }
 
     func importPickerItems(_ items: [PhotosPickerItem]) {
         guard canAddMedia, let mediaUploadWorkflow else {
-            updateDraftErrorMessage(mediaAvailabilityMessage ?? MomentsL10n.string("create.error.mediaUnavailable"))
+            updateDraftErrorMessage(mediaAvailabilityMessage ?? L10n.string("create.error.mediaUnavailable"))
             return
         }
         let template = form.template
@@ -94,7 +94,7 @@ extension MomentsCreateViewModel {
 
     func importLatestPhotos() {
         guard canAddMedia, let mediaUploadWorkflow else {
-            updateDraftErrorMessage(mediaAvailabilityMessage ?? MomentsL10n.string("create.error.mediaUnavailable"))
+            updateDraftErrorMessage(mediaAvailabilityMessage ?? L10n.string("create.error.mediaUnavailable"))
             return
         }
         let template = form.template
@@ -109,7 +109,7 @@ extension MomentsCreateViewModel {
 
     func importPhotoAlbum(id albumId: String) {
         guard canAddMedia, let mediaUploadWorkflow else {
-            updateDraftErrorMessage(mediaAvailabilityMessage ?? MomentsL10n.string("create.error.mediaUnavailable"))
+            updateDraftErrorMessage(mediaAvailabilityMessage ?? L10n.string("create.error.mediaUnavailable"))
             return
         }
         let template = form.template
@@ -145,7 +145,7 @@ extension MomentsCreateViewModel {
 
     func generateStoryDraft() {
         guard canDraftStory, let storyDraftWorkflow else {
-            updateStoryStatusMessage(storyAvailabilityMessage ?? MomentsL10n.string("create.error.storyPreparationNotReady"))
+            updateStoryStatusMessage(storyAvailabilityMessage ?? L10n.string("create.error.storyPreparationNotReady"))
             return
         }
         let form = form
@@ -220,16 +220,16 @@ extension MomentsCreateViewModel {
             do {
                 let response = try await reviewBundlePurchaser.purchaseReviewBundle()
                 self.updateStoryStatusMessage(
-                    MomentsL10n.string(
+                    L10n.string(
                         "create.reviewBundle.added",
                         response.reviewsGranted,
                         MomentsCreditCopy.countTitle(response.creditsCommitted)
                     )
                 )
             } catch let error as LocalizedError {
-                self.updateStoryStatusMessage(error.errorDescription ?? MomentsL10n.string("create.error.addStoryReviews"))
+                self.updateStoryStatusMessage(error.errorDescription ?? L10n.string("create.error.addStoryReviews"))
             } catch {
-                self.updateStoryStatusMessage(MomentsL10n.string("create.error.addStoryReviews"))
+                self.updateStoryStatusMessage(L10n.string("create.error.addStoryReviews"))
             }
         }
     }
@@ -256,7 +256,7 @@ extension MomentsCreateViewModel {
         }
 
         guard canDraftStory, let storyDraftWorkflow else {
-            updateStoryStatusMessage(storyAvailabilityMessage ?? MomentsL10n.string("create.error.storyPreparationNotReady"))
+            updateStoryStatusMessage(storyAvailabilityMessage ?? L10n.string("create.error.storyPreparationNotReady"))
             return
         }
         let form = form
@@ -313,12 +313,12 @@ extension MomentsCreateViewModel {
 
             guard self.storySummary.hasScenes,
                   self.lastPreparedStoryInputSignature == inputSignature else {
-                self.updateStoryStatusMessage(MomentsL10n.string("create.error.storyPreparationUnfinished"))
+                self.updateStoryStatusMessage(L10n.string("create.error.storyPreparationUnfinished"))
                 return
             }
 
             guard let previewGenerationWorkflow = self.previewGenerationWorkflow else {
-                self.updatePreviewStatusMessage(MomentsL10n.string("create.error.storyReviewNotConfigured"))
+                self.updatePreviewStatusMessage(L10n.string("create.error.storyReviewNotConfigured"))
                 return
             }
             await previewGenerationWorkflow.generatePreview(
@@ -331,17 +331,17 @@ extension MomentsCreateViewModel {
 
     func createFinalVideoFromCurrentSelection(removesWatermark: Bool = false) {
         guard let finalRenderWorkflow else {
-            updateFinalRenderStatusMessage(MomentsL10n.string("create.error.videoCreationNotConfigured"))
+            updateFinalRenderStatusMessage(L10n.string("create.error.videoCreationNotConfigured"))
             return
         }
         guard canGenerateFinalRender, isStoryPreparedForCurrentInput else {
             updateFinalRenderStatusMessage(finalRenderAvailabilityMessage
                 ?? storyAvailabilityMessage
-                ?? MomentsL10n.string("create.error.reviewBeforeVideo"))
+                ?? L10n.string("create.error.reviewBeforeVideo"))
             return
         }
         guard let context = activeTemplateContext else {
-            updateFinalRenderStatusMessage(MomentsL10n.string("create.error.currentMomentMissing"))
+            updateFinalRenderStatusMessage(L10n.string("create.error.currentMomentMissing"))
             return
         }
 
@@ -359,7 +359,7 @@ extension MomentsCreateViewModel {
 
     func refreshPreviewStatus() {
         guard canRefreshPreviewStatus, let previewGenerationWorkflow else {
-            updatePreviewStatusMessage(previewRefreshAvailabilityMessage ?? MomentsL10n.string("create.error.noStoryReviewStatus"))
+            updatePreviewStatusMessage(previewRefreshAvailabilityMessage ?? L10n.string("create.error.noStoryReviewStatus"))
             return
         }
 
@@ -370,18 +370,18 @@ extension MomentsCreateViewModel {
 
     func generateFinalRender(removesWatermark: Bool = false) {
         guard let finalRenderWorkflow else {
-            updateFinalRenderStatusMessage(MomentsL10n.string("create.error.videoCreationUnavailable"))
+            updateFinalRenderStatusMessage(L10n.string("create.error.videoCreationUnavailable"))
             return
         }
         guard let context = activeTemplateContext else {
-            updateFinalRenderStatusMessage(MomentsL10n.string("create.error.currentMomentMissing"))
+            updateFinalRenderStatusMessage(L10n.string("create.error.currentMomentMissing"))
             return
         }
         guard canGenerateFinalRender else {
             updateFinalRenderStatusMessage(
                 finalRenderAvailabilityMessage
                     ?? storyAvailabilityMessage
-                    ?? MomentsL10n.string("create.error.videoCreationNotReady")
+                    ?? L10n.string("create.error.videoCreationNotReady")
             )
             return
         }
@@ -399,7 +399,7 @@ extension MomentsCreateViewModel {
 
     func refreshFinalRenderStatus() {
         guard canRefreshFinalRenderStatus, let finalRenderWorkflow else {
-            updateFinalRenderStatusMessage(finalRenderRefreshAvailabilityMessage ?? MomentsL10n.string("create.error.noVideoStatus"))
+            updateFinalRenderStatusMessage(finalRenderRefreshAvailabilityMessage ?? L10n.string("create.error.noVideoStatus"))
             return
         }
 
@@ -410,7 +410,7 @@ extension MomentsCreateViewModel {
 
     func retryFinalVideoDownload() {
         guard let finalRenderWorkflow else {
-            updateFinalRenderStatusMessage(MomentsL10n.string("create.error.finalDownloadUnavailable"))
+            updateFinalRenderStatusMessage(L10n.string("create.error.finalDownloadUnavailable"))
             return
         }
 
@@ -419,7 +419,7 @@ extension MomentsCreateViewModel {
 
     func finishFinalVideoToGallery() {
         guard let finalRenderWorkflow else {
-            updateFinalRenderStatusMessage(MomentsL10n.string("create.error.galleryUnavailable"))
+            updateFinalRenderStatusMessage(L10n.string("create.error.galleryUnavailable"))
             return
         }
 

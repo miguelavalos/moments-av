@@ -16,12 +16,12 @@ enum MomentsAppExperience {
             legalLinks: legalLinks,
             brandPalette: MomentsTheme.brandPalette,
             visualAssets: visualAssets,
-            splashTagline: MomentsL10n.string("app.splash.tagline"),
-            splashStatus: MomentsL10n.string("app.splash.status"),
-            onboardingTitle: MomentsL10n.string("app.onboarding.title"),
-            onboardingSubtitle: MomentsL10n.string("app.onboarding.subtitle"),
-            onboardingPrimaryTitle: MomentsL10n.string("app.onboarding.signIn"),
-            onboardingSecondaryTitle: MomentsL10n.string("app.onboarding.skip"),
+            splashTagline: L10n.string("app.splash.tagline"),
+            splashStatus: L10n.string("app.splash.status"),
+            onboardingTitle: L10n.string("app.onboarding.title"),
+            onboardingSubtitle: L10n.string("app.onboarding.subtitle"),
+            onboardingPrimaryTitle: L10n.string("app.onboarding.signIn"),
+            onboardingSecondaryTitle: L10n.string("app.onboarding.skip"),
             onboardingBackgroundStart: .init(red: 0.97, green: 0.94, blue: 0.86),
             onboardingBackgroundMid: AVBrandColor.neutral50,
             onboardingBackgroundEnd: .init(red: 0.9, green: 0.93, blue: 0.89)
@@ -56,10 +56,10 @@ enum MomentsAppExperience {
     }
 
     static var settingsSubtitle: String {
-        MomentsL10n.string("app.settings.subtitle", identity.shortName)
+        L10n.string("app.settings.subtitle", identity.shortName)
     }
 
     static var accountSubtitle: String {
-        MomentsL10n.string("app.account.subtitle", identity.accountName)
+        L10n.string("app.account.subtitle", identity.accountName)
     }
 }

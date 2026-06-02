@@ -1,7 +1,7 @@
 import Foundation
 import SwiftUI
 
-enum MomentsAppLanguage: String, CaseIterable, Identifiable {
+enum AppLanguage: String, CaseIterable, Identifiable {
     case english = "en"
     case spanish = "es"
     case french = "fr"
@@ -12,11 +12,11 @@ enum MomentsAppLanguage: String, CaseIterable, Identifiable {
 
     var displayName: String {
         switch self {
-        case .english: MomentsL10n.string("language.english")
-        case .spanish: MomentsL10n.string("language.spanish")
-        case .french: MomentsL10n.string("language.french")
-        case .german: MomentsL10n.string("language.german")
-        case .catalan: MomentsL10n.string("language.catalan")
+        case .english: L10n.string("language.english")
+        case .spanish: L10n.string("language.spanish")
+        case .french: L10n.string("language.french")
+        case .german: L10n.string("language.german")
+        case .catalan: L10n.string("language.catalan")
         }
     }
 
@@ -34,9 +34,9 @@ enum MomentsAppLanguage: String, CaseIterable, Identifiable {
         Locale(identifier: rawValue)
     }
 
-    static func resolved(from rawValue: String?) -> MomentsAppLanguage {
+    static func resolved(from rawValue: String?) -> AppLanguage {
         guard let rawValue else { return .english }
-        if let exactMatch = MomentsAppLanguage(rawValue: rawValue) {
+        if let exactMatch = AppLanguage(rawValue: rawValue) {
             return exactMatch
         }
 
@@ -49,8 +49,8 @@ enum MomentsAppLanguage: String, CaseIterable, Identifiable {
     }
 }
 
-final class MomentsAppLanguageController: ObservableObject {
-    @Published private(set) var currentLanguage: MomentsAppLanguage
+final class AppLanguageController: ObservableObject {
+    @Published private(set) var currentLanguage: AppLanguage
 
     var locale: Locale {
         currentLanguage.locale
@@ -62,29 +62,29 @@ final class MomentsAppLanguageController: ObservableObject {
     init(userDefaults: UserDefaults = .standard) {
         self.userDefaults = userDefaults
         if let launchLanguage = ProcessInfo.processInfo.environment["MOMENTSAV_APP_LANGUAGE"] {
-            let resolvedLanguage = MomentsAppLanguage.resolved(from: launchLanguage)
+            let resolvedLanguage = AppLanguage.resolved(from: launchLanguage)
             currentLanguage = resolvedLanguage
             userDefaults.set(resolvedLanguage.rawValue, forKey: userDefaultsKey)
             return
         }
 
-        currentLanguage = MomentsAppLanguage.resolved(
+        currentLanguage = AppLanguage.resolved(
             from: userDefaults.string(forKey: userDefaultsKey) ?? Locale.preferredLanguages.first
         )
     }
 
-    func select(_ language: MomentsAppLanguage) {
+    func select(_ language: AppLanguage) {
         userDefaults.set(language.rawValue, forKey: userDefaultsKey)
         guard currentLanguage != language else { return }
         currentLanguage = language
     }
 }
 
-enum MomentsL10n {
+enum L10n {
     private static let userDefaultsKey = "momentsav.appLanguage"
 
     static var locale: Locale {
-        MomentsAppLanguage.resolved(
+        AppLanguage.resolved(
             from: UserDefaults.standard.string(forKey: userDefaultsKey) ?? Locale.preferredLanguages.first
         ).locale
     }
@@ -100,7 +100,7 @@ enum MomentsL10n {
     }
 
     private static var bundle: Bundle {
-        let selectedLanguage = MomentsAppLanguage.resolved(
+        let selectedLanguage = AppLanguage.resolved(
             from: UserDefaults.standard.string(forKey: userDefaultsKey) ?? Locale.preferredLanguages.first
         )
 
@@ -113,7 +113,7 @@ enum MomentsL10n {
     }
 }
 
-enum MomentsAppTheme: String, CaseIterable, Identifiable {
+enum AppTheme: String, CaseIterable, Identifiable {
     case system
     case light
     case dark
@@ -129,18 +129,18 @@ enum MomentsAppTheme: String, CaseIterable, Identifiable {
     }
 }
 
-final class MomentsAppThemeController: ObservableObject {
-    @Published private(set) var currentTheme: MomentsAppTheme
+final class AppThemeController: ObservableObject {
+    @Published private(set) var currentTheme: AppTheme
 
     private let userDefaults: UserDefaults
     private let userDefaultsKey = "momentsav.appTheme"
 
     init(userDefaults: UserDefaults = .standard) {
         self.userDefaults = userDefaults
-        currentTheme = MomentsAppTheme(rawValue: userDefaults.string(forKey: userDefaultsKey) ?? "") ?? .system
+        currentTheme = AppTheme(rawValue: userDefaults.string(forKey: userDefaultsKey) ?? "") ?? .system
     }
 
-    func select(_ theme: MomentsAppTheme) {
+    func select(_ theme: AppTheme) {
         guard currentTheme != theme else { return }
         currentTheme = theme
         userDefaults.set(theme.rawValue, forKey: userDefaultsKey)

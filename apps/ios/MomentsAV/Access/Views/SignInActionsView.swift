@@ -15,8 +15,8 @@ struct SignInActionsView<AuthenticationController>: View where AuthenticationCon
             onApple: startAppleSignIn,
             onGoogle: startGoogleSignIn
         )
-        .alert(MomentsL10n.string("access.error.title"), isPresented: $signInCoordinator.isShowingError) {
-            Button(MomentsL10n.string("common.close"), role: .cancel) {}
+        .alert(L10n.string("access.error.title"), isPresented: $signInCoordinator.isShowingError) {
+            Button(L10n.string("common.close"), role: .cancel) {}
         } message: {
             Text(signInCoordinator.errorMessage)
         }
@@ -29,7 +29,7 @@ struct SignInActionsView<AuthenticationController>: View where AuthenticationCon
         signInCoordinator.start(
             provider: .apple,
             isAvailable: authenticationController.isAuthenticationAvailable,
-            unavailableMessage: MomentsL10n.string("access.unavailable"),
+            unavailableMessage: L10n.string("access.unavailable"),
             operation: authenticationController.signInWithApple
         )
     }
@@ -38,7 +38,7 @@ struct SignInActionsView<AuthenticationController>: View where AuthenticationCon
         signInCoordinator.start(
             provider: .google,
             isAvailable: authenticationController.isAuthenticationAvailable,
-            unavailableMessage: MomentsL10n.string("access.unavailable"),
+            unavailableMessage: L10n.string("access.unavailable"),
             operation: authenticationController.signInWithGoogle
         )
     }

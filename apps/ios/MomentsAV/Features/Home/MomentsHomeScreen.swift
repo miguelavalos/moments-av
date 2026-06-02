@@ -47,8 +47,8 @@ struct MomentsHomeScreen: View {
             MomentsTheme.shellBackground
         } content: {
             AVAppShellHomeHeader(
-                title: MomentsL10n.string("home.header.title"),
-                subtitle: MomentsL10n.string("home.header.subtitle")
+                title: L10n.string("home.header.title"),
+                subtitle: L10n.string("home.header.subtitle")
             ) {
                 AVAppShellConfiguredBrandHeader(
                     activeItem: nil,
@@ -94,48 +94,48 @@ struct MomentsHomeScreen: View {
     @Environment(\.avCommonAppExperience) private var appExperience
 
     private var aviContextTitle: String {
-        guard viewModel.isSignedIn else { return MomentsL10n.string("home.avi.signIn.title") }
+        guard viewModel.isSignedIn else { return L10n.string("home.avi.signIn.title") }
         if createViewModel.hasRecoverableMomentContext {
             if createViewModel.previewSummary.latestPreview != nil {
-                return MomentsL10n.string("home.avi.storyReviewReady.title")
+                return L10n.string("home.avi.storyReviewReady.title")
             }
             if createViewModel.previewSummary.isGenerating {
-                return MomentsL10n.string("home.avi.creating.title")
+                return L10n.string("home.avi.creating.title")
             }
             if createViewModel.storySummary.isDrafting {
-                return MomentsL10n.string("home.avi.preparing.title")
+                return L10n.string("home.avi.preparing.title")
             }
-            return MomentsL10n.string("home.avi.currentMoment.title")
+            return L10n.string("home.avi.currentMoment.title")
         }
-        return MomentsL10n.string("home.avi.createMoment.title")
+        return L10n.string("home.avi.createMoment.title")
     }
 
     private var aviContextDetail: String {
         guard viewModel.isSignedIn else {
-            return MomentsL10n.string("home.avi.signIn.detail")
+            return L10n.string("home.avi.signIn.detail")
         }
         if createViewModel.hasRecoverableMomentContext {
             let count = createViewModel.mediaSelectedCount
             if createViewModel.previewSummary.latestPreview != nil {
-                return MomentsL10n.string("home.avi.storyReviewReady.detail")
+                return L10n.string("home.avi.storyReviewReady.detail")
             }
             if createViewModel.previewSummary.isGenerating {
-                return MomentsL10n.string("home.avi.creating.detail")
+                return L10n.string("home.avi.creating.detail")
             }
             if createViewModel.storySummary.isDrafting {
-                return MomentsL10n.string("home.avi.preparing.detail")
+                return L10n.string("home.avi.preparing.detail")
             }
             if count > 0 {
-                return MomentsL10n.string("home.avi.selected.detail", count, count == 1 ? MomentsL10n.string("media.item.one") : MomentsL10n.string("media.item.other"))
+                return L10n.string("home.avi.selected.detail", count, count == 1 ? L10n.string("media.item.one") : L10n.string("media.item.other"))
             }
-            return MomentsL10n.string("home.avi.addMedia.detail")
+            return L10n.string("home.avi.addMedia.detail")
         }
-        return MomentsL10n.string("home.avi.createMoment.detail")
+        return L10n.string("home.avi.createMoment.detail")
     }
 
     private var aviContextButtonTitle: String {
-        guard viewModel.isSignedIn else { return MomentsL10n.string("common.signIn") }
-        return createViewModel.hasRecoverableMomentContext ? MomentsL10n.string("common.continue") : MomentsL10n.string("common.create")
+        guard viewModel.isSignedIn else { return L10n.string("common.signIn") }
+        return createViewModel.hasRecoverableMomentContext ? L10n.string("common.continue") : L10n.string("common.create")
     }
 }
 

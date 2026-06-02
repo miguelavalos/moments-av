@@ -2,39 +2,39 @@ import Foundation
 
 enum MomentsRecoveryCopy {
     static func mediaImportFailure() -> String {
-        MomentsL10n.string("recovery.mediaImportFailure")
+        L10n.string("recovery.mediaImportFailure")
     }
 
     static func mediaUploadUnavailable() -> String {
-        MomentsL10n.string("recovery.mediaUploadUnavailable")
+        L10n.string("recovery.mediaUploadUnavailable")
     }
 
     static func mediaStorySaveFailure() -> String {
-        MomentsL10n.string("recovery.mediaStorySaveFailure")
+        L10n.string("recovery.mediaStorySaveFailure")
     }
 
     static func storyStartFailure() -> String {
-        MomentsL10n.string("recovery.storyStartFailure")
+        L10n.string("recovery.storyStartFailure")
     }
 
     static func storyFailure() -> String {
-        MomentsL10n.string("recovery.storyFailure")
+        L10n.string("recovery.storyFailure")
     }
 
     static func renderStartFailure() -> String {
-        MomentsL10n.string("recovery.renderStartFailure")
+        L10n.string("recovery.renderStartFailure")
     }
 
     static func renderRefreshFailure() -> String {
-        MomentsL10n.string("recovery.renderRefreshFailure")
+        L10n.string("recovery.renderRefreshFailure")
     }
 
     static func previewStatusMissing() -> String {
-        MomentsL10n.string("recovery.previewStatusMissing")
+        L10n.string("recovery.previewStatusMissing")
     }
 
     static func finalRenderStatusMissing() -> String {
-        MomentsL10n.string("recovery.finalRenderStatusMissing")
+        L10n.string("recovery.finalRenderStatusMissing")
     }
 
     static func failedRenderDetail(userMessage: String?, errorMessage: String?) -> String {
@@ -42,7 +42,7 @@ enum MomentsRecoveryCopy {
             return userMessage
         }
 
-        return MomentsL10n.string("recovery.failedRenderDetail")
+        return L10n.string("recovery.failedRenderDetail")
     }
 
     static func artifactActionDetail(kind: String, status: String) -> String {

@@ -20,13 +20,13 @@ enum MomentsProjectStatusRules {
 
     static func displayTitle(for status: String) -> String {
         if status == "preview_ready" {
-            return MomentsL10n.string("project.status.storyReady")
+            return L10n.string("project.status.storyReady")
         }
         if status == "final_render_pending" || status == "final_render_running" {
-            return MomentsL10n.string("project.status.creatingVideo")
+            return L10n.string("project.status.creatingVideo")
         }
         if status == "export_ready" || status == "completed" {
-            return MomentsL10n.string("project.status.videoReady")
+            return L10n.string("project.status.videoReady")
         }
         return status
             .replacingOccurrences(of: "_", with: " ")
@@ -35,7 +35,7 @@ enum MomentsProjectStatusRules {
 
     static func displayKind(_ kind: String) -> String {
         if kind == "preview" {
-            return MomentsL10n.string("project.kind.storyReview")
+            return L10n.string("project.kind.storyReview")
         }
         return kind
             .replacingOccurrences(of: "_", with: " ")
@@ -45,59 +45,59 @@ enum MomentsProjectStatusRules {
     static func nextAction(for workspace: MomentProjectWorkspace) -> MomentsProjectNextAction {
         if let failedJob = workspace.renderJobs.latest(where: { isFailureStatus($0.status) }) {
             return MomentsProjectNextAction(
-                title: MomentsL10n.string("project.nextAction.videoAttention.title"),
-                message: MomentsL10n.string("project.nextAction.videoAttention.message", displayKind(failedJob.kind)),
+                title: L10n.string("project.nextAction.videoAttention.title"),
+                message: L10n.string("project.nextAction.videoAttention.message", displayKind(failedJob.kind)),
                 systemImage: "exclamationmark.triangle",
-                primaryButtonTitle: MomentsL10n.string("project.nextAction.reviewInCreate"),
+                primaryButtonTitle: L10n.string("project.nextAction.reviewInCreate"),
                 continuationFocus: focus(forFailedJobKind: failedJob.kind)
             )
         }
 
         if workspace.mediaAssets.isEmpty {
             return MomentsProjectNextAction(
-                title: MomentsL10n.string("project.nextAction.addMedia.title"),
-                message: MomentsL10n.string("project.nextAction.addMedia.message"),
+                title: L10n.string("project.nextAction.addMedia.title"),
+                message: L10n.string("project.nextAction.addMedia.message"),
                 systemImage: "photo.badge.plus",
-                primaryButtonTitle: MomentsL10n.string("project.nextAction.addMedia.button"),
+                primaryButtonTitle: L10n.string("project.nextAction.addMedia.button"),
                 continuationFocus: .media
             )
         }
 
         if workspace.storyScenes.isEmpty {
             return MomentsProjectNextAction(
-                title: MomentsL10n.string("project.nextAction.prepareStory.title"),
-                message: MomentsL10n.string("project.nextAction.prepareStory.message"),
+                title: L10n.string("project.nextAction.prepareStory.title"),
+                message: L10n.string("project.nextAction.prepareStory.message"),
                 systemImage: "text.bubble",
-                primaryButtonTitle: MomentsL10n.string("project.nextAction.prepareStory.button"),
+                primaryButtonTitle: L10n.string("project.nextAction.prepareStory.button"),
                 continuationFocus: .story
             )
         }
 
         if !workspace.artifacts.containsAvailable(kind: "preview") {
             return MomentsProjectNextAction(
-                title: MomentsL10n.string("project.nextAction.reviewStory.title"),
-                message: MomentsL10n.string("project.nextAction.reviewStory.message"),
+                title: L10n.string("project.nextAction.reviewStory.title"),
+                message: L10n.string("project.nextAction.reviewStory.message"),
                 systemImage: "text.bubble",
-                primaryButtonTitle: MomentsL10n.string("project.nextAction.reviewStory.button"),
+                primaryButtonTitle: L10n.string("project.nextAction.reviewStory.button"),
                 continuationFocus: .preview
             )
         }
 
         if !workspace.artifacts.containsAvailable(kind: "final_export") {
             return MomentsProjectNextAction(
-                title: MomentsL10n.string("project.nextAction.createVideo.title"),
-                message: MomentsL10n.string("project.nextAction.createVideo.message"),
+                title: L10n.string("project.nextAction.createVideo.title"),
+                message: L10n.string("project.nextAction.createVideo.message"),
                 systemImage: "video.fill",
-                primaryButtonTitle: MomentsL10n.string("project.nextAction.createVideo.button"),
+                primaryButtonTitle: L10n.string("project.nextAction.createVideo.button"),
                 continuationFocus: .finalRender
             )
         }
 
         return MomentsProjectNextAction(
-            title: MomentsL10n.string("projects.finished.title"),
-            message: MomentsL10n.string("project.nextAction.finished.message"),
+            title: L10n.string("projects.finished.title"),
+            message: L10n.string("project.nextAction.finished.message"),
             systemImage: "checkmark.circle",
-            primaryButtonTitle: MomentsL10n.string("project.nextAction.openInCreate"),
+            primaryButtonTitle: L10n.string("project.nextAction.openInCreate"),
             continuationFocus: .finalRender
         )
     }

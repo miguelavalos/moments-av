@@ -13,8 +13,8 @@ struct MomentsCreateFinalExportCard: View {
         AVAppShellCard {
             VStack(alignment: .leading, spacing: 14) {
                 AVAppShellContentHeader(
-                    title: MomentsL10n.string("project.artifact.final.title"),
-                    detail: MomentsL10n.string("create.final.detail")
+                    title: L10n.string("project.artifact.final.title"),
+                    detail: L10n.string("create.final.detail")
                 )
 
                 Text(presentation.creditTitle)
@@ -23,7 +23,7 @@ struct MomentsCreateFinalExportCard: View {
 
                 if let finalExport = presentation.summary.finalExport {
                     MomentsCreateArtifactStatusCard(
-                        title: MomentsL10n.string("create.final.ready"),
+                        title: L10n.string("create.final.ready"),
                         systemImage: "square.and.arrow.up",
                         artifact: finalExport,
                         detail: nil
@@ -33,22 +33,22 @@ struct MomentsCreateFinalExportCard: View {
                 if presentation.summary.pendingGalleryVideo != nil {
                     MomentsCreateEmptySectionRow(
                         systemImage: "rectangle.stack.badge.play.fill",
-                        message: MomentsL10n.string("create.final.saved")
+                        message: L10n.string("create.final.saved")
                     )
 
                     AVAppShellPrimaryButton(
-                        MomentsL10n.string("create.final.finishGallery"),
+                        L10n.string("create.final.finishGallery"),
                         systemImage: "checkmark.circle.fill",
                         action: finishFinalVideoToGallery
                     )
 
                     Button(action: createAnotherFinalVideoVersion) {
-                        Label(MomentsL10n.string("create.final.createAnother"), systemImage: "plus.rectangle.on.rectangle")
+                        Label(L10n.string("create.final.createAnother"), systemImage: "plus.rectangle.on.rectangle")
                     }
                     .buttonStyle(MomentsCreateNeutralInlineButtonStyle())
                 } else if presentation.summary.canRetryFinalVideoDownload {
                     AVAppShellPrimaryButton(
-                        MomentsL10n.string("create.final.retryDownload"),
+                        L10n.string("create.final.retryDownload"),
                         systemImage: "arrow.down.circle.fill",
                         action: retryFinalVideoDownload
                     )

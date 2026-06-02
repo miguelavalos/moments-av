@@ -54,7 +54,7 @@ struct MomentsProjectDeleteButton: View {
         Button(role: .destructive) {
             requestDeleteProject()
         } label: {
-            Label(isDeletingProject ? MomentsL10n.string("projects.deleteProject.deleting") : MomentsL10n.string("projects.deleteProject.shortButton"), systemImage: "trash")
+            Label(isDeletingProject ? L10n.string("projects.deleteProject.deleting") : L10n.string("projects.deleteProject.shortButton"), systemImage: "trash")
                 .frame(maxWidth: .infinity)
         }
         .buttonStyle(.bordered)

@@ -11,21 +11,21 @@ enum MomentMusicPreset: String, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .warm: MomentsL10n.string("create.music.warm.title")
-        case .fun: MomentsL10n.string("create.music.fun.title")
-        case .cinematic: MomentsL10n.string("create.music.cinematic.title")
-        case .calm: MomentsL10n.string("create.music.calm.title")
-        case .upbeat: MomentsL10n.string("create.music.upbeat.title")
+        case .warm: L10n.string("create.music.warm.title")
+        case .fun: L10n.string("create.music.fun.title")
+        case .cinematic: L10n.string("create.music.cinematic.title")
+        case .calm: L10n.string("create.music.calm.title")
+        case .upbeat: L10n.string("create.music.upbeat.title")
         }
     }
 
     var subtitle: String {
         switch self {
-        case .warm: MomentsL10n.string("create.music.warm.subtitle")
-        case .fun: MomentsL10n.string("create.music.fun.subtitle")
-        case .cinematic: MomentsL10n.string("create.music.cinematic.subtitle")
-        case .calm: MomentsL10n.string("create.music.calm.subtitle")
-        case .upbeat: MomentsL10n.string("create.music.upbeat.subtitle")
+        case .warm: L10n.string("create.music.warm.subtitle")
+        case .fun: L10n.string("create.music.fun.subtitle")
+        case .cinematic: L10n.string("create.music.cinematic.subtitle")
+        case .calm: L10n.string("create.music.calm.subtitle")
+        case .upbeat: L10n.string("create.music.upbeat.subtitle")
         }
     }
 
@@ -56,23 +56,23 @@ enum MomentLook: String, CaseIterable, Identifiable, Codable {
 
     var title: String {
         switch self {
-        case .real: MomentsL10n.string("create.look.real.title")
-        case .anime: MomentsL10n.string("create.look.anime.title")
-        case .cartoon: MomentsL10n.string("create.look.cartoon.title")
-        case .cinematic: MomentsL10n.string("create.look.cinematic.title")
-        case .comic: MomentsL10n.string("create.look.comic.title")
-        case .clay: MomentsL10n.string("create.look.clay.title")
+        case .real: L10n.string("create.look.real.title")
+        case .anime: L10n.string("create.look.anime.title")
+        case .cartoon: L10n.string("create.look.cartoon.title")
+        case .cinematic: L10n.string("create.look.cinematic.title")
+        case .comic: L10n.string("create.look.comic.title")
+        case .clay: L10n.string("create.look.clay.title")
         }
     }
 
     var subtitle: String {
         switch self {
-        case .real: MomentsL10n.string("create.look.real.subtitle")
-        case .anime: MomentsL10n.string("create.look.anime.subtitle")
-        case .cartoon: MomentsL10n.string("create.look.cartoon.subtitle")
-        case .cinematic: MomentsL10n.string("create.look.cinematic.subtitle")
-        case .comic: MomentsL10n.string("create.look.comic.subtitle")
-        case .clay: MomentsL10n.string("create.look.clay.subtitle")
+        case .real: L10n.string("create.look.real.subtitle")
+        case .anime: L10n.string("create.look.anime.subtitle")
+        case .cartoon: L10n.string("create.look.cartoon.subtitle")
+        case .cinematic: L10n.string("create.look.cinematic.subtitle")
+        case .comic: L10n.string("create.look.comic.subtitle")
+        case .clay: L10n.string("create.look.clay.subtitle")
         }
     }
 
@@ -124,19 +124,19 @@ enum MomentDuration: String, CaseIterable, Identifiable, Codable {
 
     var title: String {
         switch self {
-        case .auto: MomentsL10n.string("create.duration.auto.title")
-        case .short: MomentsL10n.string("create.duration.short.title")
-        case .standard: MomentsL10n.string("create.duration.standard.title")
-        case .extended: MomentsL10n.string("create.duration.extended.title")
+        case .auto: L10n.string("create.duration.auto.title")
+        case .short: L10n.string("create.duration.short.title")
+        case .standard: L10n.string("create.duration.standard.title")
+        case .extended: L10n.string("create.duration.extended.title")
         }
     }
 
     var subtitle: String {
         switch self {
-        case .auto: MomentsL10n.string("create.duration.auto.subtitle")
-        case .short: MomentsL10n.string("create.duration.short.subtitle")
-        case .standard: MomentsL10n.string("create.duration.standard.subtitle")
-        case .extended: MomentsL10n.string("create.duration.extended.subtitle")
+        case .auto: L10n.string("create.duration.auto.subtitle")
+        case .short: L10n.string("create.duration.short.subtitle")
+        case .standard: L10n.string("create.duration.standard.subtitle")
+        case .extended: L10n.string("create.duration.extended.subtitle")
         }
     }
 
@@ -184,8 +184,8 @@ struct MomentCreationStyle: Identifiable, Equatable {
     static var launchStyles: [MomentCreationStyle] { [
         MomentCreationStyle(
             id: .celebration,
-            title: MomentsL10n.string("create.theme.celebration.title"),
-            subtitle: MomentsL10n.string("create.theme.celebration.subtitle"),
+            title: L10n.string("create.theme.celebration.title"),
+            subtitle: L10n.string("create.theme.celebration.subtitle"),
             assetName: "StyleCelebration",
             template: .birthdayMessage,
             defaultMusic: .warm,
@@ -196,8 +196,8 @@ struct MomentCreationStyle: Identifiable, Equatable {
         ),
         MomentCreationStyle(
             id: .eventRecap,
-            title: MomentsL10n.string("create.theme.eventRecap.title"),
-            subtitle: MomentsL10n.string("create.theme.eventRecap.subtitle"),
+            title: L10n.string("create.theme.eventRecap.title"),
+            subtitle: L10n.string("create.theme.eventRecap.subtitle"),
             assetName: "StyleEventRecap",
             template: .partyRecap,
             defaultMusic: .fun,
@@ -208,8 +208,8 @@ struct MomentCreationStyle: Identifiable, Equatable {
         ),
         MomentCreationStyle(
             id: .travel,
-            title: MomentsL10n.string("create.theme.travel.title"),
-            subtitle: MomentsL10n.string("create.theme.travel.subtitle"),
+            title: L10n.string("create.theme.travel.title"),
+            subtitle: L10n.string("create.theme.travel.subtitle"),
             assetName: "StyleTravel",
             template: .birthdayMessage,
             defaultMusic: .cinematic,
@@ -220,8 +220,8 @@ struct MomentCreationStyle: Identifiable, Equatable {
         ),
         MomentCreationStyle(
             id: .favoritePeople,
-            title: MomentsL10n.string("create.theme.favoritePeople.title"),
-            subtitle: MomentsL10n.string("create.theme.favoritePeople.subtitle"),
+            title: L10n.string("create.theme.favoritePeople.title"),
+            subtitle: L10n.string("create.theme.favoritePeople.subtitle"),
             assetName: "StyleFavoritePeople",
             template: .birthdayMessage,
             defaultMusic: .warm,
@@ -232,8 +232,8 @@ struct MomentCreationStyle: Identifiable, Equatable {
         ),
         MomentCreationStyle(
             id: .birthday,
-            title: MomentsL10n.string("create.theme.birthday.title"),
-            subtitle: MomentsL10n.string("create.theme.birthday.subtitle"),
+            title: L10n.string("create.theme.birthday.title"),
+            subtitle: L10n.string("create.theme.birthday.subtitle"),
             assetName: "StyleBirthday",
             template: .birthdayMessage,
             defaultMusic: .warm,
@@ -244,8 +244,8 @@ struct MomentCreationStyle: Identifiable, Equatable {
         ),
         MomentCreationStyle(
             id: .familyMoments,
-            title: MomentsL10n.string("create.theme.familyMoments.title"),
-            subtitle: MomentsL10n.string("create.theme.familyMoments.subtitle"),
+            title: L10n.string("create.theme.familyMoments.title"),
+            subtitle: L10n.string("create.theme.familyMoments.subtitle"),
             assetName: "StyleFamilyMoments",
             template: .birthdayMessage,
             defaultMusic: .warm,
@@ -256,8 +256,8 @@ struct MomentCreationStyle: Identifiable, Equatable {
         ),
         MomentCreationStyle(
             id: .softRoast,
-            title: MomentsL10n.string("create.theme.softRoast.title"),
-            subtitle: MomentsL10n.string("create.theme.softRoast.subtitle"),
+            title: L10n.string("create.theme.softRoast.title"),
+            subtitle: L10n.string("create.theme.softRoast.subtitle"),
             assetName: "StyleSoftRoast",
             template: .softRoast,
             defaultMusic: .fun,
@@ -268,8 +268,8 @@ struct MomentCreationStyle: Identifiable, Equatable {
         ),
         MomentCreationStyle(
             id: .milestone,
-            title: MomentsL10n.string("create.theme.milestone.title"),
-            subtitle: MomentsL10n.string("create.theme.milestone.subtitle"),
+            title: L10n.string("create.theme.milestone.title"),
+            subtitle: L10n.string("create.theme.milestone.subtitle"),
             assetName: "StyleMilestone",
             template: .birthdayMessage,
             defaultMusic: .warm,

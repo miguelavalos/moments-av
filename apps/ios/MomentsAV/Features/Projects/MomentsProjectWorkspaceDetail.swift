@@ -39,7 +39,7 @@ struct MomentsProjectLoadingDetail: View {
     var body: some View {
         HStack(spacing: 10) {
             ProgressView()
-            Text(MomentsL10n.string("projects.loadingDetail"))
+            Text(L10n.string("projects.loadingDetail"))
                 .font(.caption)
                 .foregroundStyle(.secondary)
         }

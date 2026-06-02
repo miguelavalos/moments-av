@@ -38,6 +38,6 @@ enum PreviewGenerationRun {
         }
 
         workspaceObserver.observeWorkspace(ownerUserId: ownerUserId, projectId: projectId)
-        return MomentsL10n.string("create.preview.status.readyRefine")
+        return L10n.string("create.preview.status.readyRefine")
     }
 }

@@ -36,6 +36,6 @@ struct MomentsGalleryVideoPresentation: Identifiable, Equatable {
     var id: String { record.id }
     var title: String { record.title }
     var availabilityTitle: String {
-        isLocalFileAvailable ? MomentsL10n.string("gallery.video.savedOnDevice") : MomentsL10n.string("gallery.video.localFileMissing")
+        isLocalFileAvailable ? L10n.string("gallery.video.savedOnDevice") : L10n.string("gallery.video.localFileMissing")
     }
 }

@@ -10,8 +10,8 @@ struct MomentsAviCurrentFocusCard: View {
 
     var body: some View {
         AVAviGuidanceCard(
-            title: MomentsL10n.string("avi.currentFocus.title"),
-            detail: MomentsL10n.string("avi.currentFocus.detail")
+            title: L10n.string("avi.currentFocus.title"),
+            detail: L10n.string("avi.currentFocus.detail")
         ) {
             AVAviInfoRow(
                 title: workflowFocusTitle,
@@ -21,17 +21,17 @@ struct MomentsAviCurrentFocusCard: View {
 
             HStack(spacing: 10) {
                 AVAviStatPill(
-                    title: MomentsL10n.string("avi.stat.active"),
+                    title: L10n.string("avi.stat.active"),
                     value: "\(projectSummary.inProgressCount)",
                     systemImage: "clock"
                 )
                 AVAviStatPill(
-                    title: MomentsL10n.string("projects.finished.title"),
+                    title: L10n.string("projects.finished.title"),
                     value: "\(projectSummary.finishedCount)",
                     systemImage: "checkmark.circle"
                 )
                 AVAviStatPill(
-                    title: MomentsL10n.string("credits.title"),
+                    title: L10n.string("credits.title"),
                     value: "\(creditBalance.spendable)",
                     systemImage: "creditcard"
                 )
@@ -45,13 +45,13 @@ struct MomentsAviCreditGuidanceCard: View {
 
     var body: some View {
         AVAviGuidanceCard(
-            title: MomentsL10n.string("avi.creditGuidance.title"),
-            detail: MomentsL10n.string("avi.creditGuidance.detail")
+            title: L10n.string("avi.creditGuidance.title"),
+            detail: L10n.string("avi.creditGuidance.detail")
         ) {
             HStack(spacing: 10) {
-                AVAviStatPill(title: MomentsL10n.string("avi.creditOrder.first"), value: MomentsL10n.string("credits.proMonthly.title"), systemImage: "calendar")
-                AVAviStatPill(title: MomentsL10n.string("avi.creditOrder.then"), value: MomentsL10n.string("credits.purchased.title"), systemImage: "creditcard")
-                AVAviStatPill(title: MomentsL10n.string("avi.creditOrder.then"), value: MomentsL10n.string("credits.other.title"), systemImage: "gift")
+                AVAviStatPill(title: L10n.string("avi.creditOrder.first"), value: L10n.string("credits.proMonthly.title"), systemImage: "calendar")
+                AVAviStatPill(title: L10n.string("avi.creditOrder.then"), value: L10n.string("credits.purchased.title"), systemImage: "creditcard")
+                AVAviStatPill(title: L10n.string("avi.creditOrder.then"), value: L10n.string("credits.other.title"), systemImage: "gift")
             }
             Text(message)
                 .foregroundStyle(.secondary)

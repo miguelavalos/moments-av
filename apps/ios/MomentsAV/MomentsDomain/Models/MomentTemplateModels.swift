@@ -18,46 +18,46 @@ struct MomentTemplate: Identifiable, Equatable {
     let summary: String
 
     var duration: String {
-        MomentsL10n.string("create.template.duration", durationSeconds)
+        L10n.string("create.template.duration", durationSeconds)
     }
 
     var mediaRange: String {
-        MomentsL10n.string("create.template.mediaRange", minimumAssets, maximumAssets)
+        L10n.string("create.template.mediaRange", minimumAssets, maximumAssets)
     }
 
     static var birthdayMessage: MomentTemplate {
         MomentTemplate(
         id: .birthdayMessage,
-        title: MomentsL10n.string("create.template.celebration.title"),
+        title: L10n.string("create.template.celebration.title"),
         durationSeconds: 30,
         creditCost: 2,
         minimumAssets: 1,
         maximumAssets: 80,
-        summary: MomentsL10n.string("create.template.celebration.summary")
+        summary: L10n.string("create.template.celebration.summary")
         )
     }
 
     static var partyRecap: MomentTemplate {
         MomentTemplate(
         id: .partyRecap,
-        title: MomentsL10n.string("create.template.eventRecap.title"),
+        title: L10n.string("create.template.eventRecap.title"),
         durationSeconds: 30,
         creditCost: 2,
         minimumAssets: 1,
         maximumAssets: 80,
-        summary: MomentsL10n.string("create.template.eventRecap.summary")
+        summary: L10n.string("create.template.eventRecap.summary")
         )
     }
 
     static var softRoast: MomentTemplate {
         MomentTemplate(
         id: .softRoast,
-        title: MomentsL10n.string("create.template.softRoast.title"),
+        title: L10n.string("create.template.softRoast.title"),
         durationSeconds: 30,
         creditCost: 2,
         minimumAssets: 1,
         maximumAssets: 80,
-        summary: MomentsL10n.string("create.template.softRoast.summary")
+        summary: L10n.string("create.template.softRoast.summary")
         )
     }
 

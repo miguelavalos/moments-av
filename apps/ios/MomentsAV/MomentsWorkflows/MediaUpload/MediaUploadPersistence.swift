@@ -9,15 +9,15 @@ struct MediaUploadPersistenceResult {
 
     var statusMessage: String {
         if storageBlocked {
-            return MomentsL10n.string("create.media.persistence.added", savedCount, itemWord)
+            return L10n.string("create.media.persistence.added", savedCount, itemWord)
         }
-        return MomentsL10n.string("create.media.persistence.added", savedCount, itemWord)
+        return L10n.string("create.media.persistence.added", savedCount, itemWord)
     }
 
     private var itemWord: String {
         savedCount == 1
-            ? MomentsL10n.string("media.item.singular")
-            : MomentsL10n.string("media.item.plural")
+            ? L10n.string("media.item.singular")
+            : L10n.string("media.item.plural")
     }
 }
 

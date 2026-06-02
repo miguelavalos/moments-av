@@ -21,17 +21,17 @@ struct MomentsProjectArtifactDetail: View {
                 spacing: 8
             ) {
                 AVAppShellMetadataItem(
-                    title: MomentsL10n.string("project.artifact.watermark"),
+                    title: L10n.string("project.artifact.watermark"),
                     value: presentation.watermarkTitle
                 )
                 AVAppShellMetadataItem(
-                    title: MomentsL10n.string("project.artifact.expires"),
+                    title: L10n.string("project.artifact.expires"),
                     value: presentation.expiresAtTitle
                 )
             }
 
             AVAppShellIdentifierRow(
-                title: MomentsL10n.string("project.artifact.storageKey"),
+                title: L10n.string("project.artifact.storageKey"),
                 value: presentation.storageKey,
                 lineLimit: 3
             )
@@ -64,19 +64,19 @@ struct MomentsProjectRenderJobRow: View {
                 spacing: 8
             ) {
                 AVAppShellMetadataItem(
-                    title: MomentsL10n.string("project.job.videoService"),
+                    title: L10n.string("project.job.videoService"),
                     value: presentation.providerTitle
                 )
                 AVAppShellMetadataItem(
-                    title: MomentsL10n.string("project.job.videoProfile"),
+                    title: L10n.string("project.job.videoProfile"),
                     value: presentation.modelTitle
                 )
                 AVAppShellMetadataItem(
-                    title: MomentsL10n.string("project.job.created"),
+                    title: L10n.string("project.job.created"),
                     value: presentation.createdAtTitle
                 )
                 AVAppShellMetadataItem(
-                    title: MomentsL10n.string("project.job.updated"),
+                    title: L10n.string("project.job.updated"),
                     value: presentation.updatedAtTitle
                 )
             }
@@ -87,9 +87,9 @@ struct MomentsProjectRenderJobRow: View {
             )
 
             VStack(alignment: .leading, spacing: 6) {
-                AVAppShellIdentifierRow(title: MomentsL10n.string("project.job.id"), value: presentation.id)
-                AVAppShellIdentifierRow(title: MomentsL10n.string("project.job.workflow"), value: presentation.workflowRunId)
-                AVAppShellIdentifierRow(title: MomentsL10n.string("project.job.supportReference"), value: presentation.providerRequestId)
+                AVAppShellIdentifierRow(title: L10n.string("project.job.id"), value: presentation.id)
+                AVAppShellIdentifierRow(title: L10n.string("project.job.workflow"), value: presentation.workflowRunId)
+                AVAppShellIdentifierRow(title: L10n.string("project.job.supportReference"), value: presentation.providerRequestId)
             }
         }
     }
@@ -102,7 +102,7 @@ private struct MomentsProjectRenderJobErrorBlock: View {
     var body: some View {
         if let errorMessage, !errorMessage.isEmpty {
             VStack(alignment: .leading, spacing: 3) {
-                Text(errorCode ?? MomentsL10n.string("project.job.videoError"))
+                Text(errorCode ?? L10n.string("project.job.videoError"))
                     .font(.caption2.weight(.semibold))
                     .foregroundStyle(.red)
                 Text(errorMessage)

@@ -13,8 +13,8 @@ struct MomentsProfileScreen: View {
     @EnvironmentObject private var accountController: AccountController
     @EnvironmentObject private var createViewModel: MomentsCreateViewModel
     @EnvironmentObject private var projectsViewModel: MomentsProjectsViewModel
-    @EnvironmentObject private var languageController: MomentsAppLanguageController
-    @EnvironmentObject private var themeController: MomentsAppThemeController
+    @EnvironmentObject private var languageController: AppLanguageController
+    @EnvironmentObject private var themeController: AppThemeController
     @Environment(\.avCommonAppExperience) private var appExperience
     @Environment(\.openURL) private var openURL
     @State private var showsCreditDetails = false
@@ -321,7 +321,7 @@ struct MomentsProfileScreen: View {
 
     private var languageSelector: some View {
         Menu {
-            ForEach(MomentsAppLanguage.allCases) { language in
+            ForEach(AppLanguage.allCases) { language in
                 Button {
                     languageController.select(language)
                 } label: {
@@ -369,7 +369,7 @@ struct MomentsProfileScreen: View {
 
     private var themeSelector: some View {
         HStack(spacing: 10) {
-            ForEach(MomentsAppTheme.allCases) { theme in
+            ForEach(AppTheme.allCases) { theme in
                 AVSettingsOptionButton(
                     title: themeLabel(for: theme),
                     systemImage: themeSymbol(for: theme),
@@ -384,7 +384,7 @@ struct MomentsProfileScreen: View {
         if accountController.isSignedIn {
             return accountController.user?.emailAddress
                 ?? accountController.user?.id
-                ?? MomentsL10n.string("profile.account.connected", appExperience.identity.accountName)
+                ?? L10n.string("profile.account.connected", appExperience.identity.accountName)
         }
         return localized("profile.account.identity.guest")
     }
@@ -420,7 +420,7 @@ struct MomentsProfileScreen: View {
         )
     }
 
-    private func themeLabel(for theme: MomentsAppTheme) -> String {
+    private func themeLabel(for theme: AppTheme) -> String {
         switch theme {
         case .system: localized("profile.preferences.theme.system")
         case .light: localized("profile.preferences.theme.light")
@@ -428,7 +428,7 @@ struct MomentsProfileScreen: View {
         }
     }
 
-    private func themeSymbol(for theme: MomentsAppTheme) -> String {
+    private func themeSymbol(for theme: AppTheme) -> String {
         switch theme {
         case .system: "iphone"
         case .light: "sun.max"
@@ -446,7 +446,7 @@ struct MomentsProfileScreen: View {
     }
 
     private func localized(_ key: String) -> String {
-        MomentsL10n.string(key)
+        L10n.string(key)
     }
 }
 
@@ -461,34 +461,34 @@ private struct MomentsLocalDataMaintenanceSheet: View {
     var body: some View {
         AVSettingsSheetScaffold(
             backgroundStyle: AnyShapeStyle(MomentsTheme.shellBackground),
-            closeTitle: MomentsL10n.string("profile.local.sheet.close"),
+            closeTitle: L10n.string("profile.local.sheet.close"),
             onClose: { dismiss() }
         ) {
             AVSettingsSheetHeader(
-                title: MomentsL10n.string("profile.local.sheet.title"),
-                subtitle: MomentsL10n.string("profile.local.sheet.subtitle")
+                title: L10n.string("profile.local.sheet.title"),
+                subtitle: L10n.string("profile.local.sheet.subtitle")
             )
 
             VStack(alignment: .leading, spacing: 12) {
                 AVSettingsInfoRow(
                     systemImage: "photo.on.rectangle.angled",
-                    title: MomentsL10n.string("profile.local.keep.photos.title"),
-                    detail: MomentsL10n.string("profile.local.keep.photos.detail")
+                    title: L10n.string("profile.local.keep.photos.title"),
+                    detail: L10n.string("profile.local.keep.photos.detail")
                 )
                 AVSettingsInfoRow(
                     systemImage: "play.rectangle",
-                    title: MomentsL10n.string("profile.local.keep.gallery.title"),
-                    detail: MomentsL10n.string("profile.local.keep.gallery.detail")
+                    title: L10n.string("profile.local.keep.gallery.title"),
+                    detail: L10n.string("profile.local.keep.gallery.detail")
                 )
                 AVSettingsInfoRow(
                     systemImage: "cloud",
-                    title: MomentsL10n.string("profile.local.keep.account.title"),
-                    detail: MomentsL10n.string("profile.local.keep.account.detail")
+                    title: L10n.string("profile.local.keep.account.title"),
+                    detail: L10n.string("profile.local.keep.account.detail")
                 )
             }
 
             AVSettingsDestructiveActionCard(
-                sectionTitle: MomentsL10n.string("profile.local.sheet.danger"),
+                sectionTitle: L10n.string("profile.local.sheet.danger"),
                 systemImage: "trash",
                 title: clearTitle,
                 detail: clearDetail,
@@ -496,16 +496,16 @@ private struct MomentsLocalDataMaintenanceSheet: View {
             )
         }
         .alert(
-            MomentsL10n.string("profile.local.clear.alert.title"),
+            L10n.string("profile.local.clear.alert.title"),
             isPresented: $isShowingClearAlert
         ) {
-            Button(MomentsL10n.string("profile.local.sheet.close"), role: .cancel) {}
-            Button(MomentsL10n.string("profile.local.clear.confirm"), role: .destructive) {
+            Button(L10n.string("profile.local.sheet.close"), role: .cancel) {}
+            Button(L10n.string("profile.local.clear.confirm"), role: .destructive) {
                 onConfirmClear()
                 dismiss()
             }
         } message: {
-            Text(MomentsL10n.string("profile.local.clear.alert.message"))
+            Text(L10n.string("profile.local.clear.alert.message"))
         }
     }
 }

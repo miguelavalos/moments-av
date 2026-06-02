@@ -101,7 +101,7 @@ struct MomentsCreateDraftSetupCard: View {
                 showsOptions = true
             } label: {
                 HStack(spacing: 10) {
-                    Label(MomentsL10n.string("create.options.title"), systemImage: "slider.horizontal.3")
+                    Label(L10n.string("create.options.title"), systemImage: "slider.horizontal.3")
                         .font(.system(size: 14, weight: .black))
                     Spacer()
                     Image(systemName: "chevron.right")
@@ -130,7 +130,7 @@ struct MomentsCreateDraftSetupCard: View {
         VStack(alignment: .leading, spacing: 16) {
             if presentation.showsActiveProject {
                 Button(action: discardDraft) {
-                    Label(MomentsL10n.string("create.discard.current"), systemImage: "trash")
+                    Label(L10n.string("create.discard.current"), systemImage: "trash")
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.bordered)
@@ -158,8 +158,8 @@ struct MomentsCreateDraftSetupCard: View {
     private var styleStep: some View {
         VStack(alignment: .leading, spacing: 16) {
             MomentsCreateStepHeader(
-                stepTitle: MomentsL10n.string("create.selector.theme.title"),
-                title: MomentsL10n.string("create.style.pickFeeling"),
+                stepTitle: L10n.string("create.selector.theme.title"),
+                title: L10n.string("create.style.pickFeeling"),
                 detail: aviGuidance.message
             )
 
@@ -265,14 +265,14 @@ private struct MomentsCreateNewProjectActionBlock: View {
             MomentsCreateEconomyPanel(balance: balance, selectedStyle: selectedStyle, isSignedIn: isSignedIn)
 
             AVAppShellPrimaryButton(
-                MomentsL10n.string("create.media.choose"),
+                L10n.string("create.media.choose"),
                 systemImage: "photo.badge.plus",
                 isDisabled: !canBeginNewProject,
                 action: beginNewProject
             )
 
             Button(action: planProject) {
-                Label(MomentsL10n.string("create.planFirst"), systemImage: "slider.horizontal.3")
+                Label(L10n.string("create.planFirst"), systemImage: "slider.horizontal.3")
                     .font(.system(size: 14, weight: .black))
                     .frame(maxWidth: .infinity)
             }
@@ -280,9 +280,9 @@ private struct MomentsCreateNewProjectActionBlock: View {
             .disabled(!canBeginNewProject)
 
             if !isSignedIn {
-                AVAppShellInlineMessage(message: MomentsL10n.string("create.signInLater.detail"))
+                AVAppShellInlineMessage(message: L10n.string("create.signInLater.detail"))
             } else if balance.spendable == 0 {
-                AVAppShellInlineMessage(message: MomentsL10n.string("create.credits.setupNow"))
+                AVAppShellInlineMessage(message: L10n.string("create.credits.setupNow"))
             }
         }
         .padding(AVBrandSpacing.xl)
@@ -319,15 +319,15 @@ private extension MomentsCreateAviGuidance {
     var eyebrow: String {
         switch emotion {
         case .warning:
-            return MomentsL10n.string("create.guidance.eyebrow.warning")
+            return L10n.string("create.guidance.eyebrow.warning")
         case .happy, .celebrate:
-            return MomentsL10n.string("project.nextAction.createVideo.title")
+            return L10n.string("project.nextAction.createVideo.title")
         case .focused:
-            return MomentsL10n.string("create.guidance.eyebrow.keepGoing")
+            return L10n.string("create.guidance.eyebrow.keepGoing")
         case .curious:
-            return MomentsL10n.string("paywall.signIn.title")
+            return L10n.string("paywall.signIn.title")
         case .thinking:
-            return MomentsL10n.string("create.guidance.eyebrow.prepare")
+            return L10n.string("create.guidance.eyebrow.prepare")
         }
     }
 
@@ -378,12 +378,12 @@ private struct MomentsCreateEconomyPanel: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack(alignment: .firstTextBaseline) {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(isSignedIn ? MomentsL10n.string("credits.available.title") : MomentsL10n.string("profile.summary.account.title"))
+                    Text(isSignedIn ? L10n.string("credits.available.title") : L10n.string("profile.summary.account.title"))
                         .font(.system(size: 12, weight: .black))
                         .foregroundStyle(AVBrandColor.textSecondary)
                         .textCase(.uppercase)
 
-                    Text(isSignedIn ? "\(balance.spendable)" : MomentsL10n.string("common.signIn"))
+                    Text(isSignedIn ? "\(balance.spendable)" : L10n.string("common.signIn"))
                         .font(.system(size: 42, weight: .black))
                         .foregroundStyle(AVBrandColor.textPrimary)
                 }
@@ -391,7 +391,7 @@ private struct MomentsCreateEconomyPanel: View {
                 Spacer(minLength: 12)
 
                 VStack(alignment: .trailing, spacing: 4) {
-                    Text(MomentsL10n.string("project.artifact.final.title"))
+                    Text(L10n.string("project.artifact.final.title"))
                         .font(.system(size: 12, weight: .black))
                         .foregroundStyle(AVBrandColor.textSecondary)
                         .textCase(.uppercase)
@@ -402,7 +402,7 @@ private struct MomentsCreateEconomyPanel: View {
                 }
             }
 
-            Text(MomentsL10n.string("create.credits.onlyFinal"))
+            Text(L10n.string("create.credits.onlyFinal"))
                 .font(AVBrandTypography.captionStrong)
                 .foregroundStyle(AVBrandColor.textSecondary)
                 .fixedSize(horizontal: false, vertical: true)
@@ -666,12 +666,12 @@ private struct MomentsCreateQuickCustomizeSection: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack(alignment: .firstTextBaseline) {
                 VStack(alignment: .leading, spacing: 3) {
-                    Text(MomentsL10n.string("create.optionalDetails"))
+                    Text(L10n.string("create.optionalDetails"))
                         .font(.system(size: 12, weight: .black))
                         .foregroundStyle(AVBrandColor.textSecondary)
                         .textCase(.uppercase)
 
-                    Text(MomentsL10n.string("create.optionalDetails.summary", selectedStyle.durationSeconds, selectedStyle.creditCost))
+                    Text(L10n.string("create.optionalDetails.summary", selectedStyle.durationSeconds, selectedStyle.creditCost))
                         .font(AVBrandTypography.bodyStrong)
                         .foregroundStyle(AVBrandColor.textPrimary)
                         .lineLimit(2)
@@ -680,11 +680,11 @@ private struct MomentsCreateQuickCustomizeSection: View {
 
                 Spacer(minLength: 12)
 
-                AVStatusPill(title: MomentsL10n.string("create.minOne"), isUppercased: false)
+                AVStatusPill(title: L10n.string("create.minOne"), isUppercased: false)
             }
 
             MomentsCreateMultilineFieldRow(
-                title: MomentsL10n.string("create.noteForAvi"),
+                title: L10n.string("create.noteForAvi"),
                 placeholder: "Cumple de Ana, viaje a Lisboa, para mamá...",
                 systemImage: "text.bubble.fill",
                 text: $form.details,
@@ -692,7 +692,7 @@ private struct MomentsCreateQuickCustomizeSection: View {
             )
 
             VStack(alignment: .leading, spacing: 8) {
-                Text(MomentsL10n.string("create.musicMood"))
+                Text(L10n.string("create.musicMood"))
                     .font(.system(size: 12, weight: .black))
                     .foregroundStyle(AVBrandColor.textSecondary)
                     .textCase(.uppercase)

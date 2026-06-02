@@ -11,7 +11,7 @@ struct MomentsHomeLatestProjectRow: View {
             title: title,
             detail: detail,
             systemImage: "clock.badge.checkmark",
-            eyebrow: MomentsL10n.string("home.latestMoment.eyebrow"),
+            eyebrow: L10n.string("home.latestMoment.eyebrow"),
             accessibilityIdentifier: "moments.home.latestProject",
             action: openProject
         )
@@ -21,8 +21,8 @@ struct MomentsHomeLatestProjectRow: View {
 struct MomentsHomeEmptyProjectRow: View {
     var body: some View {
         AVAppShellInfoRow(
-            title: MomentsL10n.string("home.projects.emptyRow.title"),
-            detail: MomentsL10n.string("home.projects.emptyRow.detail"),
+            title: L10n.string("home.projects.emptyRow.title"),
+            detail: L10n.string("home.projects.emptyRow.detail"),
             systemImage: "rectangle.stack.badge.plus",
             accessibilityIdentifier: "moments.home.projects.empty"
         )
