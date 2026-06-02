@@ -3,10 +3,11 @@ import PhotosUI
 import SwiftUI
 
 extension MomentsCreateViewModel {
-    func beginNewMoment(openMediaPicker: Bool = true) {
+    @discardableResult
+    func beginNewMoment(openMediaPicker: Bool = true) -> Bool {
         guard canBeginNewMoment else {
             updateSetupErrorMessage(setupAvailabilityMessage ?? L10n.string("create.error.startWhenReady"))
-            return
+            return false
         }
         prepareNewMomentCreation()
         isLocalMomentStarted = true
@@ -14,6 +15,17 @@ extension MomentsCreateViewModel {
         if openMediaPicker {
             mediaPickerOpenRequest += 1
         }
+        return true
+    }
+
+    func beginNewMomentWithPhotoPicker() {
+        guard beginNewMoment(openMediaPicker: false) else { return }
+        mediaPickerOpenRequest += 1
+    }
+
+    func beginNewMomentWithAlbumPicker() {
+        guard beginNewMoment(openMediaPicker: false) else { return }
+        mediaAlbumPickerOpenRequest += 1
     }
 
     func editNewMomentStyle() {

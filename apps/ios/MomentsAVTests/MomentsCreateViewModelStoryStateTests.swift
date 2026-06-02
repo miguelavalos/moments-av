@@ -3,6 +3,22 @@ import XCTest
 
 @MainActor
 final class MomentsCreateViewModelStoryStateTests: XCTestCase {
+    func testInitialMediaSourceRequestsOpenTheChosenPicker() {
+        let photoViewModel = MomentsCreateViewModel()
+        photoViewModel.beginNewMomentWithPhotoPicker()
+
+        XCTAssertTrue(photoViewModel.hasLocalMomentWorkspace)
+        XCTAssertEqual(photoViewModel.mediaPickerOpenRequest, 1)
+        XCTAssertEqual(photoViewModel.mediaAlbumPickerOpenRequest, 0)
+
+        let albumViewModel = MomentsCreateViewModel()
+        albumViewModel.beginNewMomentWithAlbumPicker()
+
+        XCTAssertTrue(albumViewModel.hasLocalMomentWorkspace)
+        XCTAssertEqual(albumViewModel.mediaPickerOpenRequest, 0)
+        XCTAssertEqual(albumViewModel.mediaAlbumPickerOpenRequest, 1)
+    }
+
     func testStoryScenesClearStaleErrorAndMarkCurrentInputPrepared() {
         let viewModel = MomentsCreateViewModel()
         let media = MomentsCreateTestFixtures.makeSelectedMedia(

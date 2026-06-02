@@ -622,6 +622,12 @@
 "create.form.tone" = "Ton";
 "create.media.addPhotos" = "Fotos hinzufügen";
 "create.media.added" = "Hinzugefügte Medien";
+"create.media.source.title" = "Medien hinzufügen";
+"create.media.source.detail" = "Wähle einzelne Fotos oder Clips aus, oder starte mit einem Fotos-Album.";
+"create.media.source.photos" = "Fotos oder Clips";
+"create.media.source.photosDetail" = "Wähle einzelne Elemente aus deiner Mediathek.";
+"create.media.source.album" = "Fotos-Album";
+"create.media.source.albumDetail" = "Importiere aus einem Album bis zum Limit dieses Moments.";
 "create.media.albums.empty" = "Keine Fotosammlungen";
 "create.media.albums.emptyDetail" = "Erstelle ein Album in Fotos, verwende eine Fotosammlung oder wähle einzelne Fotos und Clips.";
 "create.media.albums.loading" = "Alben werden geladen";

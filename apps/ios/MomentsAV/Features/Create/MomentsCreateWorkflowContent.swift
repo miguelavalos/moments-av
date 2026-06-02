@@ -36,7 +36,9 @@ struct MomentsCreateWorkflowContent: View {
                     useAutoStyleSuggestion: viewModel.useAutoStyleSuggestion,
                     undoAutoStyleSuggestion: viewModel.undoAutoStyleSuggestion,
                     openPickerRequest: viewModel.mediaPickerOpenRequest,
+                    openAlbumPickerRequest: viewModel.mediaAlbumPickerOpenRequest,
                     consumeOpenPickerRequest: viewModel.consumeMediaPickerOpenRequest,
+                    consumeOpenAlbumPickerRequest: viewModel.consumeMediaAlbumPickerOpenRequest,
                     discardMoment: viewModel.discardMoment,
                     startSignInFlow: startSignInFlow,
                     openCredits: openCredits,
@@ -66,7 +68,8 @@ struct MomentsCreateWorkflowContent: View {
             isSignedIn: viewModel.isSignedIn,
             balance: viewModel.balance,
             canBeginNewMoment: viewModel.canBeginNewMoment,
-            beginNewMoment: { viewModel.beginNewMoment() },
+            beginNewMoment: viewModel.beginNewMomentWithPhotoPicker,
+            beginAlbumMoment: viewModel.beginNewMomentWithAlbumPicker,
             editStyle: viewModel.editNewMomentStyle,
             selectStyle: viewModel.selectCreationStyle,
             selectMusicPreset: viewModel.selectMusicPreset,
@@ -101,7 +104,9 @@ private struct MomentsCreateMediaFirstWorkspace: View {
     let useAutoStyleSuggestion: () -> Void
     let undoAutoStyleSuggestion: () -> Void
     let openPickerRequest: Int
+    let openAlbumPickerRequest: Int
     let consumeOpenPickerRequest: () -> Void
+    let consumeOpenAlbumPickerRequest: () -> Void
     let discardMoment: () -> Void
     let startSignInFlow: () -> Void
     let openCredits: () -> Void
@@ -140,37 +145,41 @@ private struct MomentsCreateMediaFirstWorkspace: View {
                     reorderMedia: reorderMedia,
                     restoreLocalMediaForEditing: restoreLocalMediaForEditing,
                     autoPickStrongMoments: autoPickStrongMoments,
-                    consumeOpenPickerRequest: consumeOpenPickerRequest
+                    consumeOpenPickerRequest: consumeOpenPickerRequest,
+                    openAlbumPickerRequest: openAlbumPickerRequest,
+                    consumeOpenAlbumPickerRequest: consumeOpenAlbumPickerRequest
                 )
 
-                MomentsCreateOptionsSummaryCard(
-                    selectedStyle: selectedStyle,
-                    selectedMusicPreset: selectedMusicPreset,
-                    autoStyleSuggestion: autoStyleSuggestion,
-                    canUndoAutoStyleSuggestion: canUndoAutoStyleSuggestion,
-                    styles: styles,
-                    openOptions: { showsAviOptions = true }
-                )
+                if hasMediaSelection {
+                    MomentsCreateOptionsSummaryCard(
+                        selectedStyle: selectedStyle,
+                        selectedMusicPreset: selectedMusicPreset,
+                        autoStyleSuggestion: autoStyleSuggestion,
+                        canUndoAutoStyleSuggestion: canUndoAutoStyleSuggestion,
+                        styles: styles,
+                        openOptions: { showsAviOptions = true }
+                    )
 
-                MomentsCreateAviCutCard(
-                    presentation: presentation,
-                    prepareCut: prepareAviCut,
-                    openOptions: { showsAviOptions = true }
-                )
+                    MomentsCreateAviCutCard(
+                        presentation: presentation,
+                        prepareCut: prepareAviCut,
+                        openOptions: { showsAviOptions = true }
+                    )
 
-                MomentsCreatePrimaryActionBar(
-                    presentation: presentation,
-                    discardMoment: { showsDiscardMomentConfirmation = true },
-                    startSignInFlow: startSignInFlow,
-                    prepareAviCut: prepareAviCut,
-                    generatePreview: generatePreview,
-                    refreshPreviewStatus: refreshPreviewStatus,
-                    generateFinalRender: primaryFinalRenderAction,
-                    refreshFinalRenderStatus: refreshFinalRenderStatus,
-                    retryFinalVideoDownload: retryFinalVideoDownload,
-                    finishFinalVideoToGallery: finishFinalVideoToGallery,
-                    createAnotherFinalVideoVersion: createAnotherFinalVideoVersion
-                )
+                    MomentsCreatePrimaryActionBar(
+                        presentation: presentation,
+                        discardMoment: { showsDiscardMomentConfirmation = true },
+                        startSignInFlow: startSignInFlow,
+                        prepareAviCut: prepareAviCut,
+                        generatePreview: generatePreview,
+                        refreshPreviewStatus: refreshPreviewStatus,
+                        generateFinalRender: primaryFinalRenderAction,
+                        refreshFinalRenderStatus: refreshFinalRenderStatus,
+                        retryFinalVideoDownload: retryFinalVideoDownload,
+                        finishFinalVideoToGallery: finishFinalVideoToGallery,
+                        createAnotherFinalVideoVersion: createAnotherFinalVideoVersion
+                    )
+                }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.bottom, 172)
@@ -256,6 +265,11 @@ private struct MomentsCreateMediaFirstWorkspace: View {
         }
 
         return L10n.string("create.discard.currentMessage")
+    }
+
+    private var hasMediaSelection: Bool {
+        presentation.mediaSummary.reviewCount > 0
+            || !presentation.mediaSummary.syncedMediaAssets.isEmpty
     }
 }
 
@@ -3069,7 +3083,9 @@ private struct MomentsCreateWorkflowCards: View {
                     reorderMedia: reorderMedia,
                     restoreLocalMediaForEditing: restoreLocalMediaForEditing,
                     autoPickStrongMoments: autoPickStrongMoments,
-                    consumeOpenPickerRequest: {}
+                    consumeOpenPickerRequest: {},
+                    openAlbumPickerRequest: 0,
+                    consumeOpenAlbumPickerRequest: {}
                 )
                 .id(MomentsCreateSection.media)
 

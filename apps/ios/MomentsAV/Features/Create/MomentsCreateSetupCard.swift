@@ -7,6 +7,8 @@ struct MomentsCreateSetupCard: View {
     @Binding var form: MomentSetupForm
     @State private var showsOptions = false
     @State private var showsMomentSheet = false
+    @State private var showsMediaSourceSheet = false
+    @State private var pendingInitialMediaSource: MomentsCreateInitialMediaSource?
     let selectedStyle: MomentCreationStyle
     let styles: [MomentCreationStyle]
     let selectedMusicPreset: MomentMusicPreset
@@ -16,6 +18,7 @@ struct MomentsCreateSetupCard: View {
     let balance: MomentsCreditBalance
     let canBeginNewMoment: Bool
     let beginNewMoment: () -> Void
+    let beginAlbumMoment: () -> Void
     let editStyle: () -> Void
     let selectStyle: (MomentCreationStyle) -> Void
     let selectMusicPreset: (MomentMusicPreset) -> Void
@@ -41,7 +44,7 @@ struct MomentsCreateSetupCard: View {
                         form.look = .real
                         form.duration = .auto
                         form.mediaUse = .aviPick
-                        beginNewMoment()
+                        showsMediaSourceSheet = true
                     },
                     planMoment: {
                         form.creationMode = .planned
@@ -59,6 +62,24 @@ struct MomentsCreateSetupCard: View {
                     .padding(20)
                     .presentationDetents([.large])
                     .presentationDragIndicator(.visible)
+            }
+            .sheet(isPresented: $showsMediaSourceSheet) {
+                MomentsCreateMediaSourceSheet { source in
+                    pendingInitialMediaSource = source
+                    showsMediaSourceSheet = false
+                }
+                .presentationDetents([.medium])
+                .presentationDragIndicator(.visible)
+            }
+            .onChange(of: showsMediaSourceSheet) { wasPresented, isPresented in
+                guard wasPresented, !isPresented, let pendingInitialMediaSource else { return }
+                self.pendingInitialMediaSource = nil
+                switch pendingInitialMediaSource {
+                case .photos:
+                    beginNewMoment()
+                case .album:
+                    beginAlbumMoment()
+                }
             }
         } else {
             AVAppShellCard {
@@ -288,6 +309,106 @@ private struct MomentsCreateNewMomentActionBlock: View {
         .padding(AVBrandSpacing.xl)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(MomentsCreateTuneStyleSurface())
+    }
+}
+
+private enum MomentsCreateInitialMediaSource {
+    case photos
+    case album
+}
+
+private struct MomentsCreateMediaSourceSheet: View {
+    let selectSource: (MomentsCreateInitialMediaSource) -> Void
+
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationStack {
+            VStack(alignment: .leading, spacing: 16) {
+                VStack(alignment: .leading, spacing: 6) {
+                    Text(L10n.string("create.media.source.title"))
+                        .font(.system(size: 22, weight: .black))
+                        .foregroundStyle(AVBrandColor.textPrimary)
+
+                    Text(L10n.string("create.media.source.detail"))
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundStyle(AVBrandColor.textSecondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+
+                VStack(spacing: 10) {
+                    sourceButton(
+                        title: L10n.string("create.media.source.photos"),
+                        detail: L10n.string("create.media.source.photosDetail"),
+                        systemImage: "photo.badge.plus",
+                        source: .photos
+                    )
+
+                    sourceButton(
+                        title: L10n.string("create.media.source.album"),
+                        detail: L10n.string("create.media.source.albumDetail"),
+                        systemImage: "rectangle.stack.badge.plus",
+                        source: .album
+                    )
+                }
+
+                Spacer(minLength: 0)
+            }
+            .padding(20)
+            .background(MomentsTheme.shellBackground.ignoresSafeArea())
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button(L10n.string("common.cancel")) {
+                        dismiss()
+                    }
+                }
+            }
+        }
+    }
+
+    private func sourceButton(
+        title: String,
+        detail: String,
+        systemImage: String,
+        source: MomentsCreateInitialMediaSource
+    ) -> some View {
+        Button {
+            selectSource(source)
+        } label: {
+            HStack(spacing: 12) {
+                Image(systemName: systemImage)
+                    .font(.system(size: 18, weight: .black))
+                    .foregroundStyle(.white)
+                    .frame(width: 42, height: 42)
+                    .background(AVBrandColor.accent, in: Circle())
+
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(title)
+                        .font(.system(size: 15, weight: .black))
+                        .foregroundStyle(AVBrandColor.textPrimary)
+
+                    Text(detail)
+                        .font(.caption)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(AVBrandColor.textSecondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+
+                Spacer(minLength: 0)
+
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 13, weight: .black))
+                    .foregroundStyle(AVBrandColor.textSecondary)
+            }
+            .padding(14)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(AVBrandColor.elevatedSurface, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+            .overlay {
+                RoundedRectangle(cornerRadius: 8, style: .continuous)
+                    .stroke(AVBrandColor.borderSubtle.opacity(0.7), lineWidth: 1)
+            }
+        }
+        .buttonStyle(.plain)
     }
 }
 

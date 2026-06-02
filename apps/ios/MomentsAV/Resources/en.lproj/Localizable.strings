@@ -622,6 +622,12 @@
 "create.form.tone" = "Tone";
 "create.media.addPhotos" = "Add photos";
 "create.media.added" = "Added media";
+"create.media.source.title" = "Add media";
+"create.media.source.detail" = "Choose individual photos or clips, or start from a Photos album.";
+"create.media.source.photos" = "Photos or clips";
+"create.media.source.photosDetail" = "Pick selected items from your library.";
+"create.media.source.album" = "Photo album";
+"create.media.source.albumDetail" = "Import up to this Moment's limit from one album.";
 "create.media.albums.empty" = "No photo collections";
 "create.media.albums.emptyDetail" = "Create an album in Photos, use a Photos collection, or choose individual photos and clips.";
 "create.media.albums.loading" = "Loading albums";

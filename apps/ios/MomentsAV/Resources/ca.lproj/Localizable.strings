@@ -620,6 +620,12 @@
 "create.form.tone" = "To";
 "create.media.addPhotos" = "Afegir fotos";
 "create.media.added" = "Media afegida";
+"create.media.source.title" = "Afegir mèdia";
+"create.media.source.detail" = "Tria fotos o clips concrets, o comença des d'un àlbum de Fotos.";
+"create.media.source.photos" = "Fotos o clips";
+"create.media.source.photosDetail" = "Tria elements concrets de la biblioteca.";
+"create.media.source.album" = "Àlbum de Fotos";
+"create.media.source.albumDetail" = "Importa des d'un àlbum fins al límit d'aquest Moment.";
 "create.media.albums.empty" = "Sense col·leccions de fotos";
 "create.media.albums.emptyDetail" = "Crea un àlbum a Fotos, usa una col·lecció de Fotos o tria fotos i clips individuals.";
 "create.media.albums.loading" = "Carregant àlbums";

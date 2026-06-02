@@ -44,6 +44,7 @@ final class MomentsCreateViewModel: ObservableObject {
     @Published var pendingFocus: MomentsContinuationFocus?
     @Published private(set) var continuationFocusHint: MomentsContinuationFocus?
     @Published var mediaPickerOpenRequest = 0
+    @Published var mediaAlbumPickerOpenRequest = 0
 
     private(set) var momentCreationWorkflow: MomentCreationWorkflow?
     private(set) var mediaUploadWorkflow: MediaUploadWorkflow?
@@ -225,6 +226,10 @@ final class MomentsCreateViewModel: ObservableObject {
 
     func consumeMediaPickerOpenRequest() {
         mediaPickerOpenRequest = 0
+    }
+
+    func consumeMediaAlbumPickerOpenRequest() {
+        mediaAlbumPickerOpenRequest = 0
     }
 
     func applyUITestCreateFixture() {
