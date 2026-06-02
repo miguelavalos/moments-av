@@ -56,3 +56,97 @@ struct MomentsCreateStoryPresentation: Equatable {
         summary.savedScenes.sorted { $0.sceneIndex < $1.sceneIndex }
     }
 }
+
+struct MomentsCreateAviCutPresentation: Equatable {
+    var mediaSummary: MomentsCreateMediaSummary
+    var storySummary: MomentsCreateStorySummary
+    var template: MomentTemplate
+    var canImproveWithAvi = false
+    var availabilityMessage: String?
+
+    var statusMessage: String {
+        if storySummary.hasScenes {
+            return L10n.string("create.aviCut.status.ready")
+        }
+        if storySummary.isPlanning {
+            return storySummary.statusMessage ?? L10n.string("create.aviCut.status.improving")
+        }
+        if mediaCount > 0, canImproveWithAvi {
+            return L10n.string("create.aviCut.status.readyToPrepare")
+        }
+        if mediaCount > 0 {
+            return availabilityMessage ?? L10n.string("create.aviCut.status.unavailable")
+        }
+        return L10n.string("create.aviCut.status.needsMedia")
+    }
+
+    var modeTitle: String {
+        if storySummary.isPlanning {
+            return L10n.string("create.aviCut.pill.working")
+        }
+        if storySummary.hasScenes {
+            return L10n.string("create.aviCut.pill.aviChoice")
+        }
+        if mediaCount > 0 {
+            return L10n.string("create.aviCut.pill.ready")
+        }
+        return L10n.string("create.aviCut.pill.noMedia")
+    }
+
+    var mediaCountTitle: String {
+        L10n.string(
+            mediaCount == 1 ? "create.aviCut.moment.singular" : "create.aviCut.moment.plural",
+            mediaCount
+        )
+    }
+
+    var durationTitle: String {
+        template.duration
+    }
+
+    var primaryActionTitle: String {
+        storySummary.hasScenes
+            ? L10n.string("create.aviCut.action.improve")
+            : L10n.string("create.aviCut.action.prepare")
+    }
+
+    var primaryActionIconName: String {
+        storySummary.hasScenes ? "sparkles" : "wand.and.stars"
+    }
+
+    var editActionTitle: String {
+        L10n.string("create.aviCut.action.edit")
+    }
+
+    var iconName: String {
+        if storySummary.hasScenes { return "rectangle.stack.fill" }
+        if storySummary.isPlanning { return "sparkles" }
+        return "wand.and.stars"
+    }
+
+    var canRunPrimaryAction: Bool {
+        !storySummary.isPlanning
+            && mediaCount > 0
+            && canImproveWithAvi
+    }
+
+    var visibleScenes: [MomentsCreateStoryReviewScene] {
+        Array(storySummary.reviewScenes.prefix(3))
+    }
+
+    var remainingSceneCount: Int {
+        max(storySummary.reviewScenes.count - visibleScenes.count, 0)
+    }
+
+    var remainingSceneTitle: String? {
+        guard remainingSceneCount > 0 else { return nil }
+        return L10n.string(
+            remainingSceneCount == 1 ? "create.aviCut.moreScene" : "create.aviCut.moreScenes",
+            remainingSceneCount
+        )
+    }
+
+    private var mediaCount: Int {
+        mediaSummary.reviewCount
+    }
+}

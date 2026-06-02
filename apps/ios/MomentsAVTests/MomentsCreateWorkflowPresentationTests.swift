@@ -289,6 +289,82 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         XCTAssertEqual(summary.reviewScenes.map(\.caption), ["Open with the arrival.", "Show the trip highlights."])
     }
 
+    func testAviCutPresentationFormatsReadyCutState() {
+        let presentation = MomentsCreateAviCutPresentation(
+            mediaSummary: MomentsCreateMediaSummary(
+                selectedMedia: [
+                    MomentsCreateTestFixtures.makeSelectedMedia(id: "00000000-0000-0000-0000-000000000001"),
+                    MomentsCreateTestFixtures.makeSelectedMedia(id: "00000000-0000-0000-0000-000000000002")
+                ]
+            ),
+            storySummary: MomentsCreateStorySummary(
+                savedScenes: [
+                    MomentsCreateTestFixtures.makeScene(id: "scene-1", sceneIndex: 0),
+                    MomentsCreateTestFixtures.makeScene(id: "scene-2", sceneIndex: 1),
+                    MomentsCreateTestFixtures.makeScene(id: "scene-3", sceneIndex: 2),
+                    MomentsCreateTestFixtures.makeScene(id: "scene-4", sceneIndex: 3)
+                ]
+            ),
+            template: .birthdayMessage,
+            canImproveWithAvi: true
+        )
+
+        XCTAssertEqual(
+            presentation.statusMessage,
+            "Avi's Cut is ready. Create the final video or adjust the cut first."
+        )
+        XCTAssertEqual(presentation.modeTitle, "Avi's choice")
+        XCTAssertEqual(presentation.mediaCountTitle, "2 moments")
+        XCTAssertEqual(presentation.primaryActionTitle, "Improve with Avi")
+        XCTAssertEqual(presentation.editActionTitle, "Edit Cut")
+        XCTAssertTrue(presentation.canRunPrimaryAction)
+        XCTAssertEqual(presentation.visibleScenes.count, 3)
+        XCTAssertEqual(presentation.remainingSceneTitle, "1 more scene in this cut")
+    }
+
+    func testAviCutPresentationKeepsFinalPathNonBlockingWhenImproveIsUnavailable() {
+        let presentation = MomentsCreateAviCutPresentation(
+            mediaSummary: MomentsCreateMediaSummary(
+                selectedMedia: [MomentsCreateTestFixtures.makeSelectedMedia(id: "00000000-0000-0000-0000-000000000001")]
+            ),
+            storySummary: MomentsCreateStorySummary(
+                savedScenes: [MomentsCreateTestFixtures.makeScene(id: "scene-1")]
+            ),
+            template: .birthdayMessage,
+            canImproveWithAvi: false,
+            availabilityMessage: "Improve with Avi is cooling down."
+        )
+
+        XCTAssertEqual(
+            presentation.statusMessage,
+            "Avi's Cut is ready. Create the final video or adjust the cut first."
+        )
+        XCTAssertEqual(presentation.primaryActionTitle, "Improve with Avi")
+        XCTAssertFalse(presentation.canRunPrimaryAction)
+    }
+
+    func testAviCutPresentationFormatsPendingAndUnavailableStates() {
+        var presentation = MomentsCreateAviCutPresentation(
+            mediaSummary: MomentsCreateMediaSummary(
+                selectedMedia: [MomentsCreateTestFixtures.makeSelectedMedia(id: "00000000-0000-0000-0000-000000000001")]
+            ),
+            storySummary: MomentsCreateStorySummary(),
+            template: .birthdayMessage,
+            canImproveWithAvi: true
+        )
+
+        XCTAssertEqual(presentation.statusMessage, "Ready for Avi to prepare a first cut.")
+        XCTAssertEqual(presentation.modeTitle, "Ready")
+        XCTAssertEqual(presentation.mediaCountTitle, "1 moment")
+        XCTAssertEqual(presentation.primaryActionTitle, "Prepare Avi's Cut")
+        XCTAssertTrue(presentation.canRunPrimaryAction)
+
+        presentation.canImproveWithAvi = false
+        presentation.availabilityMessage = "Sign in before preparing Avi's Cut."
+        XCTAssertEqual(presentation.statusMessage, "Sign in before preparing Avi's Cut.")
+        XCTAssertFalse(presentation.canRunPrimaryAction)
+    }
+
     func testMediaPresentationFormatsSelectionAndSortsSyncedMedia() {
         let presentation = MomentsCreateMediaPresentation(
             activeMomentId: "moment-1",

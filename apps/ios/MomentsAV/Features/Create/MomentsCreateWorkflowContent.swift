@@ -609,18 +609,18 @@ private struct MomentsCreateAviCutCard: View {
         AVAppShellCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .top, spacing: 12) {
-                    Image(systemName: iconName)
+                    Image(systemName: aviCut.iconName)
                         .font(.system(size: 16, weight: .black))
                         .foregroundStyle(.white)
                         .frame(width: 38, height: 38)
                         .background(iconColor, in: Circle())
 
                     VStack(alignment: .leading, spacing: 5) {
-                        Text("Avi's Cut")
+                        Text(L10n.string("create.workflowContent.storyReviewTitle"))
                             .font(.system(size: 16, weight: .black))
                             .foregroundStyle(AVBrandColor.textPrimary)
 
-                        Text(statusMessage)
+                        Text(aviCut.statusMessage)
                             .font(.system(size: 13, weight: .semibold))
                             .foregroundStyle(AVBrandColor.textSecondary)
                             .fixedSize(horizontal: false, vertical: true)
@@ -629,19 +629,19 @@ private struct MomentsCreateAviCutCard: View {
                 }
 
                 HStack(spacing: 8) {
-                    MomentsCreateOptionPill(title: cutModeTitle, systemImage: "wand.and.stars")
-                    MomentsCreateOptionPill(title: mediaCountTitle, systemImage: "photo.stack")
-                    MomentsCreateOptionPill(title: presentation.template.duration, systemImage: "timer")
+                    MomentsCreateOptionPill(title: aviCut.modeTitle, systemImage: "wand.and.stars")
+                    MomentsCreateOptionPill(title: aviCut.mediaCountTitle, systemImage: "photo.stack")
+                    MomentsCreateOptionPill(title: aviCut.durationTitle, systemImage: "timer")
                 }
 
                 if presentation.storySummary.hasScenes {
                     VStack(alignment: .leading, spacing: 8) {
-                        ForEach(presentation.storySummary.reviewScenes.prefix(3)) { scene in
+                        ForEach(aviCut.visibleScenes) { scene in
                             MomentsCreateStoryReviewSceneRow(scene: scene)
                         }
 
-                        if presentation.storySummary.reviewScenes.count > 3 {
-                            Text("\(presentation.storySummary.reviewScenes.count - 3) more scenes in this cut")
+                        if let remainingSceneTitle = aviCut.remainingSceneTitle {
+                            Text(remainingSceneTitle)
                                 .font(.caption)
                                 .fontWeight(.bold)
                                 .foregroundStyle(AVBrandColor.textSecondary)
@@ -652,7 +652,7 @@ private struct MomentsCreateAviCutCard: View {
                         .tint(AVBrandColor.accent)
                         .frame(maxWidth: .infinity, alignment: .leading)
                 } else {
-                    Text("Avi will arrange the selected moments before creating the final video.")
+                    Text(L10n.string("create.aviCut.empty.prepare"))
                         .font(.system(size: 12, weight: .semibold))
                         .foregroundStyle(AVBrandColor.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)
@@ -660,14 +660,14 @@ private struct MomentsCreateAviCutCard: View {
 
                 HStack(spacing: 10) {
                     Button(action: primaryAction) {
-                        Label(primaryActionTitle, systemImage: primaryActionIconName)
+                        Label(aviCut.primaryActionTitle, systemImage: aviCut.primaryActionIconName)
                             .frame(maxWidth: .infinity)
                     }
                     .buttonStyle(MomentsCreateNeutralInlineButtonStyle())
-                    .disabled(isPrimaryActionDisabled)
+                    .disabled(!aviCut.canRunPrimaryAction)
 
                     Button(action: openOptions) {
-                        Label("Edit options", systemImage: "slider.horizontal.3")
+                        Label(aviCut.editActionTitle, systemImage: "slider.horizontal.3")
                             .frame(maxWidth: .infinity)
                     }
                     .buttonStyle(MomentsCreateNeutralInlineButtonStyle())
@@ -677,50 +677,18 @@ private struct MomentsCreateAviCutCard: View {
         }
     }
 
-    private var iconName: String {
-        if presentation.storySummary.hasScenes { return "rectangle.stack.fill" }
-        if presentation.storySummary.isPlanning { return "sparkles" }
-        return "wand.and.stars"
-    }
-
     private var iconColor: Color {
         presentation.storySummary.hasScenes ? AVBrandColor.accent : AVBrandColor.textPrimary
     }
 
-    private var statusMessage: String {
-        if presentation.storySummary.hasScenes {
-            return "Avi prepared a cut from your selected media. You can still change media or options before creating the video."
-        }
-        if presentation.storySummary.isPlanning {
-            return presentation.storySummary.statusMessage ?? "Avi is preparing the cut."
-        }
-        if presentation.mediaSummary.reviewCount > 0 {
-            return "Ready for Avi to prepare a cut."
-        }
-        return "Add photos or clips to start the cut."
-    }
-
-    private var cutModeTitle: String {
-        presentation.storySummary.hasScenes ? "Avi picked moments" : "Cut pending"
-    }
-
-    private var mediaCountTitle: String {
-        let count = presentation.mediaSummary.reviewCount
-        return "\(count) \(count == 1 ? "moment" : "moments")"
-    }
-
-    private var primaryActionTitle: String {
-        presentation.storySummary.hasScenes ? "Improve with Avi" : "Prepare cut"
-    }
-
-    private var primaryActionIconName: String {
-        presentation.storySummary.hasScenes ? "sparkles" : "wand.and.stars"
-    }
-
-    private var isPrimaryActionDisabled: Bool {
-        presentation.storySummary.isPlanning
-            || presentation.mediaSummary.reviewCount == 0
-            || !presentation.canPlanStory
+    private var aviCut: MomentsCreateAviCutPresentation {
+        MomentsCreateAviCutPresentation(
+            mediaSummary: presentation.mediaSummary,
+            storySummary: presentation.storySummary,
+            template: presentation.template,
+            canImproveWithAvi: presentation.canPlanStory,
+            availabilityMessage: presentation.storyAvailabilityMessage
+        )
     }
 
     private func primaryAction() {
@@ -1603,7 +1571,9 @@ private struct MomentsCreatePrimaryActionBar: View {
         if needsSignInForStory {
             return L10n.string("common.signIn")
         }
-        return presentation.finalRenderSummary.isGenerating ? L10n.string("create.preview.preparing") : "Prepare Avi's Cut"
+        return presentation.finalRenderSummary.isGenerating
+            ? L10n.string("create.preview.preparing")
+            : L10n.string("create.aviCut.action.prepare")
     }
 
     private var buttonIconName: String {
@@ -1673,7 +1643,7 @@ private struct MomentsCreatePrimaryActionBar: View {
             return L10n.string("create.primary.previewReady")
         }
         if presentation.canGenerateFinalRender {
-            return "Avi's cut is ready for the final video."
+            return L10n.string("create.primary.previewReady")
         }
         if let previewMessage = presentation.previewSummary.statusMessage, !previewMessage.isEmpty {
             return previewMessage
@@ -1691,7 +1661,7 @@ private struct MomentsCreatePrimaryActionBar: View {
             return presentation.storyAvailabilityMessage
         }
         if presentation.canPlanStory {
-            return "Avi can prepare a cut from this media."
+            return L10n.string("create.aviCut.status.readyToPrepare")
         }
         return nil
     }
