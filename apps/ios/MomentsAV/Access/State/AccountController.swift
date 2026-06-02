@@ -117,8 +117,7 @@ final class AccountController: ObservableObject {
             purchaseCatalog = try await purchaseService.loadCatalog(userId: user.id)
         } catch {
             purchaseCatalog = .empty
-            purchaseCatalogErrorMessage = error.localizedDescription
-            errorMessage = error.localizedDescription
+            purchaseCatalogErrorMessage = L10n.string("paywall.purchasesUnavailable")
         }
     }
 

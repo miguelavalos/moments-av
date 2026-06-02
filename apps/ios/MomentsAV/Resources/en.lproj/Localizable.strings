@@ -436,6 +436,7 @@
 "paywall.purchase.purchased" = "%@ purchased. Credits may take a moment to appear.";
 "paywall.purchase.restored" = "Purchases restored. Credits may take a moment to appear.";
 "paywall.purchase.restoredSingle" = "Purchase restored. Credits may take a moment to appear.";
+"paywall.purchasesUnavailable" = "Purchases are not available right now. Existing credits and promo codes still work.";
 "paywall.restore.cancelled" = "Restore cancelled.";
 "paywall.restore.title" = "Restore purchases";
 "paywall.signIn.button" = "Sign in to continue";

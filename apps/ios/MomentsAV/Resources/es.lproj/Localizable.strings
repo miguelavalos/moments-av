@@ -436,6 +436,7 @@
 "paywall.purchase.purchased" = "%@ comprado. Los créditos pueden tardar un momento en aparecer.";
 "paywall.purchase.restored" = "Compras restauradas. Los créditos pueden tardar un momento en aparecer.";
 "paywall.purchase.restoredSingle" = "Compra restaurada. Los créditos pueden tardar un momento en aparecer.";
+"paywall.purchasesUnavailable" = "Las compras no están disponibles ahora mismo. Los créditos existentes y los códigos promocionales siguen funcionando.";
 "paywall.restore.cancelled" = "Restauración cancelada.";
 "paywall.restore.title" = "Restaurar compras";
 "paywall.signIn.button" = "Iniciar sesión para continuar";

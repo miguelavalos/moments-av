@@ -36,10 +36,12 @@ struct MomentsCreditsPaywallView: View {
 
                     if isSignedIn {
                         purchaseCatalogStatus
-                        monthlyPlan
-                        creditPacks
+                        if purchasesAreAvailable {
+                            monthlyPlan
+                            creditPacks
+                            restoreAndLegal
+                        }
                         promoClaim
-                        restoreAndLegal
                     } else {
                         signInRequired
                     }
@@ -303,7 +305,11 @@ struct MomentsCreditsPaywallView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(AVBrandColor.mutedSurface, in: RoundedRectangle(cornerRadius: AVBrandRadius.control, style: .continuous))
         } else if let purchaseCatalogErrorMessage, !purchaseCatalogErrorMessage.isEmpty {
-            AVPaywallStatusRow(systemImage: "exclamationmark.triangle.fill", message: purchaseCatalogErrorMessage)
+            AVPaywallStatusRow(systemImage: "info.circle.fill", message: purchaseCatalogErrorMessage)
+                .accessibilityIdentifier("moments.credits.purchasesUnavailable")
+        } else if !purchaseCatalog.hasRequiredPaywallProducts {
+            AVPaywallStatusRow(systemImage: "info.circle.fill", message: L10n.string("paywall.purchasesUnavailable"))
+                .accessibilityIdentifier("moments.credits.purchasesUnavailable")
         }
     }
 
@@ -353,7 +359,17 @@ struct MomentsCreditsPaywallView: View {
     }
 
     private var isPurchaseActionDisabled: Bool {
-        purchasingProductID != nil || isRestoringPurchases || isPurchaseCatalogLoading || purchaseCatalogErrorMessage != nil
+        purchasingProductID != nil
+            || isRestoringPurchases
+            || isPurchaseCatalogLoading
+            || purchaseCatalogErrorMessage != nil
+            || !purchaseCatalog.hasRequiredPaywallProducts
+    }
+
+    private var purchasesAreAvailable: Bool {
+        !isPurchaseCatalogLoading
+            && purchaseCatalogErrorMessage == nil
+            && purchaseCatalog.hasRequiredPaywallProducts
     }
 
     private func priceText(for product: MomentsCreditPaywallProduct) -> String {
@@ -389,7 +405,7 @@ struct MomentsCreditsPaywallView: View {
                     statusMessage = L10n.string("paywall.purchase.cancelled")
                 }
             } catch {
-                statusMessage = error.localizedDescription
+                statusMessage = purchaseErrorMessage(error)
             }
             purchasingProductID = nil
         }
@@ -412,7 +428,7 @@ struct MomentsCreditsPaywallView: View {
                     statusMessage = L10n.string("paywall.restore.cancelled")
                 }
             } catch {
-                statusMessage = error.localizedDescription
+                statusMessage = purchaseErrorMessage(error)
             }
             isRestoringPurchases = false
         }
@@ -434,6 +450,13 @@ struct MomentsCreditsPaywallView: View {
             }
             isClaimingPromo = false
         }
+    }
+
+    private func purchaseErrorMessage(_ error: Error) -> String {
+        if let error = error as? MomentsPurchaseError {
+            return error.localizedDescription
+        }
+        return L10n.string("purchase.error.offeringUnavailable")
     }
 }
 

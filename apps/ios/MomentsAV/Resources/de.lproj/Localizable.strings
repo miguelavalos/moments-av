@@ -436,6 +436,7 @@
 "paywall.purchase.purchased" = "%@ gekauft. Credits können einen Moment brauchen, bis sie erscheinen.";
 "paywall.purchase.restored" = "Käufe wiederhergestellt. Credits können einen Moment brauchen, bis sie erscheinen.";
 "paywall.purchase.restoredSingle" = "Kauf wiederhergestellt. Credits können einen Moment brauchen, bis sie erscheinen.";
+"paywall.purchasesUnavailable" = "Käufe sind im Moment nicht verfügbar. Vorhandene Credits und Promo-Codes funktionieren weiterhin.";
 "paywall.restore.cancelled" = "Wiederherstellung abgebrochen.";
 "paywall.restore.title" = "Käufe wiederherstellen";
 "paywall.signIn.button" = "Anmelden, um fortzufahren";

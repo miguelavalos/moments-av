@@ -13,6 +13,10 @@ struct MomentsPurchaseCatalog: Equatable {
 
     static let empty = MomentsPurchaseCatalog(entriesByProductId: [:])
 
+    var hasRequiredPaywallProducts: Bool {
+        MomentsCreditPaywallProduct.all.allSatisfy { entry(for: $0) != nil }
+    }
+
     func entry(for product: MomentsCreditPaywallProduct) -> Entry? {
         entriesByProductId[product.id]
     }
@@ -135,7 +139,12 @@ final class RevenueCatMomentsPurchaseService: MomentsPurchaseServicing {
     }
 
     private func momentsOffering() async throws -> Offering {
-        let offerings = try await Purchases.shared.offerings()
+        let offerings: Offerings
+        do {
+            offerings = try await Purchases.shared.offerings()
+        } catch {
+            throw MomentsPurchaseError.offeringUnavailable
+        }
         let offeringID = offeringIDProvider().trimmingCharacters(in: .whitespacesAndNewlines)
         if !offeringID.isEmpty, let offering = offerings.offering(identifier: offeringID) {
             return offering

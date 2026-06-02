@@ -434,6 +434,7 @@
 "paywall.purchase.purchased" = "%@ comprat. Els crèdits poden trigar un moment a aparèixer.";
 "paywall.purchase.restored" = "Compres restaurades. Els crèdits poden trigar un moment a aparèixer.";
 "paywall.purchase.restoredSingle" = "Compra restaurada. Els crèdits poden trigar un moment a aparèixer.";
+"paywall.purchasesUnavailable" = "Les compres no estan disponibles ara mateix. Els crèdits existents i els codis promocionals continuen funcionant.";
 "paywall.restore.cancelled" = "Restauració cancel·lada.";
 "paywall.restore.title" = "Restaura compres";
 "paywall.signIn.button" = "Inicia sessió per continuar";

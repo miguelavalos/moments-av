@@ -2,6 +2,25 @@ import XCTest
 @testable import MomentsAV
 
 final class MomentsCreditGateTests: XCTestCase {
+    func testPurchaseCatalogRequiresAllPaywallProducts() {
+        XCTAssertFalse(MomentsPurchaseCatalog.empty.hasRequiredPaywallProducts)
+
+        let partialCatalog = MomentsPurchaseCatalog(entriesByProductId: [
+            MomentsCreditProductID.proMonthlyProduct: purchaseCatalogEntry(productId: MomentsCreditProductID.proMonthlyProduct),
+            MomentsCreditProductID.starterPackProduct: purchaseCatalogEntry(productId: MomentsCreditProductID.starterPackProduct)
+        ])
+
+        XCTAssertFalse(partialCatalog.hasRequiredPaywallProducts)
+
+        let completeCatalog = MomentsPurchaseCatalog(entriesByProductId: Dictionary(
+            uniqueKeysWithValues: MomentsCreditPaywallProduct.all.map {
+                ($0.id, purchaseCatalogEntry(productId: $0.id))
+            }
+        ))
+
+        XCTAssertTrue(completeCatalog.hasRequiredPaywallProducts)
+    }
+
     func testEmptyBalanceCannotAffordAnyLaunchTemplate() {
         XCTAssertFalse(
             MomentsCreditGate.canAffordAny(MomentTemplate.launchTemplates, balance: .empty)
@@ -301,6 +320,15 @@ final class MomentsCreditGateTests: XCTestCase {
                 balance: balance,
                 latestPreview: nil
             )
+        )
+    }
+
+    private func purchaseCatalogEntry(productId: String) -> MomentsPurchaseCatalog.Entry {
+        MomentsPurchaseCatalog.Entry(
+            productId: productId,
+            packageIdentifier: productId,
+            localizedTitle: productId,
+            localizedPrice: "$1.00"
         )
     }
 }
