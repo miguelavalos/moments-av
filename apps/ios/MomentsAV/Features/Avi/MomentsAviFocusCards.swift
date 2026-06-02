@@ -5,7 +5,7 @@ struct MomentsAviCurrentFocusCard: View {
     let workflowFocusTitle: String
     let workflowFocusMessage: String
     let workflowFocusSystemImage: String
-    let projectSummary: InProgressMomentsSummary
+    let momentsSummary: InProgressMomentsSummary
     let creditBalance: MomentsCreditBalance
 
     var body: some View {
@@ -22,12 +22,12 @@ struct MomentsAviCurrentFocusCard: View {
             HStack(spacing: 10) {
                 AVAviStatPill(
                     title: L10n.string("avi.stat.active"),
-                    value: "\(projectSummary.inProgressCount)",
+                    value: "\(momentsSummary.inProgressCount)",
                     systemImage: "clock"
                 )
                 AVAviStatPill(
                     title: L10n.string("library.finished.title"),
-                    value: "\(projectSummary.finishedCount)",
+                    value: "\(momentsSummary.finishedCount)",
                     systemImage: "checkmark.circle"
                 )
                 AVAviStatPill(

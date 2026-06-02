@@ -13,7 +13,7 @@ struct MomentsPreviewClient {
         momentId: String,
         bearerToken: String,
         template: MomentTemplate,
-        form: MomentDraftForm,
+        form: MomentSetupForm,
         previewIndex: Int
     ) async throws -> MomentsPreviewResponse {
         guard let baseURL = URL(string: baseURLString.trimmingCharacters(in: .whitespacesAndNewlines)) else {

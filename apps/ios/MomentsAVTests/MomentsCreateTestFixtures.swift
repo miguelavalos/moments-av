@@ -2,7 +2,7 @@ import Foundation
 @testable import MomentsAV
 
 enum MomentsCreateTestFixtures {
-    static func makeProject(id: String) -> InProgressMoment {
+    static func makeMoment(id: String) -> InProgressMoment {
         InProgressMoment(
             id: id,
             template: .birthdayMessage,
@@ -117,7 +117,7 @@ enum MomentsCreateTestFixtures {
             isRefreshing: false,
             unavailableMessage: "Unavailable.",
             notConfiguredMessage: "Not configured.",
-            missingProjectMessage: "Missing Moment.",
+            missingMomentMessage: "Missing Moment.",
             missingJobMessage: "Missing job.",
             missingProviderRequestMessage: "Missing request."
         )

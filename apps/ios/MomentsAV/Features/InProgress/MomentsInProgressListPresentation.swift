@@ -5,37 +5,37 @@ struct MomentsInProgressListPresentation: Equatable {
     let groups: [MomentsInProgressListGroupPresentation]
 
     static func make(
-        projectSummary: InProgressMomentsSummary,
+        momentsSummary: InProgressMomentsSummary,
         selectedMomentId: String?
     ) -> MomentsInProgressListPresentation {
         MomentsInProgressListPresentation(
             summaryPills: [
                 InProgressMomentsSummaryPresentation(
                     title: L10n.string("inProgress.summary.total"),
-                    value: projectSummary.projectCount,
+                    value: momentsSummary.momentCount,
                     systemImage: "rectangle.stack"
                 ),
                 InProgressMomentsSummaryPresentation(
                     title: L10n.string("inProgress.summary.active"),
-                    value: projectSummary.inProgressCount,
+                    value: momentsSummary.inProgressCount,
                     systemImage: "clock"
                 ),
                 InProgressMomentsSummaryPresentation(
                     title: L10n.string("inProgress.summary.done"),
-                    value: projectSummary.finishedCount,
+                    value: momentsSummary.finishedCount,
                     systemImage: "checkmark.circle"
                 )
             ],
             groups: [
                 MomentsInProgressListGroupPresentation(
                     title: L10n.string("inProgress.group.inProgress"),
-                    rows: projectSummary.groups.inProgress.map {
+                    rows: momentsSummary.groups.inProgress.map {
                         MomentsInProgressListRowPresentation(moment: $0, isSelected: selectedMomentId == $0.id)
                     }
                 ),
                 MomentsInProgressListGroupPresentation(
                     title: L10n.string("inProgress.group.finished"),
-                    rows: projectSummary.groups.finished.map {
+                    rows: momentsSummary.groups.finished.map {
                         MomentsInProgressListRowPresentation(moment: $0, isSelected: selectedMomentId == $0.id)
                     }
                 )

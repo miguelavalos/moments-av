@@ -1,18 +1,18 @@
 import SwiftUI
 
-struct MomentsCreateActiveDraftSection: View {
-    let presentation: MomentsCreateDraftSetupPresentation
+struct MomentsCreateActiveMomentSection: View {
+    let presentation: MomentsCreateSetupPresentation
     let minimumMediaCount: Int
     let discardDraft: () -> Void
 
     @ViewBuilder
     var body: some View {
         if presentation.activeMomentId != nil {
-            Label(presentation.activeProjectLabel, systemImage: "checkmark.circle.fill")
+            Label(presentation.activeMomentLabel, systemImage: "checkmark.circle.fill")
                 .font(.subheadline.weight(.semibold))
                 .foregroundStyle(.green)
 
-            Text(presentation.activeProjectDetail)
+            Text(presentation.activeMomentDetail)
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
 

@@ -29,7 +29,7 @@ struct MomentsStoryDraftRequest: Encodable {
 enum MomentsStoryDraftInputSignature {
     static func make(
         momentId: String,
-        form: MomentDraftForm,
+        form: MomentSetupForm,
         selectedMedia: [MomentsStoryDraftMedia]
     ) -> String {
         let mediaSignature = selectedMedia

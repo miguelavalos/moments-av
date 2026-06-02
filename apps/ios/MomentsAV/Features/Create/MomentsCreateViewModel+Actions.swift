@@ -16,21 +16,21 @@ extension MomentsCreateViewModel {
         }
     }
 
-    func editNewProjectStyle() {
+    func editNewMomentStyle() {
         guard !isDraftLocked else { return }
         newMomentStep = .style
     }
 
-    func editNewProjectSummary() {
+    func editNewMomentsSummary() {
         guard !isDraftLocked else { return }
         newMomentStep = .style
     }
 
-    func createDraft() {
-        createDraft(openMediaPicker: false)
+    func createMoment() {
+        createMoment(openMediaPicker: false)
     }
 
-    func createDraft(openMediaPicker: Bool) {
+    func createMoment(openMediaPicker: Bool) {
         guard canCreateDraft, let momentCreationWorkflow else {
             updateDraftErrorMessage(draftAvailabilityMessage ?? L10n.string("create.error.startMoment"))
             return
@@ -39,7 +39,7 @@ extension MomentsCreateViewModel {
         prepareNewDraftCreation()
 
         runOperation {
-            let momentId = await momentCreationWorkflow.createDraft(form: form)
+            let momentId = await momentCreationWorkflow.createMoment(form: form)
             if momentId != nil, openMediaPicker {
                 self.mediaPickerOpenRequest += 1
             }
@@ -56,18 +56,18 @@ extension MomentsCreateViewModel {
             return
         }
         if hasLocalMomentWorkspace {
-            resetActiveProject(force: true)
+            resetActiveMoment(force: true)
             return
         }
         guard let momentCreationWorkflow else {
-            resetActiveProject(force: true)
+            resetActiveMoment(force: true)
             return
         }
 
         runOperation {
-            let discarded = await momentCreationWorkflow.discardActiveDraft(momentId: self.activeMomentId)
+            let discarded = await momentCreationWorkflow.discardActiveMoment(momentId: self.activeMomentId)
             if discarded {
-                self.resetActiveProject(force: true)
+                self.resetActiveMoment(force: true)
             } else if let message = momentCreationWorkflow.errorMessage {
                 self.updateDraftErrorMessage(message)
             } else {
@@ -158,7 +158,7 @@ extension MomentsCreateViewModel {
             if let activeMomentId = self.activeMomentId {
                 momentId = activeMomentId
             } else if let momentCreationWorkflow = self.momentCreationWorkflow {
-                momentId = await momentCreationWorkflow.createDraft(form: form)
+                momentId = await momentCreationWorkflow.createMoment(form: form)
                 if momentId != nil {
                     self.isLocalMomentStarted = false
                 }
@@ -269,7 +269,7 @@ extension MomentsCreateViewModel {
             if let activeMomentId = self.activeMomentId {
                 momentId = activeMomentId
             } else if let momentCreationWorkflow = self.momentCreationWorkflow {
-                momentId = await momentCreationWorkflow.createDraft(form: form)
+                momentId = await momentCreationWorkflow.createMoment(form: form)
                 if momentId != nil {
                     self.isLocalMomentStarted = false
                 }
@@ -427,7 +427,7 @@ extension MomentsCreateViewModel {
     }
 
     func createAnotherFinalVideoVersion() {
-        resetActiveProject(force: true)
+        resetActiveMoment(force: true)
         isLocalMomentStarted = true
         updateFinalRenderStatusMessage(L10n.string("create.final.status.startAnother"))
     }
@@ -437,7 +437,7 @@ extension MomentsCreateViewModel {
         return (activeMomentId, form.template)
     }
 
-    private var activeFormContext: (momentId: String, form: MomentDraftForm)? {
+    private var activeFormContext: (momentId: String, form: MomentSetupForm)? {
         guard let activeMomentId else { return nil }
         return (activeMomentId, form)
     }

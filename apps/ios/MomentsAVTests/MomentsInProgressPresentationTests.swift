@@ -5,7 +5,7 @@ final class MomentsInProgressPresentationTests: XCTestCase {
     func testSignedOutAvailabilityExplainsAccountRequirement() {
         let presentation = MomentsInProgressPresentation.make(
             isSignedIn: false,
-            projectSummary: InProgressMomentsSummary(),
+            momentsSummary: InProgressMomentsSummary(),
             momentPendingDeletion: nil
         )
 
@@ -24,7 +24,7 @@ final class MomentsInProgressPresentationTests: XCTestCase {
     func testEmptySignedInAvailabilityExplainsCreateFirstState() {
         let presentation = MomentsInProgressPresentation.make(
             isSignedIn: true,
-            projectSummary: InProgressMomentsSummary(),
+            momentsSummary: InProgressMomentsSummary(),
             momentPendingDeletion: nil
         )
 
@@ -43,8 +43,8 @@ final class MomentsInProgressPresentationTests: XCTestCase {
     func testProjectsAvailabilityIsAvailableWhenSignedInWithProjects() {
         let presentation = MomentsInProgressPresentation.make(
             isSignedIn: true,
-            projectSummary: InProgressMomentsSummary.make(from: [
-                makeProject(id: "moment-1")
+            momentsSummary: InProgressMomentsSummary.make(from: [
+                makeMoment(id: "moment-1")
             ]),
             momentPendingDeletion: nil
         )
@@ -55,13 +55,13 @@ final class MomentsInProgressPresentationTests: XCTestCase {
     func testDeletionMessageUsesPendingProjectTitleOrFallback() {
         let fallback = MomentsInProgressPresentation.make(
             isSignedIn: true,
-            projectSummary: InProgressMomentsSummary(),
+            momentsSummary: InProgressMomentsSummary(),
             momentPendingDeletion: nil
         )
-        let moment = makeProject(id: "moment-1", title: "Family Weekend")
+        let moment = makeMoment(id: "moment-1", title: "Family Weekend")
         let titled = MomentsInProgressPresentation.make(
             isSignedIn: true,
-            projectSummary: InProgressMomentsSummary(),
+            momentsSummary: InProgressMomentsSummary(),
             momentPendingDeletion: moment
         )
 
@@ -75,7 +75,7 @@ final class MomentsInProgressPresentationTests: XCTestCase {
         )
     }
 
-    private func makeProject(
+    private func makeMoment(
         id: String,
         title: String? = nil,
         status: String = "draft_created",

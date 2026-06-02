@@ -11,7 +11,7 @@ extension MomentsCreateViewModel {
         !isDraftLocked
             && isSignedIn
             && (momentCreationWorkflow?.isConfigured ?? false)
-            && draftFormAvailability.canCreateDraft
+            && setupFormAvailability.canCreateDraft
     }
 
     var canBeginNewProject: Bool {

@@ -2,11 +2,11 @@ import XCTest
 @testable import MomentsAV
 
 final class MomentsInProgressListPresentationTests: XCTestCase {
-    func testSummaryPillsUseProjectSummaryCounts() {
+    func testSummaryPillsUseMomentsSummaryCounts() {
         let presentation = MomentsInProgressListPresentation.make(
-            projectSummary: InProgressMomentsSummary.make(from: [
-                makeProject(id: "active", status: "story_ready", updatedAt: 20),
-                makeProject(id: "done", status: "completed", updatedAt: 10)
+            momentsSummary: InProgressMomentsSummary.make(from: [
+                makeMoment(id: "active", status: "story_ready", updatedAt: 20),
+                makeMoment(id: "done", status: "completed", updatedAt: 10)
             ]),
             selectedMomentId: nil
         )
@@ -18,10 +18,10 @@ final class MomentsInProgressListPresentationTests: XCTestCase {
 
     func testGroupsOmitEmptySectionsAndPreserveStatusRulesOrder() {
         let presentation = MomentsInProgressListPresentation.make(
-            projectSummary: InProgressMomentsSummary.make(from: [
-                makeProject(id: "older-active", status: "draft_created", updatedAt: 10),
-                makeProject(id: "newer-active", status: "story_ready", updatedAt: 30),
-                makeProject(id: "done", status: "completed", updatedAt: 20)
+            momentsSummary: InProgressMomentsSummary.make(from: [
+                makeMoment(id: "older-active", status: "draft_created", updatedAt: 10),
+                makeMoment(id: "newer-active", status: "story_ready", updatedAt: 30),
+                makeMoment(id: "done", status: "completed", updatedAt: 20)
             ]),
             selectedMomentId: nil
         )
@@ -32,7 +32,7 @@ final class MomentsInProgressListPresentationTests: XCTestCase {
     }
 
     func testRowPresentationFormatsProjectMetadataAndSelection() {
-        let moment = makeProject(
+        let moment = makeMoment(
             id: "moment-1",
             status: "preview_ready",
             title: "Family Weekend",
@@ -56,7 +56,7 @@ final class MomentsInProgressListPresentationTests: XCTestCase {
 
     func testFinishedRowUsesFinishedMarkerAndCollapsedAccessoryWhenNotSelected() {
         let row = MomentsInProgressListRowPresentation(
-            moment: makeProject(id: "done", status: "completed"),
+            moment: makeMoment(id: "done", status: "completed"),
             isSelected: false
         )
 
@@ -67,14 +67,14 @@ final class MomentsInProgressListPresentationTests: XCTestCase {
 
     func testRowPresentationUsesSingularCreditCopy() {
         let row = MomentsInProgressListRowPresentation(
-            moment: makeProject(id: "one-credit", status: "draft_created", creditCost: 1),
+            moment: makeMoment(id: "one-credit", status: "draft_created", creditCost: 1),
             isSelected: false
         )
 
         XCTAssertEqual(row.creditCostTitle, "1 credit")
     }
 
-    private func makeProject(
+    private func makeMoment(
         id: String,
         status: String,
         title: String? = nil,

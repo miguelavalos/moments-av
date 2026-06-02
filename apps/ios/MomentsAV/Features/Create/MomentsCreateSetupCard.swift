@@ -3,14 +3,14 @@ import AVAppShellFoundation
 import AVBrandFoundation
 import SwiftUI
 
-struct MomentsCreateDraftSetupCard: View {
-    @Binding var form: MomentDraftForm
+struct MomentsCreateSetupCard: View {
+    @Binding var form: MomentSetupForm
     @State private var showsOptions = false
-    @State private var showsProjectSheet = false
+    @State private var showsMomentSheet = false
     let selectedStyle: MomentCreationStyle
     let styles: [MomentCreationStyle]
     let selectedMusicPreset: MomentMusicPreset
-    let presentation: MomentsCreateDraftSetupPresentation
+    let presentation: MomentsCreateSetupPresentation
     let newMomentStep: MomentsCreateNewMomentStep
     let isSignedIn: Bool
     let balance: MomentsCreditBalance
@@ -19,7 +19,7 @@ struct MomentsCreateDraftSetupCard: View {
     let editStyle: () -> Void
     let selectStyle: (MomentCreationStyle) -> Void
     let selectMusicPreset: (MomentMusicPreset) -> Void
-    let createDraft: () -> Void
+    let createMoment: () -> Void
     let discardDraft: () -> Void
     let startSignInFlow: () -> Void
     let openCredits: () -> Void
@@ -27,10 +27,10 @@ struct MomentsCreateDraftSetupCard: View {
     @ViewBuilder
     var body: some View {
         if presentation.isDraftLocked {
-            lockedProjectContent
+            lockedMomentContent
         } else if newMomentStep == .status {
             VStack(alignment: .leading, spacing: AVBrandSpacing.lg) {
-                MomentsCreateNewProjectStatus(
+                MomentsCreateNewMomentStatus(
                     isSignedIn: isSignedIn,
                     balance: balance,
                     selectedStyle: selectedStyle,
@@ -45,7 +45,7 @@ struct MomentsCreateDraftSetupCard: View {
                     },
                     planProject: {
                         form.creationMode = .planned
-                        showsProjectSheet = true
+                        showsMomentSheet = true
                         editStyle()
                     },
                     startSignInFlow: startSignInFlow,
@@ -54,7 +54,7 @@ struct MomentsCreateDraftSetupCard: View {
 
                 activeDraftAndErrorContent
             }
-            .sheet(isPresented: $showsProjectSheet) {
+            .sheet(isPresented: $showsMomentSheet) {
                 styleStep
                     .padding(20)
                     .presentationDetents([.large])
@@ -89,9 +89,9 @@ struct MomentsCreateDraftSetupCard: View {
         )
     }
 
-    private var lockedProjectContent: some View {
+    private var lockedMomentContent: some View {
         VStack(alignment: .leading, spacing: 12) {
-            MomentsCreateProjectHubHeader(
+            MomentsCreateMomentHubHeader(
                 guidance: aviGuidance,
                 style: selectedStyle,
                 selectedMusicPreset: selectedMusicPreset
@@ -128,7 +128,7 @@ struct MomentsCreateDraftSetupCard: View {
 
     private var activeDraftAndErrorContent: some View {
         VStack(alignment: .leading, spacing: 16) {
-            if presentation.showsActiveProject {
+            if presentation.showsActiveMoment {
                 Button(action: discardDraft) {
                     Label(L10n.string("create.discard.current"), systemImage: "trash")
                         .frame(maxWidth: .infinity)
@@ -169,7 +169,7 @@ struct MomentsCreateDraftSetupCard: View {
                 isLocked: presentation.isDraftLocked,
                 selectStyle: {
                     selectStyle($0)
-                    showsProjectSheet = false
+                    showsMomentSheet = false
                 }
             )
         }
@@ -177,7 +177,7 @@ struct MomentsCreateDraftSetupCard: View {
 
 }
 
-private struct MomentsCreateNewProjectStatus: View {
+private struct MomentsCreateNewMomentStatus: View {
     let isSignedIn: Bool
     let balance: MomentsCreditBalance
     let selectedStyle: MomentCreationStyle
@@ -195,7 +195,7 @@ private struct MomentsCreateNewProjectStatus: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .background(MomentsCreateTuneStyleSurface())
 
-            MomentsCreateNewProjectActionBlock(
+            MomentsCreateNewMomentActionBlock(
                 isSignedIn: isSignedIn,
                 balance: balance,
                 selectedStyle: selectedStyle,
@@ -246,11 +246,11 @@ private struct MomentsCreateAviInlineGuide: View {
             reactionTrigger += 1
         }
         .accessibilityElement(children: .combine)
-        .accessibilityLabel(L10n.string("create.draftSetup.aviSays", guidance.message))
+        .accessibilityLabel(L10n.string("create.setup.aviSays", guidance.message))
     }
 }
 
-private struct MomentsCreateNewProjectActionBlock: View {
+private struct MomentsCreateNewMomentActionBlock: View {
     let isSignedIn: Bool
     let balance: MomentsCreditBalance
     let selectedStyle: MomentCreationStyle
@@ -334,15 +334,15 @@ private extension MomentsCreateAviGuidance {
     var title: String {
         switch emotion {
         case .warning:
-            return L10n.string("create.draftSetup.guidance.checkStep")
+            return L10n.string("create.setup.guidance.checkStep")
         case .happy, .celebrate:
-            return L10n.string("create.draftSetup.guidance.readyStart")
+            return L10n.string("create.setup.guidance.readyStart")
         case .focused:
-            return L10n.string("create.draftSetup.guidance.projectMoving")
+            return L10n.string("create.setup.guidance.momentMoving")
         case .curious:
-            return L10n.string("create.draftSetup.guidance.signIn")
+            return L10n.string("create.setup.guidance.signIn")
         case .thinking:
-            return L10n.string("create.draftSetup.guidance.preparing")
+            return L10n.string("create.setup.guidance.preparing")
         }
     }
 
@@ -414,7 +414,7 @@ private struct MomentsCreateEconomyPanel: View {
                     }
                 } label: {
                     Label(
-                        showsDetails ? L10n.string("create.draftSetup.hideDetails") : L10n.string("create.draftSetup.viewDetails"),
+                        showsDetails ? L10n.string("create.setup.hideDetails") : L10n.string("create.setup.viewDetails"),
                         systemImage: showsDetails ? "chevron.up" : "chevron.down"
                     )
                         .font(.system(size: 12, weight: .black, design: .rounded))
@@ -477,7 +477,7 @@ private struct MomentsCreateStepHeader: View {
     }
 }
 
-private struct MomentsCreateProjectHubHeader: View {
+private struct MomentsCreateMomentHubHeader: View {
     let guidance: MomentsCreateAviGuidance
     let style: MomentCreationStyle
     let selectedMusicPreset: MomentMusicPreset
@@ -488,7 +488,7 @@ private struct MomentsCreateProjectHubHeader: View {
                 .frame(width: 96, height: 96)
 
             VStack(alignment: .leading, spacing: 6) {
-                Text(L10n.string("create.draftSetup.nextAddMedia"))
+                Text(L10n.string("create.setup.nextAddMedia"))
                     .font(.system(size: 12, weight: .black))
                     .foregroundStyle(AVBrandColor.accent)
                     .textCase(.uppercase)
@@ -499,7 +499,7 @@ private struct MomentsCreateProjectHubHeader: View {
                     .lineLimit(2)
                     .fixedSize(horizontal: false, vertical: true)
 
-                Text(L10n.string("create.draftSetup.styleSummary", style.title, style.durationSeconds, MomentsCreditCopy.countTitle(style.creditCost), selectedMusicPreset.title))
+                Text(L10n.string("create.setup.styleSummary", style.title, style.durationSeconds, MomentsCreditCopy.countTitle(style.creditCost), selectedMusicPreset.title))
                     .font(.system(size: 12, weight: .semibold))
                     .foregroundStyle(AVBrandColor.textSecondary)
                     .lineLimit(2)
@@ -535,7 +535,7 @@ private struct MomentsCreateStyleSummaryRow: View {
                     .foregroundStyle(AVBrandColor.textSecondary)
                     .lineLimit(2)
 
-                Text(L10n.string("create.draftSetup.compactStyleSummary", style.durationSeconds, MomentsCreditCopy.countTitle(style.creditCost), selectedMusicPreset.title))
+                Text(L10n.string("create.setup.compactStyleSummary", style.durationSeconds, MomentsCreditCopy.countTitle(style.creditCost), selectedMusicPreset.title))
                     .font(.system(size: 12, weight: .black))
                     .foregroundStyle(AVBrandColor.textPrimary)
             }
@@ -549,7 +549,7 @@ private struct MomentsCreateStyleSummaryRow: View {
                         .foregroundStyle(AVBrandColor.accent)
                 }
                 .buttonStyle(.plain)
-                .accessibilityLabel(L10n.string("create.draftSetup.editStyle"))
+                .accessibilityLabel(L10n.string("create.setup.editStyle"))
             }
         }
         .padding(12)
@@ -654,12 +654,12 @@ private struct MomentsCreateStyleTile: View {
         .buttonStyle(.plain)
         .disabled(isLocked || !style.isEnabled)
         .accessibilityLabel(style.title)
-        .accessibilityHint(style.isEnabled ? style.subtitle : L10n.string("create.draftSetup.comingSoon"))
+        .accessibilityHint(style.isEnabled ? style.subtitle : L10n.string("create.setup.comingSoon"))
     }
 }
 
 private struct MomentsCreateQuickCustomizeSection: View {
-    @Binding var form: MomentDraftForm
+    @Binding var form: MomentSetupForm
     let selectedStyle: MomentCreationStyle
     let selectedMusicPreset: MomentMusicPreset
     let selectMusicPreset: (MomentMusicPreset) -> Void
@@ -688,7 +688,7 @@ private struct MomentsCreateQuickCustomizeSection: View {
 
             MomentsCreateMultilineFieldRow(
                 title: L10n.string("create.noteForAvi"),
-                placeholder: L10n.string("create.draftSetup.notePlaceholder"),
+                placeholder: L10n.string("create.setup.notePlaceholder"),
                 systemImage: "text.bubble.fill",
                 text: $form.details,
                 isDisabled: isLocked

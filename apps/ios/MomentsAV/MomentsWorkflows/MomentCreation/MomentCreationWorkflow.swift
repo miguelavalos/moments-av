@@ -8,22 +8,22 @@ final class MomentCreationWorkflow: ObservableObject {
 
     private let currentUserProvider: any MomentsCurrentUserProviding
     private let creditBalanceProvider: any MomentsCreditBalanceProviding
-    private let projectCreator: any MomentsCreating
-    private let projectDeleter: any MomentsDeleting
+    private let momentCreator: any MomentsCreating
+    private let momentDeleter: any MomentsDeleting
     private let workspaceObserver: any MomentsActiveWorkspaceObserving
     private var workflowGeneration = WorkflowGeneration()
 
     init(
         currentUserProvider: any MomentsCurrentUserProviding,
         creditBalanceProvider: any MomentsCreditBalanceProviding,
-        projectCreator: any MomentsCreating,
-        projectDeleter: any MomentsDeleting,
+        momentCreator: any MomentsCreating,
+        momentDeleter: any MomentsDeleting,
         workspaceObserver: any MomentsActiveWorkspaceObserving
     ) {
         self.currentUserProvider = currentUserProvider
         self.creditBalanceProvider = creditBalanceProvider
-        self.projectCreator = projectCreator
-        self.projectDeleter = projectDeleter
+        self.momentCreator = momentCreator
+        self.momentDeleter = momentDeleter
         self.workspaceObserver = workspaceObserver
     }
 
@@ -36,7 +36,7 @@ final class MomentCreationWorkflow: ObservableObject {
     }
 
     var isConfigured: Bool {
-        projectCreator.isConfigured
+        momentCreator.isConfigured
     }
 
     func canAfford(_ template: MomentTemplate) -> Bool {
@@ -47,16 +47,16 @@ final class MomentCreationWorkflow: ObservableObject {
         MomentsCreditGate.spendPlan(for: template.creditCost, balance: balance)
     }
 
-    func createDraft(form: MomentDraftForm) async -> String? {
+    func createMoment(form: MomentSetupForm) async -> String? {
         guard !isCreatingDraft else { return nil }
         guard let ownerUserId = currentUserProvider.currentUserId else {
             errorMessage = L10n.string("workflow.moment.signInStart")
             return nil
         }
 
-        let availability = MomentDraftRules.availability(form: form, balance: balance)
+        let availability = MomentSetupRules.availability(form: form, balance: balance)
         guard availability.canCreateDraft else {
-            errorMessage = createDraftBlockMessage(availability)
+            errorMessage = createMomentBlockMessage(availability)
             return nil
         }
 
@@ -65,7 +65,7 @@ final class MomentCreationWorkflow: ObservableObject {
         errorMessage = nil
 
         do {
-            let momentId = try await projectCreator.createDraft(ownerUserId: ownerUserId, form: form)
+            let momentId = try await momentCreator.createMoment(ownerUserId: ownerUserId, form: form)
             guard workflowGeneration.isCurrent(generation) else { return nil }
             activeMomentId = momentId
             workspaceObserver.observeWorkspace(ownerUserId: ownerUserId, momentId: momentId)
@@ -101,7 +101,7 @@ final class MomentCreationWorkflow: ObservableObject {
         workspaceObserver.clearWorkspace()
     }
 
-    func discardActiveDraft(momentId momentIdOverride: String? = nil) async -> Bool {
+    func discardActiveMoment(momentId momentIdOverride: String? = nil) async -> Bool {
         guard !isCreatingDraft else { return false }
         guard let ownerUserId = currentUserProvider.currentUserId else {
             errorMessage = L10n.string("workflow.moment.signInDiscard")
@@ -114,7 +114,7 @@ final class MomentCreationWorkflow: ObservableObject {
         errorMessage = nil
 
         do {
-            try await projectDeleter.deleteMoment(ownerUserId: ownerUserId, momentId: momentId)
+            try await momentDeleter.deleteMoment(ownerUserId: ownerUserId, momentId: momentId)
             guard workflowGeneration.isCurrent(generation) else { return false }
             isCreatingDraft = false
             self.activeMomentId = nil
@@ -128,7 +128,7 @@ final class MomentCreationWorkflow: ObservableObject {
         }
     }
 
-    private func createDraftBlockMessage(_ availability: MomentDraftRules.Availability) -> String {
-        MomentDraftRules.availabilityMessage(availability) ?? L10n.string("workflow.moment.draftNotReady")
+    private func createMomentBlockMessage(_ availability: MomentSetupRules.Availability) -> String {
+        MomentSetupRules.availabilityMessage(availability) ?? L10n.string("workflow.moment.draftNotReady")
     }
 }

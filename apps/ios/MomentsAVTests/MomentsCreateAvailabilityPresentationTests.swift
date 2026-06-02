@@ -179,7 +179,7 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
                 isPreviewGenerationAvailable: true,
                 isPreviewGenerating: false,
                 isPreviewGenerationConfigured: true,
-                moment: MomentsCreateTestFixtures.makeProject(id: "moment-1"),
+                moment: MomentsCreateTestFixtures.makeMoment(id: "moment-1"),
                 template: .birthdayMessage,
                 balance: .empty
             ),
@@ -194,7 +194,7 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
                 isFinalRenderAvailable: true,
                 isFinalRenderGenerating: false,
                 isFinalRenderConfigured: true,
-                moment: MomentsCreateTestFixtures.makeProject(id: "moment-1"),
+                moment: MomentsCreateTestFixtures.makeMoment(id: "moment-1"),
                 template: .birthdayMessage,
                 balance: MomentsCreditBalance(proMonthly: 4, promotional: 0, purchased: 0),
                 latestPreview: nil

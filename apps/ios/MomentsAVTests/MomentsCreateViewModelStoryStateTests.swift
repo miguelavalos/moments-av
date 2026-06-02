@@ -75,7 +75,7 @@ final class MomentsCreateViewModelStoryStateTests: XCTestCase {
         viewModel.applyPreviewGenerationState(
             MomentsCreatePreviewGenerationState(
                 activeWorkspace: MomentWorkspace(
-                moment: MomentsCreateTestFixtures.makeProject(id: "moment-1"),
+                moment: MomentsCreateTestFixtures.makeMoment(id: "moment-1"),
                 mediaAssets: [
                     MomentsCreateTestFixtures.makeMediaAsset(
                         id: "backend-media-1",

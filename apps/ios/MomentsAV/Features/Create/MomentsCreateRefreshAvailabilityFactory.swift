@@ -16,7 +16,7 @@ enum MomentsCreateRefreshAvailabilityFactory {
             isRefreshing: isRefreshing,
             unavailableMessage: L10n.string("create.refresh.preview.unavailable"),
             notConfiguredMessage: L10n.string("create.refresh.preview.notConfigured"),
-            missingProjectMessage: L10n.string("create.refresh.preview.missingProject"),
+            missingMomentMessage: L10n.string("create.refresh.preview.missingMoment"),
             missingJobMessage: L10n.string("create.refresh.preview.missingJob"),
             missingProviderRequestMessage: MomentsRecoveryCopy.previewStatusMissing()
         )
@@ -37,7 +37,7 @@ enum MomentsCreateRefreshAvailabilityFactory {
             isRefreshing: isRefreshing,
             unavailableMessage: L10n.string("create.refresh.final.unavailable"),
             notConfiguredMessage: L10n.string("create.refresh.final.notConfigured"),
-            missingProjectMessage: L10n.string("create.refresh.final.missingProject"),
+            missingMomentMessage: L10n.string("create.refresh.final.missingMoment"),
             missingJobMessage: L10n.string("create.refresh.final.missingJob"),
             missingProviderRequestMessage: MomentsRecoveryCopy.finalRenderStatusMissing()
         )

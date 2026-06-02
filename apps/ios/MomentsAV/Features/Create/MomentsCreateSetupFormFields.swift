@@ -1,8 +1,8 @@
 import AVBrandFoundation
 import SwiftUI
 
-struct MomentsCreateDraftFormFields: View {
-    @Binding var form: MomentDraftForm
+struct MomentsCreateSetupFormFields: View {
+    @Binding var form: MomentSetupForm
     let templateSelection: Binding<MomentTemplateID>
     let templates: [MomentTemplate]
     let isDraftLocked: Bool
@@ -52,7 +52,7 @@ struct MomentsCreateDraftFormFields: View {
                     systemImage: "quote.bubble.fill",
                     isDisabled: isDraftLocked
                 ) {
-                    ForEach(MomentDraftTone.allCases) { tone in
+                    ForEach(MomentSetupTone.allCases) { tone in
                         Button(tone.title) {
                             form.tone = tone
                         }
@@ -66,7 +66,7 @@ struct MomentsCreateDraftFormFields: View {
                     systemImage: "metronome.fill",
                     isDisabled: isDraftLocked
                 ) {
-                    ForEach(MomentDraftTempo.allCases) { tempo in
+                    ForEach(MomentSetupTempo.allCases) { tempo in
                         Button(tempo.title) {
                             form.tempo = tempo
                         }

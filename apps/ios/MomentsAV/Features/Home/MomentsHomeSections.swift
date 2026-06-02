@@ -64,7 +64,7 @@ struct MomentsHomeSignInCard: View {
 
 struct MomentsHomeMomentStatusCard: View {
     let isSignedIn: Bool
-    let projectSummary: InProgressMomentsSummary
+    let momentsSummary: InProgressMomentsSummary
     let presentation: MomentsHomePresentation
     let openInProgress: () -> Void
 
@@ -73,32 +73,32 @@ struct MomentsHomeMomentStatusCard: View {
             title: L10n.string("library.inProgressAndGallery.title"),
             detail: presentation.momentStatusDetail
         ) {
-            if let latestProject = projectSummary.latestProject {
+            if let latestMoment = momentsSummary.latestMoment {
                 MomentsHomeLatestMomentRow(
-                    title: latestProject.title,
-                    detail: MomentsMomentFormatting.compactDetail(for: latestProject),
+                    title: latestMoment.title,
+                    detail: MomentsMomentFormatting.compactDetail(for: latestMoment),
                     openMoment: openInProgress
                 )
             } else if isSignedIn {
                 MomentsHomeEmptyMomentRow()
             }
 
-            AVAppShellMetricStrip(metrics: projectMetrics)
+            AVAppShellMetricStrip(metrics: momentMetrics)
         }
     }
 
-    private var projectMetrics: [AVAppShellMetric] {
+    private var momentMetrics: [AVAppShellMetric] {
         [
             AVAppShellMetric(
                 id: "in-progress",
                 title: L10n.string("inProgress.title"),
-                value: "\(projectSummary.inProgressCount)",
+                value: "\(momentsSummary.inProgressCount)",
                 systemImage: "clock"
             ),
             AVAppShellMetric(
                 id: "finished",
                 title: L10n.string("library.finished.title"),
-                value: "\(projectSummary.finishedCount)",
+                value: "\(momentsSummary.finishedCount)",
                 systemImage: "checkmark.circle"
             )
         ]

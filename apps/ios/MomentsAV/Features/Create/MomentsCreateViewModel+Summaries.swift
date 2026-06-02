@@ -28,7 +28,7 @@ extension MomentsCreateViewModel {
 
     var previewSummary: MomentsCreatePreviewSummary {
         MomentsCreatePreviewSummary(
-            activeProject: activeProject,
+            activeMoment: activeMoment,
             latestPreview: effectiveLatestPreview,
             latestPreviewJob: effectiveLatestPreviewJob,
             isGenerating: isGeneratingPreview,

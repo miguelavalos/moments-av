@@ -67,14 +67,14 @@ enum MomentsPreviewRules {
 
     static func availabilityMessage(
         _ availability: Availability,
-        missingProjectMessage: String,
+        missingMomentMessage: String,
         insufficientCreditsMessage: String
     ) -> String? {
         switch availability.blockReason {
         case nil:
             return nil
         case .missingProject:
-            return missingProjectMessage
+            return missingMomentMessage
         case .previewLimitReached:
             return "Story Review limit reached for this Moment."
         case .insufficientCredits:

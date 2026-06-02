@@ -3,9 +3,9 @@ import XCTest
 
 final class MomentStatusRulesTests: XCTestCase {
     func testGroupsCompletedProjectsAsFinished() {
-        let draft = makeProject(id: "draft", status: "draft_created", updatedAt: 10)
-        let preview = makeProject(id: "preview", status: "preview_ready", updatedAt: 20)
-        let completed = makeProject(id: "completed", status: "completed", updatedAt: 30)
+        let draft = makeMoment(id: "draft", status: "draft_created", updatedAt: 10)
+        let preview = makeMoment(id: "preview", status: "preview_ready", updatedAt: 20)
+        let completed = makeMoment(id: "completed", status: "completed", updatedAt: 30)
 
         let groups = MomentStatusRules.group([draft, preview, completed])
 
@@ -14,15 +14,15 @@ final class MomentStatusRulesTests: XCTestCase {
     }
 
     func testGroupsSortProjectsByLatestUpdateWithinEachSection() {
-        let olderDraft = makeProject(id: "older-draft", status: "draft_created", updatedAt: 10)
-        let newerDraft = makeProject(id: "newer-draft", status: "story_ready", updatedAt: 30)
-        let olderFinished = makeProject(id: "older-finished", status: "completed", updatedAt: 20)
-        let newerFinished = makeProject(id: "newer-finished", status: "completed", updatedAt: 40)
+        let olderInProgress = makeMoment(id: "older-draft", status: "draft_created", updatedAt: 10)
+        let newerInProgress = makeMoment(id: "newer-draft", status: "story_ready", updatedAt: 30)
+        let olderFinished = makeMoment(id: "older-finished", status: "completed", updatedAt: 20)
+        let newerFinished = makeMoment(id: "newer-finished", status: "completed", updatedAt: 40)
 
         let groups = MomentStatusRules.group([
-            olderDraft,
+            olderInProgress,
             olderFinished,
-            newerDraft,
+            newerInProgress,
             newerFinished
         ])
 
@@ -31,28 +31,28 @@ final class MomentStatusRulesTests: XCTestCase {
     }
 
     func testListSummaryCountsAndLatestProjectUseProjectRules() {
-        let oldest = makeProject(id: "oldest", status: "completed", updatedAt: 10)
-        let newest = makeProject(id: "newest", status: "story_ready", updatedAt: 30)
-        let middle = makeProject(id: "middle", status: "completed", updatedAt: 20)
+        let oldest = makeMoment(id: "oldest", status: "completed", updatedAt: 10)
+        let newest = makeMoment(id: "newest", status: "story_ready", updatedAt: 30)
+        let middle = makeMoment(id: "middle", status: "completed", updatedAt: 20)
 
         let summary = InProgressMomentsSummary.make(from: [oldest, newest, middle])
 
-        XCTAssertEqual(summary.projectCount, 3)
+        XCTAssertEqual(summary.momentCount, 3)
         XCTAssertEqual(summary.inProgressCount, 1)
         XCTAssertEqual(summary.finishedCount, 2)
-        XCTAssertEqual(summary.latestProject?.id, "newest")
-        XCTAssertTrue(summary.hasProjects)
+        XCTAssertEqual(summary.latestMoment?.id, "newest")
+        XCTAssertTrue(summary.hasMoments)
     }
 
     func testListSummaryExposesLatestInProgressContinuationRequest() {
-        let olderDraft = makeProject(id: "older-draft", status: "draft_created", updatedAt: 10)
-        let newestFinished = makeProject(id: "newest-finished", status: "completed", updatedAt: 30)
-        let latestDraft = makeProject(id: "latest-draft", status: "story_ready", updatedAt: 20)
+        let olderInProgress = makeMoment(id: "older-draft", status: "draft_created", updatedAt: 10)
+        let newestFinished = makeMoment(id: "newest-finished", status: "completed", updatedAt: 30)
+        let latestInProgress = makeMoment(id: "latest-draft", status: "story_ready", updatedAt: 20)
 
-        let summary = InProgressMomentsSummary.make(from: [olderDraft, newestFinished, latestDraft])
+        let summary = InProgressMomentsSummary.make(from: [olderInProgress, newestFinished, latestInProgress])
 
-        XCTAssertEqual(summary.latestProject?.id, "newest-finished")
-        XCTAssertEqual(summary.latestInProgressProject?.id, "latest-draft")
+        XCTAssertEqual(summary.latestMoment?.id, "newest-finished")
+        XCTAssertEqual(summary.latestInProgressMoment?.id, "latest-draft")
         XCTAssertEqual(summary.latestInProgressContinuationRequest?.moment.id, "latest-draft")
         XCTAssertEqual(summary.latestInProgressContinuationRequest?.focus, .review)
     }
@@ -60,13 +60,13 @@ final class MomentStatusRulesTests: XCTestCase {
     func testEmptyListSummaryHasNoProjects() {
         let summary = InProgressMomentsSummary.make(from: [])
 
-        XCTAssertEqual(summary.projectCount, 0)
+        XCTAssertEqual(summary.momentCount, 0)
         XCTAssertEqual(summary.inProgressCount, 0)
         XCTAssertEqual(summary.finishedCount, 0)
-        XCTAssertNil(summary.latestProject)
-        XCTAssertNil(summary.latestInProgressProject)
+        XCTAssertNil(summary.latestMoment)
+        XCTAssertNil(summary.latestInProgressMoment)
         XCTAssertNil(summary.latestInProgressContinuationRequest)
-        XCTAssertFalse(summary.hasProjects)
+        XCTAssertFalse(summary.hasMoments)
     }
 
     func testDisplayHelpersFormatBackendValuesForUI() {
@@ -155,7 +155,7 @@ final class MomentStatusRulesTests: XCTestCase {
         XCTAssertEqual(action.continuationFocus, .preview)
     }
 
-    private func makeProject(
+    private func makeMoment(
         id: String,
         status: String,
         updatedAt: Double
@@ -184,7 +184,7 @@ final class MomentStatusRulesTests: XCTestCase {
         artifacts: [MomentArtifact] = []
     ) -> MomentWorkspace {
         MomentWorkspace(
-            moment: makeProject(id: "moment-1", status: "draft_created", updatedAt: 10),
+            moment: makeMoment(id: "moment-1", status: "draft_created", updatedAt: 10),
             mediaAssets: mediaAssets,
             storyScenes: storyScenes,
             renderJobs: renderJobs,

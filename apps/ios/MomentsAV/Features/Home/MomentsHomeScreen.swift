@@ -15,12 +15,12 @@ struct MomentsHomeScreen: View {
     let selectTab: (MomentsRootTab) -> Void
     let startMoment: () -> Void
     let continueMoment: (MomentsContinuationRequest) -> Void
-    private var projectSummary: InProgressMomentsSummary { viewModel.projectSummary }
+    private var momentsSummary: InProgressMomentsSummary { viewModel.momentsSummary }
     private var presentation: MomentsHomePresentation {
         MomentsHomePresentation.make(
             isSignedIn: viewModel.isSignedIn,
             displayName: viewModel.displayName,
-            projectSummary: projectSummary
+            momentsSummary: momentsSummary
         )
     }
 
@@ -77,7 +77,7 @@ struct MomentsHomeScreen: View {
 
             MomentsHomeMomentStatusCard(
                 isSignedIn: viewModel.isSignedIn,
-                projectSummary: projectSummary,
+                momentsSummary: momentsSummary,
                 presentation: presentation,
                 openInProgress: { selectTab(.inProgress) }
             )

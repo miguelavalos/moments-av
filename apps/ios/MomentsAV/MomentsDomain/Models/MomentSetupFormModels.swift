@@ -1,6 +1,6 @@
 import Foundation
 
-enum MomentDraftTone: String, CaseIterable, Identifiable {
+enum MomentSetupTone: String, CaseIterable, Identifiable {
     case warm
     case playful
     case cinematic
@@ -20,7 +20,7 @@ enum MomentDraftTone: String, CaseIterable, Identifiable {
     }
 }
 
-enum MomentDraftTempo: String, CaseIterable, Identifiable {
+enum MomentSetupTempo: String, CaseIterable, Identifiable {
     case gentle
     case balanced
     case upbeat
@@ -36,7 +36,7 @@ enum MomentDraftTempo: String, CaseIterable, Identifiable {
     }
 }
 
-extension MomentDraftTone {
+extension MomentSetupTone {
     init(musicPreset: MomentMusicPreset) {
         switch musicPreset {
         case .warm:
@@ -53,7 +53,7 @@ extension MomentDraftTone {
     }
 }
 
-struct MomentDraftForm: Equatable {
+struct MomentSetupForm: Equatable {
     var creationMode: MomentCreationMode = .quick
     var look: MomentLook = .real
     var theme: MomentCreationStyleID = .celebration
@@ -62,15 +62,15 @@ struct MomentDraftForm: Equatable {
     var template: MomentTemplate
     var occasion = "Birthday"
     var recipient = ""
-    var tone: MomentDraftTone = .warm
-    var tempo: MomentDraftTempo = .balanced
+    var tone: MomentSetupTone = .warm
+    var tempo: MomentSetupTempo = .balanced
     var details = ""
 
     var title: String {
         let trimmedRecipient = recipient.trimmingCharacters(in: .whitespacesAndNewlines)
         let trimmedOccasion = occasion.trimmingCharacters(in: .whitespacesAndNewlines)
-        let projectTitle = trimmedOccasion.isEmpty ? template.title : trimmedOccasion
-        return trimmedRecipient.isEmpty ? projectTitle : "\(projectTitle) for \(trimmedRecipient)"
+        let momentTitle = trimmedOccasion.isEmpty ? template.title : trimmedOccasion
+        return trimmedRecipient.isEmpty ? momentTitle : "\(momentTitle) for \(trimmedRecipient)"
     }
 
     var canCreateDraft: Bool {
@@ -80,17 +80,17 @@ struct MomentDraftForm: Equatable {
     static func continuing(
         moment: InProgressMoment,
         templates: [MomentTemplate]
-    ) -> MomentDraftForm? {
+    ) -> MomentSetupForm? {
         guard let template = templates.first(where: { $0.id == moment.template }) else {
             return nil
         }
 
-        var form = MomentDraftForm(
+        var form = MomentSetupForm(
             template: template,
             occasion: moment.occasion ?? "",
             recipient: "",
-            tone: MomentDraftTone(rawValue: moment.mood ?? moment.tone ?? "") ?? .warm,
-            tempo: MomentDraftTempo(rawValue: moment.tempo ?? "") ?? .balanced,
+            tone: MomentSetupTone(rawValue: moment.mood ?? moment.tone ?? "") ?? .warm,
+            tempo: MomentSetupTempo(rawValue: moment.tempo ?? "") ?? .balanced,
             details: moment.details ?? ""
         )
         form.creationMode = MomentCreationMode(rawValue: moment.creationMode) ?? .quick
@@ -102,7 +102,7 @@ struct MomentDraftForm: Equatable {
     }
 }
 
-enum MomentDraftRules {
+enum MomentSetupRules {
     enum BlockReason {
         case missingOccasion
     }
@@ -113,7 +113,7 @@ enum MomentDraftRules {
     }
 
     static func availability(
-        form: MomentDraftForm,
+        form: MomentSetupForm,
         balance: MomentsCreditBalance
     ) -> Availability {
         guard !form.occasion.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {

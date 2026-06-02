@@ -14,10 +14,10 @@ struct MomentsHomePresentation {
     static func make(
         isSignedIn: Bool,
         displayName: String?,
-        projectSummary: InProgressMomentsSummary
+        momentsSummary: InProgressMomentsSummary
     ) -> MomentsHomePresentation {
-        let latestInProgressProject = projectSummary.latestInProgressProject
-        let latestInProgressAction = latestInProgressProject.map {
+        let latestInProgressMoment = momentsSummary.latestInProgressMoment
+        let latestInProgressAction = latestInProgressMoment.map {
             MomentsHomeAction(
                 title: L10n.string("home.action.continueLatest.title"),
                 detail: MomentsMomentFormatting.compactDetail(for: $0, includeTitle: true),
@@ -29,19 +29,19 @@ struct MomentsHomePresentation {
         return MomentsHomePresentation(
             accountTitle: isSignedIn ? L10n.string("home.account.connected.title") : L10n.string("home.account.required.title"),
             accountDetail: accountDetail(isSignedIn: isSignedIn, displayName: displayName),
-            aviBriefDetail: aviBriefDetail(isSignedIn: isSignedIn, projectSummary: projectSummary),
-            momentStatusDetail: momentStatusDetail(projectSummary: projectSummary),
+            aviBriefDetail: aviBriefDetail(isSignedIn: isSignedIn, momentsSummary: momentsSummary),
+            momentStatusDetail: momentStatusDetail(momentsSummary: momentsSummary),
             createAction: MomentsHomeAction(
                 title: L10n.string("home.action.create.title"),
                 detail: L10n.string("home.action.create.detail"),
                 systemImage: "plus.app",
-                isProminent: latestInProgressProject == nil,
+                isProminent: latestInProgressMoment == nil,
                 isDisabled: !isSignedIn
             ),
             reviewInProgressAction: MomentsHomeAction(
                 title: L10n.string("home.action.openInProgress.title"),
-                detail: projectSummary.hasProjects
-                    ? L10n.string("home.action.openInProgress.detail.hasProjects")
+                detail: momentsSummary.hasMoments
+                    ? L10n.string("home.action.openInProgress.detail.hasMoments")
                     : L10n.string("home.action.openInProgress.detail.empty"),
                 systemImage: "clock",
                 isDisabled: !isSignedIn
@@ -52,7 +52,7 @@ struct MomentsHomePresentation {
                 systemImage: "sparkles"
             ),
             latestInProgressAction: latestInProgressAction,
-            latestInProgressContinuationRequest: projectSummary.latestInProgressContinuationRequest
+            latestInProgressContinuationRequest: momentsSummary.latestInProgressContinuationRequest
         )
     }
 
@@ -64,24 +64,24 @@ struct MomentsHomePresentation {
         return L10n.string("home.account.signInRequired")
     }
 
-    private static func momentStatusDetail(projectSummary: InProgressMomentsSummary) -> String {
-        if projectSummary.hasProjects {
-            return L10n.string("home.momentStatus.synced", projectSummary.projectCount, momentLabel(projectSummary.projectCount))
+    private static func momentStatusDetail(momentsSummary: InProgressMomentsSummary) -> String {
+        if momentsSummary.hasMoments {
+            return L10n.string("home.momentStatus.synced", momentsSummary.momentCount, momentLabel(momentsSummary.momentCount))
         }
 
         return L10n.string("home.momentStatus.empty")
     }
 
-    private static func aviBriefDetail(isSignedIn: Bool, projectSummary: InProgressMomentsSummary) -> String {
+    private static func aviBriefDetail(isSignedIn: Bool, momentsSummary: InProgressMomentsSummary) -> String {
         guard isSignedIn else {
             return L10n.string("home.aviBrief.signIn")
         }
 
-        if let latestProject = projectSummary.latestInProgressProject {
-            return L10n.string("home.aviBrief.continueMoment", latestProject.title)
+        if let latestMoment = momentsSummary.latestInProgressMoment {
+            return L10n.string("home.aviBrief.continueMoment", latestMoment.title)
         }
 
-        if projectSummary.hasProjects {
+        if momentsSummary.hasMoments {
             return L10n.string("home.aviBrief.reviewInProgress")
         }
 

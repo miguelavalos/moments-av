@@ -199,8 +199,8 @@ struct MomentsAppShellView: View {
             return
         }
 
-        if let activeProject = inProgressViewModel.projectSummary.latestInProgressProject {
-            createViewModel.continueMoment(activeProject)
+        if let activeMoment = inProgressViewModel.momentsSummary.latestInProgressMoment {
+            createViewModel.continueMoment(activeMoment)
             selectRootTab(.create)
             return
         }

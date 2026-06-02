@@ -7,7 +7,7 @@ final class MomentsAviViewModelTests: XCTestCase {
     func testSignedOutGuidanceAsksForAuthentication() {
         let presentation = MomentsAviPresentation.make(
             isSignedIn: false,
-            projectSummary: InProgressMomentsSummary(),
+            momentsSummary: InProgressMomentsSummary(),
             creditBalance: .empty
         )
 
@@ -16,12 +16,12 @@ final class MomentsAviViewModelTests: XCTestCase {
         XCTAssertEqual(presentation.creditGuidanceMessage, "Credits appear here after sign in.")
     }
 
-    func testActiveProjectsDriveWorkflowFocus() {
+    func testActiveMomentsDriveWorkflowFocus() {
         let presentation = MomentsAviPresentation.make(
             isSignedIn: true,
-            projectSummary: InProgressMomentsSummary.make(from: [
-                makeProject(id: "active-1", status: "story_ready", updatedAt: 20),
-                makeProject(id: "done-1", status: "completed", updatedAt: 10)
+            momentsSummary: InProgressMomentsSummary.make(from: [
+                makeMoment(id: "active-1", status: "story_ready", updatedAt: 20),
+                makeMoment(id: "done-1", status: "completed", updatedAt: 10)
             ]),
             creditBalance: .empty
         )
@@ -34,7 +34,7 @@ final class MomentsAviViewModelTests: XCTestCase {
     func testCreditGuidanceUsesSpendableBalance() {
         let presentation = MomentsAviPresentation.make(
             isSignedIn: true,
-            projectSummary: InProgressMomentsSummary(),
+            momentsSummary: InProgressMomentsSummary(),
             creditBalance: MomentsCreditBalance(proMonthly: 2, promotional: 1, purchased: 3)
         )
 
@@ -44,7 +44,7 @@ final class MomentsAviViewModelTests: XCTestCase {
     func testCreditGuidanceUsesSingularSpendableCredit() {
         let presentation = MomentsAviPresentation.make(
             isSignedIn: true,
-            projectSummary: InProgressMomentsSummary(),
+            momentsSummary: InProgressMomentsSummary(),
             creditBalance: MomentsCreditBalance(proMonthly: 1, promotional: 0, purchased: 0)
         )
 
@@ -54,7 +54,7 @@ final class MomentsAviViewModelTests: XCTestCase {
     func testZeroCreditsExplainFinalExportRequirement() {
         let presentation = MomentsAviPresentation.make(
             isSignedIn: true,
-            projectSummary: InProgressMomentsSummary(),
+            momentsSummary: InProgressMomentsSummary(),
             creditBalance: .empty
         )
 
@@ -65,7 +65,7 @@ final class MomentsAviViewModelTests: XCTestCase {
     }
 
     func testViewModelExposesPresentationFromBoundState() {
-        let summaryProvider = AviProjectSummaryProvider()
+        let summaryProvider = AviMomentsSummaryProvider()
         let accountProvider = AviAccountStateProvider()
         let viewModel = MomentsAviViewModel()
         viewModel.bind(to: summaryProvider)
@@ -77,7 +77,7 @@ final class MomentsAviViewModelTests: XCTestCase {
         )
         summaryProvider.summary.send(
             InProgressMomentsSummary.make(from: [
-                makeProject(id: "active-1", status: "story_ready", updatedAt: 20)
+                makeMoment(id: "active-1", status: "story_ready", updatedAt: 20)
             ])
         )
 
@@ -85,7 +85,7 @@ final class MomentsAviViewModelTests: XCTestCase {
         XCTAssertTrue(viewModel.presentation.creditGuidanceMessage.contains("1 credit is available"))
     }
 
-    private func makeProject(id: String, status: String, updatedAt: Double) -> InProgressMoment {
+    private func makeMoment(id: String, status: String, updatedAt: Double) -> InProgressMoment {
         InProgressMoment(
             id: id,
             template: .birthdayMessage,
@@ -104,7 +104,7 @@ final class MomentsAviViewModelTests: XCTestCase {
     }
 }
 
-private final class AviProjectSummaryProvider: InProgressMomentsSummaryProviding {
+private final class AviMomentsSummaryProvider: InProgressMomentsSummaryProviding {
     let summary = CurrentValueSubject<InProgressMomentsSummary, Never>(InProgressMomentsSummary())
 
     var inProgressSummaryPublisher: AnyPublisher<InProgressMomentsSummary, Never> {

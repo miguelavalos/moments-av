@@ -76,7 +76,7 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
         momentId: String,
         template: MomentTemplate,
         creationStyle: MomentCreationStyleID?,
-        form: MomentDraftForm,
+        form: MomentSetupForm,
         removesWatermark: Bool = false,
         allowPreparedStory: Bool = false
     ) async {
@@ -315,7 +315,7 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
     private func generateBlockMessage(_ availability: MomentsFinalRenderRules.Availability) -> String {
         MomentsFinalRenderRules.availabilityMessage(
             availability,
-            missingProjectMessage: L10n.string("workflow.final.missingProject"),
+            missingMomentMessage: L10n.string("workflow.final.missingProject"),
             insufficientCreditsMessage: L10n.string("workflow.final.addCredits")
         ) ?? L10n.string("workflow.final.notReady")
     }

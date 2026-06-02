@@ -280,7 +280,7 @@ final class MomentsAPIClientTests: XCTestCase {
             momentId: "moment-1",
             ownerUserId: "user-1",
             bearerToken: "token-1",
-            form: MomentDraftForm(template: .birthdayMessage),
+            form: MomentSetupForm(template: .birthdayMessage),
             mediaAssets: []
         )
 
@@ -319,7 +319,7 @@ final class MomentsAPIClientTests: XCTestCase {
             momentId: "moment-1",
             ownerUserId: "user-1",
             bearerToken: "token-1",
-            form: MomentDraftForm(template: .birthdayMessage),
+            form: MomentSetupForm(template: .birthdayMessage),
             mediaAssets: []
         )
 
@@ -354,7 +354,7 @@ final class MomentsAPIClientTests: XCTestCase {
             momentId: "moment-1",
             bearerToken: "token-1",
             template: .birthdayMessage,
-            form: MomentDraftForm(template: .birthdayMessage),
+            form: MomentSetupForm(template: .birthdayMessage),
             previewIndex: 0
         )
 
@@ -396,7 +396,7 @@ final class MomentsAPIClientTests: XCTestCase {
             momentId: "moment-1",
             bearerToken: "token-1",
             template: .birthdayMessage,
-            form: MomentDraftForm(template: .birthdayMessage),
+            form: MomentSetupForm(template: .birthdayMessage),
             previewIndex: 0
         )
 
@@ -422,7 +422,7 @@ final class MomentsAPIClientTests: XCTestCase {
                 momentId: "moment-1",
                 bearerToken: "token-1",
                 template: .birthdayMessage,
-                form: MomentDraftForm(template: .birthdayMessage),
+                form: MomentSetupForm(template: .birthdayMessage),
                 previewIndex: 0
             )
             XCTFail("Expected API error")
@@ -484,7 +484,7 @@ final class MomentsAPIClientTests: XCTestCase {
             bearerToken: "token-1",
             template: .birthdayMessage,
             creationStyle: nil,
-            form: MomentDraftForm(template: .birthdayMessage),
+            form: MomentSetupForm(template: .birthdayMessage),
             removesWatermark: false,
             reservationId: "reservation-1",
             operationId: "operation-1"
@@ -517,7 +517,7 @@ final class MomentsAPIClientTests: XCTestCase {
                 bearerToken: "token-1",
                 template: .birthdayMessage,
                 creationStyle: nil,
-                form: MomentDraftForm(template: .birthdayMessage),
+                form: MomentSetupForm(template: .birthdayMessage),
                 removesWatermark: false,
                 reservationId: "reservation-1",
                 operationId: "operation-1"

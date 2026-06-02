@@ -6,10 +6,10 @@ import XCTest
 final class InProgressMomentsObserverTests: XCTestCase {
     func testProjectsObserverPublishesProjectUpdates() async throws {
         let repository = MockProjectsRepository()
-        let observer = InProgressMomentsObserver(projectRepository: repository)
+        let observer = InProgressMomentsObserver(momentsRepository: repository)
 
         observer.observeInProgressMoments(ownerUserId: "user-1")
-        let moment = makeProject(id: "moment-1")
+        let moment = makeMoment(id: "moment-1")
         repository.sendProjects([moment])
         await waitUntil { observer.moments == [moment] }
 
@@ -20,10 +20,10 @@ final class InProgressMomentsObserverTests: XCTestCase {
 
     func testProjectsObserverClearsStateWhenOwnerIsMissing() async {
         let repository = MockProjectsRepository()
-        let observer = InProgressMomentsObserver(projectRepository: repository)
+        let observer = InProgressMomentsObserver(momentsRepository: repository)
 
         observer.observeInProgressMoments(ownerUserId: "user-1")
-        repository.sendProjects([makeProject(id: "moment-1")])
+        repository.sendProjects([makeMoment(id: "moment-1")])
         await waitUntil { !observer.moments.isEmpty }
 
         observer.observeInProgressMoments(ownerUserId: nil)
@@ -35,7 +35,7 @@ final class InProgressMomentsObserverTests: XCTestCase {
 
     func testProjectsObserverPublishesObservationErrors() {
         let repository = MockProjectsRepository(projectsError: TestObservationError.moments)
-        let observer = InProgressMomentsObserver(projectRepository: repository)
+        let observer = InProgressMomentsObserver(momentsRepository: repository)
 
         observer.observeInProgressMoments(ownerUserId: "user-1")
 
@@ -45,20 +45,20 @@ final class InProgressMomentsObserverTests: XCTestCase {
 
     func testProjectsObserverIgnoresStaleProjectUpdatesAfterChangingOwner() async {
         let repository = MockProjectsRepository()
-        let observer = InProgressMomentsObserver(projectRepository: repository)
+        let observer = InProgressMomentsObserver(momentsRepository: repository)
 
         observer.observeInProgressMoments(ownerUserId: "user-1")
         let firstSubject = repository.projectsSubjects[0]
-        let firstProject = makeProject(id: "moment-1")
+        let firstProject = makeMoment(id: "moment-1")
         firstSubject.send([firstProject])
         await waitUntil { observer.moments == [firstProject] }
 
         observer.observeInProgressMoments(ownerUserId: "user-2")
-        let secondProject = makeProject(id: "moment-2")
+        let secondProject = makeMoment(id: "moment-2")
         repository.sendProjects([secondProject])
         await waitUntil { observer.moments == [secondProject] }
 
-        firstSubject.send([makeProject(id: "stale-moment")])
+        firstSubject.send([makeMoment(id: "stale-moment")])
         try? await Task.sleep(nanoseconds: 20_000_000)
 
         XCTAssertEqual(observer.moments, [secondProject])
@@ -67,10 +67,10 @@ final class InProgressMomentsObserverTests: XCTestCase {
 
     func testWorkspaceObserverPublishesWorkspaceUpdates() async throws {
         let repository = MockWorkspaceRepository()
-        let observer = MomentsWorkspaceObserver(projectRepository: repository)
+        let observer = MomentsWorkspaceObserver(momentsRepository: repository)
 
         observer.observeWorkspace(ownerUserId: "user-1", momentId: "moment-1")
-        let workspace = makeWorkspace(moment: makeProject(id: "moment-1"))
+        let workspace = makeWorkspace(moment: makeMoment(id: "moment-1"))
         repository.sendWorkspace(workspace)
         await waitUntil { observer.activeWorkspace == workspace }
 
@@ -83,10 +83,10 @@ final class InProgressMomentsObserverTests: XCTestCase {
 
     func testWorkspaceObserverClearsStateWhenRequestIsIncomplete() async {
         let repository = MockWorkspaceRepository()
-        let observer = MomentsWorkspaceObserver(projectRepository: repository)
+        let observer = MomentsWorkspaceObserver(momentsRepository: repository)
 
         observer.observeWorkspace(ownerUserId: "user-1", momentId: "moment-1")
-        repository.sendWorkspace(makeWorkspace(moment: makeProject(id: "moment-1")))
+        repository.sendWorkspace(makeWorkspace(moment: makeMoment(id: "moment-1")))
         await waitUntil { observer.activeWorkspace != nil }
 
         observer.observeWorkspace(ownerUserId: "user-1", momentId: nil)
@@ -100,7 +100,7 @@ final class InProgressMomentsObserverTests: XCTestCase {
 
     func testWorkspaceObserverPublishesObservationErrors() {
         let repository = MockWorkspaceRepository(workspaceError: TestObservationError.workspace)
-        let observer = MomentsWorkspaceObserver(projectRepository: repository)
+        let observer = MomentsWorkspaceObserver(momentsRepository: repository)
 
         observer.observeWorkspace(ownerUserId: "user-1", momentId: "moment-1")
 
@@ -110,20 +110,20 @@ final class InProgressMomentsObserverTests: XCTestCase {
 
     func testWorkspaceObserverIgnoresStaleWorkspaceUpdatesAfterChangingProject() async {
         let repository = MockWorkspaceRepository()
-        let observer = MomentsWorkspaceObserver(projectRepository: repository)
+        let observer = MomentsWorkspaceObserver(momentsRepository: repository)
 
         observer.observeWorkspace(ownerUserId: "user-1", momentId: "moment-1")
         let firstSubject = repository.workspaceSubjects[0]
-        let firstWorkspace = makeWorkspace(moment: makeProject(id: "moment-1"))
+        let firstWorkspace = makeWorkspace(moment: makeMoment(id: "moment-1"))
         firstSubject.send(firstWorkspace)
         await waitUntil { observer.activeWorkspace == firstWorkspace }
 
         observer.observeWorkspace(ownerUserId: "user-1", momentId: "moment-2")
-        let secondWorkspace = makeWorkspace(moment: makeProject(id: "moment-2"))
+        let secondWorkspace = makeWorkspace(moment: makeMoment(id: "moment-2"))
         repository.sendWorkspace(secondWorkspace)
         await waitUntil { observer.activeWorkspace == secondWorkspace }
 
-        firstSubject.send(makeWorkspace(moment: makeProject(id: "stale-moment")))
+        firstSubject.send(makeWorkspace(moment: makeMoment(id: "stale-moment")))
         try? await Task.sleep(nanoseconds: 20_000_000)
 
         XCTAssertEqual(observer.activeWorkspace, secondWorkspace)
@@ -156,7 +156,7 @@ final class InProgressMomentsObserverTests: XCTestCase {
         )
     }
 
-    private func makeProject(id: String) -> InProgressMoment {
+    private func makeMoment(id: String) -> InProgressMoment {
         InProgressMoment(
             id: id,
             template: .birthdayMessage,

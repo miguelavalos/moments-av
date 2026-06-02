@@ -10,7 +10,7 @@ final class MomentsCreateViewModel: ObservableObject {
     @Published var newMomentStep: MomentsCreateNewMomentStep = .status
     @Published var selectedCreationStyle = MomentCreationStyle.launchStyles[0]
     @Published var selectedMusicPreset = MomentCreationStyle.launchStyles[0].defaultMusic
-    @Published var form = MomentDraftForm(template: MomentTemplate.launchTemplates[0])
+    @Published var form = MomentSetupForm(template: MomentTemplate.launchTemplates[0])
     @Published private(set) var isCreatingDraft = false
     @Published private(set) var isContinuingMoment = false
     @Published var isLocalMomentStarted = false
@@ -56,10 +56,10 @@ final class MomentsCreateViewModel: ObservableObject {
     private var autoStyleMediaSignature: String?
     var lastPreparedStoryInputSignature: String?
     private var hasUserStyleOverride = false
-    private var autoStyleUndoSelection: (style: MomentCreationStyle, musicPreset: MomentMusicPreset, form: MomentDraftForm)?
+    private var autoStyleUndoSelection: (style: MomentCreationStyle, musicPreset: MomentMusicPreset, form: MomentSetupForm)?
     var reviewBundlePurchaser: (any MomentsReviewBundlePurchasing)?
 
-    var activeProject: InProgressMoment? {
+    var activeMoment: InProgressMoment? {
         if usesFullUITestFixture {
             return MomentsCreateUITestFixtures.moment
         }
@@ -68,7 +68,7 @@ final class MomentsCreateViewModel: ObservableObject {
     }
 
     var activeMomentId: String? {
-        activeProject?.id ?? workflowActiveMomentId
+        activeMoment?.id ?? workflowActiveMomentId
     }
 
     var hasMomentWorkspace: Bool {
@@ -124,7 +124,7 @@ final class MomentsCreateViewModel: ObservableObject {
         creationStyles = MomentCreationStyle.launchStyles
         selectedCreationStyle = MomentCreationStyle.launchStyles[0]
         selectedMusicPreset = selectedCreationStyle.defaultMusic
-        form = MomentDraftForm(template: momentCreationWorkflow.launchTemplates[0])
+        form = MomentSetupForm(template: momentCreationWorkflow.launchTemplates[0])
         canUndoAutoStyleSuggestion = false
         autoStyleUndoSelection = nil
         applyStyleDefaults(selectedCreationStyle)
@@ -167,7 +167,7 @@ final class MomentsCreateViewModel: ObservableObject {
         canUndoAutoStyleSuggestion = false
         autoStyleUndoSelection = nil
         selectedMusicPreset = preset
-        form.tone = MomentDraftTone(musicPreset: preset)
+        form.tone = MomentSetupTone(musicPreset: preset)
     }
 
     func useAutoStyleSuggestion() {
@@ -180,7 +180,7 @@ final class MomentsCreateViewModel: ObservableObject {
         hasUserStyleOverride = false
         canUndoAutoStyleSuggestion = true
         applyStyleDefaults(suggestedStyle)
-        form.tone = MomentDraftTone(musicPreset: suggestion.musicPreset)
+        form.tone = MomentSetupTone(musicPreset: suggestion.musicPreset)
     }
 
     func undoAutoStyleSuggestion() {
@@ -195,7 +195,7 @@ final class MomentsCreateViewModel: ObservableObject {
     }
 
     func clearSessionState() {
-        resetActiveProject(force: true)
+        resetActiveMoment(force: true)
     }
 
     func prepareNewDraftCreation() {
@@ -211,7 +211,7 @@ final class MomentsCreateViewModel: ObservableObject {
         pendingFocus = focus
         continuationFocusHint = focus
 
-        if let continuedForm = MomentDraftForm.continuing(moment: moment, templates: templates) {
+        if let continuedForm = MomentSetupForm.continuing(moment: moment, templates: templates) {
             form = continuedForm
         }
 
@@ -235,12 +235,12 @@ final class MomentsCreateViewModel: ObservableObject {
 
         let workspace = MomentsCreateUITestFixtures.workspace
         let template = templates.first(where: { $0.id == workspace.moment.template }) ?? MomentTemplate.birthdayMessage
-        form = MomentDraftForm(
+        form = MomentSetupForm(
             template: template,
             occasion: workspace.moment.occasion ?? "Birthday",
             recipient: "Ava",
-            tone: MomentDraftTone(rawValue: workspace.moment.tone ?? "") ?? .warm,
-            tempo: MomentDraftTempo(rawValue: workspace.moment.tempo ?? "") ?? .balanced,
+            tone: MomentSetupTone(rawValue: workspace.moment.tone ?? "") ?? .warm,
+            tempo: MomentSetupTempo(rawValue: workspace.moment.tempo ?? "") ?? .balanced,
             details: workspace.moment.details ?? ""
         )
         isSignedIn = true
@@ -313,7 +313,7 @@ final class MomentsCreateViewModel: ObservableObject {
         MomentsUITestEnvironment.current.createFixture == "full"
     }
 
-    func resetActiveProject(force: Bool) {
+    func resetActiveMoment(force: Bool) {
         cancelOperations()
         isContinuingMoment = false
         isLocalMomentStarted = false
@@ -326,7 +326,7 @@ final class MomentsCreateViewModel: ObservableObject {
         finalRenderWorkflow?.reset(force: force)
 
         if let firstTemplate = templates.first {
-            form = MomentDraftForm(template: firstTemplate)
+            form = MomentSetupForm(template: firstTemplate)
         }
         selectedCreationStyle = creationStyles.first ?? MomentCreationStyle.launchStyles[0]
         selectedMusicPreset = selectedCreationStyle.defaultMusic
@@ -424,12 +424,12 @@ extension MomentsCreateViewModel {
 
     func applyMomentCreationState(_ state: MomentsCreateMomentCreationState) {
         guard !usesFullUITestFixture else { return }
-        let previousActiveProjectId = workflowActiveMomentId
+        let previousActiveMomentId = workflowActiveMomentId
         isCreatingDraft = state.isCreatingDraft
         workflowActiveMomentId = state.activeMomentId
         draftErrorMessage = state.draftErrorMessage
 
-        if previousActiveProjectId == nil, state.activeMomentId != nil {
+        if previousActiveMomentId == nil, state.activeMomentId != nil {
             pendingFocus = .media
             continuationFocusHint = nil
         }
@@ -505,7 +505,7 @@ extension MomentsCreateViewModel {
     private func syncFormWithActiveWorkspace(_ workspace: MomentWorkspace?) {
         guard let moment = workspace?.moment else { return }
         guard moment.id == activeMomentId else { return }
-        guard let continuedForm = MomentDraftForm.continuing(moment: moment, templates: templates) else { return }
+        guard let continuedForm = MomentSetupForm.continuing(moment: moment, templates: templates) else { return }
 
         form = continuedForm
         if let continuedStyle = creationStyles.first(where: { $0.template.id == continuedForm.template.id }) {
@@ -540,7 +540,7 @@ extension MomentsCreateViewModel {
         selectedCreationStyle = suggestedStyle
         selectedMusicPreset = suggestion.musicPreset
         applyStyleDefaults(suggestedStyle)
-        form.tone = MomentDraftTone(musicPreset: suggestion.musicPreset)
+        form.tone = MomentSetupTone(musicPreset: suggestion.musicPreset)
     }
 
     private func mediaSignature(_ media: [MomentsSelectedMedia]) -> String {

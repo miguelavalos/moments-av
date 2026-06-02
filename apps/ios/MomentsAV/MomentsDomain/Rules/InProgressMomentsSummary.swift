@@ -8,9 +8,9 @@ struct InProgressMomentGroups {
 struct InProgressMomentsSummary: Equatable {
     var moments: [InProgressMoment] = []
     var groups = InProgressMomentGroups()
-    var latestProject: InProgressMoment?
+    var latestMoment: InProgressMoment?
 
-    var projectCount: Int {
+    var momentCount: Int {
         moments.count
     }
 
@@ -22,23 +22,23 @@ struct InProgressMomentsSummary: Equatable {
         groups.finished.count
     }
 
-    var hasProjects: Bool {
+    var hasMoments: Bool {
         !moments.isEmpty
     }
 
-    var latestInProgressProject: InProgressMoment? {
+    var latestInProgressMoment: InProgressMoment? {
         groups.inProgress.first
     }
 
     var latestInProgressContinuationRequest: MomentsContinuationRequest? {
-        latestInProgressProject.map { MomentsContinuationRequest(moment: $0) }
+        latestInProgressMoment.map { MomentsContinuationRequest(moment: $0) }
     }
 
     static func make(from moments: [InProgressMoment]) -> InProgressMomentsSummary {
         InProgressMomentsSummary(
             moments: moments,
             groups: MomentStatusRules.group(moments),
-            latestProject: moments.max { $0.updatedAt < $1.updatedAt }
+            latestMoment: moments.max { $0.updatedAt < $1.updatedAt }
         )
     }
 

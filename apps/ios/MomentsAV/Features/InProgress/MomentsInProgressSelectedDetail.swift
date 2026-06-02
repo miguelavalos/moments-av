@@ -2,14 +2,14 @@ import SwiftUI
 
 struct MomentsInProgressSelectedDetail: View {
     let selectedMomentId: String?
-    let isLoadingProjectWorkspace: Bool
+    let isLoadingMomentWorkspace: Bool
     let activeWorkspace: MomentWorkspace?
     let isDeletingMoment: Bool
     let continueMoment: (MomentsContinuationRequest) -> Void
     let requestDeleteMoment: (InProgressMoment) -> Void
 
     var body: some View {
-        if isLoadingProjectWorkspace {
+        if isLoadingMomentWorkspace {
             Divider()
                 .padding(.vertical, 8)
             MomentsInProgressLoadingDetail()

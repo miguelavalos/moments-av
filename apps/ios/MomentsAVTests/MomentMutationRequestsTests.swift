@@ -3,14 +3,14 @@ import XCTest
 
 final class MomentMutationRequestsTests: XCTestCase {
     func testDraftCreationRequestUsesFormValues() {
-        var form = MomentDraftForm(template: .partyRecap)
+        var form = MomentSetupForm(template: .partyRecap)
         form.recipient = "Ava"
         form.occasion = "Graduation"
         form.tone = .cinematic
         form.tempo = .upbeat
         form.details = "Use the beach photos first."
 
-        let request = MomentCreationRequest.draft(form)
+        let request = MomentCreationRequest.setup(form)
 
         XCTAssertEqual(request.theme, "party_recap")
         XCTAssertEqual(request.title, "Graduation for Ava")
@@ -21,11 +21,11 @@ final class MomentMutationRequestsTests: XCTestCase {
     }
 
     func testDraftCreationRequestUsesOccasionWhenRecipientIsEmpty() {
-        var form = MomentDraftForm(template: .softRoast)
+        var form = MomentSetupForm(template: .softRoast)
         form.occasion = "Team dinner"
         form.recipient = "  "
 
-        let request = MomentCreationRequest.draft(form)
+        let request = MomentCreationRequest.setup(form)
 
         XCTAssertEqual(request.title, "Team dinner")
     }

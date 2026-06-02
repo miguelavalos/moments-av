@@ -144,7 +144,7 @@ struct MomentsCreateStoryReviewScene: Equatable, Identifiable {
 }
 
 struct MomentsCreatePreviewSummary: Equatable {
-    var activeProject: InProgressMoment?
+    var activeMoment: InProgressMoment?
     var latestPreview: MomentArtifact?
     var latestPreviewJob: MomentRenderJob?
     var isGenerating = false

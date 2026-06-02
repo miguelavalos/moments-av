@@ -8,7 +8,7 @@ enum FinalRenderGenerationRun {
         momentId: String,
         template: MomentTemplate,
         creationStyle: MomentCreationStyleID?,
-        form: MomentDraftForm,
+        form: MomentSetupForm,
         balance: MomentsCreditBalance,
         removesWatermark: Bool,
         finalRenderClient: MomentsFinalRenderClient,

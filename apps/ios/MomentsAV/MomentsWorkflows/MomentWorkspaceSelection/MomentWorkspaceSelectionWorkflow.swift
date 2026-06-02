@@ -3,9 +3,9 @@ import Foundation
 
 @MainActor
 final class MomentWorkspaceSelectionWorkflow: ObservableObject {
-    @Published private(set) var activeProject: InProgressMoment?
+    @Published private(set) var activeMoment: InProgressMoment?
     @Published private(set) var activeWorkspace: MomentWorkspace?
-    @Published private(set) var isLoadingProjectWorkspace = false
+    @Published private(set) var isLoadingMomentWorkspace = false
     @Published private(set) var errorMessage: String?
 
     private let workspaceObserver: any MomentsActiveWorkspaceObserving
@@ -29,16 +29,16 @@ final class MomentWorkspaceSelectionWorkflow: ObservableObject {
             .store(in: &cancellables)
     }
 
-    var activeProjectPublisher: AnyPublisher<InProgressMoment?, Never> {
-        $activeProject.eraseToAnyPublisher()
+    var activeMomentPublisher: AnyPublisher<InProgressMoment?, Never> {
+        $activeMoment.eraseToAnyPublisher()
     }
 
     var activeWorkspacePublisher: AnyPublisher<MomentWorkspace?, Never> {
         $activeWorkspace.eraseToAnyPublisher()
     }
 
-    var isLoadingProjectWorkspacePublisher: AnyPublisher<Bool, Never> {
-        $isLoadingProjectWorkspace.eraseToAnyPublisher()
+    var isLoadingMomentWorkspacePublisher: AnyPublisher<Bool, Never> {
+        $isLoadingMomentWorkspace.eraseToAnyPublisher()
     }
 
     var workspaceErrorPublisher: AnyPublisher<String?, Never> {
@@ -46,9 +46,9 @@ final class MomentWorkspaceSelectionWorkflow: ObservableObject {
     }
 
     func observeMomentWorkspace(ownerUserId: String?, momentId: String?) {
-        activeProject = nil
+        activeMoment = nil
         activeWorkspace = nil
-        isLoadingProjectWorkspace = false
+        isLoadingMomentWorkspace = false
         errorMessage = nil
 
         guard let ownerUserId, let momentId else {
@@ -57,25 +57,25 @@ final class MomentWorkspaceSelectionWorkflow: ObservableObject {
         }
 
         workspaceObserver.observeWorkspace(ownerUserId: ownerUserId, momentId: momentId)
-        isLoadingProjectWorkspace = true
+        isLoadingMomentWorkspace = true
     }
 
-    func clearProjectWorkspace() {
+    func clearMomentWorkspace() {
         workspaceObserver.clearWorkspace()
-        activeProject = nil
+        activeMoment = nil
         activeWorkspace = nil
-        isLoadingProjectWorkspace = false
+        isLoadingMomentWorkspace = false
     }
 
     private func apply(workspace: MomentWorkspace?) {
         activeWorkspace = workspace
-        activeProject = workspace?.moment
-        isLoadingProjectWorkspace = false
+        activeMoment = workspace?.moment
+        isLoadingMomentWorkspace = false
     }
 
     private func applyWorkspaceError(_ message: String?) {
         guard let message else { return }
         errorMessage = message
-        isLoadingProjectWorkspace = false
+        isLoadingMomentWorkspace = false
     }
 }

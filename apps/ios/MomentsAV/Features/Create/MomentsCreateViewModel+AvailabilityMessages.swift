@@ -4,7 +4,7 @@ extension MomentsCreateViewModel {
             isDraftLocked: isDraftLocked,
             isSignedIn: isSignedIn,
             isMomentCreationConfigured: momentCreationWorkflow?.isConfigured ?? false,
-            draftFormAvailability: draftFormAvailability
+            setupFormAvailability: setupFormAvailability
         )
     }
 
@@ -36,7 +36,7 @@ extension MomentsCreateViewModel {
             isPreviewGenerationAvailable: previewGenerationWorkflow != nil,
             isPreviewGenerating: previewGenerationWorkflow?.isGenerating ?? false,
             isPreviewGenerationConfigured: previewGenerationWorkflow?.isConfigured ?? false,
-            moment: activeProject,
+            moment: activeMoment,
             template: form.template,
             balance: balance
         )
@@ -52,7 +52,7 @@ extension MomentsCreateViewModel {
             isFinalRenderAvailable: finalRenderWorkflow != nil,
             isFinalRenderGenerating: finalRenderWorkflow?.isGenerating ?? false,
             isFinalRenderConfigured: finalRenderWorkflow?.isConfigured ?? false,
-            moment: activeProject,
+            moment: activeMoment,
             template: form.template,
             balance: balance,
             latestPreview: effectiveLatestPreview
@@ -63,8 +63,8 @@ extension MomentsCreateViewModel {
         finalRenderRefreshAvailability.message
     }
 
-    var draftFormAvailability: MomentDraftRules.Availability {
-        MomentDraftRules.availability(form: form, balance: balance)
+    var setupFormAvailability: MomentSetupRules.Availability {
+        MomentSetupRules.availability(form: form, balance: balance)
     }
 
     var previewRefreshAvailability: RenderJobStatusRefreshAvailability {

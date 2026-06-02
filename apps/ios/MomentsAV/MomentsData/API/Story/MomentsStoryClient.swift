@@ -13,7 +13,7 @@ struct MomentsStoryClient {
         momentId: String,
         ownerUserId: String,
         bearerToken: String,
-        form: MomentDraftForm,
+        form: MomentSetupForm,
         mediaAssets: [MomentMediaAsset]
     ) async throws -> MomentsStoryDraftResponse {
         let selectedMedia = mediaAssets
@@ -42,7 +42,7 @@ struct MomentsStoryClient {
         momentId: String,
         ownerUserId: String,
         bearerToken: String,
-        form: MomentDraftForm,
+        form: MomentSetupForm,
         selectedMedia: [MomentsStoryDraftMedia]
     ) async throws -> MomentsStoryDraftResponse {
         guard let baseURL = URL(string: baseURLString.trimmingCharacters(in: .whitespacesAndNewlines)) else {

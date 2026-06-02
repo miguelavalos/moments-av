@@ -3,13 +3,13 @@ import Foundation
 
 @MainActor
 final class MomentsInProgressViewModel: ObservableObject {
-    @Published private(set) var projectSummary = InProgressMomentsSummary()
+    @Published private(set) var momentsSummary = InProgressMomentsSummary()
     @Published private(set) var isSignedIn = false
     @Published private(set) var currentUserId: String?
-    @Published private(set) var activeProject: InProgressMoment?
+    @Published private(set) var activeMoment: InProgressMoment?
     @Published private(set) var activeWorkspace: MomentWorkspace?
     @Published private(set) var selectedMomentId: String?
-    @Published private(set) var isLoadingProjectWorkspace = false
+    @Published private(set) var isLoadingMomentWorkspace = false
     @Published private(set) var isDeletingMoment = false
     @Published private(set) var statusMessage: String?
 
@@ -27,15 +27,15 @@ final class MomentsInProgressViewModel: ObservableObject {
         workflow.inProgressSummaryPublisher
             .removeDuplicates()
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] projectSummary in
-                self?.projectSummary = projectSummary
+            .sink { [weak self] momentsSummary in
+                self?.momentsSummary = momentsSummary
             }
             .store(in: &workflowCancellables)
 
-        workflow.activeProjectPublisher
+        workflow.activeMomentPublisher
             .receive(on: DispatchQueue.main)
             .sink { [weak self] moment in
-                self?.activeProject = moment
+                self?.activeMoment = moment
             }
             .store(in: &workflowCancellables)
 
@@ -46,10 +46,10 @@ final class MomentsInProgressViewModel: ObservableObject {
             }
             .store(in: &workflowCancellables)
 
-        workflow.isLoadingProjectWorkspacePublisher
+        workflow.isLoadingMomentWorkspacePublisher
             .receive(on: DispatchQueue.main)
             .sink { [weak self] isLoading in
-                self?.isLoadingProjectWorkspace = isLoading
+                self?.isLoadingMomentWorkspace = isLoading
             }
             .store(in: &workflowCancellables)
 
@@ -86,7 +86,7 @@ final class MomentsInProgressViewModel: ObservableObject {
     func selectProject(_ moment: InProgressMoment) {
         if selectedMomentId == moment.id {
             selectedMomentId = nil
-            workflow?.clearProjectWorkspace()
+            workflow?.clearMomentWorkspace()
             return
         }
 
@@ -103,7 +103,7 @@ final class MomentsInProgressViewModel: ObservableObject {
         deletionTask = nil
         selectedMomentId = nil
         statusMessage = nil
-        workflow?.clearProjectWorkspace()
+        workflow?.clearMomentWorkspace()
     }
 
     func deleteMoment(_ moment: InProgressMoment) {
@@ -115,9 +115,9 @@ final class MomentsInProgressViewModel: ObservableObject {
             guard !Task.isCancelled else { return }
             if didDelete {
                 self?.selectedMomentId = nil
-                self?.activeProject = nil
+                self?.activeMoment = nil
                 self?.activeWorkspace = nil
-                self?.projectSummary = self?.projectSummary.removing(momentId: moment.id) ?? InProgressMomentsSummary()
+                self?.momentsSummary = self?.momentsSummary.removing(momentId: moment.id) ?? InProgressMomentsSummary()
                 self?.statusMessage = L10n.string("inProgress.status.momentDeleted")
             }
             self?.deletionTask = nil

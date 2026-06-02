@@ -6,13 +6,13 @@ struct MomentsInProgressPresentation: Equatable {
 
     static func make(
         isSignedIn: Bool,
-        projectSummary: InProgressMomentsSummary,
+        momentsSummary: InProgressMomentsSummary,
         momentPendingDeletion: InProgressMoment?
     ) -> MomentsInProgressPresentation {
         MomentsInProgressPresentation(
             availability: MomentsInProgressAvailability.make(
                 isSignedIn: isSignedIn,
-                projectSummary: projectSummary
+                momentsSummary: momentsSummary
             ),
             deletionMessage: L10n.string("inProgress.deleteMoment.message", momentPendingDeletion?.title ?? L10n.string("moment.this"))
         )
@@ -26,7 +26,7 @@ enum MomentsInProgressAvailability: Equatable {
 
     static func make(
         isSignedIn: Bool,
-        projectSummary: InProgressMomentsSummary
+        momentsSummary: InProgressMomentsSummary
     ) -> MomentsInProgressAvailability {
         if !isSignedIn {
             return .signedOut(
@@ -38,7 +38,7 @@ enum MomentsInProgressAvailability: Equatable {
             )
         }
 
-        if !projectSummary.hasProjects {
+        if !momentsSummary.hasMoments {
             return .empty(
                 MomentsInProgressUnavailablePresentation(
                     systemImage: "rectangle.stack.badge.plus",

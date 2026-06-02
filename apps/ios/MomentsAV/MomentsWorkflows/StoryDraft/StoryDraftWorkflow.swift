@@ -43,7 +43,7 @@ final class StoryDraftWorkflow: WorkspaceObservingWorkflow {
 
     func generateDraft(
         momentId: String,
-        form: MomentDraftForm,
+        form: MomentSetupForm,
         selectedMedia: [MomentsSelectedMedia],
         persistedMedia: [MomentsStoryDraftMedia]? = nil
     ) async -> Bool {

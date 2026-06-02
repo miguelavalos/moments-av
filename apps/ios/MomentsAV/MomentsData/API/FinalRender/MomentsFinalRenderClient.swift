@@ -59,7 +59,7 @@ struct MomentsFinalRenderClient {
         bearerToken: String,
         template: MomentTemplate,
         creationStyle: MomentCreationStyleID?,
-        form: MomentDraftForm
+        form: MomentSetupForm
     ) async throws -> MomentsFinalRenderResponse {
         guard let baseURL = URL(string: baseURLString.trimmingCharacters(in: .whitespacesAndNewlines)) else {
             throw MomentsFinalRenderError.apiNotConfigured
@@ -155,7 +155,7 @@ struct MomentsFinalRenderClient {
         bearerToken: String,
         template: MomentTemplate,
         creationStyle: MomentCreationStyleID?,
-        form: MomentDraftForm
+        form: MomentSetupForm
     ) async throws -> MomentsRenderPlanResponse {
         guard let baseURL = URL(string: baseURLString.trimmingCharacters(in: .whitespacesAndNewlines)) else {
             throw MomentsFinalRenderError.apiNotConfigured
@@ -205,7 +205,7 @@ struct MomentsFinalRenderClient {
         bearerToken: String,
         template: MomentTemplate,
         creationStyle: MomentCreationStyleID?,
-        form: MomentDraftForm,
+        form: MomentSetupForm,
         removesWatermark: Bool,
         reservationId: String,
         operationId: String

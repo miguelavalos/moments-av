@@ -2,7 +2,7 @@ import Foundation
 
 enum MomentsCreateAvailabilityCopy {
     static var draftSignInRequired: String { L10n.string("create.availability.draftSignInRequired") }
-    static var projectSyncNotConfigured: String { L10n.string("create.availability.projectSyncNotConfigured") }
+    static var momentSyncNotConfigured: String { L10n.string("create.availability.momentSyncNotConfigured") }
     static var mediaMissingProject: String { L10n.string("create.availability.mediaMissingProject") }
     static var mediaUploadNotConfigured: String { L10n.string("create.availability.mediaUploadNotConfigured") }
     static var mediaTemplateFull: String { L10n.string("create.availability.mediaTemplateFull") }

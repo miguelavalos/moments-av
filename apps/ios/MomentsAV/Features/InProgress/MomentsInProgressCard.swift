@@ -6,9 +6,9 @@ import SwiftUI
 struct MomentsInProgressCard: View {
     let presentation: MomentsInProgressPresentation
     let balance: MomentsCreditBalance
-    let projectSummary: InProgressMomentsSummary
+    let momentsSummary: InProgressMomentsSummary
     let selectedMomentId: String?
-    let isLoadingProjectWorkspace: Bool
+    let isLoadingMomentWorkspace: Bool
     let activeWorkspace: MomentWorkspace?
     let isDeletingMoment: Bool
     let statusMessage: String?
@@ -21,7 +21,7 @@ struct MomentsInProgressCard: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
-            MomentsInProgressAviBlock(projectSummary: projectSummary)
+            MomentsInProgressAviBlock(momentsSummary: momentsSummary)
 
             switch presentation.availability {
             case let .signedOut(unavailable):
@@ -48,7 +48,7 @@ struct MomentsInProgressCard: View {
     }
 
     private var continueMoments: [InProgressMoment] {
-        projectSummary.groups.inProgress.sorted { $0.updatedAt > $1.updatedAt }
+        momentsSummary.groups.inProgress.sorted { $0.updatedAt > $1.updatedAt }
     }
 }
 
@@ -121,7 +121,7 @@ private struct MomentsInProgressEmptyContent: View {
 }
 
 private struct MomentsInProgressAviBlock: View {
-    let projectSummary: InProgressMomentsSummary
+    let momentsSummary: InProgressMomentsSummary
 
     var body: some View {
         HStack(spacing: 16) {
@@ -156,20 +156,20 @@ private struct MomentsInProgressAviBlock: View {
     }
 
     private var title: String {
-        if projectSummary.latestInProgressProject != nil {
+        if momentsSummary.latestInProgressMoment != nil {
             return L10n.string("inProgress.avi.momentInProgress.title")
         }
-        if projectSummary.finishedCount > 0 {
+        if momentsSummary.finishedCount > 0 {
             return L10n.string("inProgress.avi.galleryStarts.title")
         }
         return L10n.string("inProgress.avi.ready.title")
     }
 
     private var message: String {
-        if let moment = projectSummary.latestInProgressProject {
+        if let moment = momentsSummary.latestInProgressMoment {
             return L10n.string("inProgress.avi.momentInProgress.message", moment.title)
         }
-        if projectSummary.finishedCount > 0 {
+        if momentsSummary.finishedCount > 0 {
             return L10n.string("inProgress.avi.galleryStarts.message")
         }
         return L10n.string("inProgress.avi.ready.message")
@@ -324,7 +324,7 @@ private struct MomentsInProgressInlineEmptyState: View {
     }
 }
 
-private struct MomentsInProgressProjectsEmptyState: View {
+private struct MomentsInProgressGalleryEmptyState: View {
     var body: some View {
         MomentsInProgressInlineEmptyState(
             systemImage: "play.square.stack.fill",

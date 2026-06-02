@@ -10,8 +10,8 @@ final class MomentsWorkspaceObserver: ObservableObject {
     private var activeWorkspaceTask: Task<Void, Never>?
     private var observationGeneration = 0
 
-    init(projectRepository: any MomentWorkspaceObserving = MomentsRepository()) {
-        workspaceObserver = projectRepository
+    init(momentsRepository: any MomentWorkspaceObserving = MomentsRepository()) {
+        workspaceObserver = momentsRepository
     }
 
     var activeWorkspacePublisher: AnyPublisher<MomentWorkspace?, Never> {

@@ -3,24 +3,24 @@ import Foundation
 
 @MainActor
 final class MomentsHomeViewModel: ObservableObject {
-    @Published private(set) var projectSummary = InProgressMomentsSummary()
+    @Published private(set) var momentsSummary = InProgressMomentsSummary()
     @Published private(set) var isSignedIn = false
     @Published private(set) var displayName: String?
     @Published private(set) var creditBalance = MomentsCreditBalance.empty
 
-    private var projectCancellables = Set<AnyCancellable>()
+    private var momentsCancellables = Set<AnyCancellable>()
     private var accountCancellables = Set<AnyCancellable>()
 
     func bind(to summaryProvider: any InProgressMomentsSummaryProviding) {
-        projectCancellables.removeAll()
+        momentsCancellables.removeAll()
 
         summaryProvider.inProgressSummaryPublisher
             .removeDuplicates()
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] projectSummary in
-                self?.projectSummary = projectSummary
+            .sink { [weak self] momentsSummary in
+                self?.momentsSummary = momentsSummary
             }
-            .store(in: &projectCancellables)
+            .store(in: &momentsCancellables)
     }
 
     func bind(accountStateProvider: any MomentsAccountStateProviding) {

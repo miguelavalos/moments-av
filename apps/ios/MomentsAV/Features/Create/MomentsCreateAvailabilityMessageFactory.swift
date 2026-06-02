@@ -5,12 +5,12 @@ enum MomentsCreateAvailabilityMessageFactory {
         isDraftLocked: Bool,
         isSignedIn: Bool,
         isMomentCreationConfigured: Bool,
-        draftFormAvailability: MomentDraftRules.Availability
+        setupFormAvailability: MomentSetupRules.Availability
     ) -> String? {
         if isDraftLocked { return nil }
         if !isSignedIn { return MomentsCreateAvailabilityCopy.draftSignInRequired }
-        if !isMomentCreationConfigured { return MomentsCreateAvailabilityCopy.projectSyncNotConfigured }
-        return MomentDraftRules.availabilityMessage(draftFormAvailability)
+        if !isMomentCreationConfigured { return MomentsCreateAvailabilityCopy.momentSyncNotConfigured }
+        return MomentSetupRules.availabilityMessage(setupFormAvailability)
     }
 
     static func media(
@@ -88,7 +88,7 @@ enum MomentsCreateAvailabilityMessageFactory {
                 template: template,
                 balance: balance
             ),
-            missingProjectMessage: MomentsCreateAvailabilityCopy.previewMissingWorkspace,
+            missingMomentMessage: MomentsCreateAvailabilityCopy.previewMissingWorkspace,
             insufficientCreditsMessage: MomentsCreateAvailabilityCopy.previewInsufficientCredits(
                 missingCredits: missingCredits(template: template, balance: balance)
             )
@@ -116,7 +116,7 @@ enum MomentsCreateAvailabilityMessageFactory {
                 balance: balance,
                 latestPreview: latestPreview
             ),
-            missingProjectMessage: MomentsCreateAvailabilityCopy.finalRenderMissingWorkspace,
+            missingMomentMessage: MomentsCreateAvailabilityCopy.finalRenderMissingWorkspace,
             insufficientCreditsMessage: MomentsCreateAvailabilityCopy.finalRenderInsufficientCredits(
                 missingCredits: missingCredits(template: template, balance: balance)
             )

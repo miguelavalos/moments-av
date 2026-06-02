@@ -14,7 +14,7 @@ struct MomentsInProgressScreen: View {
     private var presentation: MomentsInProgressPresentation {
         MomentsInProgressPresentation.make(
             isSignedIn: viewModel.isSignedIn,
-            projectSummary: viewModel.projectSummary,
+            momentsSummary: viewModel.momentsSummary,
             momentPendingDeletion: momentPendingDeletion
         )
     }
@@ -47,9 +47,9 @@ struct MomentsInProgressScreen: View {
             MomentsInProgressCard(
                 presentation: presentation,
                 balance: balance,
-                projectSummary: viewModel.projectSummary,
+                momentsSummary: viewModel.momentsSummary,
                 selectedMomentId: viewModel.selectedMomentId,
-                isLoadingProjectWorkspace: viewModel.isLoadingProjectWorkspace,
+                isLoadingMomentWorkspace: viewModel.isLoadingMomentWorkspace,
                 activeWorkspace: viewModel.activeWorkspace,
                 isDeletingMoment: viewModel.isDeletingMoment,
                 statusMessage: viewModel.statusMessage,

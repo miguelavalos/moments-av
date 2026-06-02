@@ -8,12 +8,12 @@ struct RenderJobStatusRefreshAvailability {
     let isRefreshing: Bool
     let unavailableMessage: String
     let notConfiguredMessage: String
-    let missingProjectMessage: String
+    let missingMomentMessage: String
     let missingJobMessage: String
     let missingProviderRequestMessage: String
 
     var message: String? {
-        guard momentId != nil else { return missingProjectMessage }
+        guard momentId != nil else { return missingMomentMessage }
         if !isAvailable { return unavailableMessage }
         if isRefreshing { return nil }
         if !isConfigured { return notConfiguredMessage }

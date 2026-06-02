@@ -4,7 +4,7 @@ import Foundation
 @MainActor
 protocol MomentsCreating {
     var isConfigured: Bool { get }
-    func createDraft(ownerUserId: String, form: MomentDraftForm) async throws -> String
+    func createMoment(ownerUserId: String, form: MomentSetupForm) async throws -> String
 }
 
 @MainActor

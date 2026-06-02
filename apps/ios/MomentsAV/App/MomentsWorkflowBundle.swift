@@ -13,39 +13,39 @@ struct MomentsWorkflowBundle {
 
     init(
         accountController: AccountController,
-        projectRepository: MomentsRepository,
-        projectsObserver: InProgressMomentsObserver,
+        momentsRepository: MomentsRepository,
+        momentsObserver: InProgressMomentsObserver,
         workspaceObserver: MomentsWorkspaceObserver,
         clients: MomentsWorkflowClients
     ) {
         momentDeletion = MomentDeletionWorkflow(
             currentUserProvider: accountController,
-            projectDeleter: projectRepository
+            momentDeleter: momentsRepository
         )
         momentWorkspaceSelection = MomentWorkspaceSelectionWorkflow(workspaceObserver: workspaceObserver)
         inProgressMoments = InProgressMomentsWorkflow(
-            projectsObserver: projectsObserver,
+            momentsObserver: momentsObserver,
             workspaceSelectionWorkflow: momentWorkspaceSelection,
             momentDeletionWorkflow: momentDeletion
         )
         momentCreation = MomentCreationWorkflow(
             currentUserProvider: accountController,
             creditBalanceProvider: accountController,
-            projectCreator: projectRepository,
-            projectDeleter: projectRepository,
+            momentCreator: momentsRepository,
+            momentDeleter: momentsRepository,
             workspaceObserver: workspaceObserver
         )
         mediaUpload = MediaUploadWorkflow(
             currentUserProvider: accountController,
             authTokenProvider: accountController,
-            mediaAssetSaver: projectRepository,
+            mediaAssetSaver: momentsRepository,
             workspaceObserver: workspaceObserver,
             uploadClient: clients.upload
         )
         storyDraft = StoryDraftWorkflow(
             currentUserProvider: accountController,
             authTokenProvider: accountController,
-            storyDraftSaver: projectRepository,
+            storyDraftSaver: momentsRepository,
             workspaceObserver: workspaceObserver,
             storyClient: clients.story
         )
@@ -53,7 +53,7 @@ struct MomentsWorkflowBundle {
             currentUserProvider: accountController,
             authTokenProvider: accountController,
             creditBalanceProvider: accountController,
-            previewResultSaver: projectRepository,
+            previewResultSaver: momentsRepository,
             workspaceObserver: workspaceObserver,
             previewClient: clients.preview,
             statusClient: clients.renderStatus
@@ -62,7 +62,7 @@ struct MomentsWorkflowBundle {
             currentUserProvider: accountController,
             authTokenProvider: accountController,
             creditBalanceProvider: accountController,
-            finalRenderResultSaver: projectRepository,
+            finalRenderResultSaver: momentsRepository,
             workspaceObserver: workspaceObserver,
             finalRenderClient: clients.finalRender,
             statusClient: clients.renderStatus

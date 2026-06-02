@@ -54,7 +54,7 @@ final class PreviewGenerationWorkflow: WorkspaceObservingWorkflow {
             && !isGenerating
     }
 
-    func generatePreview(momentId: String, template: MomentTemplate, form: MomentDraftForm) async {
+    func generatePreview(momentId: String, template: MomentTemplate, form: MomentSetupForm) async {
         guard let ownerUserId = currentUserProvider.currentUserId else {
             statusMessage = L10n.string("workflow.preview.signInReview")
             return
@@ -64,7 +64,7 @@ final class PreviewGenerationWorkflow: WorkspaceObservingWorkflow {
             return
         }
         guard let moment = activeWorkspace?.moment else {
-            statusMessage = L10n.string("workflow.preview.missingProject")
+            statusMessage = L10n.string("workflow.preview.missingMoment")
             return
         }
         guard isConfigured else {
@@ -157,7 +157,7 @@ final class PreviewGenerationWorkflow: WorkspaceObservingWorkflow {
     private func generateBlockMessage(_ availability: MomentsPreviewRules.Availability) -> String {
         MomentsPreviewRules.availabilityMessage(
             availability,
-            missingProjectMessage: L10n.string("workflow.preview.missingProject"),
+            missingMomentMessage: L10n.string("workflow.preview.missingMoment"),
             insufficientCreditsMessage: L10n.string("workflow.preview.addCredits")
         ) ?? L10n.string("workflow.preview.notReady")
     }

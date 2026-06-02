@@ -37,8 +37,8 @@ extension MomentsCreateViewModel {
         )
     }
 
-    var draftSetupPresentation: MomentsCreateDraftSetupPresentation {
-        MomentsCreateDraftSetupPresentation.make(
+    var draftSetupPresentation: MomentsCreateSetupPresentation {
+        MomentsCreateSetupPresentation.make(
             template: form.template,
             canAfford: canAfford(form.template),
             spendPlanDescription: spendPlanDescription(for: form.template),

@@ -16,17 +16,17 @@ struct MomentsCreateIntroCard: View {
     }
 }
 
-struct MomentsCreateActiveProjectCard: View {
-    let activeProject: InProgressMoment?
+struct MomentsCreateActiveMomentCard: View {
+    let activeMoment: InProgressMoment?
 
     var body: some View {
-        if let activeProject {
+        if let activeMoment {
             AVAppShellCard {
                 AVAppShellInfoRow(
-                    title: activeProject.title,
-                    detail: MomentsMomentFormatting.updatedAt(activeProject),
+                    title: activeMoment.title,
+                    detail: MomentsMomentFormatting.updatedAt(activeMoment),
                     systemImage: "rectangle.stack",
-                    eyebrow: MomentsMomentFormatting.statusTitle(activeProject)
+                    eyebrow: MomentsMomentFormatting.statusTitle(activeMoment)
                 )
             }
         }

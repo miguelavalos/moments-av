@@ -31,12 +31,12 @@ struct MomentsRepository {
         )
     }
 
-    func createDraft(ownerUserId: String, form: MomentDraftForm) async throws -> String {
+    func createMoment(ownerUserId: String, form: MomentSetupForm) async throws -> String {
         guard form.canCreateDraft else {
             throw MomentsSyncError.invalidForm
         }
 
-        return try await remoteClient.createDraftProject(
+        return try await remoteClient.createMoment(
             ownerUserId: ownerUserId,
             form: form
         )

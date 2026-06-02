@@ -8,19 +8,19 @@ struct MomentsAviPresentation: Equatable {
 
     static func make(
         isSignedIn: Bool,
-        projectSummary: InProgressMomentsSummary,
+        momentsSummary: InProgressMomentsSummary,
         creditBalance: MomentsCreditBalance
     ) -> MomentsAviPresentation {
         MomentsAviPresentation(
             workflowFocusTitle: workflowFocusTitle(
                 isSignedIn: isSignedIn,
-                projectSummary: projectSummary
+                momentsSummary: momentsSummary
             ),
             workflowFocusMessage: workflowFocusMessage(
                 isSignedIn: isSignedIn,
-                projectSummary: projectSummary
+                momentsSummary: momentsSummary
             ),
-            workflowFocusSystemImage: workflowFocusSystemImage(projectSummary: projectSummary),
+            workflowFocusSystemImage: workflowFocusSystemImage(momentsSummary: momentsSummary),
             creditGuidanceMessage: creditGuidanceMessage(
                 isSignedIn: isSignedIn,
                 creditBalance: creditBalance
@@ -30,32 +30,32 @@ struct MomentsAviPresentation: Equatable {
 
     private static func workflowFocusTitle(
         isSignedIn: Bool,
-        projectSummary: InProgressMomentsSummary
+        momentsSummary: InProgressMomentsSummary
     ) -> String {
         guard isSignedIn else { return L10n.string("avi.focus.signIn.title") }
-        if projectSummary.inProgressCount > 0 { return L10n.string("avi.focus.reviewActive.title") }
-        if projectSummary.finishedCount > 0 { return L10n.string("avi.focus.nextMemory.title") }
+        if momentsSummary.inProgressCount > 0 { return L10n.string("avi.focus.reviewActive.title") }
+        if momentsSummary.finishedCount > 0 { return L10n.string("avi.focus.nextMemory.title") }
         return L10n.string("avi.focus.firstMemory.title")
     }
 
     private static func workflowFocusMessage(
         isSignedIn: Bool,
-        projectSummary: InProgressMomentsSummary
+        momentsSummary: InProgressMomentsSummary
     ) -> String {
         guard isSignedIn else {
             return L10n.string("avi.focus.signIn.message")
         }
-        if projectSummary.inProgressCount > 0 {
-            return L10n.string("avi.focus.inProgress.message", projectSummary.inProgressCount, inProgressProjectLabel(projectSummary))
+        if momentsSummary.inProgressCount > 0 {
+            return L10n.string("avi.focus.inProgress.message", momentsSummary.inProgressCount, inProgressMomentLabel(momentsSummary))
         }
-        if projectSummary.finishedCount > 0 {
+        if momentsSummary.finishedCount > 0 {
             return L10n.string("avi.focus.finished.message")
         }
         return L10n.string("avi.focus.empty.message")
     }
 
-    private static func workflowFocusSystemImage(projectSummary: InProgressMomentsSummary) -> String {
-        projectSummary.inProgressCount > 0 ? "clock.badge.checkmark" : "sparkles"
+    private static func workflowFocusSystemImage(momentsSummary: InProgressMomentsSummary) -> String {
+        momentsSummary.inProgressCount > 0 ? "clock.badge.checkmark" : "sparkles"
     }
 
     private static func creditGuidanceMessage(
@@ -71,7 +71,7 @@ struct MomentsAviPresentation: Equatable {
         return L10n.string("avi.credits.available.message", MomentsCreditCopy.countTitle(creditBalance.spendable))
     }
 
-    private static func inProgressProjectLabel(_ projectSummary: InProgressMomentsSummary) -> String {
-        projectSummary.inProgressCount == 1 ? L10n.string("moment.noun.one") : L10n.string("moment.noun.other")
+    private static func inProgressMomentLabel(_ momentsSummary: InProgressMomentsSummary) -> String {
+        momentsSummary.inProgressCount == 1 ? L10n.string("moment.noun.one") : L10n.string("moment.noun.other")
     }
 }

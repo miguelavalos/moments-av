@@ -45,14 +45,14 @@ struct MomentsRemoteClient {
         .eraseToAnyPublisher()
     }
 
-    func createDraftProject(ownerUserId: String, form: MomentDraftForm) async throws -> String {
-        try await createDraftProject(
+    func createMoment(ownerUserId: String, form: MomentSetupForm) async throws -> String {
+        try await createMoment(
             ownerUserId: ownerUserId,
-            request: .draft(form)
+            request: .setup(form)
         )
     }
 
-    func createDraftProject(
+    func createMoment(
         ownerUserId: String,
         request: MomentCreationRequest
     ) async throws -> String {
@@ -60,7 +60,7 @@ struct MomentsRemoteClient {
 
         return try await retryingMutation(
             client: client,
-            name: "moments:createDraftProject",
+            name: "moments:createMoment",
             args: [
                 "ownerUserId": ownerUserId,
                 "creationMode": request.creationMode,

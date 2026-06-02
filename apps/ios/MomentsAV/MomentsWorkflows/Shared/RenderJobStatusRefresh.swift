@@ -9,12 +9,12 @@ struct RenderJobStatusRefresh {
     static func make(
         momentId: String?,
         job: MomentRenderJob?,
-        missingProjectMessage: String,
+        missingMomentMessage: String,
         missingJobMessage: String,
         missingProviderRequestMessage: String
     ) throws -> RenderJobStatusRefresh {
         guard let momentId else {
-            throw RenderJobStatusRefreshError(message: missingProjectMessage)
+            throw RenderJobStatusRefreshError(message: missingMomentMessage)
         }
         guard let job else {
             throw RenderJobStatusRefreshError(message: missingJobMessage)
@@ -45,7 +45,7 @@ struct RenderJobStatusRefresh {
         let refresh = try make(
             momentId: momentId,
             job: job,
-            missingProjectMessage: messages.missingProject,
+            missingMomentMessage: messages.missingProject,
             missingJobMessage: messages.missingJob,
             missingProviderRequestMessage: messages.missingProviderRequest
         )

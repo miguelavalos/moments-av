@@ -20,7 +20,7 @@ struct MomentDeletionRequest {
 }
 
 extension MomentCreationRequest {
-    static func draft(_ form: MomentDraftForm) -> MomentCreationRequest {
+    static func setup(_ form: MomentSetupForm) -> MomentCreationRequest {
         MomentCreationRequest(
             creationMode: form.creationMode.rawValue,
             look: form.look.rawValue,

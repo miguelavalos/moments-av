@@ -8,7 +8,7 @@ enum PreviewGenerationRun {
         momentId: String,
         moment: InProgressMoment,
         template: MomentTemplate,
-        form: MomentDraftForm,
+        form: MomentSetupForm,
         previewClient: MomentsPreviewClient,
         previewResultSaver: any MomentsPreviewResultSaving,
         workspaceObserver: any MomentsActiveWorkspaceObserving,

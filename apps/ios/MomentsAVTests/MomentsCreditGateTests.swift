@@ -63,8 +63,8 @@ final class MomentsCreditGateTests: XCTestCase {
         XCTAssertEqual(MomentTemplate.softRoast.maximumAssets, 20)
     }
 
-    func testDraftFormRequiresOccasionBeforeCreate() {
-        var form = MomentDraftForm(template: .birthdayMessage)
+    func testSetupFormRequiresOccasionBeforeCreate() {
+        var form = MomentSetupForm(template: .birthdayMessage)
 
         XCTAssertTrue(form.canCreateDraft)
 
@@ -74,19 +74,19 @@ final class MomentsCreditGateTests: XCTestCase {
     }
 
     func testDraftAvailabilityAllowsSetupWithoutCredits() {
-        var form = MomentDraftForm(template: .birthdayMessage)
+        var form = MomentSetupForm(template: .birthdayMessage)
         form.occasion = "Birthday"
 
-        let availability = MomentDraftRules.availability(
+        let availability = MomentSetupRules.availability(
             form: form,
             balance: .empty
         )
 
         XCTAssertTrue(availability.canCreateDraft)
-        XCTAssertNil(MomentDraftRules.availabilityMessage(availability))
+        XCTAssertNil(MomentSetupRules.availabilityMessage(availability))
     }
 
-    func testContinuingDraftFormUsesProjectFieldsAndFallbacks() {
+    func testContinuingSetupFormUsesMomentFieldsAndFallbacks() {
         let moment = InProgressMoment(
             id: "moment-1",
             template: .birthdayMessage,
@@ -103,7 +103,7 @@ final class MomentsCreditGateTests: XCTestCase {
             updatedAt: 0
         )
 
-        let form = MomentDraftForm.continuing(
+        let form = MomentSetupForm.continuing(
             moment: moment,
             templates: MomentTemplate.launchTemplates
         )
@@ -158,7 +158,7 @@ final class MomentsCreditGateTests: XCTestCase {
             )
         }
 
-        var form = MomentDraftForm(template: .birthdayMessage)
+        var form = MomentSetupForm(template: .birthdayMessage)
         form.occasion = "Trip"
         form.details = "Use the desert photos."
         let media = [

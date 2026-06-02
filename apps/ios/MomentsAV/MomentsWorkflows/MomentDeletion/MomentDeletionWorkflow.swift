@@ -7,15 +7,15 @@ final class MomentDeletionWorkflow: ObservableObject {
     @Published private(set) var errorMessage: String?
 
     private let currentUserProvider: any MomentsCurrentUserProviding
-    private let projectDeleter: any MomentsDeleting
+    private let momentDeleter: any MomentsDeleting
     private var deletionGeneration = 0
 
     init(
         currentUserProvider: any MomentsCurrentUserProviding,
-        projectDeleter: any MomentsDeleting
+        momentDeleter: any MomentsDeleting
     ) {
         self.currentUserProvider = currentUserProvider
-        self.projectDeleter = projectDeleter
+        self.momentDeleter = momentDeleter
     }
 
     var isDeletingMomentPublisher: AnyPublisher<Bool, Never> {
@@ -39,7 +39,7 @@ final class MomentDeletionWorkflow: ObservableObject {
         let generation = deletionGeneration
 
         do {
-            try await projectDeleter.deleteMoment(ownerUserId: ownerUserId, momentId: moment.id)
+            try await momentDeleter.deleteMoment(ownerUserId: ownerUserId, momentId: moment.id)
             guard deletionGeneration == generation else { return false }
             isDeletingMoment = false
             return true

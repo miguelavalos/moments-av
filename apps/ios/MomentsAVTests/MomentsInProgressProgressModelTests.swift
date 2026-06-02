@@ -46,7 +46,7 @@ final class MomentsInProgressProgressModelTests: XCTestCase {
         artifacts: [MomentArtifact] = []
     ) -> MomentWorkspace {
         MomentWorkspace(
-            moment: makeProject(id: "moment-1", status: "draft_created", updatedAt: 10),
+            moment: makeMoment(id: "moment-1", status: "draft_created", updatedAt: 10),
             mediaAssets: mediaAssets,
             storyScenes: storyScenes,
             renderJobs: renderJobs,
@@ -54,7 +54,7 @@ final class MomentsInProgressProgressModelTests: XCTestCase {
         )
     }
 
-    private func makeProject(id: String, status: String, updatedAt: Double) -> InProgressMoment {
+    private func makeMoment(id: String, status: String, updatedAt: Double) -> InProgressMoment {
         InProgressMoment(
             id: id,
             template: .birthdayMessage,

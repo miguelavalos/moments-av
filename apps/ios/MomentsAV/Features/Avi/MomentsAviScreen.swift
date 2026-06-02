@@ -47,7 +47,7 @@ struct MomentsAviScreen: View {
         } content: {
             MomentsAviGuidanceContent(
                 presentation: presentation,
-                projectSummary: viewModel.projectSummary,
+                momentsSummary: viewModel.momentsSummary,
                 creditBalance: viewModel.creditBalance,
                 isSignedIn: viewModel.isSignedIn,
                 startSignInFlow: startSignInFlow,
@@ -60,7 +60,7 @@ struct MomentsAviScreen: View {
 
 private struct MomentsAviGuidanceContent: View {
     let presentation: MomentsAviPresentation
-    let projectSummary: InProgressMomentsSummary
+    let momentsSummary: InProgressMomentsSummary
     let creditBalance: MomentsCreditBalance
     let isSignedIn: Bool
     let startSignInFlow: () -> Void
@@ -78,7 +78,7 @@ private struct MomentsAviGuidanceContent: View {
             workflowFocusTitle: presentation.workflowFocusTitle,
             workflowFocusMessage: presentation.workflowFocusMessage,
             workflowFocusSystemImage: presentation.workflowFocusSystemImage,
-            projectSummary: projectSummary,
+            momentsSummary: momentsSummary,
             creditBalance: creditBalance
         )
 

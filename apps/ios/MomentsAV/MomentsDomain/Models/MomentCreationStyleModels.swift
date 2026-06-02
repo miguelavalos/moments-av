@@ -171,8 +171,8 @@ struct MomentCreationStyle: Identifiable, Equatable {
     let template: MomentTemplate
     let defaultMusic: MomentMusicPreset
     let allowedMusic: [MomentMusicPreset]
-    let tone: MomentDraftTone
-    let tempo: MomentDraftTempo
+    let tone: MomentSetupTone
+    let tempo: MomentSetupTempo
     let isEnabled: Bool
 
     var durationSeconds: Int { 15 }

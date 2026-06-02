@@ -3,36 +3,36 @@ import Foundation
 
 @MainActor
 final class InProgressMomentsWorkflow: ObservableObject {
-    @Published private(set) var projectSummary = InProgressMomentsSummary()
+    @Published private(set) var momentsSummary = InProgressMomentsSummary()
     @Published private(set) var isDeletingMoment = false
     @Published private(set) var errorMessage: String?
 
-    private let projectsObserver: any InProgressMomentsListProviding
+    private let momentsObserver: any InProgressMomentsListProviding
     private let workspaceSelectionWorkflow: MomentWorkspaceSelectionWorkflow
     private let momentDeletionWorkflow: MomentDeletionWorkflow
     private var currentOwnerUserId: String?
     private var cancellables = Set<AnyCancellable>()
 
     init(
-        projectsObserver: any InProgressMomentsListProviding,
+        momentsObserver: any InProgressMomentsListProviding,
         workspaceSelectionWorkflow: MomentWorkspaceSelectionWorkflow,
         momentDeletionWorkflow: MomentDeletionWorkflow
     ) {
-        self.projectsObserver = projectsObserver
+        self.momentsObserver = momentsObserver
         self.workspaceSelectionWorkflow = workspaceSelectionWorkflow
         self.momentDeletionWorkflow = momentDeletionWorkflow
 
-        projectsObserver.momentsPublisher
+        momentsObserver.momentsPublisher
             .receive(on: DispatchQueue.main)
             .sink { [weak self] moments in
                 self?.apply(moments)
             }
             .store(in: &cancellables)
 
-        projectsObserver.momentsErrorPublisher
+        momentsObserver.momentsErrorPublisher
             .receive(on: DispatchQueue.main)
             .sink { [weak self] message in
-                self?.applyProjectListError(message)
+                self?.applyMomentListError(message)
             }
             .store(in: &cancellables)
 
@@ -60,10 +60,10 @@ final class InProgressMomentsWorkflow: ObservableObject {
 
     func observeInProgressMoments(ownerUserId: String?) {
         currentOwnerUserId = ownerUserId
-        projectSummary = InProgressMomentsSummary()
+        momentsSummary = InProgressMomentsSummary()
         errorMessage = nil
-        clearActiveProject()
-        projectsObserver.observeInProgressMoments(ownerUserId: ownerUserId)
+        clearActiveMoment()
+        momentsObserver.observeInProgressMoments(ownerUserId: ownerUserId)
     }
 
     func observeMomentWorkspace(ownerUserId: String?, momentId: String?) {
@@ -76,8 +76,8 @@ final class InProgressMomentsWorkflow: ObservableObject {
         errorMessage = message
     }
 
-    func clearProjectWorkspace() {
-        clearActiveProject()
+    func clearMomentWorkspace() {
+        clearActiveMoment()
     }
 
     func deleteMoment(_ moment: InProgressMoment) async -> Bool {
@@ -85,18 +85,18 @@ final class InProgressMomentsWorkflow: ObservableObject {
         let didDelete = await momentDeletionWorkflow.deleteMoment(moment)
         guard didDelete else { return false }
 
-        if workspaceSelectionWorkflow.activeProject?.id == moment.id {
-            clearActiveProject()
+        if workspaceSelectionWorkflow.activeMoment?.id == moment.id {
+            clearActiveMoment()
         }
         observeInProgressMoments(ownerUserId: currentOwnerUserId)
         return true
     }
 
     private func apply(_ moments: [InProgressMoment]) {
-        projectSummary = InProgressMomentsSummary.make(from: moments)
+        momentsSummary = InProgressMomentsSummary.make(from: moments)
     }
 
-    private func applyProjectListError(_ message: String?) {
+    private func applyMomentListError(_ message: String?) {
         guard let message else { return }
         errorMessage = message
     }
@@ -106,26 +106,26 @@ final class InProgressMomentsWorkflow: ObservableObject {
         errorMessage = message
     }
 
-    private func clearActiveProject() {
-        workspaceSelectionWorkflow.clearProjectWorkspace()
+    private func clearActiveMoment() {
+        workspaceSelectionWorkflow.clearMomentWorkspace()
     }
 }
 
 extension InProgressMomentsWorkflow: InProgressMomentsViewing {
     var inProgressSummaryPublisher: AnyPublisher<InProgressMomentsSummary, Never> {
-        $projectSummary.eraseToAnyPublisher()
+        $momentsSummary.eraseToAnyPublisher()
     }
 
-    var activeProjectPublisher: AnyPublisher<InProgressMoment?, Never> {
-        workspaceSelectionWorkflow.activeProjectPublisher
+    var activeMomentPublisher: AnyPublisher<InProgressMoment?, Never> {
+        workspaceSelectionWorkflow.activeMomentPublisher
     }
 
     var activeWorkspacePublisher: AnyPublisher<MomentWorkspace?, Never> {
         workspaceSelectionWorkflow.activeWorkspacePublisher
     }
 
-    var isLoadingProjectWorkspacePublisher: AnyPublisher<Bool, Never> {
-        workspaceSelectionWorkflow.isLoadingProjectWorkspacePublisher
+    var isLoadingMomentWorkspacePublisher: AnyPublisher<Bool, Never> {
+        workspaceSelectionWorkflow.isLoadingMomentWorkspacePublisher
     }
 
     var isDeletingMomentPublisher: AnyPublisher<Bool, Never> {

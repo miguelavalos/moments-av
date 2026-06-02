@@ -3,7 +3,7 @@ import Foundation
 @MainActor
 final class MomentsDependencyContainer: ObservableObject {
     let accountController: AccountController
-    let projectsObserver: InProgressMomentsObserver
+    let momentsObserver: InProgressMomentsObserver
     let workspaceObserver: MomentsWorkspaceObserver
     let momentDeletionWorkflow: MomentDeletionWorkflow
     let momentWorkspaceSelectionWorkflow: MomentWorkspaceSelectionWorkflow
@@ -22,20 +22,20 @@ final class MomentsDependencyContainer: ObservableObject {
 
     init(
         accountController: AccountController = AccountController(),
-        projectRepository: MomentsRepository = MomentsRepository(),
-        projectsObserver: InProgressMomentsObserver? = nil,
+        momentsRepository: MomentsRepository = MomentsRepository(),
+        momentsObserver: InProgressMomentsObserver? = nil,
         workspaceObserver: MomentsWorkspaceObserver? = nil
     ) {
         let clients = MomentsWorkflowClients(baseURLString: AppConfig.momentsAPIBaseURL)
         self.accountController = accountController
-        let resolvedProjectsObserver = projectsObserver ?? InProgressMomentsObserver(projectRepository: projectRepository)
-        let resolvedWorkspaceObserver = workspaceObserver ?? MomentsWorkspaceObserver(projectRepository: projectRepository)
-        self.projectsObserver = resolvedProjectsObserver
+        let resolvedProjectsObserver = momentsObserver ?? InProgressMomentsObserver(momentsRepository: momentsRepository)
+        let resolvedWorkspaceObserver = workspaceObserver ?? MomentsWorkspaceObserver(momentsRepository: momentsRepository)
+        self.momentsObserver = resolvedProjectsObserver
         self.workspaceObserver = resolvedWorkspaceObserver
         let workflows = MomentsWorkflowBundle(
             accountController: accountController,
-            projectRepository: projectRepository,
-            projectsObserver: resolvedProjectsObserver,
+            momentsRepository: momentsRepository,
+            momentsObserver: resolvedProjectsObserver,
             workspaceObserver: resolvedWorkspaceObserver,
             clients: clients
         )

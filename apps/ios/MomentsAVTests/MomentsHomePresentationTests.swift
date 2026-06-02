@@ -6,7 +6,7 @@ final class MomentsHomePresentationTests: XCTestCase {
         let presentation = MomentsHomePresentation.make(
             isSignedIn: false,
             displayName: nil,
-            projectSummary: InProgressMomentsSummary()
+            momentsSummary: InProgressMomentsSummary()
         )
 
         XCTAssertEqual(presentation.accountTitle, "Account required")
@@ -24,7 +24,7 @@ final class MomentsHomePresentationTests: XCTestCase {
         let presentation = MomentsHomePresentation.make(
             isSignedIn: true,
             displayName: "Ava",
-            projectSummary: InProgressMomentsSummary()
+            momentsSummary: InProgressMomentsSummary()
         )
 
         XCTAssertEqual(presentation.accountTitle, "Account connected")
@@ -39,12 +39,12 @@ final class MomentsHomePresentationTests: XCTestCase {
     }
 
     func testLatestInProgressProjectAddsContinuationAction() {
-        let moment = makeProject(id: "latest-draft", status: "story_ready", updatedAt: 20)
+        let moment = makeMoment(id: "latest-draft", status: "story_ready", updatedAt: 20)
         let presentation = MomentsHomePresentation.make(
             isSignedIn: true,
             displayName: nil,
-            projectSummary: InProgressMomentsSummary.make(from: [
-                makeProject(id: "finished", status: "completed", updatedAt: 30),
+            momentsSummary: InProgressMomentsSummary.make(from: [
+                makeMoment(id: "finished", status: "completed", updatedAt: 30),
                 moment
             ])
         )
@@ -61,9 +61,9 @@ final class MomentsHomePresentationTests: XCTestCase {
         let presentation = MomentsHomePresentation.make(
             isSignedIn: true,
             displayName: nil,
-            projectSummary: InProgressMomentsSummary.make(from: [
-                makeProject(id: "one", status: "draft_created", updatedAt: 10),
-                makeProject(id: "two", status: "completed", updatedAt: 20)
+            momentsSummary: InProgressMomentsSummary.make(from: [
+                makeMoment(id: "one", status: "draft_created", updatedAt: 10),
+                makeMoment(id: "two", status: "completed", updatedAt: 20)
             ])
         )
 
@@ -81,8 +81,8 @@ final class MomentsHomePresentationTests: XCTestCase {
         let presentation = MomentsHomePresentation.make(
             isSignedIn: true,
             displayName: nil,
-            projectSummary: InProgressMomentsSummary.make(from: [
-                makeProject(id: "one", status: "draft_created", updatedAt: 10)
+            momentsSummary: InProgressMomentsSummary.make(from: [
+                makeMoment(id: "one", status: "draft_created", updatedAt: 10)
             ])
         )
 
@@ -96,7 +96,7 @@ final class MomentsHomePresentationTests: XCTestCase {
         )
     }
 
-    private func makeProject(id: String, status: String, updatedAt: Double) -> InProgressMoment {
+    private func makeMoment(id: String, status: String, updatedAt: Double) -> InProgressMoment {
         InProgressMoment(
             id: id,
             template: .birthdayMessage,

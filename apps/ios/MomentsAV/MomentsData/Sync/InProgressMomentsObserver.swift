@@ -6,12 +6,12 @@ final class InProgressMomentsObserver: ObservableObject {
     @Published private(set) var moments: [InProgressMoment] = []
     @Published private(set) var errorMessage: String?
 
-    private let projectsObserver: any InProgressMomentsObserving
-    private var projectsTask: Task<Void, Never>?
+    private let momentsObserver: any InProgressMomentsObserving
+    private var momentsTask: Task<Void, Never>?
     private var observationGeneration = 0
 
-    init(projectRepository: any InProgressMomentsObserving = MomentsRepository()) {
-        projectsObserver = projectRepository
+    init(momentsRepository: any InProgressMomentsObserving = MomentsRepository()) {
+        momentsObserver = momentsRepository
     }
 
     var momentsPublisher: AnyPublisher<[InProgressMoment], Never> {
@@ -25,16 +25,16 @@ final class InProgressMomentsObserver: ObservableObject {
     func observeInProgressMoments(ownerUserId: String?) {
         observationGeneration += 1
         let generation = observationGeneration
-        projectsTask?.cancel()
+        momentsTask?.cancel()
         moments = []
         errorMessage = nil
 
         guard let ownerUserId else { return }
 
         do {
-            let updates = try projectsObserver.observeInProgressMoments(ownerUserId: ownerUserId).values
+            let updates = try momentsObserver.observeInProgressMoments(ownerUserId: ownerUserId).values
 
-            projectsTask = Task { [weak self] in
+            momentsTask = Task { [weak self] in
                 do {
                     for try await moments in updates {
                         await MainActor.run {
@@ -60,13 +60,13 @@ final class InProgressMomentsObserver: ObservableObject {
 
     func clearInProgressMoments() {
         observationGeneration += 1
-        projectsTask?.cancel()
+        momentsTask?.cancel()
         moments = []
         errorMessage = nil
     }
 
     deinit {
-        projectsTask?.cancel()
+        momentsTask?.cancel()
     }
 }
 

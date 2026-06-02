@@ -1,6 +1,6 @@
 import Foundation
 
-struct MomentsCreateDraftSetupPresentation: Equatable {
+struct MomentsCreateSetupPresentation: Equatable {
     var templateSummary: MomentsCreateTemplateSummaryPresentation
     var isDraftLocked = false
     var isCreatingDraft = false
@@ -12,21 +12,21 @@ struct MomentsCreateDraftSetupPresentation: Equatable {
     var draftErrorMessage: String?
     var workspaceSummary: MomentsCreateWorkspaceSummary
 
-    var createDraftTitle: String {
-        isCreatingDraft ? L10n.string("create.draft.action.starting") : L10n.string("create.draft.action.useTheme")
+    var createMomentTitle: String {
+        isCreatingDraft ? L10n.string("create.moment.action.starting") : L10n.string("create.moment.action.useTheme")
     }
 
-    var activeProjectLabel: String {
-        isContinuingMoment ? L10n.string("create.draft.active.continuing") : L10n.string("create.draft.active.ready")
+    var activeMomentLabel: String {
+        isContinuingMoment ? L10n.string("create.moment.active.continuing") : L10n.string("create.moment.active.ready")
     }
 
-    var activeProjectDetail: String {
+    var activeMomentDetail: String {
         isContinuingMoment
-            ? L10n.string("create.draft.active.attached")
-            : L10n.string("create.draft.active.nextMedia")
+            ? L10n.string("create.moment.active.attached")
+            : L10n.string("create.moment.active.nextMedia")
     }
 
-    var showsActiveProject: Bool {
+    var showsActiveMoment: Bool {
         activeMomentId != nil
     }
 
@@ -43,8 +43,8 @@ struct MomentsCreateDraftSetupPresentation: Equatable {
         canStartAnotherProject: Bool,
         draftErrorMessage: String?,
         workspaceSummary: MomentsCreateWorkspaceSummary
-    ) -> MomentsCreateDraftSetupPresentation {
-        MomentsCreateDraftSetupPresentation(
+    ) -> MomentsCreateSetupPresentation {
+        MomentsCreateSetupPresentation(
             templateSummary: MomentsCreateTemplateSummaryPresentation(
                 template: template,
                 canAfford: canAfford,

@@ -184,14 +184,14 @@ enum MomentsFinalRenderRules {
 
     static func availabilityMessage(
         _ availability: Availability,
-        missingProjectMessage: String,
+        missingMomentMessage: String,
         insufficientCreditsMessage: String
     ) -> String? {
         switch availability.blockReason {
         case nil:
             return nil
         case .missingProject:
-            return missingProjectMessage
+            return missingMomentMessage
         case .insufficientCredits:
             return insufficientCreditsMessage
         case .storyNotReady:

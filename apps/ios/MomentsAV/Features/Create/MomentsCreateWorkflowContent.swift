@@ -57,7 +57,7 @@ struct MomentsCreateWorkflowContent: View {
     }
 
     private var draftSetupCard: some View {
-        MomentsCreateDraftSetupCard(
+        MomentsCreateSetupCard(
             form: $viewModel.form,
             selectedStyle: viewModel.selectedCreationStyle,
             styles: viewModel.creationStyles,
@@ -68,10 +68,10 @@ struct MomentsCreateWorkflowContent: View {
             balance: viewModel.balance,
             canBeginNewProject: viewModel.canBeginNewProject,
             beginNewProject: { viewModel.beginNewProject() },
-            editStyle: viewModel.editNewProjectStyle,
+            editStyle: viewModel.editNewMomentStyle,
             selectStyle: viewModel.selectCreationStyle,
             selectMusicPreset: viewModel.selectMusicPreset,
-            createDraft: viewModel.createDraft,
+            createMoment: viewModel.createMoment,
             discardDraft: viewModel.discardDraft,
             startSignInFlow: startSignInFlow,
             openCredits: openCredits
@@ -80,7 +80,7 @@ struct MomentsCreateWorkflowContent: View {
 }
 
 private struct MomentsCreateMediaFirstWorkspace: View {
-    @Binding var form: MomentDraftForm
+    @Binding var form: MomentSetupForm
     let selectedStyle: MomentCreationStyle
     let autoStyleSuggestion: MomentsMediaAutoStyleSuggestion?
     let canUndoAutoStyleSuggestion: Bool
@@ -1929,7 +1929,7 @@ private struct MomentsCreateLegacyCompactAviGuide: View {
 }
 
 private struct MomentsCreateAviOptionsSheet: View {
-    @Binding var form: MomentDraftForm
+    @Binding var form: MomentSetupForm
     let selectedStyle: MomentCreationStyle
     let autoStyleSuggestion: MomentsMediaAutoStyleSuggestion?
     let canUndoAutoStyleSuggestion: Bool
@@ -2036,7 +2036,7 @@ private struct MomentsCreateAviOptionsSheet: View {
 }
 
 private struct MomentsCreateGuideSummaryCard: View {
-    @Binding var form: MomentDraftForm
+    @Binding var form: MomentSetupForm
     let style: MomentCreationStyle
     let selectedMusicPreset: MomentMusicPreset
     let changeTheme: () -> Void
