@@ -1,6 +1,6 @@
 extension MomentsCreateViewModel {
     func canAfford(_ template: MomentTemplate) -> Bool {
-        if MomentsUITestEnvironment.current.createFixture == "full" {
+        if usesCreateUITestFixture {
             return MomentsCreditGate.canAfford(template, balance: balance)
         }
 
@@ -65,7 +65,20 @@ extension MomentsCreateViewModel {
     }
 
     var workflowCapability: MomentsCreateWorkflowCapability {
-        MomentsCreateWorkflowCapabilityFactory.make(
+        if let fixtureMode = activeUITestFixtureMode {
+            return MomentsCreateWorkflowCapability(
+                canAddMedia: false,
+                canPlanStory: false,
+                canGeneratePreview: false,
+                canRefreshPreviewStatus: false,
+                canGenerateFinalRender: fixtureMode != .full
+                    && !isBusy
+                    && MomentsCreditGate.canAfford(form.template, balance: balance),
+                canRefreshFinalRenderStatus: false
+            )
+        }
+
+        return MomentsCreateWorkflowCapabilityFactory.make(
             activeMomentId: activeMomentId,
             isSignedIn: isSignedIn,
             hasMomentWorkspace: hasMomentWorkspace,
@@ -92,7 +105,7 @@ extension MomentsCreateViewModel {
     }
 
     var isStoryPreparedForCurrentInput: Bool {
-        if usesFullUITestFixture {
+        if usesCreateUITestFixture {
             return true
         }
         guard storySummary.hasScenes else { return false }
@@ -105,7 +118,7 @@ extension MomentsCreateViewModel {
     }
 
     func spendPlanDescription(for template: MomentTemplate) -> String {
-        if MomentsUITestEnvironment.current.createFixture == "full" {
+        if usesCreateUITestFixture {
             return MomentsCreateFormatting.spendPlanDescription(
                 MomentsCreditGate.spendPlan(for: template.creditCost, balance: balance)
             )

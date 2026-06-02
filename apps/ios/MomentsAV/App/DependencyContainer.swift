@@ -66,8 +66,8 @@ final class MomentsDependencyContainer: ObservableObject {
     }
 
     func applyUITestFixturesIfNeeded() {
-        guard MomentsUITestEnvironment.current.createFixture == "full" else { return }
-        createViewModel.applyUITestFullWorkflowFixture()
+        guard MomentsCreateUITestFixtures.isActive else { return }
+        createViewModel.applyUITestCreateFixture()
     }
 }
 

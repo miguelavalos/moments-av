@@ -58,8 +58,8 @@ final class MomentsCreateViewModel: ObservableObject {
     private var autoStyleUndoSelection: (style: MomentCreationStyle, musicPreset: MomentMusicPreset, form: MomentSetupForm)?
 
     var activeMoment: InProgressMoment? {
-        if usesFullUITestFixture {
-            return MomentsCreateUITestFixtures.moment
+        if let fixtureMode = activeUITestFixtureMode {
+            return MomentsCreateUITestFixtures.moment(for: fixtureMode)
         }
 
         return activeWorkspace?.moment
@@ -227,10 +227,10 @@ final class MomentsCreateViewModel: ObservableObject {
         mediaPickerOpenRequest = 0
     }
 
-    func applyUITestFullWorkflowFixture() {
-        guard MomentsUITestEnvironment.current.createFixture == "full" else { return }
+    func applyUITestCreateFixture() {
+        guard let fixtureMode = activeUITestFixtureMode else { return }
 
-        let workspace = MomentsCreateUITestFixtures.workspace
+        let workspace = MomentsCreateUITestFixtures.workspace(for: fixtureMode)
         let template = templates.first(where: { $0.id == workspace.moment.template }) ?? MomentTemplate.birthdayMessage
         form = MomentSetupForm(
             template: template,
@@ -255,21 +255,34 @@ final class MomentsCreateViewModel: ObservableObject {
         activeWorkspace = workspace
         latestPreview = workspace.latestArtifact(kind: "preview")
         latestPreviewJob = workspace.latestRenderJob(kind: "preview")
-        previewStatusMessage = L10n.string("create.preview.status.available")
+        previewStatusMessage = latestPreview == nil ? nil : L10n.string("create.preview.status.available")
         finalExport = workspace.latestArtifact(kind: "final_export")
         pendingGalleryVideo = nil
         latestFinalJob = workspace.latestRenderJob(kind: "final")
-        finalRenderStatusMessage = L10n.string("create.final.status.ready")
+        renderPlan = fixtureMode == .videoPlanReady ? MomentsCreateUITestFixtures.renderPlan : nil
+        finalRenderStatusMessage = {
+            switch fixtureMode {
+            case .aviCutReady:
+                return nil
+            case .videoPlanReady:
+                return L10n.string("workflow.final.planReady")
+            case .full:
+                return L10n.string("create.final.status.ready")
+            }
+        }()
         pendingFocus = .review
         continuationFocusHint = .review
     }
 
     var effectiveActiveWorkspace: MomentWorkspace? {
-        usesFullUITestFixture ? MomentsCreateUITestFixtures.workspace : activeWorkspace
+        if let fixtureMode = activeUITestFixtureMode {
+            return MomentsCreateUITestFixtures.workspace(for: fixtureMode)
+        }
+        return activeWorkspace
     }
 
     var effectiveSelectedMedia: [MomentsSelectedMedia] {
-        usesFullUITestFixture ? MomentsCreateUITestFixtures.selectedMedia : selectedMedia
+        usesCreateUITestFixture ? MomentsCreateUITestFixtures.selectedMedia : selectedMedia
     }
 
     var effectiveSavedScenes: [MomentStoryScene] {
@@ -306,8 +319,12 @@ final class MomentsCreateViewModel: ObservableObject {
         effectiveActiveWorkspace?.latestRenderJob(kind: "final") ?? latestFinalJob
     }
 
-    var usesFullUITestFixture: Bool {
-        MomentsUITestEnvironment.current.createFixture == "full"
+    var activeUITestFixtureMode: MomentsCreateUITestFixtures.Mode? {
+        MomentsCreateUITestFixtures.mode
+    }
+
+    var usesCreateUITestFixture: Bool {
+        activeUITestFixtureMode != nil
     }
 
     func resetActiveMoment(force: Bool) {
@@ -414,12 +431,13 @@ enum MomentsCreateNewMomentStep: Equatable {
 
 extension MomentsCreateViewModel {
     func applyAccountState(_ state: MomentsCreateAccountState) {
+        guard !usesCreateUITestFixture else { return }
         isSignedIn = state.isSignedIn
         balance = state.balance
     }
 
     func applyMomentCreationState(_ state: MomentsCreateMomentCreationState) {
-        guard !usesFullUITestFixture else { return }
+        guard !usesCreateUITestFixture else { return }
         let previousActiveMomentId = workflowActiveMomentId
         isCreatingMoment = state.isCreatingMoment
         workflowActiveMomentId = state.activeMomentId
@@ -432,7 +450,7 @@ extension MomentsCreateViewModel {
     }
 
     func applyMediaUploadState(_ state: MomentsCreateMediaUploadState) {
-        guard !usesFullUITestFixture else { return }
+        guard !usesCreateUITestFixture else { return }
         selectedMedia = state.selectedMedia
         mediaStatusMessage = state.statusMessage
         isImportingMedia = state.isImporting
@@ -441,7 +459,7 @@ extension MomentsCreateViewModel {
     }
 
     func applyStoryPlanState(_ state: MomentsCreateStoryPlanState) {
-        guard !usesFullUITestFixture else { return }
+        guard !usesCreateUITestFixture else { return }
         savedScenes = state.savedScenes
         generatedScenes = state.generatedScenes
         isPlanningStory = state.isPlanning
@@ -476,7 +494,7 @@ extension MomentsCreateViewModel {
     }
 
     func applyPreviewGenerationState(_ state: MomentsCreatePreviewGenerationState) {
-        guard !usesFullUITestFixture else { return }
+        guard !usesCreateUITestFixture else { return }
         activeWorkspace = state.activeWorkspace
         syncFormWithActiveWorkspace(state.activeWorkspace)
         latestPreview = state.latestPreview
@@ -487,7 +505,7 @@ extension MomentsCreateViewModel {
     }
 
     func applyFinalRenderState(_ state: MomentsCreateFinalRenderState) {
-        guard !usesFullUITestFixture else { return }
+        guard !usesCreateUITestFixture else { return }
         finalExport = state.finalExport
         latestFinalJob = state.latestFinalJob
         renderPlan = state.renderPlan

@@ -1,13 +1,36 @@
 import Foundation
 
 enum MomentsCreateUITestFixtures {
+    enum Mode: String {
+        case aviCutReady = "avi_cut_ready"
+        case videoPlanReady = "video_plan_ready"
+        case full
+
+        static var current: Mode? {
+            guard let fixture = MomentsUITestEnvironment.current.createFixture else { return nil }
+            return Mode(rawValue: fixture)
+        }
+    }
+
     static let momentId = "moments-ui-moment-1"
 
+    static var mode: Mode? {
+        Mode.current
+    }
+
+    static var isActive: Bool {
+        mode != nil
+    }
+
     static var moment: InProgressMoment {
+        moment(for: .full)
+    }
+
+    static func moment(for mode: Mode) -> InProgressMoment {
         InProgressMoment(
             id: momentId,
             template: .birthdayMessage,
-            status: "final_rendering",
+            status: mode == .full ? "gallery_ready" : "story_ready",
             title: "Family Weekend",
             tone: "warm",
             tempo: "balanced",
@@ -16,19 +39,23 @@ enum MomentsCreateUITestFixtures {
             storyInputSignature: nil,
             durationSeconds: 30,
             creditCost: 2,
-            previewCount: 1,
+            previewCount: mode == .full ? 1 : 0,
             previewLimit: 3,
             updatedAt: 1_781_592_000_000
         )
     }
 
     static var workspace: MomentWorkspace {
+        workspace(for: .full)
+    }
+
+    static func workspace(for mode: Mode) -> MomentWorkspace {
         MomentWorkspace(
-            moment: moment,
+            moment: moment(for: mode),
             mediaAssets: mediaAssets,
             storyScenes: storyScenes,
-            renderJobs: renderJobs,
-            artifacts: artifacts
+            renderJobs: renderJobs(for: mode),
+            artifacts: artifacts(for: mode)
         )
     }
 
@@ -69,17 +96,50 @@ enum MomentsCreateUITestFixtures {
     }
 
     static var renderJobs: [MomentRenderJob] {
-        [
+        renderJobs(for: .full)
+    }
+
+    static func renderJobs(for mode: Mode) -> [MomentRenderJob] {
+        guard mode == .full else { return [] }
+
+        return [
             renderJob(id: "preview-job-1", kind: "preview", status: "completed", model: "moments-preview-route"),
             renderJob(id: "final-job-1", kind: "final", status: "completed", model: "moments-final-route")
         ]
     }
 
     static var artifacts: [MomentArtifact] {
-        [
+        artifacts(for: .full)
+    }
+
+    static func artifacts(for mode: Mode) -> [MomentArtifact] {
+        guard mode == .full else { return [] }
+
+        return [
             artifact(id: "preview-artifact-1", kind: "preview", key: "momentsav/ui-test/moment-1/previews/preview-1.mp4", hasWatermark: true),
-            artifact(id: "final-artifact-1", kind: "final", key: "momentsav/ui-test/moment-1/final/final-1.mp4", hasWatermark: false)
+            artifact(id: "final-artifact-1", kind: "final_export", key: "momentsav/ui-test/moment-1/final/final-1.mp4", hasWatermark: false)
         ]
+    }
+
+    static var renderPlan: MomentsRenderPlanResponse {
+        MomentsRenderPlanResponse(
+            appId: "momentsav",
+            momentId: momentId,
+            planId: "ui-test-plan-1",
+            plan: MomentsRenderPlan(
+                targetDurationMs: 30_000,
+                creditCost: 2,
+                secondsPerCredit: 15,
+                plannedAssetCount: 3,
+                usedAssetCount: 3,
+                rejectedAssetCount: 0,
+                rendererMode: "image_to_video",
+                userMessage: "Avi will use the strongest clips, keep the beach toast as the ending, and render a 30 second video.",
+                qualityWarnings: []
+            ),
+            canCreateVideo: true,
+            generatedAt: "2026-06-02T00:00:00Z"
+        )
     }
 
     private static func selectedMedia(

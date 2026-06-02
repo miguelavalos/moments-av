@@ -667,4 +667,22 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         XCTAssertEqual(summary.previewDetail, "Not made yet")
     }
 
+    func testCreateUITestFixturesExposePreRenderStates() {
+        let aviCutWorkspace = MomentsCreateUITestFixtures.workspace(for: .aviCutReady)
+        let videoPlanWorkspace = MomentsCreateUITestFixtures.workspace(for: .videoPlanReady)
+        let fullWorkspace = MomentsCreateUITestFixtures.workspace(for: .full)
+
+        XCTAssertEqual(aviCutWorkspace.moment.status, "story_ready")
+        XCTAssertEqual(videoPlanWorkspace.moment.status, "story_ready")
+        XCTAssertEqual(fullWorkspace.moment.status, "gallery_ready")
+        XCTAssertFalse(aviCutWorkspace.storyScenes.isEmpty)
+        XCTAssertFalse(videoPlanWorkspace.storyScenes.isEmpty)
+        XCTAssertTrue(aviCutWorkspace.renderJobs.isEmpty)
+        XCTAssertTrue(videoPlanWorkspace.renderJobs.isEmpty)
+        XCTAssertNil(aviCutWorkspace.latestArtifact(kind: "final_export"))
+        XCTAssertNil(videoPlanWorkspace.latestArtifact(kind: "final_export"))
+        XCTAssertEqual(fullWorkspace.latestArtifact(kind: "final_export")?.id, "final-artifact-1")
+        XCTAssertEqual(MomentsCreateUITestFixtures.renderPlan.momentId, MomentsCreateUITestFixtures.momentId)
+    }
+
 }
