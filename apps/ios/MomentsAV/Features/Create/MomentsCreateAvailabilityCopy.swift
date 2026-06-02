@@ -20,10 +20,6 @@ enum MomentsCreateAvailabilityCopy {
     static var finalRenderNotConfigured: String { L10n.string("create.availability.finalRenderNotConfigured") }
     static var finalRenderMissingWorkspace: String { L10n.string("create.availability.finalRenderMissingWorkspace") }
 
-    static func previewInsufficientCredits(missingCredits: Int) -> String {
-        L10n.string("create.availability.previewInsufficientCredits", missingCredits, MomentsCreditCopy.noun(missingCredits))
-    }
-
     static func finalRenderInsufficientCredits(missingCredits: Int) -> String {
         L10n.string("create.availability.finalRenderInsufficientCredits", missingCredits, MomentsCreditCopy.noun(missingCredits))
     }

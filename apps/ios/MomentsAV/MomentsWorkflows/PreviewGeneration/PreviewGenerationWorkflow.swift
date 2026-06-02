@@ -10,7 +10,6 @@ final class PreviewGenerationWorkflow: WorkspaceObservingWorkflow {
 
     private let currentUserProvider: any MomentsCurrentUserProviding
     private let authTokenProvider: any MomentsAuthTokenProviding
-    private let creditBalanceProvider: any MomentsCreditBalanceProviding
     private let previewResultSaver: any MomentsPreviewResultSaving
     private let previewClient: MomentsPreviewClient
     private let statusClient: MomentsRenderStatusClient
@@ -18,7 +17,6 @@ final class PreviewGenerationWorkflow: WorkspaceObservingWorkflow {
     init(
         currentUserProvider: any MomentsCurrentUserProviding,
         authTokenProvider: any MomentsAuthTokenProviding,
-        creditBalanceProvider: any MomentsCreditBalanceProviding,
         previewResultSaver: any MomentsPreviewResultSaving,
         workspaceObserver: any MomentsActiveWorkspaceObserving,
         previewClient: MomentsPreviewClient,
@@ -26,7 +24,6 @@ final class PreviewGenerationWorkflow: WorkspaceObservingWorkflow {
     ) {
         self.currentUserProvider = currentUserProvider
         self.authTokenProvider = authTokenProvider
-        self.creditBalanceProvider = creditBalanceProvider
         self.previewResultSaver = previewResultSaver
         self.previewClient = previewClient
         self.statusClient = statusClient
@@ -48,8 +45,7 @@ final class PreviewGenerationWorkflow: WorkspaceObservingWorkflow {
             && isConfigured
             && MomentsPreviewRules.canGenerate(
                 moment: moment,
-                template: template,
-                balance: creditBalanceProvider.currentCreditBalance
+                template: template
             )
             && !isGenerating
     }
@@ -74,8 +70,7 @@ final class PreviewGenerationWorkflow: WorkspaceObservingWorkflow {
 
         let availability = MomentsPreviewRules.availability(
             moment: moment,
-            template: template,
-            balance: creditBalanceProvider.currentCreditBalance
+            template: template
         )
         guard availability.canGenerate else {
             statusMessage = generateBlockMessage(availability)
@@ -157,8 +152,7 @@ final class PreviewGenerationWorkflow: WorkspaceObservingWorkflow {
     private func generateBlockMessage(_ availability: MomentsPreviewRules.Availability) -> String {
         MomentsPreviewRules.availabilityMessage(
             availability,
-            missingMomentMessage: L10n.string("workflow.preview.missingMoment"),
-            insufficientCreditsMessage: L10n.string("workflow.preview.addCredits")
+            missingMomentMessage: L10n.string("workflow.preview.missingMoment")
         ) ?? L10n.string("workflow.preview.notReady")
     }
 

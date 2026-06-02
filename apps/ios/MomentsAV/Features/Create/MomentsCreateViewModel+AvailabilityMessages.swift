@@ -37,8 +37,7 @@ extension MomentsCreateViewModel {
             isPreviewGenerating: previewGenerationWorkflow?.isGenerating ?? false,
             isPreviewGenerationConfigured: previewGenerationWorkflow?.isConfigured ?? false,
             moment: activeMoment,
-            template: form.template,
-            balance: balance
+            template: form.template
         )
     }
 

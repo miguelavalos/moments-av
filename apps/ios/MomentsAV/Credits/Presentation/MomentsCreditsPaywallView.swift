@@ -98,10 +98,7 @@ struct MomentsCreditsPaywallView: View {
                     .minimumScaleFactor(0.75)
             }
 
-            HStack(spacing: AVBrandSpacing.sm) {
-                MomentsCreditsPrimaryBalanceTile(title: L10n.string("credits.videoCredits.title"), value: balance.spendable, detail: balanceTitle)
-                MomentsCreditsPrimaryBalanceTile(title: L10n.string("credits.storyReviews.title"), value: balance.reviewAllowanceRemaining, detail: storyReviewsDetail)
-            }
+            MomentsCreditsPrimaryBalanceTile(title: L10n.string("credits.videoCredits.title"), value: balance.spendable, detail: balanceTitle)
 
             if isSignedIn {
                 Button {
@@ -351,13 +348,6 @@ struct MomentsCreditsPaywallView: View {
         return MomentsCreditCopy.availableTitle(balance)
     }
 
-    private var storyReviewsDetail: String {
-        if balance.reviewAllowanceRemaining == 0 {
-            return L10n.string("paywall.balance.noReviews")
-        }
-        return L10n.string("credits.available.count", balance.reviewAllowanceRemaining)
-    }
-
     private var normalizedPromoCode: String {
         promoCode.trimmingCharacters(in: .whitespacesAndNewlines)
     }
@@ -501,7 +491,6 @@ private struct MomentsProPlanCard: View {
 
                 VStack(alignment: .leading, spacing: AVBrandSpacing.xs) {
                     MomentsProBenefitRow(systemImage: "video.fill", text: L10n.string("paywall.pro.benefit.videoCredits"))
-                    MomentsProBenefitRow(systemImage: "wand.and.stars", text: L10n.string("paywall.pro.benefit.storyReviews"))
                     MomentsProBenefitRow(systemImage: "checkmark.seal.fill", text: L10n.string("paywall.pro.benefit.noWatermark"))
                 }
 

@@ -41,7 +41,6 @@ struct MomentsCreateWorkflowContent: View {
                     startSignInFlow: startSignInFlow,
                     openCredits: openCredits,
                     generateStoryPlan: viewModel.generateStoryPlan,
-                    buyReviewBundle: viewModel.buyStoryReviewBundle,
                     generatePreview: viewModel.preparePreview,
                     refreshPreviewStatus: viewModel.refreshPreviewStatus,
                     generateFinalRender: viewModel.createFinalVideoFromCurrentSelection,
@@ -107,7 +106,6 @@ private struct MomentsCreateMediaFirstWorkspace: View {
     let startSignInFlow: () -> Void
     let openCredits: () -> Void
     let generateStoryPlan: () -> Void
-    let buyReviewBundle: () -> Void
     let generatePreview: () -> Void
     let refreshPreviewStatus: () -> Void
     let generateFinalRender: (Bool) -> Void
@@ -824,7 +822,6 @@ private struct MomentsCreateReviewMetric: View {
 private struct MomentsCreateStoryReviewPage: View {
     let presentation: MomentsCreateWorkflowPresentation
     let createVideo: (Bool) -> Void
-    let buyReviewBundle: () -> Void
     let openCredits: () -> Void
     let discardMoment: () -> Void
     let dismiss: () -> Void
@@ -890,12 +887,6 @@ private struct MomentsCreateStoryReviewPage: View {
                     MomentsCreateStoryDirectionCard(presentation: presentation)
 
                     MomentsCreateStoryReviewCard(presentation: presentation)
-
-                    MomentsCreateStoryAllowanceActionCard(
-                        presentation: presentation,
-                        buyReviewBundle: buyReviewBundle,
-                        openCredits: openCredits
-                    )
 
                     MomentsCreateReadinessChecklistCard(presentation: presentation)
 
@@ -1052,72 +1043,6 @@ private struct MomentsCreateStoryReviewPage: View {
     }
 }
 
-private struct MomentsCreateStoryAllowanceActionCard: View {
-    let presentation: MomentsCreateWorkflowPresentation
-    let buyReviewBundle: () -> Void
-    let openCredits: () -> Void
-
-    var body: some View {
-        AVAppShellCard {
-            VStack(alignment: .leading, spacing: 12) {
-                Text(L10n.string("create.workflowContent.reviewAllowance"))
-                    .font(.system(size: 13, weight: .black))
-                    .foregroundStyle(AVBrandColor.textPrimary)
-
-                HStack(spacing: 10) {
-                    MomentsCreateReviewMetric(
-                        title: "\(presentation.balance.reviewAllowanceRemaining)",
-                        subtitle: L10n.string("create.workflowContent.reviewsLeft"),
-                        systemImage: "list.bullet.clipboard.fill"
-                    )
-                    MomentsCreateReviewMetric(
-                        title: "\(presentation.balance.reviewBundleReviewCount)",
-                        subtitle: L10n.string("create.workflowContent.perBundle"),
-                        systemImage: "plus.circle.fill"
-                    )
-                    MomentsCreateReviewMetric(
-                        title: MomentsCreditCopy.countTitle(presentation.balance.reviewBundleCreditCost),
-                        subtitle: L10n.string("create.workflowContent.bundleCost"),
-                        systemImage: "creditcard.fill"
-                    )
-                }
-
-                if presentation.balance.reviewAllowanceRemaining == 0 {
-                    Text(L10n.string("create.workflowContent.reviewAllowanceEmpty"))
-                        .font(.system(size: 12, weight: .semibold))
-                        .foregroundStyle(AVBrandColor.textSecondary)
-                        .fixedSize(horizontal: false, vertical: true)
-
-                    if presentation.balance.canBuyReviewBundle {
-                        Button(action: buyReviewBundle) {
-                            Label(reviewBundleButtonTitle, systemImage: "plus.circle.fill")
-                                .frame(maxWidth: .infinity)
-                        }
-                        .buttonStyle(MomentsCreateSoftActionButtonStyle())
-                        .disabled(presentation.isBuyingReviewBundle)
-                    } else {
-                        Button(action: openCredits) {
-                            Label(L10n.string("create.workflowContent.addCredits"), systemImage: "creditcard.fill")
-                                .frame(maxWidth: .infinity)
-                        }
-                        .buttonStyle(MomentsCreateSoftActionButtonStyle())
-                    }
-                }
-            }
-        }
-    }
-
-    private var reviewBundleButtonTitle: String {
-        presentation.isBuyingReviewBundle
-            ? L10n.string("create.reviewBundle.action.adding")
-            : L10n.string(
-                "create.reviewBundle.action.add",
-                presentation.balance.reviewBundleReviewCount,
-                MomentsCreditCopy.countTitle(presentation.balance.reviewBundleCreditCost)
-            )
-    }
-}
-
 private struct MomentsCreateStoryDirectionCard: View {
     let presentation: MomentsCreateWorkflowPresentation
 
@@ -1226,11 +1151,6 @@ private struct MomentsCreateFinalVideoOptionsCard: View {
         VStack(alignment: .leading, spacing: 10) {
             HStack(spacing: 10) {
                 MomentsCreateReviewMetric(
-                    title: reviewAllowanceTitle,
-                    subtitle: L10n.string("create.workflowContent.storyReviews"),
-                    systemImage: "list.bullet.clipboard.fill"
-                )
-                MomentsCreateReviewMetric(
                     title: totalCostTitle,
                     subtitle: watermarkSubtitle,
                     systemImage: "creditcard.fill"
@@ -1260,10 +1180,6 @@ private struct MomentsCreateFinalVideoOptionsCard: View {
         }
         .padding(12)
         .background(AVBrandColor.neutral100.opacity(0.70), in: RoundedRectangle(cornerRadius: 8, style: .continuous))
-    }
-
-    private var reviewAllowanceTitle: String {
-        "\(balance.reviewAllowanceRemaining) left"
     }
 
     private var totalCost: Int {
@@ -3136,7 +3052,6 @@ private struct MomentsCreateWorkflowCards: View {
     let autoPickStrongMoments: () -> Void
     let openPickerRequest: Int
     let generateStoryPlan: () -> Void
-    let buyReviewBundle: () -> Void = {}
     let openCredits: () -> Void = {}
     let generatePreview: () -> Void
     let refreshPreviewStatus: () -> Void
@@ -3177,14 +3092,10 @@ private struct MomentsCreateWorkflowCards: View {
                 MomentsCreateStoryCard(
                     presentation: MomentsCreateStoryPresentation(
                         summary: presentation.storySummary,
-                        balance: presentation.balance,
                         canPlanStory: presentation.canPlanStory,
-                        isBuyingReviewBundle: presentation.isBuyingReviewBundle,
                         availabilityMessage: presentation.storyAvailabilityMessage
                     ),
-                    generateStoryPlan: generateStoryPlan,
-                    buyReviewBundle: buyReviewBundle,
-                    openCredits: openCredits
+                    generateStoryPlan: generateStoryPlan
                 )
                 .id(MomentsCreateSection.story)
 

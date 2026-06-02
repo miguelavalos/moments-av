@@ -198,8 +198,7 @@ final class MomentsCreditGateTests: XCTestCase {
         XCTAssertNotEqual(baseSignature, changedDirectionSignature)
     }
 
-    func testPreviewRulesRequireStoryReadyCreditsAndLimit() {
-        let balance = MomentsCreditBalance(proMonthly: 0, promotional: 0, purchased: 2)
+    func testPreviewRulesRequireStoryReadyAndLimit() {
         let moment = InProgressMoment(
             id: "moment-1",
             template: .birthdayMessage,
@@ -216,7 +215,7 @@ final class MomentsCreditGateTests: XCTestCase {
             updatedAt: 0
         )
 
-        XCTAssertTrue(MomentsPreviewRules.canGenerate(moment: moment, template: .birthdayMessage, balance: balance))
+        XCTAssertTrue(MomentsPreviewRules.canGenerate(moment: moment, template: .birthdayMessage))
 
         let previewReadyMoment = InProgressMoment(
             id: moment.id,
@@ -233,7 +232,7 @@ final class MomentsCreditGateTests: XCTestCase {
             previewLimit: moment.previewLimit,
             updatedAt: moment.updatedAt
         )
-        XCTAssertTrue(MomentsPreviewRules.canGenerate(moment: previewReadyMoment, template: .birthdayMessage, balance: balance))
+        XCTAssertTrue(MomentsPreviewRules.canGenerate(moment: previewReadyMoment, template: .birthdayMessage))
 
         let limitedMoment = InProgressMoment(
             id: moment.id,
@@ -250,7 +249,7 @@ final class MomentsCreditGateTests: XCTestCase {
             previewLimit: 3,
             updatedAt: moment.updatedAt
         )
-        XCTAssertFalse(MomentsPreviewRules.canGenerate(moment: limitedMoment, template: .birthdayMessage, balance: balance))
+        XCTAssertFalse(MomentsPreviewRules.canGenerate(moment: limitedMoment, template: .birthdayMessage))
     }
 
     func testFinalRenderRulesRequireReadyStatusAndCredits() {

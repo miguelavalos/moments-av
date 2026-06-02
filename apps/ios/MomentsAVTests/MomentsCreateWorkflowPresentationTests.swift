@@ -186,7 +186,6 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
             storySummary: MomentsCreateStorySummary(),
             previewSummary: MomentsCreatePreviewSummary(),
             finalRenderSummary: MomentsCreateFinalRenderSummary(),
-            isBuyingReviewBundle: true,
             availability: MomentsCreateWorkflowAvailability(
                 canAddMedia: true,
                 canPlanStory: false,
@@ -204,7 +203,6 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         )
 
         XCTAssertTrue(presentation.canAddMedia)
-        XCTAssertTrue(presentation.isBuyingReviewBundle)
         XCTAssertFalse(presentation.canPlanStory)
         XCTAssertTrue(presentation.canGeneratePreview)
         XCTAssertEqual(presentation.creationStyleTitle, "Birthday Story")
@@ -234,7 +232,6 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
             storySummary: MomentsCreateStorySummary(),
             previewSummary: MomentsCreatePreviewSummary(),
             finalRenderSummary: MomentsCreateFinalRenderSummary(),
-            isBuyingReviewBundle: false,
             availability: MomentsCreateWorkflowAvailability(
                 canAddMedia: true,
                 canPlanStory: false,
@@ -345,7 +342,6 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
                 isPlanning: true,
                 statusMessage: "Planning."
             ),
-            balance: MomentsCreditBalance(proMonthly: 0, promotional: 1, purchased: 0),
             canPlanStory: true,
             availabilityMessage: "Ready."
         )
@@ -373,11 +369,11 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
             refreshAvailabilityMessage: "Refresh preview."
         )
 
-        XCTAssertEqual(presentation.usageTitle, "0/3 Story Reviews")
-        XCTAssertEqual(presentation.previewArtifactMessage, "Story review is ready for your final check.")
-        XCTAssertEqual(presentation.refreshButtonTitle, "Refreshing story review...")
-        XCTAssertEqual(presentation.generateButtonTitle, "Reviewing story...")
-        XCTAssertEqual(presentation.emptyMessage, "Story is ready. Review it before creating the final video.")
+        XCTAssertEqual(presentation.usageTitle, "Avi's Cut")
+        XCTAssertEqual(presentation.previewArtifactMessage, "Avi's Cut is ready for your final check.")
+        XCTAssertEqual(presentation.refreshButtonTitle, "Improving with Avi...")
+        XCTAssertEqual(presentation.generateButtonTitle, "Preparing Avi's Cut...")
+        XCTAssertEqual(presentation.emptyMessage, "Avi can prepare the cut before the final video.")
         XCTAssertFalse(presentation.showsEmptyState)
         XCTAssertTrue(presentation.canGeneratePreview)
         XCTAssertTrue(presentation.canRefreshPreviewStatus)
@@ -393,9 +389,9 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
 
         XCTAssertNil(presentation.usageTitle)
         XCTAssertNil(presentation.previewArtifactMessage)
-        XCTAssertEqual(presentation.refreshButtonTitle, "Refresh story review")
-        XCTAssertEqual(presentation.generateButtonTitle, "Review story")
-        XCTAssertEqual(presentation.emptyMessage, "Prepare the story before reviewing it.")
+        XCTAssertEqual(presentation.refreshButtonTitle, "Improve with Avi")
+        XCTAssertEqual(presentation.generateButtonTitle, "Prepare Avi's Cut")
+        XCTAssertEqual(presentation.emptyMessage, "Prepare the story before Avi's Cut.")
         XCTAssertTrue(presentation.showsEmptyState)
     }
 
@@ -527,7 +523,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         )
         XCTAssertEqual(
             MomentsRecoveryCopy.previewStatusMissing(),
-            "Story review status cannot be refreshed yet. Review the story again if this does not update."
+            "Avi's Cut status cannot be refreshed yet. Improve with Avi again if this does not update."
         )
         XCTAssertEqual(
             MomentsRecoveryCopy.finalRenderStatusMissing(),

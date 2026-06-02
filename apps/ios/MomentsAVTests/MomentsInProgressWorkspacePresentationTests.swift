@@ -91,7 +91,7 @@ final class MomentsInProgressWorkspacePresentationTests: XCTestCase {
             )
         )
 
-        XCTAssertEqual(presentation.tiles.map(\.title), ["Status", "Story Review", "Final", "Latest job"])
+        XCTAssertEqual(presentation.tiles.map(\.title), ["Status", "Avi's Cut", "Final", "Latest job"])
         XCTAssertEqual(presentation.tiles.map(\.value), ["Story ready", "Available", "Available", "Final · Failed"])
         XCTAssertEqual(presentation.tiles.map(\.systemImage), ["circle.dashed", "text.bubble", "video.fill", "gearshape.2"])
     }
@@ -112,7 +112,7 @@ final class MomentsInProgressWorkspacePresentationTests: XCTestCase {
 
         XCTAssertEqual(presentation.title, "Media")
         XCTAssertEqual(presentation.emptySystemImage, "photo.badge.plus")
-        XCTAssertEqual(presentation.emptyMessage, "No media is attached to this Moment yet. Add photos or clips from Create to review the story.")
+        XCTAssertEqual(presentation.emptyMessage, "No media is attached to this Moment yet. Add photos or clips from Create to prepare Avi's Cut.")
         XCTAssertEqual(presentation.mediaAssets.map(\.id), ["first", "second"])
     }
 

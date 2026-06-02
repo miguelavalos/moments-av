@@ -10,7 +10,7 @@ final class MomentsInProgressArtifactPresentationTests: XCTestCase {
 
         XCTAssertEqual(presentation.title, "Video activity")
         XCTAssertEqual(presentation.emptySystemImage, "gearshape.2")
-        XCTAssertEqual(presentation.emptyMessage, "Story reviews and video creation activity will appear here.")
+        XCTAssertEqual(presentation.emptyMessage, "Avi's Cut and video creation will appear here.")
         XCTAssertEqual(presentation.jobs.map(\.id), ["new", "old"])
     }
 
@@ -24,14 +24,14 @@ final class MomentsInProgressArtifactPresentationTests: XCTestCase {
         let preview = MomentsInProgressArtifactSectionPresentation.preview(artifacts: artifacts)
         let finalExport = MomentsInProgressArtifactSectionPresentation.finalExport(artifacts: artifacts)
 
-        XCTAssertEqual(preview.title, "Story Review")
+        XCTAssertEqual(preview.title, "Avi's Cut")
         XCTAssertEqual(preview.emptySystemImage, "text.bubble")
-        XCTAssertEqual(preview.emptyMessage, "Review the story after it is ready.")
+        XCTAssertEqual(preview.emptyMessage, "Check Avi's Cut when it is ready.")
         XCTAssertEqual(preview.artifact?.storageKey, "momentsav/preview-2.mp4")
 
         XCTAssertEqual(finalExport.title, "Final video")
         XCTAssertEqual(finalExport.emptySystemImage, "video.fill")
-        XCTAssertEqual(finalExport.emptyMessage, "Create the final video after reviewing the story.")
+        XCTAssertEqual(finalExport.emptyMessage, "Create the final video after checking Avi's Cut.")
         XCTAssertEqual(finalExport.artifact?.storageKey, "momentsav/final-1.mp4")
     }
 
@@ -63,10 +63,10 @@ final class MomentsInProgressArtifactPresentationTests: XCTestCase {
             )
         )
 
-        XCTAssertEqual(presentation.kindTitle, "Story Review")
+        XCTAssertEqual(presentation.kindTitle, "Avi's Cut")
         XCTAssertEqual(presentation.watermarkTitle, "Included")
         XCTAssertEqual(presentation.expiresAtTitle, MomentsDateFormatting.formattedDate(milliseconds: 1_781_592_000_000))
-        XCTAssertEqual(presentation.actionDetail, "Story Review is ready to review.")
+        XCTAssertEqual(presentation.actionDetail, "Avi's Cut is ready to check.")
     }
 
     func testFinalArtifactPresentationProvidesExportAndRecoveryCopy() {

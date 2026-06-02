@@ -83,9 +83,6 @@ struct MomentsStoryClient {
                 fallbackCode: "moments_story_plan_failed",
                 fallbackMessage: MomentsStoryError.planFailed.localizedDescription
             )
-            if apiError.code == "moments_review_allowance_exhausted" {
-                throw MomentsStoryError.reviewAllowanceExhausted(apiError.message)
-            }
             throw apiError
         }
 
@@ -123,7 +120,6 @@ enum MomentsStoryError: LocalizedError {
     case planFailed
     case blocked(String)
     case providerFailed(String)
-    case reviewAllowanceExhausted(String)
 
     var errorDescription: String? {
         switch self {
@@ -131,7 +127,6 @@ enum MomentsStoryError: LocalizedError {
         case .planFailed: "Story plan request failed."
         case .blocked(let message): message
         case .providerFailed(let message): message
-        case .reviewAllowanceExhausted(let message): message
         }
     }
 }

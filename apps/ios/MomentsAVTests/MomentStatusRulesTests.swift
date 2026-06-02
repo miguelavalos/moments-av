@@ -71,7 +71,7 @@ final class MomentStatusRulesTests: XCTestCase {
 
     func testDisplayHelpersFormatBackendValuesForUI() {
         XCTAssertEqual(MomentStatusRules.displayTitle(for: "preview_ready"), "Story ready")
-        XCTAssertEqual(MomentStatusRules.displayKind("preview"), "Story Review")
+        XCTAssertEqual(MomentStatusRules.displayKind("preview"), "Avi's Cut")
         XCTAssertEqual(MomentStatusRules.displayKind("final"), "Final")
     }
 
@@ -101,9 +101,9 @@ final class MomentStatusRulesTests: XCTestCase {
             )
         )
 
-        XCTAssertEqual(action.title, "Review story")
+        XCTAssertEqual(action.title, "Check Avi's Cut")
         XCTAssertEqual(action.systemImage, "text.bubble")
-        XCTAssertEqual(action.primaryButtonTitle, "Review Story in Create")
+        XCTAssertEqual(action.primaryButtonTitle, "Open Avi's Cut in Create")
         XCTAssertEqual(action.continuationFocus, .preview)
     }
 
@@ -151,7 +151,7 @@ final class MomentStatusRulesTests: XCTestCase {
 
         XCTAssertEqual(action.title, "Video needs attention")
         XCTAssertEqual(action.systemImage, "exclamationmark.triangle")
-        XCTAssertEqual(action.primaryButtonTitle, "Review in Create")
+        XCTAssertEqual(action.primaryButtonTitle, "Open in Create")
         XCTAssertEqual(action.continuationFocus, .preview)
     }
 

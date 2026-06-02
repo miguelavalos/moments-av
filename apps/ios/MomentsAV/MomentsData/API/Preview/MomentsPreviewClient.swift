@@ -79,8 +79,8 @@ enum MomentsPreviewError: LocalizedError {
 
     var errorDescription: String? {
         switch self {
-        case .apiNotConfigured: "Story Review is not configured for this build."
-        case .generationFailed: "Story Review failed."
+        case .apiNotConfigured: "Avi's Cut is not configured for this build."
+        case .generationFailed: "Avi's Cut failed."
         }
     }
 }

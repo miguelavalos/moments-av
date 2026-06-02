@@ -52,7 +52,7 @@ enum MomentsRecoveryCopy {
         case "available":
             return kind == "final_export"
                 ? "Your finished video is ready to save or share."
-                : "\(kindTitle) is ready to review."
+                : "\(kindTitle) is ready to check."
         case "expired":
             return "\(kindTitle) is no longer available. Return to Create and generate it again."
         case "failed", "error", "blocked":

@@ -52,7 +52,6 @@ struct MomentsWorkflowBundle {
         previewGeneration = PreviewGenerationWorkflow(
             currentUserProvider: accountController,
             authTokenProvider: accountController,
-            creditBalanceProvider: accountController,
             previewResultSaver: momentsRepository,
             workspaceObserver: workspaceObserver,
             previewClient: clients.preview,

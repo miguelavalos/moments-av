@@ -35,7 +35,6 @@ enum MomentsPreviewRules {
     enum BlockReason {
         case missingMoment
         case previewLimitReached
-        case insufficientCredits
         case storyNotReady
     }
 
@@ -44,14 +43,13 @@ enum MomentsPreviewRules {
         let blockReason: BlockReason?
     }
 
-    static func canGenerate(moment: InProgressMoment, template: MomentTemplate, balance: MomentsCreditBalance) -> Bool {
-        availability(moment: moment, template: template, balance: balance).canGenerate
+    static func canGenerate(moment: InProgressMoment, template: MomentTemplate) -> Bool {
+        availability(moment: moment, template: template).canGenerate
     }
 
     static func availability(
         moment: InProgressMoment?,
-        template: MomentTemplate,
-        balance: MomentsCreditBalance
+        template: MomentTemplate
     ) -> Availability {
         guard let moment else {
             return Availability(canGenerate: false, blockReason: .missingMoment)
@@ -67,8 +65,7 @@ enum MomentsPreviewRules {
 
     static func availabilityMessage(
         _ availability: Availability,
-        missingMomentMessage: String,
-        insufficientCreditsMessage: String
+        missingMomentMessage: String
     ) -> String? {
         switch availability.blockReason {
         case nil:
@@ -76,11 +73,9 @@ enum MomentsPreviewRules {
         case .missingMoment:
             return missingMomentMessage
         case .previewLimitReached:
-            return "Story Review limit reached for this Moment."
-        case .insufficientCredits:
-            return insufficientCreditsMessage
+            return "Avi can only refresh this cut a few times for this Moment."
         case .storyNotReady:
-            return "Generate a story before reviewing it."
+            return "Prepare Avi's Cut before refreshing it."
         }
     }
 }

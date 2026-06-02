@@ -13,7 +13,7 @@ enum MomentsMomentFormatting {
     }
 
     static func previewUsage(_ moment: InProgressMoment) -> String {
-        "\(Int(moment.previewCount))/\(Int(moment.previewLimit)) Story Reviews"
+        "Avi's Cut"
     }
 
     static func statusTitle(_ moment: InProgressMoment) -> String {

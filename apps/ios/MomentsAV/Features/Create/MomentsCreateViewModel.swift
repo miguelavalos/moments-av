@@ -26,7 +26,6 @@ final class MomentsCreateViewModel: ObservableObject {
     @Published private(set) var generatedScenes: [MomentsStoryPlanScene] = []
     @Published private(set) var storyStatusMessage: String?
     @Published private(set) var isPlanningStory = false
-    @Published var isBuyingReviewBundle = false
     @Published var isPreparingStory = false
     @Published private(set) var activeWorkspace: MomentWorkspace?
     @Published private(set) var latestPreview: MomentArtifact?
@@ -57,7 +56,6 @@ final class MomentsCreateViewModel: ObservableObject {
     var lastPreparedStoryInputSignature: String?
     private var hasUserStyleOverride = false
     private var autoStyleUndoSelection: (style: MomentCreationStyle, musicPreset: MomentMusicPreset, form: MomentSetupForm)?
-    var reviewBundlePurchaser: (any MomentsReviewBundlePurchasing)?
 
     var activeMoment: InProgressMoment? {
         if usesFullUITestFixture {
@@ -114,7 +112,6 @@ final class MomentsCreateViewModel: ObservableObject {
         finalRenderWorkflow: FinalRenderWorkflow
     ) {
         cancelOperations()
-        reviewBundlePurchaser = accountStateProvider as? any MomentsReviewBundlePurchasing
         self.momentCreationWorkflow = momentCreationWorkflow
         self.mediaUploadWorkflow = mediaUploadWorkflow
         self.storyPlanWorkflow = storyPlanWorkflow
@@ -336,7 +333,6 @@ final class MomentsCreateViewModel: ObservableObject {
         autoStyleMediaSignature = nil
         lastPreparedStoryInputSignature = nil
         hasUserStyleOverride = false
-        isBuyingReviewBundle = false
         applyStyleDefaults(selectedCreationStyle)
         newMomentStep = .status
     }

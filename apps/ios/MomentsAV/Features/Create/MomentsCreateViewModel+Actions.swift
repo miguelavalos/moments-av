@@ -202,38 +202,6 @@ extension MomentsCreateViewModel {
         }
     }
 
-    func buyStoryReviewBundle() {
-        guard let reviewBundlePurchaser else {
-            updateStoryStatusMessage(L10n.string("create.reviewBundle.unavailable"))
-            return
-        }
-        guard balance.canBuyReviewBundle else {
-            updateStoryStatusMessage(L10n.string("create.reviewBundle.addCreditsFirst"))
-            return
-        }
-        guard !isBusy, !isBuyingReviewBundle else { return }
-
-        isBuyingReviewBundle = true
-        updateStoryStatusMessage(nil)
-        runOperation {
-            defer { self.isBuyingReviewBundle = false }
-            do {
-                let response = try await reviewBundlePurchaser.purchaseReviewBundle()
-                self.updateStoryStatusMessage(
-                    L10n.string(
-                        "create.reviewBundle.added",
-                        response.reviewsGranted,
-                        MomentsCreditCopy.countTitle(response.creditsCommitted)
-                    )
-                )
-            } catch let error as LocalizedError {
-                self.updateStoryStatusMessage(error.errorDescription ?? L10n.string("create.error.addStoryReviews"))
-            } catch {
-                self.updateStoryStatusMessage(L10n.string("create.error.addStoryReviews"))
-            }
-        }
-    }
-
     func generatePreview() {
         guard canGeneratePreview, let previewGenerationWorkflow, let context = activeTemplateContext else {
             updatePreviewStatusMessage(previewAvailabilityMessage ?? L10n.string("create.preview.status.notReady"))

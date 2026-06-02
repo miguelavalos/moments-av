@@ -15,7 +15,6 @@ extension MomentsCreateViewModel {
             storySummary: storySummary,
             previewSummary: previewSummary,
             finalRenderSummary: finalRenderSummary,
-            isBuyingReviewBundle: isBuyingReviewBundle,
             availability: workflowAvailability
         )
     }

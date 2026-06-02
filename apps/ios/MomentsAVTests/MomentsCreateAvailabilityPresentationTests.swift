@@ -106,10 +106,6 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
             "Wait for this Moment to sync before creating the final video."
         )
         XCTAssertEqual(
-            MomentsCreateAvailabilityCopy.previewInsufficientCredits(missingCredits: 1),
-            "Add 1 more credit before reviewing the story."
-        )
-        XCTAssertEqual(
             MomentsCreateAvailabilityCopy.finalRenderInsufficientCredits(missingCredits: 2),
             "Add 2 more credits before creating the final video."
         )
@@ -172,7 +168,7 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
         )
     }
 
-    func testAvailabilityMessageFactoryFormatsPreviewCreditStates() {
+    func testAvailabilityMessageFactoryFormatsPreviewReadinessStates() {
         XCTAssertEqual(
             MomentsCreateAvailabilityMessageFactory.preview(
                 activeMomentId: "moment-1",
@@ -180,10 +176,9 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
                 isPreviewGenerating: false,
                 isPreviewGenerationConfigured: true,
                 moment: MomentsCreateTestFixtures.makeMoment(id: "moment-1"),
-                template: .birthdayMessage,
-                balance: .empty
+                template: .birthdayMessage
             ),
-            "Generate a story before reviewing it."
+            "Prepare Avi's Cut before refreshing it."
         )
     }
 
@@ -219,7 +214,7 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
             isRefreshing: false
         )
 
-        XCTAssertEqual(preview.message, "Open a moment before refreshing story review status.")
+        XCTAssertEqual(preview.message, "Open a moment before improving Avi's Cut.")
         XCTAssertEqual(finalRender.message, "No final video is available yet.")
     }
 }

@@ -75,8 +75,7 @@ enum MomentsCreateAvailabilityMessageFactory {
         isPreviewGenerating: Bool,
         isPreviewGenerationConfigured: Bool,
         moment: InProgressMoment?,
-        template: MomentTemplate,
-        balance: MomentsCreditBalance
+        template: MomentTemplate
     ) -> String? {
         guard activeMomentId != nil else { return MomentsCreateAvailabilityCopy.previewMissingMoment }
         guard isPreviewGenerationAvailable else { return MomentsCreateAvailabilityCopy.previewUnavailable }
@@ -85,13 +84,9 @@ enum MomentsCreateAvailabilityMessageFactory {
         return MomentsPreviewRules.availabilityMessage(
             MomentsPreviewRules.availability(
                 moment: moment,
-                template: template,
-                balance: balance
+                template: template
             ),
-            missingMomentMessage: MomentsCreateAvailabilityCopy.previewMissingWorkspace,
-            insufficientCreditsMessage: MomentsCreateAvailabilityCopy.previewInsufficientCredits(
-                missingCredits: missingCredits(template: template, balance: balance)
-            )
+            missingMomentMessage: MomentsCreateAvailabilityCopy.previewMissingWorkspace
         )
     }
 
