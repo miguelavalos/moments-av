@@ -147,3 +147,237 @@ struct MomentsCreateFinalVideoActionPresentation: Equatable {
         )
     }
 }
+
+struct MomentsCreatePrimaryActionPresentation: Equatable {
+    var workflow: MomentsCreateWorkflowPresentation
+    var finalVideoAction: MomentsCreateFinalVideoActionPresentation
+
+    init(workflow: MomentsCreateWorkflowPresentation) {
+        self.workflow = workflow
+        self.finalVideoAction = MomentsCreateFinalVideoActionPresentation(
+            summary: workflow.finalRenderSummary,
+            template: workflow.template,
+            balance: workflow.balance
+        )
+    }
+
+    var canRunPrimaryAction: Bool {
+        if isBusy {
+            return false
+        }
+        if workflow.finalRenderSummary.pendingGalleryVideo != nil || workflow.finalRenderSummary.finalExport != nil {
+            return false
+        }
+        if workflow.finalRenderSummary.latestFinalJob != nil {
+            return canRefreshFinalRender
+        }
+        if hasFinalVideoIntent {
+            return workflow.canGenerateFinalRender
+                || canPrepareVideoPlan
+                || workflow.canPlanStory
+                || needsSignInForStory
+        }
+        if workflow.previewSummary.latestPreviewJob != nil {
+            return workflow.canRefreshPreviewStatus
+        }
+        return workflow.canPlanStory || needsSignInForStory
+    }
+
+    var title: String {
+        if workflow.finalRenderSummary.finalExport != nil || workflow.finalRenderSummary.latestFinalJob != nil {
+            return L10n.string("create.final.video")
+        }
+        if hasFinalVideoIntent {
+            return L10n.string("create.final.createVideoTitle")
+        }
+        return L10n.string("common.continue")
+    }
+
+    var buttonTitle: String {
+        if workflow.finalRenderSummary.pendingGalleryVideo != nil {
+            return L10n.string("create.final.chooseDestination")
+        }
+        if workflow.finalRenderSummary.finalExport != nil {
+            return L10n.string("create.final.videoReady")
+        }
+        if workflow.finalRenderSummary.latestFinalJob != nil {
+            return workflow.finalRenderSummary.isRefreshingStatus
+                ? L10n.string("create.status.checking")
+                : L10n.string("create.final.checkStatus")
+        }
+        if workflow.finalRenderSummary.isGenerating {
+            return L10n.string("create.final.creating")
+        }
+        if hasFinalVideoIntent {
+            return finalVideoAction.primaryTitle
+        }
+        if workflow.previewSummary.latestPreviewJob != nil {
+            return workflow.previewSummary.isRefreshingStatus
+                ? L10n.string("create.status.refreshing")
+                : L10n.string("create.preview.refresh")
+        }
+        if needsSignInForStory {
+            return L10n.string("common.signIn")
+        }
+        return finalVideoAction.primaryTitle
+    }
+
+    var buttonIconName: String {
+        if workflow.finalRenderSummary.pendingGalleryVideo != nil {
+            return "rectangle.stack.badge.play.fill"
+        }
+        if workflow.finalRenderSummary.finalExport != nil {
+            return "checkmark.circle.fill"
+        }
+        if workflow.finalRenderSummary.latestFinalJob != nil {
+            return "arrow.clockwise"
+        }
+        if hasFinalVideoIntent {
+            return finalVideoAction.primaryIconName
+        }
+        if workflow.previewSummary.latestPreviewJob != nil {
+            return "arrow.clockwise"
+        }
+        if needsSignInForStory {
+            return "person.crop.circle.badge.checkmark"
+        }
+        return finalVideoAction.primaryIconName
+    }
+
+    var statusMessage: String? {
+        if workflow.finalRenderSummary.pendingGalleryVideo != nil {
+            return workflow.finalRenderSummary.statusMessage
+                ?? L10n.string("workflow.final.savedLocal")
+        }
+        if workflow.finalRenderSummary.isGenerating {
+            return workflow.finalRenderSummary.statusMessage ?? L10n.string("create.final.action.creating")
+        }
+        if workflow.previewSummary.isGenerating {
+            return workflow.previewSummary.statusMessage ?? L10n.string("create.preview.action.reviewing")
+        }
+        if workflow.storySummary.isPlanning {
+            return workflow.storySummary.statusMessage ?? L10n.string("create.preparation.prepareStory.progress")
+        }
+        if workflow.mediaSummary.isImporting {
+            return workflow.mediaSummary.statusMessage ?? L10n.string("workflow.media.uploading")
+        }
+        if workflow.finalRenderSummary.finalExport != nil {
+            return L10n.string("create.primary.finalReady")
+        }
+        if workflow.finalRenderSummary.latestFinalJob != nil {
+            return workflow.finalRenderSummary.realtimeStatus?.detail
+                ?? workflow.finalRenderSummary.statusMessage
+                ?? L10n.string("create.primary.videoCreating")
+        }
+        if hasFinalVideoIntent {
+            if finalVideoAction.hasRenderPlan {
+                return finalVideoAction.creditPolicyMessage
+            }
+            if workflow.canGenerateFinalRender || canPrepareVideoPlan || workflow.canPlanStory {
+                return L10n.string("create.primary.createVideoPreflight")
+            }
+            return availabilityMessage
+        }
+        if let previewMessage = workflow.previewSummary.statusMessage, !previewMessage.isEmpty {
+            return previewMessage
+        }
+        if let storyMessage = workflow.storySummary.statusMessage, !storyMessage.isEmpty {
+            return storyMessage
+        }
+        if let mediaMessage = workflow.mediaSummary.statusMessage, !mediaMessage.isEmpty {
+            return mediaMessage
+        }
+        if !canRunPrimaryAction {
+            return availabilityMessage
+        }
+        if needsSignInForStory {
+            return workflow.storyAvailabilityMessage
+        }
+        if workflow.canPlanStory {
+            return L10n.string("create.primary.createVideoPreflight")
+        }
+        return nil
+    }
+
+    var statusIconName: String {
+        if isBusy {
+            return "sparkles"
+        }
+        if workflow.finalRenderSummary.finalExport != nil || workflow.previewSummary.latestPreview != nil {
+            return "checkmark.circle.fill"
+        }
+        if !canRunPrimaryAction {
+            return "info.circle.fill"
+        }
+        return "play.circle.fill"
+    }
+
+    var primaryHeaderIconName: String {
+        if workflow.finalRenderSummary.pendingGalleryVideo != nil {
+            return "rectangle.stack.badge.play.fill"
+        }
+        if workflow.finalRenderSummary.finalExport != nil {
+            return "checkmark.circle.fill"
+        }
+        if let realtimeStatus = workflow.finalRenderSummary.realtimeStatus {
+            return realtimeStatus.systemImage
+        }
+        if workflow.finalRenderSummary.latestFinalJob != nil {
+            return "arrow.clockwise"
+        }
+        if needsSignInForStory {
+            return "person.crop.circle.badge.checkmark"
+        }
+        return "video.fill"
+    }
+
+    var hasFinalVideoIntent: Bool {
+        workflow.mediaSummary.reviewCount > 0
+            || workflow.storySummary.hasScenes
+            || workflow.previewSummary.latestPreview != nil
+            || workflow.finalRenderSummary.renderPlan != nil
+            || workflow.finalRenderSummary.latestFinalJob != nil
+            || workflow.finalRenderSummary.finalExport != nil
+            || workflow.finalRenderSummary.pendingGalleryVideo != nil
+    }
+
+    var isBusy: Bool {
+        workflow.mediaSummary.isImporting
+            || workflow.storySummary.isPlanning
+            || workflow.previewSummary.isGenerating
+            || workflow.previewSummary.isRefreshingStatus
+            || workflow.finalRenderSummary.isGenerating
+            || workflow.finalRenderSummary.isRefreshingStatus
+    }
+
+    var canPrepareVideoPlan: Bool {
+        workflow.canPrepareFinalRenderPlan
+            && workflow.finalRenderSummary.renderPlan == nil
+    }
+
+    var canRefreshFinalRender: Bool {
+        workflow.finalRenderSummary.latestFinalJob != nil
+            && workflow.canRefreshFinalRenderStatus
+    }
+
+    var needsSignInForStory: Bool {
+        !workflow.isSignedIn
+            && workflow.mediaSummary.reviewCount > 0
+            && !workflow.storySummary.isPlanning
+    }
+
+    private var availabilityMessage: String? {
+        if workflow.finalRenderSummary.latestFinalJob != nil {
+            return workflow.finalRenderRefreshAvailabilityMessage ?? workflow.finalRenderAvailabilityMessage
+        }
+        if hasFinalVideoIntent {
+            return workflow.finalRenderAvailabilityMessage
+                ?? workflow.storyAvailabilityMessage
+                ?? workflow.mediaAvailabilityMessage
+        }
+        if workflow.previewSummary.latestPreviewJob != nil {
+            return workflow.previewAvailabilityMessage
+        }
+        return workflow.finalRenderAvailabilityMessage ?? workflow.storyAvailabilityMessage
+    }
+}

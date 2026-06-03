@@ -923,9 +923,9 @@
 "create.workflowContent.videoPlan" = "Comprobación final";
 "create.workflowContent.preparedVideoPlan" = "Listo para crear";
 "create.workflowContent.needsPlan" = "Comprobando";
-"create.workflowContent.assetUsageSkipped" = "%d used · %d skipped";
-"create.workflowContent.assetUsageItems" = "%d of %d items";
-"create.workflowContent.beforeVideo" = "Before video";
+"create.workflowContent.assetUsageSkipped" = "%d usados · %d omitidos";
+"create.workflowContent.assetUsageItems" = "%d de %d elementos";
+"create.workflowContent.beforeVideo" = "Antes del video";
 "create.workflowContent.modePending" = "Mode pending";
 "create.workflowContent.renderPlanFallback" = "Avi comprueba media, duración y calidad antes de reservar créditos.";
 "create.workflowContent.storyReviewTitle" = "Avi's Cut";
@@ -993,7 +993,7 @@
 "create.workflowContent.tipStoryReady" = "Avi's Cut está listo. Siguiente paso: crear el video.";
 "create.workflowContent.tipMediaReady" = "Avi will shape these moments into a simple story plan.";
 "create.workflowContent.tipPickMoments" = "Pick the moments. Avi will shape the story, mood, and pacing.";
-"create.workflowContent.planDetail" = "%ds · %d media items";
+"create.workflowContent.planDetail" = "%ds · %d elementos";
 
 "create.renderRows.renderJob" = "Tarea de video";
 "create.renderRows.waitingStatus" = "Esperando el estado del video.";

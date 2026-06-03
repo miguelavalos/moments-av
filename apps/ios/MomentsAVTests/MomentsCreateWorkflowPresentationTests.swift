@@ -529,6 +529,96 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         )
     }
 
+    func testPrimaryActionPresentationKeepsCreateVideoIntentWhileUploadingMedia() {
+        let presentation = MomentsCreatePrimaryActionPresentation(
+            workflow: MomentsCreateWorkflowPresentation(
+                activeMomentId: "moment-1",
+                isSignedIn: true,
+                hasMomentWorkspace: true,
+                template: .birthdayMessage,
+                balance: MomentsCreditBalance(proMonthly: 0, promotional: 2, purchased: 0),
+                mediaSummary: MomentsCreateMediaSummary(
+                    selectedMedia: [MomentsCreateTestFixtures.makeSelectedMedia(id: "00000000-0000-0000-0000-000000000001")],
+                    isImporting: true,
+                    statusMessage: "Uploading media for video creation."
+                ),
+                storySummary: MomentsCreateStorySummary(),
+                previewSummary: MomentsCreatePreviewSummary(),
+                finalRenderSummary: MomentsCreateFinalRenderSummary(creditCost: 2),
+                canPlanStory: false,
+                canPrepareFinalRenderPlan: false,
+                canGenerateFinalRender: false
+            )
+        )
+
+        XCTAssertTrue(presentation.hasFinalVideoIntent)
+        XCTAssertFalse(presentation.canRunPrimaryAction)
+        XCTAssertEqual(presentation.title, "Create the video")
+        XCTAssertEqual(presentation.buttonTitle, "Create video")
+        XCTAssertEqual(presentation.buttonIconName, "video.fill")
+        XCTAssertEqual(presentation.statusMessage, "Uploading media for video creation.")
+    }
+
+    func testPrimaryActionPresentationUsesCreateVideoForInternalStoryPreflight() {
+        let presentation = MomentsCreatePrimaryActionPresentation(
+            workflow: MomentsCreateWorkflowPresentation(
+                activeMomentId: "moment-1",
+                isSignedIn: true,
+                hasMomentWorkspace: true,
+                template: .birthdayMessage,
+                balance: MomentsCreditBalance(proMonthly: 0, promotional: 2, purchased: 0),
+                mediaSummary: MomentsCreateMediaSummary(
+                    selectedMedia: [MomentsCreateTestFixtures.makeSelectedMedia(id: "00000000-0000-0000-0000-000000000001")]
+                ),
+                storySummary: MomentsCreateStorySummary(),
+                previewSummary: MomentsCreatePreviewSummary(),
+                finalRenderSummary: MomentsCreateFinalRenderSummary(creditCost: 2),
+                canPlanStory: true,
+                canPrepareFinalRenderPlan: false,
+                canGenerateFinalRender: false
+            )
+        )
+
+        XCTAssertTrue(presentation.canRunPrimaryAction)
+        XCTAssertEqual(presentation.title, "Create the video")
+        XCTAssertEqual(presentation.buttonTitle, "Create video")
+        XCTAssertEqual(presentation.statusMessage, "Avi will check media and confirm credits before starting.")
+    }
+
+    func testPrimaryActionPresentationShowsBackendPlanCostBeforeConfirmation() {
+        let presentation = MomentsCreatePrimaryActionPresentation(
+            workflow: MomentsCreateWorkflowPresentation(
+                activeMomentId: "moment-1",
+                isSignedIn: true,
+                hasMomentWorkspace: true,
+                template: .birthdayMessage,
+                balance: MomentsCreditBalance(proMonthly: 0, promotional: 3, purchased: 0),
+                mediaSummary: MomentsCreateMediaSummary(
+                    syncedMediaAssets: [MomentsCreateTestFixtures.makeMediaAsset(id: "media-1")]
+                ),
+                storySummary: MomentsCreateStorySummary(
+                    savedScenes: [MomentsCreateTestFixtures.makeScene(id: "scene-1")]
+                ),
+                previewSummary: MomentsCreatePreviewSummary(),
+                finalRenderSummary: MomentsCreateFinalRenderSummary(
+                    creditCost: 2,
+                    renderPlan: MomentsCreateTestFixtures.makeRenderPlan()
+                ),
+                canPlanStory: false,
+                canPrepareFinalRenderPlan: false,
+                canGenerateFinalRender: true
+            )
+        )
+
+        XCTAssertTrue(presentation.canRunPrimaryAction)
+        XCTAssertEqual(presentation.title, "Create the video")
+        XCTAssertEqual(presentation.buttonTitle, "Create video · 2 credits")
+        XCTAssertEqual(
+            presentation.statusMessage,
+            "Starting the final video reserves 2 credits. Credits are finalized only after the export is delivered."
+        )
+    }
+
     func testRealtimeRenderPresentationFormatsActivePhaseAndProgress() {
         let job = MomentsCreateTestFixtures.makeRenderJob(
             id: "final-job",

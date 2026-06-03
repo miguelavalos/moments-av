@@ -41,8 +41,6 @@ struct MomentsCreateWorkflowContent: View {
                     discardMoment: viewModel.discardMoment,
                     startSignInFlow: startSignInFlow,
                     openCredits: openCredits,
-                    generateStoryPlan: viewModel.generateStoryPlan,
-                    generatePreview: viewModel.preparePreview,
                     refreshPreviewStatus: viewModel.refreshPreviewStatus,
                     generateFinalRender: viewModel.createFinalVideoFromCurrentSelection,
                     refreshFinalRenderStatus: viewModel.refreshFinalRenderStatus,
@@ -86,8 +84,6 @@ private struct MomentsCreateMediaFirstWorkspace: View {
     let discardMoment: () -> Void
     let startSignInFlow: () -> Void
     let openCredits: () -> Void
-    let generateStoryPlan: () -> Void
-    let generatePreview: () -> Void
     let refreshPreviewStatus: () -> Void
     let generateFinalRender: (Bool) -> Void
     let refreshFinalRenderStatus: () -> Void
@@ -127,8 +123,6 @@ private struct MomentsCreateMediaFirstWorkspace: View {
                         presentation: presentation,
                         discardMoment: { showsDiscardMomentConfirmation = true },
                         startSignInFlow: startSignInFlow,
-                        prepareAviCut: prepareAviCut,
-                        generatePreview: generatePreview,
                         refreshPreviewStatus: refreshPreviewStatus,
                         generateFinalRender: primaryFinalRenderAction,
                         refreshFinalRenderStatus: refreshFinalRenderStatus,
@@ -260,10 +254,6 @@ private struct MomentsCreateMediaFirstWorkspace: View {
             canAddMedia: presentation.canAddMedia,
             availabilityMessage: presentation.mediaAvailabilityMessage
         )
-    }
-
-    private func prepareAviCut() {
-        generateStoryPlan()
     }
 
     private var finalVideoAction: MomentsCreateFinalVideoActionPresentation {
@@ -700,622 +690,6 @@ private struct MomentsCreateAviCutDecisionCard: View {
     }
 }
 
-private struct MomentsCreateRenderPlanSummary: View {
-    let plan: MomentsRenderPlan?
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text(plan == nil ? L10n.string("create.workflowContent.videoPlan") : L10n.string("create.workflowContent.preparedVideoPlan"))
-                .font(.system(size: 13, weight: .black))
-                .foregroundStyle(AVBrandColor.textPrimary)
-
-            HStack(spacing: 8) {
-                MomentsCreateOptionPill(title: assetUsageTitle, systemImage: "photo.stack")
-                MomentsCreateOptionPill(title: durationTitle, systemImage: "timer")
-                MomentsCreateOptionPill(title: renderModeTitle, systemImage: "wand.and.stars")
-            }
-
-            Text(message)
-                .font(.system(size: 13, weight: .semibold))
-                .foregroundStyle(AVBrandColor.textSecondary)
-                .fixedSize(horizontal: false, vertical: true)
-
-            ForEach((plan?.qualityWarnings ?? []).prefix(2), id: \.self) { warning in
-                Label(warning, systemImage: "exclamationmark.triangle.fill")
-                    .font(.system(size: 12, weight: .bold))
-                    .foregroundStyle(.orange)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
-        }
-        .padding(12)
-        .background(AVBrandColor.accent.opacity(0.08), in: RoundedRectangle(cornerRadius: 8, style: .continuous))
-    }
-
-    private var assetUsageTitle: String {
-        guard let plan else { return L10n.string("create.workflowContent.needsPlan") }
-        if plan.rejectedAssetCount > 0 {
-            return L10n.string("create.workflowContent.assetUsageSkipped", plan.usedAssetCount, plan.rejectedAssetCount)
-        }
-        return L10n.string("create.workflowContent.assetUsageItems", plan.usedAssetCount, plan.plannedAssetCount)
-    }
-
-    private var durationTitle: String {
-        guard let plan else { return L10n.string("create.workflowContent.beforeVideo") }
-        return "\(plan.targetDurationMs / 1000)s"
-    }
-
-    private var renderModeTitle: String {
-        guard let plan else { return L10n.string("create.workflowContent.modePending") }
-        return plan.rendererMode
-            .split(separator: "_")
-            .map { $0.capitalized }
-            .joined(separator: " ")
-    }
-
-    private var message: String {
-        plan?.userMessage ?? L10n.string("create.workflowContent.renderPlanFallback")
-    }
-}
-
-private struct MomentsCreateReviewMetric: View {
-    let title: String
-    let subtitle: String
-    let systemImage: String
-
-    var body: some View {
-        HStack(spacing: 10) {
-            Image(systemName: systemImage)
-                .font(.system(size: 14, weight: .black))
-                .foregroundStyle(AVBrandColor.accent)
-                .frame(width: 32, height: 32)
-                .background(AVBrandColor.accent.opacity(0.10), in: Circle())
-
-            VStack(alignment: .leading, spacing: 2) {
-                Text(title)
-                    .font(.system(size: 14, weight: .black))
-                    .foregroundStyle(AVBrandColor.textPrimary)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.8)
-
-                Text(subtitle)
-                    .font(.system(size: 11, weight: .semibold))
-                    .foregroundStyle(AVBrandColor.textSecondary)
-                    .lineLimit(2)
-                    .minimumScaleFactor(0.82)
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-        }
-        .padding(10)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(AVBrandColor.mutedSurface, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
-    }
-}
-
-private struct MomentsCreateStoryReviewPage: View {
-    let presentation: MomentsCreateWorkflowPresentation
-    let createVideo: (Bool) -> Void
-    let openCredits: () -> Void
-    let discardMoment: () -> Void
-    let dismiss: () -> Void
-
-    @State private var showsCreateVideoConfirmation = false
-    @State private var waitsForFinalRenderPlan = false
-    @State private var showsDiscardMomentConfirmation = false
-    @State private var removesWatermark = false
-
-    var body: some View {
-        VStack(spacing: 0) {
-            MomentsCreateEditorPageHeader(
-                title: L10n.string("create.workflowContent.storyReviewTitle"),
-                dismiss: dismiss
-            )
-            .padding(.horizontal, 20)
-            .padding(.top, 20)
-            .padding(.bottom, 14)
-
-            ScrollView {
-                VStack(alignment: .leading, spacing: 14) {
-                    AVAppShellCard {
-                        HStack(alignment: .center, spacing: 14) {
-                            ZStack(alignment: .bottomTrailing) {
-                                Image("AviFullBody")
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 74, height: 74)
-                                    .padding(12)
-                                    .background(AVBrandColor.accent.opacity(0.10), in: RoundedRectangle(cornerRadius: 8, style: .continuous))
-
-                                Image(systemName: "film.stack.fill")
-                                    .font(.system(size: 13, weight: .black))
-                                    .foregroundStyle(.white)
-                                    .frame(width: 30, height: 30)
-                                    .background(AVBrandColor.accent, in: Circle())
-                                    .offset(x: 8, y: 8)
-                            }
-                            .frame(width: 98, height: 98)
-
-                            VStack(alignment: .leading, spacing: 8) {
-                                Text(L10n.string("create.reviewBeforeCreating.title"))
-                                    .font(.system(size: 18, weight: .black))
-                                    .foregroundStyle(AVBrandColor.textPrimary)
-
-                                Text(summaryTitle)
-                                    .font(.system(size: 13, weight: .semibold))
-                                    .foregroundStyle(AVBrandColor.textSecondary)
-                                    .lineLimit(3)
-                                    .fixedSize(horizontal: false, vertical: true)
-
-                                HStack(spacing: 8) {
-                                    MomentsCreateOptionPill(title: L10n.string("create.media.itemCount", presentation.mediaSummary.reviewCount), systemImage: "photo.on.rectangle")
-                                    MomentsCreateOptionPill(title: "\(presentation.template.duration)", systemImage: "timer")
-                                    MomentsCreateOptionPill(title: "\(totalCreditCostTitle)", systemImage: "creditcard.fill")
-                                }
-                            }
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                        }
-                    }
-
-                    MomentsCreateReviewMediaTimingCard(presentation: presentation)
-
-                    MomentsCreateStoryDirectionCard(presentation: presentation)
-
-                    MomentsCreateStoryReviewCard(presentation: presentation)
-
-                    MomentsCreateReadinessChecklistCard(presentation: presentation)
-
-                    AVAppShellCard {
-                        VStack(alignment: .leading, spacing: 14) {
-                            HStack(alignment: .top, spacing: 12) {
-                                Image(systemName: "video.fill")
-                                    .font(.system(size: 18, weight: .black))
-                                    .foregroundStyle(.white)
-                                    .frame(width: 42, height: 42)
-                                    .background(AVBrandColor.textPrimary, in: Circle())
-
-                                VStack(alignment: .leading, spacing: 5) {
-                                    Text(L10n.string("create.final.createVideoTitle"))
-                                        .font(.system(size: 17, weight: .black))
-                                        .foregroundStyle(AVBrandColor.textPrimary)
-
-                                    Text(L10n.string("create.final.createVideoDetail", presentation.template.duration))
-                                        .font(.system(size: 13, weight: .semibold))
-                                        .foregroundStyle(AVBrandColor.textSecondary)
-                                        .fixedSize(horizontal: false, vertical: true)
-                                }
-                            }
-
-                            MomentsCreateRenderPlanSummary(plan: presentation.finalRenderSummary.renderPlan?.plan)
-
-                            MomentsCreateFinalVideoOptionsCard(
-                                balance: presentation.balance,
-                                creditBalanceLoadState: presentation.creditBalanceLoadState,
-                                template: presentation.template,
-                                removesWatermark: $removesWatermark
-                            )
-
-                            Label(finalVideoAction.creditPolicyMessage, systemImage: finalVideoAction.hasRenderPlan ? "creditcard.fill" : "checklist")
-                                .font(.system(size: 12, weight: .bold))
-                                .foregroundStyle(AVBrandColor.textSecondary)
-                                .fixedSize(horizontal: false, vertical: true)
-
-                            Button(action: primaryCreateAction) {
-                                Label(finalVideoAction.primaryTitle, systemImage: finalVideoAction.primaryIconName)
-                                    .font(.system(size: 15, weight: .black))
-                                    .frame(maxWidth: .infinity)
-                                    .frame(height: 50)
-                            }
-                            .buttonStyle(MomentsCreateSoftActionButtonStyle())
-                            .disabled(isPrimaryCreateDisabled)
-
-                            HStack(spacing: 14) {
-                                Button(action: dismiss) {
-                                    Label(L10n.string("create.workflowContent.changeMediaOrStyle"), systemImage: "slider.horizontal.3")
-                                }
-                                .buttonStyle(MomentsCreateNeutralInlineButtonStyle())
-
-                                Spacer(minLength: 0)
-
-                                Button(action: { showsDiscardMomentConfirmation = true }) {
-                                    Label(discardActionTitle, systemImage: discardActionIconName)
-                                }
-                                .buttonStyle(MomentsCreateNeutralInlineButtonStyle())
-                            }
-                            .font(.system(size: 13, weight: .bold))
-                            .frame(maxWidth: .infinity)
-                        }
-                    }
-                }
-                .padding(.horizontal, 20)
-                .padding(.bottom, 172)
-            }
-            .scrollIndicators(.hidden)
-        }
-        .background(MomentsTheme.shellBackground.ignoresSafeArea())
-        .navigationBarBackButtonHidden(true)
-        .toolbar(.hidden, for: .navigationBar)
-        .sheet(isPresented: $showsCreateVideoConfirmation) {
-            MomentsCreateFinalVideoConfirmationSheet(
-                action: finalVideoAction,
-                confirm: {
-                    showsCreateVideoConfirmation = false
-                    waitsForFinalRenderPlan = false
-                    dismiss()
-                    Task { @MainActor in
-                        createVideo(removesWatermark)
-                    }
-                },
-                cancel: {
-                    showsCreateVideoConfirmation = false
-                }
-            )
-            .presentationDetents([.medium])
-            .presentationDragIndicator(.visible)
-        }
-        .onChange(of: presentation.finalRenderSummary.renderPlan?.planId) { _, planId in
-            guard waitsForFinalRenderPlan, planId != nil else { return }
-            waitsForFinalRenderPlan = false
-            showsCreateVideoConfirmation = true
-        }
-        .onChange(of: presentation.finalRenderSummary.isGenerating) { _, isGenerating in
-            guard waitsForFinalRenderPlan, !isGenerating, presentation.finalRenderSummary.renderPlan == nil else { return }
-            waitsForFinalRenderPlan = false
-        }
-        .alert(L10n.string("create.discard.confirmTitle"), isPresented: $showsDiscardMomentConfirmation) {
-            Button(L10n.string("create.discard.keep"), role: .cancel) {}
-            Button(discardConfirmationActionTitle, role: .destructive) {
-                discardMoment()
-            }
-        } message: {
-            Text(discardConfirmationMessage)
-        }
-    }
-
-    private var summaryTitle: String {
-        L10n.string("create.final.summaryTitle")
-    }
-
-    private var discardConfirmationActionTitle: String {
-        presentation.hasUnsavedLocalMoment ? L10n.string("create.discard.local") : L10n.string("create.discard.current")
-    }
-
-    private var discardActionTitle: String {
-        presentation.hasUnsavedLocalMoment ? L10n.string("create.discard.closeDraft") : L10n.string("create.discard.current")
-    }
-
-    private var discardActionIconName: String {
-        presentation.hasUnsavedLocalMoment ? "xmark.circle" : "trash"
-    }
-
-    private var discardConfirmationMessage: String {
-        if presentation.hasUnsavedLocalMoment {
-            return L10n.string("create.discard.localMessage")
-        }
-
-        return L10n.string("create.discard.currentMessage")
-    }
-
-    private var finalVideoAction: MomentsCreateFinalVideoActionPresentation {
-        MomentsCreateFinalVideoActionPresentation(
-            summary: presentation.finalRenderSummary,
-            template: presentation.template,
-            balance: presentation.balance,
-            removesWatermark: removesWatermark
-        )
-    }
-
-    private var totalCreditCostTitle: String {
-        finalVideoAction.totalCreditCostTitle
-    }
-
-    private var mediaCountTitle: String {
-        let count = presentation.mediaSummary.reviewCount
-        return "\(count) \(count == 1 ? "item" : "items")"
-    }
-
-    private var isPrimaryCreateDisabled: Bool {
-        !presentation.canGenerateFinalRender
-            || presentation.mediaSummary.reviewCount == 0
-            || !presentation.storySummary.hasScenes
-            || !finalVideoAction.canAffordSelectedCost
-    }
-
-    private func primaryCreateAction() {
-        guard !isPrimaryCreateDisabled else { return }
-        if finalVideoAction.hasRenderPlan {
-            showsCreateVideoConfirmation = true
-        } else {
-            waitsForFinalRenderPlan = true
-            createVideo(removesWatermark)
-        }
-    }
-}
-
-private struct MomentsCreateStoryDirectionCard: View {
-    let presentation: MomentsCreateWorkflowPresentation
-
-    var body: some View {
-        AVAppShellCard {
-            VStack(alignment: .leading, spacing: 12) {
-                Text(L10n.string("create.workflowContent.storyDirection"))
-                    .font(.system(size: 13, weight: .black))
-                    .foregroundStyle(AVBrandColor.textPrimary)
-
-                HStack(spacing: 10) {
-                    MomentsCreateReviewMetric(
-                        title: presentation.creationStyleTitle,
-                        subtitle: L10n.string("create.workflowContent.theme"),
-                        systemImage: "sparkles"
-                    )
-                    MomentsCreateReviewMetric(
-                        title: presentation.tempoTitle,
-                        subtitle: L10n.string("create.workflowContent.pacing"),
-                        systemImage: "metronome.fill"
-                    )
-                }
-
-                HStack(spacing: 10) {
-                    MomentsCreateReviewMetric(
-                        title: presentation.toneTitle,
-                        subtitle: L10n.string("create.workflowContent.tone"),
-                        systemImage: "text.bubble.fill"
-                    )
-                    MomentsCreateReviewMetric(
-                        title: presentation.occasionTitle,
-                        subtitle: L10n.string("create.workflowContent.moment"),
-                        systemImage: "rectangle.stack.fill"
-                    )
-                }
-            }
-        }
-    }
-}
-
-private struct MomentsCreateReadinessChecklistCard: View {
-    let presentation: MomentsCreateWorkflowPresentation
-
-    var body: some View {
-        AVAppShellCard {
-            VStack(alignment: .leading, spacing: 12) {
-                Text(L10n.string("create.workflowContent.readyCheck"))
-                    .font(.system(size: 13, weight: .black))
-                    .foregroundStyle(AVBrandColor.textPrimary)
-
-                VStack(spacing: 8) {
-                    MomentsCreateReadinessRow(
-                        title: L10n.string("create.workflowContent.mediaSelected"),
-                        detail: mediaDetail,
-                        isReady: presentation.mediaSummary.reviewCount > 0
-                    )
-                    MomentsCreateReadinessRow(
-                        title: L10n.string("create.workflowContent.storyPrepared"),
-                        detail: storyDetail,
-                        isReady: presentation.storySummary.hasScenes
-                    )
-                    MomentsCreateReadinessRow(
-                        title: L10n.string("create.workflowContent.videoPlan"),
-                        detail: planDetail,
-                        isReady: presentation.finalRenderSummary.renderPlan != nil
-                    )
-                    MomentsCreateReadinessRow(
-                        title: L10n.string("create.workflowContent.credits"),
-                        detail: creditDetail,
-                        isReady: presentation.creditBalanceLoadState.hasLoadedBalance
-                            && MomentsCreditGate.canAfford(presentation.template, balance: presentation.balance)
-                    )
-                }
-            }
-        }
-    }
-
-    private var mediaDetail: String {
-        let count = presentation.mediaSummary.reviewCount
-        return count > 0
-            ? L10n.string(count == 1 ? "create.workflowContent.itemReady" : "create.workflowContent.itemsReady", count)
-            : L10n.string("create.workflowContent.addMediaFirst")
-    }
-
-    private var storyDetail: String {
-        let count = presentation.storySummary.reviewScenes.count
-        return count > 0
-            ? L10n.string(count == 1 ? "create.workflowContent.sceneReady" : "create.workflowContent.scenesReady", count)
-            : L10n.string("create.workflowContent.prepareStoryFirst")
-    }
-
-    private var planDetail: String {
-        guard let plan = presentation.finalRenderSummary.renderPlan?.plan else {
-            return L10n.string("create.workflowContent.preparedBeforeVideo")
-        }
-        let seconds = plan.targetDurationMs / 1000
-        return L10n.string("create.workflowContent.planDetail", seconds, plan.usedAssetCount)
-    }
-
-    private var creditDetail: String {
-        guard presentation.creditBalanceLoadState.hasLoadedBalance else {
-            return MomentsCreditCopy.balanceStatusDetail(presentation.creditBalanceLoadState)
-        }
-        return L10n.string(
-            "create.workflowContent.creditsNeeded",
-            MomentsCreditCopy.countTitle(presentation.finalRenderSummary.creditCost)
-        )
-    }
-}
-
-private struct MomentsCreateFinalVideoOptionsCard: View {
-    let balance: MomentsCreditBalance
-    let creditBalanceLoadState: MomentsCreditBalanceLoadState
-    let template: MomentTemplate
-    @Binding var removesWatermark: Bool
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            HStack(spacing: 10) {
-                MomentsCreateReviewMetric(
-                    title: totalCostTitle,
-                    subtitle: watermarkSubtitle,
-                    systemImage: "creditcard.fill"
-                )
-            }
-
-            Toggle(isOn: $removesWatermark) {
-                VStack(alignment: .leading, spacing: 3) {
-                    Text(L10n.string("create.workflowContent.removeMark"))
-                        .font(.system(size: 13, weight: .black))
-                        .foregroundStyle(AVBrandColor.textPrimary)
-                    Text(watermarkDetail)
-                        .font(.system(size: 11, weight: .semibold))
-                        .foregroundStyle(AVBrandColor.textSecondary)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
-            }
-            .toggleStyle(.switch)
-            .disabled(balance.watermarkFreeIncluded || !creditBalanceLoadState.hasLoadedBalance)
-
-            if !creditBalanceLoadState.hasLoadedBalance {
-                Label(MomentsCreditCopy.balanceStatusDetail(creditBalanceLoadState), systemImage: creditBalanceLoadState.systemImage)
-                    .font(.system(size: 12, weight: .bold))
-                    .foregroundStyle(AVBrandColor.textSecondary)
-                    .fixedSize(horizontal: false, vertical: true)
-            } else if !canAffordSelectedCost {
-                Label(L10n.string("create.workflowContent.addCreditsForVersion", MomentsCreditCopy.countTitle(missingCredits)), systemImage: "exclamationmark.triangle.fill")
-                    .font(.system(size: 12, weight: .bold))
-                    .foregroundStyle(.orange)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
-        }
-        .padding(12)
-        .background(AVBrandColor.neutral100.opacity(0.70), in: RoundedRectangle(cornerRadius: 8, style: .continuous))
-    }
-
-    private var totalCost: Int {
-        MomentsCreditGate.finalRenderCreditCost(
-            template: template,
-            removesWatermark: removesWatermark,
-            balance: balance
-        )
-    }
-
-    private var totalCostTitle: String {
-        MomentsCreditCopy.countTitle(totalCost)
-    }
-
-    private var watermarkSubtitle: String {
-        if balance.watermarkFreeIncluded {
-            return L10n.string("create.workflowContent.noMarkWithPro")
-        }
-        return removesWatermark ? L10n.string("create.workflowContent.noMarkSelected") : L10n.string("create.workflowContent.includesMark")
-    }
-
-    private var watermarkDetail: String {
-        if balance.watermarkFreeIncluded {
-            return L10n.string("create.workflowContent.includedWithPro")
-        }
-        return L10n.string("create.workflowContent.optionalCleanExport", MomentsCreditCopy.countTitle(balance.watermarkRemovalCreditCost))
-    }
-
-    private var canAffordSelectedCost: Bool {
-        balance.spendable >= totalCost
-    }
-
-    private var missingCredits: Int {
-        max(0, totalCost - balance.spendable)
-    }
-}
-
-private struct MomentsCreateReadinessRow: View {
-    let title: String
-    let detail: String
-    let isReady: Bool
-
-    var body: some View {
-        HStack(spacing: 10) {
-            Image(systemName: isReady ? "checkmark.circle.fill" : "circle.dashed")
-                .font(.system(size: 16, weight: .black))
-                .foregroundStyle(isReady ? AVBrandColor.accent : AVBrandColor.textSecondary.opacity(0.6))
-                .frame(width: 24)
-
-            VStack(alignment: .leading, spacing: 2) {
-                Text(title)
-                    .font(.system(size: 12, weight: .black))
-                    .foregroundStyle(AVBrandColor.textPrimary)
-                Text(detail)
-                    .font(.system(size: 11, weight: .semibold))
-                    .foregroundStyle(AVBrandColor.textSecondary)
-                    .lineLimit(2)
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-        }
-        .padding(10)
-        .background(AVBrandColor.neutral100.opacity(0.66), in: RoundedRectangle(cornerRadius: 8, style: .continuous))
-    }
-}
-
-private struct MomentsCreateReviewMediaTimingCard: View {
-    let presentation: MomentsCreateWorkflowPresentation
-
-    var body: some View {
-        AVAppShellCard {
-            VStack(alignment: .leading, spacing: 12) {
-                Text(L10n.string("create.workflowContent.mediaAndTiming"))
-                    .font(.system(size: 13, weight: .black))
-                    .foregroundStyle(AVBrandColor.textPrimary)
-
-                HStack(spacing: 10) {
-                    MomentsCreateReviewMetric(
-                        title: mediaCountTitle,
-                        subtitle: mediaSubtitle,
-                        systemImage: "photo.stack.fill"
-                    )
-                    MomentsCreateReviewMetric(
-                        title: presentation.template.duration,
-                        subtitle: L10n.string("create.workflowContent.finalVideoCost", creditCostTitle),
-                        systemImage: "timer"
-                    )
-                }
-
-                if presentation.mediaSummary.reviewCount == 0 {
-                    Label(L10n.string("create.workflowContent.needsMediaBeforeVideo"), systemImage: "exclamationmark.triangle.fill")
-                        .font(.system(size: 12, weight: .bold))
-                        .foregroundStyle(.orange)
-                        .fixedSize(horizontal: false, vertical: true)
-                } else {
-                    MomentsCreateReviewMediaStrip(mediaSummary: presentation.mediaSummary)
-
-                    Text(L10n.string("create.workflowContent.finalEditSummary"))
-                        .font(.system(size: 12, weight: .semibold))
-                        .foregroundStyle(AVBrandColor.textSecondary)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
-            }
-        }
-    }
-
-    private var mediaCountTitle: String {
-        let count = presentation.mediaSummary.reviewCount
-        return L10n.string(count == 1 ? "create.workflowContent.itemCount" : "create.workflowContent.itemsCount", count)
-    }
-
-    private var mediaSubtitle: String {
-        presentation.mediaSummary.reviewCount > 0 ? L10n.string("create.workflowContent.selectedForVideo") : L10n.string("create.workflowContent.notReady")
-    }
-
-    private var creditCostTitle: String {
-        MomentsCreditCopy.countTitle(presentation.finalRenderSummary.creditCost)
-    }
-}
-
-private struct MomentsCreateReviewMediaStrip: View {
-    let mediaSummary: MomentsCreateMediaSummary
-
-    var body: some View {
-        MomentsSharedMediaStrip(
-            localMedia: mediaSummary.selectedMedia,
-            syncedMedia: mediaSummary.syncedMediaAssets,
-            maxCount: 12,
-            tileSize: 58
-        )
-    }
-}
-
 private struct MomentsCreateStoryReviewSceneRow: View {
     let scene: MomentsCreateStoryReviewScene
 
@@ -1464,8 +838,6 @@ private struct MomentsCreatePrimaryActionBar: View {
     let presentation: MomentsCreateWorkflowPresentation
     let discardMoment: () -> Void
     let startSignInFlow: () -> Void
-    let prepareAviCut: () -> Void
-    let generatePreview: () -> Void
     let refreshPreviewStatus: () -> Void
     let generateFinalRender: () -> Void
     let refreshFinalRenderStatus: () -> Void
@@ -1477,19 +849,19 @@ private struct MomentsCreatePrimaryActionBar: View {
         AVAppShellCard {
             VStack(alignment: .leading, spacing: 10) {
                 HStack(alignment: .center, spacing: 10) {
-                    Image(systemName: primaryHeaderIconName)
+                    Image(systemName: primaryActionPresentation.primaryHeaderIconName)
                         .font(.system(size: 14, weight: .black))
                         .foregroundStyle(.white)
                         .frame(width: 32, height: 32)
                         .background(primaryHeaderColor, in: Circle())
 
                     VStack(alignment: .leading, spacing: 3) {
-                        Text(title)
+                        Text(primaryActionPresentation.title)
                             .font(.system(size: 14, weight: .black))
                             .foregroundStyle(AVBrandColor.textPrimary)
                             .lineLimit(1)
 
-                        if let statusMessage {
+                        if let statusMessage = primaryActionPresentation.statusMessage {
                             Text(statusMessage)
                                 .font(.system(size: 12, weight: .semibold))
                                 .foregroundStyle(statusColor)
@@ -1513,16 +885,16 @@ private struct MomentsCreatePrimaryActionBar: View {
                 }
 
                 Button(action: primaryAction) {
-                    Label(buttonTitle, systemImage: buttonIconName)
+                    Label(primaryActionPresentation.buttonTitle, systemImage: primaryActionPresentation.buttonIconName)
                         .font(.system(size: 15, weight: .black))
                         .lineLimit(1)
                         .minimumScaleFactor(0.8)
                         .frame(maxWidth: .infinity)
                         .frame(height: 46)
                 }
-                .disabled(!canRunPrimaryAction)
+                .disabled(!primaryActionPresentation.canRunPrimaryAction)
                 .buttonStyle(MomentsCreateSoftActionButtonStyle())
-                .opacity(canRunPrimaryAction ? 1 : 0.55)
+                .opacity(primaryActionPresentation.canRunPrimaryAction ? 1 : 0.72)
 
                 if presentation.finalRenderSummary.pendingGalleryVideo != nil {
                     VStack(spacing: 10) {
@@ -1549,13 +921,6 @@ private struct MomentsCreatePrimaryActionBar: View {
                 }
 
                 HStack(spacing: 14) {
-                    if let secondaryActionTitle {
-                        Button(action: secondaryAction) {
-                            Label(secondaryActionTitle, systemImage: secondaryActionIconName)
-                        }
-                        .buttonStyle(MomentsCreateNeutralInlineButtonStyle())
-                    }
-
                     Spacer(minLength: 0)
 
                     Button(action: discardMoment) {
@@ -1569,20 +934,8 @@ private struct MomentsCreatePrimaryActionBar: View {
         }
     }
 
-    private var canRunPrimaryAction: Bool {
-        if isBusy {
-            return false
-        }
-        if presentation.finalRenderSummary.pendingGalleryVideo != nil {
-            return false
-        }
-        if presentation.finalRenderSummary.latestFinalJob != nil {
-            return canRefreshFinalRender
-        }
-        return presentation.canGenerateFinalRender
-            || canPrepareVideoPlan
-            || presentation.canPlanStory
-            || needsSignInForStory
+    private var primaryActionPresentation: MomentsCreatePrimaryActionPresentation {
+        MomentsCreatePrimaryActionPresentation(workflow: presentation)
     }
 
     private var discardActionTitle: String {
@@ -1593,171 +946,11 @@ private struct MomentsCreatePrimaryActionBar: View {
         presentation.hasUnsavedLocalMoment ? "xmark.circle" : "trash"
     }
 
-    private var buttonTitle: String {
-        if presentation.finalRenderSummary.pendingGalleryVideo != nil {
-            return L10n.string("create.final.chooseDestination")
-        }
-        if presentation.finalRenderSummary.finalExport != nil {
-            return L10n.string("create.final.videoReady")
-        }
-        if presentation.finalRenderSummary.latestFinalJob != nil {
-            return presentation.finalRenderSummary.isRefreshingStatus ? L10n.string("create.status.checking") : L10n.string("create.final.checkStatus")
-        }
-        if presentation.canGenerateFinalRender || canPrepareVideoPlan || finalVideoAction.hasRenderPlan {
-            return finalVideoAction.primaryTitle
-        }
-        if presentation.previewSummary.latestPreview != nil {
-            return presentation.finalRenderSummary.isGenerating ? L10n.string("create.final.creating") : L10n.string("create.final.create")
-        }
-        if presentation.previewSummary.latestPreviewJob != nil {
-            return presentation.previewSummary.isRefreshingStatus ? L10n.string("create.status.refreshing") : L10n.string("create.preview.refresh")
-        }
-        if needsSignInForStory {
-            return L10n.string("common.signIn")
-        }
-        if presentation.finalRenderSummary.isGenerating {
-            return L10n.string("create.preview.preparing")
-        }
-        return presentation.storySummary.hasScenes
-            ? L10n.string("create.aviCut.action.improve")
-            : L10n.string("create.aviCut.action.prepare")
-    }
-
-    private var buttonIconName: String {
-        if presentation.finalRenderSummary.pendingGalleryVideo != nil {
-            return "rectangle.stack.badge.play.fill"
-        }
-        if presentation.finalRenderSummary.finalExport != nil {
-            return "checkmark.circle.fill"
-        }
-        if presentation.canGenerateFinalRender || canPrepareVideoPlan || finalVideoAction.hasRenderPlan {
-            return finalVideoAction.primaryIconName
-        }
-        if presentation.previewSummary.latestPreview != nil {
-            return "wand.and.stars"
-        }
-        if presentation.previewSummary.latestPreviewJob != nil {
-            return "arrow.clockwise"
-        }
-        if presentation.finalRenderSummary.latestFinalJob != nil {
-            return "arrow.clockwise"
-        }
-        if needsSignInForStory {
-            return "person.crop.circle.badge.checkmark"
-        }
-        return presentation.storySummary.hasScenes ? "sparkles" : "play.rectangle.fill"
-    }
-
-    private var availabilityMessage: String? {
-        if presentation.finalRenderSummary.finalExport != nil {
-            return nil
-        }
-        if presentation.finalRenderSummary.latestFinalJob != nil {
-            return presentation.finalRenderRefreshAvailabilityMessage ?? presentation.finalRenderAvailabilityMessage
-        }
-        if presentation.previewSummary.latestPreview != nil || presentation.canGenerateFinalRender || canPrepareVideoPlan || finalVideoAction.hasRenderPlan {
-            return presentation.finalRenderAvailabilityMessage
-        }
-        if presentation.previewSummary.latestPreviewJob != nil {
-            return presentation.previewAvailabilityMessage
-        }
-        return presentation.finalRenderAvailabilityMessage ?? presentation.storyAvailabilityMessage
-    }
-
-    private var statusMessage: String? {
-        if presentation.finalRenderSummary.pendingGalleryVideo != nil {
-            return presentation.finalRenderSummary.statusMessage
-                ?? L10n.string("workflow.final.savedLocal")
-        }
-        if presentation.finalRenderSummary.isGenerating {
-            return presentation.finalRenderSummary.statusMessage ?? L10n.string("create.final.action.creating")
-        }
-        if presentation.previewSummary.isGenerating {
-            return presentation.previewSummary.statusMessage ?? L10n.string("create.preview.action.reviewing")
-        }
-        if presentation.storySummary.isPlanning {
-            return presentation.storySummary.statusMessage ?? L10n.string("create.preparation.prepareStory.progress")
-        }
-        if presentation.finalRenderSummary.finalExport != nil {
-            return L10n.string("create.primary.finalReady")
-        }
-        if presentation.finalRenderSummary.latestFinalJob != nil {
-            return presentation.finalRenderSummary.realtimeStatus?.detail
-                ?? presentation.finalRenderSummary.statusMessage
-                ?? L10n.string("create.primary.videoCreating")
-        }
-        if presentation.previewSummary.latestPreview != nil {
-            return L10n.string("create.primary.previewReady")
-        }
-        if presentation.canGenerateFinalRender {
-            return finalVideoAction.hasRenderPlan
-                ? finalVideoAction.creditPolicyMessage
-                : L10n.string("create.primary.createVideoPreflight")
-        }
-        if canPrepareVideoPlan {
-            return L10n.string("create.primary.createVideoPreflight")
-        }
-        if finalVideoAction.hasRenderPlan {
-            return presentation.finalRenderAvailabilityMessage
-        }
-        if let previewMessage = presentation.previewSummary.statusMessage, !previewMessage.isEmpty {
-            return previewMessage
-        }
-        if let storyMessage = presentation.storySummary.statusMessage, !storyMessage.isEmpty {
-            return storyMessage
-        }
-        if let mediaMessage = presentation.mediaSummary.statusMessage, !mediaMessage.isEmpty {
-            return mediaMessage
-        }
-        if !canRunPrimaryAction {
-            return availabilityMessage
-        }
-        if needsSignInForStory {
-            return presentation.storyAvailabilityMessage
-        }
-        if presentation.canPlanStory {
-            return L10n.string("create.aviCut.status.readyToPrepare")
-        }
-        return nil
-    }
-
-    private var statusIconName: String {
-        if isBusy {
-            return "sparkles"
-        }
-        if presentation.finalRenderSummary.finalExport != nil || presentation.previewSummary.latestPreview != nil {
-            return "checkmark.circle.fill"
-        }
-        if !canRunPrimaryAction {
-            return "info.circle.fill"
-        }
-        return "play.circle.fill"
-    }
-
     private var statusColor: Color {
         if presentation.finalRenderSummary.finalExport != nil || presentation.previewSummary.latestPreview != nil {
             return AVBrandColor.accent
         }
         return AVBrandColor.textSecondary
-    }
-
-    private var primaryHeaderIconName: String {
-        if presentation.finalRenderSummary.pendingGalleryVideo != nil {
-            return "rectangle.stack.badge.play.fill"
-        }
-        if presentation.finalRenderSummary.finalExport != nil {
-            return "checkmark.circle.fill"
-        }
-        if let realtimeStatus = presentation.finalRenderSummary.realtimeStatus {
-            return realtimeStatus.systemImage
-        }
-        if presentation.finalRenderSummary.latestFinalJob != nil {
-            return "arrow.clockwise"
-        }
-        if needsSignInForStory {
-            return "person.crop.circle.badge.checkmark"
-        }
-        return "video.fill"
     }
 
     private var primaryHeaderColor: Color {
@@ -1767,36 +960,10 @@ private struct MomentsCreatePrimaryActionBar: View {
         if presentation.finalRenderSummary.finalExport != nil {
             return AVBrandColor.accent
         }
-        if presentation.finalRenderSummary.latestFinalJob != nil || isBusy {
+        if presentation.finalRenderSummary.latestFinalJob != nil || primaryActionPresentation.isBusy {
             return AVBrandColor.textSecondary
         }
         return AVBrandColor.textPrimary
-    }
-
-    private var finalVideoAction: MomentsCreateFinalVideoActionPresentation {
-        MomentsCreateFinalVideoActionPresentation(
-            summary: presentation.finalRenderSummary,
-            template: presentation.template,
-            balance: presentation.balance
-        )
-    }
-
-    private var isBusy: Bool {
-        presentation.storySummary.isPlanning
-            || presentation.mediaSummary.isImporting
-            || presentation.previewSummary.isGenerating
-            || presentation.previewSummary.isRefreshingStatus
-            || presentation.finalRenderSummary.isGenerating
-            || presentation.finalRenderSummary.isRefreshingStatus
-    }
-
-    private var secondaryActionTitle: String? {
-        guard !isBusy else { return nil }
-        return nil
-    }
-
-    private var secondaryActionIconName: String {
-        presentation.storySummary.hasScenes ? "list.bullet.rectangle.portrait.fill" : "sparkles"
     }
 
     private func primaryAction() {
@@ -1807,53 +974,20 @@ private struct MomentsCreatePrimaryActionBar: View {
             return
         }
         if presentation.finalRenderSummary.latestFinalJob != nil {
-            if canRefreshFinalRender {
+            if primaryActionPresentation.canRefreshFinalRender {
                 refreshFinalRenderStatus()
             }
-        } else if presentation.previewSummary.latestPreview != nil {
-            generateFinalRender()
-        } else if presentation.canGenerateFinalRender || canPrepareVideoPlan || presentation.canPlanStory {
-            if presentation.canGenerateFinalRender || canPrepareVideoPlan {
-                generateFinalRender()
+        } else if primaryActionPresentation.hasFinalVideoIntent {
+            if primaryActionPresentation.needsSignInForStory {
+                startSignInFlow()
             } else {
-                prepareAviCut()
+                generateFinalRender()
             }
         } else if presentation.previewSummary.latestPreviewJob != nil {
             refreshPreviewStatus()
-        } else if needsSignInForStory {
+        } else if primaryActionPresentation.needsSignInForStory {
             startSignInFlow()
         }
-    }
-
-    private func secondaryAction() {
-        prepareAviCut()
-    }
-
-    private var title: String {
-        if presentation.finalRenderSummary.finalExport != nil || presentation.finalRenderSummary.latestFinalJob != nil {
-            return L10n.string("create.final.video")
-        }
-        return L10n.string("common.continue")
-    }
-
-    private var creditCostTitle: String {
-        MomentsCreditCopy.countTitle(presentation.finalRenderSummary.creditCost)
-    }
-
-    private var needsSignInForStory: Bool {
-        !presentation.isSignedIn
-            && presentation.mediaSummary.selectedCount > 0
-            && !presentation.storySummary.isPlanning
-    }
-
-    private var canPrepareVideoPlan: Bool {
-        presentation.canPrepareFinalRenderPlan
-            && presentation.finalRenderSummary.renderPlan == nil
-    }
-
-    private var canRefreshFinalRender: Bool {
-        presentation.finalRenderSummary.latestFinalJob != nil
-            && presentation.canRefreshFinalRenderStatus
     }
 }
 
@@ -3114,103 +2248,5 @@ private struct MomentsCreateThemeImageTile: View {
                     .stroke(isSelected ? AVBrandColor.accent : AVBrandColor.borderSubtle.opacity(0.7), lineWidth: isSelected ? 2 : 1)
             }
             .shadow(color: AVBrandColor.ink.opacity(isSelected ? 0.12 : 0.05), radius: isSelected ? 8 : 4, x: 0, y: 3)
-    }
-}
-
-private struct MomentsCreateWorkflowCards: View {
-    let presentation: MomentsCreateWorkflowPresentation
-    @Binding var pickerItems: [PhotosPickerItem]
-    let importPickerItems: ([PhotosPickerItem]) -> Void
-    let importLatestPhotos: () -> Void
-    let importPhotoAlbum: (String) -> Void
-    let removeMedia: (MomentsSelectedMedia) -> Void
-    let moveMedia: (MomentsSelectedMedia, MomentsSelectedMedia) -> Void
-    let reorderMedia: ([MomentsSelectedMedia]) -> Void
-    let restoreLocalMediaForEditing: () -> Void
-    let autoPickStrongMoments: () -> Void
-    let openPickerRequest: Int
-    let openAlbumRequest: Int = 0
-    let generateStoryPlan: () -> Void
-    let openCredits: () -> Void = {}
-    let generatePreview: () -> Void
-    let refreshPreviewStatus: () -> Void
-    let generateFinalRender: () -> Void
-    let refreshFinalRenderStatus: () -> Void
-    let retryFinalVideoDownload: () -> Void = {}
-    let finishFinalVideoToGallery: () -> Void = {}
-    let createAnotherFinalVideoVersion: () -> Void = {}
-
-    @ViewBuilder
-    var body: some View {
-        if presentation.showsWorkflowCards {
-            switch presentation.currentStage {
-            case .media:
-                MomentsCreateMediaCard(
-                    pickerItems: $pickerItems,
-                    openPickerRequest: openPickerRequest,
-                    openAlbumRequest: openAlbumRequest,
-                    presentation: MomentsCreateMediaPresentation(
-                        activeMomentId: presentation.activeMomentId,
-                        template: presentation.template,
-                        summary: presentation.mediaSummary,
-                        canAddMedia: presentation.canAddMedia,
-                        availabilityMessage: presentation.mediaAvailabilityMessage
-                    ),
-                    importPickerItems: importPickerItems,
-                    importLatestPhotos: importLatestPhotos,
-                    importPhotoAlbum: importPhotoAlbum,
-                    removeMedia: removeMedia,
-                    moveMedia: moveMedia,
-                    reorderMedia: reorderMedia,
-                    restoreLocalMediaForEditing: restoreLocalMediaForEditing,
-                    autoPickStrongMoments: autoPickStrongMoments,
-                    consumeOpenPickerRequest: {},
-                    consumeOpenAlbumRequest: {}
-                )
-                .id(MomentsCreateSection.media)
-
-            case .story:
-                MomentsCreateStoryCard(
-                    presentation: MomentsCreateStoryPresentation(
-                        summary: presentation.storySummary,
-                        canPlanStory: presentation.canPlanStory,
-                        availabilityMessage: presentation.storyAvailabilityMessage
-                    ),
-                    generateStoryPlan: generateStoryPlan
-                )
-                .id(MomentsCreateSection.story)
-
-            case .preview:
-                MomentsCreatePreviewCard(
-                    presentation: MomentsCreatePreviewPresentation(
-                        summary: presentation.previewSummary,
-                        canGeneratePreview: presentation.canGeneratePreview,
-                        canRefreshPreviewStatus: presentation.canRefreshPreviewStatus,
-                        availabilityMessage: presentation.previewAvailabilityMessage,
-                        refreshAvailabilityMessage: presentation.previewRefreshAvailabilityMessage
-                    ),
-                    generatePreview: generatePreview,
-                    refreshPreviewStatus: refreshPreviewStatus
-                )
-                .id(MomentsCreateSection.preview)
-
-            case .finalVideo:
-                MomentsCreateFinalExportCard(
-                    presentation: MomentsCreateFinalRenderPresentation(
-                        summary: presentation.finalRenderSummary,
-                        canGenerateFinalRender: presentation.canGenerateFinalRender,
-                        canRefreshFinalRenderStatus: presentation.canRefreshFinalRenderStatus,
-                        availabilityMessage: presentation.finalRenderAvailabilityMessage,
-                        refreshAvailabilityMessage: presentation.finalRenderRefreshAvailabilityMessage
-                    ),
-                    generateFinalRender: generateFinalRender,
-                    refreshFinalRenderStatus: refreshFinalRenderStatus,
-                    retryFinalVideoDownload: retryFinalVideoDownload,
-                    finishFinalVideoToGallery: finishFinalVideoToGallery,
-                    createAnotherFinalVideoVersion: createAnotherFinalVideoVersion
-                )
-                .id(MomentsCreateSection.finalRender)
-            }
-        }
     }
 }

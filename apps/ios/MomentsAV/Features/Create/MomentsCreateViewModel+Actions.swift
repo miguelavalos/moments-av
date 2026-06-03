@@ -212,53 +212,18 @@ extension MomentsCreateViewModel {
 
         runOperation {
             defer { self.isPreparingStory = false }
-            let momentId: String?
-            if let activeMomentId = self.activeMomentId {
-                momentId = activeMomentId
-            } else if let momentCreationWorkflow = self.momentCreationWorkflow {
-                momentId = await momentCreationWorkflow.createMoment(form: form)
-                if momentId != nil {
-                    self.isLocalMomentStarted = false
-                }
-            } else {
-                momentId = nil
-            }
+            let momentId = await self.resolveMomentIdForPreparation(form: form)
 
             guard let momentId else {
                 self.updateStoryStatusMessage(self.momentCreationFailureMessage())
                 return
             }
-            var inputSignature = self.preparedStoryComparisonInputSignature(momentId: momentId)
-            if self.storySummary.hasScenes,
-               self.lastPreparedStoryInputSignature == inputSignature {
-                self.updateStoryStatusMessage(L10n.string("create.story.status.alreadyReady"))
-            } else {
-                let persistedMedia = await self.mediaUploadWorkflow?.persistSelectedMedia(momentId: momentId)
-                guard persistedMedia != nil || selectedMedia.isEmpty else {
-                    self.updateStoryStatusMessage(self.mediaStatusMessage
-                        ?? MomentsRecoveryCopy.mediaStorySaveFailure()
-                    )
-                    return
-                }
-                inputSignature = self.currentStoryPlanInputSignature(
-                    momentId: momentId,
-                    persistedMedia: persistedMedia
-                )
-
-                let didPrepareStory = await storyPlanWorkflow.generatePlan(
-                    momentId: momentId,
-                    form: form,
-                    selectedMedia: selectedMedia,
-                    persistedMedia: persistedMedia
-                )
-                if didPrepareStory {
-                    self.recordPreparedStoryInputSignature(inputSignature, momentId: momentId)
-                }
-            }
-
-            guard self.storySummary.hasScenes,
-                  self.lastPreparedStoryInputSignature == inputSignature else {
-                self.updateStoryStatusMessage(L10n.string("create.error.storyPreparationUnfinished"))
+            guard await self.prepareStoryIfNeeded(
+                momentId: momentId,
+                form: form,
+                selectedMedia: selectedMedia,
+                storyPlanWorkflow: storyPlanWorkflow
+            ) else {
                 return
             }
 
@@ -279,18 +244,27 @@ extension MomentsCreateViewModel {
             updateFinalRenderStatusMessage(L10n.string("create.error.videoCreationNotConfigured"))
             return
         }
-        guard let context = activeTemplateContext else {
-            updateFinalRenderStatusMessage(L10n.string("create.error.currentMomentMissing"))
-            return
-        }
-        let needsRenderPlan = renderPlan == nil || renderPlan?.momentId != context.momentId
-        if needsRenderPlan {
+        let form = form
+        let selectedMedia = selectedMedia
+        let creationStyleId = selectedCreationStyle.id
+        let needsStoryPreparation = !isStoryPreparedForCurrentInput
+        let storyPlanWorkflowForFinalVideo: StoryPlanWorkflow?
+        if needsStoryPreparation {
+            guard canPlanStory, let storyPlanWorkflow else {
+                updateFinalRenderStatusMessage(storyAvailabilityMessage
+                    ?? finalRenderAvailabilityMessage
+                    ?? L10n.string("create.error.storyPreparationNotReady"))
+                return
+            }
+            storyPlanWorkflowForFinalVideo = storyPlanWorkflow
+        } else if renderPlan == nil || renderPlan?.momentId != activeMomentId {
             guard canPrepareFinalRenderPlan else {
                 updateFinalRenderStatusMessage(finalRenderAvailabilityMessage
                     ?? storyAvailabilityMessage
                     ?? L10n.string("create.error.reviewBeforeVideo"))
                 return
             }
+            storyPlanWorkflowForFinalVideo = nil
         } else {
             guard canGenerateFinalRender else {
                 updateFinalRenderStatusMessage(finalRenderAvailabilityMessage
@@ -298,18 +272,100 @@ extension MomentsCreateViewModel {
                     ?? L10n.string("create.error.reviewBeforeVideo"))
                 return
             }
+            storyPlanWorkflowForFinalVideo = nil
         }
 
+        if needsStoryPreparation {
+            isPreparingStory = true
+        }
         runOperation {
+            defer {
+                if needsStoryPreparation {
+                    self.isPreparingStory = false
+                }
+            }
+            let momentId = await self.resolveMomentIdForPreparation(form: form)
+
+            guard let momentId else {
+                self.updateFinalRenderStatusMessage(self.momentCreationFailureMessage())
+                return
+            }
+            if let storyPlanWorkflow = storyPlanWorkflowForFinalVideo {
+                guard await self.prepareStoryIfNeeded(
+                    momentId: momentId,
+                    form: form,
+                    selectedMedia: selectedMedia,
+                    storyPlanWorkflow: storyPlanWorkflow
+                ) else {
+                    self.updateFinalRenderStatusMessage(self.storySummary.statusMessage
+                        ?? self.storyAvailabilityMessage
+                        ?? L10n.string("create.error.storyPreparationUnfinished"))
+                    return
+                }
+            }
+
             await finalRenderWorkflow.generateFinalRender(
-                momentId: context.momentId,
-                template: context.template,
-                creationStyle: self.selectedCreationStyle.id,
-                form: self.form,
+                momentId: momentId,
+                template: form.template,
+                creationStyle: creationStyleId,
+                form: form,
                 removesWatermark: removesWatermark,
                 allowPreparedStory: true
             )
         }
+    }
+
+    private func resolveMomentIdForPreparation(form: MomentSetupForm) async -> String? {
+        if let activeMomentId {
+            return activeMomentId
+        }
+        guard let momentCreationWorkflow else {
+            return nil
+        }
+        let momentId = await momentCreationWorkflow.createMoment(form: form)
+        if momentId != nil {
+            isLocalMomentStarted = false
+        }
+        return momentId
+    }
+
+    private func prepareStoryIfNeeded(
+        momentId: String,
+        form: MomentSetupForm,
+        selectedMedia: [MomentsSelectedMedia],
+        storyPlanWorkflow: StoryPlanWorkflow
+    ) async -> Bool {
+        var inputSignature = preparedStoryComparisonInputSignature(momentId: momentId)
+        if storySummary.hasScenes, lastPreparedStoryInputSignature == inputSignature {
+            updateStoryStatusMessage(L10n.string("create.story.status.alreadyReady"))
+            return true
+        }
+
+        let persistedMedia = await mediaUploadWorkflow?.persistSelectedMedia(momentId: momentId)
+        guard persistedMedia != nil || selectedMedia.isEmpty else {
+            updateStoryStatusMessage(mediaStatusMessage ?? MomentsRecoveryCopy.mediaStorySaveFailure())
+            return false
+        }
+        inputSignature = currentStoryPlanInputSignature(
+            momentId: momentId,
+            persistedMedia: persistedMedia
+        )
+
+        let didPrepareStory = await storyPlanWorkflow.generatePlan(
+            momentId: momentId,
+            form: form,
+            selectedMedia: selectedMedia,
+            persistedMedia: persistedMedia
+        )
+        if didPrepareStory {
+            recordPreparedStoryInputSignature(inputSignature, momentId: momentId)
+        }
+
+        guard storySummary.hasScenes, lastPreparedStoryInputSignature == inputSignature else {
+            updateStoryStatusMessage(L10n.string("create.error.storyPreparationUnfinished"))
+            return false
+        }
+        return true
     }
 
     func refreshPreviewStatus() {

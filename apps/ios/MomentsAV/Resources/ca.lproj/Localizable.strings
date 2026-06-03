@@ -921,9 +921,9 @@
 "create.workflowContent.videoPlan" = "Comprovació final";
 "create.workflowContent.preparedVideoPlan" = "Llest per crear";
 "create.workflowContent.needsPlan" = "Comprovant";
-"create.workflowContent.assetUsageSkipped" = "%d used · %d skipped";
-"create.workflowContent.assetUsageItems" = "%d of %d items";
-"create.workflowContent.beforeVideo" = "Before video";
+"create.workflowContent.assetUsageSkipped" = "%d usats · %d omesos";
+"create.workflowContent.assetUsageItems" = "%d de %d elements";
+"create.workflowContent.beforeVideo" = "Abans del vídeo";
 "create.workflowContent.modePending" = "Mode pending";
 "create.workflowContent.renderPlanFallback" = "Avi comprova mèdia, durada i qualitat abans de reservar crèdits.";
 "create.workflowContent.storyReviewTitle" = "Avi's Cut";
@@ -991,7 +991,7 @@
 "create.workflowContent.tipStoryReady" = "Avi's Cut està a punt. Pas següent: crear el vídeo.";
 "create.workflowContent.tipMediaReady" = "Avi will shape these moments into a simple story plan.";
 "create.workflowContent.tipPickMoments" = "Pick the moments. Avi will shape the story, mood, and pacing.";
-"create.workflowContent.planDetail" = "%ds · %d media items";
+"create.workflowContent.planDetail" = "%ds · %d elements";
 
 "create.renderRows.renderJob" = "Render job";
 "create.renderRows.waitingStatus" = "Waiting for renderer status.";
