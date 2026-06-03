@@ -680,6 +680,7 @@
 "recovery.mediaImportFailure" = "No se pudo añadir esa media. Tus fotos siguen en este dispositivo; inténtalo de nuevo o elige otros ítems.";
 "recovery.mediaUploadUnavailable" = "La subida de media aún no está lista. Tus fotos y videos siguen en este dispositivo; inténtalo de nuevo en un momento.";
 "recovery.mediaStorySaveFailure" = "No se pudo guardar la media de la historia. Tus fotos y videos siguen en este dispositivo; inténtalo de nuevo o elige otros ítems.";
+"recovery.mediaVideoSaveFailure" = "No se pudo guardar la media para crear el video. Tus fotos y videos siguen en este dispositivo; inténtalo de nuevo o elige otros ítems.";
 "recovery.storyStartFailure" = "No se pudo iniciar este Moment para esta historia. No se usaron créditos del video final. Inténtalo de nuevo.";
 "recovery.storyFailure" = "Avi no pudo preparar la historia ahora. No se usaron créditos del video final. Inténtalo de nuevo.";
 "recovery.renderStartFailure" = "No se pudo iniciar la creación del video. No se usaron créditos del video final. Inténtalo de nuevo en un momento.";
@@ -784,8 +785,8 @@
 "workflow.media.noNewMedia" = "No se añadió media nueva.";
 "workflow.media.noRecentPhotos" = "No se encontraron fotos recientes.";
 "workflow.media.noAlbumPhotos" = "No se encontraron fotos en ese álbum.";
-"workflow.media.signInPrepareStory" = "Inicia sesión antes de preparar la historia.";
-"workflow.media.signInAgainPrepareStory" = "Vuelve a iniciar sesión antes de preparar la historia.";
+"workflow.media.signInPrepareStory" = "Inicia sesión antes de continuar.";
+"workflow.media.signInAgainPrepareStory" = "Vuelve a iniciar sesión antes de continuar.";
 "workflow.media.uploading" = "Subiendo media para crear el video.";
 "workflow.media.uploadingProgress" = "Subiendo media %d de %d.";
 "workflow.media.localReady" = "La media local está lista para editar.";

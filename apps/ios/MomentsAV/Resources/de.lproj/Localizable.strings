@@ -680,6 +680,7 @@
 "recovery.mediaImportFailure" = "Diese Medien konnten nicht hinzugefügt werden. Deine Fotos bleiben auf diesem Gerät; versuche es erneut oder wähle andere Elemente.";
 "recovery.mediaUploadUnavailable" = "Der Medien-Upload ist noch nicht bereit. Deine Fotos und Videos bleiben auf diesem Gerät; versuche es gleich erneut.";
 "recovery.mediaStorySaveFailure" = "Die Medien für die Story konnten nicht gespeichert werden. Deine Fotos und Videos bleiben auf diesem Gerät; versuche es erneut oder wähle andere Elemente.";
+"recovery.mediaVideoSaveFailure" = "Die Medien für die Videoerstellung konnten nicht gespeichert werden. Deine Fotos und Videos bleiben auf diesem Gerät; versuche es erneut oder wähle andere Elemente.";
 "recovery.storyStartFailure" = "Dieser Moment konnte für diese Story nicht gestartet werden. Es wurden keine Credits für das finale Video verwendet. Bitte versuche es erneut.";
 "recovery.storyFailure" = "Avi konnte die Story gerade nicht vorbereiten. Es wurden keine Credits für das finale Video verwendet. Bitte versuche es erneut.";
 "recovery.renderStartFailure" = "Die Videoerstellung konnte nicht gestartet werden. Es wurden keine Credits für das finale Video verwendet. Bitte versuche es gleich erneut.";
@@ -784,8 +785,8 @@
 "workflow.media.noNewMedia" = "Keine neuen Medien hinzugefügt.";
 "workflow.media.noRecentPhotos" = "Keine aktuellen Fotos gefunden.";
 "workflow.media.noAlbumPhotos" = "Keine Fotos in diesem Album gefunden.";
-"workflow.media.signInPrepareStory" = "Melde dich an, bevor du die Story vorbereitest.";
-"workflow.media.signInAgainPrepareStory" = "Melde dich erneut an, bevor du die Story vorbereitest.";
+"workflow.media.signInPrepareStory" = "Melde dich an, bevor du fortfährst.";
+"workflow.media.signInAgainPrepareStory" = "Melde dich erneut an, bevor du fortfährst.";
 "workflow.media.uploading" = "Medien für die Videoerstellung werden hochgeladen.";
 "workflow.media.uploadingProgress" = "Medien werden hochgeladen: %d von %d.";
 "workflow.media.localReady" = "Lokale Medien sind bereit zur Bearbeitung.";

@@ -13,6 +13,10 @@ enum MomentsRecoveryCopy {
         L10n.string("recovery.mediaStorySaveFailure")
     }
 
+    static func mediaVideoSaveFailure() -> String {
+        L10n.string("recovery.mediaVideoSaveFailure")
+    }
+
     static func storyStartFailure() -> String {
         L10n.string("recovery.storyStartFailure")
     }

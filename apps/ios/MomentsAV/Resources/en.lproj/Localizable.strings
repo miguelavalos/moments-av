@@ -680,6 +680,7 @@
 "recovery.mediaImportFailure" = "Couldn’t add that media. Your photos are still on this device; try again or choose different items.";
 "recovery.mediaUploadUnavailable" = "Media upload is not ready yet. Your photos and videos are still on this device; please try again in a moment.";
 "recovery.mediaStorySaveFailure" = "Couldn’t save media for the story. Your photos and videos are still on this device; try again or choose different items.";
+"recovery.mediaVideoSaveFailure" = "Couldn’t save media for video creation. Your photos and videos are still on this device; try again or choose different items.";
 "recovery.storyStartFailure" = "Couldn’t start a Moment for this story. No final video credits were used. Please try again.";
 "recovery.storyFailure" = "Avi couldn’t prepare the story right now. No final video credits were used. Please try again.";
 "recovery.renderStartFailure" = "Couldn’t start video creation. No final video credits were used. Please try again in a moment.";
@@ -784,8 +785,8 @@
 "workflow.media.noNewMedia" = "No new media added.";
 "workflow.media.noRecentPhotos" = "No recent photos found.";
 "workflow.media.noAlbumPhotos" = "No photos found in that album.";
-"workflow.media.signInPrepareStory" = "Sign in before preparing the story.";
-"workflow.media.signInAgainPrepareStory" = "Sign in again before preparing the story.";
+"workflow.media.signInPrepareStory" = "Sign in before continuing.";
+"workflow.media.signInAgainPrepareStory" = "Sign in again before continuing.";
 "workflow.media.uploading" = "Uploading media for video creation.";
 "workflow.media.uploadingProgress" = "Uploading media %d of %d.";
 "workflow.media.localReady" = "Local media ready for editing.";

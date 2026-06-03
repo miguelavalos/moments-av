@@ -678,6 +678,7 @@
 "recovery.mediaImportFailure" = "No s’ha pogut afegir aquesta mèdia. Les teves fotos continuen en aquest dispositiu; torna-ho a provar o tria altres ítems.";
 "recovery.mediaUploadUnavailable" = "La pujada de mèdia encara no està a punt. Les teves fotos i vídeos continuen en aquest dispositiu; torna-ho a provar d’aquí a un moment.";
 "recovery.mediaStorySaveFailure" = "No s’ha pogut guardar la mèdia de la història. Les teves fotos i vídeos continuen en aquest dispositiu; torna-ho a provar o tria altres ítems.";
+"recovery.mediaVideoSaveFailure" = "No s’ha pogut guardar la mèdia per crear el vídeo. Les teves fotos i vídeos continuen en aquest dispositiu; torna-ho a provar o tria altres ítems.";
 "recovery.storyStartFailure" = "No s’ha pogut iniciar aquest Moment per a aquesta història. No s’han fet servir crèdits del vídeo final. Torna-ho a provar.";
 "recovery.storyFailure" = "Avi no ha pogut preparar la història ara mateix. No s’han fet servir crèdits del vídeo final. Torna-ho a provar.";
 "recovery.renderStartFailure" = "No s’ha pogut iniciar la creació del vídeo. No s’han fet servir crèdits del vídeo final. Torna-ho a provar d’aquí a un moment.";
@@ -782,8 +783,8 @@
 "workflow.media.noNewMedia" = "No s’ha afegit mèdia nova.";
 "workflow.media.noRecentPhotos" = "No s’han trobat fotos recents.";
 "workflow.media.noAlbumPhotos" = "No s’han trobat fotos en aquest àlbum.";
-"workflow.media.signInPrepareStory" = "Inicia sessió abans de preparar la història.";
-"workflow.media.signInAgainPrepareStory" = "Torna a iniciar sessió abans de preparar la història.";
+"workflow.media.signInPrepareStory" = "Inicia sessió abans de continuar.";
+"workflow.media.signInAgainPrepareStory" = "Torna a iniciar sessió abans de continuar.";
 "workflow.media.uploading" = "Pujant mèdia per crear el vídeo.";
 "workflow.media.uploadingProgress" = "Pujant mèdia %d de %d.";
 "workflow.media.localReady" = "La mèdia local està llesta per editar.";

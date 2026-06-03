@@ -37,6 +37,7 @@ enum MediaUploadPersistence {
         momentId: String,
         uploadClient: MomentsUploadClient,
         mediaAssetSaver: any MomentsMediaAssetSaving,
+        requiresProductStateSave: Bool = true,
         progress: @MainActor @escaping (_ completedCount: Int, _ totalCount: Int) -> Void = { _, _ in },
         shouldContinue: @MainActor () -> Bool
     ) async throws -> MediaUploadPersistenceResult {
@@ -65,11 +66,19 @@ enum MediaUploadPersistence {
         let mediaAssetRequests = uploadedMedia.map {
             MediaAssetPersistenceRequest.asset($0.media, preparedUpload: $0.preparedUpload)
         }
-        let savedMediaAssetIds = try await mediaAssetSaver.saveMediaAssets(
-            ownerUserId: ownerUserId,
-            momentId: momentId,
-            mediaAssets: mediaAssetRequests
-        )
+        let savedMediaAssetIds: [String]
+        do {
+            savedMediaAssetIds = try await mediaAssetSaver.saveMediaAssets(
+                ownerUserId: ownerUserId,
+                momentId: momentId,
+                mediaAssets: mediaAssetRequests
+            )
+        } catch {
+            guard !requiresProductStateSave else {
+                throw error
+            }
+            savedMediaAssetIds = uploadedMedia.map(\.preparedUpload.mediaAssetId)
+        }
 
         let savedMedia = zip(uploadedMedia, savedMediaAssetIds).map { uploaded, savedMediaAssetId in
             MomentsLocalMediaThumbnailCache.store(uploaded.media, mediaAssetId: savedMediaAssetId)

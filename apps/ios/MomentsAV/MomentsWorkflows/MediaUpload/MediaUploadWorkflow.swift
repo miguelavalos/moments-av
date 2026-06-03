@@ -227,6 +227,28 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
     }
 
     func persistSelectedMedia(momentId: String) async -> [MomentsStoryPlanMedia]? {
+        await persistSelectedMedia(
+            momentId: momentId,
+            requiresProductStateSave: true,
+            saveFailureMessage: MomentsRecoveryCopy.mediaStorySaveFailure()
+        )
+    }
+
+    func persistSelectedMediaForFinalVideo(momentId: String) async -> Bool {
+        let selectedCount = selectedMedia.filter(\.selected).count
+        let persistedMedia = await persistSelectedMedia(
+            momentId: momentId,
+            requiresProductStateSave: false,
+            saveFailureMessage: MomentsRecoveryCopy.mediaVideoSaveFailure()
+        )
+        return persistedMedia != nil || selectedCount == 0
+    }
+
+    private func persistSelectedMedia(
+        momentId: String,
+        requiresProductStateSave: Bool,
+        saveFailureMessage: String
+    ) async -> [MomentsStoryPlanMedia]? {
         guard let ownerUserId = currentUserProvider.currentUserId else {
             statusMessage = L10n.string("workflow.media.signInPrepareStory")
             return nil
@@ -279,6 +301,7 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
                 momentId: momentId,
                 uploadClient: uploadClient,
                 mediaAssetSaver: mediaAssetSaver,
+                requiresProductStateSave: requiresProductStateSave,
                 progress: { [weak self] completedCount, totalCount in
                     self?.updateImportProgress(completedCount: completedCount, totalCount: totalCount)
                     self?.statusMessage = L10n.string(
@@ -311,7 +334,7 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
             logger.error(
                 "Media persistence failed apiCode=\(error.code, privacy: .public) selected=\(mediaToSave.count, privacy: .public) pending=\(pendingMediaToSave.count, privacy: .public)"
             )
-            statusMessage = MomentsRecoveryCopy.mediaStorySaveFailure()
+            statusMessage = saveFailureMessage
             isImporting = false
             importProgress = nil
             return nil
@@ -320,7 +343,7 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
             logger.error(
                 "Media persistence failed errorType=\(String(describing: type(of: error)), privacy: .public) selected=\(mediaToSave.count, privacy: .public) pending=\(pendingMediaToSave.count, privacy: .public)"
             )
-            statusMessage = MomentsRecoveryCopy.mediaStorySaveFailure()
+            statusMessage = saveFailureMessage
             isImporting = false
             importProgress = nil
             return nil

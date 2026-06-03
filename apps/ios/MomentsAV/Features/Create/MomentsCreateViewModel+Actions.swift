@@ -244,62 +244,32 @@ extension MomentsCreateViewModel {
             updateFinalRenderStatusMessage(L10n.string("create.error.videoCreationNotConfigured"))
             return
         }
+        guard mediaSelectedCount > 0 else {
+            updateFinalRenderStatusMessage(mediaAvailabilityMessage ?? L10n.string("create.error.mediaUnavailable"))
+            return
+        }
+        guard !isFinalRenderEditingLocked else {
+            updateFinalRenderStatusMessage(finalRenderAvailabilityMessage ?? L10n.string("create.error.videoCreationNotReady"))
+            return
+        }
         let form = form
-        let selectedMedia = selectedMedia
         let creationStyleId = selectedCreationStyle.id
-        let needsStoryPreparation = !isStoryPreparedForCurrentInput
-        let storyPlanWorkflowForFinalVideo: StoryPlanWorkflow?
-        if needsStoryPreparation {
-            guard canPlanStory, let storyPlanWorkflow else {
-                updateFinalRenderStatusMessage(storyAvailabilityMessage
-                    ?? finalRenderAvailabilityMessage
-                    ?? L10n.string("create.error.storyPreparationNotReady"))
-                return
-            }
-            storyPlanWorkflowForFinalVideo = storyPlanWorkflow
-        } else if renderPlan == nil || renderPlan?.momentId != activeMomentId {
-            guard canPrepareFinalRenderPlan else {
-                updateFinalRenderStatusMessage(finalRenderAvailabilityMessage
-                    ?? storyAvailabilityMessage
-                    ?? L10n.string("create.error.reviewBeforeVideo"))
-                return
-            }
-            storyPlanWorkflowForFinalVideo = nil
-        } else {
-            guard canGenerateFinalRender else {
-                updateFinalRenderStatusMessage(finalRenderAvailabilityMessage
-                    ?? storyAvailabilityMessage
-                    ?? L10n.string("create.error.reviewBeforeVideo"))
-                return
-            }
-            storyPlanWorkflowForFinalVideo = nil
-        }
 
-        if needsStoryPreparation {
-            isPreparingStory = true
-        }
         runOperation {
-            defer {
-                if needsStoryPreparation {
-                    self.isPreparingStory = false
-                }
-            }
             let momentId = await self.resolveMomentIdForPreparation(form: form)
 
             guard let momentId else {
                 self.updateFinalRenderStatusMessage(self.momentCreationFailureMessage())
                 return
             }
-            if let storyPlanWorkflow = storyPlanWorkflowForFinalVideo {
-                guard await self.prepareStoryIfNeeded(
-                    momentId: momentId,
-                    form: form,
-                    selectedMedia: selectedMedia,
-                    storyPlanWorkflow: storyPlanWorkflow
-                ) else {
-                    self.updateFinalRenderStatusMessage(self.storySummary.statusMessage
-                        ?? self.storyAvailabilityMessage
-                        ?? L10n.string("create.error.storyPreparationUnfinished"))
+
+            if self.renderPlan == nil || self.renderPlan?.momentId != momentId {
+                guard let mediaUploadWorkflow = self.mediaUploadWorkflow else {
+                    self.updateFinalRenderStatusMessage(self.mediaAvailabilityMessage ?? L10n.string("create.error.mediaUnavailable"))
+                    return
+                }
+                guard await mediaUploadWorkflow.persistSelectedMediaForFinalVideo(momentId: momentId) else {
+                    self.updateFinalRenderStatusMessage(self.mediaStatusMessage ?? MomentsRecoveryCopy.mediaVideoSaveFailure())
                     return
                 }
             }

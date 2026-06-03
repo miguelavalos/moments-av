@@ -60,26 +60,17 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
     }
 
     func canGenerate(template: MomentTemplate, latestPreview: MomentArtifact?) -> Bool {
-        guard let moment = activeWorkspace?.moment else { return false }
+        guard activeWorkspace?.moment != nil else { return false }
         return currentUserProvider.currentUserId != nil
             && isConfigured
-            && MomentsFinalRenderRules.canGenerate(
-                moment: moment,
-                template: template,
-                balance: creditBalanceProvider.currentCreditBalance,
-                latestPreview: latestPreview,
-                storySceneCount: activeWorkspace?.storyScenes.count ?? 0
-            )
+            && MomentsCreditGate.canAfford(template, balance: creditBalanceProvider.currentCreditBalance)
             && !isGenerating
     }
 
     func canPreparePlan() -> Bool {
         currentUserProvider.currentUserId != nil
             && isConfigured
-            && MomentsFinalRenderRules.canPreparePlan(
-                moment: activeWorkspace?.moment,
-                storySceneCount: activeWorkspace?.storyScenes.count ?? 0
-            )
+            && activeWorkspace?.moment != nil
             && !isGenerating
     }
 

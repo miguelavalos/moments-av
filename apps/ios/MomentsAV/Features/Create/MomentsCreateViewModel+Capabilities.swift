@@ -38,13 +38,11 @@ extension MomentsCreateViewModel {
     var canPrepareFinalRenderPlan: Bool {
         !isFinalRenderEditingLocked
             && workflowCapability.canPrepareFinalRenderPlan
-            && isStoryPreparedForCurrentInput
     }
 
     var canGenerateFinalRender: Bool {
         !isFinalRenderEditingLocked
             && workflowCapability.canGenerateFinalRender
-            && isStoryPreparedForCurrentInput
     }
 
     var canRefreshFinalRenderStatus: Bool {
