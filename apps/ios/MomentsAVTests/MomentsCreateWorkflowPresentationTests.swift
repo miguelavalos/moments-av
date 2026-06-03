@@ -177,6 +177,37 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         XCTAssertTrue(presentation.showsMediaFirstWorkspace)
     }
 
+    func testWorkflowPresentationShowsMediaChoiceForEmptyLocalMoment() {
+        let presentation = MomentsCreateWorkflowPresentation.make(
+            activeMomentId: nil,
+            isSignedIn: true,
+            hasMomentWorkspace: false,
+            hasUnsavedLocalMoment: true,
+            template: .birthdayMessage,
+            creationStyleTitle: "Birthday Story",
+            toneTitle: "Warm",
+            tempoTitle: "Balanced",
+            occasionTitle: "Birthday",
+            balance: .empty,
+            mediaSummary: MomentsCreateMediaSummary(),
+            storySummary: MomentsCreateStorySummary(),
+            previewSummary: MomentsCreatePreviewSummary(),
+            finalRenderSummary: MomentsCreateFinalRenderSummary(),
+            availability: MomentsCreateWorkflowAvailability(
+                canAddMedia: true,
+                canPlanStory: false,
+                canGeneratePreview: false,
+                canRefreshPreviewStatus: false,
+                canPrepareFinalRenderPlan: false,
+                canGenerateFinalRender: false,
+                canRefreshFinalRenderStatus: false
+            )
+        )
+
+        XCTAssertFalse(presentation.showsWorkflowCards)
+        XCTAssertTrue(presentation.showsMediaFirstWorkspace)
+    }
+
     func testWorkflowPresentationShowsBlockingPreparationForCriticalWork() {
         var presentation = MomentsCreateWorkflowPresentation(
             activeMomentId: "moment-1",

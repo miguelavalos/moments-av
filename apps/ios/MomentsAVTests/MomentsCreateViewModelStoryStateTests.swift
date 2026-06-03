@@ -4,7 +4,16 @@ import Combine
 
 @MainActor
 final class MomentsCreateViewModelStoryStateTests: XCTestCase {
-    func testBeginNewMomentCanOpenPhotoPicker() {
+    func testBeginNewMomentShowsMediaChoiceByDefault() {
+        let viewModel = MomentsCreateViewModel()
+        viewModel.beginNewMoment()
+
+        XCTAssertTrue(viewModel.hasLocalMomentWorkspace)
+        XCTAssertEqual(viewModel.mediaPickerOpenRequest, 0)
+        XCTAssertTrue(viewModel.workflowPresentation.showsMediaFirstWorkspace)
+    }
+
+    func testBeginNewMomentCanExplicitlyOpenPhotoPicker() {
         let viewModel = MomentsCreateViewModel()
         viewModel.beginNewMoment(openMediaPicker: true)
 

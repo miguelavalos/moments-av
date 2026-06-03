@@ -553,7 +553,7 @@
 "common.edit" = "Edit";
 "create.media.actions" = "Avi media actions";
 "create.media.add" = "Add media";
-"create.media.addCollection" = "Add collection photos";
+"create.media.addCollection" = "Choose an album";
 "create.media.choose" = "Choose photos or clips";
 "create.media.emptySummary" = "Choose photos, clips, or an album from your library.";
 "create.media.finishReorder" = "Finish reorder";
@@ -617,8 +617,8 @@
 "create.form.tone" = "Tone";
 "create.media.addPhotos" = "Add photos";
 "create.media.added" = "Added media";
-"create.media.albums.empty" = "No photo collections";
-"create.media.albums.emptyDetail" = "Create an album in Photos, use a Photos collection, or choose individual photos and clips.";
+"create.media.albums.empty" = "No albums";
+"create.media.albums.emptyDetail" = "Create an album in Photos or choose individual photos and clips.";
 "create.media.albums.loading" = "Loading albums";
 "create.media.albums.unavailable" = "Albums unavailable";
 "create.media.backEditor" = "Back to media editor";
@@ -635,7 +635,7 @@
 "create.media.chooseShort" = "Choose";
 "create.media.editTitle" = "Edit media";
 "create.media.editSummary" = "Tap to delete, add, or reorder.";
-"create.media.collection.confirmTitleFallback" = "Add collection photos?";
+"create.media.collection.confirmTitleFallback" = "Add album photos?";
 "create.media.collection.confirmTitle" = "Add up to %d %@?";
 "create.media.collection.confirmMessage" = "Avi will add up to %d %@ from %@ and skip photos already selected.";
 "create.media.status.ready" = "Media ready. Avi can prepare the story.";

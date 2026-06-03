@@ -35,6 +35,7 @@ struct MomentsCreateWorkflowPresentation: Equatable {
 
     var showsMediaFirstWorkspace: Bool {
         hasMomentWorkspace
+            || hasUnsavedLocalMoment
             || mediaSummary.selectedCount > 0
             || !mediaSummary.syncedMediaAssets.isEmpty
             || previewSummary.latestPreview != nil

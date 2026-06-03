@@ -551,7 +551,7 @@
 "common.edit" = "Editar";
 "create.media.actions" = "Accions de media d'Avi";
 "create.media.add" = "Afegir media";
-"create.media.addCollection" = "Afegir fotos de col·lecció";
+"create.media.addCollection" = "Triar un àlbum";
 "create.media.choose" = "Triar fotos o clips";
 "create.media.emptySummary" = "Tria fotos, clips o un àlbum de la teva biblioteca.";
 "create.media.finishReorder" = "Acabar ordre";
@@ -615,8 +615,8 @@
 "create.form.tone" = "To";
 "create.media.addPhotos" = "Afegir fotos";
 "create.media.added" = "Media afegida";
-"create.media.albums.empty" = "Sense col·leccions de fotos";
-"create.media.albums.emptyDetail" = "Crea un àlbum a Fotos, usa una col·lecció de Fotos o tria fotos i clips individuals.";
+"create.media.albums.empty" = "Sense àlbums";
+"create.media.albums.emptyDetail" = "Crea un àlbum a Fotos o tria fotos i clips individuals.";
 "create.media.albums.loading" = "Carregant àlbums";
 "create.media.albums.unavailable" = "Àlbums no disponibles";
 "create.media.backEditor" = "Tornar a l’editor de media";
@@ -633,7 +633,7 @@
 "create.media.chooseShort" = "Triar";
 "create.media.editTitle" = "Editar mèdia";
 "create.media.editSummary" = "Toca per eliminar, afegir o reordenar.";
-"create.media.collection.confirmTitleFallback" = "Afegir fotos de col·lecció?";
+"create.media.collection.confirmTitleFallback" = "Afegir fotos de l'àlbum?";
 "create.media.collection.confirmTitle" = "Afegir fins a %d %@?";
 "create.media.collection.confirmMessage" = "Avi afegirà fins a %d %@ de %@ i ometrà les fotos ja seleccionades.";
 "create.media.status.ready" = "Mèdia a punt. Avi pot preparar la història.";

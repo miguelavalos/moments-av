@@ -206,7 +206,7 @@ struct MomentsAppShellView: View {
         }
 
         if createViewModel.canBeginNewMoment {
-            createViewModel.beginNewMoment(openMediaPicker: true)
+            createViewModel.beginNewMoment()
         }
         selectRootTab(.create)
     }
@@ -222,7 +222,7 @@ struct MomentsAppShellView: View {
         }
 
         if createViewModel.canBeginNewMoment {
-            createViewModel.beginNewMoment(openMediaPicker: true)
+            createViewModel.beginNewMoment()
         }
         selectRootTab(.create)
     }

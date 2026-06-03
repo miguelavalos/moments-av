@@ -553,7 +553,7 @@
 "common.edit" = "Editar";
 "create.media.actions" = "Acciones de media de Avi";
 "create.media.add" = "Añadir media";
-"create.media.addCollection" = "Añadir fotos de colección";
+"create.media.addCollection" = "Elegir un álbum";
 "create.media.choose" = "Elegir fotos o clips";
 "create.media.emptySummary" = "Elige fotos, clips o un álbum de tu biblioteca.";
 "create.media.finishReorder" = "Terminar orden";
@@ -617,8 +617,8 @@
 "create.form.tone" = "Tono";
 "create.media.addPhotos" = "Añadir fotos";
 "create.media.added" = "Media añadida";
-"create.media.albums.empty" = "Sin colecciones de fotos";
-"create.media.albums.emptyDetail" = "Crea un álbum en Fotos, usa una colección de Fotos o elige fotos y clips individuales.";
+"create.media.albums.empty" = "Sin álbumes";
+"create.media.albums.emptyDetail" = "Crea un álbum en Fotos o elige fotos y clips individuales.";
 "create.media.albums.loading" = "Cargando álbumes";
 "create.media.albums.unavailable" = "Álbumes no disponibles";
 "create.media.backEditor" = "Volver al editor de media";
@@ -635,7 +635,7 @@
 "create.media.chooseShort" = "Elegir";
 "create.media.editTitle" = "Editar medios";
 "create.media.editSummary" = "Toca para eliminar, añadir o reordenar.";
-"create.media.collection.confirmTitleFallback" = "¿Añadir fotos de colección?";
+"create.media.collection.confirmTitleFallback" = "¿Añadir fotos del álbum?";
 "create.media.collection.confirmTitle" = "¿Añadir hasta %d %@?";
 "create.media.collection.confirmMessage" = "Avi añadirá hasta %d %@ de %@ y omitirá fotos ya seleccionadas.";
 "create.media.status.ready" = "Media lista. Avi puede preparar la historia.";
