@@ -59,7 +59,7 @@ struct MomentsCreateFinalRenderPresentation: Equatable {
             return L10n.string("create.final.action.creating")
         }
         return summary.renderPlan == nil
-            ? L10n.string("create.final.preparePlan")
+            ? L10n.string("create.final.createVideo")
             : L10n.string("create.final.createWithCost", creditTitle)
     }
 
@@ -68,7 +68,7 @@ struct MomentsCreateFinalRenderPresentation: Equatable {
             return L10n.string("create.final.empty.prepareStory")
         }
         return summary.renderPlan == nil
-            ? L10n.string("create.final.empty.preparePlan")
+            ? L10n.string("create.final.empty.createVideo")
             : L10n.string("create.final.empty.ready")
     }
 
@@ -78,7 +78,7 @@ struct MomentsCreateFinalRenderPresentation: Equatable {
 
     var creditPolicyMessage: String {
         summary.renderPlan == nil
-            ? L10n.string("create.final.creditPolicy.plan")
+            ? L10n.string("create.final.creditPolicy.preflight")
             : L10n.string("create.final.creditPolicy.create", creditTitle)
     }
 }
@@ -111,37 +111,17 @@ struct MomentsCreateFinalVideoActionPresentation: Equatable {
     var primaryTitle: String {
         hasRenderPlan
             ? L10n.string("create.final.createWithCost", totalCreditCostTitle)
-            : L10n.string("create.final.preparePlan")
+            : L10n.string("create.final.createVideo")
     }
 
     var primaryIconName: String {
-        hasRenderPlan ? "video.fill" : "checklist"
-    }
-
-    var stepTitle: String {
-        hasRenderPlan
-            ? L10n.string("create.final.step.create")
-            : L10n.string("create.final.step.plan")
-    }
-
-    var stepDetail: String {
-        hasRenderPlan
-            ? L10n.string("create.final.step.createDetail", totalCreditCostTitle)
-            : L10n.string("create.final.step.planDetail")
-    }
-
-    var stepBadgeTitle: String {
-        hasRenderPlan ? totalCreditCostTitle : L10n.string("create.final.step.noCredits")
-    }
-
-    var stepIconName: String {
-        hasRenderPlan ? "creditcard.fill" : "checklist"
+        "video.fill"
     }
 
     var creditPolicyMessage: String {
         hasRenderPlan
             ? L10n.string("create.final.creditPolicy.create", totalCreditCostTitle)
-            : L10n.string("create.final.creditPolicy.plan")
+            : L10n.string("create.final.creditPolicy.preflight")
     }
 
     var confirmationTitle: String {

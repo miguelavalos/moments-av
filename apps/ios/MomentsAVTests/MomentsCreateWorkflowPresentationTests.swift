@@ -455,7 +455,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         XCTAssertEqual(presentation.creditTitle, "2 credits")
         XCTAssertEqual(presentation.refreshButtonTitle, "Refreshing final video...")
         XCTAssertEqual(presentation.generateButtonTitle, "Creating final video...")
-        XCTAssertEqual(presentation.emptyMessage, "The video plan is ready. Create the final video when you are ready.")
+        XCTAssertEqual(presentation.emptyMessage, "Ready to create the final video when you are.")
         XCTAssertEqual(
             presentation.creditPolicyMessage,
             "Starting the final video reserves 2 credits. Credits are finalized only after the export is delivered."
@@ -475,7 +475,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
 
         XCTAssertEqual(presentation.creditTitle, "3 credits")
         XCTAssertEqual(presentation.refreshButtonTitle, "Refresh final video")
-        XCTAssertEqual(presentation.generateButtonTitle, "Prepare video plan")
+        XCTAssertEqual(presentation.generateButtonTitle, "Create video")
         XCTAssertEqual(presentation.emptyMessage, "Prepare the story before creating the final video.")
         XCTAssertTrue(presentation.showsEmptyState)
     }
@@ -487,9 +487,9 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         )
 
         XCTAssertEqual(presentation.creditTitle, "2 credits")
-        XCTAssertEqual(presentation.generateButtonTitle, "Prepare video plan")
-        XCTAssertEqual(presentation.emptyMessage, "Prepare the video plan first. No credits are reserved in this step.")
-        XCTAssertEqual(presentation.creditPolicyMessage, "Preparing the video plan does not reserve credits.")
+        XCTAssertEqual(presentation.generateButtonTitle, "Create video")
+        XCTAssertEqual(presentation.emptyMessage, "Create the video when you are ready. Avi checks media and credits first.")
+        XCTAssertEqual(presentation.creditPolicyMessage, "Avi checks media and confirms credits before anything is reserved.")
     }
 
     func testFinalVideoActionPresentationSeparatesPlanAndCreditConfirmation() {
@@ -500,13 +500,9 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         )
 
         XCTAssertFalse(planning.hasRenderPlan)
-        XCTAssertEqual(planning.primaryTitle, "Prepare video plan")
-        XCTAssertEqual(planning.primaryIconName, "checklist")
-        XCTAssertEqual(planning.stepTitle, "Step 2 · Plan first")
-        XCTAssertEqual(planning.stepDetail, "Avi checks media, duration, and quality. No credits reserved.")
-        XCTAssertEqual(planning.stepBadgeTitle, "No credits")
-        XCTAssertEqual(planning.stepIconName, "checklist")
-        XCTAssertEqual(planning.creditPolicyMessage, "Preparing the video plan does not reserve credits.")
+        XCTAssertEqual(planning.primaryTitle, "Create video")
+        XCTAssertEqual(planning.primaryIconName, "video.fill")
+        XCTAssertEqual(planning.creditPolicyMessage, "Avi checks media and confirms credits before anything is reserved.")
         XCTAssertTrue(planning.canAffordSelectedCost)
 
         let ready = MomentsCreateFinalVideoActionPresentation(
@@ -523,10 +519,6 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         XCTAssertEqual(ready.totalCreditCostTitle, "2 credits")
         XCTAssertEqual(ready.primaryTitle, "Create video · 2 credits")
         XCTAssertEqual(ready.primaryIconName, "video.fill")
-        XCTAssertEqual(ready.stepTitle, "Step 3 · Ready to create")
-        XCTAssertEqual(ready.stepDetail, "2 credits reserved when video starts.")
-        XCTAssertEqual(ready.stepBadgeTitle, "2 credits")
-        XCTAssertEqual(ready.stepIconName, "creditcard.fill")
         XCTAssertEqual(
             ready.creditPolicyMessage,
             "Starting the final video reserves 2 credits. Credits are finalized only after the export is delivered."

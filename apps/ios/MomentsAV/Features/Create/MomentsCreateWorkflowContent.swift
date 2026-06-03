@@ -97,6 +97,7 @@ private struct MomentsCreateMediaFirstWorkspace: View {
 
     @State private var showsAviOptions = false
     @State private var showsCreateVideoConfirmation = false
+    @State private var waitsForFinalRenderPlan = false
     @State private var showsDiscardMomentConfirmation = false
     @State private var showsCompactPhotoPicker = false
     @State private var showsCompactAlbumPicker = false
@@ -201,13 +202,29 @@ private struct MomentsCreateMediaFirstWorkspace: View {
             )
             .presentationDetents([.medium, .large])
         }
-        .alert(finalVideoAction.confirmationTitle, isPresented: $showsCreateVideoConfirmation) {
-            Button(L10n.string("create.action.notNow"), role: .cancel) {}
-            Button(finalVideoAction.confirmationActionTitle) {
-                generateFinalRender(false)
-            }
-        } message: {
-            Text(finalVideoAction.confirmationMessage)
+        .sheet(isPresented: $showsCreateVideoConfirmation) {
+            MomentsCreateFinalVideoConfirmationSheet(
+                action: finalVideoAction,
+                confirm: {
+                    showsCreateVideoConfirmation = false
+                    waitsForFinalRenderPlan = false
+                    generateFinalRender(false)
+                },
+                cancel: {
+                    showsCreateVideoConfirmation = false
+                }
+            )
+            .presentationDetents([.medium])
+            .presentationDragIndicator(.visible)
+        }
+        .onChange(of: presentation.finalRenderSummary.renderPlan?.planId) { _, planId in
+            guard waitsForFinalRenderPlan, planId != nil else { return }
+            waitsForFinalRenderPlan = false
+            showsCreateVideoConfirmation = true
+        }
+        .onChange(of: presentation.finalRenderSummary.isGenerating) { _, isGenerating in
+            guard waitsForFinalRenderPlan, !isGenerating, presentation.finalRenderSummary.renderPlan == nil else { return }
+            waitsForFinalRenderPlan = false
         }
         .alert(L10n.string("create.discard.confirmTitle"), isPresented: $showsDiscardMomentConfirmation) {
             Button(L10n.string("create.discard.keep"), role: .cancel) {}
@@ -261,6 +278,7 @@ private struct MomentsCreateMediaFirstWorkspace: View {
         if finalVideoAction.hasRenderPlan {
             showsCreateVideoConfirmation = true
         } else {
+            waitsForFinalRenderPlan = true
             generateFinalRender(false)
         }
     }
@@ -781,6 +799,7 @@ private struct MomentsCreateStoryReviewPage: View {
     let dismiss: () -> Void
 
     @State private var showsCreateVideoConfirmation = false
+    @State private var waitsForFinalRenderPlan = false
     @State private var showsDiscardMomentConfirmation = false
     @State private var removesWatermark = false
 
@@ -914,16 +933,32 @@ private struct MomentsCreateStoryReviewPage: View {
         .background(MomentsTheme.shellBackground.ignoresSafeArea())
         .navigationBarBackButtonHidden(true)
         .toolbar(.hidden, for: .navigationBar)
-        .alert(finalVideoAction.confirmationTitle, isPresented: $showsCreateVideoConfirmation) {
-            Button(L10n.string("create.action.notNow"), role: .cancel) {}
-            Button(finalVideoAction.confirmationActionTitle) {
-                dismiss()
-                Task { @MainActor in
-                    createVideo(removesWatermark)
+        .sheet(isPresented: $showsCreateVideoConfirmation) {
+            MomentsCreateFinalVideoConfirmationSheet(
+                action: finalVideoAction,
+                confirm: {
+                    showsCreateVideoConfirmation = false
+                    waitsForFinalRenderPlan = false
+                    dismiss()
+                    Task { @MainActor in
+                        createVideo(removesWatermark)
+                    }
+                },
+                cancel: {
+                    showsCreateVideoConfirmation = false
                 }
-            }
-        } message: {
-            Text(finalVideoAction.confirmationMessage)
+            )
+            .presentationDetents([.medium])
+            .presentationDragIndicator(.visible)
+        }
+        .onChange(of: presentation.finalRenderSummary.renderPlan?.planId) { _, planId in
+            guard waitsForFinalRenderPlan, planId != nil else { return }
+            waitsForFinalRenderPlan = false
+            showsCreateVideoConfirmation = true
+        }
+        .onChange(of: presentation.finalRenderSummary.isGenerating) { _, isGenerating in
+            guard waitsForFinalRenderPlan, !isGenerating, presentation.finalRenderSummary.renderPlan == nil else { return }
+            waitsForFinalRenderPlan = false
         }
         .alert(L10n.string("create.discard.confirmTitle"), isPresented: $showsDiscardMomentConfirmation) {
             Button(L10n.string("create.discard.keep"), role: .cancel) {}
@@ -989,6 +1024,7 @@ private struct MomentsCreateStoryReviewPage: View {
         if finalVideoAction.hasRenderPlan {
             showsCreateVideoConfirmation = true
         } else {
+            waitsForFinalRenderPlan = true
             createVideo(removesWatermark)
         }
     }
@@ -1476,10 +1512,6 @@ private struct MomentsCreatePrimaryActionBar: View {
                     MomentsCreateRealtimeRenderStatusPanel(status: realtimeStatus)
                 }
 
-                if showsVideoStepCue && finalVideoAction.hasRenderPlan {
-                    MomentsCreateVideoStepCue(action: finalVideoAction)
-                }
-
                 Button(action: primaryAction) {
                     Label(buttonTitle, systemImage: buttonIconName)
                         .font(.system(size: 15, weight: .black))
@@ -1660,10 +1692,10 @@ private struct MomentsCreatePrimaryActionBar: View {
         if presentation.canGenerateFinalRender {
             return finalVideoAction.hasRenderPlan
                 ? finalVideoAction.creditPolicyMessage
-                : L10n.string("create.primary.prepareVideoPlan")
+                : L10n.string("create.primary.createVideoPreflight")
         }
         if canPrepareVideoPlan {
-            return L10n.string("create.primary.prepareVideoPlan")
+            return L10n.string("create.primary.createVideoPreflight")
         }
         if finalVideoAction.hasRenderPlan {
             return presentation.finalRenderAvailabilityMessage
@@ -1687,14 +1719,6 @@ private struct MomentsCreatePrimaryActionBar: View {
             return L10n.string("create.aviCut.status.readyToPrepare")
         }
         return nil
-    }
-
-    private var showsVideoStepCue: Bool {
-        (presentation.canGenerateFinalRender || presentation.canPrepareFinalRenderPlan || finalVideoAction.hasRenderPlan)
-            && !isBusy
-            && presentation.finalRenderSummary.finalExport == nil
-            && presentation.finalRenderSummary.latestFinalJob == nil
-            && presentation.finalRenderSummary.pendingGalleryVideo == nil
     }
 
     private var statusIconName: String {
@@ -1833,67 +1857,133 @@ private struct MomentsCreatePrimaryActionBar: View {
     }
 }
 
-private struct MomentsCreateVideoStepCue: View {
+private struct MomentsCreateFinalVideoConfirmationSheet: View {
     let action: MomentsCreateFinalVideoActionPresentation
+    let confirm: () -> Void
+    let cancel: () -> Void
 
     var body: some View {
-        HStack(alignment: .center, spacing: 10) {
-            Image(systemName: action.stepIconName)
-                .font(.system(size: 13, weight: .black))
-                .foregroundStyle(iconColor)
-                .frame(width: 24, height: 24)
-                .background(iconColor.opacity(0.12), in: Circle())
+        VStack(alignment: .leading, spacing: 16) {
+            HStack(alignment: .top, spacing: 12) {
+                Image(systemName: "video.fill")
+                    .font(.system(size: 17, weight: .black))
+                    .foregroundStyle(.white)
+                    .frame(width: 42, height: 42)
+                    .background(AVBrandColor.textPrimary, in: Circle())
 
-            VStack(alignment: .leading, spacing: 3) {
-                Text(action.stepTitle)
-                    .font(.system(size: 13, weight: .black))
-                    .foregroundStyle(AVBrandColor.textPrimary)
+                VStack(alignment: .leading, spacing: 5) {
+                    Text(L10n.string("create.final.confirmSheet.title"))
+                        .font(.system(size: 21, weight: .black))
+                        .foregroundStyle(AVBrandColor.textPrimary)
+                        .lineLimit(2)
+                        .fixedSize(horizontal: false, vertical: true)
 
-                Text(action.stepDetail)
-                    .font(.caption)
-                    .fontWeight(.semibold)
-                    .foregroundStyle(AVBrandColor.textSecondary)
-                    .lineLimit(2)
-                    .fixedSize(horizontal: false, vertical: true)
+                    Text(L10n.string("create.final.confirmSheet.detail"))
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundStyle(AVBrandColor.textSecondary)
+                        .lineLimit(3)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
 
-            Text(action.stepBadgeTitle)
-                .font(.system(size: 11, weight: .black))
-                .foregroundStyle(badgeColor)
+            VStack(spacing: 8) {
+                MomentsCreateConfirmationMetric(
+                    title: L10n.string("create.final.confirmSheet.cost"),
+                    value: action.totalCreditCostTitle,
+                    systemImage: "creditcard.fill"
+                )
+                MomentsCreateConfirmationMetric(
+                    title: L10n.string("create.final.confirmSheet.media"),
+                    value: mediaUsageTitle,
+                    systemImage: "photo.stack"
+                )
+                MomentsCreateConfirmationMetric(
+                    title: L10n.string("create.final.confirmSheet.duration"),
+                    value: durationTitle,
+                    systemImage: "timer"
+                )
+            }
+
+            Text(action.confirmationMessage)
+                .font(.system(size: 12, weight: .semibold))
+                .foregroundStyle(AVBrandColor.textSecondary)
+                .lineLimit(4)
+                .fixedSize(horizontal: false, vertical: true)
+
+            VStack(spacing: 10) {
+                Button(action: confirm) {
+                    Label(action.confirmationActionTitle, systemImage: "video.fill")
+                        .font(.system(size: 15, weight: .black))
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 48)
+                }
+                .buttonStyle(MomentsCreateSoftActionButtonStyle())
+
+                Button(action: cancel) {
+                    Text(L10n.string("create.action.notNow"))
+                        .font(.system(size: 14, weight: .black))
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 42)
+                }
+                .buttonStyle(MomentsCreateNeutralInlineButtonStyle())
+            }
+        }
+        .padding(.horizontal, 22)
+        .padding(.top, 24)
+        .padding(.bottom, 18)
+        .presentationBackground(MomentsTheme.shellBackground)
+    }
+
+    private var plan: MomentsRenderPlan? {
+        action.summary.renderPlan?.plan
+    }
+
+    private var mediaUsageTitle: String {
+        guard let plan else {
+            return L10n.string("create.final.confirmSheet.mediaPending")
+        }
+        if plan.rejectedAssetCount > 0 {
+            return L10n.string("create.workflowContent.assetUsageSkipped", plan.usedAssetCount, plan.rejectedAssetCount)
+        }
+        return L10n.string("create.workflowContent.assetUsageItems", plan.usedAssetCount, plan.plannedAssetCount)
+    }
+
+    private var durationTitle: String {
+        guard let plan else {
+            return L10n.string("create.workflowContent.beforeVideo")
+        }
+        return "\(plan.targetDurationMs / 1000)s"
+    }
+}
+
+private struct MomentsCreateConfirmationMetric: View {
+    let title: String
+    let value: String
+    let systemImage: String
+
+    var body: some View {
+        HStack(spacing: 10) {
+            Image(systemName: systemImage)
+                .font(.system(size: 12, weight: .black))
+                .foregroundStyle(AVBrandColor.accent)
+                .frame(width: 24, height: 24)
+                .background(AVBrandColor.accent.opacity(0.10), in: Circle())
+
+            Text(title)
+                .font(.system(size: 12, weight: .black))
+                .foregroundStyle(AVBrandColor.textSecondary)
+
+            Spacer(minLength: 10)
+
+            Text(value)
+                .font(.system(size: 13, weight: .black))
+                .foregroundStyle(AVBrandColor.textPrimary)
                 .lineLimit(1)
                 .minimumScaleFactor(0.78)
-                .padding(.horizontal, 8)
-                .padding(.vertical, 5)
-                .background(badgeBackground, in: Capsule())
         }
-        .padding(12)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(backgroundColor, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
-        .overlay {
-            RoundedRectangle(cornerRadius: 8, style: .continuous)
-                .stroke(borderColor, lineWidth: 1)
-        }
-    }
-
-    private var iconColor: Color {
-        action.hasRenderPlan ? AVBrandColor.accent : AVBrandColor.textSecondary
-    }
-
-    private var badgeColor: Color {
-        action.hasRenderPlan ? AVBrandColor.textPrimary : AVBrandColor.textSecondary
-    }
-
-    private var badgeBackground: Color {
-        action.hasRenderPlan ? AVBrandColor.accent.opacity(0.14) : AVBrandColor.mutedSurface.opacity(0.72)
-    }
-
-    private var backgroundColor: Color {
-        action.hasRenderPlan ? AVBrandColor.accent.opacity(0.08) : AVBrandColor.neutral100.opacity(0.70)
-    }
-
-    private var borderColor: Color {
-        action.hasRenderPlan ? AVBrandColor.accent.opacity(0.22) : AVBrandColor.borderSubtle.opacity(0.42)
+        .padding(.horizontal, 12)
+        .padding(.vertical, 10)
+        .background(AVBrandColor.mutedSurface, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
     }
 }
 

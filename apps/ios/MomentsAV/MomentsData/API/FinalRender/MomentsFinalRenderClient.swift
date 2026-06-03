@@ -406,7 +406,7 @@ enum MomentsFinalRenderError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .apiNotConfigured: "Final render is not configured for this build."
-        case .planFailed: "Avi could not prepare the final video plan."
+        case .planFailed: "Avi could not check this Moment for final video creation."
         case .reservationFailed: "Credits could not be reserved for the final video."
         case .generationFailed: "Final render failed before delivery. Credits were not committed unless an export was delivered."
         case .downloadPreparationFailed: "The final video download could not be prepared."
