@@ -64,6 +64,31 @@ final class MomentsAviViewModelTests: XCTestCase {
         )
     }
 
+    func testLoadingCreditsDoNotReadAsZeroCredits() {
+        let presentation = MomentsAviPresentation.make(
+            isSignedIn: true,
+            momentsSummary: InProgressMomentsSummary(),
+            creditBalance: .empty,
+            creditBalanceLoadState: .loading
+        )
+
+        XCTAssertEqual(presentation.creditGuidanceMessage, "Loading your video credit balance.")
+    }
+
+    func testOfflineCreditsExplainNetworkState() {
+        let presentation = MomentsAviPresentation.make(
+            isSignedIn: true,
+            momentsSummary: InProgressMomentsSummary(),
+            creditBalance: .empty,
+            creditBalanceLoadState: .offline
+        )
+
+        XCTAssertEqual(
+            presentation.creditGuidanceMessage,
+            "Connect to the internet to see your balance or get credits."
+        )
+    }
+
     func testViewModelExposesPresentationFromBoundState() {
         let summaryProvider = AviMomentsSummaryProvider()
         let accountProvider = AviAccountStateProvider()
@@ -117,6 +142,7 @@ private final class AviAccountStateProvider: MomentsAccountStateProviding {
     let currentUserId = CurrentValueSubject<String?, Never>(nil)
     let displayName = CurrentValueSubject<String?, Never>(nil)
     let creditBalance = CurrentValueSubject<MomentsCreditBalance, Never>(.empty)
+    let creditBalanceLoadState = CurrentValueSubject<MomentsCreditBalanceLoadState, Never>(.loaded)
 
     var isSignedInPublisher: AnyPublisher<Bool, Never> {
         isSignedIn.eraseToAnyPublisher()
@@ -132,5 +158,9 @@ private final class AviAccountStateProvider: MomentsAccountStateProviding {
 
     var creditBalancePublisher: AnyPublisher<MomentsCreditBalance, Never> {
         creditBalance.eraseToAnyPublisher()
+    }
+
+    var creditBalanceLoadStatePublisher: AnyPublisher<MomentsCreditBalanceLoadState, Never> {
+        creditBalanceLoadState.eraseToAnyPublisher()
     }
 }

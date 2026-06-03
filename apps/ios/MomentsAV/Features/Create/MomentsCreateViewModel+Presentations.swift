@@ -11,6 +11,7 @@ extension MomentsCreateViewModel {
             tempoTitle: form.tempo.title,
             occasionTitle: form.title,
             balance: balance,
+            creditBalanceLoadState: creditBalanceLoadState,
             mediaSummary: mediaSummary,
             storySummary: storySummary,
             previewSummary: previewSummary,

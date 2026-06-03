@@ -19,6 +19,43 @@ enum MomentsCreditCopy {
             : L10n.string("credits.available.detail", availableTitle(balance))
     }
 
+    static func balanceStatusTitle(_ loadState: MomentsCreditBalanceLoadState) -> String {
+        switch loadState {
+        case .signedOut:
+            L10n.string("credits.balance.signedOut.title")
+        case .loading:
+            L10n.string("credits.balance.loading.title")
+        case .loaded:
+            L10n.string("credits.available.title")
+        case .offline:
+            L10n.string("credits.balance.offline.title")
+        case .unavailable:
+            L10n.string("credits.balance.unavailable.title")
+        }
+    }
+
+    static func balanceStatusDetail(_ loadState: MomentsCreditBalanceLoadState) -> String {
+        switch loadState {
+        case .signedOut:
+            L10n.string("credits.balance.signedOut.detail")
+        case .loading:
+            L10n.string("credits.balance.loading.detail")
+        case .loaded:
+            L10n.string("credits.home.ready")
+        case .offline:
+            L10n.string("credits.balance.offline.detail")
+        case .unavailable:
+            L10n.string("credits.balance.unavailable.detail")
+        }
+    }
+
+    static func balanceStatusDetail(
+        _ loadState: MomentsCreditBalanceLoadState,
+        balance: MomentsCreditBalance
+    ) -> String {
+        loadState.hasLoadedBalance ? availableDetail(balance) : balanceStatusDetail(loadState)
+    }
+
     static func proMonthlyDetail(_ balance: MomentsCreditBalance) -> String {
         L10n.string("credits.proMonthly.detail", balance.proMonthly, monthlyVideoCreditsIncluded)
     }

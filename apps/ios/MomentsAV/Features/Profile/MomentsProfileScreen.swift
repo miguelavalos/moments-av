@@ -222,29 +222,38 @@ struct MomentsProfileScreen: View {
     private var creditsCard: some View {
         AVSettingsSectionCard(
             title: localized("credits.title"),
-            subtitle: MomentsCreditCopy.availableDetail(accountController.creditBalance)
+            subtitle: MomentsCreditCopy.balanceStatusDetail(
+                accountController.creditBalanceLoadState,
+                balance: accountController.creditBalance
+            )
         ) {
             VStack(alignment: .leading, spacing: 12) {
                 AVSettingsInfoRow(
-                    systemImage: "creditcard",
-                    title: localized("credits.available.title"),
-                    detail: MomentsCreditCopy.availableDetail(accountController.creditBalance)
-                )
-
-                Button {
-                    withAnimation(.easeInOut(duration: 0.18)) {
-                        showsCreditDetails.toggle()
-                    }
-                } label: {
-                    Label(
-                        showsCreditDetails ? localized("paywall.wallet.hideDetails") : localized("paywall.wallet.viewDetails"),
-                        systemImage: showsCreditDetails ? "chevron.up" : "chevron.down"
+                    systemImage: accountController.creditBalanceLoadState.systemImage,
+                    title: creditBalanceRowTitle,
+                    detail: MomentsCreditCopy.balanceStatusDetail(
+                        accountController.creditBalanceLoadState,
+                        balance: accountController.creditBalance
                     )
-                        .font(.system(size: 13, weight: .bold, design: .rounded))
-                }
-                .buttonStyle(.plain)
+                )
+                .redacted(reason: accountController.creditBalanceLoadState.isLoading ? .placeholder : [])
 
-                if showsCreditDetails {
+                if accountController.creditBalanceLoadState.hasLoadedBalance {
+                    Button {
+                        withAnimation(.easeInOut(duration: 0.18)) {
+                            showsCreditDetails.toggle()
+                        }
+                    } label: {
+                        Label(
+                            showsCreditDetails ? localized("paywall.wallet.hideDetails") : localized("paywall.wallet.viewDetails"),
+                            systemImage: showsCreditDetails ? "chevron.up" : "chevron.down"
+                        )
+                            .font(.system(size: 13, weight: .bold, design: .rounded))
+                    }
+                    .buttonStyle(.plain)
+                }
+
+                if showsCreditDetails, accountController.creditBalanceLoadState.hasLoadedBalance {
                     ForEach(MomentsCreditCopy.detailRows(for: accountController.creditBalance)) { row in
                         AVSettingsInfoRow(
                             systemImage: row.systemImage,
@@ -255,12 +264,22 @@ struct MomentsProfileScreen: View {
                 }
             }
 
-            AVSettingsButton(
-                title: localized("credits.getMore"),
-                style: .primary,
-                action: openCredits
-            )
-            .accessibilityIdentifier("profile.credits.open")
+            if !accountController.creditBalanceLoadState.isLoading {
+                AVSettingsButton(
+                    title: accountController.creditBalanceLoadState.hasLoadedBalance
+                        ? localized("credits.getMore")
+                        : localized("credits.balance.retry.title"),
+                    style: .primary,
+                    action: accountController.creditBalanceLoadState.hasLoadedBalance
+                        ? openCredits
+                        : retryCreditBalance
+                )
+                .accessibilityIdentifier(
+                    accountController.creditBalanceLoadState.hasLoadedBalance
+                        ? "profile.credits.open"
+                        : "profile.credits.retry"
+                )
+            }
         }
     }
 
@@ -472,9 +491,25 @@ struct MomentsProfileScreen: View {
 
     private var accessDetail: String {
         if accountController.isSignedIn {
-            return MomentsCreditCopy.availableDetail(accountController.creditBalance)
+            return MomentsCreditCopy.balanceStatusDetail(
+                accountController.creditBalanceLoadState,
+                balance: accountController.creditBalance
+            )
         }
         return localized("profile.summary.plan.detail.guest")
+    }
+
+    private var creditBalanceRowTitle: String {
+        guard accountController.creditBalanceLoadState.hasLoadedBalance else {
+            return MomentsCreditCopy.balanceStatusTitle(accountController.creditBalanceLoadState)
+        }
+        return localized("credits.available.title")
+    }
+
+    private func retryCreditBalance() {
+        Task {
+            await accountController.refreshCreditBalance()
+        }
     }
 
     private var momentsProSubtitle: String {

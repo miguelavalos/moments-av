@@ -22,6 +22,7 @@ protocol MomentsAccountStateProviding: AnyObject {
     var currentUserIdPublisher: AnyPublisher<String?, Never> { get }
     var displayNamePublisher: AnyPublisher<String?, Never> { get }
     var creditBalancePublisher: AnyPublisher<MomentsCreditBalance, Never> { get }
+    var creditBalanceLoadStatePublisher: AnyPublisher<MomentsCreditBalanceLoadState, Never> { get }
 }
 
 @MainActor

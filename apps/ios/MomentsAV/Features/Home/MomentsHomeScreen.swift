@@ -12,6 +12,7 @@ struct MomentsHomeScreen: View {
     let openAccount: () -> Void
     let startSignInFlow: () -> Void
     let openCredits: () -> Void
+    let retryCredits: () -> Void
     let selectTab: (MomentsRootTab) -> Void
     let startMoment: () -> Void
     let continueMoment: (MomentsContinuationRequest) -> Void
@@ -29,6 +30,7 @@ struct MomentsHomeScreen: View {
         openAccount: @escaping () -> Void,
         startSignInFlow: @escaping () -> Void,
         openCredits: @escaping () -> Void,
+        retryCredits: @escaping () -> Void,
         selectTab: @escaping (MomentsRootTab) -> Void,
         startMoment: @escaping () -> Void,
         continueMoment: @escaping (MomentsContinuationRequest) -> Void
@@ -37,6 +39,7 @@ struct MomentsHomeScreen: View {
         self.openAccount = openAccount
         self.startSignInFlow = startSignInFlow
         self.openCredits = openCredits
+        self.retryCredits = retryCredits
         self.selectTab = selectTab
         self.startMoment = startMoment
         self.continueMoment = continueMoment
@@ -69,7 +72,9 @@ struct MomentsHomeScreen: View {
             if viewModel.isSignedIn {
                 MomentsHomeAccountCard(
                     creditBalance: viewModel.creditBalance,
-                    openCredits: openCredits
+                    creditBalanceLoadState: viewModel.creditBalanceLoadState,
+                    openCredits: openCredits,
+                    retryCredits: retryCredits
                 )
             } else {
                 MomentsHomeSignInCard(startSignInFlow: startSignInFlow)

@@ -6,6 +6,7 @@ import Foundation
 final class AccountController: ObservableObject {
     @Published private(set) var user: AccountAVUser?
     @Published private(set) var creditBalance = MomentsCreditBalance.empty
+    @Published private(set) var creditBalanceLoadState = MomentsCreditBalanceLoadState.signedOut
     @Published private(set) var purchaseCatalog = MomentsPurchaseCatalog.empty
     @Published private(set) var isPurchaseCatalogLoading = false
     @Published private(set) var purchaseCatalogErrorMessage: String?
@@ -42,10 +43,9 @@ final class AccountController: ObservableObject {
     func refresh() {
         user = service.currentUser
         if user == nil {
-            creditBalance = .empty
-            purchaseCatalog = .empty
-            purchaseCatalogErrorMessage = nil
+            resetSignedOutAccountState()
         } else {
+            creditBalanceLoadState = .loading
             Task { await refreshCreditBalance() }
         }
     }
@@ -61,9 +61,7 @@ final class AccountController: ObservableObject {
             }
         }
         if user == nil {
-            creditBalance = .empty
-            purchaseCatalog = .empty
-            purchaseCatalogErrorMessage = nil
+            resetSignedOutAccountState()
         } else {
             await refreshCreditBalance()
         }
@@ -86,9 +84,7 @@ final class AccountController: ObservableObject {
             try await self.service.signOut()
             await self.purchaseService.logOut()
             self.user = nil
-            self.creditBalance = .empty
-            self.purchaseCatalog = .empty
-            self.purchaseCatalogErrorMessage = nil
+            self.resetSignedOutAccountState()
         }
     }
 
@@ -99,6 +95,7 @@ final class AccountController: ObservableObject {
         let token = try await service.getToken() ?? user.id
         let response = try await promoCodeClient.redeem(code: normalizedCode, bearerToken: token)
         creditBalance = response.balance
+        creditBalanceLoadState = .loaded
         return response.creditsGranted
     }
 
@@ -157,14 +154,17 @@ final class AccountController: ObservableObject {
 
     func refreshCreditBalance() async {
         guard let user else {
-            creditBalance = .empty
+            resetSignedOutAccountState()
             return
         }
 
+        creditBalanceLoadState = .loading
         do {
             let token = try await service.getToken() ?? user.id
             creditBalance = try await balanceClient.fetchBalance(bearerToken: token)
+            creditBalanceLoadState = .loaded
         } catch {
+            creditBalanceLoadState = MomentsCreditBalanceLoadState.failureState(for: error)
             errorMessage = error.localizedDescription
         }
     }
@@ -180,6 +180,13 @@ final class AccountController: ObservableObject {
             try? await Task.sleep(nanoseconds: 1_500_000_000)
             await self?.refreshCreditBalance()
         }
+    }
+
+    private func resetSignedOutAccountState() {
+        creditBalance = .empty
+        creditBalanceLoadState = .signedOut
+        purchaseCatalog = .empty
+        purchaseCatalogErrorMessage = nil
     }
 
     private func startAuthTask(_ operation: @escaping () async throws -> Void) {
@@ -366,5 +373,9 @@ extension AccountController: MomentsCurrentUserProviding, MomentsAuthTokenProvid
 
     var creditBalancePublisher: AnyPublisher<MomentsCreditBalance, Never> {
         $creditBalance.eraseToAnyPublisher()
+    }
+
+    var creditBalanceLoadStatePublisher: AnyPublisher<MomentsCreditBalanceLoadState, Never> {
+        $creditBalanceLoadState.eraseToAnyPublisher()
     }
 }

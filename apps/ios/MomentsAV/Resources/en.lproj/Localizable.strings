@@ -280,6 +280,15 @@
 "credits.home.ready" = "Ready to spend on private memory films.";
 "credits.manage.detail" = "View wallet details, purchases, and restore options.";
 "credits.manage.title" = "Manage credits";
+"credits.balance.signedOut.title" = "Sign in for credits";
+"credits.balance.signedOut.detail" = "Credits appear here after sign in.";
+"credits.balance.loading.title" = "Checking credits";
+"credits.balance.loading.detail" = "Loading your video credit balance.";
+"credits.balance.offline.title" = "Credits unavailable offline";
+"credits.balance.offline.detail" = "Connect to the internet to see your balance or get credits.";
+"credits.balance.unavailable.title" = "Credits could not load";
+"credits.balance.unavailable.detail" = "Moments AV could not reach the credit service. Try again in a moment.";
+"credits.balance.retry.title" = "Try again";
 "credits.noun.one" = "credit";
 "credits.noun.other" = "credits";
 "credits.other.detail" = "%d other";
@@ -758,6 +767,9 @@
 "create.availability.finalRenderNotConfigured" = "Final video creation is not configured for this build.";
 "create.availability.finalRenderMissingWorkspace" = "Wait for this Moment to sync before creating the final video.";
 "create.availability.finalRenderInsufficientCredits" = "Add %d more %@ before creating the final video.";
+"create.availability.finalRenderCreditsLoading" = "Checking your credits before the final video.";
+"create.availability.finalRenderCreditsOffline" = "Connect to the internet before creating the final video.";
+"create.availability.finalRenderCreditsUnavailable" = "Credits could not be checked. Try again before creating the final video.";
 "account.error.unavailable" = "Account sign-in is not configured for this build.";
 "account.displayName.user" = "Moments AV user";
 "purchase.error.notConfigured" = "Purchases are not configured for this build.";

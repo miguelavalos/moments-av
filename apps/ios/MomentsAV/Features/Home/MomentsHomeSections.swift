@@ -3,22 +3,38 @@ import SwiftUI
 
 struct MomentsHomeAccountCard: View {
     let creditBalance: MomentsCreditBalance
+    let creditBalanceLoadState: MomentsCreditBalanceLoadState
     let openCredits: () -> Void
+    let retryCredits: () -> Void
 
     var body: some View {
         AVAppShellDashboardSection(
             title: L10n.string("credits.title"),
             detail: creditDetail
         ) {
-            AVAppShellMetricStrip(metrics: creditMetrics)
-            AVAppShellActionRow(
-                title: creditBalance.spendable > 0 ? L10n.string("credits.manage.title") : L10n.string("credits.get.title"),
-                detail: creditBalance.spendable > 0 ? L10n.string("credits.manage.detail") : L10n.string("credits.get.detail"),
-                systemImage: creditBalance.spendable > 0 ? "creditcard.fill" : "plus.circle.fill",
-                isProminent: creditBalance.spendable == 0,
-                accessibilityIdentifier: "moments.home.credits.open",
-                action: openCredits
-            )
+            if creditBalanceLoadState.isLoading {
+                AVAppShellMetricStrip(metrics: loadingCreditMetrics)
+                    .redacted(reason: .placeholder)
+            } else if creditBalanceLoadState.hasLoadedBalance {
+                AVAppShellMetricStrip(metrics: creditMetrics)
+                AVAppShellActionRow(
+                    title: creditBalance.spendable > 0 ? L10n.string("credits.manage.title") : L10n.string("credits.get.title"),
+                    detail: creditBalance.spendable > 0 ? L10n.string("credits.manage.detail") : L10n.string("credits.get.detail"),
+                    systemImage: creditBalance.spendable > 0 ? "creditcard.fill" : "plus.circle.fill",
+                    isProminent: creditBalance.spendable == 0,
+                    accessibilityIdentifier: "moments.home.credits.open",
+                    action: openCredits
+                )
+            } else {
+                AVAppShellActionRow(
+                    title: L10n.string("credits.balance.retry.title"),
+                    detail: MomentsCreditCopy.balanceStatusDetail(creditBalanceLoadState),
+                    systemImage: creditBalanceLoadState.systemImage,
+                    isProminent: false,
+                    accessibilityIdentifier: "moments.home.credits.retry",
+                    action: retryCredits
+                )
+            }
         }
     }
 
@@ -34,11 +50,25 @@ struct MomentsHomeAccountCard: View {
     }
 
     private var creditDetail: String {
+        guard creditBalanceLoadState.hasLoadedBalance else {
+            return MomentsCreditCopy.balanceStatusDetail(creditBalanceLoadState)
+        }
         if creditBalance.spendable == 0 {
             return L10n.string("credits.home.none")
         }
 
         return L10n.string("credits.home.ready")
+    }
+
+    private var loadingCreditMetrics: [AVAppShellMetric] {
+        [
+            AVAppShellMetric(
+                id: "spendable-loading",
+                title: L10n.string("credits.available.title"),
+                value: "...",
+                systemImage: "creditcard"
+            )
+        ]
     }
 }
 

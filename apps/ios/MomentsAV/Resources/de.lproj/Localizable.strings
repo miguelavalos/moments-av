@@ -168,6 +168,15 @@
 "credits.home.ready" = "Bereit für private Erinnerungsvideos.";
 "credits.manage.detail" = "Guthaben-Details, Käufe und Wiederherstellung anzeigen.";
 "credits.manage.title" = "Guthaben verwalten";
+"credits.balance.signedOut.title" = "Anmelden für Guthaben";
+"credits.balance.signedOut.detail" = "Guthaben erscheint hier nach der Anmeldung.";
+"credits.balance.loading.title" = "Guthaben wird geprüft";
+"credits.balance.loading.detail" = "Dein Video-Guthaben wird geladen.";
+"credits.balance.offline.title" = "Guthaben offline nicht verfügbar";
+"credits.balance.offline.detail" = "Verbinde dich mit dem Internet, um dein Guthaben zu sehen oder Guthaben zu erhalten.";
+"credits.balance.unavailable.title" = "Guthaben konnte nicht geladen werden";
+"credits.balance.unavailable.detail" = "Moments AV konnte den Guthaben-Dienst nicht erreichen. Versuche es gleich erneut.";
+"credits.balance.retry.title" = "Erneut versuchen";
 "credits.noun.one" = "Guthabenpunkt";
 "credits.noun.other" = "Guthabenpunkte";
 "credits.other.detail" = "%d andere";
@@ -758,6 +767,9 @@
 "create.availability.finalRenderNotConfigured" = "Finale Videoerstellung ist für diesen Build nicht konfiguriert.";
 "create.availability.finalRenderMissingWorkspace" = "Warte, bis dieser Moment synchronisiert ist, bevor du das finale Video erstellst.";
 "create.availability.finalRenderInsufficientCredits" = "Füge %d weitere %@ hinzu, bevor du das finale Video erstellst.";
+"create.availability.finalRenderCreditsLoading" = "Dein Guthaben wird vor dem finalen Video geprüft.";
+"create.availability.finalRenderCreditsOffline" = "Verbinde dich mit dem Internet, bevor du das finale Video erstellst.";
+"create.availability.finalRenderCreditsUnavailable" = "Guthaben konnte nicht geprüft werden. Versuche es erneut, bevor du das finale Video erstellst.";
 "account.error.unavailable" = "Konto-Anmeldung ist für diesen Build nicht konfiguriert.";
 "account.displayName.user" = "Moments AV Nutzer";
 "purchase.error.notConfigured" = "Käufe sind für diesen Build nicht konfiguriert.";

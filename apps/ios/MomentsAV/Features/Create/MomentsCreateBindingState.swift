@@ -3,6 +3,7 @@ import Foundation
 struct MomentsCreateAccountState {
     let isSignedIn: Bool
     let balance: MomentsCreditBalance
+    let creditBalanceLoadState: MomentsCreditBalanceLoadState
 }
 
 struct MomentsCreateMomentCreationState {

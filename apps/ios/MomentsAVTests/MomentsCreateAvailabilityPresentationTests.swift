@@ -198,6 +198,40 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
         )
     }
 
+    func testFinalRenderCreditsLoadingDoesNotReportInsufficientCredits() {
+        XCTAssertEqual(
+            MomentsCreateAvailabilityMessageFactory.finalRender(
+                activeMomentId: "moment-1",
+                isFinalRenderAvailable: true,
+                isFinalRenderGenerating: false,
+                isFinalRenderConfigured: true,
+                moment: MomentsCreateTestFixtures.makeMoment(id: "moment-1", status: "story_ready"),
+                template: .birthdayMessage,
+                balance: .empty,
+                creditBalanceLoadState: .loading,
+                latestPreview: nil
+            ),
+            "Checking your credits before the final video."
+        )
+    }
+
+    func testFinalRenderCreditsOfflineDoesNotReportInsufficientCredits() {
+        XCTAssertEqual(
+            MomentsCreateAvailabilityMessageFactory.finalRender(
+                activeMomentId: "moment-1",
+                isFinalRenderAvailable: true,
+                isFinalRenderGenerating: false,
+                isFinalRenderConfigured: true,
+                moment: MomentsCreateTestFixtures.makeMoment(id: "moment-1", status: "story_ready"),
+                template: .birthdayMessage,
+                balance: .empty,
+                creditBalanceLoadState: .offline,
+                latestPreview: nil
+            ),
+            "Connect to the internet before creating the final video."
+        )
+    }
+
     func testRefreshAvailabilityFactoryFormatsPreviewAndFinalMessages() {
         let preview = MomentsCreateRefreshAvailabilityFactory.preview(
             momentId: nil,

@@ -6,10 +6,12 @@ struct MomentsInProgressScreen: View {
     @EnvironmentObject private var createViewModel: MomentsCreateViewModel
     @State private var momentPendingDeletion: InProgressMoment?
     let balance: MomentsCreditBalance
+    let creditBalanceLoadState: MomentsCreditBalanceLoadState
     let continueMoment: (MomentsContinuationRequest) -> Void
     let startMoment: () -> Void
     let startSignInFlow: () -> Void
     let openCredits: () -> Void
+    let retryCredits: () -> Void
 
     private var presentation: MomentsInProgressPresentation {
         MomentsInProgressPresentation.make(
@@ -21,16 +23,20 @@ struct MomentsInProgressScreen: View {
 
     init(
         balance: MomentsCreditBalance = .empty,
+        creditBalanceLoadState: MomentsCreditBalanceLoadState = .loaded,
         continueMoment: @escaping (MomentsContinuationRequest) -> Void = { _ in },
         startMoment: @escaping () -> Void = {},
         startSignInFlow: @escaping () -> Void = {},
-        openCredits: @escaping () -> Void = {}
+        openCredits: @escaping () -> Void = {},
+        retryCredits: @escaping () -> Void = {}
     ) {
         self.balance = balance
+        self.creditBalanceLoadState = creditBalanceLoadState
         self.continueMoment = continueMoment
         self.startMoment = startMoment
         self.startSignInFlow = startSignInFlow
         self.openCredits = openCredits
+        self.retryCredits = retryCredits
     }
 
     var body: some View {
@@ -47,6 +53,7 @@ struct MomentsInProgressScreen: View {
             MomentsInProgressCard(
                 presentation: presentation,
                 balance: balance,
+                creditBalanceLoadState: creditBalanceLoadState,
                 momentsSummary: viewModel.momentsSummary,
                 selectedMomentId: viewModel.selectedMomentId,
                 isLoadingMomentWorkspace: viewModel.isLoadingMomentWorkspace,
@@ -58,6 +65,7 @@ struct MomentsInProgressScreen: View {
                 startMoment: startMoment,
                 startSignInFlow: startSignInFlow,
                 openCredits: openCredits,
+                retryCredits: retryCredits,
                 requestDeleteMoment: { moment in
                     momentPendingDeletion = moment
                 }

@@ -6,6 +6,7 @@ import SwiftUI
 struct MomentsInProgressCard: View {
     let presentation: MomentsInProgressPresentation
     let balance: MomentsCreditBalance
+    let creditBalanceLoadState: MomentsCreditBalanceLoadState
     let momentsSummary: InProgressMomentsSummary
     let selectedMomentId: String?
     let isLoadingMomentWorkspace: Bool
@@ -17,6 +18,7 @@ struct MomentsInProgressCard: View {
     let startMoment: () -> Void
     let startSignInFlow: () -> Void
     let openCredits: () -> Void
+    let retryCredits: () -> Void
     let requestDeleteMoment: (InProgressMoment) -> Void
 
     var body: some View {
@@ -30,13 +32,23 @@ struct MomentsInProgressCard: View {
                     startSignInFlow: startSignInFlow
                 )
             case let .empty(unavailable):
-                MomentsInProgressCreditStatus(balance: balance, openCredits: openCredits)
+                MomentsInProgressCreditStatus(
+                    balance: balance,
+                    creditBalanceLoadState: creditBalanceLoadState,
+                    openCredits: openCredits,
+                    retryCredits: retryCredits
+                )
                 MomentsInProgressEmptyContent(
                     unavailable: unavailable,
                     startMoment: startMoment
                 )
             case .available:
-                MomentsInProgressCreditStatus(balance: balance, openCredits: openCredits)
+                MomentsInProgressCreditStatus(
+                    balance: balance,
+                    creditBalanceLoadState: creditBalanceLoadState,
+                    openCredits: openCredits,
+                    retryCredits: retryCredits
+                )
                 MomentsInProgressContinueBlock(
                     moments: continueMoments,
                     continueMoment: continueMoment,
@@ -54,22 +66,24 @@ struct MomentsInProgressCard: View {
 
 private struct MomentsInProgressCreditStatus: View {
     let balance: MomentsCreditBalance
+    let creditBalanceLoadState: MomentsCreditBalanceLoadState
     let openCredits: () -> Void
+    let retryCredits: () -> Void
 
     var body: some View {
         AVAppShellCard {
             HStack(alignment: .center, spacing: 12) {
-                Image(systemName: balance.spendable > 0 ? "creditcard.fill" : "exclamationmark.circle.fill")
+                Image(systemName: systemImage)
                     .font(.system(size: 18, weight: .bold))
-                    .foregroundStyle(balance.spendable > 0 ? AVBrandColor.accent : AVBrandColor.textSecondary)
+                    .foregroundStyle(iconColor)
                     .frame(width: 28, height: 28)
 
                 VStack(alignment: .leading, spacing: 3) {
-                    Text(L10n.string("credits.available.detail", MomentsCreditCopy.countTitle(balance.spendable)))
+                    Text(title)
                         .font(.system(size: 15, weight: .black))
                         .foregroundStyle(AVBrandColor.textPrimary)
 
-                    Text(balance.spendable > 0 ? L10n.string("inProgress.credits.ready") : L10n.string("inProgress.credits.needed"))
+                    Text(detail)
                         .font(AVBrandTypography.captionStrong)
                         .foregroundStyle(AVBrandColor.textSecondary)
                         .lineLimit(1)
@@ -78,13 +92,55 @@ private struct MomentsInProgressCreditStatus: View {
 
                 Spacer(minLength: 8)
 
-                Button(action: openCredits) {
-                    Label(balance.spendable > 0 ? L10n.string("common.manage") : L10n.string("common.get"), systemImage: "plus.circle.fill")
-                        .font(.system(size: 13, weight: .black))
+                if !creditBalanceLoadState.isLoading {
+                    Button(action: creditBalanceLoadState.hasLoadedBalance ? openCredits : retryCredits) {
+                        Label(buttonTitle, systemImage: buttonSystemImage)
+                            .font(.system(size: 13, weight: .black))
+                    }
+                    .buttonStyle(.bordered)
                 }
-                .buttonStyle(.bordered)
             }
+            .redacted(reason: creditBalanceLoadState.isLoading ? .placeholder : [])
         }
+    }
+
+    private var systemImage: String {
+        guard creditBalanceLoadState.hasLoadedBalance else {
+            return creditBalanceLoadState.systemImage
+        }
+        return balance.spendable > 0 ? "creditcard.fill" : "exclamationmark.circle.fill"
+    }
+
+    private var iconColor: Color {
+        creditBalanceLoadState.hasLoadedBalance && balance.spendable > 0 ? AVBrandColor.accent : AVBrandColor.textSecondary
+    }
+
+    private var title: String {
+        guard creditBalanceLoadState.hasLoadedBalance else {
+            return MomentsCreditCopy.balanceStatusTitle(creditBalanceLoadState)
+        }
+        return L10n.string("credits.available.detail", MomentsCreditCopy.countTitle(balance.spendable))
+    }
+
+    private var detail: String {
+        guard creditBalanceLoadState.hasLoadedBalance else {
+            return MomentsCreditCopy.balanceStatusDetail(creditBalanceLoadState)
+        }
+        return balance.spendable > 0 ? L10n.string("inProgress.credits.ready") : L10n.string("inProgress.credits.needed")
+    }
+
+    private var buttonTitle: String {
+        if creditBalanceLoadState.hasLoadedBalance {
+            return balance.spendable > 0 ? L10n.string("common.manage") : L10n.string("common.get")
+        }
+        return L10n.string("credits.balance.retry.title")
+    }
+
+    private var buttonSystemImage: String {
+        if creditBalanceLoadState.hasLoadedBalance {
+            return "plus.circle.fill"
+        }
+        return "arrow.clockwise"
     }
 }
 

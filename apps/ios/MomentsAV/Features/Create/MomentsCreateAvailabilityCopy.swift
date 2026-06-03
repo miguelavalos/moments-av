@@ -20,6 +20,21 @@ enum MomentsCreateAvailabilityCopy {
     static var finalRenderNotConfigured: String { L10n.string("create.availability.finalRenderNotConfigured") }
     static var finalRenderMissingWorkspace: String { L10n.string("create.availability.finalRenderMissingWorkspace") }
 
+    static func finalRenderCreditBalanceUnavailable(_ loadState: MomentsCreditBalanceLoadState) -> String {
+        switch loadState {
+        case .loading:
+            L10n.string("create.availability.finalRenderCreditsLoading")
+        case .offline:
+            L10n.string("create.availability.finalRenderCreditsOffline")
+        case .unavailable:
+            L10n.string("create.availability.finalRenderCreditsUnavailable")
+        case .signedOut:
+            momentSignInRequired
+        case .loaded:
+            ""
+        }
+    }
+
     static func finalRenderInsufficientCredits(missingCredits: Int) -> String {
         L10n.string("create.availability.finalRenderInsufficientCredits", missingCredits, MomentsCreditCopy.noun(missingCredits))
     }

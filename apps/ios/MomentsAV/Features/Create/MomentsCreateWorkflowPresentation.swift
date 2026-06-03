@@ -11,6 +11,7 @@ struct MomentsCreateWorkflowPresentation: Equatable {
     var tempoTitle = ""
     var occasionTitle = ""
     var balance: MomentsCreditBalance
+    var creditBalanceLoadState = MomentsCreditBalanceLoadState.loaded
     var mediaSummary: MomentsCreateMediaSummary
     var storySummary: MomentsCreateStorySummary
     var previewSummary: MomentsCreatePreviewSummary
@@ -80,6 +81,7 @@ struct MomentsCreateWorkflowPresentation: Equatable {
         tempoTitle: String,
         occasionTitle: String,
         balance: MomentsCreditBalance,
+        creditBalanceLoadState: MomentsCreditBalanceLoadState = .loaded,
         mediaSummary: MomentsCreateMediaSummary,
         storySummary: MomentsCreateStorySummary,
         previewSummary: MomentsCreatePreviewSummary,
@@ -97,6 +99,7 @@ struct MomentsCreateWorkflowPresentation: Equatable {
             tempoTitle: tempoTitle,
             occasionTitle: occasionTitle,
             balance: balance,
+            creditBalanceLoadState: creditBalanceLoadState,
             mediaSummary: mediaSummary,
             storySummary: storySummary,
             previewSummary: previewSummary,

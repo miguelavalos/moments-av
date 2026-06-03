@@ -167,7 +167,8 @@ final class MomentsCreateViewModelStoryStateTests: XCTestCase {
         viewModel.applyAccountState(
             MomentsCreateAccountState(
                 isSignedIn: true,
-                balance: MomentsCreditBalance(proMonthly: 0, promotional: 15, purchased: 0)
+                balance: MomentsCreditBalance(proMonthly: 0, promotional: 15, purchased: 0),
+                creditBalanceLoadState: .loaded
             )
         )
         viewModel.beginNewMoment(openMediaPicker: false)
@@ -220,6 +221,7 @@ private final class MomentCreationFailureHarness:
     private let balanceSubject = CurrentValueSubject<MomentsCreditBalance, Never>(
         MomentsCreditBalance(proMonthly: 0, promotional: 15, purchased: 0)
     )
+    private let creditBalanceLoadStateSubject = CurrentValueSubject<MomentsCreditBalanceLoadState, Never>(.loaded)
     private let workspaceSubject = CurrentValueSubject<MomentWorkspace?, Never>(nil)
     private let workspaceErrorSubject = CurrentValueSubject<String?, Never>(nil)
 
@@ -295,6 +297,10 @@ private final class MomentCreationFailureHarness:
 
     var creditBalancePublisher: AnyPublisher<MomentsCreditBalance, Never> {
         balanceSubject.eraseToAnyPublisher()
+    }
+
+    var creditBalanceLoadStatePublisher: AnyPublisher<MomentsCreditBalanceLoadState, Never> {
+        creditBalanceLoadStateSubject.eraseToAnyPublisher()
     }
 
     var currentUserId: String? {

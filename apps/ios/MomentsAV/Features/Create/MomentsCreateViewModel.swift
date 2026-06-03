@@ -5,6 +5,7 @@ import Foundation
 final class MomentsCreateViewModel: ObservableObject {
     @Published private(set) var isSignedIn = false
     @Published private(set) var balance = MomentsCreditBalance.empty
+    @Published private(set) var creditBalanceLoadState = MomentsCreditBalanceLoadState.signedOut
     @Published private(set) var templates = MomentTemplate.launchTemplates
     @Published private(set) var creationStyles = MomentCreationStyle.launchStyles
     @Published var selectedCreationStyle = MomentCreationStyle.launchStyles[0]
@@ -427,6 +428,7 @@ extension MomentsCreateViewModel {
         guard !usesCreateUITestFixture else { return }
         isSignedIn = state.isSignedIn
         balance = state.balance
+        creditBalanceLoadState = state.creditBalanceLoadState
     }
 
     func applyMomentCreationState(_ state: MomentsCreateMomentCreationState) {

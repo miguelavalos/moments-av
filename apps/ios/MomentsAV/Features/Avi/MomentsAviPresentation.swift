@@ -9,7 +9,8 @@ struct MomentsAviPresentation: Equatable {
     static func make(
         isSignedIn: Bool,
         momentsSummary: InProgressMomentsSummary,
-        creditBalance: MomentsCreditBalance
+        creditBalance: MomentsCreditBalance,
+        creditBalanceLoadState: MomentsCreditBalanceLoadState = .loaded
     ) -> MomentsAviPresentation {
         MomentsAviPresentation(
             workflowFocusTitle: workflowFocusTitle(
@@ -23,7 +24,8 @@ struct MomentsAviPresentation: Equatable {
             workflowFocusSystemImage: workflowFocusSystemImage(momentsSummary: momentsSummary),
             creditGuidanceMessage: creditGuidanceMessage(
                 isSignedIn: isSignedIn,
-                creditBalance: creditBalance
+                creditBalance: creditBalance,
+                creditBalanceLoadState: creditBalanceLoadState
             )
         )
     }
@@ -60,10 +62,14 @@ struct MomentsAviPresentation: Equatable {
 
     private static func creditGuidanceMessage(
         isSignedIn: Bool,
-        creditBalance: MomentsCreditBalance
+        creditBalance: MomentsCreditBalance,
+        creditBalanceLoadState: MomentsCreditBalanceLoadState
     ) -> String {
         guard isSignedIn else {
             return L10n.string("avi.credits.signIn.message")
+        }
+        guard creditBalanceLoadState.hasLoadedBalance else {
+            return MomentsCreditCopy.balanceStatusDetail(creditBalanceLoadState)
         }
         guard creditBalance.spendable > 0 else {
             return L10n.string("avi.credits.none.message")

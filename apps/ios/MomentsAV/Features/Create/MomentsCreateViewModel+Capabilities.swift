@@ -76,6 +76,7 @@ extension MomentsCreateViewModel {
             storyPlanWorkflow: storyPlanWorkflow,
             previewGenerationWorkflow: previewGenerationWorkflow,
             finalRenderWorkflow: finalRenderWorkflow,
+            creditBalanceLoadState: creditBalanceLoadState,
             template: form.template,
             previewRefreshAvailability: previewRefreshAvailability,
             finalRenderRefreshAvailability: finalRenderRefreshAvailability,

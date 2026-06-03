@@ -7,6 +7,7 @@ struct MomentsAviCurrentFocusCard: View {
     let workflowFocusSystemImage: String
     let momentsSummary: InProgressMomentsSummary
     let creditBalance: MomentsCreditBalance
+    let creditBalanceLoadState: MomentsCreditBalanceLoadState
 
     var body: some View {
         AVAviGuidanceCard(
@@ -32,11 +33,19 @@ struct MomentsAviCurrentFocusCard: View {
                 )
                 AVAviStatPill(
                     title: L10n.string("credits.title"),
-                    value: "\(creditBalance.spendable)",
-                    systemImage: "creditcard"
+                    value: creditValue,
+                    systemImage: creditBalanceLoadState.systemImage
                 )
+                .redacted(reason: creditBalanceLoadState.isLoading ? .placeholder : [])
             }
         }
+    }
+
+    private var creditValue: String {
+        guard creditBalanceLoadState.hasLoadedBalance else {
+            return creditBalanceLoadState == .signedOut ? "--" : "..."
+        }
+        return "\(creditBalance.spendable)"
     }
 }
 

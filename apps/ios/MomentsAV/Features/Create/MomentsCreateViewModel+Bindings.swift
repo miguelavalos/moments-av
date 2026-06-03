@@ -19,14 +19,19 @@ extension MomentsCreateViewModel {
     }
 
     private func bindAccount(_ accountStateProvider: any MomentsAccountStateProviding) {
-        Publishers.CombineLatest(
+        Publishers.CombineLatest3(
             accountStateProvider.isSignedInPublisher,
-            accountStateProvider.creditBalancePublisher
+            accountStateProvider.creditBalancePublisher,
+            accountStateProvider.creditBalanceLoadStatePublisher
         )
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] isSignedIn, balance in
+            .sink { [weak self] isSignedIn, balance, creditBalanceLoadState in
                 self?.applyAccountState(
-                    MomentsCreateAccountState(isSignedIn: isSignedIn, balance: balance)
+                    MomentsCreateAccountState(
+                        isSignedIn: isSignedIn,
+                        balance: balance,
+                        creditBalanceLoadState: creditBalanceLoadState
+                    )
                 )
             }
             .store(in: &cancellables)

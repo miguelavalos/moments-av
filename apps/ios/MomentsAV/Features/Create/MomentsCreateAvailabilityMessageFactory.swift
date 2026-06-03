@@ -98,19 +98,24 @@ enum MomentsCreateAvailabilityMessageFactory {
         moment: InProgressMoment?,
         template: MomentTemplate,
         balance: MomentsCreditBalance,
+        creditBalanceLoadState: MomentsCreditBalanceLoadState = .loaded,
         latestPreview: MomentArtifact?
     ) -> String? {
         guard activeMomentId != nil else { return MomentsCreateAvailabilityCopy.finalRenderMissingMoment }
         guard isFinalRenderAvailable else { return MomentsCreateAvailabilityCopy.finalRenderUnavailable }
         if isFinalRenderGenerating { return nil }
         if !isFinalRenderConfigured { return MomentsCreateAvailabilityCopy.finalRenderNotConfigured }
+        let availability = MomentsFinalRenderRules.availability(
+            moment: moment,
+            template: template,
+            balance: balance,
+            latestPreview: latestPreview
+        )
+        if availability.blockReason == .insufficientCredits, !creditBalanceLoadState.hasLoadedBalance {
+            return MomentsCreateAvailabilityCopy.finalRenderCreditBalanceUnavailable(creditBalanceLoadState)
+        }
         return MomentsFinalRenderRules.availabilityMessage(
-            MomentsFinalRenderRules.availability(
-                moment: moment,
-                template: template,
-                balance: balance,
-                latestPreview: latestPreview
-            ),
+            availability,
             missingMomentMessage: MomentsCreateAvailabilityCopy.finalRenderMissingWorkspace,
             insufficientCreditsMessage: MomentsCreateAvailabilityCopy.finalRenderInsufficientCredits(
                 missingCredits: missingCredits(template: template, balance: balance)

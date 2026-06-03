@@ -869,6 +869,7 @@ private struct MomentsCreateStoryReviewPage: View {
 
                             MomentsCreateFinalVideoOptionsCard(
                                 balance: presentation.balance,
+                                creditBalanceLoadState: presentation.creditBalanceLoadState,
                                 template: presentation.template,
                                 removesWatermark: $removesWatermark
                             )
@@ -1062,7 +1063,8 @@ private struct MomentsCreateReadinessChecklistCard: View {
                     MomentsCreateReadinessRow(
                         title: L10n.string("create.workflowContent.credits"),
                         detail: creditDetail,
-                        isReady: MomentsCreditGate.canAfford(presentation.template, balance: presentation.balance)
+                        isReady: presentation.creditBalanceLoadState.hasLoadedBalance
+                            && MomentsCreditGate.canAfford(presentation.template, balance: presentation.balance)
                     )
                 }
             }
@@ -1092,7 +1094,10 @@ private struct MomentsCreateReadinessChecklistCard: View {
     }
 
     private var creditDetail: String {
-        L10n.string(
+        guard presentation.creditBalanceLoadState.hasLoadedBalance else {
+            return MomentsCreditCopy.balanceStatusDetail(presentation.creditBalanceLoadState)
+        }
+        return L10n.string(
             "create.workflowContent.creditsNeeded",
             MomentsCreditCopy.countTitle(presentation.finalRenderSummary.creditCost)
         )
@@ -1101,6 +1106,7 @@ private struct MomentsCreateReadinessChecklistCard: View {
 
 private struct MomentsCreateFinalVideoOptionsCard: View {
     let balance: MomentsCreditBalance
+    let creditBalanceLoadState: MomentsCreditBalanceLoadState
     let template: MomentTemplate
     @Binding var removesWatermark: Bool
 
@@ -1126,9 +1132,14 @@ private struct MomentsCreateFinalVideoOptionsCard: View {
                 }
             }
             .toggleStyle(.switch)
-            .disabled(balance.watermarkFreeIncluded)
+            .disabled(balance.watermarkFreeIncluded || !creditBalanceLoadState.hasLoadedBalance)
 
-            if !canAffordSelectedCost {
+            if !creditBalanceLoadState.hasLoadedBalance {
+                Label(MomentsCreditCopy.balanceStatusDetail(creditBalanceLoadState), systemImage: creditBalanceLoadState.systemImage)
+                    .font(.system(size: 12, weight: .bold))
+                    .foregroundStyle(AVBrandColor.textSecondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            } else if !canAffordSelectedCost {
                 Label(L10n.string("create.workflowContent.addCreditsForVersion", MomentsCreditCopy.countTitle(missingCredits)), systemImage: "exclamationmark.triangle.fill")
                     .font(.system(size: 12, weight: .bold))
                     .foregroundStyle(.orange)

@@ -120,6 +120,7 @@ struct MomentsAppShellView: View {
                     openAccount: { chromeItem = .account },
                     startSignInFlow: startSignInFlow,
                     openCredits: openCredits,
+                    retryCredits: retryCreditBalance,
                     selectTab: selectRootTab,
                     startMoment: startOrContinueMoment,
                     continueMoment: { request in
@@ -137,6 +138,7 @@ struct MomentsAppShellView: View {
             case .inProgress:
                 MomentsInProgressScreen(
                     balance: accountController.creditBalance,
+                    creditBalanceLoadState: accountController.creditBalanceLoadState,
                     continueMoment: { request in
                         createViewModel.continueMoment(request.moment, focus: request.focus)
                         selectedTab = .create
@@ -145,7 +147,8 @@ struct MomentsAppShellView: View {
                         startOrContinueMoment()
                     },
                     startSignInFlow: startSignInFlow,
-                    openCredits: openCredits
+                    openCredits: openCredits,
+                    retryCredits: retryCreditBalance
                 )
             case .gallery:
                 MomentsGalleryScreen()
@@ -170,6 +173,12 @@ struct MomentsAppShellView: View {
         }
 
         creditsPaywallIsPresented = true
+    }
+
+    private func retryCreditBalance() {
+        Task {
+            await accountController.refreshCreditBalance()
+        }
     }
 
     private var footerSelectedTab: MomentsRootTab {

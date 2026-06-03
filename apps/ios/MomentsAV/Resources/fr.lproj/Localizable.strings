@@ -278,6 +278,15 @@
 "credits.home.ready" = "Prêt pour des films souvenirs privés.";
 "credits.manage.detail" = "Voir les détails du solde, les achats et les options de restauration.";
 "credits.manage.title" = "Gérer les crédits";
+"credits.balance.signedOut.title" = "Connecte-toi pour voir les crédits";
+"credits.balance.signedOut.detail" = "Les crédits apparaîtront ici après connexion.";
+"credits.balance.loading.title" = "Vérification des crédits";
+"credits.balance.loading.detail" = "Chargement de ton solde de crédits vidéo.";
+"credits.balance.offline.title" = "Crédits indisponibles hors ligne";
+"credits.balance.offline.detail" = "Connecte-toi à internet pour voir ton solde ou obtenir des crédits.";
+"credits.balance.unavailable.title" = "Impossible de charger les crédits";
+"credits.balance.unavailable.detail" = "Moments AV n’a pas pu joindre le service de crédits. Réessaie dans un instant.";
+"credits.balance.retry.title" = "Réessayer";
 "credits.noun.one" = "crédit";
 "credits.noun.other" = "crédits";
 "credits.other.detail" = "%d autres";
@@ -756,6 +765,9 @@
 "create.availability.finalRenderNotConfigured" = "La création de la vidéo finale n’est pas configurée pour cette build.";
 "create.availability.finalRenderMissingWorkspace" = "Attends que ce Moment soit synchronisé avant de créer la vidéo finale.";
 "create.availability.finalRenderInsufficientCredits" = "Ajoute %d %@ de plus avant de créer la vidéo finale.";
+"create.availability.finalRenderCreditsLoading" = "Vérification de tes crédits avant la vidéo finale.";
+"create.availability.finalRenderCreditsOffline" = "Connecte-toi à internet avant de créer la vidéo finale.";
+"create.availability.finalRenderCreditsUnavailable" = "Impossible de vérifier les crédits. Réessaie avant de créer la vidéo finale.";
 "account.error.unavailable" = "La connexion au compte n’est pas configurée pour cette build.";
 "account.displayName.user" = "Utilisateur Moments AV";
 "purchase.error.notConfigured" = "Les achats ne sont pas configurés pour cette build.";
