@@ -103,6 +103,6 @@ extension MomentsCreateViewModel {
         guard let preparedSignature else {
             return true
         }
-        return currentStoryPlanInputSignature(momentId: activeMomentId) == preparedSignature
+        return preparedStoryComparisonInputSignature(momentId: activeMomentId) == preparedSignature
     }
 }

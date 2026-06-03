@@ -1,4 +1,5 @@
 import Foundation
+import OSLog
 import PhotosUI
 import SwiftUI
 
@@ -13,6 +14,7 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
     private let authTokenProvider: any MomentsAuthTokenProviding
     private let mediaAssetSaver: any MomentsMediaAssetSaving
     private let uploadClient: MomentsUploadClient
+    private let logger = Logger(subsystem: "com.avalsys.momentsav", category: "media-upload")
     private var restoredWorkspaceMomentId: String?
 
     init(
@@ -265,6 +267,9 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
         isImporting = true
         importProgress = MomentsMediaImportProgress(completedCount: 0, totalCount: pendingMediaToSave.count)
         statusMessage = L10n.string("workflow.media.uploading")
+        logger.info(
+            "Persisting selected media selected=\(mediaToSave.count, privacy: .public) alreadySynced=\(alreadySyncedMedia.count, privacy: .public) pending=\(pendingMediaToSave.count, privacy: .public)"
+        )
 
         do {
             let result = try await MediaUploadPersistence.save(
@@ -288,15 +293,33 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
             statusMessage = result.statusMessage
             isImporting = false
             importProgress = nil
+            logger.info(
+                "Persisted selected media saved=\(result.savedMedia.count, privacy: .public) total=\((alreadySyncedMedia.count + result.savedMedia.count), privacy: .public)"
+            )
             return (alreadySyncedMedia + result.savedMedia).sorted { $0.sortOrder < $1.sortOrder }
         } catch MomentsUploadError.signedUploadUnavailable {
             guard isCurrentWorkflowGeneration(generation) else { return nil }
+            logger.error(
+                "Media persistence failed error=signedUploadUnavailable selected=\(mediaToSave.count, privacy: .public) pending=\(pendingMediaToSave.count, privacy: .public)"
+            )
             statusMessage = MomentsRecoveryCopy.mediaUploadUnavailable()
+            isImporting = false
+            importProgress = nil
+            return nil
+        } catch let error as MomentsAPIError {
+            guard isCurrentWorkflowGeneration(generation) else { return nil }
+            logger.error(
+                "Media persistence failed apiCode=\(error.code, privacy: .public) selected=\(mediaToSave.count, privacy: .public) pending=\(pendingMediaToSave.count, privacy: .public)"
+            )
+            statusMessage = MomentsRecoveryCopy.mediaStorySaveFailure()
             isImporting = false
             importProgress = nil
             return nil
         } catch {
             guard isCurrentWorkflowGeneration(generation) else { return nil }
+            logger.error(
+                "Media persistence failed errorType=\(String(describing: type(of: error)), privacy: .public) selected=\(mediaToSave.count, privacy: .public) pending=\(pendingMediaToSave.count, privacy: .public)"
+            )
             statusMessage = MomentsRecoveryCopy.mediaStorySaveFailure()
             isImporting = false
             importProgress = nil

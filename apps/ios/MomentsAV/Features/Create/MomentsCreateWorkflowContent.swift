@@ -1583,8 +1583,11 @@ private struct MomentsCreatePrimaryActionBar: View {
         if needsSignInForStory {
             return L10n.string("common.signIn")
         }
-        return presentation.finalRenderSummary.isGenerating
-            ? L10n.string("create.preview.preparing")
+        if presentation.finalRenderSummary.isGenerating {
+            return L10n.string("create.preview.preparing")
+        }
+        return presentation.storySummary.hasScenes
+            ? L10n.string("create.aviCut.action.improve")
             : L10n.string("create.aviCut.action.prepare")
     }
 
@@ -1610,7 +1613,7 @@ private struct MomentsCreatePrimaryActionBar: View {
         if needsSignInForStory {
             return "person.crop.circle.badge.checkmark"
         }
-        return "play.rectangle.fill"
+        return presentation.storySummary.hasScenes ? "sparkles" : "play.rectangle.fill"
     }
 
     private var availabilityMessage: String? {

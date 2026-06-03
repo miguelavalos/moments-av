@@ -56,6 +56,7 @@ extension MomentsCreateViewModel {
             return
         }
         let template = form.template
+        markPreparedStoryMediaEdited()
 
         runOperation {
             await mediaUploadWorkflow.importPickerItems(
@@ -72,6 +73,7 @@ extension MomentsCreateViewModel {
             return
         }
         let template = form.template
+        markPreparedStoryMediaEdited()
 
         runOperation {
             await mediaUploadWorkflow.importLatestPhotos(
@@ -87,6 +89,7 @@ extension MomentsCreateViewModel {
             return
         }
         let template = form.template
+        markPreparedStoryMediaEdited()
 
         runOperation {
             await mediaUploadWorkflow.importPhotoAlbum(
@@ -98,18 +101,22 @@ extension MomentsCreateViewModel {
     }
 
     func removeMedia(_ media: MomentsSelectedMedia) {
+        markPreparedStoryMediaEdited()
         mediaUploadWorkflow?.remove(media)
     }
 
     func moveMedia(_ media: MomentsSelectedMedia, before target: MomentsSelectedMedia) {
+        markPreparedStoryMediaEdited()
         mediaUploadWorkflow?.move(media, before: target)
     }
 
     func reorderMedia(_ media: [MomentsSelectedMedia]) {
+        markPreparedStoryMediaEdited()
         mediaUploadWorkflow?.reorder(media)
     }
 
     func autoPickStrongMoments() {
+        markPreparedStoryMediaEdited()
         mediaUploadWorkflow?.autoPickStrongMoments()
     }
 
@@ -145,7 +152,7 @@ extension MomentsCreateViewModel {
                 return
             }
             if self.storySummary.hasScenes,
-               self.lastPreparedStoryInputSignature == self.currentStoryPlanInputSignature(momentId: momentId) {
+               self.lastPreparedStoryInputSignature == self.preparedStoryComparisonInputSignature(momentId: momentId) {
                 self.updateStoryStatusMessage(L10n.string("create.story.status.alreadyReady"))
                 return
             }
@@ -169,7 +176,7 @@ extension MomentsCreateViewModel {
                 persistedMedia: persistedMedia
             )
             if didPrepareStory {
-                self.lastPreparedStoryInputSignature = inputSignature
+                self.recordPreparedStoryInputSignature(inputSignature, momentId: momentId)
             }
         }
     }
@@ -221,7 +228,7 @@ extension MomentsCreateViewModel {
                 self.updateStoryStatusMessage(self.momentCreationFailureMessage())
                 return
             }
-            var inputSignature = self.currentStoryPlanInputSignature(momentId: momentId)
+            var inputSignature = self.preparedStoryComparisonInputSignature(momentId: momentId)
             if self.storySummary.hasScenes,
                self.lastPreparedStoryInputSignature == inputSignature {
                 self.updateStoryStatusMessage(L10n.string("create.story.status.alreadyReady"))
@@ -245,7 +252,7 @@ extension MomentsCreateViewModel {
                     persistedMedia: persistedMedia
                 )
                 if didPrepareStory {
-                    self.lastPreparedStoryInputSignature = inputSignature
+                    self.recordPreparedStoryInputSignature(inputSignature, momentId: momentId)
                 }
             }
 

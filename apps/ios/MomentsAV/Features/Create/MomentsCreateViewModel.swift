@@ -55,6 +55,7 @@ final class MomentsCreateViewModel: ObservableObject {
     var cancellables = Set<AnyCancellable>()
     private var autoStyleMediaSignature: String?
     var lastPreparedStoryInputSignature: String?
+    private var hasExplicitMediaEditsAfterPreparedStory = false
     private var hasUserStyleOverride = false
     private var autoStyleUndoSelection: (style: MomentCreationStyle, musicPreset: MomentMusicPreset, form: MomentSetupForm)?
 
@@ -350,6 +351,7 @@ final class MomentsCreateViewModel: ObservableObject {
         autoStyleUndoSelection = nil
         autoStyleMediaSignature = nil
         lastPreparedStoryInputSignature = nil
+        hasExplicitMediaEditsAfterPreparedStory = false
         hasUserStyleOverride = false
         applyStyleDefaults(selectedCreationStyle)
     }
@@ -385,6 +387,36 @@ final class MomentsCreateViewModel: ObservableObject {
         )
     }
 
+    func preparedStoryComparisonInputSignature(momentId: String) -> String {
+        if !hasExplicitMediaEditsAfterPreparedStory,
+           let workspaceMedia = currentWorkspaceStoryPlanSignatureMedia(),
+           !workspaceMedia.isEmpty {
+            return currentStoryPlanInputSignature(momentId: momentId, persistedMedia: workspaceMedia)
+        }
+
+        return currentStoryPlanInputSignature(momentId: momentId)
+    }
+
+    func markPreparedStoryMediaEdited() {
+        guard !savedScenes.isEmpty || !generatedScenes.isEmpty else { return }
+        hasExplicitMediaEditsAfterPreparedStory = true
+    }
+
+    @discardableResult
+    func recordPreparedStoryInputSignature(_ inputSignature: String, momentId: String) -> String {
+        let recordedSignature: String
+        if let workspaceSignature = effectiveActiveWorkspace?.moment.storyInputSignature {
+            recordedSignature = workspaceSignature
+        } else if currentWorkspaceStoryPlanSignatureMedia()?.isEmpty == false {
+            recordedSignature = inputSignature
+        } else {
+            recordedSignature = currentStoryPlanInputSignature(momentId: momentId)
+        }
+        lastPreparedStoryInputSignature = recordedSignature
+        hasExplicitMediaEditsAfterPreparedStory = false
+        return recordedSignature
+    }
+
     private func currentStoryPlanSignatureMedia() -> [MomentsStoryPlanMedia] {
         let localMedia = effectiveSelectedMedia
             .filter(\.selected)
@@ -410,6 +442,23 @@ final class MomentsCreateViewModel: ObservableObject {
 
         return (effectiveActiveWorkspace?.mediaAssets ?? [])
             .filter(\.selected)
+            .sorted { $0.sortOrder < $1.sortOrder }
+            .map {
+                MomentsStoryPlanMedia(
+                    mediaAssetId: $0.id,
+                    mediaKind: $0.kind,
+                    sortOrder: Int($0.sortOrder),
+                    selected: $0.selected,
+                    moderationStatus: $0.moderationStatus
+                )
+            }
+    }
+
+    private func currentWorkspaceStoryPlanSignatureMedia() -> [MomentsStoryPlanMedia]? {
+        let mediaAssets = effectiveActiveWorkspace?.mediaAssets ?? []
+        guard !mediaAssets.isEmpty else { return nil }
+        let selectedAssets = mediaAssets.filter(\.selected)
+        return (selectedAssets.isEmpty ? mediaAssets : selectedAssets)
             .sorted { $0.sortOrder < $1.sortOrder }
             .map {
                 MomentsStoryPlanMedia(
@@ -461,11 +510,7 @@ extension MomentsCreateViewModel {
 
         let hasStoryScenes = !state.savedScenes.isEmpty || !state.generatedScenes.isEmpty
         if hasStoryScenes {
-            if let activeMomentId {
-                lastPreparedStoryInputSignature = effectiveActiveWorkspace?.moment.storyInputSignature
-                    ?? lastPreparedStoryInputSignature
-                    ?? currentStoryPlanInputSignature(momentId: activeMomentId)
-            }
+            reconcilePreparedStorySignature()
             storyStatusMessage = nil
         } else {
             storyStatusMessage = state.statusMessage
@@ -492,6 +537,7 @@ extension MomentsCreateViewModel {
         guard !usesCreateUITestFixture else { return }
         activeWorkspace = state.activeWorkspace
         syncFormWithActiveWorkspace(state.activeWorkspace)
+        reconcilePreparedStorySignature()
         latestPreview = state.latestPreview
         latestPreviewJob = state.latestPreviewJob
         previewStatusMessage = state.statusMessage
@@ -527,8 +573,26 @@ extension MomentsCreateViewModel {
         }
     }
 
+    private func reconcilePreparedStorySignature() {
+        guard !savedScenes.isEmpty || !generatedScenes.isEmpty else { return }
+        guard let activeMomentId else { return }
+
+        if let workspaceSignature = effectiveActiveWorkspace?.moment.storyInputSignature {
+            if lastPreparedStoryInputSignature != workspaceSignature {
+                hasExplicitMediaEditsAfterPreparedStory = false
+            }
+            lastPreparedStoryInputSignature = workspaceSignature
+            return
+        }
+
+        if lastPreparedStoryInputSignature == nil || currentWorkspaceStoryPlanSignatureMedia()?.isEmpty == false {
+            lastPreparedStoryInputSignature = preparedStoryComparisonInputSignature(momentId: activeMomentId)
+        }
+    }
+
     private func updateAutoStyleSuggestion(for media: [MomentsSelectedMedia]) {
         guard canEditCreationOptions else { return }
+        guard !storySummary.hasScenes || hasExplicitMediaEditsAfterPreparedStory else { return }
         let signature = mediaSignature(media)
         guard signature != autoStyleMediaSignature else { return }
         autoStyleMediaSignature = signature
