@@ -15,6 +15,7 @@ struct MomentsProfileScreen: View {
     @EnvironmentObject private var inProgressViewModel: MomentsInProgressViewModel
     @EnvironmentObject private var languageController: AppLanguageController
     @EnvironmentObject private var themeController: AppThemeController
+    @EnvironmentObject private var newMomentStartController: MomentsNewMomentStartController
     @Environment(\.avCommonAppExperience) private var appExperience
     @Environment(\.openURL) private var openURL
     @State private var showsCreditDetails = false
@@ -74,6 +75,7 @@ struct MomentsProfileScreen: View {
     @ViewBuilder
     private var settingsContent: some View {
         appPreferencesCard
+        creationPreferencesCard
         onThisDeviceCard
         helpAndLegalCard
     }
@@ -110,6 +112,21 @@ struct MomentsProfileScreen: View {
             )
 
             themeSelector
+        }
+    }
+
+    private var creationPreferencesCard: some View {
+        AVSettingsSectionCard(
+            title: localized("profile.creationPreferences.title"),
+            subtitle: localized("profile.creationPreferences.subtitle")
+        ) {
+            AVSettingsInfoRow(
+                systemImage: "film.stack",
+                title: localized("profile.creationPreferences.start.title"),
+                detail: localized("profile.creationPreferences.start.detail")
+            )
+
+            newMomentStartSelector
         }
     }
 
@@ -378,6 +395,61 @@ struct MomentsProfileScreen: View {
                 )
             }
         }
+    }
+
+    private var newMomentStartSelector: some View {
+        Menu {
+            ForEach(MomentsNewMomentStartPreference.allCases) { preference in
+                Button {
+                    newMomentStartController.select(preference)
+                } label: {
+                    if newMomentStartController.currentPreference == preference {
+                        Label {
+                            Text(preference.title)
+                        } icon: {
+                            Image(systemName: "checkmark")
+                        }
+                    } else {
+                        Text(preference.title)
+                    }
+                }
+            }
+        } label: {
+            HStack(spacing: 12) {
+                Image(systemName: newMomentStartController.currentPreference.systemImage)
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundStyle(MomentsTheme.highlight)
+                    .frame(width: 22)
+
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(newMomentStartController.currentPreference.title)
+                        .font(.system(size: 15, weight: .semibold))
+                        .foregroundStyle(AVBrandColor.textPrimary)
+
+                    Text(newMomentStartController.currentPreference.detail)
+                        .font(.system(size: 12, weight: .medium))
+                        .foregroundStyle(AVBrandColor.textSecondary)
+                        .lineLimit(2)
+                }
+
+                Spacer(minLength: 0)
+
+                Image(systemName: "chevron.up.chevron.down")
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundStyle(MomentsTheme.highlight)
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 14)
+            .background(
+                RoundedRectangle(cornerRadius: 18, style: .continuous)
+                    .fill(AVBrandColor.mutedSurface)
+            )
+            .overlay {
+                RoundedRectangle(cornerRadius: 18, style: .continuous)
+                    .stroke(AVBrandColor.borderSubtle, lineWidth: 1)
+            }
+        }
+        .accessibilityIdentifier("settings.newMomentStart")
     }
 
     private var accountIdentityDetail: String {

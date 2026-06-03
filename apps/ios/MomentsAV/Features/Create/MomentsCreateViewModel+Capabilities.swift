@@ -72,7 +72,6 @@ extension MomentsCreateViewModel {
             isSignedIn: isSignedIn,
             hasMomentWorkspace: hasMomentWorkspace,
             isImportingMedia: isImportingMedia,
-            isMediaUploadConfigured: mediaUploadWorkflow?.isConfigured ?? false,
             mediaRemainingSlots: mediaRemainingSlots,
             storyPlanWorkflow: storyPlanWorkflow,
             previewGenerationWorkflow: previewGenerationWorkflow,

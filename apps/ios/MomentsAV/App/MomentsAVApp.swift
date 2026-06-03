@@ -4,6 +4,7 @@ import SwiftUI
 struct MomentsAVApp: App {
     @StateObject private var languageController = AppLanguageController()
     @StateObject private var themeController = AppThemeController()
+    @StateObject private var newMomentStartController = MomentsNewMomentStartController()
 
     init() {
         AppConfig.configureAVAccountIfPossible()
@@ -14,6 +15,7 @@ struct MomentsAVApp: App {
             MomentsAppBootstrapView()
                 .environmentObject(languageController)
                 .environmentObject(themeController)
+                .environmentObject(newMomentStartController)
                 .environment(\.locale, languageController.locale)
                 .avCommonAppExperience(MomentsAppExperience.experience)
                 .preferredColorScheme(themeController.currentTheme.preferredColorScheme)

@@ -7,7 +7,6 @@ enum MomentsCreateWorkflowCapabilityFactory {
         isSignedIn: Bool,
         hasMomentWorkspace: Bool,
         isImportingMedia: Bool,
-        isMediaUploadConfigured: Bool,
         mediaRemainingSlots: Int,
         storyPlanWorkflow: StoryPlanWorkflow?,
         previewGenerationWorkflow: PreviewGenerationWorkflow?,
@@ -22,7 +21,6 @@ enum MomentsCreateWorkflowCapabilityFactory {
             canAddMedia: canAddMedia(
                 hasMomentWorkspace: hasMomentWorkspace,
                 isImportingMedia: isImportingMedia,
-                isMediaUploadConfigured: isMediaUploadConfigured,
                 mediaRemainingSlots: mediaRemainingSlots
             ),
             canPlanStory: canPlanStory(
@@ -55,12 +53,10 @@ enum MomentsCreateWorkflowCapabilityFactory {
     private static func canAddMedia(
         hasMomentWorkspace: Bool,
         isImportingMedia: Bool,
-        isMediaUploadConfigured: Bool,
         mediaRemainingSlots: Int
     ) -> Bool {
         hasMomentWorkspace
             && !isImportingMedia
-            && isMediaUploadConfigured
             && mediaRemainingSlots > 0
     }
 

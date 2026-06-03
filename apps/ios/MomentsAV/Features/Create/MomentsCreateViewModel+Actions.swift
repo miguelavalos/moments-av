@@ -4,7 +4,7 @@ import SwiftUI
 
 extension MomentsCreateViewModel {
     @discardableResult
-    func beginNewMoment(openMediaPicker: Bool = false) -> Bool {
+    func beginNewMoment(openMediaPicker: Bool = false, openAlbumPicker: Bool = false) -> Bool {
         guard canBeginNewMoment else {
             updateSetupErrorMessage(setupAvailabilityMessage ?? L10n.string("create.error.startWhenReady"))
             return false
@@ -14,6 +14,8 @@ extension MomentsCreateViewModel {
         pendingFocus = .media
         if openMediaPicker {
             mediaPickerOpenRequest += 1
+        } else if openAlbumPicker {
+            albumPickerOpenRequest += 1
         }
         return true
     }

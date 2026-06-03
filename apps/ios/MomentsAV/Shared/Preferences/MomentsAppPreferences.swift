@@ -131,6 +131,38 @@ enum AppTheme: String, CaseIterable, Identifiable {
     }
 }
 
+enum MomentsNewMomentStartPreference: String, CaseIterable, Identifiable {
+    case askEveryTime = "ask"
+    case photosOrClips = "single"
+    case album
+
+    var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .askEveryTime: L10n.string("profile.creationPreferences.start.ask.title")
+        case .photosOrClips: L10n.string("profile.creationPreferences.start.photos.title")
+        case .album: L10n.string("profile.creationPreferences.start.album.title")
+        }
+    }
+
+    var detail: String {
+        switch self {
+        case .askEveryTime: L10n.string("profile.creationPreferences.start.ask.detail")
+        case .photosOrClips: L10n.string("profile.creationPreferences.start.photos.detail")
+        case .album: L10n.string("profile.creationPreferences.start.album.detail")
+        }
+    }
+
+    var systemImage: String {
+        switch self {
+        case .askEveryTime: "rectangle.stack.badge.plus"
+        case .photosOrClips: "photo.badge.plus"
+        case .album: "rectangle.stack"
+        }
+    }
+}
+
 final class AppThemeController: ObservableObject {
     @Published private(set) var currentTheme: AppTheme
 
@@ -146,5 +178,25 @@ final class AppThemeController: ObservableObject {
         guard currentTheme != theme else { return }
         currentTheme = theme
         userDefaults.set(theme.rawValue, forKey: userDefaultsKey)
+    }
+}
+
+final class MomentsNewMomentStartController: ObservableObject {
+    @Published private(set) var currentPreference: MomentsNewMomentStartPreference
+
+    private let userDefaults: UserDefaults
+    private let userDefaultsKey = "momentsav.newMomentStartPreference"
+
+    init(userDefaults: UserDefaults = .standard) {
+        self.userDefaults = userDefaults
+        currentPreference = MomentsNewMomentStartPreference(
+            rawValue: userDefaults.string(forKey: userDefaultsKey) ?? ""
+        ) ?? .photosOrClips
+    }
+
+    func select(_ preference: MomentsNewMomentStartPreference) {
+        guard currentPreference != preference else { return }
+        currentPreference = preference
+        userDefaults.set(preference.rawValue, forKey: userDefaultsKey)
     }
 }

@@ -57,6 +57,16 @@
 "profile.preferences.theme.system" = "Sistema";
 "profile.preferences.theme.title" = "Apariencia";
 "profile.preferences.title" = "Preferencias de la app";
+"profile.creationPreferences.title" = "Creación de Moments";
+"profile.creationPreferences.subtitle" = "Elige cómo empiezan los nuevos Moments en este dispositivo.";
+"profile.creationPreferences.start.title" = "Inicio de nuevo Moment";
+"profile.creationPreferences.start.detail" = "Por defecto abre la selección rápida de fotos y clips. Cámbialo si prefieres álbumes o una pantalla con opciones.";
+"profile.creationPreferences.start.ask.title" = "Preguntar siempre";
+"profile.creationPreferences.start.ask.detail" = "Muestra las dos opciones de media antes de empezar.";
+"profile.creationPreferences.start.photos.title" = "Fotos o clips";
+"profile.creationPreferences.start.photos.detail" = "Abre la selección de media inmediatamente.";
+"profile.creationPreferences.start.album.title" = "Álbum";
+"profile.creationPreferences.start.album.detail" = "Abre primero tus álbumes.";
 "profile.pro.avi.detail" = "Videos finales sin marca de agua mientras Pro esté activo.";
 "profile.pro.avi.title" = "Sin marca de agua";
 "profile.pro.library.detail" = "Mejor valor mensual que comprar créditos uno a uno.";

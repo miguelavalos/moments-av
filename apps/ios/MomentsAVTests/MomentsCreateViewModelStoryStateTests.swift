@@ -4,7 +4,7 @@ import Combine
 
 @MainActor
 final class MomentsCreateViewModelStoryStateTests: XCTestCase {
-    func testBeginNewMomentShowsMediaChoiceByDefault() {
+    func testBeginNewMomentWithoutPickerRequestShowsMediaChoice() {
         let viewModel = MomentsCreateViewModel()
         viewModel.beginNewMoment()
 
@@ -19,6 +19,16 @@ final class MomentsCreateViewModelStoryStateTests: XCTestCase {
 
         XCTAssertTrue(viewModel.hasLocalMomentWorkspace)
         XCTAssertEqual(viewModel.mediaPickerOpenRequest, 1)
+        XCTAssertEqual(viewModel.albumPickerOpenRequest, 0)
+    }
+
+    func testBeginNewMomentCanExplicitlyOpenAlbumPicker() {
+        let viewModel = MomentsCreateViewModel()
+        viewModel.beginNewMoment(openAlbumPicker: true)
+
+        XCTAssertTrue(viewModel.hasLocalMomentWorkspace)
+        XCTAssertEqual(viewModel.mediaPickerOpenRequest, 0)
+        XCTAssertEqual(viewModel.albumPickerOpenRequest, 1)
     }
 
     func testStoryScenesClearStaleErrorAndMarkCurrentInputPrepared() {

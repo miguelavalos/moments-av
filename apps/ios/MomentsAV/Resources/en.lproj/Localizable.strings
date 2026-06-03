@@ -57,6 +57,16 @@
 "profile.preferences.theme.system" = "System";
 "profile.preferences.theme.title" = "Appearance";
 "profile.preferences.title" = "App preferences";
+"profile.creationPreferences.title" = "Moment creation";
+"profile.creationPreferences.subtitle" = "Choose how new Moments start on this device.";
+"profile.creationPreferences.start.title" = "New Moment start";
+"profile.creationPreferences.start.detail" = "Default is fast photo and clip selection. Change it if you prefer albums or a choice screen.";
+"profile.creationPreferences.start.ask.title" = "Ask every time";
+"profile.creationPreferences.start.ask.detail" = "Show both media options before starting.";
+"profile.creationPreferences.start.photos.title" = "Photos or clips";
+"profile.creationPreferences.start.photos.detail" = "Open media selection immediately.";
+"profile.creationPreferences.start.album.title" = "Album";
+"profile.creationPreferences.start.album.detail" = "Open albums first.";
 "profile.pro.avi.detail" = "Create final videos without the Moments AV watermark while Pro is active.";
 "profile.pro.avi.title" = "No watermark";
 "profile.pro.library.detail" = "Better monthly value than buying credits one by one.";

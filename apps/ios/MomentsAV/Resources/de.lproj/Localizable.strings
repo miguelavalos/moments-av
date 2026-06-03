@@ -57,6 +57,16 @@
 "profile.preferences.theme.system" = "System";
 "profile.preferences.theme.title" = "Darstellung";
 "profile.preferences.title" = "App-Einstellungen";
+"profile.creationPreferences.title" = "Moment-Erstellung";
+"profile.creationPreferences.subtitle" = "Lege fest, wie neue Moments auf diesem Gerät starten.";
+"profile.creationPreferences.start.title" = "Start eines neuen Moments";
+"profile.creationPreferences.start.detail" = "Standardmäßig öffnet sich die schnelle Foto- und Clip-Auswahl. Ändere dies, wenn du Alben oder einen Auswahlbildschirm bevorzugst.";
+"profile.creationPreferences.start.ask.title" = "Immer fragen";
+"profile.creationPreferences.start.ask.detail" = "Zeigt vor dem Start beide Medienoptionen.";
+"profile.creationPreferences.start.photos.title" = "Fotos oder Clips";
+"profile.creationPreferences.start.photos.detail" = "Öffnet die Medienauswahl sofort.";
+"profile.creationPreferences.start.album.title" = "Album";
+"profile.creationPreferences.start.album.detail" = "Öffnet zuerst deine Alben.";
 "profile.pro.avi.detail" = "Finale Videos ohne Wasserzeichen, solange Pro aktiv ist.";
 "profile.pro.avi.title" = "Ohne Wasserzeichen";
 "profile.pro.library.detail" = "Besserer Monatswert als Credits einzeln zu kaufen.";

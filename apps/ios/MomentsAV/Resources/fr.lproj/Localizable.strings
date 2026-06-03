@@ -57,6 +57,16 @@
 "profile.preferences.theme.system" = "Système";
 "profile.preferences.theme.title" = "Apparence";
 "profile.preferences.title" = "Préférences de l'app";
+"profile.creationPreferences.title" = "Création de Moments";
+"profile.creationPreferences.subtitle" = "Choisissez comment les nouveaux Moments commencent sur cet appareil.";
+"profile.creationPreferences.start.title" = "Début d'un nouveau Moment";
+"profile.creationPreferences.start.detail" = "Par défaut, la sélection rapide de photos et clips s'ouvre. Changez ce réglage si vous préférez les albums ou un écran de choix.";
+"profile.creationPreferences.start.ask.title" = "Toujours demander";
+"profile.creationPreferences.start.ask.detail" = "Affiche les deux options de média avant de commencer.";
+"profile.creationPreferences.start.photos.title" = "Photos ou clips";
+"profile.creationPreferences.start.photos.detail" = "Ouvre immédiatement la sélection de média.";
+"profile.creationPreferences.start.album.title" = "Album";
+"profile.creationPreferences.start.album.detail" = "Ouvre d'abord vos albums.";
 "profile.pro.avi.detail" = "Vidéos finales sans filigrane tant que Pro est actif.";
 "profile.pro.avi.title" = "Sans filigrane";
 "profile.pro.library.detail" = "Meilleure valeur mensuelle que l'achat de crédits un par un.";

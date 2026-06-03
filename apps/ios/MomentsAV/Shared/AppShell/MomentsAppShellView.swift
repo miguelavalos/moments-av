@@ -1,7 +1,6 @@
 import AVAppShellFoundation
 import AVBrandFoundation
 import AVSettingsFoundation
-import PhotosUI
 import SwiftUI
 
 struct MomentsAppShellView: View {
@@ -13,10 +12,10 @@ struct MomentsAppShellView: View {
     @EnvironmentObject private var inProgressViewModel: MomentsInProgressViewModel
     @EnvironmentObject private var galleryViewModel: MomentsGalleryViewModel
     @EnvironmentObject private var aviViewModel: MomentsAviViewModel
+    @EnvironmentObject private var newMomentStartController: MomentsNewMomentStartController
     @Environment(\.avCommonAppExperience) private var appExperience
     @State private var chromeItem: AVAppShellChromeItem?
     @State private var creditsPaywallIsPresented = false
-    @State private var newMomentPickerItems: [PhotosPickerItem] = []
     @State private var navigationPath = NavigationPath()
     @State private var navigationStackResetID = UUID()
 
@@ -205,10 +204,7 @@ struct MomentsAppShellView: View {
             return
         }
 
-        if createViewModel.canBeginNewMoment {
-            createViewModel.beginNewMoment()
-        }
-        selectRootTab(.create)
+        beginNewMomentFromPreference()
     }
 
     private func startFloatingMomentAction() {
@@ -221,9 +217,24 @@ struct MomentsAppShellView: View {
             createViewModel.clearSessionState()
         }
 
-        if createViewModel.canBeginNewMoment {
-            createViewModel.beginNewMoment()
+        beginNewMomentFromPreference()
+    }
+
+    private func beginNewMomentFromPreference() {
+        guard createViewModel.canBeginNewMoment else {
+            selectRootTab(.create)
+            return
         }
+
+        switch newMomentStartController.currentPreference {
+        case .askEveryTime:
+            createViewModel.beginNewMoment()
+        case .photosOrClips:
+            createViewModel.beginNewMoment(openMediaPicker: true)
+        case .album:
+            createViewModel.beginNewMoment(openAlbumPicker: true)
+        }
+
         selectRootTab(.create)
     }
 

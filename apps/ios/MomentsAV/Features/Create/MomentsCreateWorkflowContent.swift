@@ -35,7 +35,9 @@ struct MomentsCreateWorkflowContent: View {
                     useAutoStyleSuggestion: viewModel.useAutoStyleSuggestion,
                     undoAutoStyleSuggestion: viewModel.undoAutoStyleSuggestion,
                     openPickerRequest: viewModel.mediaPickerOpenRequest,
+                    openAlbumRequest: viewModel.albumPickerOpenRequest,
                     consumeOpenPickerRequest: viewModel.consumeMediaPickerOpenRequest,
+                    consumeOpenAlbumRequest: viewModel.consumeAlbumPickerOpenRequest,
                     discardMoment: viewModel.discardMoment,
                     startSignInFlow: startSignInFlow,
                     openCredits: openCredits,
@@ -78,7 +80,9 @@ private struct MomentsCreateMediaFirstWorkspace: View {
     let useAutoStyleSuggestion: () -> Void
     let undoAutoStyleSuggestion: () -> Void
     let openPickerRequest: Int
+    let openAlbumRequest: Int
     let consumeOpenPickerRequest: () -> Void
+    let consumeOpenAlbumRequest: () -> Void
     let discardMoment: () -> Void
     let startSignInFlow: () -> Void
     let openCredits: () -> Void
@@ -135,6 +139,7 @@ private struct MomentsCreateMediaFirstWorkspace: View {
                     MomentsCreateMediaCard(
                         pickerItems: $pickerItems,
                         openPickerRequest: openPickerRequest,
+                        openAlbumRequest: openAlbumRequest,
                         presentation: mediaPresentation,
                         importPickerItems: importPickerItems,
                         importLatestPhotos: importLatestPhotos,
@@ -144,7 +149,8 @@ private struct MomentsCreateMediaFirstWorkspace: View {
                         reorderMedia: reorderMedia,
                         restoreLocalMediaForEditing: restoreLocalMediaForEditing,
                         autoPickStrongMoments: autoPickStrongMoments,
-                        consumeOpenPickerRequest: consumeOpenPickerRequest
+                        consumeOpenPickerRequest: consumeOpenPickerRequest,
+                        consumeOpenAlbumRequest: consumeOpenAlbumRequest
                     )
                 }
             }
@@ -3019,6 +3025,7 @@ private struct MomentsCreateWorkflowCards: View {
     let restoreLocalMediaForEditing: () -> Void
     let autoPickStrongMoments: () -> Void
     let openPickerRequest: Int
+    let openAlbumRequest: Int = 0
     let generateStoryPlan: () -> Void
     let openCredits: () -> Void = {}
     let generatePreview: () -> Void
@@ -3037,6 +3044,7 @@ private struct MomentsCreateWorkflowCards: View {
                 MomentsCreateMediaCard(
                     pickerItems: $pickerItems,
                     openPickerRequest: openPickerRequest,
+                    openAlbumRequest: openAlbumRequest,
                     presentation: MomentsCreateMediaPresentation(
                         activeMomentId: presentation.activeMomentId,
                         template: presentation.template,
@@ -3052,7 +3060,8 @@ private struct MomentsCreateWorkflowCards: View {
                     reorderMedia: reorderMedia,
                     restoreLocalMediaForEditing: restoreLocalMediaForEditing,
                     autoPickStrongMoments: autoPickStrongMoments,
-                    consumeOpenPickerRequest: {}
+                    consumeOpenPickerRequest: {},
+                    consumeOpenAlbumRequest: {}
                 )
                 .id(MomentsCreateSection.media)
 

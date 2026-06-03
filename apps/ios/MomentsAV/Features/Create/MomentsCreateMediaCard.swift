@@ -11,8 +11,10 @@ struct MomentsCreateMediaCard: View {
     @State private var showsAlbumPicker = false
     @State private var showsMediaManager = false
     @State private var handledOpenPickerRequest = 0
+    @State private var handledOpenAlbumRequest = 0
 
     let openPickerRequest: Int
+    let openAlbumRequest: Int
     let presentation: MomentsCreateMediaPresentation
     let importPickerItems: ([PhotosPickerItem]) -> Void
     let importLatestPhotos: () -> Void
@@ -23,6 +25,7 @@ struct MomentsCreateMediaCard: View {
     let restoreLocalMediaForEditing: () -> Void
     let autoPickStrongMoments: () -> Void
     let consumeOpenPickerRequest: () -> Void
+    let consumeOpenAlbumRequest: () -> Void
 
     var body: some View {
         AVAppShellCard {
@@ -98,7 +101,9 @@ struct MomentsCreateMediaCard: View {
                 .frame(maxWidth: .infinity, minHeight: cardMinHeight, alignment: .topLeading)
             }
         .contentShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-        .onTapGesture(perform: mediaCardAction)
+        .modifier(MomentsCreateEditableMediaTapModifier(isEnabled: hasEditableMedia) {
+            showsMediaManager = true
+        })
         .photosPicker(
             isPresented: $showsPhotoPicker,
             selection: $pickerItems,
@@ -143,9 +148,13 @@ struct MomentsCreateMediaCard: View {
         }
         .onAppear {
             openPickerIfRequested(openPickerRequest)
+            openAlbumIfRequested(openAlbumRequest)
         }
         .onChange(of: openPickerRequest) { _, newValue in
             openPickerIfRequested(newValue)
+        }
+        .onChange(of: openAlbumRequest) { _, newValue in
+            openAlbumIfRequested(newValue)
         }
     }
 
@@ -174,7 +183,30 @@ struct MomentsCreateMediaCard: View {
               presentation.summary.selectedCount == 0 else { return }
         handledOpenPickerRequest = request
         consumeOpenPickerRequest()
-        showsPhotoPicker = true
+        presentRequestedPhotoPicker()
+    }
+
+    private func openAlbumIfRequested(_ request: Int) {
+        guard request > handledOpenAlbumRequest,
+              presentation.canAddMedia,
+              presentation.summary.selectedCount == 0 else { return }
+        handledOpenAlbumRequest = request
+        consumeOpenAlbumRequest()
+        presentRequestedAlbumPicker()
+    }
+
+    private func presentRequestedPhotoPicker() {
+        Task { @MainActor in
+            try? await Task.sleep(for: .milliseconds(200))
+            showsPhotoPicker = true
+        }
+    }
+
+    private func presentRequestedAlbumPicker() {
+        Task { @MainActor in
+            try? await Task.sleep(for: .milliseconds(200))
+            showsAlbumPicker = true
+        }
     }
 
     private var summaryText: String {
@@ -184,14 +216,6 @@ struct MomentsCreateMediaCard: View {
         }
 
         return L10n.string("create.media.editSummary")
-    }
-
-    private func mediaCardAction() {
-        if !hasEditableMedia {
-            return
-        } else {
-            showsMediaManager = true
-        }
     }
 
     private var hasEditableMedia: Bool {
@@ -204,6 +228,19 @@ struct MomentsCreateMediaCard: View {
 
     private var cardMinHeight: CGFloat {
         selectedCount == 0 ? 232 : 134
+    }
+}
+
+private struct MomentsCreateEditableMediaTapModifier: ViewModifier {
+    let isEnabled: Bool
+    let action: () -> Void
+
+    func body(content: Content) -> some View {
+        if isEnabled {
+            content.onTapGesture(perform: action)
+        } else {
+            content
+        }
     }
 }
 
