@@ -3,6 +3,7 @@ extension MomentsCreateViewModel {
         MomentsCreateWorkflowPresentation.make(
             activeMomentId: activeMomentId,
             isSignedIn: isSignedIn,
+            isCreatingMoment: isCreatingMoment,
             hasMomentWorkspace: hasMomentWorkspace,
             hasUnsavedLocalMoment: hasLocalMomentWorkspace,
             template: form.template,

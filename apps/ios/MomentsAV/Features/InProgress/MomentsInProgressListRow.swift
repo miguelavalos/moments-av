@@ -25,9 +25,6 @@ struct MomentsInProgressListRow: View {
                         Text(row.statusTitle)
                             .font(.caption2.weight(.semibold))
                             .foregroundStyle(MomentsTheme.highlight)
-                        Text(row.creditCostTitle)
-                            .font(.caption2.weight(.semibold))
-                            .foregroundStyle(.secondary)
                     }
                 }
 
@@ -42,4 +39,3 @@ struct MomentsInProgressListRow: View {
         .buttonStyle(.plain)
     }
 }
-

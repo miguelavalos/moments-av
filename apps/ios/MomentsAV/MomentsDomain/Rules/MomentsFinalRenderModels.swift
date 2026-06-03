@@ -192,14 +192,12 @@ enum MomentsFinalRenderRules {
         moment: InProgressMoment,
         template: MomentTemplate,
         balance: MomentsCreditBalance,
-        latestPreview: MomentArtifact?,
         storySceneCount: Int = 0
     ) -> Bool {
         availability(
             moment: moment,
             template: template,
             balance: balance,
-            latestPreview: latestPreview,
             storySceneCount: storySceneCount
         ).canGenerate
     }
@@ -216,7 +214,6 @@ enum MomentsFinalRenderRules {
         moment: InProgressMoment?,
         template: MomentTemplate,
         balance: MomentsCreditBalance,
-        latestPreview: MomentArtifact?,
         storySceneCount: Int = 0
     ) -> Availability {
         guard let moment else {

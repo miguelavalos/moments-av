@@ -78,7 +78,6 @@ extension MomentsCreateViewModel {
             template: form.template,
             previewRefreshAvailability: previewRefreshAvailability,
             finalRenderRefreshAvailability: finalRenderRefreshAvailability,
-            latestPreview: effectiveLatestPreview,
             selectedMediaCount: mediaSelectedCount
         )
     }

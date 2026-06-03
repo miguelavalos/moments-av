@@ -25,6 +25,10 @@ extension MomentsCreateViewModel {
             updateSetupErrorMessage(L10n.string("create.error.waitBeforeDiscard"))
             return
         }
+        guard effectiveLatestFinalJob?.isActiveRender != true else {
+            updateSetupErrorMessage(L10n.string("create.error.waitBeforeDiscard"))
+            return
+        }
         guard hasMomentWorkspace || hasRecoverableMomentContext else {
             updateSetupErrorMessage(L10n.string("create.error.noActiveMoment"))
             return
@@ -254,6 +258,7 @@ extension MomentsCreateViewModel {
         }
         let form = form
         let creationStyleId = selectedCreationStyle.id
+        updateFinalRenderStatusMessage(nil)
 
         runOperation {
             let momentId = await self.resolveMomentIdForPreparation(form: form)
@@ -378,9 +383,8 @@ extension MomentsCreateViewModel {
         }
     }
 
-    func refreshFinalRenderStatus() {
+    func autoRefreshFinalRenderStatus() {
         guard canRefreshFinalRenderStatus, let finalRenderWorkflow else {
-            updateFinalRenderStatusMessage(finalRenderRefreshAvailabilityMessage ?? L10n.string("create.error.noVideoStatus"))
             return
         }
 
@@ -407,9 +411,9 @@ extension MomentsCreateViewModel {
         finalRenderWorkflow.finishFinalExportToGallery()
     }
 
-    func createAnotherFinalVideoVersion() {
+    func createAnotherFinalVideoVersion(openMediaPicker: Bool = false, openAlbumPicker: Bool = false) {
         resetActiveMoment(force: true)
-        isLocalMomentStarted = true
+        _ = beginNewMoment(openMediaPicker: openMediaPicker, openAlbumPicker: openAlbumPicker)
         updateFinalRenderStatusMessage(L10n.string("create.final.status.startAnother"))
     }
 

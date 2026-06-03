@@ -1,60 +1,30 @@
 import AVAppShellFoundation
 import AVBrandFoundation
 import Photos
-import PhotosUI
 import SwiftUI
 import UIKit
 
 struct MomentsCreateMediaCard: View {
-    @Binding var pickerItems: [PhotosPickerItem]
-    @State private var showsPhotoPicker = false
-    @State private var showsAlbumPicker = false
-    @State private var showsMediaManager = false
-    @State private var handledOpenPickerRequest = 0
-    @State private var handledOpenAlbumRequest = 0
-
-    let openPickerRequest: Int
-    let openAlbumRequest: Int
     let presentation: MomentsCreateMediaPresentation
-    let importPickerItems: ([PhotosPickerItem]) -> Void
-    let importLatestPhotos: () -> Void
-    let importPhotoAlbum: (String) -> Void
-    let removeMedia: (MomentsSelectedMedia) -> Void
-    let moveMedia: (MomentsSelectedMedia, MomentsSelectedMedia) -> Void
-    let reorderMedia: ([MomentsSelectedMedia]) -> Void
-    let restoreLocalMediaForEditing: () -> Void
-    let autoPickStrongMoments: () -> Void
-    let consumeOpenPickerRequest: () -> Void
-    let consumeOpenAlbumRequest: () -> Void
+    let choosePhotos: () -> Void
+    let chooseAlbum: () -> Void
 
     var body: some View {
         AVAppShellCard {
-                VStack(alignment: .leading, spacing: selectedCount == 0 ? 16 : 10) {
+                VStack(alignment: .leading, spacing: 16) {
                     HStack(spacing: 10) {
                         Text(L10n.string("create.media.title"))
                             .font(.system(size: 13, weight: .black))
                             .foregroundStyle(AVBrandColor.textPrimary)
 
                         Spacer(minLength: 0)
-
-                        if hasEditableMedia {
-                            MomentsCreateMediaActionIcon()
-                                .accessibilityHidden(true)
-                        }
                     }
 
                     HStack(alignment: .center, spacing: 16) {
                         mediaVisual
 
                         VStack(alignment: .leading, spacing: 4) {
-                            if selectedCount > 0 {
-                                Text(L10n.string("create.current.selected", selectedCount))
-                                    .font(.system(size: 15, weight: .black))
-                                    .foregroundStyle(AVBrandColor.textPrimary)
-                                    .lineLimit(1)
-                            }
-
-                            Text(summaryText)
+                            Text(L10n.string("create.media.emptySummary"))
                                 .font(.system(size: 13, weight: .semibold))
                                 .foregroundStyle(AVBrandColor.textSecondary)
                                 .lineLimit(nil)
@@ -64,218 +34,94 @@ struct MomentsCreateMediaCard: View {
                         Spacer(minLength: 0)
                     }
 
-                    if presentation.summary.reviewCount == 0 {
-                        Text(L10n.string("create.media.startDetail"))
-                            .font(.system(size: 13, weight: .semibold))
-                            .foregroundStyle(AVBrandColor.textSecondary)
-                            .lineLimit(nil)
-                            .fixedSize(horizontal: false, vertical: true)
+                    Text(L10n.string("create.media.startDetail"))
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundStyle(AVBrandColor.textSecondary)
+                        .lineLimit(nil)
+                        .fixedSize(horizontal: false, vertical: true)
 
-                        VStack(spacing: 8) {
-                            Button {
-                                showsPhotoPicker = true
-                            } label: {
-                                MomentsCreateMediaChoiceButtonLabel(
-                                    title: L10n.string("create.media.choose"),
-                                    systemImage: "photo.badge.plus",
-                                    isPrimary: true
-                                )
-                            }
-                            .buttonStyle(.plain)
-                            .disabled(!presentation.canAddMedia || presentation.summary.isImporting)
+                    VStack(spacing: 8) {
+                        MomentsCreateMediaChoiceAction(
+                            title: L10n.string("create.media.choose"),
+                            systemImage: "photo.badge.plus",
+                            isPrimary: true,
+                            isEnabled: !presentation.summary.isImporting,
+                            action: choosePhotos
+                        )
 
-                            Button {
-                                showsAlbumPicker = true
-                            } label: {
-                                MomentsCreateMediaChoiceButtonLabel(
-                                    title: L10n.string("create.media.addCollection"),
-                                    systemImage: "rectangle.stack.badge.plus",
-                                    isPrimary: false
-                                )
-                            }
-                            .buttonStyle(.plain)
-                            .disabled(!presentation.canAddMedia || presentation.summary.isImporting)
-                        }
+                        MomentsCreateMediaChoiceAction(
+                            title: L10n.string("create.media.addCollection"),
+                            systemImage: "rectangle.stack.badge.plus",
+                            isPrimary: false,
+                            isEnabled: !presentation.summary.isImporting,
+                            action: chooseAlbum
+                        )
                     }
                 }
-                .frame(maxWidth: .infinity, minHeight: cardMinHeight, alignment: .topLeading)
+                .frame(maxWidth: .infinity, minHeight: 232, alignment: .topLeading)
             }
         .contentShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-        .modifier(MomentsCreateEditableMediaTapModifier(isEnabled: hasEditableMedia) {
-            showsMediaManager = true
-        })
-        .photosPicker(
-            isPresented: $showsPhotoPicker,
-            selection: $pickerItems,
-            maxSelectionCount: presentation.remainingSlots,
-            matching: .any(of: [.images, .videos])
-        )
-        .onChange(of: pickerItems) { _, newItems in
-            guard !newItems.isEmpty else { return }
-            importPickerItems(newItems)
-            pickerItems = []
-        }
-        .fullScreenCover(isPresented: $showsMediaManager) {
-            MomentsCreateMediaManagerSheet(
-                selectedMedia: presentation.summary.selectedMedia,
-                syncedMediaAssets: presentation.syncedMediaAssets,
-                canAddMedia: presentation.canAddMedia,
-                isImporting: presentation.summary.isImporting,
-                importProgress: presentation.summary.importProgress,
-                removeMedia: removeMedia,
-                moveMedia: moveMedia,
-                reorderMedia: reorderMedia,
-                restoreLocalMediaForEditing: restoreLocalMediaForEditing,
-                chooseManually: {
-                    showsPhotoPicker = true
-                },
-                chooseAlbum: {
-                    showsAlbumPicker = true
-                },
-                importLatestPhotos: importLatestPhotos,
-                smartOrder: autoPickStrongMoments
-            )
-        }
-        .sheet(isPresented: $showsAlbumPicker) {
-            MomentsCreateAlbumPickerSheet(
-                remainingSlots: presentation.remainingSlots,
-                selectAlbum: { album in
-                    showsAlbumPicker = false
-                    importPhotoAlbum(album.id)
-                }
-            )
-            .presentationDetents([.medium, .large])
-        }
-        .onAppear {
-            openPickerIfRequested(openPickerRequest)
-            openAlbumIfRequested(openAlbumRequest)
-        }
-        .onChange(of: openPickerRequest) { _, newValue in
-            openPickerIfRequested(newValue)
-        }
-        .onChange(of: openAlbumRequest) { _, newValue in
-            openAlbumIfRequested(newValue)
-        }
     }
 
-    @ViewBuilder
     private var mediaVisual: some View {
-        if !presentation.summary.selectedMedia.isEmpty || !presentation.syncedMediaAssets.isEmpty {
-            MomentsSharedMediaSummaryStack(
-                localMedia: presentation.summary.selectedMedia,
-                syncedMedia: presentation.syncedMediaAssets
-            )
-        } else {
-            ZStack {
-                AVBrandColor.accent.opacity(0.08)
-                Image(systemName: "photo.on.rectangle.angled")
-                        .font(.system(size: 36, weight: .bold))
-                        .foregroundStyle(AVBrandColor.accent)
-            }
-            .frame(width: 92, height: 92)
-            .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+        ZStack {
+            AVBrandColor.accent.opacity(0.08)
+            Image(systemName: "photo.on.rectangle.angled")
+                    .font(.system(size: 36, weight: .bold))
+                    .foregroundStyle(AVBrandColor.accent)
         }
-    }
-
-    private func openPickerIfRequested(_ request: Int) {
-        guard request > handledOpenPickerRequest,
-              presentation.canAddMedia,
-              presentation.summary.selectedCount == 0 else { return }
-        handledOpenPickerRequest = request
-        consumeOpenPickerRequest()
-        presentRequestedPhotoPicker()
-    }
-
-    private func openAlbumIfRequested(_ request: Int) {
-        guard request > handledOpenAlbumRequest,
-              presentation.canAddMedia,
-              presentation.summary.selectedCount == 0 else { return }
-        handledOpenAlbumRequest = request
-        consumeOpenAlbumRequest()
-        presentRequestedAlbumPicker()
-    }
-
-    private func presentRequestedPhotoPicker() {
-        Task { @MainActor in
-            try? await Task.sleep(for: .milliseconds(200))
-            showsPhotoPicker = true
-        }
-    }
-
-    private func presentRequestedAlbumPicker() {
-        Task { @MainActor in
-            try? await Task.sleep(for: .milliseconds(200))
-            showsAlbumPicker = true
-        }
-    }
-
-    private var summaryText: String {
-        let count = selectedCount
-        if count == 0 {
-            return L10n.string("create.media.emptySummary")
-        }
-
-        return L10n.string("create.media.editSummary")
-    }
-
-    private var hasEditableMedia: Bool {
-        selectedCount > 0 || !presentation.syncedMediaAssets.isEmpty
-    }
-
-    private var selectedCount: Int {
-        presentation.summary.reviewCount
-    }
-
-    private var cardMinHeight: CGFloat {
-        selectedCount == 0 ? 232 : 134
+        .frame(width: 92, height: 92)
+        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
     }
 }
 
-private struct MomentsCreateEditableMediaTapModifier: ViewModifier {
-    let isEnabled: Bool
-    let action: () -> Void
-
-    func body(content: Content) -> some View {
-        if isEnabled {
-            content.onTapGesture(perform: action)
-        } else {
-            content
-        }
-    }
-}
-
-private struct MomentsCreateMediaActionIcon: View {
-    var body: some View {
-        Image(systemName: "square.and.pencil")
-            .font(.system(size: 13, weight: .black))
-            .foregroundStyle(AVBrandColor.accent)
-            .frame(width: 32, height: 32)
-            .background(AVBrandColor.accent.opacity(0.08), in: Circle())
-    }
-}
-
-private struct MomentsCreateMediaChoiceButtonLabel: View {
+private struct MomentsCreateMediaChoiceAction: View {
     let title: String
     let systemImage: String
     let isPrimary: Bool
+    let isEnabled: Bool
+    let action: () -> Void
 
     var body: some View {
-        Label(title, systemImage: systemImage)
-            .font(.system(size: 14, weight: .black))
-            .foregroundStyle(AVBrandColor.textPrimary)
-            .frame(maxWidth: .infinity)
-            .frame(height: 40)
-            .background(
-                RoundedRectangle(cornerRadius: 20, style: .continuous)
-                    .fill(isPrimary ? AVBrandColor.accent.opacity(0.08) : AVBrandColor.neutral100)
-            )
-            .overlay {
-                RoundedRectangle(cornerRadius: 20, style: .continuous)
-                    .stroke(
-                        isPrimary ? AVBrandColor.accent.opacity(0.24) : AVBrandColor.borderSubtle.opacity(0.72),
-                        lineWidth: 1
-                    )
-            }
+        Button {
+            guard isEnabled else { return }
+            action()
+        } label: {
+            Label(title, systemImage: systemImage)
+                .font(.system(size: 14, weight: .black))
+                .foregroundStyle(foregroundColor)
+                .frame(maxWidth: .infinity)
+                .frame(height: 40)
+                .background(backgroundColor, in: Capsule())
+                .overlay {
+                    Capsule()
+                        .stroke(borderColor, lineWidth: 1)
+                }
+                .contentShape(Capsule())
+        }
+        .buttonStyle(.plain)
+        .disabled(!isEnabled)
+        .accessibilityLabel(title)
+    }
+
+    private var foregroundColor: Color {
+        isEnabled ? AVBrandColor.textPrimary : AVBrandColor.textSecondary.opacity(0.55)
+    }
+
+    private var backgroundColor: Color {
+        if !isEnabled {
+            return AVBrandColor.mutedSurface.opacity(0.7)
+        }
+
+        return isPrimary ? AVBrandColor.accent.opacity(0.08) : AVBrandColor.mutedSurface.opacity(0.58)
+    }
+
+    private var borderColor: Color {
+        if isPrimary {
+            return isEnabled ? AVBrandColor.accent.opacity(0.22) : AVBrandColor.borderSubtle.opacity(0.45)
+        }
+
+        return AVBrandColor.borderSubtle.opacity(isEnabled ? 0.38 : 0.22)
     }
 }
 

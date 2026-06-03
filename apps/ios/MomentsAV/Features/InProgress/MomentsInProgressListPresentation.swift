@@ -67,7 +67,6 @@ struct MomentsInProgressListRowPresentation: Identifiable, Equatable {
     let isFinished: Bool
     let metadata: [MomentsInProgressListMetadataPresentation]
     let statusTitle: String
-    let creditCostTitle: String
     let accessorySystemImage: String
     let isSelected: Bool
 
@@ -89,14 +88,8 @@ struct MomentsInProgressListRowPresentation: Identifiable, Equatable {
             )
         ]
         self.statusTitle = MomentsMomentFormatting.statusTitle(moment)
-        self.creditCostTitle = Self.creditCostTitle(moment.creditCost)
         self.accessorySystemImage = isSelected ? "chevron.up.circle.fill" : "chevron.right.circle"
         self.isSelected = isSelected
-    }
-
-    private static func creditCostTitle(_ creditCost: Double) -> String {
-        let count = Int(creditCost)
-        return "\(count) \(count == 1 ? "credit" : "credits")"
     }
 }
 

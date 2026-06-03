@@ -99,7 +99,7 @@ final class MomentsCreateViewModel: ObservableObject {
             mediaStatusMessage,
             storyStatusMessage,
             previewStatusMessage,
-            finalRenderStatusMessage
+            finalRenderAlertMessage
         ]
             .compactMap(\.self)
             .first(where: Self.isUserFacingErrorMessage)
@@ -552,7 +552,10 @@ extension MomentsCreateViewModel {
         renderPlan = state.renderPlan
         pendingGalleryVideo = state.pendingGalleryVideo
         canRetryFinalVideoDownload = state.canRetryFinalVideoDownload
-        finalRenderStatusMessage = state.statusMessage
+        finalRenderStatusMessage = normalizedFinalRenderStatusMessage(
+            state.statusMessage,
+            latestFinalJob: state.latestFinalJob
+        )
         isGeneratingFinalRender = state.isGenerating
         isRefreshingFinalRenderStatus = state.isRefreshingStatus
     }
@@ -620,6 +623,32 @@ extension MomentsCreateViewModel {
         media
             .map { "\($0.id.uuidString):\($0.sha256):\($0.sortOrder)" }
             .joined(separator: "|")
+    }
+
+    private var finalRenderAlertMessage: String? {
+        guard let finalRenderStatusMessage else { return nil }
+        guard !hasActiveFinalRenderJob else { return nil }
+        return finalRenderStatusMessage
+    }
+
+    private var hasActiveFinalRenderJob: Bool {
+        guard let latestFinalJob else { return false }
+        return latestFinalJob.status == "queued" || latestFinalJob.status == "running"
+    }
+
+    private func normalizedFinalRenderStatusMessage(
+        _ message: String?,
+        latestFinalJob: MomentRenderJob?
+    ) -> String? {
+        guard let message,
+              Self.isUserFacingErrorMessage(message),
+              let latestFinalJob,
+              latestFinalJob.status == "queued" || latestFinalJob.status == "running"
+        else {
+            return message
+        }
+
+        return latestFinalJob.userMessage
     }
 
     private static func isUserFacingErrorMessage(_ message: String) -> Bool {

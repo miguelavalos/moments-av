@@ -288,29 +288,18 @@ final class MomentsCreditGateTests: XCTestCase {
             previewLimit: 3,
             updatedAt: 0
         )
-        let preview = MomentArtifact(
-            id: "preview-1",
-            kind: "preview",
-            r2Key: "momentsav/user/moment/previews/preview-1.mp4",
-            status: "available",
-            hasWatermark: true,
-            expiresAt: 0
-        )
-
         XCTAssertTrue(
             MomentsFinalRenderRules.canGenerate(
                 moment: moment,
                 template: .birthdayMessage,
-                balance: balance,
-                latestPreview: preview
+                balance: balance
             )
         )
         XCTAssertFalse(
             MomentsFinalRenderRules.canGenerate(
                 moment: moment,
                 template: .birthdayMessage,
-                balance: .empty,
-                latestPreview: preview
+                balance: .empty
             )
         )
         XCTAssertTrue(MomentsFinalRenderRules.canPreparePlan(moment: moment))
@@ -318,8 +307,7 @@ final class MomentsCreditGateTests: XCTestCase {
             MomentsFinalRenderRules.canGenerate(
                 moment: moment,
                 template: .birthdayMessage,
-                balance: balance,
-                latestPreview: nil
+                balance: balance
             )
         )
 
@@ -345,7 +333,6 @@ final class MomentsCreditGateTests: XCTestCase {
                 moment: staleStoryMoment,
                 template: .birthdayMessage,
                 balance: balance,
-                latestPreview: nil,
                 storySceneCount: 1
             )
         )

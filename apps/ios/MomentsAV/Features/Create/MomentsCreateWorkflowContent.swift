@@ -8,6 +8,7 @@ struct MomentsCreateWorkflowContent: View {
     @Binding var pickerItems: [PhotosPickerItem]
     let startSignInFlow: () -> Void
     let openCredits: () -> Void
+    let createAnotherFinalVideoVersion: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -41,12 +42,13 @@ struct MomentsCreateWorkflowContent: View {
                     discardMoment: viewModel.discardMoment,
                     startSignInFlow: startSignInFlow,
                     openCredits: openCredits,
+                    preparePreview: viewModel.preparePreview,
                     refreshPreviewStatus: viewModel.refreshPreviewStatus,
                     generateFinalRender: viewModel.createFinalVideoFromCurrentSelection,
-                    refreshFinalRenderStatus: viewModel.refreshFinalRenderStatus,
+                    autoRefreshFinalRenderStatus: viewModel.autoRefreshFinalRenderStatus,
                     retryFinalVideoDownload: viewModel.retryFinalVideoDownload,
                     finishFinalVideoToGallery: viewModel.finishFinalVideoToGallery,
-                    createAnotherFinalVideoVersion: viewModel.createAnotherFinalVideoVersion
+                    createAnotherFinalVideoVersion: createAnotherFinalVideoVersion
                 )
             } else {
                 EmptyView()
@@ -84,9 +86,10 @@ private struct MomentsCreateMediaFirstWorkspace: View {
     let discardMoment: () -> Void
     let startSignInFlow: () -> Void
     let openCredits: () -> Void
+    let preparePreview: () -> Void
     let refreshPreviewStatus: () -> Void
     let generateFinalRender: (Bool) -> Void
-    let refreshFinalRenderStatus: () -> Void
+    let autoRefreshFinalRenderStatus: () -> Void
     let retryFinalVideoDownload: () -> Void
     let finishFinalVideoToGallery: () -> Void
     let createAnotherFinalVideoVersion: () -> Void
@@ -98,61 +101,69 @@ private struct MomentsCreateMediaFirstWorkspace: View {
     @State private var showsCompactPhotoPicker = false
     @State private var showsCompactAlbumPicker = false
     @State private var showsCompactMediaManager = false
+    @State private var handledOpenPickerRequest = 0
+    @State private var handledOpenAlbumRequest = 0
 
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: hasMediaSelection ? 10 : 12) {
-                MomentsCreateCompactAviGuide(
-                    presentation: presentation,
-                    openOptions: { showsAviOptions = true }
-                )
-
-                if hasMediaSelection {
-                    MomentsCreateAviCutDecisionCard(
+        ZStack {
+            ScrollView {
+                VStack(alignment: .leading, spacing: showsWorkflowDashboard ? 10 : 12) {
+                    MomentsCreateCompactAviGuide(
                         presentation: presentation,
-                        selectedStyle: selectedStyle,
-                        selectedMusicPreset: selectedMusicPreset,
-                        autoStyleSuggestion: autoStyleSuggestion,
-                        canUndoAutoStyleSuggestion: canUndoAutoStyleSuggestion,
-                        styles: styles,
-                        editMedia: { showsCompactMediaManager = true },
                         openOptions: { showsAviOptions = true }
                     )
 
-                    MomentsCreatePrimaryActionBar(
-                        presentation: presentation,
-                        discardMoment: { showsDiscardMomentConfirmation = true },
-                        startSignInFlow: startSignInFlow,
-                        refreshPreviewStatus: refreshPreviewStatus,
-                        generateFinalRender: primaryFinalRenderAction,
-                        refreshFinalRenderStatus: refreshFinalRenderStatus,
-                        retryFinalVideoDownload: retryFinalVideoDownload,
-                        finishFinalVideoToGallery: finishFinalVideoToGallery,
-                        createAnotherFinalVideoVersion: createAnotherFinalVideoVersion
-                    )
-                } else {
-                    MomentsCreateMediaCard(
-                        pickerItems: $pickerItems,
-                        openPickerRequest: openPickerRequest,
-                        openAlbumRequest: openAlbumRequest,
-                        presentation: mediaPresentation,
-                        importPickerItems: importPickerItems,
-                        importLatestPhotos: importLatestPhotos,
-                        importPhotoAlbum: importPhotoAlbum,
-                        removeMedia: removeMedia,
-                        moveMedia: moveMedia,
-                        reorderMedia: reorderMedia,
-                        restoreLocalMediaForEditing: restoreLocalMediaForEditing,
-                        autoPickStrongMoments: autoPickStrongMoments,
-                        consumeOpenPickerRequest: consumeOpenPickerRequest,
-                        consumeOpenAlbumRequest: consumeOpenAlbumRequest
-                    )
+                    if hasMediaSelection {
+                        MomentsCreateAviCutDecisionCard(
+                            presentation: presentation,
+                            selectedDuration: form.duration,
+                            selectedStyle: selectedStyle,
+                            selectedMusicPreset: selectedMusicPreset,
+                            autoStyleSuggestion: autoStyleSuggestion,
+                            canUndoAutoStyleSuggestion: canUndoAutoStyleSuggestion,
+                            styles: styles,
+                            editMedia: { showsCompactMediaManager = true },
+                            openOptions: { showsAviOptions = true },
+                            preparePreview: preparePreview,
+                            refreshPreviewStatus: refreshPreviewStatus
+                        )
+
+                        MomentsCreatePrimaryActionBar(
+                            presentation: presentation,
+                            discardMoment: { showsDiscardMomentConfirmation = true },
+                            startSignInFlow: startSignInFlow,
+                            openCredits: openCredits,
+                            refreshPreviewStatus: refreshPreviewStatus,
+                            generateFinalRender: primaryFinalRenderAction,
+                            retryFinalVideoDownload: retryFinalVideoDownload,
+                            finishFinalVideoToGallery: finishFinalVideoToGallery,
+                            createAnotherFinalVideoVersion: createAnotherFinalVideoVersion
+                        )
+                    } else if hasFinalVideoState {
+                        MomentsCreatePrimaryActionBar(
+                            presentation: presentation,
+                            discardMoment: { showsDiscardMomentConfirmation = true },
+                            startSignInFlow: startSignInFlow,
+                            openCredits: openCredits,
+                            refreshPreviewStatus: refreshPreviewStatus,
+                            generateFinalRender: primaryFinalRenderAction,
+                            retryFinalVideoDownload: retryFinalVideoDownload,
+                            finishFinalVideoToGallery: finishFinalVideoToGallery,
+                            createAnotherFinalVideoVersion: createAnotherFinalVideoVersion
+                        )
+                    } else {
+                        MomentsCreateMediaCard(
+                            presentation: mediaPresentation,
+                            choosePhotos: presentCompactPhotoPicker,
+                            chooseAlbum: presentCompactAlbumPicker
+                        )
+                    }
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.bottom, showsWorkflowDashboard ? 132 : 172)
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.bottom, hasMediaSelection ? 132 : 172)
+            .scrollIndicators(.hidden)
         }
-        .scrollIndicators(.hidden)
         .animation(.spring(response: 0.38, dampingFraction: 0.86), value: presentation.storySummary.hasScenes)
         .photosPicker(
             isPresented: $showsCompactPhotoPicker,
@@ -161,7 +172,7 @@ private struct MomentsCreateMediaFirstWorkspace: View {
             matching: .any(of: [.images, .videos])
         )
         .onChange(of: pickerItems) { _, newItems in
-            guard hasMediaSelection, !newItems.isEmpty else { return }
+            guard !newItems.isEmpty else { return }
             importPickerItems(newItems)
             pickerItems = []
         }
@@ -177,10 +188,10 @@ private struct MomentsCreateMediaFirstWorkspace: View {
                 reorderMedia: reorderMedia,
                 restoreLocalMediaForEditing: restoreLocalMediaForEditing,
                 chooseManually: {
-                    showsCompactPhotoPicker = true
+                    presentCompactPhotoPicker()
                 },
                 chooseAlbum: {
-                    showsCompactAlbumPicker = true
+                    presentCompactAlbumPicker()
                 },
                 importLatestPhotos: importLatestPhotos,
                 smartOrder: autoPickStrongMoments
@@ -211,14 +222,28 @@ private struct MomentsCreateMediaFirstWorkspace: View {
             .presentationDetents([.medium])
             .presentationDragIndicator(.visible)
         }
-        .onChange(of: presentation.finalRenderSummary.renderPlan?.planId) { _, planId in
-            guard waitsForFinalRenderPlan, planId != nil else { return }
+        .onChange(of: presentation.finalRenderSummary.renderPlan?.planId) { _, _ in
+            guard waitsForFinalRenderPlan,
+                  presentation.finalRenderSummary.renderPlan?.canCreateVideo == true else { return }
             waitsForFinalRenderPlan = false
             showsCreateVideoConfirmation = true
         }
         .onChange(of: presentation.finalRenderSummary.isGenerating) { _, isGenerating in
             guard waitsForFinalRenderPlan, !isGenerating, presentation.finalRenderSummary.renderPlan == nil else { return }
             waitsForFinalRenderPlan = false
+        }
+        .onAppear {
+            openCompactPickerIfRequested(openPickerRequest)
+            openCompactAlbumIfRequested(openAlbumRequest)
+        }
+        .onChange(of: openPickerRequest) { _, newValue in
+            openCompactPickerIfRequested(newValue)
+        }
+        .onChange(of: openAlbumRequest) { _, newValue in
+            openCompactAlbumIfRequested(newValue)
+        }
+        .task(id: autoFinalRenderRefreshTaskID) {
+            await autoRefreshFinalRenderStatusIfNeeded()
         }
         .alert(L10n.string("create.discard.confirmTitle"), isPresented: $showsDiscardMomentConfirmation) {
             Button(L10n.string("create.discard.keep"), role: .cancel) {}
@@ -273,9 +298,57 @@ private struct MomentsCreateMediaFirstWorkspace: View {
         }
     }
 
+    private func openCompactPickerIfRequested(_ request: Int) {
+        guard request > handledOpenPickerRequest,
+              presentation.mediaSummary.selectedCount == 0 else { return }
+        handledOpenPickerRequest = request
+        consumeOpenPickerRequest()
+        presentCompactPhotoPicker()
+    }
+
+    private func openCompactAlbumIfRequested(_ request: Int) {
+        guard request > handledOpenAlbumRequest,
+              presentation.mediaSummary.selectedCount == 0 else { return }
+        handledOpenAlbumRequest = request
+        consumeOpenAlbumRequest()
+        presentCompactAlbumPicker()
+    }
+
+    private func presentCompactPhotoPicker() {
+        showsCompactPhotoPicker = true
+    }
+
+    private func presentCompactAlbumPicker() {
+        showsCompactAlbumPicker = true
+    }
+
     private func discardCurrentMoment() {
         showsAviOptions = false
         discardMoment()
+    }
+
+    private var autoFinalRenderRefreshTaskID: String {
+        guard let job = presentation.finalRenderSummary.latestFinalJob,
+              job.isActiveRender,
+              presentation.finalRenderSummary.finalExport == nil else {
+            return "none"
+        }
+
+        return "\(job.id):\(job.status):\(Int(job.updatedAt))"
+    }
+
+    private func autoRefreshFinalRenderStatusIfNeeded() async {
+        guard let job = presentation.finalRenderSummary.latestFinalJob,
+              job.isActiveRender,
+              presentation.finalRenderSummary.finalExport == nil,
+              presentation.canRefreshFinalRenderStatus else {
+            return
+        }
+
+        while !Task.isCancelled {
+            autoRefreshFinalRenderStatus()
+            try? await Task.sleep(for: .seconds(12))
+        }
     }
 
     private var discardConfirmationActionTitle: String {
@@ -293,6 +366,17 @@ private struct MomentsCreateMediaFirstWorkspace: View {
     private var hasMediaSelection: Bool {
         presentation.mediaSummary.reviewCount > 0
             || !presentation.mediaSummary.syncedMediaAssets.isEmpty
+    }
+
+    private var hasFinalVideoState: Bool {
+        presentation.finalRenderSummary.renderPlan != nil
+            || presentation.finalRenderSummary.latestFinalJob != nil
+            || presentation.finalRenderSummary.finalExport != nil
+            || presentation.finalRenderSummary.pendingGalleryVideo != nil
+    }
+
+    private var showsWorkflowDashboard: Bool {
+        hasMediaSelection || hasFinalVideoState
     }
 }
 
@@ -389,6 +473,9 @@ struct MomentsCreateBlockingPreparationView: View {
     }
 
     private var mode: PreparationMode {
+        if presentation.isCreatingMoment {
+            return .prepareMoment
+        }
         if presentation.finalRenderSummary.isGenerating {
             return .createVideo
         }
@@ -405,6 +492,7 @@ struct MomentsCreateBlockingPreparationView: View {
     }
 
     private enum PreparationMode {
+        case prepareMoment
         case importMedia
         case prepareStory
         case uploadForVideo
@@ -413,6 +501,8 @@ struct MomentsCreateBlockingPreparationView: View {
 
         var title: String {
             switch self {
+            case .prepareMoment:
+                return L10n.string("create.preparation.prepareMoment.title")
             case .importMedia:
                 return L10n.string("create.preparation.importMedia.title")
             case .prepareStory:
@@ -428,6 +518,8 @@ struct MomentsCreateBlockingPreparationView: View {
 
         var iconName: String {
             switch self {
+            case .prepareMoment:
+                return "rectangle.stack.badge.plus"
             case .importMedia:
                 return "photo.on.rectangle.angled"
             case .prepareStory:
@@ -443,7 +535,7 @@ struct MomentsCreateBlockingPreparationView: View {
 
         var tint: Color {
             switch self {
-            case .importMedia, .prepareStory:
+            case .prepareMoment, .importMedia, .prepareStory:
                 return AVBrandColor.accent
             case .uploadForVideo:
                 return AVBrandColor.textSecondary
@@ -454,6 +546,8 @@ struct MomentsCreateBlockingPreparationView: View {
 
         func message(itemCount: Int?) -> String {
             switch self {
+            case .prepareMoment:
+                return L10n.string("create.preparation.prepareMoment.detail")
             case .importMedia:
                 if let itemCount, itemCount > 0 {
                     let itemWord = itemCount == 1
@@ -536,6 +630,7 @@ private struct MomentsCreateStoryReviewCard: View {
 
 private struct MomentsCreateAviCutDecisionCard: View {
     let presentation: MomentsCreateWorkflowPresentation
+    let selectedDuration: MomentDuration
     let selectedStyle: MomentCreationStyle
     let selectedMusicPreset: MomentMusicPreset
     let autoStyleSuggestion: MomentsMediaAutoStyleSuggestion?
@@ -543,10 +638,12 @@ private struct MomentsCreateAviCutDecisionCard: View {
     let styles: [MomentCreationStyle]
     let editMedia: () -> Void
     let openOptions: () -> Void
+    let preparePreview: () -> Void
+    let refreshPreviewStatus: () -> Void
 
     var body: some View {
         AVAppShellCard {
-            VStack(alignment: .leading, spacing: 12) {
+            VStack(alignment: .leading, spacing: 11) {
                 HStack(alignment: .center, spacing: 14) {
                     MomentsSharedMediaSummaryStack(
                         localMedia: presentation.mediaSummary.selectedMedia,
@@ -578,19 +675,26 @@ private struct MomentsCreateAviCutDecisionCard: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                 }
 
-                ViewThatFits(in: .horizontal) {
-                    HStack(spacing: 7) {
-                        summaryPills
-                    }
+                VStack(alignment: .leading, spacing: 7) {
+                    Text(L10n.string("create.aviCut.selectedSetup"))
+                        .font(.system(size: 11, weight: .black))
+                        .foregroundStyle(AVBrandColor.textSecondary)
+                        .textCase(.uppercase)
 
-                    VStack(alignment: .leading, spacing: 7) {
+                    ViewThatFits(in: .horizontal) {
                         HStack(spacing: 7) {
-                            MomentsCreateOptionPill(title: aviCut.mediaCountTitle, systemImage: "photo.stack")
-                            MomentsCreateOptionPill(title: selectedStyle.title, systemImage: "sparkles")
+                            summaryPills
                         }
-                        HStack(spacing: 7) {
-                            MomentsCreateOptionPill(title: selectedMusicPreset.title, systemImage: "music.note")
-                            MomentsCreateOptionPill(title: aviCut.durationTitle, systemImage: "timer")
+
+                        VStack(alignment: .leading, spacing: 7) {
+                            HStack(spacing: 7) {
+                                MomentsCreateOptionPill(title: aviCut.mediaCountTitle, systemImage: "photo.stack")
+                                MomentsCreateOptionPill(title: selectedStyle.title, systemImage: "sparkles")
+                            }
+                            HStack(spacing: 7) {
+                                MomentsCreateOptionPill(title: selectedMusicPreset.title, systemImage: "music.note")
+                                MomentsCreateOptionPill(title: aviCut.durationTitle, systemImage: "timer")
+                            }
                         }
                     }
                 }
@@ -625,6 +729,22 @@ private struct MomentsCreateAviCutDecisionCard: View {
                         .background(AVBrandColor.accent.opacity(0.08), in: RoundedRectangle(cornerRadius: 8, style: .continuous))
                 }
 
+                VStack(alignment: .leading, spacing: 8) {
+                    Text(L10n.string("create.aviCut.optionalPreview"))
+                        .font(.system(size: 11, weight: .black))
+                        .foregroundStyle(AVBrandColor.textSecondary)
+                        .textCase(.uppercase)
+
+                    Button(action: previewAction) {
+                        Label(previewButtonTitle, systemImage: previewIconName)
+                            .frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(MomentsCreateNeutralInlineButtonStyle())
+                    .disabled(!canRunPreviewAction)
+                    .opacity(canRunPreviewAction ? 1 : 0.68)
+                }
+                .font(.system(size: 13, weight: .black))
+
                 HStack(spacing: 10) {
                     Button(action: editMedia) {
                         Label(L10n.string("create.media.editTitle"), systemImage: "photo.stack")
@@ -652,6 +772,48 @@ private struct MomentsCreateAviCutDecisionCard: View {
         MomentsCreateOptionPill(title: aviCut.durationTitle, systemImage: "timer")
     }
 
+    private var previewButtonTitle: String {
+        if presentation.previewSummary.latestPreview != nil {
+            return L10n.string("create.preview.action.refresh")
+        }
+        if presentation.previewSummary.latestPreviewJob != nil {
+            return previewActionPresentation.refreshButtonTitle
+        }
+        return previewActionPresentation.generateButtonTitle
+    }
+
+    private var previewIconName: String {
+        if presentation.previewSummary.latestPreviewJob != nil {
+            return "arrow.clockwise"
+        }
+        return "sparkles.tv.fill"
+    }
+
+    private var canRunPreviewAction: Bool {
+        if presentation.previewSummary.latestPreviewJob != nil {
+            return presentation.canRefreshPreviewStatus
+        }
+        return presentation.canGeneratePreview || presentation.canPlanStory
+    }
+
+    private func previewAction() {
+        if presentation.previewSummary.latestPreviewJob != nil, presentation.canRefreshPreviewStatus {
+            refreshPreviewStatus()
+        } else {
+            preparePreview()
+        }
+    }
+
+    private var previewActionPresentation: MomentsCreatePreviewPresentation {
+        MomentsCreatePreviewPresentation(
+            summary: presentation.previewSummary,
+            canGeneratePreview: presentation.canGeneratePreview,
+            canRefreshPreviewStatus: presentation.canRefreshPreviewStatus,
+            availabilityMessage: presentation.previewAvailabilityMessage,
+            refreshAvailabilityMessage: presentation.previewRefreshAvailabilityMessage
+        )
+    }
+
     private var mediaPresentation: MomentsCreateMediaPresentation {
         MomentsCreateMediaPresentation(
             activeMomentId: presentation.activeMomentId,
@@ -670,7 +832,8 @@ private struct MomentsCreateAviCutDecisionCard: View {
         MomentsCreateAviCutPresentation(
             mediaSummary: presentation.mediaSummary,
             storySummary: presentation.storySummary,
-            template: presentation.template,
+            selectedDuration: selectedDuration,
+            renderPlan: presentation.finalRenderSummary.renderPlan?.plan,
             canImproveWithAvi: presentation.canPlanStory,
             availabilityMessage: presentation.storyAvailabilityMessage
         )
@@ -838,9 +1001,9 @@ private struct MomentsCreatePrimaryActionBar: View {
     let presentation: MomentsCreateWorkflowPresentation
     let discardMoment: () -> Void
     let startSignInFlow: () -> Void
+    let openCredits: () -> Void
     let refreshPreviewStatus: () -> Void
     let generateFinalRender: () -> Void
-    let refreshFinalRenderStatus: () -> Void
     let retryFinalVideoDownload: () -> Void
     let finishFinalVideoToGallery: () -> Void
     let createAnotherFinalVideoVersion: () -> Void
@@ -884,17 +1047,19 @@ private struct MomentsCreatePrimaryActionBar: View {
                     MomentsCreateRealtimeRenderStatusPanel(status: realtimeStatus)
                 }
 
-                Button(action: primaryAction) {
-                    Label(primaryActionPresentation.buttonTitle, systemImage: primaryActionPresentation.buttonIconName)
-                        .font(.system(size: 15, weight: .black))
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.8)
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 46)
+                if primaryActionPresentation.showsPrimaryActionButton {
+                    Button(action: primaryAction) {
+                        Label(primaryActionPresentation.buttonTitle, systemImage: primaryActionPresentation.buttonIconName)
+                            .font(.system(size: 15, weight: .black))
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.8)
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 46)
+                    }
+                    .disabled(!primaryActionPresentation.canRunPrimaryAction)
+                    .buttonStyle(MomentsCreateSoftActionButtonStyle())
+                    .opacity(primaryActionPresentation.canRunPrimaryAction ? 1 : 0.72)
                 }
-                .disabled(!primaryActionPresentation.canRunPrimaryAction)
-                .buttonStyle(MomentsCreateSoftActionButtonStyle())
-                .opacity(primaryActionPresentation.canRunPrimaryAction ? 1 : 0.72)
 
                 if presentation.finalRenderSummary.pendingGalleryVideo != nil {
                     VStack(spacing: 10) {
@@ -903,6 +1068,23 @@ private struct MomentsCreatePrimaryActionBar: View {
                                 .frame(maxWidth: .infinity)
                         }
                         .buttonStyle(MomentsCreateSoftActionButtonStyle())
+
+                        Button(action: createAnotherFinalVideoVersion) {
+                            Label(L10n.string("create.final.createAnother"), systemImage: "plus.rectangle.on.rectangle")
+                                .frame(maxWidth: .infinity)
+                        }
+                        .buttonStyle(MomentsCreateNeutralInlineButtonStyle())
+                    }
+                    .font(.system(size: 14, weight: .black))
+                } else if presentation.finalRenderSummary.finalExport != nil {
+                    VStack(spacing: 10) {
+                        if presentation.finalRenderSummary.canRetryFinalVideoDownload {
+                            Button(action: retryFinalVideoDownload) {
+                                Label(L10n.string("create.workflowContent.retryFinalDownload"), systemImage: "arrow.down.circle.fill")
+                                    .frame(maxWidth: .infinity)
+                            }
+                            .buttonStyle(MomentsCreateSoftActionButtonStyle())
+                        }
 
                         Button(action: createAnotherFinalVideoVersion) {
                             Label(L10n.string("create.final.createAnother"), systemImage: "plus.rectangle.on.rectangle")
@@ -920,16 +1102,18 @@ private struct MomentsCreatePrimaryActionBar: View {
                     .font(.system(size: 14, weight: .black))
                 }
 
-                HStack(spacing: 14) {
-                    Spacer(minLength: 0)
+                if canShowDiscardAction {
+                    HStack(spacing: 14) {
+                        Spacer(minLength: 0)
 
-                    Button(action: discardMoment) {
-                        Label(discardActionTitle, systemImage: discardActionIconName)
+                        Button(action: discardMoment) {
+                            Label(discardActionTitle, systemImage: discardActionIconName)
+                        }
+                        .buttonStyle(MomentsCreateNeutralInlineButtonStyle())
                     }
-                    .buttonStyle(MomentsCreateNeutralInlineButtonStyle())
+                    .font(.system(size: 12, weight: .bold))
+                    .frame(maxWidth: .infinity)
                 }
-                .font(.system(size: 12, weight: .bold))
-                .frame(maxWidth: .infinity)
             }
         }
     }
@@ -944,6 +1128,10 @@ private struct MomentsCreatePrimaryActionBar: View {
 
     private var discardActionIconName: String {
         presentation.hasUnsavedLocalMoment ? "xmark.circle" : "trash"
+    }
+
+    private var canShowDiscardAction: Bool {
+        presentation.finalRenderSummary.latestFinalJob?.isActiveRender != true
     }
 
     private var statusColor: Color {
@@ -974,12 +1162,12 @@ private struct MomentsCreatePrimaryActionBar: View {
             return
         }
         if presentation.finalRenderSummary.latestFinalJob != nil {
-            if primaryActionPresentation.canRefreshFinalRender {
-                refreshFinalRenderStatus()
-            }
+            return
         } else if primaryActionPresentation.hasFinalVideoIntent {
             if primaryActionPresentation.needsSignInForStory {
                 startSignInFlow()
+            } else if primaryActionPresentation.needsCreditsForPreparedPlan {
+                openCredits()
             } else {
                 generateFinalRender()
             }
@@ -1052,6 +1240,8 @@ private struct MomentsCreateFinalVideoConfirmationSheet: View {
                         .frame(height: 48)
                 }
                 .buttonStyle(MomentsCreateSoftActionButtonStyle())
+                .disabled(!action.canAffordSelectedCost)
+                .opacity(action.canAffordSelectedCost ? 1 : 0.62)
 
                 Button(action: cancel) {
                     Text(L10n.string("create.action.notNow"))

@@ -61,6 +61,7 @@ struct RenderJobStatusRefresh {
         return messages.success
     }
 
+    @discardableResult
     func updateStatus(
         ownerUserId: String,
         bearerToken: String,
@@ -68,8 +69,30 @@ struct RenderJobStatusRefresh {
         statusUpdater: any MomentsRenderJobStatusUpdating,
         usesProviderReconciliation: Bool = false,
         shouldContinue: () -> Bool
-    ) async throws {
-        let status = if usesProviderReconciliation {
+    ) async throws -> MomentsRenderStatusResponse {
+        let status = try await fetchStatus(
+            bearerToken: bearerToken,
+            statusClient: statusClient,
+            usesProviderReconciliation: usesProviderReconciliation
+        )
+        guard shouldContinue() else { throw CancellationError() }
+
+        try await saveStatus(
+            ownerUserId: ownerUserId,
+            status: status,
+            statusUpdater: statusUpdater
+        )
+        guard shouldContinue() else { throw CancellationError() }
+
+        return status
+    }
+
+    func fetchStatus(
+        bearerToken: String,
+        statusClient: MomentsRenderStatusClient,
+        usesProviderReconciliation: Bool = false
+    ) async throws -> MomentsRenderStatusResponse {
+        if usesProviderReconciliation {
             try await statusClient.reconcileFinalRender(
                 renderJobId: providerRequestId,
                 bearerToken: bearerToken
@@ -80,8 +103,13 @@ struct RenderJobStatusRefresh {
                 bearerToken: bearerToken
             )
         }
-        guard shouldContinue() else { throw CancellationError() }
+    }
 
+    func saveStatus(
+        ownerUserId: String,
+        status: MomentsRenderStatusResponse,
+        statusUpdater: any MomentsRenderJobStatusUpdating
+    ) async throws {
         try await statusUpdater.updateRenderJobStatus(
             ownerUserId: ownerUserId,
             renderJobId: job.id,
@@ -94,6 +122,27 @@ struct RenderJobStatusRefresh {
             errorCode: status.errorCode,
             errorMessage: status.errorMessage
         )
-        guard shouldContinue() else { throw CancellationError() }
+    }
+
+    @discardableResult
+    func saveCompletedFinalArtifactIfNeeded(
+        ownerUserId: String,
+        status: MomentsRenderStatusResponse,
+        workspace: MomentWorkspace?,
+        statusUpdater: any MomentsFinalRenderResultSaving
+    ) async throws -> Bool {
+        guard status.status == "completed",
+              status.artifactStatus == "available",
+              workspace?.latestArtifact(kind: "final_export")?.r2Key != status.artifactR2Key else {
+            return false
+        }
+
+        try await statusUpdater.saveCompletedFinalRenderStatusArtifact(
+            ownerUserId: ownerUserId,
+            momentId: momentId,
+            renderJobId: job.id,
+            status: status
+        )
+        return true
     }
 }

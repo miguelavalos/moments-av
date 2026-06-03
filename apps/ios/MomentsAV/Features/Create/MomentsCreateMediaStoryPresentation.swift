@@ -60,7 +60,8 @@ struct MomentsCreateStoryPresentation: Equatable {
 struct MomentsCreateAviCutPresentation: Equatable {
     var mediaSummary: MomentsCreateMediaSummary
     var storySummary: MomentsCreateStorySummary
-    var template: MomentTemplate
+    var selectedDuration: MomentDuration
+    var renderPlan: MomentsRenderPlan?
     var canImproveWithAvi = false
     var availabilityMessage: String?
 
@@ -101,7 +102,10 @@ struct MomentsCreateAviCutPresentation: Equatable {
     }
 
     var durationTitle: String {
-        template.duration
+        if let targetDurationMs = renderPlan?.targetDurationMs {
+            return "\(targetDurationMs / 1_000)s"
+        }
+        return selectedDuration.title
     }
 
     var primaryActionTitle: String {

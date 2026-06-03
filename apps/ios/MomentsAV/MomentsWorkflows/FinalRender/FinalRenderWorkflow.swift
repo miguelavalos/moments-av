@@ -1,4 +1,5 @@
 import Foundation
+import OSLog
 
 @MainActor
 final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
@@ -20,6 +21,7 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
     private let finalRenderClient: MomentsFinalRenderClient
     private let statusClient: MomentsRenderStatusClient
     private let galleryStore: any MomentsGalleryStoring
+    private let logger = Logger(subsystem: "com.avalsys.momentsav", category: "final-render")
     private var downloadingArtifactIds = Set<String>()
 
     init(
@@ -59,11 +61,14 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
         finalRenderResultSaver.isConfigured && finalRenderClient.isConfigured && statusClient.isConfigured
     }
 
-    func canGenerate(template: MomentTemplate, latestPreview: MomentArtifact?) -> Bool {
+    func canGenerate(template: MomentTemplate) -> Bool {
         guard activeWorkspace?.moment != nil else { return false }
         return currentUserProvider.currentUserId != nil
             && isConfigured
-            && MomentsCreditGate.canAfford(template, balance: creditBalanceProvider.currentCreditBalance)
+            && creditBalanceProvider.currentCreditBalance.spendable >= requiredCreditCost(
+                template: template,
+                removesWatermark: false
+            )
             && !isGenerating
     }
 
@@ -99,16 +104,11 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
 
         if allowPreparedStory {
             if !needsRenderPlan {
-                guard MomentsCreditGate.canAffordFinalRender(
+                let requiredCredits = requiredCreditCost(
                     template: template,
-                    removesWatermark: removesWatermark,
-                    balance: creditBalanceProvider.currentCreditBalance
-                ) else {
-                    let requiredCredits = MomentsCreditGate.finalRenderCreditCost(
-                        template: template,
-                        removesWatermark: removesWatermark,
-                        balance: creditBalanceProvider.currentCreditBalance
-                    )
+                    removesWatermark: removesWatermark
+                )
+                guard creditBalanceProvider.currentCreditBalance.spendable >= requiredCredits else {
                     statusMessage = MomentsCreateAvailabilityCopy.finalRenderInsufficientCredits(
                         missingCredits: max(0, requiredCredits - creditBalanceProvider.currentCreditBalance.spendable)
                     )
@@ -120,7 +120,6 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
                 moment: activeWorkspace?.moment,
                 template: template,
                 balance: creditBalanceProvider.currentCreditBalance,
-                latestPreview: activeWorkspace?.latestArtifact(kind: "preview"),
                 storySceneCount: activeWorkspace?.storyScenes.count ?? 0
             )
             guard availability.canGenerate else {
@@ -131,12 +130,16 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
 
         let generation = beginWorkflowGeneration()
         isGenerating = true
+        if needsRenderPlan {
+            renderPlan = nil
+        }
         statusMessage = L10n.string("workflow.final.preparing")
 
         do {
             if needsRenderPlan {
                 statusMessage = L10n.string("workflow.final.checkingPlan")
-                let plan = try await finalRenderClient.prepareRenderPlan(
+                logger.info("Preparing final render plan momentId=\(momentId, privacy: .public)")
+                let plan = try await prepareRenderPlanWithUploadVisibilityRetry(
                     momentId: momentId,
                     bearerToken: bearerToken,
                     template: template,
@@ -144,12 +147,14 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
                     form: form,
                     removesWatermark: removesWatermark
                 )
-                renderPlan = plan
                 guard plan.canCreateVideo else {
+                    renderPlan = nil
                     statusMessage = L10n.string("workflow.final.needsUsableMedia")
                     isGenerating = false
                     return
                 }
+                renderPlan = plan
+                logger.info("Final render plan ready momentId=\(momentId, privacy: .public) planId=\(plan.planId, privacy: .public) cost=\(plan.plan.totalCreditCost, privacy: .public)")
                 statusMessage = L10n.string("workflow.final.planReady")
                 isGenerating = false
                 return
@@ -214,6 +219,10 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
             latestFinalJob = startedJob
             latestFinalJobMomentId = momentId
             statusMessage = L10n.string("workflow.final.creatingVideo")
+        } catch let error as MomentsAPIError {
+            guard isCurrentWorkflowGeneration(generation) else { return }
+            logger.error("Final render API error code=\(error.code, privacy: .public) message=\(error.message, privacy: .public) momentId=\(momentId, privacy: .public)")
+            statusMessage = error.localizedDescription
         } catch {
             guard isCurrentWorkflowGeneration(generation) else { return }
             statusMessage = MomentsRecoveryCopy.renderStartFailure()
@@ -221,6 +230,33 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
 
         guard isCurrentWorkflowGeneration(generation) else { return }
         isGenerating = false
+    }
+
+    private func prepareRenderPlanWithUploadVisibilityRetry(
+        momentId: String,
+        bearerToken: String,
+        template: MomentTemplate,
+        creationStyle: MomentCreationStyleID?,
+        form: MomentSetupForm,
+        removesWatermark: Bool
+    ) async throws -> MomentsRenderPlanResponse {
+        var attempt = 0
+
+        while true {
+            do {
+                return try await finalRenderClient.prepareRenderPlan(
+                    momentId: momentId,
+                    bearerToken: bearerToken,
+                    template: template,
+                    creationStyle: creationStyle,
+                    form: form,
+                    removesWatermark: removesWatermark
+                )
+            } catch let error as MomentsAPIError where error.isRetryableMediaVisibilityError && attempt < 2 {
+                attempt += 1
+                try await Task.sleep(nanoseconds: UInt64(attempt) * 750_000_000)
+            }
+        }
     }
 
     func refreshStatus() async {
@@ -238,18 +274,41 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
         statusMessage = nil
 
         do {
-            statusMessage = try await RenderJobStatusRefresh.perform(
-                ownerUserId: ownerUserId,
-                bearerToken: bearerToken,
+            let refresh = try RenderJobStatusRefresh.make(
                 momentId: activeWorkspace?.moment.id,
                 job: latestFinalJob,
-                messages: refreshMessages,
-                statusClient: statusClient,
-                statusUpdater: finalRenderResultSaver,
-                workspaceObserver: workspaceObserver,
-                usesProviderReconciliation: true,
-                shouldContinue: { isCurrentWorkflowGeneration(generation) }
+                missingMomentMessage: refreshMessages.missingMoment,
+                missingJobMessage: refreshMessages.missingJob,
+                missingProviderRequestMessage: refreshMessages.missingProviderRequest
             )
+            let status = try await refresh.fetchStatus(
+                bearerToken: bearerToken,
+                statusClient: statusClient,
+                usesProviderReconciliation: true
+            )
+            guard isCurrentWorkflowGeneration(generation) else { return }
+
+            let didAttachFinalArtifact = try await refresh.saveCompletedFinalArtifactIfNeeded(
+                ownerUserId: ownerUserId,
+                status: status,
+                workspace: activeWorkspace,
+                statusUpdater: finalRenderResultSaver
+            )
+            guard isCurrentWorkflowGeneration(generation) else { return }
+
+            do {
+                try await refresh.saveStatus(
+                    ownerUserId: ownerUserId,
+                    status: status,
+                    statusUpdater: finalRenderResultSaver
+                )
+            } catch {
+                guard didAttachFinalArtifact else { throw error }
+                logger.error("Final render status update failed after artifact attach momentId=\(refresh.momentId, privacy: .public) renderJobId=\(refresh.job.id, privacy: .public) reason=\(String(describing: error), privacy: .public)")
+            }
+
+            workspaceObserver.observeWorkspace(ownerUserId: ownerUserId, momentId: refresh.momentId)
+            statusMessage = status.userMessage ?? refreshMessages.success
         } catch {
             guard isCurrentWorkflowGeneration(generation) else { return }
             statusMessage = MomentsRecoveryCopy.renderRefreshFailure()
@@ -257,6 +316,15 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
 
         guard isCurrentWorkflowGeneration(generation) else { return }
         isRefreshingStatus = false
+    }
+
+    private func requiredCreditCost(template: MomentTemplate, removesWatermark: Bool) -> Int {
+        renderPlan?.plan.totalCreditCost
+            ?? MomentsCreditGate.finalRenderCreditCost(
+                template: template,
+                removesWatermark: removesWatermark,
+                balance: creditBalanceProvider.currentCreditBalance
+            )
     }
 
     func reset(force: Bool = false) {
@@ -405,5 +473,13 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
             missingProviderRequest: MomentsRecoveryCopy.finalRenderStatusMissing(),
             success: L10n.string("workflow.final.refreshSuccess")
         )
+    }
+}
+
+private extension MomentsAPIError {
+    var isRetryableMediaVisibilityError: Bool {
+        code == "insufficient_allowed_media"
+            || code == "moments_final_render_source_media_required"
+            || code == "moments_render_timeline_duration_required"
     }
 }

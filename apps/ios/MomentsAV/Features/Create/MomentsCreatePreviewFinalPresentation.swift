@@ -39,50 +39,6 @@ struct MomentsCreatePreviewPresentation: Equatable {
     }
 }
 
-struct MomentsCreateFinalRenderPresentation: Equatable {
-    var summary: MomentsCreateFinalRenderSummary
-    var canGenerateFinalRender = false
-    var canRefreshFinalRenderStatus = false
-    var availabilityMessage: String?
-    var refreshAvailabilityMessage: String?
-
-    var creditTitle: String {
-        MomentsCreditCopy.countTitle(summary.renderPlan?.plan.totalCreditCost ?? summary.creditCost)
-    }
-
-    var refreshButtonTitle: String {
-        summary.isRefreshingStatus ? L10n.string("create.final.action.refreshing") : L10n.string("create.final.action.refresh")
-    }
-
-    var generateButtonTitle: String {
-        if summary.isGenerating {
-            return L10n.string("create.final.action.creating")
-        }
-        return summary.renderPlan == nil
-            ? L10n.string("create.final.createVideo")
-            : L10n.string("create.final.createWithCost", creditTitle)
-    }
-
-    var emptyMessage: String {
-        guard canGenerateFinalRender else {
-            return L10n.string("create.final.empty.prepareStory")
-        }
-        return summary.renderPlan == nil
-            ? L10n.string("create.final.empty.createVideo")
-            : L10n.string("create.final.empty.ready")
-    }
-
-    var showsEmptyState: Bool {
-        summary.finalExport == nil && summary.latestFinalJob == nil
-    }
-
-    var creditPolicyMessage: String {
-        summary.renderPlan == nil
-            ? L10n.string("create.final.creditPolicy.preflight")
-            : L10n.string("create.final.creditPolicy.create", creditTitle)
-    }
-}
-
 struct MomentsCreateFinalVideoActionPresentation: Equatable {
     var summary: MomentsCreateFinalRenderSummary
     var template: MomentTemplate
@@ -90,7 +46,7 @@ struct MomentsCreateFinalVideoActionPresentation: Equatable {
     var removesWatermark = false
 
     var hasRenderPlan: Bool {
-        summary.renderPlan != nil
+        summary.renderPlan?.canCreateVideo == true
     }
 
     var totalCreditCost: Int {
@@ -110,12 +66,12 @@ struct MomentsCreateFinalVideoActionPresentation: Equatable {
 
     var primaryTitle: String {
         hasRenderPlan
-            ? L10n.string("create.final.createWithCost", totalCreditCostTitle)
-            : L10n.string("create.final.createVideo")
+            ? L10n.string("create.final.confirmCredits", totalCreditCostTitle)
+            : L10n.string("create.final.reviewCost")
     }
 
     var primaryIconName: String {
-        "video.fill"
+        hasRenderPlan ? "video.fill" : "creditcard.fill"
     }
 
     var creditPolicyMessage: String {
@@ -169,11 +125,15 @@ struct MomentsCreatePrimaryActionPresentation: Equatable {
             return false
         }
         if workflow.finalRenderSummary.latestFinalJob != nil {
-            return canRefreshFinalRender
+            return false
         }
         if hasFinalVideoIntent {
+            if needsCreditsForPreparedPlan {
+                return true
+            }
             return workflow.canGenerateFinalRender
                 || canPrepareVideoPlan
+                || canPrepareLocalVideoPlan
                 || workflow.canPlanStory
                 || needsSignInForStory
         }
@@ -183,12 +143,20 @@ struct MomentsCreatePrimaryActionPresentation: Equatable {
         return workflow.canPlanStory || needsSignInForStory
     }
 
+    var showsPrimaryActionButton: Bool {
+        workflow.finalRenderSummary.pendingGalleryVideo == nil
+            && workflow.finalRenderSummary.finalExport == nil
+            && workflow.finalRenderSummary.latestFinalJob == nil
+    }
+
     var title: String {
         if workflow.finalRenderSummary.finalExport != nil || workflow.finalRenderSummary.latestFinalJob != nil {
             return L10n.string("create.final.video")
         }
         if hasFinalVideoIntent {
-            return L10n.string("create.final.createVideoTitle")
+            return finalVideoAction.hasRenderPlan
+                ? L10n.string("create.final.readyToCreateTitle")
+                : L10n.string("create.final.reviewCostTitle")
         }
         return L10n.string("common.continue")
     }
@@ -203,10 +171,13 @@ struct MomentsCreatePrimaryActionPresentation: Equatable {
         if workflow.finalRenderSummary.latestFinalJob != nil {
             return workflow.finalRenderSummary.isRefreshingStatus
                 ? L10n.string("create.status.checking")
-                : L10n.string("create.final.checkStatus")
+                : L10n.string("create.final.video")
         }
         if workflow.finalRenderSummary.isGenerating {
             return L10n.string("create.final.creating")
+        }
+        if hasFinalVideoIntent, needsCreditsForPreparedPlan {
+            return L10n.string("credits.get.title")
         }
         if hasFinalVideoIntent {
             return finalVideoAction.primaryTitle
@@ -230,7 +201,10 @@ struct MomentsCreatePrimaryActionPresentation: Equatable {
             return "checkmark.circle.fill"
         }
         if workflow.finalRenderSummary.latestFinalJob != nil {
-            return "arrow.clockwise"
+            return "video.fill"
+        }
+        if hasFinalVideoIntent, needsCreditsForPreparedPlan {
+            return "plus.circle.fill"
         }
         if hasFinalVideoIntent {
             return finalVideoAction.primaryIconName
@@ -270,11 +244,20 @@ struct MomentsCreatePrimaryActionPresentation: Equatable {
                 ?? L10n.string("create.primary.videoCreating")
         }
         if hasFinalVideoIntent {
+            if needsCreditsForPreparedPlan {
+                return MomentsCreateAvailabilityCopy.finalRenderInsufficientCredits(
+                    missingCredits: missingCreditsForPreparedPlan
+                )
+            }
             if finalVideoAction.hasRenderPlan {
                 return finalVideoAction.creditPolicyMessage
             }
-            if workflow.canGenerateFinalRender || canPrepareVideoPlan || workflow.canPlanStory {
-                return L10n.string("create.primary.createVideoPreflight")
+            if let finalStatusMessage = workflow.finalRenderSummary.statusMessage,
+               !finalStatusMessage.isEmpty {
+                return finalStatusMessage
+            }
+            if workflow.canGenerateFinalRender || canPrepareVideoPlan || canPrepareLocalVideoPlan || workflow.canPlanStory {
+                return L10n.string("create.primary.reviewCostPreflight")
             }
             return availabilityMessage
         }
@@ -294,7 +277,7 @@ struct MomentsCreatePrimaryActionPresentation: Equatable {
             return workflow.storyAvailabilityMessage
         }
         if workflow.canPlanStory {
-            return L10n.string("create.primary.createVideoPreflight")
+            return L10n.string("create.primary.reviewCostPreflight")
         }
         return nil
     }
@@ -323,12 +306,15 @@ struct MomentsCreatePrimaryActionPresentation: Equatable {
             return realtimeStatus.systemImage
         }
         if workflow.finalRenderSummary.latestFinalJob != nil {
-            return "arrow.clockwise"
+            return "video.fill"
         }
         if needsSignInForStory {
             return "person.crop.circle.badge.checkmark"
         }
-        return "video.fill"
+        if hasFinalVideoIntent {
+            return finalVideoAction.primaryIconName
+        }
+        return "creditcard.fill"
     }
 
     var hasFinalVideoIntent: Bool {
@@ -355,15 +341,24 @@ struct MomentsCreatePrimaryActionPresentation: Equatable {
             && workflow.finalRenderSummary.renderPlan == nil
     }
 
-    var canRefreshFinalRender: Bool {
-        workflow.finalRenderSummary.latestFinalJob != nil
-            && workflow.canRefreshFinalRenderStatus
+    var canPrepareLocalVideoPlan: Bool {
+        workflow.isSignedIn
+            && workflow.mediaSummary.reviewCount > 0
+            && workflow.finalRenderSummary.renderPlan == nil
     }
 
     var needsSignInForStory: Bool {
         !workflow.isSignedIn
             && workflow.mediaSummary.reviewCount > 0
             && !workflow.storySummary.isPlanning
+    }
+
+    var needsCreditsForPreparedPlan: Bool {
+        finalVideoAction.hasRenderPlan && !finalVideoAction.canAffordSelectedCost
+    }
+
+    private var missingCreditsForPreparedPlan: Int {
+        max(0, finalVideoAction.totalCreditCost - workflow.balance.spendable)
     }
 
     private var availabilityMessage: String? {

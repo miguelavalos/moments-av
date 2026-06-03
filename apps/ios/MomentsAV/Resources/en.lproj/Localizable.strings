@@ -594,7 +594,6 @@
 "create.discard.currentMessage" = "This deletes the current Moment, selected media, and Avi's Cut.";
 "create.discard.local" = "Discard draft";
 "create.discard.localMessage" = "This removes this draft, selected media, and story setup before anything is saved.";
-"create.final.checkStatus" = "Check video status";
 "create.final.chooseDestination" = "Choose final video destination";
 "create.final.create" = "Create final";
 "create.final.creating" = "Creating final...";
@@ -620,6 +619,8 @@
 "create.final.confirmSheet.mediaPending" = "Checking media";
 "create.final.confirmSheet.duration" = "Duration";
 "create.final.createVideo" = "Create video";
+"create.final.reviewCost" = "Review credits";
+"create.final.confirmCredits" = "Confirm credits · %@";
 "create.final.createWithCost" = "Create video · %@";
 "create.final.summaryTitle" = "Review Avi's Cut and the credit cost before video creation starts.";
 "create.final.creditCost" = "%@ needed";
@@ -723,12 +724,14 @@
 "create.dashboard.subtitle.storyPlan" = "Avi has a story plan. Create the video when ready.";
 "create.dashboard.subtitle.default" = "Check what Avi prepared and create the video when ready.";
 "create.preparation.importMedia.title" = "Reading your selection";
+"create.preparation.prepareMoment.title" = "Preparing this Moment";
 "create.preparation.prepareStory.title" = "Preparing your story";
 "create.preparation.uploadForVideo.title" = "Uploading media";
 "create.preparation.createVideo.title" = "Creating your video";
 "create.preparation.createPreview.title" = "Preparing Avi's Cut";
 "create.preparation.importMedia.detailWithCount" = "Avi is reading %d %@ and preparing Avi's Cut.";
 "create.preparation.importMedia.detail" = "Avi is reading the selection and preparing Avi's Cut.";
+"create.preparation.prepareMoment.detail" = "Avi is opening a secure workspace for this video.";
 "create.preparation.prepareStory.detail" = "Avi is organizing the selected items into Avi's Cut.";
 "create.preparation.uploadForVideo.detailWithCount" = "Sending %d %@ needed for final video creation.";
 "create.preparation.uploadForVideo.detail" = "Sending the selected media needed for final video creation.";
@@ -743,11 +746,14 @@
 "create.reviewBeforeCreating.title" = "Check before creating";
 "create.media.itemCount" = "%d items";
 "create.final.createVideoTitle" = "Create the video";
+"create.final.reviewCostTitle" = "Review credits";
+"create.final.readyToCreateTitle" = "Ready to create";
 "create.final.createVideoDetail" = "Avi will edit your real media into a %@ video. You confirm credits before the final render starts.";
 "create.primary.finalReady" = "Final video ready.";
 "create.primary.videoCreating" = "Avi is creating the video. You can check progress here.";
 "create.primary.previewReady" = "Avi's Cut ready. Check it before the final video.";
 "create.primary.createVideoPreflight" = "Avi will check media and confirm credits before starting.";
+"create.primary.reviewCostPreflight" = "Avi will upload media and show the credit cost before anything is reserved.";
 "create.primary.reviewBeforeVideo" = "Check Avi's Cut before creating the final video.";
 "create.error.storyPreparationNotReady" = "Story preparation is not ready yet.";
 "create.availability.momentSignInRequired" = "Sign in before starting a Moment.";
@@ -892,8 +898,6 @@
 "create.preview.action.review" = "Prepare Avi's Cut";
 "create.preview.empty.ready" = "Avi can prepare the cut before the final video.";
 "create.preview.empty.prepareStory" = "Prepare the story before Avi's Cut.";
-"create.final.action.refreshing" = "Refreshing final video...";
-"create.final.action.refresh" = "Refresh final video";
 "create.final.action.creating" = "Creating final video...";
 "create.final.empty.ready" = "Ready to create the final video when you are.";
 "create.final.empty.createVideo" = "Create the video when you are ready. Avi checks media and credits first.";
@@ -930,6 +934,8 @@
 "create.workflowContent.modePending" = "Mode pending";
 "create.workflowContent.renderPlanFallback" = "Avi checks media, duration, and quality before credits are reserved.";
 "create.workflowContent.storyReviewTitle" = "Avi's Cut";
+"create.aviCut.selectedSetup" = "Selection and direction";
+"create.aviCut.optionalPreview" = "Optional Avi preview";
 "create.aviCut.status.ready" = "Avi's Cut is ready. Create the final video or adjust the cut first.";
 "create.aviCut.status.improving" = "Avi is shaping the cut.";
 "create.aviCut.status.readyToPrepare" = "Ready for Avi to prepare a first cut.";
@@ -989,7 +995,7 @@
 "create.workflowContent.aviTip" = "Avi tip";
 "create.workflowContent.tipFinalReady" = "Your video is ready to export or share.";
 "create.workflowContent.tipReviewReady" = "Check Avi's Cut. If it feels right, create the final video.";
-"create.workflowContent.tipFinalWorking" = "Avi is finishing the final video. You can refresh when needed.";
+"create.workflowContent.tipFinalWorking" = "Avi is finishing the final video. Progress updates automatically.";
 "create.workflowContent.tipPreviewWorking" = "Avi is improving the cut from your selected items.";
 "create.workflowContent.tipStoryReady" = "Avi's Cut is ready. Next step: create the video.";
 "create.workflowContent.tipMediaReady" = "Avi will shape these moments into a simple story plan.";

@@ -3,6 +3,7 @@ import Foundation
 struct MomentsCreateWorkflowPresentation: Equatable {
     var activeMomentId: String?
     var isSignedIn = false
+    var isCreatingMoment = false
     var hasMomentWorkspace = false
     var hasUnsavedLocalMoment = false
     var template: MomentTemplate
@@ -64,7 +65,8 @@ struct MomentsCreateWorkflowPresentation: Equatable {
     }
 
     var showsBlockingPreparation: Bool {
-        mediaSummary.isImporting
+        isCreatingMoment
+            || mediaSummary.isImporting
             || storySummary.isPlanning
             || previewSummary.isGenerating
             || finalRenderSummary.isGenerating
@@ -73,6 +75,7 @@ struct MomentsCreateWorkflowPresentation: Equatable {
     static func make(
         activeMomentId: String?,
         isSignedIn: Bool,
+        isCreatingMoment: Bool,
         hasMomentWorkspace: Bool,
         hasUnsavedLocalMoment: Bool,
         template: MomentTemplate,
@@ -91,6 +94,7 @@ struct MomentsCreateWorkflowPresentation: Equatable {
         MomentsCreateWorkflowPresentation(
             activeMomentId: activeMomentId,
             isSignedIn: isSignedIn,
+            isCreatingMoment: isCreatingMoment,
             hasMomentWorkspace: hasMomentWorkspace,
             hasUnsavedLocalMoment: hasUnsavedLocalMoment,
             template: template,

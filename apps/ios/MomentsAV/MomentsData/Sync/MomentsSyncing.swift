@@ -76,6 +76,13 @@ protocol MomentsFinalRenderResultSaving: MomentsRenderJobStatusUpdating {
         finalRender: MomentsFinalRenderResponse,
         template: MomentTemplate
     ) async throws
+
+    func saveCompletedFinalRenderStatusArtifact(
+        ownerUserId: String,
+        momentId: String,
+        renderJobId: String,
+        status: MomentsRenderStatusResponse
+    ) async throws
 }
 
 @MainActor

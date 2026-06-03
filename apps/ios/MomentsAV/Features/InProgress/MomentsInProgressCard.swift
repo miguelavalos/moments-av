@@ -19,7 +19,6 @@ struct MomentsInProgressCard: View {
     let startSignInFlow: () -> Void
     let openCredits: () -> Void
     let retryCredits: () -> Void
-    let requestDeleteMoment: (InProgressMoment) -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
@@ -51,8 +50,7 @@ struct MomentsInProgressCard: View {
                 )
                 MomentsInProgressContinueBlock(
                     moments: continueMoments,
-                    continueMoment: continueMoment,
-                    requestDeleteMoment: requestDeleteMoment
+                    continueMoment: continueMoment
                 )
                 MomentsInProgressStatusMessage(message: statusMessage)
             }
@@ -60,7 +58,7 @@ struct MomentsInProgressCard: View {
     }
 
     private var continueMoments: [InProgressMoment] {
-        momentsSummary.groups.inProgress.sorted { $0.updatedAt > $1.updatedAt }
+        momentsSummary.moments.sorted { $0.updatedAt > $1.updatedAt }
     }
 }
 
@@ -235,7 +233,6 @@ private struct MomentsInProgressAviBlock: View {
 private struct MomentsInProgressContinueBlock: View {
     let moments: [InProgressMoment]
     let continueMoment: (MomentsContinuationRequest) -> Void
-    let requestDeleteMoment: (InProgressMoment) -> Void
 
     var body: some View {
         if moments.isEmpty {
@@ -269,7 +266,7 @@ private struct MomentsInProgressContinueBlock: View {
                                             .foregroundStyle(AVBrandColor.textPrimary)
                                             .lineLimit(2)
 
-                                        Text("\(MomentStatusRules.displayTitle(for: moment.status)) · \(Self.creditTitle(moment.creditCost))")
+                                        Text(MomentStatusRules.displayTitle(for: moment.status))
                                             .font(AVBrandTypography.captionStrong)
                                             .foregroundStyle(AVBrandColor.textSecondary)
                                     }
@@ -280,16 +277,10 @@ private struct MomentsInProgressContinueBlock: View {
                                         .font(.system(size: 13, weight: .black))
                                         .foregroundStyle(AVBrandColor.textSecondary)
                                 }
+                                .frame(maxWidth: .infinity, minHeight: 56, alignment: .leading)
+                                .contentShape(Rectangle())
                             }
                             .buttonStyle(.plain)
-
-                            Button(role: .destructive) {
-                                requestDeleteMoment(moment)
-                            } label: {
-                                Label(L10n.string("common.discard"), systemImage: "trash")
-                                    .frame(maxWidth: .infinity)
-                            }
-                            .buttonStyle(.bordered)
                         }
                         if moment.id != moments.last?.id {
                             Divider()
@@ -313,10 +304,6 @@ private struct MomentsInProgressContinueBlock: View {
         }
     }
 
-    private static func creditTitle(_ creditCost: Double) -> String {
-        let count = Int(creditCost.rounded())
-        return MomentsCreditCopy.countTitle(count)
-    }
 }
 
 private struct MomentsInProgressInlineEmptyState: View {

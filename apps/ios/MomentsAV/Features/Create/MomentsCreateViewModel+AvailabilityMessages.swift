@@ -54,8 +54,7 @@ extension MomentsCreateViewModel {
             moment: activeMoment,
             template: form.template,
             balance: balance,
-            creditBalanceLoadState: creditBalanceLoadState,
-            latestPreview: effectiveLatestPreview
+            creditBalanceLoadState: creditBalanceLoadState
         )
     }
 

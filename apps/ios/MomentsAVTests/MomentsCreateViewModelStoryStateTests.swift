@@ -618,6 +618,13 @@ private final class MomentCreationFailureHarness:
         finalRender: MomentsFinalRenderResponse,
         template: MomentTemplate
     ) async throws {}
+
+    func saveCompletedFinalRenderStatusArtifact(
+        ownerUserId: String,
+        momentId: String,
+        renderJobId: String,
+        status: MomentsRenderStatusResponse
+    ) async throws {}
 }
 
 private struct TestGalleryStore: MomentsGalleryStoring {

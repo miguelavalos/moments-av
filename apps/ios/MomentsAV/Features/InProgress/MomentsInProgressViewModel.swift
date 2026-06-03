@@ -106,8 +106,17 @@ final class MomentsInProgressViewModel: ObservableObject {
         workflow?.clearMomentWorkspace()
     }
 
+    func refreshActiveFinalRenderStatusIfNeeded() async {
+        await workflow?.refreshActiveFinalRenderStatusIfNeeded()
+    }
+
     func deleteMoment(_ moment: InProgressMoment) {
         guard let workflow else { return }
+        if ["final_render_pending", "final_rendering"].contains(moment.status)
+            || (activeWorkspace?.moment.id == moment.id && activeWorkspace?.activeFinalRenderJob != nil) {
+            statusMessage = L10n.string("create.error.waitBeforeDiscard")
+            return
+        }
 
         deletionTask?.cancel()
         deletionTask = Task { [weak self] in

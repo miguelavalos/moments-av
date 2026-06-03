@@ -4,6 +4,7 @@ import SwiftUI
 
 struct MomentsCreateScreen: View {
     @EnvironmentObject private var viewModel: MomentsCreateViewModel
+    @EnvironmentObject private var newMomentStartController: MomentsNewMomentStartController
     @State private var pickerItems: [PhotosPickerItem] = []
     @State private var workflowErrorAlertMessage: String?
     let startSignInFlow: () -> Void
@@ -28,7 +29,8 @@ struct MomentsCreateScreen: View {
             viewModel: viewModel,
             pickerItems: $pickerItems,
             startSignInFlow: startSignInFlow,
-            openCredits: openCredits
+            openCredits: openCredits,
+            createAnotherFinalVideoVersion: createAnotherFinalVideoVersion
         )
         .background(MomentsTheme.shellBackground.ignoresSafeArea())
         .safeAreaPadding(.horizontal, 20)
@@ -38,9 +40,8 @@ struct MomentsCreateScreen: View {
             redirectEmptyCreateIfNeeded()
         }
         .onChange(of: viewModel.workflowPresentation.showsMediaFirstWorkspace) { _, showsWorkspace in
-            if !showsWorkspace {
-                cancelCreation()
-            }
+            guard !showsWorkspace else { return }
+            redirectEmptyCreateIfNeeded()
         }
         .fullScreenCover(
             isPresented: Binding(
@@ -74,8 +75,21 @@ struct MomentsCreateScreen: View {
     }
 
     private func redirectEmptyCreateIfNeeded() {
-        guard !viewModel.workflowPresentation.showsMediaFirstWorkspace else { return }
+        guard !viewModel.workflowPresentation.showsMediaFirstWorkspace,
+              !viewModel.isContinuingMoment
+        else { return }
         cancelCreation()
+    }
+
+    private func createAnotherFinalVideoVersion() {
+        switch newMomentStartController.currentPreference {
+        case .askEveryTime:
+            viewModel.createAnotherFinalVideoVersion()
+        case .photosOrClips:
+            viewModel.createAnotherFinalVideoVersion(openMediaPicker: true)
+        case .album:
+            viewModel.createAnotherFinalVideoVersion(openAlbumPicker: true)
+        }
     }
 }
 

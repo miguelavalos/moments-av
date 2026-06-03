@@ -48,7 +48,6 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
             template: .birthdayMessage,
             previewRefreshAvailability: MomentsCreateTestFixtures.makeRefreshAvailability(canRefresh: true),
             finalRenderRefreshAvailability: MomentsCreateTestFixtures.makeRefreshAvailability(canRefresh: false),
-            latestPreview: nil,
             selectedMediaCount: 0
         )
 
@@ -74,7 +73,6 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
             template: .birthdayMessage,
             previewRefreshAvailability: MomentsCreateTestFixtures.makeRefreshAvailability(canRefresh: false),
             finalRenderRefreshAvailability: MomentsCreateTestFixtures.makeRefreshAvailability(canRefresh: false),
-            latestPreview: nil,
             selectedMediaCount: 0
         )
         let withoutMoment = MomentsCreateWorkflowCapabilityFactory.make(
@@ -89,7 +87,6 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
             template: .birthdayMessage,
             previewRefreshAvailability: MomentsCreateTestFixtures.makeRefreshAvailability(canRefresh: false),
             finalRenderRefreshAvailability: MomentsCreateTestFixtures.makeRefreshAvailability(canRefresh: false),
-            latestPreview: nil,
             selectedMediaCount: 0
         )
 
@@ -191,8 +188,7 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
                 isFinalRenderConfigured: true,
                 moment: MomentsCreateTestFixtures.makeMoment(id: "moment-1"),
                 template: .birthdayMessage,
-                balance: MomentsCreditBalance(proMonthly: 4, promotional: 0, purchased: 0),
-                latestPreview: nil
+                balance: MomentsCreditBalance(proMonthly: 4, promotional: 0, purchased: 0)
             ),
             "Prepare the story before creating the final video."
         )
@@ -208,8 +204,7 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
                 moment: MomentsCreateTestFixtures.makeMoment(id: "moment-1", status: "story_ready"),
                 template: .birthdayMessage,
                 balance: .empty,
-                creditBalanceLoadState: .loading,
-                latestPreview: nil
+                creditBalanceLoadState: .loading
             ),
             "Checking your credits before the final video."
         )
@@ -225,8 +220,7 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
                 moment: MomentsCreateTestFixtures.makeMoment(id: "moment-1", status: "story_ready"),
                 template: .birthdayMessage,
                 balance: .empty,
-                creditBalanceLoadState: .offline,
-                latestPreview: nil
+                creditBalanceLoadState: .offline
             ),
             "Connect to the internet before creating the final video."
         )

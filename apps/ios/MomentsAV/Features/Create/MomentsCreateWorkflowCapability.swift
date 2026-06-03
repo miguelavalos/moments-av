@@ -15,7 +15,6 @@ enum MomentsCreateWorkflowCapabilityFactory {
         template: MomentTemplate,
         previewRefreshAvailability: RenderJobStatusRefreshAvailability,
         finalRenderRefreshAvailability: RenderJobStatusRefreshAvailability,
-        latestPreview: MomentArtifact?,
         selectedMediaCount: Int
     ) -> MomentsCreateWorkflowCapability {
         MomentsCreateWorkflowCapability(
@@ -45,8 +44,7 @@ enum MomentsCreateWorkflowCapabilityFactory {
                 activeMomentId: activeMomentId,
                 finalRenderWorkflow: finalRenderWorkflow,
                 creditBalanceLoadState: creditBalanceLoadState,
-                template: template,
-                latestPreview: latestPreview
+                template: template
             ),
             canRefreshFinalRenderStatus: finalRenderRefreshAvailability.canRefresh
         )
@@ -97,14 +95,10 @@ enum MomentsCreateWorkflowCapabilityFactory {
         activeMomentId: String?,
         finalRenderWorkflow: FinalRenderWorkflow?,
         creditBalanceLoadState: MomentsCreditBalanceLoadState,
-        template: MomentTemplate,
-        latestPreview: MomentArtifact?
+        template: MomentTemplate
     ) -> Bool {
         guard let finalRenderWorkflow, activeMomentId != nil else { return false }
         guard creditBalanceLoadState.hasLoadedBalance else { return false }
-        return finalRenderWorkflow.canGenerate(
-            template: template,
-            latestPreview: latestPreview
-        )
+        return finalRenderWorkflow.canGenerate(template: template)
     }
 }

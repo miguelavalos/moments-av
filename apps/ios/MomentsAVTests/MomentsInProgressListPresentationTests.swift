@@ -50,7 +50,6 @@ final class MomentsInProgressListPresentationTests: XCTestCase {
         XCTAssertTrue(row.metadata[0].text.hasPrefix("Updated "))
         XCTAssertEqual(row.metadata[1].text, "Avi's Cut")
         XCTAssertEqual(row.statusTitle, "Story ready")
-        XCTAssertEqual(row.creditCostTitle, "3 credits")
         XCTAssertEqual(row.accessorySystemImage, "chevron.up.circle.fill")
     }
 
@@ -63,15 +62,6 @@ final class MomentsInProgressListPresentationTests: XCTestCase {
         XCTAssertTrue(row.isFinished)
         XCTAssertEqual(row.statusSystemImage, "checkmark.circle.fill")
         XCTAssertEqual(row.accessorySystemImage, "chevron.right.circle")
-    }
-
-    func testRowPresentationUsesSingularCreditCopy() {
-        let row = MomentsInProgressListRowPresentation(
-            moment: makeMoment(id: "one-credit", status: "in_progress", creditCost: 1),
-            isSelected: false
-        )
-
-        XCTAssertEqual(row.creditCostTitle, "1 credit")
     }
 
     private func makeMoment(

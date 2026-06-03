@@ -28,8 +28,10 @@ struct MomentsInProgressWorkspaceDetail: View {
             MomentsInProgressContinueButton(action: presentation.nextAction) {
                 continueMoment(presentation.continuationRequest)
             }
-            MomentsInProgressDeleteButton(isDeletingMoment: isDeletingMoment) {
-                requestDeleteMoment(workspace.moment)
+            if workspace.activeFinalRenderJob == nil {
+                MomentsInProgressDeleteButton(isDeletingMoment: isDeletingMoment) {
+                    requestDeleteMoment(workspace.moment)
+                }
             }
         }
     }

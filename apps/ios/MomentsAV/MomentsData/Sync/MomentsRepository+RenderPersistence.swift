@@ -60,6 +60,32 @@ extension MomentsRepository {
         )
     }
 
+    func saveCompletedFinalRenderStatusArtifact(
+        ownerUserId: String,
+        momentId: String,
+        renderJobId: String,
+        status: MomentsRenderStatusResponse
+    ) async throws {
+        guard status.status == "completed",
+              status.artifactKind == "final_export",
+              status.artifactStatus == "available",
+              let r2Key = status.artifactR2Key,
+              !r2Key.isEmpty else {
+            return
+        }
+
+        try await remoteClient.attachArtifact(
+            ownerUserId: ownerUserId,
+            momentId: momentId,
+            renderJobId: renderJobId,
+            kind: "final_export",
+            r2Key: r2Key,
+            durationSeconds: max(1, status.artifactDurationSeconds ?? 1),
+            creditCost: max(0, status.artifactCreditCost ?? 0),
+            hasWatermark: status.artifactHasWatermark ?? true
+        )
+    }
+
     private func saveRenderResult(
         ownerUserId: String,
         momentId: String,

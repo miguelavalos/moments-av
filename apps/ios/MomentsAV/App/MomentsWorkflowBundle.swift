@@ -26,7 +26,11 @@ struct MomentsWorkflowBundle {
         inProgressMoments = InProgressMomentsWorkflow(
             momentsObserver: momentsObserver,
             workspaceSelectionWorkflow: momentWorkspaceSelection,
-            momentDeletionWorkflow: momentDeletion
+            momentDeletionWorkflow: momentDeletion,
+            currentUserProvider: accountController,
+            authTokenProvider: accountController,
+            finalRenderResultSaver: momentsRepository,
+            statusClient: clients.renderStatus
         )
         momentCreation = MomentCreationWorkflow(
             currentUserProvider: accountController,

@@ -16,5 +16,6 @@ protocol InProgressMomentsViewing: InProgressMomentsSummaryProviding {
 
     func observeMomentWorkspace(ownerUserId: String?, momentId: String?)
     func clearMomentWorkspace()
+    func refreshActiveFinalRenderStatusIfNeeded() async
     func deleteMoment(_ moment: InProgressMoment) async -> Bool
 }

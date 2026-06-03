@@ -65,10 +65,7 @@ struct MomentsInProgressScreen: View {
                 startMoment: startMoment,
                 startSignInFlow: startSignInFlow,
                 openCredits: openCredits,
-                retryCredits: retryCredits,
-                requestDeleteMoment: { moment in
-                    momentPendingDeletion = moment
-                }
+                retryCredits: retryCredits
             )
         }
         .confirmationDialog(

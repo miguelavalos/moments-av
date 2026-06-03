@@ -19,8 +19,11 @@ struct MomentsRemoteClient {
         let client = try requireClient()
 
         return client.subscribe(
-            to: "moments:listInProgressMoments",
-            with: ["ownerUserId": ownerUserId],
+            to: "moments:listMoments",
+            with: [
+                "ownerUserId": ownerUserId,
+                "collection": "in_progress"
+            ],
             yielding: [InProgressMoment].self
         )
         .mapError { $0 as Error }

@@ -104,7 +104,7 @@ extension MomentsRemoteClient {
             args["userMessage"] = userMessage as ConvexEncodable
         }
         if let canEditSetup {
-            args["canEditSetup"] = canEditSetup as ConvexEncodable
+            args["canEditMoment"] = canEditSetup as ConvexEncodable
         }
         if let canRetry {
             args["canRetry"] = canRetry as ConvexEncodable
