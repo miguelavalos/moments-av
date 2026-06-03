@@ -70,7 +70,6 @@ extension MomentsRemoteClient {
             "platformMediaAssetId": request.platformMediaAssetId as ConvexEncodable,
             "uploadId": request.uploadId as ConvexEncodable,
             "kind": request.kind as ConvexEncodable,
-            "r2Key": request.r2Key as ConvexEncodable,
             "sortOrder": request.sortOrder as ConvexEncodable,
             "selected": request.selected as ConvexEncodable,
             "moderationStatus": request.moderationStatus as ConvexEncodable,
@@ -82,6 +81,9 @@ extension MomentsRemoteClient {
         }
         if let momentId {
             payload["momentId"] = momentId as ConvexEncodable
+        }
+        if let r2Key = request.r2Key, !r2Key.isEmpty {
+            payload["r2Key"] = r2Key as ConvexEncodable
         }
         if let thumbnailR2Key = request.thumbnailR2Key, !thumbnailR2Key.isEmpty {
             payload["thumbnailR2Key"] = thumbnailR2Key as ConvexEncodable

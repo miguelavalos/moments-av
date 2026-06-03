@@ -127,13 +127,17 @@ enum MomentsCreateUITestFixtures {
             momentId: momentId,
             planId: "ui-test-plan-1",
             plan: MomentsRenderPlan(
+                schemaVersion: 1,
                 targetDurationMs: 30_000,
                 creditCost: 2,
+                totalCreditCost: 2,
                 secondsPerCredit: 15,
                 plannedAssetCount: 3,
                 usedAssetCount: 3,
                 rejectedAssetCount: 0,
                 rendererMode: "image_to_video",
+                renderOptionId: "standard_moment",
+                renderOptionTitle: "Standard Moment",
                 userMessage: "Avi will use the strongest clips, keep the beach toast as the ending, and render a 30 second video.",
                 qualityWarnings: []
             ),

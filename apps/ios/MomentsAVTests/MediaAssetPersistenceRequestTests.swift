@@ -26,7 +26,6 @@ final class MediaAssetPersistenceRequestTests: XCTestCase {
             completionUrl: nil,
             method: "PUT",
             headers: ["content-type": "video/quicktime"],
-            storageKey: "momentsav/user/moment/source/video.mov",
             expiresAt: "2026-05-16T17:00:00Z",
             generatedAt: "2026-05-16T16:00:00Z"
         )
@@ -40,7 +39,7 @@ final class MediaAssetPersistenceRequestTests: XCTestCase {
         XCTAssertEqual(request.platformMediaAssetId, "local-1")
         XCTAssertEqual(request.uploadId, "upload-1")
         XCTAssertEqual(request.kind, "video")
-        XCTAssertEqual(request.r2Key, "momentsav/user/moment/source/video.mov")
+        XCTAssertNil(request.r2Key)
         XCTAssertNil(request.thumbnailR2Key)
         XCTAssertEqual(request.sortOrder, 2.0)
         XCTAssertTrue(request.selected)

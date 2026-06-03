@@ -809,6 +809,7 @@
 "workflow.final.needsUsableMedia" = "Avi necessita mèdia utilitzable abans de crear el vídeo.";
 "workflow.final.planReady" = "El pla del vídeo està llest. Revisa’l abans de crear el vídeo.";
 "workflow.final.creatingVideo" = "Avi està creant el vídeo. Pots consultar el progrés aquí.";
+"workflow.final.savingStatus" = "Desant l’estat del vídeo.";
 "workflow.final.noDownloadReady" = "Encara no hi ha cap vídeo final llest per descarregar.";
 "workflow.final.downloadInProgress" = "La descàrrega del vídeo final ja està en curs.";
 "workflow.final.signInAgainSaveLocal" = "Torna a iniciar sessió per desar el vídeo final localment.";

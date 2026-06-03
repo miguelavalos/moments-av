@@ -150,7 +150,8 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
                     bearerToken: bearerToken,
                     template: template,
                     creationStyle: creationStyle,
-                    form: form
+                    form: form,
+                    removesWatermark: removesWatermark
                 )
                 renderPlan = plan
                 guard plan.canCreateVideo else {
@@ -163,20 +164,61 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
                 return
             }
 
-            let startedJob = try await FinalRenderGenerationRun.perform(
-                ownerUserId: ownerUserId,
-                bearerToken: bearerToken,
+            guard let renderPlan else {
+                statusMessage = L10n.string("workflow.final.checkingPlan")
+                isGenerating = false
+                return
+            }
+
+            statusMessage = L10n.string("workflow.final.creatingVideo")
+            let confirmed = try await finalRenderClient.confirmFinalRender(
                 momentId: momentId,
+                bearerToken: bearerToken,
                 template: template,
                 creationStyle: creationStyle,
                 form: form,
-                balance: creditBalanceProvider.currentCreditBalance,
                 removesWatermark: removesWatermark,
-                finalRenderClient: finalRenderClient,
-                finalRenderResultSaver: finalRenderResultSaver,
-                workspaceObserver: workspaceObserver,
-                updateStatus: { statusMessage = $0 },
-                shouldContinue: { isCurrentWorkflowGeneration(generation) }
+                planId: renderPlan.planId,
+                renderOptionId: renderPlan.plan.renderOptionId,
+                operationId: UUID().uuidString
+            )
+            self.renderPlan = confirmed.renderPlan
+
+            guard isCurrentWorkflowGeneration(generation) else { return }
+
+            statusMessage = L10n.string("workflow.final.savingStatus")
+            let savedRenderJobId = try await saveStartedFinalRenderWithRetry(
+                ownerUserId: ownerUserId,
+                momentId: momentId,
+                reservationId: confirmed.reservation.id,
+                startedWorkflow: confirmed.workflow
+            )
+
+            guard isCurrentWorkflowGeneration(generation) else { return }
+
+            workspaceObserver.observeWorkspace(ownerUserId: ownerUserId, momentId: momentId)
+            let startedJob = MomentRenderJob(
+                id: savedRenderJobId,
+                kind: "final",
+                status: confirmed.workflow.status,
+                phase: "queued",
+                progressPercent: 10,
+                userMessage: L10n.string("workflow.final.creatingVideo"),
+                canEditSetup: false,
+                canRetry: false,
+                targetDurationMs: Double(confirmed.renderPlan.plan.targetDurationMs),
+                plannedAssetCount: Double(confirmed.renderPlan.plan.plannedAssetCount),
+                usedAssetCount: Double(confirmed.renderPlan.plan.usedAssetCount),
+                rejectedAssetCount: Double(confirmed.renderPlan.plan.rejectedAssetCount),
+                rendererMode: confirmed.renderPlan.plan.rendererMode,
+                workflowRunId: confirmed.workflow.workflowRunId,
+                provider: "appsav-api",
+                model: "moments-final-provider-async",
+                providerRequestId: confirmed.workflow.renderJobId,
+                errorCode: nil,
+                errorMessage: nil,
+                createdAt: Date().timeIntervalSince1970 * 1000,
+                updatedAt: Date().timeIntervalSince1970 * 1000
             )
             latestFinalJob = startedJob
             latestFinalJobMomentId = momentId
@@ -334,6 +376,34 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
             missingMomentMessage: L10n.string("workflow.final.missingMoment"),
             insufficientCreditsMessage: L10n.string("workflow.final.addCredits")
         ) ?? L10n.string("workflow.final.notReady")
+    }
+
+    private func saveStartedFinalRenderWithRetry(
+        ownerUserId: String,
+        momentId: String,
+        reservationId: String,
+        startedWorkflow: MomentsStartWorkflowResponse
+    ) async throws -> String {
+        let retryPolicy = MomentsNetworkRetryPolicy()
+        var attempt = 0
+
+        while true {
+            do {
+                return try await finalRenderResultSaver.saveStartedFinalRender(
+                    ownerUserId: ownerUserId,
+                    momentId: momentId,
+                    reservationId: reservationId,
+                    startedWorkflow: startedWorkflow
+                )
+            } catch {
+                guard retryPolicy.shouldRetry(error: error, attempt: attempt) else {
+                    throw error
+                }
+
+                attempt += 1
+                try await Task.sleep(nanoseconds: retryPolicy.delayNanoseconds(forAttempt: attempt))
+            }
+        }
     }
 
     private var refreshMessages: RenderJobStatusRefreshMessages {

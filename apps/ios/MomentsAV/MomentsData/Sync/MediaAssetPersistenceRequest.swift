@@ -4,7 +4,7 @@ struct MediaAssetPersistenceRequest {
     let platformMediaAssetId: String
     let uploadId: String
     let kind: String
-    let r2Key: String
+    let r2Key: String?
     let thumbnailR2Key: String?
     let sortOrder: Double
     let selected: Bool
@@ -22,7 +22,7 @@ extension MediaAssetPersistenceRequest {
             platformMediaAssetId: media.sourceLocalIdentifier,
             uploadId: preparedUpload.uploadId,
             kind: media.kind,
-            r2Key: preparedUpload.storageKey,
+            r2Key: nil,
             thumbnailR2Key: nil,
             sortOrder: Double(media.sortOrder),
             selected: media.selected,

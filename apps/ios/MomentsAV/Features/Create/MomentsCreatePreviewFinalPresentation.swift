@@ -47,7 +47,7 @@ struct MomentsCreateFinalRenderPresentation: Equatable {
     var refreshAvailabilityMessage: String?
 
     var creditTitle: String {
-        MomentsCreditCopy.countTitle(summary.creditCost)
+        MomentsCreditCopy.countTitle(summary.renderPlan?.plan.totalCreditCost ?? summary.creditCost)
     }
 
     var refreshButtonTitle: String {
@@ -94,7 +94,10 @@ struct MomentsCreateFinalVideoActionPresentation: Equatable {
     }
 
     var totalCreditCost: Int {
-        MomentsCreditGate.finalRenderCreditCost(
+        if let backendCost = summary.renderPlan?.plan.totalCreditCost {
+            return backendCost
+        }
+        return MomentsCreditGate.finalRenderCreditCost(
             template: template,
             removesWatermark: removesWatermark,
             balance: balance
@@ -154,7 +157,10 @@ struct MomentsCreateFinalVideoActionPresentation: Equatable {
     }
 
     var canAffordSelectedCost: Bool {
-        MomentsCreditGate.canAffordFinalRender(
+        if let backendCost = summary.renderPlan?.plan.totalCreditCost {
+            return balance.spendable >= backendCost
+        }
+        return MomentsCreditGate.canAffordFinalRender(
             template: template,
             removesWatermark: removesWatermark,
             balance: balance

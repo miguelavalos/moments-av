@@ -29,7 +29,6 @@ struct MomentsPreparedUpload: Decodable, Equatable, Sendable {
     let completionUrl: URL?
     let method: String
     let headers: [String: String]
-    let storageKey: String
     let expiresAt: String
     let generatedAt: String
 }

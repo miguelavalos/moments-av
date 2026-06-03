@@ -19,7 +19,6 @@ final class MomentsAPIClientTests: XCTestCase {
               "uploadUrl": "https://uploads.example.com/media-1",
               "method": "PUT",
               "headers": { "content-type": "image/jpeg" },
-              "storageKey": "momentsav/user/moment/source/media-1.jpg",
               "expiresAt": "2026-05-16T17:00:00Z",
               "generatedAt": "2026-05-16T16:00:00Z"
             }
@@ -58,7 +57,6 @@ final class MomentsAPIClientTests: XCTestCase {
               "uploadUrl": "https://uploads.example.com/media-1",
               "method": "PUT",
               "headers": { "content-type": "image/jpeg" },
-              "storageKey": "momentsav/user/moment/source/media-1.jpg",
               "expiresAt": "2026-05-16T17:00:00Z",
               "generatedAt": "2026-05-16T16:00:00Z"
             }
@@ -118,7 +116,6 @@ final class MomentsAPIClientTests: XCTestCase {
                 "x-appsav-moments-moment-id": "moment-1",
                 "x-appsav-moments-media-asset-id": "media-1"
             ],
-            storageKey: "momentsav/user/moment/source/media-1",
             expiresAt: "2026-05-16T17:00:00Z",
             generatedAt: "2026-05-16T16:00:00Z"
         )
@@ -156,7 +153,6 @@ final class MomentsAPIClientTests: XCTestCase {
             completionUrl: nil,
             method: "PUT",
             headers: ["content-type": "image/jpeg"],
-            storageKey: "momentsav/user/moment/source/media-1",
             expiresAt: "2026-05-16T17:00:00Z",
             generatedAt: "2026-05-16T16:00:00Z"
         )
@@ -201,7 +197,6 @@ final class MomentsAPIClientTests: XCTestCase {
                 "content-type": "image/jpeg",
                 "x-amz-meta-upload-id": "upload-1"
             ],
-            storageKey: "momentsav/user/moment/source/media-1",
             expiresAt: "2026-05-16T17:00:00Z",
             generatedAt: "2026-05-16T16:00:00Z"
         )
@@ -244,7 +239,6 @@ final class MomentsAPIClientTests: XCTestCase {
             completionUrl: nil,
             method: "PUT",
             headers: ["content-type": "image/jpeg"],
-            storageKey: "momentsav/user/moment/source/media-1",
             expiresAt: "2026-05-16T17:00:00Z",
             generatedAt: "2026-05-16T16:00:00Z"
         )
@@ -495,6 +489,89 @@ final class MomentsAPIClientTests: XCTestCase {
         XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.value(forHTTPHeaderField: "Authorization"), "Bearer token-1")
         XCTAssertEqual(workflow.renderJobId, "render-1")
         XCTAssertEqual(workflow.status, "running")
+    }
+
+    func testConfirmFinalRenderUsesBackendOwnedEndpoint() async throws {
+        let session = makeMockSession(
+            json: """
+            {
+              "appId": "momentsav",
+              "momentId": "moment-1",
+              "planId": "plan-1",
+              "reservation": {
+                "id": "reservation-1",
+                "appId": "momentsav",
+                "userId": "user-1",
+                "momentId": "moment-1",
+                "workflowRunId": null,
+                "amount": 2,
+                "status": "reserved",
+                "idempotencyKey": "final-confirm:moment-1:birthdayMessage:watermarked:operation-1",
+                "expiresAt": "2026-06-16T16:00:00Z",
+                "createdAt": "2026-05-16T16:00:00Z",
+                "updatedAt": "2026-05-16T16:00:00Z"
+              },
+              "workflow": {
+                "appId": "momentsav",
+                "momentId": "moment-1",
+                "renderJobId": "render-1",
+                "workflowRunId": "workflow-1",
+                "status": "running",
+                "startedAt": "2026-05-16T16:00:00Z"
+              },
+              "renderPlan": {
+                "appId": "momentsav",
+                "momentId": "moment-1",
+                "planId": "plan-1",
+                "canCreateVideo": true,
+                "generatedAt": "2026-05-16T16:00:00Z",
+                "plan": {
+                  "schemaVersion": 1,
+                  "secondsPerCredit": 15,
+                  "renderOptionId": "standard_moment",
+                  "renderOptionTitle": "Standard Moment",
+                  "creationMode": "quick",
+                  "look": "real",
+                  "theme": "birthday",
+                  "mood": "warm",
+                  "duration": "auto",
+                  "mediaUse": "aviPick",
+                  "creditCost": 2,
+                  "totalCreditCost": 2,
+                  "targetDurationMs": 30000,
+                  "fps": 24,
+                  "rendererMode": "image_to_video",
+                  "plannedAssetCount": 4,
+                  "usedAssetCount": 4,
+                  "rejectedAssetCount": 0,
+                  "qualityWarnings": [],
+                  "userMessage": "Ready."
+                }
+              },
+              "confirmedAt": "2026-05-16T16:00:00Z"
+            }
+            """
+        )
+        let client = MomentsFinalRenderClient(baseURLString: accountAPIBaseURL, session: session)
+
+        let confirmation = try await client.confirmFinalRender(
+            momentId: "moment-1",
+            bearerToken: "token-1",
+            template: .birthdayMessage,
+            creationStyle: nil,
+            form: MomentSetupForm(template: .birthdayMessage),
+            removesWatermark: false,
+            planId: "plan-1",
+            renderOptionId: "standard_moment",
+            operationId: "operation-1"
+        )
+
+        XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.url?.absoluteString, "\(accountAPIBaseURL)/v1/apps/momentsav/renders/final/confirm")
+        XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.httpMethod, "POST")
+        XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.value(forHTTPHeaderField: "Authorization"), "Bearer token-1")
+        XCTAssertEqual(confirmation.reservation.id, "reservation-1")
+        XCTAssertEqual(confirmation.workflow.renderJobId, "render-1")
+        XCTAssertEqual(confirmation.renderPlan.plan.totalCreditCost, 2)
     }
 
     func testFinalRenderSurfacesProviderFailureMessage() async throws {

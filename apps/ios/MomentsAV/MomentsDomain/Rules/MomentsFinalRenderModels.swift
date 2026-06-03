@@ -48,9 +48,12 @@ struct MomentsCreditReservationRequest: Encodable {
 struct MomentsCreditReservationResponse: Decodable, Equatable {
     let id: String
     let appId: String
+    let userId: String?
     let momentId: String
+    let workflowRunId: String?
     let amount: Int
     let status: String
+    let idempotencyKey: String?
     let expiresAt: String
     let createdAt: String
     let updatedAt: String
@@ -73,6 +76,7 @@ struct MomentsStartWorkflowRequest: Encodable {
     let safetyAcknowledged = true
     let idempotencyKey: String
     let reservationId: String
+    let renderOptionId: String?
 }
 
 struct MomentsStartWorkflowResponse: Decodable, Equatable {
@@ -96,6 +100,36 @@ struct MomentsRenderPlanRequest: Encodable {
     let occasion: String?
     let details: String?
     let creditCost: Int
+    let removeWatermark: Bool
+    let renderOptionId: String?
+}
+
+struct MomentsConfirmFinalRenderRequest: Encodable {
+    let appId = "momentsav"
+    let momentId: String
+    let creationMode: String
+    let look: String
+    let theme: String
+    let mood: String
+    let duration: String
+    let mediaUse: String
+    let occasion: String?
+    let details: String?
+    let creditCost: Int
+    let removeWatermark: Bool
+    let renderOptionId: String?
+    let planId: String
+    let idempotencyKey: String
+}
+
+struct MomentsConfirmFinalRenderResponse: Decodable, Equatable {
+    let appId: String
+    let momentId: String
+    let planId: String
+    let reservation: MomentsCreditReservationResponse
+    let workflow: MomentsStartWorkflowResponse
+    let renderPlan: MomentsRenderPlanResponse
+    let confirmedAt: String
 }
 
 struct MomentsRenderPlanResponse: Decodable, Equatable {
@@ -127,13 +161,17 @@ struct MomentsArtifactDownloadResponse: Decodable, Equatable {
 }
 
 struct MomentsRenderPlan: Decodable, Equatable {
+    let schemaVersion: Int?
     let targetDurationMs: Int
     let creditCost: Int
+    let totalCreditCost: Int
     let secondsPerCredit: Int
     let plannedAssetCount: Int
     let usedAssetCount: Int
     let rejectedAssetCount: Int
     let rendererMode: String
+    let renderOptionId: String?
+    let renderOptionTitle: String?
     let userMessage: String
     let qualityWarnings: [String]
 }

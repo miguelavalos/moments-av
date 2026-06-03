@@ -809,6 +809,7 @@
 "workflow.final.needsUsableMedia" = "Avi a besoin de médias utilisables avant de créer la vidéo.";
 "workflow.final.planReady" = "Le plan vidéo est prêt. Relis-le avant de créer la vidéo.";
 "workflow.final.creatingVideo" = "Avi crée la vidéo. Tu peux suivre la progression ici.";
+"workflow.final.savingStatus" = "Enregistrement de l’état de la vidéo.";
 "workflow.final.noDownloadReady" = "Aucune vidéo finale n’est encore prête à télécharger.";
 "workflow.final.downloadInProgress" = "Le téléchargement de la vidéo finale est déjà en cours.";
 "workflow.final.signInAgainSaveLocal" = "Reconnecte-toi pour enregistrer la vidéo finale localement.";

@@ -520,20 +520,20 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         )
 
         XCTAssertTrue(ready.hasRenderPlan)
-        XCTAssertEqual(ready.totalCreditCostTitle, "3 credits")
-        XCTAssertEqual(ready.primaryTitle, "Create video · 3 credits")
+        XCTAssertEqual(ready.totalCreditCostTitle, "2 credits")
+        XCTAssertEqual(ready.primaryTitle, "Create video · 2 credits")
         XCTAssertEqual(ready.primaryIconName, "video.fill")
         XCTAssertEqual(ready.stepTitle, "Step 3 · Ready to create")
-        XCTAssertEqual(ready.stepDetail, "3 credits reserved when video starts.")
-        XCTAssertEqual(ready.stepBadgeTitle, "3 credits")
+        XCTAssertEqual(ready.stepDetail, "2 credits reserved when video starts.")
+        XCTAssertEqual(ready.stepBadgeTitle, "2 credits")
         XCTAssertEqual(ready.stepIconName, "creditcard.fill")
         XCTAssertEqual(
             ready.creditPolicyMessage,
-            "Starting the final video reserves 3 credits. Credits are finalized only after the export is delivered."
+            "Starting the final video reserves 2 credits. Credits are finalized only after the export is delivered."
         )
         XCTAssertEqual(
             ready.confirmationMessage,
-            "This reserves 3 credits now. Credits are finalized only after the final video is delivered; if creation fails before delivery, the reservation is released."
+            "This reserves 2 credits now. Credits are finalized only after the final video is delivered; if creation fails before delivery, the reservation is released."
         )
     }
 

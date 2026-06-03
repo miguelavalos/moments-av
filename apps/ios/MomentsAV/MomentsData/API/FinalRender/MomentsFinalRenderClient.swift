@@ -155,7 +155,8 @@ struct MomentsFinalRenderClient {
         bearerToken: String,
         template: MomentTemplate,
         creationStyle: MomentCreationStyleID?,
-        form: MomentSetupForm
+        form: MomentSetupForm,
+        removesWatermark: Bool
     ) async throws -> MomentsRenderPlanResponse {
         guard let baseURL = URL(string: baseURLString.trimmingCharacters(in: .whitespacesAndNewlines)) else {
             throw MomentsFinalRenderError.apiNotConfigured
@@ -177,7 +178,9 @@ struct MomentsFinalRenderClient {
             mediaUse: form.mediaUse.rawValue,
             occasion: form.occasion,
             details: form.details,
-            creditCost: template.creditCost
+            creditCost: template.creditCost,
+            removeWatermark: removesWatermark,
+            renderOptionId: nil
         )
 
         var request = URLRequest(url: endpoint)
@@ -198,6 +201,65 @@ struct MomentsFinalRenderClient {
         }
 
         return try JSONDecoder().decode(MomentsRenderPlanResponse.self, from: data)
+    }
+
+    func confirmFinalRender(
+        momentId: String,
+        bearerToken: String,
+        template: MomentTemplate,
+        creationStyle: MomentCreationStyleID?,
+        form: MomentSetupForm,
+        removesWatermark: Bool,
+        planId: String,
+        renderOptionId: String?,
+        operationId: String
+    ) async throws -> MomentsConfirmFinalRenderResponse {
+        guard let baseURL = URL(string: baseURLString.trimmingCharacters(in: .whitespacesAndNewlines)) else {
+            throw MomentsFinalRenderError.apiNotConfigured
+        }
+
+        let endpoint = baseURL
+            .appendingPathComponent("v1")
+            .appendingPathComponent("apps")
+            .appendingPathComponent("momentsav")
+            .appendingPathComponent("renders")
+            .appendingPathComponent("final")
+            .appendingPathComponent("confirm")
+        let body = MomentsConfirmFinalRenderRequest(
+            momentId: momentId,
+            creationMode: form.creationMode.rawValue,
+            look: form.look.rawValue,
+            theme: form.theme.rawValue,
+            mood: form.tone.rawValue,
+            duration: form.duration.rawValue,
+            mediaUse: form.mediaUse.rawValue,
+            occasion: form.occasion,
+            details: form.details,
+            creditCost: template.creditCost,
+            removeWatermark: removesWatermark,
+            renderOptionId: renderOptionId,
+            planId: planId,
+            idempotencyKey: "final-confirm:\(momentId):\(template.id.rawValue):\(removesWatermark ? "clean" : "watermarked"):\(operationId)"
+        )
+
+        var request = URLRequest(url: endpoint)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("Bearer \(bearerToken)", forHTTPHeaderField: "Authorization")
+        request.httpBody = try JSONEncoder().encode(body)
+
+        let (data, response) = try await retryPolicy.run {
+            try await session.data(for: request)
+        }
+        guard let httpResponse = response as? HTTPURLResponse, 200..<300 ~= httpResponse.statusCode else {
+            throw MomentsAPIError.decode(
+                from: data,
+                fallbackCode: "moments_final_render_confirm_failed",
+                fallbackMessage: MomentsFinalRenderError.generationFailed.localizedDescription
+            )
+        }
+
+        return try JSONDecoder().decode(MomentsConfirmFinalRenderResponse.self, from: data)
     }
 
     func startFinalRenderWorkflow(
@@ -234,7 +296,8 @@ struct MomentsFinalRenderClient {
             creditCost: template.creditCost,
             removeWatermark: removesWatermark,
             idempotencyKey: "final-workflow:\(momentId):\(template.id.rawValue):\(operationId)",
-            reservationId: reservationId
+            reservationId: reservationId,
+            renderOptionId: nil
         )
 
         var request = URLRequest(url: endpoint)
