@@ -20,6 +20,11 @@ apps/ios/Config/Local.xcconfig
 It is gitignored generated output. Regenerate it whenever switching local,
 staging, or release environments.
 
+For signed development workflows, use the generated `staging` config. AVALSYS
+Apps AV product workflows should run against deployed preview in development,
+not a local Wrangler worker, whenever they touch Account AV, media uploads,
+credits, R2-backed artifacts, purchases, render jobs, or account deletion.
+
 ## Public Rules
 
 - Keep committed xcconfigs free of production runtime values.

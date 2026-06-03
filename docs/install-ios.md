@@ -50,6 +50,11 @@ Generate and validate local runtime config through the private AVALSYS tooling
 available to maintainers. Public docs should describe the hygiene rules, not
 the production values. See [production-config.md](production-config.md).
 
+For signed development smoke, generate the `staging` runtime config. In AVALSYS
+Apps AV projects, `staging` means deployed preview. Do not point Moments AV at a
+local Wrangler API worker for sign-in, credits, media upload, render-plan,
+final-render, gallery, purchase, or account-deletion testing.
+
 After generating local settings, validate the effective build settings:
 
 ```bash
