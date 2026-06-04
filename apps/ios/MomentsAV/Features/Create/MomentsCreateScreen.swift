@@ -31,8 +31,7 @@ struct MomentsCreateScreen: View {
             viewModel: viewModel,
             pickerItems: $pickerItems,
             startSignInFlow: startSignInFlow,
-            openCredits: openCredits,
-            createAnotherFinalVideoVersion: createAnotherFinalVideoVersion
+            openCredits: openCredits
         )
         .background(MomentsTheme.shellBackground.ignoresSafeArea())
         .safeAreaPadding(.horizontal, 20)
@@ -105,17 +104,6 @@ struct MomentsCreateScreen: View {
               !viewModel.isContinuingMoment
         else { return }
         cancelCreation()
-    }
-
-    private func createAnotherFinalVideoVersion() {
-        switch newMomentStartController.currentPreference {
-        case .askEveryTime:
-            viewModel.createAnotherFinalVideoVersion()
-        case .photosOrClips:
-            viewModel.createAnotherFinalVideoVersion(openMediaPicker: true)
-        case .album:
-            viewModel.createAnotherFinalVideoVersion(openAlbumPicker: true)
-        }
     }
 
     private func openAutomaticPhotoPickerIfRequested(_ request: Int) {

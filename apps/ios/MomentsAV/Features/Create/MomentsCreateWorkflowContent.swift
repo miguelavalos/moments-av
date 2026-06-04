@@ -8,7 +8,6 @@ struct MomentsCreateWorkflowContent: View {
     @Binding var pickerItems: [PhotosPickerItem]
     let startSignInFlow: () -> Void
     let openCredits: () -> Void
-    let createAnotherFinalVideoVersion: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -47,8 +46,7 @@ struct MomentsCreateWorkflowContent: View {
                     generateFinalRender: viewModel.createFinalVideoFromCurrentSelection,
                     autoRefreshFinalRenderStatus: viewModel.autoRefreshFinalRenderStatus,
                     retryFinalVideoDownload: viewModel.retryFinalVideoDownload,
-                    finishFinalVideoToGallery: viewModel.finishFinalVideoToGallery,
-                    createAnotherFinalVideoVersion: createAnotherFinalVideoVersion
+                    finishFinalVideoToGallery: viewModel.finishFinalVideoToGallery
                 )
             } else {
                 EmptyView()
@@ -92,7 +90,6 @@ private struct MomentsCreateMediaFirstWorkspace: View {
     let autoRefreshFinalRenderStatus: () -> Void
     let retryFinalVideoDownload: () -> Void
     let finishFinalVideoToGallery: () -> Void
-    let createAnotherFinalVideoVersion: () -> Void
 
     @State private var showsThemeChooser = false
     @State private var showsLookChooser = false
@@ -160,8 +157,7 @@ private struct MomentsCreateMediaFirstWorkspace: View {
                     refreshPreviewStatus: refreshPreviewStatus,
                     generateFinalRender: primaryFinalRenderAction,
                     retryFinalVideoDownload: retryFinalVideoDownload,
-                    finishFinalVideoToGallery: finishFinalVideoToGallery,
-                    createAnotherFinalVideoVersion: createAnotherFinalVideoVersion
+                    finishFinalVideoToGallery: finishFinalVideoToGallery
                 )
                 .padding(.horizontal, 2)
                 .frame(maxHeight: .infinity, alignment: .bottom)
@@ -1235,7 +1231,6 @@ private struct MomentsCreatePrimaryActionBar: View {
     let generateFinalRender: () -> Void
     let retryFinalVideoDownload: () -> Void
     let finishFinalVideoToGallery: () -> Void
-    let createAnotherFinalVideoVersion: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -1295,12 +1290,6 @@ private struct MomentsCreatePrimaryActionBar: View {
                             .frame(maxWidth: .infinity)
                     }
                     .buttonStyle(MomentsCreateSoftActionButtonStyle())
-
-                    Button(action: createAnotherFinalVideoVersion) {
-                        Label(L10n.string("create.final.createAnother"), systemImage: "plus.rectangle.on.rectangle")
-                            .frame(maxWidth: .infinity)
-                    }
-                    .buttonStyle(MomentsCreateNeutralInlineButtonStyle())
                 }
                 .font(.system(size: 14, weight: .black))
             } else if presentation.finalRenderSummary.finalExport != nil {
@@ -1312,12 +1301,6 @@ private struct MomentsCreatePrimaryActionBar: View {
                         }
                         .buttonStyle(MomentsCreateSoftActionButtonStyle())
                     }
-
-                    Button(action: createAnotherFinalVideoVersion) {
-                        Label(L10n.string("create.final.createAnother"), systemImage: "plus.rectangle.on.rectangle")
-                            .frame(maxWidth: .infinity)
-                    }
-                    .buttonStyle(MomentsCreateNeutralInlineButtonStyle())
                 }
                 .font(.system(size: 14, weight: .black))
             } else if presentation.finalRenderSummary.canRetryFinalVideoDownload {

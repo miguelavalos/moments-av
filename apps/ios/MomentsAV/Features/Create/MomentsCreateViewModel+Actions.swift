@@ -442,12 +442,6 @@ extension MomentsCreateViewModel {
         finalRenderWorkflow.finishFinalExportToGallery()
     }
 
-    func createAnotherFinalVideoVersion(openMediaPicker: Bool = false, openAlbumPicker: Bool = false) {
-        resetActiveMoment(force: true)
-        _ = beginNewMoment(openMediaPicker: openMediaPicker, openAlbumPicker: openAlbumPicker)
-        updateFinalRenderStatusMessage(L10n.string("create.final.status.startAnother"))
-    }
-
     private var activeTemplateContext: (momentId: String, template: MomentTemplate)? {
         guard let activeMomentId else { return nil }
         return (activeMomentId, form.template)
