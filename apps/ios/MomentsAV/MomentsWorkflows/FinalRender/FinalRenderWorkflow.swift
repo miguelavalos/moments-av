@@ -100,10 +100,7 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
             statusMessage = L10n.string("workflow.final.notConfigured")
             return
         }
-        let selectedSourceLocalIdentifiers = selectedMedia
-            .filter(\.selected)
-            .sorted { $0.sortOrder < $1.sortOrder }
-            .map(\.sourceLocalIdentifier)
+        let selectedSourceLocalIdentifiers = selectedSourceLocalIdentifiersForFinalRender(from: selectedMedia)
 
         let needsRenderPlan = renderPlan == nil
             || renderPlan?.momentId != momentId
@@ -175,6 +172,7 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
             }
 
             statusMessage = L10n.string("workflow.final.creatingVideo")
+            logger.info("Confirming final render momentId=\(momentId, privacy: .public) planId=\(renderPlan.planId, privacy: .public) cost=\(renderPlan.plan.totalCreditCost, privacy: .public) selectedMedia=\(selectedSourceLocalIdentifiers.count, privacy: .public)")
             let confirmed = try await finalRenderClient.confirmFinalRender(
                 momentId: momentId,
                 bearerToken: bearerToken,
@@ -271,6 +269,32 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
                 try await Task.sleep(nanoseconds: UInt64(attempt) * 750_000_000)
             }
         }
+    }
+
+    func selectedSourceLocalIdentifiersForFinalRender(from selectedMedia: [MomentsSelectedMedia]) -> [String] {
+        selectedSourceLocalIdentifiersForFinalRender(
+            from: selectedMedia,
+            workspaceMedia: activeWorkspace?.mediaAssets ?? []
+        )
+    }
+
+    func selectedSourceLocalIdentifiersForFinalRender(
+        from selectedMedia: [MomentsSelectedMedia],
+        workspaceMedia: [MomentMediaAsset]
+    ) -> [String] {
+        let localSelection = selectedMedia
+            .filter(\.selected)
+            .sorted { $0.sortOrder < $1.sortOrder }
+            .map(\.sourceLocalIdentifier)
+
+        if !localSelection.isEmpty {
+            return localSelection
+        }
+
+        let selectedWorkspaceMedia = workspaceMedia.filter(\.selected)
+        return (selectedWorkspaceMedia.isEmpty ? workspaceMedia : selectedWorkspaceMedia)
+            .sorted { $0.sortOrder < $1.sortOrder }
+            .map { $0.platformMediaAssetId ?? $0.id }
     }
 
     func refreshStatus() async {

@@ -31,6 +31,28 @@ final class MomentsCreateViewModelStoryStateTests: XCTestCase {
         XCTAssertEqual(viewModel.albumPickerOpenRequest, 1)
     }
 
+    func testFinalRenderUsesWorkspaceMediaIdentifiersAfterReload() {
+        let harness = MomentCreationFailureHarness(error: NSError(domain: "test", code: 1))
+        let workflow = harness.finalRenderWorkflow
+        let workspaceMedia = [
+            MomentsCreateTestFixtures.makeMediaAsset(
+                id: "backend-media-2",
+                sortOrder: 2,
+                sourceLocalIdentifier: "platform-2"
+            ),
+            MomentsCreateTestFixtures.makeMediaAsset(
+                id: "backend-media-1",
+                sortOrder: 1,
+                sourceLocalIdentifier: "platform-1"
+            )
+        ]
+
+        XCTAssertEqual(
+            workflow.selectedSourceLocalIdentifiersForFinalRender(from: [], workspaceMedia: workspaceMedia),
+            ["platform-1", "platform-2"]
+        )
+    }
+
     func testStoryScenesClearStaleErrorAndMarkCurrentInputPrepared() {
         let viewModel = MomentsCreateViewModel()
         let media = MomentsCreateTestFixtures.makeSelectedMedia(
