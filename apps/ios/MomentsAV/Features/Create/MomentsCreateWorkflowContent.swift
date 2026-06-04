@@ -156,6 +156,7 @@ private struct MomentsCreateMediaFirstWorkspace: View {
                     openCredits: openCredits,
                     refreshPreviewStatus: refreshPreviewStatus,
                     generateFinalRender: primaryFinalRenderAction,
+                    openCreateVideoConfirmation: { showsCreateVideoConfirmation = true },
                     retryFinalVideoDownload: retryFinalVideoDownload,
                     finishFinalVideoToGallery: finishFinalVideoToGallery
                 )
@@ -214,6 +215,8 @@ private struct MomentsCreateMediaFirstWorkspace: View {
                     showsCreateVideoConfirmation = false
                     let currentRemovesWatermark = presentation.finalRenderSummary.renderPlan?.watermark?.selectedRemoveWatermark ?? false
                     waitsForFinalRenderPlan = removesWatermark != currentRemovesWatermark
+                        || presentation.finalRenderSummary.renderPlan?.canCreateVideo != true
+                        || presentation.finalRenderSummary.latestFinalJob == nil
                     generateFinalRender(removesWatermark)
                 },
                 cancel: {
@@ -225,9 +228,16 @@ private struct MomentsCreateMediaFirstWorkspace: View {
         }
         .onChange(of: presentation.finalRenderSummary.renderPlan?.planId) { _, _ in
             guard waitsForFinalRenderPlan,
+                  presentation.finalRenderSummary.latestFinalJob == nil,
                   presentation.finalRenderSummary.renderPlan?.canCreateVideo == true else { return }
             waitsForFinalRenderPlan = false
             showsCreateVideoConfirmation = true
+        }
+        .onChange(of: presentation.finalRenderSummary.latestFinalJob?.id) { _, jobId in
+            if jobId != nil {
+                waitsForFinalRenderPlan = false
+                showsCreateVideoConfirmation = false
+            }
         }
         .onChange(of: presentation.finalRenderSummary.isGenerating) { _, isGenerating in
             guard waitsForFinalRenderPlan, !isGenerating, presentation.finalRenderSummary.renderPlan == nil else { return }
@@ -1229,6 +1239,7 @@ private struct MomentsCreatePrimaryActionBar: View {
     let openCredits: () -> Void
     let refreshPreviewStatus: () -> Void
     let generateFinalRender: () -> Void
+    let openCreateVideoConfirmation: () -> Void
     let retryFinalVideoDownload: () -> Void
     let finishFinalVideoToGallery: () -> Void
 
@@ -1360,6 +1371,8 @@ private struct MomentsCreatePrimaryActionBar: View {
                 startSignInFlow()
             } else if primaryActionPresentation.needsCreditsForPreparedPlan {
                 openCredits()
+            } else if primaryActionPresentation.finalVideoAction.hasRenderPlan {
+                openCreateVideoConfirmation()
             } else {
                 generateFinalRender()
             }
