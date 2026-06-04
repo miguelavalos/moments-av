@@ -616,6 +616,7 @@
 "create.final.confirmSheet.media" = "Mèdia";
 "create.final.confirmSheet.mediaPending" = "Comprovant mèdia";
 "create.final.confirmSheet.duration" = "Durada";
+"create.final.confirmSheet.durationRange" = "%d-%d s";
 "create.final.confirmSheet.upToSeconds" = "fins a %ds";
 "create.final.confirmSheet.watermark" = "Marca d'aigua";
 "create.final.costDetails.chargedOnCompletion" = "Només es cobra si el vídeo final es completa.";

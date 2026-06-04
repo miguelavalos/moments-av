@@ -215,6 +215,7 @@ struct MomentsArtifactDownloadResponse: Decodable, Equatable {
 
 struct MomentsRenderPlan: Decodable, Equatable {
     let schemaVersion: Int?
+    let minimumDurationMs: Int?
     let targetDurationMs: Int
     let creditCost: Int
     let totalCreditCost: Int

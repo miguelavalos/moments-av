@@ -618,6 +618,7 @@
 "create.final.confirmSheet.media" = "Media";
 "create.final.confirmSheet.mediaPending" = "Comprobando media";
 "create.final.confirmSheet.duration" = "Duración";
+"create.final.confirmSheet.durationRange" = "%d-%d s";
 "create.final.confirmSheet.upToSeconds" = "hasta %ds";
 "create.final.confirmSheet.watermark" = "Marca de agua";
 "create.final.costDetails.chargedOnCompletion" = "Solo se cobra si el video final se completa.";

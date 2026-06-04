@@ -618,6 +618,7 @@
 "create.final.confirmSheet.media" = "Medien";
 "create.final.confirmSheet.mediaPending" = "Medien werden geprüft";
 "create.final.confirmSheet.duration" = "Dauer";
+"create.final.confirmSheet.durationRange" = "%d-%d s";
 "create.final.confirmSheet.upToSeconds" = "bis zu %ds";
 "create.final.confirmSheet.watermark" = "Wasserzeichen";
 "create.final.costDetails.chargedOnCompletion" = "Wird nur berechnet, wenn das finale Video fertig ist.";

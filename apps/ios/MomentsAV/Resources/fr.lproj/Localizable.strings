@@ -616,6 +616,7 @@
 "create.final.confirmSheet.media" = "Médias";
 "create.final.confirmSheet.mediaPending" = "Vérification des médias";
 "create.final.confirmSheet.duration" = "Durée";
+"create.final.confirmSheet.durationRange" = "%d-%d s";
 "create.final.confirmSheet.upToSeconds" = "jusqu'à %ds";
 "create.final.confirmSheet.watermark" = "Filigrane";
 "create.final.costDetails.chargedOnCompletion" = "Facturé uniquement si la vidéo finale est terminée.";

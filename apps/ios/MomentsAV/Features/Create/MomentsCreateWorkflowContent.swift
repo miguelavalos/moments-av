@@ -1642,6 +1642,15 @@ private struct MomentsCreateFinalVideoConfirmationSheet: View {
         guard let plan else {
             return L10n.string("create.workflowContent.beforeVideo")
         }
+        if let minimumDurationMs = plan.minimumDurationMs,
+           minimumDurationMs > 0,
+           minimumDurationMs < plan.targetDurationMs {
+            return L10n.string(
+                "create.final.confirmSheet.durationRange",
+                minimumDurationMs / 1000,
+                plan.targetDurationMs / 1000
+            )
+        }
         return L10n.string("create.final.confirmSheet.upToSeconds", plan.targetDurationMs / 1000)
     }
 }

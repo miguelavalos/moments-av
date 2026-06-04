@@ -102,8 +102,17 @@ struct MomentsCreateAviCutPresentation: Equatable {
     }
 
     var durationTitle: String {
-        if let targetDurationMs = renderPlan?.targetDurationMs {
-            return "\(targetDurationMs / 1_000)s"
+        if let renderPlan {
+            if let minimumDurationMs = renderPlan.minimumDurationMs,
+               minimumDurationMs > 0,
+               minimumDurationMs < renderPlan.targetDurationMs {
+                return L10n.string(
+                    "create.final.confirmSheet.durationRange",
+                    minimumDurationMs / 1_000,
+                    renderPlan.targetDurationMs / 1_000
+                )
+            }
+            return L10n.string("create.final.confirmSheet.upToSeconds", renderPlan.targetDurationMs / 1_000)
         }
         return selectedDuration.title
     }

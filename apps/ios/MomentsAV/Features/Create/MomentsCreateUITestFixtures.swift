@@ -135,6 +135,7 @@ enum MomentsCreateUITestFixtures {
             ),
             plan: MomentsRenderPlan(
                 schemaVersion: 1,
+                minimumDurationMs: 16_000,
                 targetDurationMs: 30_000,
                 creditCost: 2,
                 totalCreditCost: 2,
