@@ -114,6 +114,9 @@ private struct MomentsCreateMediaFirstWorkspace: View {
                     if presentation.isFinalRenderEditingLocked {
                         MomentsCreateLockedFinalRenderScene(presentation: presentation)
                             .padding(.top, 28)
+                            .task(id: presentation.finalRenderSummary.latestFinalJob?.id) {
+                                refreshActiveFinalRenderStatusOnceIfNeeded()
+                            }
                     } else {
                         MomentsCreateCompactAviGuide(
                             presentation: presentation
@@ -254,12 +257,16 @@ private struct MomentsCreateMediaFirstWorkspace: View {
         .onAppear {
             openCompactPickerIfRequested(openPickerRequest)
             openCompactAlbumIfRequested(openAlbumRequest)
+            refreshActiveFinalRenderStatusOnceIfNeeded()
         }
         .onChange(of: openPickerRequest) { _, newValue in
             openCompactPickerIfRequested(newValue)
         }
         .onChange(of: openAlbumRequest) { _, newValue in
             openCompactAlbumIfRequested(newValue)
+        }
+        .onChange(of: autoFinalRenderRefreshTaskID) { _, _ in
+            refreshActiveFinalRenderStatusOnceIfNeeded()
         }
         .task(id: autoFinalRenderRefreshTaskID) {
             await autoRefreshFinalRenderStatusIfNeeded()
@@ -398,8 +405,7 @@ private struct MomentsCreateMediaFirstWorkspace: View {
     private func autoRefreshFinalRenderStatusIfNeeded() async {
         guard let job = presentation.finalRenderSummary.latestFinalJob,
               job.isActiveRender,
-              presentation.finalRenderSummary.finalExport == nil,
-              presentation.canRefreshFinalRenderStatus else {
+              presentation.finalRenderSummary.finalExport == nil else {
             return
         }
 
@@ -407,6 +413,16 @@ private struct MomentsCreateMediaFirstWorkspace: View {
             autoRefreshFinalRenderStatus()
             try? await Task.sleep(for: .seconds(12))
         }
+    }
+
+    private func refreshActiveFinalRenderStatusOnceIfNeeded() {
+        guard let job = presentation.finalRenderSummary.latestFinalJob,
+              job.isActiveRender,
+              presentation.finalRenderSummary.finalExport == nil else {
+            return
+        }
+
+        autoRefreshFinalRenderStatus()
     }
 
     private var discardConfirmationActionTitle: String {
@@ -1442,7 +1458,8 @@ private struct MomentsCreatePrimaryActionBar: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            if let realtimeStatus = presentation.finalRenderSummary.realtimeStatus {
+            if presentation.finalRenderSummary.finalExport == nil,
+               let realtimeStatus = presentation.finalRenderSummary.realtimeStatus {
                 MomentsCreateRealtimeRenderStatusPanel(status: realtimeStatus)
             }
 

@@ -58,8 +58,8 @@ extension MomentsRemoteClient {
                 "kind": kind,
                 "r2Key": r2Key,
                 "status": "available",
-                "durationSeconds": durationSeconds,
-                "creditCost": creditCost,
+                "durationSeconds": Double(durationSeconds),
+                "creditCost": Double(creditCost),
                 "hasWatermark": hasWatermark,
                 "expiresAt": expirationMilliseconds()
             ]
@@ -98,7 +98,7 @@ extension MomentsRemoteClient {
             args["phase"] = phase as ConvexEncodable
         }
         if let progressPercent {
-            args["progressPercent"] = progressPercent as ConvexEncodable
+            args["progressPercent"] = Double(progressPercent) as ConvexEncodable
         }
         if let userMessage {
             args["userMessage"] = userMessage as ConvexEncodable

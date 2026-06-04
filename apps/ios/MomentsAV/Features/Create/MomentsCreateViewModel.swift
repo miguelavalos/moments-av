@@ -59,6 +59,8 @@ final class MomentsCreateViewModel: ObservableObject {
     var lastPreparedStoryInputSignature: String?
     private var renderPlanInputSignature: String?
     private var pendingRenderPlanInputSignature: String?
+    private var finalRenderAutoRefreshTask: Task<Void, Never>?
+    private var finalRenderAutoRefreshJobId: String?
     private var hasExplicitMediaEditsAfterPreparedStory = false
     private var hasUserStyleOverride = false
     private var hasUserDurationOverride = false
@@ -662,6 +664,18 @@ extension MomentsCreateViewModel {
         previewStatusMessage = state.statusMessage
         isGeneratingPreview = state.isGenerating
         isRefreshingPreviewStatus = state.isRefreshingStatus
+        updateFinalRenderAutoRefreshTask(
+            for: MomentsCreateFinalRenderState(
+                finalExport: finalExport,
+                latestFinalJob: latestFinalJob,
+                renderPlan: renderPlan,
+                pendingGalleryVideo: pendingGalleryVideo,
+                canRetryFinalVideoDownload: canRetryFinalVideoDownload,
+                statusMessage: finalRenderStatusMessage,
+                isGenerating: isGeneratingFinalRender,
+                isRefreshingStatus: isRefreshingFinalRenderStatus
+            )
+        )
     }
 
     func applyFinalRenderState(_ state: MomentsCreateFinalRenderState) {
@@ -684,6 +698,38 @@ extension MomentsCreateViewModel {
         )
         isGeneratingFinalRender = state.isGenerating
         isRefreshingFinalRenderStatus = state.isRefreshingStatus
+        updateFinalRenderAutoRefreshTask(for: state)
+    }
+
+    private func updateFinalRenderAutoRefreshTask(for state: MomentsCreateFinalRenderState) {
+        let workspace = activeWorkspace
+        let refreshMomentId = workspace?.moment.id ?? activeMomentId
+        let refreshJob = state.latestFinalJob ?? workspace?.latestRenderJob(kind: "final")
+        let refreshFinalExport = state.finalExport ?? workspace?.latestArtifact(kind: "final_export")
+        guard let job = refreshJob,
+              job.isActiveRender,
+              refreshFinalExport == nil,
+              let refreshMomentId,
+              finalRenderWorkflow != nil else {
+            cancelFinalRenderAutoRefresh()
+            return
+        }
+
+        guard finalRenderAutoRefreshJobId != job.id else { return }
+        finalRenderAutoRefreshTask?.cancel()
+        finalRenderAutoRefreshJobId = job.id
+        finalRenderAutoRefreshTask = Task { [weak self] in
+            while !Task.isCancelled {
+                await self?.finalRenderWorkflow?.refreshStatus(momentId: refreshMomentId, job: job)
+                try? await Task.sleep(for: .seconds(12))
+            }
+        }
+    }
+
+    func cancelFinalRenderAutoRefresh() {
+        finalRenderAutoRefreshTask?.cancel()
+        finalRenderAutoRefreshTask = nil
+        finalRenderAutoRefreshJobId = nil
     }
 
     private func syncFormWithActiveWorkspace(_ workspace: MomentWorkspace?) {

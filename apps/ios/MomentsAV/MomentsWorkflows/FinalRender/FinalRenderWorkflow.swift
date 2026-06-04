@@ -317,12 +317,21 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
     }
 
     func refreshStatus() async {
+        await refreshStatus(
+            momentId: activeWorkspace?.moment.id,
+            job: latestFinalJob
+        )
+    }
+
+    func refreshStatus(momentId: String?, job: MomentRenderJob?) async {
         guard let ownerUserId = currentUserProvider.currentUserId else {
             statusMessage = refreshMessages.signIn
+            logger.error("Final render refresh skipped: missing current user")
             return
         }
         guard let bearerToken = try? await authTokenProvider.currentBearerToken() else {
             statusMessage = refreshMessages.signIn
+            logger.error("Final render refresh skipped: missing bearer token")
             return
         }
 
@@ -331,9 +340,10 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
         statusMessage = nil
 
         do {
+            logger.info("Refreshing final render status activeMomentId=\(momentId ?? "nil", privacy: .public) latestFinalJob=\(job?.id ?? "nil", privacy: .public) providerRequestId=\(job?.providerRequestId ?? "nil", privacy: .public)")
             let refresh = try RenderJobStatusRefresh.make(
-                momentId: activeWorkspace?.moment.id,
-                job: latestFinalJob,
+                momentId: momentId,
+                job: job,
                 missingMomentMessage: refreshMessages.missingMoment,
                 missingJobMessage: refreshMessages.missingJob,
                 missingProviderRequestMessage: refreshMessages.missingProviderRequest
@@ -343,6 +353,7 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
                 statusClient: statusClient,
                 usesProviderReconciliation: true
             )
+            logger.info("Final render reconcile response renderJobId=\(status.renderJobId, privacy: .public) status=\(status.status, privacy: .public) phase=\(status.phase ?? "nil", privacy: .public) artifactId=\(status.artifactId ?? "nil", privacy: .public) artifactR2Key=\(status.artifactR2Key ?? "nil", privacy: .public)")
             guard isCurrentWorkflowGeneration(generation) else { return }
 
             let didAttachFinalArtifact = try await refresh.saveCompletedFinalArtifactIfNeeded(
@@ -351,6 +362,7 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
                 workspace: activeWorkspace,
                 statusUpdater: finalRenderResultSaver
             )
+            logger.info("Final render artifact attach attempted didAttach=\(didAttachFinalArtifact, privacy: .public)")
             guard isCurrentWorkflowGeneration(generation) else { return }
 
             do {
@@ -368,6 +380,7 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
             statusMessage = status.userMessage ?? refreshMessages.success
         } catch {
             guard isCurrentWorkflowGeneration(generation) else { return }
+            logger.error("Final render refresh failed reason=\(String(describing: error), privacy: .public)")
             statusMessage = MomentsRecoveryCopy.renderRefreshFailure()
         }
 

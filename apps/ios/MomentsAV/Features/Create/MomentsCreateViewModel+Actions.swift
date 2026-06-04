@@ -420,7 +420,7 @@ extension MomentsCreateViewModel {
     }
 
     func autoRefreshFinalRenderStatus() {
-        guard canRefreshFinalRenderStatus, let finalRenderWorkflow else {
+        guard let finalRenderWorkflow else {
             return
         }
 

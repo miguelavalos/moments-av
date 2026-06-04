@@ -7,5 +7,6 @@ extension MomentsCreateViewModel {
 
     func cancelOperations() {
         operationRunner.cancelAll()
+        cancelFinalRenderAutoRefresh()
     }
 }

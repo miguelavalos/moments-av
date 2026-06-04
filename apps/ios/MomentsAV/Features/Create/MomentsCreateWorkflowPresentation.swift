@@ -73,6 +73,9 @@ struct MomentsCreateWorkflowPresentation: Equatable {
     }
 
     var isFinalRenderEditingLocked: Bool {
+        guard finalRenderSummary.finalExport == nil else {
+            return false
+        }
         guard let latestFinalJob = finalRenderSummary.latestFinalJob,
               latestFinalJob.isActiveRender else {
             return false
