@@ -97,7 +97,7 @@
 "common.back" = "Back";
 "common.soon" = "Soon";
 "create.aviDirection.changedDirection" = "You changed the direction to %@. Avi originally suggested %@ for this selection.";
-"create.aviDirection.changedMusic" = "Avi picked %@ for this selection. You changed the music.";
+"create.aviDirection.changedMusic" = "Avi picked %@ for this selection. You changed the mood.";
 "create.aviDirection.defaultMessage" = "Tell Avi what matters most, or leave everything automatic.";
 "create.aviDirection.title" = "Avi direction";
 "create.aviDirection.undoSuggestion" = "Undo Avi suggestion";
@@ -148,7 +148,7 @@
 "create.note.field.title" = "Note for Avi";
 "create.note.placeholder" = "Tell Avi what to focus on...";
 "create.note.title" = "Note";
-"create.note.voice.accessibility" = "Voice note transcription";
+"create.note.voice.accessibility" = "Dictate note for Avi";
 "create.rules.missingOccasion" = "Complete the occasion before starting a Moment.";
 "create.selector.length.auto.detail" = "Avi fits the time.";
 "create.selector.length.extended.detail" = "More time.";
@@ -164,7 +164,7 @@
 "create.selector.mood.calm.detail" = "Gentle, slower, and understated.";
 "create.selector.mood.cinematic.detail" = "More dramatic pacing and atmosphere.";
 "create.selector.mood.fun.detail" = "Playful energy for shared moments.";
-"create.selector.mood.intro.detail" = "Pick the emotional direction Avi should use for pacing, tone, and music.";
+"create.selector.mood.intro.detail" = "Pick the emotional direction Avi should use for pacing and tone.";
 "create.selector.mood.intro.title" = "Mood guides the edit";
 "create.selector.mood.title" = "Choose mood";
 "create.selector.mood.upbeat.detail" = "Fast, bright, and lively.";
@@ -584,7 +584,7 @@
 "create.media.suggestOrder" = "Suggest order";
 "create.media.title" = "Media";
 "create.media.undoAviOrder" = "Undo Avi order";
-"create.options.detail" = "Avi can adjust mood, music, rhythm, and the story note before creating the video.";
+"create.options.detail" = "Avi can adjust mood, rhythm, and the story note before creating the video.";
 "create.options.edit" = "Edit options";
 "create.options.suggestion" = "Avi suggests %@ · %@";
 "create.options.suggestionActive" = "Avi suggestion is active. Open options to undo or adjust it.";

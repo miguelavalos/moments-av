@@ -97,7 +97,7 @@
 "common.back" = "Enrere";
 "common.soon" = "Aviat";
 "create.aviDirection.changedDirection" = "Has canviat la direcció a %@. Avi havia suggerit %@ per a aquesta selecció.";
-"create.aviDirection.changedMusic" = "Avi ha triat %@ per a aquesta selecció. Has canviat la música.";
+"create.aviDirection.changedMusic" = "Avi ha triat %@ per a aquesta selecció. Has canviat l'ànim.";
 "create.aviDirection.defaultMessage" = "Digues a Avi què importa, o deixa-ho tot automàtic.";
 "create.aviDirection.title" = "Direcció d’Avi";
 "create.aviDirection.undoSuggestion" = "Desfés el suggeriment d’Avi";
@@ -148,7 +148,7 @@
 "create.note.field.title" = "NOTA PER A AVI";
 "create.note.placeholder" = "Digues a Avi en què s’ha de centrar...";
 "create.note.title" = "Nota";
-"create.note.voice.accessibility" = "Transcripció de nota de veu";
+"create.note.voice.accessibility" = "Dictar nota per a Avi";
 "create.rules.missingOccasion" = "Completa l’ocasió abans de començar un Moment.";
 "create.selector.length.auto.detail" = "Avi ajusta el temps.";
 "create.selector.length.extended.detail" = "Més temps.";
@@ -164,7 +164,7 @@
 "create.selector.mood.calm.detail" = "Suau, més lent i discret.";
 "create.selector.mood.cinematic.detail" = "Ritme més dramàtic i amb atmosfera.";
 "create.selector.mood.fun.detail" = "Energia juganera per moments compartits.";
-"create.selector.mood.intro.detail" = "Tria la direcció emocional que Avi usarà per ritme, to i música.";
+"create.selector.mood.intro.detail" = "Tria la direcció emocional que Avi usarà per ritme i to.";
 "create.selector.mood.intro.title" = "L’ànim guia l’edició";
 "create.selector.mood.title" = "Triar ànim";
 "create.selector.mood.upbeat.detail" = "Ràpid, lluminós i viu.";
@@ -582,7 +582,7 @@
 "create.media.suggestOrder" = "Suggerir ordre";
 "create.media.title" = "Mèdia";
 "create.media.undoAviOrder" = "Desfer ordre d'Avi";
-"create.options.detail" = "Avi pot ajustar ànim, música, ritme i la nota d'història abans de crear el vídeo.";
+"create.options.detail" = "Avi pot ajustar ànim, ritme i la nota d'història abans de crear el vídeo.";
 "create.options.edit" = "Editar opcions";
 "create.options.suggestion" = "Avi suggereix %@ · %@";
 "create.options.suggestionActive" = "El suggeriment d'Avi està actiu. Obre opcions per desfer-lo o ajustar-lo.";

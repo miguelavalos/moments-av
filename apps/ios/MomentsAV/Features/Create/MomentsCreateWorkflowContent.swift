@@ -1930,18 +1930,6 @@ private struct MomentsCreateAviNoteField: View {
                         }
 
                         Spacer(minLength: 0)
-
-                        Button {
-                        } label: {
-                            Image(systemName: "mic.fill")
-                                .font(.system(size: 15, weight: .black))
-                                .foregroundStyle(AVBrandColor.accent)
-                                .frame(width: 34, height: 34)
-                                .background(AVBrandColor.accent.opacity(0.10), in: Circle())
-                        }
-                        .buttonStyle(.plain)
-                        .disabled(true)
-                        .accessibilityLabel(L10n.string("create.note.voice.accessibility"))
                     }
 
                     TextField(L10n.string("create.note.placeholder"), text: $text, axis: .vertical)
@@ -2027,18 +2015,6 @@ private struct MomentsCreateAviNoteEditorPage: View {
                                     }
 
                                     Spacer(minLength: 0)
-
-                                    Button {
-                                    } label: {
-                                        Image(systemName: "mic.fill")
-                                            .font(.system(size: 15, weight: .black))
-                                            .foregroundStyle(AVBrandColor.accent)
-                                            .frame(width: 34, height: 34)
-                                            .background(AVBrandColor.accent.opacity(0.10), in: Circle())
-                                    }
-                                    .buttonStyle(.plain)
-                                    .disabled(true)
-                                    .accessibilityLabel(L10n.string("create.note.voice.accessibility"))
                                 }
 
                                 TextField(L10n.string("create.note.placeholder"), text: $draftText, axis: .vertical)

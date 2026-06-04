@@ -300,7 +300,7 @@
 
 /* Synced fallback keys from English pending native translation */
 "create.aviDirection.changedDirection" = "Du hast die Richtung zu %@ geändert. Avi hatte für diese Auswahl ursprünglich %@ vorgeschlagen.";
-"create.aviDirection.changedMusic" = "Avi hat %@ für diese Auswahl gewählt. Du hast die Musik geändert.";
+"create.aviDirection.changedMusic" = "Avi hat %@ für diese Auswahl gewählt. Du hast die Stimmung geändert.";
 "create.aviDirection.defaultMessage" = "Sag Avi, was wichtig ist, oder lass alles automatisch.";
 "create.aviDirection.title" = "Avi-Richtung";
 "create.aviDirection.undoSuggestion" = "Avi-Vorschlag rückgängig machen";
@@ -351,7 +351,7 @@
 "create.note.field.title" = "NOTIZ FÜR AVI";
 "create.note.placeholder" = "Sag Avi, worauf der Fokus liegen soll...";
 "create.note.title" = "Notiz";
-"create.note.voice.accessibility" = "Sprachnotiz-Transkription";
+"create.note.voice.accessibility" = "Notiz fuer Avi diktieren";
 "create.rules.missingOccasion" = "Vervollständige den Anlass, bevor du einen Moment startest.";
 "create.selector.length.auto.detail" = "Avi passt die Länge an.";
 "create.selector.length.extended.detail" = "Mehr Zeit.";
@@ -367,7 +367,7 @@
 "create.selector.mood.calm.detail" = "Sanft, langsamer und zurückhaltend.";
 "create.selector.mood.cinematic.detail" = "Dramatischeres Tempo und mehr Atmosphäre.";
 "create.selector.mood.fun.detail" = "Verspielte Energie für gemeinsame Momente.";
-"create.selector.mood.intro.detail" = "Wähle die emotionale Richtung, die Avi für Tempo, Ton und Musik verwenden soll.";
+"create.selector.mood.intro.detail" = "Wähle die emotionale Richtung, die Avi für Tempo und Ton verwenden soll.";
 "create.selector.mood.intro.title" = "Stimmung steuert den Schnitt";
 "create.selector.mood.title" = "Stimmung wählen";
 "create.selector.mood.upbeat.detail" = "Schnell, hell und lebendig.";
@@ -584,7 +584,7 @@
 "create.media.suggestOrder" = "Reihenfolge vorschlagen";
 "create.media.title" = "Medien";
 "create.media.undoAviOrder" = "Avi-Reihenfolge rückgängig";
-"create.options.detail" = "Avi kann Stimmung, Musik, Rhythmus und die Story-Notiz vor der Videoerstellung anpassen.";
+"create.options.detail" = "Avi kann Stimmung, Rhythmus und die Story-Notiz vor der Videoerstellung anpassen.";
 "create.options.edit" = "Optionen bearbeiten";
 "create.options.suggestion" = "Avi schlägt %@ · %@ vor";
 "create.options.suggestionActive" = "Avis Vorschlag ist aktiv. Öffne die Optionen, um ihn rückgängig zu machen oder anzupassen.";

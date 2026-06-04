@@ -97,7 +97,7 @@
 "common.back" = "Retour";
 "common.soon" = "Bientôt";
 "create.aviDirection.changedDirection" = "Tu as changé la direction en %@. Avi avait proposé %@ pour cette sélection.";
-"create.aviDirection.changedMusic" = "Avi a choisi %@ pour cette sélection. Tu as changé la musique.";
+"create.aviDirection.changedMusic" = "Avi a choisi %@ pour cette sélection. Tu as changé l'ambiance.";
 "create.aviDirection.defaultMessage" = "Dis à Avi ce qui compte, ou laisse tout automatique.";
 "create.aviDirection.title" = "Direction Avi";
 "create.aviDirection.undoSuggestion" = "Annuler la suggestion Avi";
@@ -148,7 +148,7 @@
 "create.note.field.title" = "NOTE POUR AVI";
 "create.note.placeholder" = "Dis à Avi sur quoi se concentrer...";
 "create.note.title" = "Note";
-"create.note.voice.accessibility" = "Transcription de note vocale";
+"create.note.voice.accessibility" = "Dicter une note pour Avi";
 "create.rules.missingOccasion" = "Complète l’occasion avant de démarrer un Moment.";
 "create.selector.length.auto.detail" = "Avi ajuste la durée.";
 "create.selector.length.extended.detail" = "Plus de temps.";
@@ -164,7 +164,7 @@
 "create.selector.mood.calm.detail" = "Doux, plus lent et discret.";
 "create.selector.mood.cinematic.detail" = "Rythme plus dramatique et atmosphère marquée.";
 "create.selector.mood.fun.detail" = "Énergie joueuse pour les moments partagés.";
-"create.selector.mood.intro.detail" = "Choisis la direction émotionnelle qu’Avi doit utiliser pour le rythme, le ton et la musique.";
+"create.selector.mood.intro.detail" = "Choisis la direction émotionnelle qu’Avi doit utiliser pour le rythme et le ton.";
 "create.selector.mood.intro.title" = "L’ambiance guide le montage";
 "create.selector.mood.title" = "Choisir l’ambiance";
 "create.selector.mood.upbeat.detail" = "Rapide, lumineux et vivant.";
@@ -582,7 +582,7 @@
 "create.media.suggestOrder" = "Suggérer l'ordre";
 "create.media.title" = "Médias";
 "create.media.undoAviOrder" = "Annuler l'ordre d'Avi";
-"create.options.detail" = "Avi peut ajuster l'ambiance, la musique, le rythme et la note d'histoire avant de créer la vidéo.";
+"create.options.detail" = "Avi peut ajuster l'ambiance, le rythme et la note d'histoire avant de créer la vidéo.";
 "create.options.edit" = "Modifier les options";
 "create.options.suggestion" = "Avi suggère %@ · %@";
 "create.options.suggestionActive" = "La suggestion d'Avi est active. Ouvre les options pour l'annuler ou l'ajuster.";
