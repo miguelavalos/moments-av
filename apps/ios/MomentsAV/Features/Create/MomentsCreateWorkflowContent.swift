@@ -218,7 +218,6 @@ private struct MomentsCreateMediaFirstWorkspace: View {
                     let currentRemovesWatermark = presentation.finalRenderSummary.renderPlan?.watermark?.selectedRemoveWatermark ?? false
                     waitsForFinalRenderPlan = removesWatermark != currentRemovesWatermark
                         || presentation.finalRenderSummary.renderPlan?.canCreateVideo != true
-                        || presentation.finalRenderSummary.latestFinalJob == nil
                     generateFinalRender(removesWatermark)
                 },
                 cancel: {
