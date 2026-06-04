@@ -1009,6 +1009,7 @@
 "create.workflowContent.finalEditSummary" = "Avi will use these selected items, story direction, and timing for the final edit.";
 "create.workflowContent.itemCount" = "%d element";
 "create.workflowContent.itemsCount" = "%d elements";
+"create.workflowContent.locked" = "Locked";
 "create.workflowContent.selectedForVideo" = "Selected for this video";
 "create.workflowContent.notReady" = "Not ready";
 "create.workflowContent.uploadingMedia" = "Uploading media";

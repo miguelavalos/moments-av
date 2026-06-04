@@ -112,8 +112,8 @@ private struct MomentsCreateMediaFirstWorkspace: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: showsWorkflowDashboard ? 10 : 12) {
                     if presentation.isFinalRenderEditingLocked {
-                        MomentsCreateLockedFinalRenderCard(presentation: presentation)
-                            .padding(.top, 34)
+                        MomentsCreateLockedFinalRenderScene(presentation: presentation)
+                            .padding(.top, 28)
                     } else {
                         MomentsCreateCompactAviGuide(
                             presentation: presentation
@@ -443,7 +443,7 @@ private struct MomentsCreateMediaFirstWorkspace: View {
 
     private var bottomContentPadding: CGFloat {
         if presentation.isFinalRenderEditingLocked {
-            return 96
+            return 118
         }
         return showsWorkflowDashboard ? 144 : 172
     }
@@ -1063,61 +1063,88 @@ private struct MomentsCreateAviCutDecisionSummary: View {
     }
 }
 
-private struct MomentsCreateLockedFinalRenderCard: View {
+private struct MomentsCreateLockedFinalRenderScene: View {
     let presentation: MomentsCreateWorkflowPresentation
 
     var body: some View {
-        AVAppShellCard {
-            VStack(alignment: .leading, spacing: 18) {
-                HStack(alignment: .center, spacing: 16) {
+        VStack(spacing: 18) {
+            Spacer(minLength: 22)
+
+            VStack(spacing: 14) {
+                ZStack(alignment: .bottomTrailing) {
                     Image("AviFullBody")
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 62, height: 62)
-                        .padding(8)
+                        .frame(width: 88, height: 88)
+                        .padding(14)
                         .background(AVBrandColor.accent.opacity(0.10), in: Circle())
                         .accessibilityHidden(true)
 
-                    VStack(alignment: .leading, spacing: 7) {
-                        HStack(spacing: 8) {
-                            Image(systemName: systemImage)
-                                .font(.system(size: 13, weight: .black))
-                                .foregroundStyle(.white)
-                                .frame(width: 28, height: 28)
-                                .background(AVBrandColor.textPrimary, in: Circle())
-
-                            Text(title)
-                                .font(.system(size: 22, weight: .black))
-                                .foregroundStyle(AVBrandColor.textPrimary)
-                                .lineLimit(1)
-                                .minimumScaleFactor(0.82)
-                        }
-
-                        Text(detail)
-                            .font(.system(size: 13, weight: .semibold))
-                            .foregroundStyle(AVBrandColor.textSecondary)
-                            .lineLimit(3)
-                            .fixedSize(horizontal: false, vertical: true)
-                    }
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                    Image(systemName: systemImage)
+                        .font(.system(size: 15, weight: .black))
+                        .foregroundStyle(.white)
+                        .frame(width: 34, height: 34)
+                        .background(AVBrandColor.textPrimary, in: Circle())
                 }
 
-                if let realtimeStatus = presentation.finalRenderSummary.realtimeStatus {
-                    MomentsCreateRealtimeRenderStatusPanel(status: realtimeStatus)
-                } else {
-                    Label(L10n.string("create.workflowContent.editingLocked"), systemImage: "lock.fill")
-                        .font(.caption)
-                        .fontWeight(.black)
+                VStack(spacing: 7) {
+                    Text(title)
+                        .font(.system(size: 28, weight: .black))
+                        .foregroundStyle(AVBrandColor.textPrimary)
+                        .multilineTextAlignment(.center)
+                        .lineLimit(2)
+                        .minimumScaleFactor(0.76)
+
+                    Text(detail)
+                        .font(.system(size: 14, weight: .semibold))
                         .foregroundStyle(AVBrandColor.textSecondary)
+                        .multilineTextAlignment(.center)
                         .fixedSize(horizontal: false, vertical: true)
-                        .padding(10)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .background(AVBrandColor.neutral100.opacity(0.72), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+                }
+
+                if let progressFraction {
+                    ProgressView(value: progressFraction)
+                        .tint(AVBrandColor.accent)
+                        .accessibilityLabel(L10n.string("create.workflowContent.finalVideoProgress"))
+                        .accessibilityValue("\(Int((progressFraction * 100).rounded())) percent")
+                } else {
+                    ProgressView()
+                        .tint(AVBrandColor.accent)
+                        .controlSize(.regular)
+                        .accessibilityLabel(title)
+                }
+            }
+            .padding(.horizontal, 18)
+            .padding(.vertical, 24)
+            .frame(maxWidth: .infinity)
+            .background(AVBrandColor.cardSurface.opacity(0.96), in: RoundedRectangle(cornerRadius: 18, style: .continuous))
+            .overlay(
+                RoundedRectangle(cornerRadius: 18, style: .continuous)
+                    .stroke(AVBrandColor.borderSubtle.opacity(0.82), lineWidth: 1)
+            )
+
+            VStack(alignment: .leading, spacing: 10) {
+                HStack(spacing: 8) {
+                    MomentsCreateLockedRenderMetric(
+                        title: L10n.string("create.final.confirmSheet.cost"),
+                        value: MomentsCreditCopy.countTitle(presentation.finalRenderSummary.creditCost),
+                        systemImage: "creditcard.fill"
+                    )
+                    MomentsCreateLockedRenderMetric(
+                        title: L10n.string("create.final.confirmSheet.media"),
+                        value: mediaValue,
+                        systemImage: "photo.on.rectangle.angled"
+                    )
                 }
 
                 MomentsCreateLockedFinalRenderNotice()
             }
+            .padding(12)
+            .background(AVBrandColor.mutedSurface.opacity(0.78), in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+
+            Spacer(minLength: 36)
         }
+        .frame(maxWidth: .infinity, minHeight: 560)
         .accessibilityElement(children: .combine)
         .accessibilityLabel("\(title). \(detail)")
     }
@@ -1135,6 +1162,55 @@ private struct MomentsCreateLockedFinalRenderCard: View {
     private var systemImage: String {
         presentation.finalRenderSummary.realtimeStatus?.systemImage
             ?? "lock.fill"
+    }
+
+    private var progressFraction: Double? {
+        presentation.finalRenderSummary.realtimeStatus?.progressFraction
+    }
+
+    private var mediaValue: String {
+        let count = max(
+            presentation.mediaSummary.reviewCount,
+            presentation.mediaSummary.selectedCount,
+            presentation.mediaSummary.syncedMediaAssets.count
+        )
+        guard count > 0 else {
+            return L10n.string("create.workflowContent.locked")
+        }
+        return L10n.string("create.workflowContent.assetUsageItems", count, count)
+    }
+}
+
+private struct MomentsCreateLockedRenderMetric: View {
+    let title: String
+    let value: String
+    let systemImage: String
+
+    var body: some View {
+        HStack(spacing: 9) {
+            Image(systemName: systemImage)
+                .font(.system(size: 12, weight: .black))
+                .foregroundStyle(AVBrandColor.accent)
+                .frame(width: 24, height: 24)
+                .background(AVBrandColor.accent.opacity(0.11), in: Circle())
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title)
+                    .font(.system(size: 11, weight: .black))
+                    .foregroundStyle(AVBrandColor.textSecondary)
+                    .lineLimit(1)
+
+                Text(value)
+                    .font(.system(size: 13, weight: .black))
+                    .foregroundStyle(AVBrandColor.textPrimary)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.75)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .padding(10)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(AVBrandColor.cardSurface.opacity(0.82), in: RoundedRectangle(cornerRadius: 11, style: .continuous))
     }
 }
 
