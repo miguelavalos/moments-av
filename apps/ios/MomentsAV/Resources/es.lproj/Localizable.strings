@@ -622,7 +622,7 @@
 "create.final.confirmSheet.upToSeconds" = "hasta %ds";
 "create.final.confirmSheet.watermark" = "Marca de agua";
 "create.final.costDetails.chargedOnCompletion" = "Solo se cobra si el video final se completa.";
-"create.final.costDetails.includedWithPro" = "Incluido";
+"create.final.costDetails.includedWithPro" = "Sin marca de agua";
 "create.final.costDetails.noExtraCost" = "Sin coste extra";
 "create.final.costDetails.title" = "Detalle del coste";
 "create.final.costDetails.total" = "Total";
@@ -643,7 +643,7 @@
 "create.final.blocker.default" = "Avi aún no puede crear este video final.";
 "create.final.watermark.included" = "Incluida";
 "create.final.watermark.none" = "Sin marca de agua";
-"create.final.watermark.proIncluded" = "Sin marca de agua incluida con Pro.";
+"create.final.watermark.proIncluded" = "Pro elimina la marca de agua de Avi.";
 "create.final.watermark.remove" = "Quitar marca de agua · %@";
 "create.final.watermark.removeDetail" = "Actualiza el coste antes de crear el video.";
 "create.form.details" = "Detalles para Avi";

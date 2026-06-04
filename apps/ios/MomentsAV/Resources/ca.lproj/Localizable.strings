@@ -620,7 +620,7 @@
 "create.final.confirmSheet.upToSeconds" = "fins a %ds";
 "create.final.confirmSheet.watermark" = "Marca d'aigua";
 "create.final.costDetails.chargedOnCompletion" = "Només es cobra si el vídeo final es completa.";
-"create.final.costDetails.includedWithPro" = "Inclòs";
+"create.final.costDetails.includedWithPro" = "Sense marca d'aigua";
 "create.final.costDetails.noExtraCost" = "Sense cost extra";
 "create.final.costDetails.title" = "Detall del cost";
 "create.final.costDetails.total" = "Total";

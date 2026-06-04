@@ -622,7 +622,7 @@
 "create.final.confirmSheet.upToSeconds" = "up to %ds";
 "create.final.confirmSheet.watermark" = "Watermark";
 "create.final.costDetails.chargedOnCompletion" = "Charged only if the final video completes.";
-"create.final.costDetails.includedWithPro" = "Included";
+"create.final.costDetails.includedWithPro" = "No watermark";
 "create.final.costDetails.noExtraCost" = "No extra cost";
 "create.final.costDetails.title" = "Cost details";
 "create.final.costDetails.total" = "Total";
@@ -643,7 +643,7 @@
 "create.final.blocker.default" = "Avi cannot create this final video yet.";
 "create.final.watermark.included" = "Included";
 "create.final.watermark.none" = "None";
-"create.final.watermark.proIncluded" = "No watermark included with Pro.";
+"create.final.watermark.proIncluded" = "Pro removes the Avi watermark.";
 "create.final.watermark.remove" = "Remove watermark · %@";
 "create.final.watermark.removeDetail" = "Updates the cost before creating the video.";
 "create.form.details" = "Details for Avi";

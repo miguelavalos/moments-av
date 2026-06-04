@@ -620,7 +620,7 @@
 "create.final.confirmSheet.upToSeconds" = "jusqu'à %ds";
 "create.final.confirmSheet.watermark" = "Filigrane";
 "create.final.costDetails.chargedOnCompletion" = "Facturé uniquement si la vidéo finale est terminée.";
-"create.final.costDetails.includedWithPro" = "Inclus";
+"create.final.costDetails.includedWithPro" = "Sans filigrane";
 "create.final.costDetails.noExtraCost" = "Sans coût supplémentaire";
 "create.final.costDetails.title" = "Détail du coût";
 "create.final.costDetails.total" = "Total";
