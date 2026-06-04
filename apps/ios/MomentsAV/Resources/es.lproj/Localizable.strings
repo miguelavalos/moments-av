@@ -628,6 +628,10 @@
 "create.final.creditCost" = "%@ necesarios";
 "create.final.creditPolicy.preflight" = "Avi comprueba media y créditos antes de crear el video final.";
 "create.final.creditPolicy.create" = "Solo se descuentan créditos por videos finales completados. Este video cuesta %@.";
+"create.final.blocker.providerUnavailable" = "Esta opción de video aún no está disponible.";
+"create.final.blocker.insufficientCredits" = "Necesitas más créditos para crear este video final.";
+"create.final.blocker.noUsableMedia" = "Avi necesita media utilizable antes de crear el video final.";
+"create.final.blocker.default" = "Avi aún no puede crear este video final.";
 "create.final.watermark.included" = "Incluida";
 "create.final.watermark.none" = "Sin marca de agua";
 "create.final.watermark.proIncluded" = "Sin marca de agua incluida con Pro.";

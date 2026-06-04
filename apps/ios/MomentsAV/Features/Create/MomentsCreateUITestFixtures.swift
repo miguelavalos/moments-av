@@ -149,6 +149,7 @@ enum MomentsCreateUITestFixtures {
                 qualityWarnings: []
             ),
             canCreateVideo: true,
+            createVideoBlockers: [],
             generatedAt: "2026-06-02T00:00:00Z"
         )
     }

@@ -524,6 +524,7 @@ final class MomentsAPIClientTests: XCTestCase {
                 "momentId": "moment-1",
                 "planId": "plan-1",
                 "canCreateVideo": true,
+                "createVideoBlockers": [],
                 "generatedAt": "2026-05-16T16:00:00Z",
                 "plan": {
                   "schemaVersion": 1,

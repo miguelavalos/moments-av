@@ -49,6 +49,25 @@ struct MomentsCreateFinalVideoActionPresentation: Equatable {
         summary.renderPlan?.canCreateVideo == true
     }
 
+    var hasBlockedRenderPlan: Bool {
+        summary.renderPlan != nil && !hasRenderPlan
+    }
+
+    var blockedRenderPlanMessage: String? {
+        guard hasBlockedRenderPlan else { return nil }
+        let blockers = summary.renderPlan?.createVideoBlockers ?? []
+        if blockers.contains("provider_adapter_unavailable") || blockers.contains("render_option_unavailable") {
+            return L10n.string("create.final.blocker.providerUnavailable")
+        }
+        if blockers.contains("insufficient_credits") {
+            return L10n.string("create.final.blocker.insufficientCredits")
+        }
+        if blockers.contains("no_usable_media") || blockers.contains("all_media_rejected") {
+            return L10n.string("create.final.blocker.noUsableMedia")
+        }
+        return L10n.string("create.final.blocker.default")
+    }
+
     var totalCreditCost: Int {
         if let backendCost = summary.renderPlan?.plan.totalCreditCost {
             return backendCost
@@ -128,6 +147,9 @@ struct MomentsCreatePrimaryActionPresentation: Equatable {
             return false
         }
         if hasFinalVideoIntent {
+            if finalVideoAction.hasBlockedRenderPlan {
+                return false
+            }
             if needsCreditsForPreparedPlan {
                 return true
             }
@@ -180,6 +202,9 @@ struct MomentsCreatePrimaryActionPresentation: Equatable {
             return L10n.string("credits.get.title")
         }
         if hasFinalVideoIntent {
+            if finalVideoAction.hasBlockedRenderPlan {
+                return L10n.string("create.final.reviewCost")
+            }
             return finalVideoAction.hasRenderPlan
                 ? finalVideoAction.primaryTitle
                 : L10n.string("common.continue")
@@ -209,6 +234,9 @@ struct MomentsCreatePrimaryActionPresentation: Equatable {
             return "plus.circle.fill"
         }
         if hasFinalVideoIntent {
+            if finalVideoAction.hasBlockedRenderPlan {
+                return "exclamationmark.triangle.fill"
+            }
             return finalVideoAction.primaryIconName
         }
         if workflow.previewSummary.latestPreviewJob != nil {
@@ -246,6 +274,9 @@ struct MomentsCreatePrimaryActionPresentation: Equatable {
                 ?? L10n.string("create.primary.videoCreating")
         }
         if hasFinalVideoIntent {
+            if let blockedRenderPlanMessage = finalVideoAction.blockedRenderPlanMessage {
+                return blockedRenderPlanMessage
+            }
             if needsCreditsForPreparedPlan {
                 return MomentsCreateAvailabilityCopy.finalRenderInsufficientCredits(
                     missingCredits: missingCreditsForPreparedPlan

@@ -624,6 +624,10 @@
 "create.final.creditCost" = "%@ necessaris";
 "create.final.creditPolicy.preflight" = "Avi comprova mèdia i confirma crèdits abans de reservar res.";
 "create.final.creditPolicy.create" = "Iniciar el vídeo final reserva %@. Els crèdits només es finalitzen quan es lliura l'exportació.";
+"create.final.blocker.providerUnavailable" = "Aquesta opció de vídeo encara no està disponible.";
+"create.final.blocker.insufficientCredits" = "Necessites més crèdits per crear aquest vídeo final.";
+"create.final.blocker.noUsableMedia" = "Avi necessita mèdia utilitzable abans de crear el vídeo final.";
+"create.final.blocker.default" = "Avi encara no pot crear aquest vídeo final.";
 "create.form.details" = "Detalls per a Avi";
 "create.form.details.placeholder" = "Afegeix noms, bromes internes, escenes a destacar o coses a evitar.";
 "create.form.occasion" = "Ocasió";

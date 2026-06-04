@@ -139,7 +139,51 @@ struct MomentsRenderPlanResponse: Decodable, Equatable {
     let watermark: MomentsRenderWatermarkPlan?
     let plan: MomentsRenderPlan
     let canCreateVideo: Bool
+    let createVideoBlockers: [String]
     let generatedAt: String
+
+    enum CodingKeys: String, CodingKey {
+        case appId
+        case momentId
+        case planId
+        case watermark
+        case plan
+        case canCreateVideo
+        case createVideoBlockers
+        case generatedAt
+    }
+
+    init(
+        appId: String,
+        momentId: String,
+        planId: String,
+        watermark: MomentsRenderWatermarkPlan? = nil,
+        plan: MomentsRenderPlan,
+        canCreateVideo: Bool,
+        createVideoBlockers: [String] = [],
+        generatedAt: String
+    ) {
+        self.appId = appId
+        self.momentId = momentId
+        self.planId = planId
+        self.watermark = watermark
+        self.plan = plan
+        self.canCreateVideo = canCreateVideo
+        self.createVideoBlockers = createVideoBlockers
+        self.generatedAt = generatedAt
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        appId = try container.decode(String.self, forKey: .appId)
+        momentId = try container.decode(String.self, forKey: .momentId)
+        planId = try container.decode(String.self, forKey: .planId)
+        watermark = try container.decodeIfPresent(MomentsRenderWatermarkPlan.self, forKey: .watermark)
+        plan = try container.decode(MomentsRenderPlan.self, forKey: .plan)
+        canCreateVideo = try container.decode(Bool.self, forKey: .canCreateVideo)
+        createVideoBlockers = try container.decodeIfPresent([String].self, forKey: .createVideoBlockers) ?? []
+        generatedAt = try container.decode(String.self, forKey: .generatedAt)
+    }
 }
 
 struct MomentsRenderWatermarkPlan: Decodable, Equatable {

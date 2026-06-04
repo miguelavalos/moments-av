@@ -322,7 +322,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         XCTAssertEqual(presentation.statusMessage, "Ready for Avi to prepare a first cut.")
         XCTAssertEqual(presentation.modeTitle, "Ready")
         XCTAssertEqual(presentation.mediaCountTitle, "1 item")
-        XCTAssertEqual(presentation.primaryActionTitle, "Prepare Avi's Cut")
+        XCTAssertEqual(presentation.primaryActionTitle, "Create preview")
         XCTAssertTrue(presentation.canRunPrimaryAction)
         XCTAssertFalse(presentation.canShowImproveAction)
 
@@ -415,7 +415,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         XCTAssertEqual(presentation.usageTitle, "Avi's Cut")
         XCTAssertEqual(presentation.previewArtifactMessage, "Avi's Cut is ready for your final check.")
         XCTAssertEqual(presentation.refreshButtonTitle, "Improving with Avi...")
-        XCTAssertEqual(presentation.generateButtonTitle, "Preparing Avi's Cut...")
+        XCTAssertEqual(presentation.generateButtonTitle, "Creating preview...")
         XCTAssertEqual(presentation.emptyMessage, "Avi can prepare the cut before the final video.")
         XCTAssertFalse(presentation.showsEmptyState)
         XCTAssertTrue(presentation.canGeneratePreview)
@@ -433,7 +433,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         XCTAssertNil(presentation.usageTitle)
         XCTAssertNil(presentation.previewArtifactMessage)
         XCTAssertEqual(presentation.refreshButtonTitle, "Improve with Avi")
-        XCTAssertEqual(presentation.generateButtonTitle, "Prepare Avi's Cut")
+        XCTAssertEqual(presentation.generateButtonTitle, "Create preview")
         XCTAssertEqual(presentation.emptyMessage, "Prepare the story before Avi's Cut.")
         XCTAssertTrue(presentation.showsEmptyState)
     }
@@ -448,7 +448,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         XCTAssertFalse(planning.hasRenderPlan)
         XCTAssertEqual(planning.primaryTitle, "Review credits")
         XCTAssertEqual(planning.primaryIconName, "creditcard.fill")
-        XCTAssertEqual(planning.creditPolicyMessage, "Avi checks media and confirms credits before anything is reserved.")
+        XCTAssertEqual(planning.creditPolicyMessage, "Avi checks media and credits before creating the final video.")
         XCTAssertTrue(planning.canAffordSelectedCost)
 
         let ready = MomentsCreateFinalVideoActionPresentation(
@@ -467,12 +467,47 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         XCTAssertEqual(ready.primaryIconName, "video.fill")
         XCTAssertEqual(
             ready.creditPolicyMessage,
-            "Starting the final video reserves 2 credits. Credits are finalized only after the export is delivered."
+            "Credits are only charged for completed final videos. This video costs 2 credits."
         )
         XCTAssertEqual(
             ready.confirmationMessage,
-            "This reserves 2 credits now. Credits are finalized only after the final video is delivered; if creation fails before delivery, the reservation is released."
+            "Credits are only charged for completed final videos. This video costs 2 credits."
         )
+    }
+
+    func testPrimaryActionPresentationBlocksUnavailableFinalProviderPlan() {
+        let unavailablePlan = MomentsRenderPlanResponse(
+            appId: "momentsav",
+            momentId: "moment-1",
+            planId: "plan-1",
+            plan: MomentsCreateTestFixtures.makeRenderPlan().plan,
+            canCreateVideo: false,
+            createVideoBlockers: ["provider_adapter_unavailable"],
+            generatedAt: "2026-06-02T00:00:00Z"
+        )
+        let workflow = MomentsCreateWorkflowPresentation(
+            activeMomentId: "moment-1",
+            isSignedIn: true,
+            hasMomentWorkspace: true,
+            template: .birthdayMessage,
+            balance: MomentsCreditBalance(proMonthly: 0, promotional: 3, purchased: 0),
+            mediaSummary: MomentsCreateMediaSummary(
+                selectedMedia: [MomentsCreateTestFixtures.makeSelectedMedia(id: "00000000-0000-0000-0000-000000000001")]
+            ),
+            storySummary: MomentsCreateStorySummary(),
+            previewSummary: MomentsCreatePreviewSummary(),
+            finalRenderSummary: MomentsCreateFinalRenderSummary(
+                creditCost: 2,
+                renderPlan: unavailablePlan
+            ),
+            canPrepareFinalRenderPlan: true,
+            canGenerateFinalRender: true
+        )
+        let presentation = MomentsCreatePrimaryActionPresentation(workflow: workflow)
+
+        XCTAssertFalse(presentation.canRunPrimaryAction)
+        XCTAssertEqual(presentation.buttonIconName, "exclamationmark.triangle.fill")
+        XCTAssertEqual(presentation.statusMessage, "This video option is not available yet.")
     }
 
     func testPrimaryActionPresentationKeepsCreateVideoIntentWhileUploadingMedia() {
@@ -499,8 +534,8 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
 
         XCTAssertTrue(presentation.hasFinalVideoIntent)
         XCTAssertFalse(presentation.canRunPrimaryAction)
-        XCTAssertEqual(presentation.title, "Review credits")
-        XCTAssertEqual(presentation.buttonTitle, "Review credits")
+        XCTAssertEqual(presentation.title, "Continue")
+        XCTAssertEqual(presentation.buttonTitle, "Continue")
         XCTAssertEqual(presentation.buttonIconName, "creditcard.fill")
         XCTAssertEqual(presentation.statusMessage, "Uploading media for video creation.")
     }
@@ -526,9 +561,9 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         )
 
         XCTAssertTrue(presentation.canRunPrimaryAction)
-        XCTAssertEqual(presentation.title, "Review credits")
-        XCTAssertEqual(presentation.buttonTitle, "Review credits")
-        XCTAssertEqual(presentation.statusMessage, "Avi will upload media and show the credit cost before anything is reserved.")
+        XCTAssertEqual(presentation.title, "Continue")
+        XCTAssertEqual(presentation.buttonTitle, "Continue")
+        XCTAssertEqual(presentation.statusMessage, "You will see the cost before creating the video.")
     }
 
     func testPrimaryActionPresentationShowsBackendPlanCostBeforeConfirmation() {
@@ -561,7 +596,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         XCTAssertEqual(presentation.buttonTitle, "Confirm credits · 2 credits")
         XCTAssertEqual(
             presentation.statusMessage,
-            "Starting the final video reserves 2 credits. Credits are finalized only after the export is delivered."
+            "Credits are only charged for completed final videos. This video costs 2 credits."
         )
     }
 
@@ -600,7 +635,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         XCTAssertEqual(presentation.title, "Needs attention")
         XCTAssertEqual(
             presentation.detail,
-            "Video creation hit a problem. Any reserved credits will be released if the video was not completed. Please try again or contact support."
+            "Video creation hit a problem. If the final video was not completed, credits will not be charged. Please try again or contact support."
         )
         XCTAssertEqual(presentation.systemImage, "exclamationmark.triangle.fill")
         XCTAssertFalse(presentation.isActive)

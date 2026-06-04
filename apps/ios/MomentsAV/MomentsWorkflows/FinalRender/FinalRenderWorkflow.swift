@@ -150,7 +150,7 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
                     removesWatermark: removesWatermark
                 )
                 guard plan.canCreateVideo else {
-                    renderPlan = nil
+                    renderPlan = plan
                     statusMessage = L10n.string("workflow.final.needsUsableMedia")
                     isGenerating = false
                     return

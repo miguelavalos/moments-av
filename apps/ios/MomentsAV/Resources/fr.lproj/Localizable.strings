@@ -624,6 +624,10 @@
 "create.final.creditCost" = "%@ nécessaires";
 "create.final.creditPolicy.preflight" = "Avi vérifie les médias et confirme les crédits avant toute réservation.";
 "create.final.creditPolicy.create" = "Le lancement de la vidéo finale réserve %@. Les crédits ne sont finalisés qu'après la livraison de l'export.";
+"create.final.blocker.providerUnavailable" = "Cette option vidéo n'est pas encore disponible.";
+"create.final.blocker.insufficientCredits" = "Il vous faut plus de crédits pour créer cette vidéo finale.";
+"create.final.blocker.noUsableMedia" = "Avi a besoin de médias utilisables avant de créer la vidéo finale.";
+"create.final.blocker.default" = "Avi ne peut pas encore créer cette vidéo finale.";
 "create.form.details" = "Détails pour Avi";
 "create.form.details.placeholder" = "Ajoute des noms, blagues internes, scènes à souligner ou choses à éviter.";
 "create.form.occasion" = "Occasion";
