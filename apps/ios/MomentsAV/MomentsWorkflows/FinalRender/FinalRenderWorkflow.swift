@@ -102,9 +102,10 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
         }
         let selectedSourceLocalIdentifiers = selectedSourceLocalIdentifiersForFinalRender(from: selectedMedia)
 
-        let needsRenderPlan = renderPlan == nil
-            || renderPlan?.momentId != momentId
-            || renderPlan?.watermark?.selectedRemoveWatermark != removesWatermark
+        let needsRenderPlan = needsRenderPlanForFinalRender(
+            momentId: momentId,
+            removesWatermark: removesWatermark
+        )
 
         if allowPreparedStory {
             if !needsRenderPlan {
@@ -295,6 +296,24 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
         return (selectedWorkspaceMedia.isEmpty ? workspaceMedia : selectedWorkspaceMedia)
             .sorted { $0.sortOrder < $1.sortOrder }
             .map { $0.platformMediaAssetId ?? $0.id }
+    }
+
+    func needsRenderPlanForFinalRender(momentId: String, removesWatermark: Bool) -> Bool {
+        Self.needsRenderPlanForFinalRender(
+            renderPlan: renderPlan,
+            momentId: momentId,
+            removesWatermark: removesWatermark
+        )
+    }
+
+    static func needsRenderPlanForFinalRender(
+        renderPlan: MomentsRenderPlanResponse?,
+        momentId: String,
+        removesWatermark: Bool
+    ) -> Bool {
+        guard let renderPlan else { return true }
+        return renderPlan.momentId != momentId
+            || (renderPlan.watermark?.selectedRemoveWatermark ?? false) != removesWatermark
     }
 
     func refreshStatus() async {

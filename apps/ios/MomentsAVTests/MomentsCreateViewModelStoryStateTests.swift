@@ -53,6 +53,25 @@ final class MomentsCreateViewModelStoryStateTests: XCTestCase {
         )
     }
 
+    func testFinalRenderPlanWithoutWatermarkIsCurrentForWatermarkedRender() {
+        let plan = MomentsCreateTestFixtures.makeRenderPlan(momentId: "moment-1")
+
+        XCTAssertFalse(
+            FinalRenderWorkflow.needsRenderPlanForFinalRender(
+                renderPlan: plan,
+                momentId: "moment-1",
+                removesWatermark: false
+            )
+        )
+        XCTAssertTrue(
+            FinalRenderWorkflow.needsRenderPlanForFinalRender(
+                renderPlan: plan,
+                momentId: "moment-1",
+                removesWatermark: true
+            )
+        )
+    }
+
     func testStoryScenesClearStaleErrorAndMarkCurrentInputPrepared() {
         let viewModel = MomentsCreateViewModel()
         let media = MomentsCreateTestFixtures.makeSelectedMedia(
