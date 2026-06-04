@@ -404,17 +404,25 @@ final class MomentsCreateViewModel: ObservableObject {
         return currentStoryPlanInputSignature(momentId: momentId)
     }
 
-    func currentFinalRenderInputSignature(momentId: String) -> String {
+    func currentFinalRenderInputSignature(momentId: String, removesWatermark: Bool = false) -> String {
         [
             currentStoryPlanInputSignature(momentId: momentId),
             "style:\(selectedCreationStyle.id.rawValue)",
-            "music:\(selectedMusicPreset.rawValue)"
+            "music:\(selectedMusicPreset.rawValue)",
+            "removeWatermark:\(removesWatermark)"
         ].joined(separator: "|")
     }
 
     var currentRenderPlan: MomentsRenderPlanResponse? {
+        currentRenderPlan(removesWatermark: false)
+    }
+
+    func currentRenderPlan(removesWatermark: Bool) -> MomentsRenderPlanResponse? {
         guard let renderPlan else { return nil }
-        guard renderPlanInputSignature == currentFinalRenderInputSignature(momentId: renderPlan.momentId) else {
+        guard renderPlanInputSignature == currentFinalRenderInputSignature(
+            momentId: renderPlan.momentId,
+            removesWatermark: removesWatermark
+        ) else {
             return nil
         }
         return renderPlan

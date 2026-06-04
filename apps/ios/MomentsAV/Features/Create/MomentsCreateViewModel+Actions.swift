@@ -20,6 +20,14 @@ extension MomentsCreateViewModel {
         return true
     }
 
+    func requestMediaPickerOpen() {
+        mediaPickerOpenRequest += 1
+    }
+
+    func requestAlbumPickerOpen() {
+        albumPickerOpenRequest += 1
+    }
+
     func discardMoment() {
         guard !isBusy else {
             updateSetupErrorMessage(L10n.string("create.error.waitBeforeDiscard"))
@@ -274,8 +282,11 @@ extension MomentsCreateViewModel {
                 return
             }
 
-            let inputSignature = self.currentFinalRenderInputSignature(momentId: momentId)
-            let hasCurrentRenderPlan = self.currentRenderPlan?.momentId == momentId
+            let inputSignature = self.currentFinalRenderInputSignature(
+                momentId: momentId,
+                removesWatermark: removesWatermark
+            )
+            let hasCurrentRenderPlan = self.currentRenderPlan(removesWatermark: removesWatermark)?.momentId == momentId
 
             if !hasCurrentRenderPlan {
                 self.clearStaleRenderPlan()

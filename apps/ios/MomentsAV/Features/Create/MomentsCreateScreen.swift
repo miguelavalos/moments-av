@@ -6,6 +6,8 @@ struct MomentsCreateScreen: View {
     @EnvironmentObject private var viewModel: MomentsCreateViewModel
     @EnvironmentObject private var newMomentStartController: MomentsNewMomentStartController
     @State private var pickerItems: [PhotosPickerItem] = []
+    @State private var showsAutomaticPhotoPicker = false
+    @State private var handledAutomaticPhotoPickerRequest = 0
     @State private var workflowErrorAlertMessage: String?
     let startSignInFlow: () -> Void
     let openCredits: () -> Void
@@ -38,10 +40,25 @@ struct MomentsCreateScreen: View {
         .safeAreaPadding(.bottom, bottomSafeAreaPadding)
         .task {
             redirectEmptyCreateIfNeeded()
+            openAutomaticPhotoPickerIfRequested(viewModel.mediaPickerOpenRequest)
         }
         .onChange(of: viewModel.workflowPresentation.showsMediaFirstWorkspace) { _, showsWorkspace in
             guard !showsWorkspace else { return }
             redirectEmptyCreateIfNeeded()
+        }
+        .photosPicker(
+            isPresented: $showsAutomaticPhotoPicker,
+            selection: $pickerItems,
+            maxSelectionCount: automaticPhotoPickerSelectionLimit,
+            matching: .any(of: [.images, .videos])
+        )
+        .onChange(of: viewModel.mediaPickerOpenRequest) { _, request in
+            openAutomaticPhotoPickerIfRequested(request)
+        }
+        .onChange(of: pickerItems) { _, newItems in
+            guard !newItems.isEmpty else { return }
+            viewModel.importPickerItems(newItems)
+            pickerItems = []
         }
         .fullScreenCover(
             isPresented: Binding(
@@ -79,6 +96,10 @@ struct MomentsCreateScreen: View {
         }
     }
 
+    private var automaticPhotoPickerSelectionLimit: Int {
+        max(1, viewModel.workflowPresentation.mediaSummary.remainingSlots(template: viewModel.form.template))
+    }
+
     private func redirectEmptyCreateIfNeeded() {
         guard !viewModel.workflowPresentation.showsMediaFirstWorkspace,
               !viewModel.isContinuingMoment
@@ -94,6 +115,18 @@ struct MomentsCreateScreen: View {
             viewModel.createAnotherFinalVideoVersion(openMediaPicker: true)
         case .album:
             viewModel.createAnotherFinalVideoVersion(openAlbumPicker: true)
+        }
+    }
+
+    private func openAutomaticPhotoPickerIfRequested(_ request: Int) {
+        guard request > handledAutomaticPhotoPickerRequest,
+              viewModel.workflowPresentation.mediaSummary.selectedCount == 0 else { return }
+        handledAutomaticPhotoPickerRequest = request
+        viewModel.consumeMediaPickerOpenRequest()
+
+        Task { @MainActor in
+            try? await Task.sleep(nanoseconds: 350_000_000)
+            showsAutomaticPhotoPicker = true
         }
     }
 }

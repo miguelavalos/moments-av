@@ -35,9 +35,9 @@ struct MomentsCreateWorkflowContent: View {
                     selectMusicPreset: viewModel.selectMusicPreset,
                     useAutoStyleSuggestion: viewModel.useAutoStyleSuggestion,
                     undoAutoStyleSuggestion: viewModel.undoAutoStyleSuggestion,
-                    openPickerRequest: viewModel.mediaPickerOpenRequest,
+                    openPickerRequest: 0,
                     openAlbumRequest: viewModel.albumPickerOpenRequest,
-                    consumeOpenPickerRequest: viewModel.consumeMediaPickerOpenRequest,
+                    consumeOpenPickerRequest: {},
                     consumeOpenAlbumRequest: viewModel.consumeAlbumPickerOpenRequest,
                     discardMoment: viewModel.discardMoment,
                     startSignInFlow: startSignInFlow,
@@ -214,16 +214,17 @@ private struct MomentsCreateMediaFirstWorkspace: View {
             MomentsCreateFinalVideoConfirmationSheet(
                 action: finalVideoAction,
                 mediaSummary: presentation.mediaSummary,
-                confirm: {
+                confirm: { removesWatermark in
                     showsCreateVideoConfirmation = false
-                    waitsForFinalRenderPlan = false
-                    generateFinalRender(false)
+                    let currentRemovesWatermark = presentation.finalRenderSummary.renderPlan?.watermark?.selectedRemoveWatermark ?? false
+                    waitsForFinalRenderPlan = removesWatermark != currentRemovesWatermark
+                    generateFinalRender(removesWatermark)
                 },
                 cancel: {
                     showsCreateVideoConfirmation = false
                 }
             )
-            .presentationDetents([.medium])
+            .presentationDetents([.medium, .large])
             .presentationDragIndicator(.visible)
         }
         .onChange(of: presentation.finalRenderSummary.renderPlan?.planId) { _, _ in
@@ -340,7 +341,7 @@ private struct MomentsCreateMediaFirstWorkspace: View {
               presentation.mediaSummary.selectedCount == 0 else { return }
         handledOpenPickerRequest = request
         consumeOpenPickerRequest()
-        presentCompactPhotoPicker()
+        presentCompactPhotoPickerAfterViewUpdate()
     }
 
     private func openCompactAlbumIfRequested(_ request: Int) {
@@ -353,6 +354,13 @@ private struct MomentsCreateMediaFirstWorkspace: View {
 
     private func presentCompactPhotoPicker() {
         showsCompactPhotoPicker = true
+    }
+
+    private func presentCompactPhotoPickerAfterViewUpdate() {
+        Task { @MainActor in
+            await Task.yield()
+            showsCompactPhotoPicker = true
+        }
     }
 
     private func presentCompactAlbumPicker() {
@@ -1383,8 +1391,22 @@ private struct MomentsCreatePrimaryActionBar: View {
 private struct MomentsCreateFinalVideoConfirmationSheet: View {
     let action: MomentsCreateFinalVideoActionPresentation
     let mediaSummary: MomentsCreateMediaSummary
-    let confirm: () -> Void
+    let confirm: (Bool) -> Void
     let cancel: () -> Void
+    @State private var removesWatermark: Bool
+
+    init(
+        action: MomentsCreateFinalVideoActionPresentation,
+        mediaSummary: MomentsCreateMediaSummary,
+        confirm: @escaping (Bool) -> Void,
+        cancel: @escaping () -> Void
+    ) {
+        self.action = action
+        self.mediaSummary = mediaSummary
+        self.confirm = confirm
+        self.cancel = cancel
+        _removesWatermark = State(initialValue: action.summary.renderPlan?.watermark?.selectedRemoveWatermark ?? false)
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -1413,7 +1435,7 @@ private struct MomentsCreateFinalVideoConfirmationSheet: View {
             VStack(spacing: 8) {
                 MomentsCreateConfirmationMetric(
                     title: L10n.string("create.final.confirmSheet.cost"),
-                    value: action.totalCreditCostTitle,
+                    value: selectedCreditCostTitle,
                     systemImage: "creditcard.fill"
                 )
                 MomentsCreateConfirmationMetric(
@@ -1426,24 +1448,33 @@ private struct MomentsCreateFinalVideoConfirmationSheet: View {
                     value: durationTitle,
                     systemImage: "timer"
                 )
+                MomentsCreateConfirmationMetric(
+                    title: L10n.string("create.final.confirmSheet.watermark"),
+                    value: watermarkTitle,
+                    systemImage: "seal"
+                )
             }
 
-            Text(action.confirmationMessage)
+            watermarkControl
+
+            Text(confirmationMessage)
                 .font(.system(size: 12, weight: .semibold))
                 .foregroundStyle(AVBrandColor.textSecondary)
                 .lineLimit(4)
                 .fixedSize(horizontal: false, vertical: true)
 
             VStack(spacing: 10) {
-                Button(action: confirm) {
-                    Label(action.confirmationActionTitle, systemImage: "video.fill")
+                Button {
+                    confirm(removesWatermark)
+                } label: {
+                    Label(confirmationActionTitle, systemImage: "video.fill")
                         .font(.system(size: 15, weight: .black))
                         .frame(maxWidth: .infinity)
                         .frame(height: 48)
                 }
                 .buttonStyle(MomentsCreateSoftActionButtonStyle())
-                .disabled(!action.canAffordSelectedCost)
-                .opacity(action.canAffordSelectedCost ? 1 : 0.62)
+                .disabled(!canAffordSelectedCost)
+                .opacity(canAffordSelectedCost ? 1 : 0.62)
 
                 Button(action: cancel) {
                     Text(L10n.string("create.action.notNow"))
@@ -1464,6 +1495,72 @@ private struct MomentsCreateFinalVideoConfirmationSheet: View {
         action.summary.renderPlan?.plan
     }
 
+    private var watermark: MomentsRenderWatermarkPlan? {
+        action.summary.renderPlan?.watermark
+    }
+
+    private var selectedCreditCost: Int {
+        let baseCost = plan?.creditCost ?? action.totalCreditCost
+        guard removesWatermark,
+              watermark?.userHasWatermarkFree != true else {
+            return action.totalCreditCost
+        }
+        return baseCost + (watermark?.nonProRemovalCreditCost ?? action.balance.watermarkRemovalCreditCost)
+    }
+
+    private var selectedCreditCostTitle: String {
+        MomentsCreditCopy.countTitle(selectedCreditCost)
+    }
+
+    private var confirmationActionTitle: String {
+        L10n.string("create.final.createWithCost", selectedCreditCostTitle)
+    }
+
+    private var confirmationMessage: String {
+        L10n.string("create.final.confirmMessage", selectedCreditCostTitle)
+    }
+
+    private var canAffordSelectedCost: Bool {
+        action.balance.spendable >= selectedCreditCost
+    }
+
+    @ViewBuilder
+    private var watermarkControl: some View {
+        if watermark?.userHasWatermarkFree == true {
+            HStack(spacing: 10) {
+                Image(systemName: "checkmark.seal.fill")
+                    .font(.system(size: 13, weight: .black))
+                    .foregroundStyle(AVBrandColor.accent)
+                Text(L10n.string("create.final.watermark.proIncluded"))
+                    .font(.system(size: 12, weight: .bold))
+                    .foregroundStyle(AVBrandColor.textSecondary)
+            }
+        } else if let watermark {
+            Toggle(isOn: $removesWatermark) {
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(L10n.string(
+                        "create.final.watermark.remove",
+                        MomentsCreditCopy.countTitle(watermark.nonProRemovalCreditCost)
+                    ))
+                    .font(.system(size: 13, weight: .black))
+                    .foregroundStyle(AVBrandColor.textPrimary)
+
+                    Text(L10n.string("create.final.watermark.removeDetail"))
+                        .font(.system(size: 12, weight: .semibold))
+                        .foregroundStyle(AVBrandColor.textSecondary)
+                }
+            }
+            .toggleStyle(.switch)
+        }
+    }
+
+    private var watermarkTitle: String {
+        if watermark?.userHasWatermarkFree == true || removesWatermark {
+            return L10n.string("create.final.watermark.none")
+        }
+        return L10n.string("create.final.watermark.included")
+    }
+
     private var mediaUsageTitle: String {
         guard let plan else {
             return L10n.string("create.final.confirmSheet.mediaPending")
@@ -1482,7 +1579,7 @@ private struct MomentsCreateFinalVideoConfirmationSheet: View {
         guard let plan else {
             return L10n.string("create.workflowContent.beforeVideo")
         }
-        return "\(plan.targetDurationMs / 1000)s"
+        return L10n.string("create.final.confirmSheet.upToSeconds", plan.targetDurationMs / 1000)
     }
 }
 

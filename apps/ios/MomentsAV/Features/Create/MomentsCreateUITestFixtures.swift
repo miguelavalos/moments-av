@@ -126,6 +126,13 @@ enum MomentsCreateUITestFixtures {
             appId: "momentsav",
             momentId: momentId,
             planId: "ui-test-plan-1",
+            watermark: MomentsRenderWatermarkPlan(
+                includedForPro: true,
+                userHasWatermarkFree: false,
+                nonProRemovalCreditCost: 1,
+                selectedRemoveWatermark: false,
+                watermarkCreditCost: 0
+            ),
             plan: MomentsRenderPlan(
                 schemaVersion: 1,
                 targetDurationMs: 30_000,

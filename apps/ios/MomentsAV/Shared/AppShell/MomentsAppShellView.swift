@@ -202,6 +202,12 @@ struct MomentsAppShellView: View {
     }
 
     private func startOrContinueMoment() {
+        if createViewModel.hasLocalMomentWorkspace {
+            createViewModel.clearSessionState()
+            beginNewMomentFromPreference()
+            return
+        }
+
         if createViewModel.hasMomentWorkspace {
             selectRootTab(.create)
             return
@@ -218,7 +224,8 @@ struct MomentsAppShellView: View {
 
     private func startFloatingMomentAction() {
         if createViewModel.hasLocalMomentWorkspace {
-            selectRootTab(.create)
+            createViewModel.clearSessionState()
+            beginNewMomentFromPreference()
             return
         }
 
@@ -235,16 +242,30 @@ struct MomentsAppShellView: View {
             return
         }
 
-        switch newMomentStartController.currentPreference {
-        case .askEveryTime:
-            createViewModel.beginNewMoment()
-        case .photosOrClips:
-            createViewModel.beginNewMoment(openMediaPicker: true)
-        case .album:
-            createViewModel.beginNewMoment(openAlbumPicker: true)
-        }
-
+        let startPreference = newMomentStartController.currentPreference
+        createViewModel.beginNewMoment()
         selectRootTab(.create)
+        requestStartPickerAfterCreateNavigation(startPreference)
+    }
+
+    private func requestStartPickerAfterCreateNavigation(_ preference: MomentsNewMomentStartPreference) {
+        guard preference != .askEveryTime else { return }
+
+        Task { @MainActor in
+            try? await Task.sleep(nanoseconds: 500_000_000)
+            guard selectedTab == .create,
+                  createViewModel.workflowPresentation.mediaSummary.selectedCount == 0
+            else { return }
+
+            switch preference {
+            case .askEveryTime:
+                break
+            case .photosOrClips:
+                createViewModel.requestMediaPickerOpen()
+            case .album:
+                createViewModel.requestAlbumPickerOpen()
+            }
+        }
     }
 
     private func selectRootTab(_ tab: MomentsRootTab) {

@@ -136,9 +136,18 @@ struct MomentsRenderPlanResponse: Decodable, Equatable {
     let appId: String
     let momentId: String
     let planId: String
+    let watermark: MomentsRenderWatermarkPlan?
     let plan: MomentsRenderPlan
     let canCreateVideo: Bool
     let generatedAt: String
+}
+
+struct MomentsRenderWatermarkPlan: Decodable, Equatable {
+    let includedForPro: Bool
+    let userHasWatermarkFree: Bool
+    let nonProRemovalCreditCost: Int
+    let selectedRemoveWatermark: Bool
+    let watermarkCreditCost: Int
 }
 
 struct MomentsArtifactDownloadRequest: Encodable {

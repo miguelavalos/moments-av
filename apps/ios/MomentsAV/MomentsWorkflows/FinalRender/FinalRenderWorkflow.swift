@@ -100,7 +100,9 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
             return
         }
 
-        let needsRenderPlan = renderPlan == nil || renderPlan?.momentId != momentId
+        let needsRenderPlan = renderPlan == nil
+            || renderPlan?.momentId != momentId
+            || renderPlan?.watermark?.selectedRemoveWatermark != removesWatermark
 
         if allowPreparedStory {
             if !needsRenderPlan {
