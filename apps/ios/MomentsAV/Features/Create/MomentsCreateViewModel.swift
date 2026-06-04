@@ -1,4 +1,5 @@
 import Combine
+import CryptoKit
 import Foundation
 
 @MainActor
@@ -408,16 +409,28 @@ final class MomentsCreateViewModel: ObservableObject {
     }
 
     func currentFinalRenderInputSignature(momentId: String, removesWatermark: Bool = false) -> String {
+        let input = currentFinalRenderInputSignatureSource(momentId: momentId, removesWatermark: removesWatermark)
+        let digest = SHA256.hash(data: Data(input.utf8))
+        return digest.map { String(format: "%02x", $0) }.joined()
+    }
+
+    func currentFinalRenderInputSignatureSource(momentId: String, removesWatermark: Bool = false) -> String {
         let finalForm = effectiveFinalRenderForm()
+        let mediaSignature = currentFinalRenderSignatureMedia()
+            .map { "\($0.sortOrder):\($0.sourceLocalIdentifier):\($0.mediaKind)" }
+            .joined(separator: "|")
         return [
-            MomentsStoryPlanInputSignature.make(
-                momentId: momentId,
-                form: finalForm,
-                selectedMedia: currentStoryPlanSignatureMedia()
-            ),
-            "style:\(selectedCreationStyle.id.rawValue)",
-            "music:\(selectedMusicPreset.rawValue)",
-            "removeWatermark:\(removesWatermark)"
+            momentId,
+            finalForm.creationMode.rawValue,
+            finalForm.look.rawValue,
+            finalForm.theme.rawValue,
+            finalForm.tone.rawValue,
+            finalForm.duration.rawValue,
+            finalForm.mediaUse.rawValue,
+            finalForm.occasion.trimmingCharacters(in: .whitespacesAndNewlines),
+            finalForm.details.trimmingCharacters(in: .whitespacesAndNewlines),
+            mediaSignature,
+            "\(removesWatermark)"
         ].joined(separator: "|")
     }
 
@@ -520,6 +533,32 @@ final class MomentsCreateViewModel: ObservableObject {
                     sortOrder: Int($0.sortOrder),
                     selected: $0.selected,
                     moderationStatus: $0.moderationStatus
+                )
+            }
+    }
+
+    private func currentFinalRenderSignatureMedia() -> [(sourceLocalIdentifier: String, mediaKind: String, sortOrder: Int)] {
+        let localMedia = effectiveSelectedMedia
+            .filter(\.selected)
+            .sorted { $0.sortOrder < $1.sortOrder }
+        if !localMedia.isEmpty {
+            return localMedia.map {
+                (
+                    sourceLocalIdentifier: $0.sourceLocalIdentifier,
+                    mediaKind: $0.kind,
+                    sortOrder: $0.sortOrder
+                )
+            }
+        }
+
+        return (effectiveActiveWorkspace?.mediaAssets ?? [])
+            .filter(\.selected)
+            .sorted { $0.sortOrder < $1.sortOrder }
+            .map {
+                (
+                    sourceLocalIdentifier: $0.platformMediaAssetId ?? $0.id,
+                    mediaKind: $0.kind,
+                    sortOrder: Int($0.sortOrder)
                 )
             }
     }

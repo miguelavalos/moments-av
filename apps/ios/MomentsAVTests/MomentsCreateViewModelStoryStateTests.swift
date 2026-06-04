@@ -318,6 +318,78 @@ final class MomentsCreateViewModelStoryStateTests: XCTestCase {
         XCTAssertNil(viewModel.finalRenderSummary.renderPlan)
     }
 
+    func testSyncedBackendMediaIdsDoNotInvalidatePreparedFinalRenderPlan() {
+        let viewModel = MomentsCreateViewModel()
+        let localMedia = MomentsCreateTestFixtures.makeSelectedMedia(
+            id: "00000000-0000-0000-0000-000000000001",
+            sourceLocalIdentifier: "local-asset-1"
+        )
+        viewModel.applyMomentCreationState(
+            MomentsCreateMomentCreationState(
+                isCreatingMoment: false,
+                activeMomentId: "moment-1",
+                setupErrorMessage: nil
+            )
+        )
+        viewModel.applyMediaUploadState(
+            MomentsCreateMediaUploadState(
+                selectedMedia: [localMedia],
+                statusMessage: nil,
+                isImporting: false,
+                importProgress: nil
+            )
+        )
+        viewModel.applyFinalRenderState(
+            MomentsCreateFinalRenderState(
+                finalExport: nil,
+                latestFinalJob: nil,
+                renderPlan: MomentsCreateTestFixtures.makeRenderPlan(),
+                statusMessage: nil,
+                isGenerating: false,
+                isRefreshingStatus: false
+            )
+        )
+
+        let signatureBeforeSync = viewModel.currentFinalRenderInputSignatureSource(momentId: "moment-1")
+        XCTAssertNotNil(viewModel.currentRenderPlan)
+
+        viewModel.applyPreviewGenerationState(
+            MomentsCreatePreviewGenerationState(
+                activeWorkspace: MomentWorkspace(
+                    moment: MomentsCreateTestFixtures.makeMoment(
+                        id: "moment-1",
+                        template: .partyRecap,
+                        theme: "eventRecap",
+                        mood: "warm",
+                        duration: "auto",
+                        mediaUse: "aviPick",
+                        occasion: "Event Recap",
+                        details: ""
+                    ),
+                    mediaAssets: [
+                        MomentsCreateTestFixtures.makeMediaAsset(
+                            id: "backend-media-1",
+                            sourceLocalIdentifier: "local-asset-1"
+                        )
+                    ],
+                    storyScenes: [],
+                    renderJobs: [],
+                    artifacts: []
+                ),
+                latestPreview: nil,
+                latestPreviewJob: nil,
+                statusMessage: nil,
+                isGenerating: false,
+                isRefreshingStatus: false
+            )
+        )
+
+        let signatureAfterSync = viewModel.currentFinalRenderInputSignatureSource(momentId: "moment-1")
+        XCTAssertEqual(signatureBeforeSync, signatureAfterSync, "\(viewModel.form)")
+        XCTAssertNotNil(viewModel.currentRenderPlan)
+        XCTAssertNotNil(viewModel.finalRenderSummary.renderPlan)
+    }
+
     func testGenerateStoryPlanShowsImmediateMomentCreationError() async {
         let harness = MomentCreationFailureHarness(error: MomentsSyncError.notConfigured)
         let viewModel = MomentsCreateViewModel()

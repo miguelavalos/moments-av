@@ -4,19 +4,33 @@ import Foundation
 enum MomentsCreateTestFixtures {
     static func makeMoment(
         id: String,
+        template: MomentTemplateID = .birthdayMessage,
+        creationMode: String = "quick",
+        look: String = "real",
+        theme: String = "celebration",
+        mood: String? = nil,
+        duration: String = "auto",
+        mediaUse: String = "aviPick",
         status: String = "in_progress",
         occasion: String? = nil,
+        details: String? = nil,
         storyInputSignature: String? = nil
     ) -> InProgressMoment {
         InProgressMoment(
             id: id,
-            template: .birthdayMessage,
+            template: template,
+            creationMode: creationMode,
+            look: look,
+            theme: theme,
+            mood: mood,
+            duration: duration,
+            mediaUse: mediaUse,
             status: status,
             title: "Family Weekend",
             tone: nil,
             tempo: nil,
             occasion: occasion,
-            details: nil,
+            details: details,
             storyInputSignature: storyInputSignature,
             durationSeconds: 30,
             creditCost: 2,
@@ -26,10 +40,14 @@ enum MomentsCreateTestFixtures {
         )
     }
 
-    static func makeMediaAsset(id: String, sortOrder: Double = 0) -> MomentMediaAsset {
+    static func makeMediaAsset(
+        id: String,
+        sortOrder: Double = 0,
+        sourceLocalIdentifier: String? = nil
+    ) -> MomentMediaAsset {
         MomentMediaAsset(
             id: id,
-            platformMediaAssetId: "platform-\(id)",
+            platformMediaAssetId: sourceLocalIdentifier ?? "platform-\(id)",
             uploadId: "upload-\(id)",
             kind: "image",
             sortOrder: sortOrder,
