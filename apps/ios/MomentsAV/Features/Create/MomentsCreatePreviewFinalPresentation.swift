@@ -282,6 +282,11 @@ struct MomentsCreatePrimaryActionPresentation: Equatable {
                     missingCredits: missingCreditsForPreparedPlan
                 )
             }
+            if let finalStatusMessage = workflow.finalRenderSummary.statusMessage,
+               !finalStatusMessage.isEmpty,
+               finalStatusMessage != L10n.string("workflow.final.planReady") {
+                return finalStatusMessage
+            }
             if finalVideoAction.hasRenderPlan {
                 return finalVideoAction.creditPolicyMessage
             }

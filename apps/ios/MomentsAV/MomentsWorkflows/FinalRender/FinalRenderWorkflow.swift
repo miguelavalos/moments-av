@@ -231,6 +231,9 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
         } catch let error as MomentsAPIError {
             guard isCurrentWorkflowGeneration(generation) else { return }
             logger.error("Final render API error code=\(error.code, privacy: .public) message=\(error.message, privacy: .public) momentId=\(momentId, privacy: .public)")
+            if error.code == "moments_render_plan_stale" {
+                renderPlan = nil
+            }
             statusMessage = error.localizedDescription
         } catch {
             guard isCurrentWorkflowGeneration(generation) else { return }

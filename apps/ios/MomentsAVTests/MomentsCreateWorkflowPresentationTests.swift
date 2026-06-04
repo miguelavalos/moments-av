@@ -600,6 +600,41 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         )
     }
 
+    func testPrimaryActionPresentationShowsFinalRenderErrorOverPreparedPlanCopy() {
+        let presentation = MomentsCreatePrimaryActionPresentation(
+            workflow: MomentsCreateWorkflowPresentation(
+                activeMomentId: "moment-1",
+                isSignedIn: true,
+                hasMomentWorkspace: true,
+                template: .birthdayMessage,
+                balance: MomentsCreditBalance(proMonthly: 0, promotional: 3, purchased: 0),
+                mediaSummary: MomentsCreateMediaSummary(
+                    syncedMediaAssets: [MomentsCreateTestFixtures.makeMediaAsset(id: "media-1")]
+                ),
+                storySummary: MomentsCreateStorySummary(
+                    savedScenes: [MomentsCreateTestFixtures.makeScene(id: "scene-1")]
+                ),
+                previewSummary: MomentsCreatePreviewSummary(),
+                finalRenderSummary: MomentsCreateFinalRenderSummary(
+                    creditCost: 2,
+                    renderPlan: MomentsCreateTestFixtures.makeRenderPlan(),
+                    statusMessage: "The video plan changed. Review the latest plan before creating the video."
+                ),
+                canPlanStory: false,
+                canPrepareFinalRenderPlan: false,
+                canGenerateFinalRender: true
+            )
+        )
+
+        XCTAssertTrue(presentation.canRunPrimaryAction)
+        XCTAssertEqual(presentation.title, "Ready to create")
+        XCTAssertEqual(presentation.buttonTitle, "Confirm credits · 2 credits")
+        XCTAssertEqual(
+            presentation.statusMessage,
+            "The video plan changed. Review the latest plan before creating the video."
+        )
+    }
+
     func testRealtimeRenderPresentationFormatsActivePhaseAndProgress() {
         let job = MomentsCreateTestFixtures.makeRenderJob(
             id: "final-job",
