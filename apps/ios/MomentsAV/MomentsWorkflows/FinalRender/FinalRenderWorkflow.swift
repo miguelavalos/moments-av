@@ -327,6 +327,12 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
             )
     }
 
+    func clearRenderPlan() {
+        guard !isGenerating else { return }
+        renderPlan = nil
+        statusMessage = nil
+    }
+
     func reset(force: Bool = false) {
         guard force || (!isGenerating && !isRefreshingStatus) else { return }
         advanceWorkflowGeneration()

@@ -411,24 +411,34 @@ struct MomentsCreateMediaManagerSheet: View {
     }
 
     private var reorderList: some View {
-        VStack(spacing: 0) {
-            reorderHeader
-                .padding(.horizontal, 20)
-                .padding(.top, 20)
-                .padding(.bottom, 14)
+        ZStack(alignment: .bottom) {
+            VStack(spacing: 0) {
+                reorderHeader
+                    .padding(.horizontal, 20)
+                    .padding(.top, 20)
+                    .padding(.bottom, 14)
 
-            List {
-                ForEach(Array(workingMedia.enumerated()), id: \.element.id) { index, media in
-                    MomentsCreateMediaReorderRow(media: media, index: index)
+                List {
+                    ForEach(Array(workingMedia.enumerated()), id: \.element.id) { index, media in
+                        MomentsCreateMediaReorderRow(media: media, index: index)
+                    }
+                    .onMove(perform: moveRows)
                 }
-                .onMove(perform: moveRows)
+                .listStyle(.plain)
+                .scrollContentBackground(.hidden)
+                .environment(\.editMode, .constant(.active))
+                .safeAreaPadding(.bottom, 192)
             }
-            .listStyle(.plain)
-            .scrollContentBackground(.hidden)
-            .environment(\.editMode, .constant(.active))
+
+            MomentsCreateFixedFooterAction(
+                title: L10n.string("create.media.doneReordering"),
+                systemImage: "checkmark.circle.fill",
+                action: finishManualReorder
+            )
+            .padding(.horizontal, 20)
+            .padding(.bottom, 96)
         }
         .background(MomentsTheme.shellBackground.ignoresSafeArea())
-        .safeAreaPadding(.bottom, 96)
     }
 
     private var editHeader: some View {
@@ -443,7 +453,7 @@ struct MomentsCreateMediaManagerSheet: View {
     private var reorderHeader: some View {
         HStack(spacing: 12) {
             Button {
-                isReordering = false
+                cancelManualReorder()
             } label: {
                 Image(systemName: "chevron.left")
                     .font(.system(size: 17, weight: .black))
@@ -459,29 +469,30 @@ struct MomentsCreateMediaManagerSheet: View {
                 .foregroundStyle(AVBrandColor.textPrimary)
                 .frame(maxWidth: .infinity)
 
-            Button {
-                isReordering = false
-            } label: {
-                Image(systemName: "checkmark")
-                    .font(.system(size: 17, weight: .black))
-                    .foregroundStyle(AVBrandColor.textInverse)
-                    .frame(width: 44, height: 44)
-                    .background(AVBrandColor.accent, in: Circle())
-            }
-            .accessibilityLabel(L10n.string("create.media.doneReordering"))
+            Color.clear
+                .frame(width: 44, height: 44)
         }
     }
 
     private func moveRows(from source: IndexSet, to destination: Int) {
         orderBeforeAviSuggestion = nil
         workingMedia.move(fromOffsets: source, toOffset: destination)
-        reorderMedia(workingMedia)
     }
 
     private func startManualReorder() {
         guard !isImporting else { return }
         orderBeforeAviSuggestion = nil
         isReordering = true
+    }
+
+    private func finishManualReorder() {
+        reorderMedia(workingMedia)
+        isReordering = false
+    }
+
+    private func cancelManualReorder() {
+        workingMedia = selectedMedia
+        isReordering = false
     }
 
     private func suggestAviOrder() {
@@ -1104,6 +1115,34 @@ struct MomentsCreateSoftActionButtonStyle: ButtonStyle {
         }
 
         return configuration.isPressed ? AVBrandColor.accent.opacity(0.14) : AVBrandColor.accent.opacity(0.08)
+    }
+}
+
+struct MomentsCreateFixedFooterAction: View {
+    let title: String
+    let systemImage: String
+    let action: () -> Void
+
+    var body: some View {
+        VStack(spacing: 0) {
+            Button(action: action) {
+                Label(title, systemImage: systemImage)
+                    .font(.system(size: 15, weight: .black))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 46)
+            }
+            .buttonStyle(MomentsCreateSoftActionButtonStyle())
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 12)
+        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 20, style: .continuous))
+        .overlay {
+            RoundedRectangle(cornerRadius: 20, style: .continuous)
+                .stroke(AVBrandColor.glassStroke.opacity(0.82), lineWidth: 1)
+        }
+        .shadow(color: AVBrandColor.glassShadow.opacity(0.7), radius: 12, y: 3)
     }
 }
 

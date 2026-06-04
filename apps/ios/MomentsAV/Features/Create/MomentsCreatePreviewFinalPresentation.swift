@@ -156,7 +156,7 @@ struct MomentsCreatePrimaryActionPresentation: Equatable {
         if hasFinalVideoIntent {
             return finalVideoAction.hasRenderPlan
                 ? L10n.string("create.final.readyToCreateTitle")
-                : L10n.string("create.final.reviewCostTitle")
+                : L10n.string("common.continue")
         }
         return L10n.string("common.continue")
     }
@@ -180,7 +180,9 @@ struct MomentsCreatePrimaryActionPresentation: Equatable {
             return L10n.string("credits.get.title")
         }
         if hasFinalVideoIntent {
-            return finalVideoAction.primaryTitle
+            return finalVideoAction.hasRenderPlan
+                ? finalVideoAction.primaryTitle
+                : L10n.string("common.continue")
         }
         if workflow.previewSummary.latestPreviewJob != nil {
             return workflow.previewSummary.isRefreshingStatus
@@ -257,7 +259,7 @@ struct MomentsCreatePrimaryActionPresentation: Equatable {
                 return finalStatusMessage
             }
             if workflow.canGenerateFinalRender || canPrepareVideoPlan || canPrepareLocalVideoPlan || workflow.canPlanStory {
-                return L10n.string("create.primary.reviewCostPreflight")
+                return L10n.string("create.primary.continuePreflight")
             }
             return availabilityMessage
         }
@@ -277,7 +279,7 @@ struct MomentsCreatePrimaryActionPresentation: Equatable {
             return workflow.storyAvailabilityMessage
         }
         if workflow.canPlanStory {
-            return L10n.string("create.primary.reviewCostPreflight")
+            return L10n.string("create.primary.continuePreflight")
         }
         return nil
     }

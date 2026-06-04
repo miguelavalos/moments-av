@@ -45,13 +45,18 @@ struct MomentsCreateScreen: View {
         }
         .fullScreenCover(
             isPresented: Binding(
-                get: { viewModel.workflowPresentation.showsBlockingPreparation || viewModel.isPreparingStory },
+                get: {
+                    viewModel.workflowPresentation.showsBlockingPreparation
+                        || viewModel.isPreparingStory
+                        || viewModel.isPreparingFinalPlan
+                },
                 set: { _ in }
             )
         ) {
             MomentsCreateBlockingPreparationView(
                 presentation: viewModel.workflowPresentation,
-                isPreparingStory: viewModel.isPreparingStory
+                isPreparingStory: viewModel.isPreparingStory,
+                isPreparingFinalPlan: viewModel.isPreparingFinalPlan
             )
             .interactiveDismissDisabled()
         }

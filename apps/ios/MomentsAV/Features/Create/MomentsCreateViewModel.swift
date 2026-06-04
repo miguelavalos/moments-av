@@ -40,6 +40,7 @@ final class MomentsCreateViewModel: ObservableObject {
     @Published private(set) var canRetryFinalVideoDownload = false
     @Published private(set) var finalRenderStatusMessage: String?
     @Published private(set) var isGeneratingFinalRender = false
+    @Published private(set) var isPreparingFinalPlan = false
     @Published private(set) var isRefreshingFinalRenderStatus = false
     @Published var pendingFocus: MomentsContinuationFocus?
     @Published private(set) var continuationFocusHint: MomentsContinuationFocus?
@@ -55,6 +56,8 @@ final class MomentsCreateViewModel: ObservableObject {
     var cancellables = Set<AnyCancellable>()
     private var autoStyleMediaSignature: String?
     var lastPreparedStoryInputSignature: String?
+    private var renderPlanInputSignature: String?
+    private var pendingRenderPlanInputSignature: String?
     private var hasExplicitMediaEditsAfterPreparedStory = false
     private var hasUserStyleOverride = false
     private var autoStyleUndoSelection: (style: MomentCreationStyle, musicPreset: MomentMusicPreset, form: MomentSetupForm)?
@@ -262,6 +265,7 @@ final class MomentsCreateViewModel: ObservableObject {
         pendingGalleryVideo = nil
         latestFinalJob = workspace.latestRenderJob(kind: "final")
         renderPlan = fixtureMode == .videoPlanReady ? MomentsCreateUITestFixtures.renderPlan : nil
+        renderPlanInputSignature = renderPlan.map { currentFinalRenderInputSignature(momentId: $0.momentId) }
         finalRenderStatusMessage = {
             switch fixtureMode {
             case .aviCutReady:
@@ -351,6 +355,9 @@ final class MomentsCreateViewModel: ObservableObject {
         autoStyleUndoSelection = nil
         autoStyleMediaSignature = nil
         lastPreparedStoryInputSignature = nil
+        renderPlanInputSignature = nil
+        pendingRenderPlanInputSignature = nil
+        isPreparingFinalPlan = false
         hasExplicitMediaEditsAfterPreparedStory = false
         hasUserStyleOverride = false
         applyStyleDefaults(selectedCreationStyle)
@@ -395,6 +402,38 @@ final class MomentsCreateViewModel: ObservableObject {
         }
 
         return currentStoryPlanInputSignature(momentId: momentId)
+    }
+
+    func currentFinalRenderInputSignature(momentId: String) -> String {
+        [
+            currentStoryPlanInputSignature(momentId: momentId),
+            "style:\(selectedCreationStyle.id.rawValue)",
+            "music:\(selectedMusicPreset.rawValue)"
+        ].joined(separator: "|")
+    }
+
+    var currentRenderPlan: MomentsRenderPlanResponse? {
+        guard let renderPlan else { return nil }
+        guard renderPlanInputSignature == currentFinalRenderInputSignature(momentId: renderPlan.momentId) else {
+            return nil
+        }
+        return renderPlan
+    }
+
+    func beginFinalPlanPreparation(inputSignature: String) {
+        pendingRenderPlanInputSignature = inputSignature
+        isPreparingFinalPlan = true
+    }
+
+    func finishFinalPlanPreparation() {
+        isPreparingFinalPlan = false
+    }
+
+    func clearStaleRenderPlan() {
+        renderPlan = nil
+        renderPlanInputSignature = nil
+        pendingRenderPlanInputSignature = nil
+        finalRenderWorkflow?.clearRenderPlan()
     }
 
     func markPreparedStoryMediaEdited() {
@@ -550,6 +589,13 @@ extension MomentsCreateViewModel {
         finalExport = state.finalExport
         latestFinalJob = state.latestFinalJob
         renderPlan = state.renderPlan
+        if let renderPlan = state.renderPlan {
+            renderPlanInputSignature = pendingRenderPlanInputSignature
+                ?? currentFinalRenderInputSignature(momentId: renderPlan.momentId)
+            pendingRenderPlanInputSignature = nil
+        } else {
+            renderPlanInputSignature = nil
+        }
         pendingGalleryVideo = state.pendingGalleryVideo
         canRetryFinalVideoDownload = state.canRetryFinalVideoDownload
         finalRenderStatusMessage = normalizedFinalRenderStatusMessage(

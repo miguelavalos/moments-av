@@ -191,6 +191,7 @@ extension MomentsCreateViewModel {
             return
         }
 
+        updatePreviewStatusMessage(L10n.string("create.preview.action.reviewing"))
         runOperation {
             await previewGenerationWorkflow.generatePreview(
                 momentId: context.momentId,
@@ -213,15 +214,19 @@ extension MomentsCreateViewModel {
         let form = form
         let selectedMedia = selectedMedia
         isPreparingStory = true
+        updateStoryStatusMessage(L10n.string("create.preparation.prepareStory.progress"))
+        updatePreviewStatusMessage(L10n.string("create.preview.status.creating"))
 
         runOperation {
             defer { self.isPreparingStory = false }
+            self.updateStoryStatusMessage(L10n.string("create.preparation.uploadForVideo.title"))
             let momentId = await self.resolveMomentIdForPreparation(form: form)
 
             guard let momentId else {
                 self.updateStoryStatusMessage(self.momentCreationFailureMessage())
                 return
             }
+            self.updateStoryStatusMessage(L10n.string("create.preparation.prepareStory.progress"))
             guard await self.prepareStoryIfNeeded(
                 momentId: momentId,
                 form: form,
@@ -235,6 +240,7 @@ extension MomentsCreateViewModel {
                 self.updatePreviewStatusMessage(L10n.string("create.error.storyReviewNotConfigured"))
                 return
             }
+            self.updatePreviewStatusMessage(L10n.string("create.preview.action.reviewing"))
             await previewGenerationWorkflow.generatePreview(
                 momentId: momentId,
                 template: form.template,
@@ -268,7 +274,21 @@ extension MomentsCreateViewModel {
                 return
             }
 
-            if self.renderPlan == nil || self.renderPlan?.momentId != momentId {
+            let inputSignature = self.currentFinalRenderInputSignature(momentId: momentId)
+            let hasCurrentRenderPlan = self.currentRenderPlan?.momentId == momentId
+
+            if !hasCurrentRenderPlan {
+                self.clearStaleRenderPlan()
+                self.beginFinalPlanPreparation(inputSignature: inputSignature)
+                self.updateFinalRenderStatusMessage(L10n.string("workflow.final.checkingPlan"))
+            }
+            defer {
+                if !hasCurrentRenderPlan {
+                    self.finishFinalPlanPreparation()
+                }
+            }
+
+            if !hasCurrentRenderPlan {
                 guard let mediaUploadWorkflow = self.mediaUploadWorkflow else {
                     self.updateFinalRenderStatusMessage(self.mediaAvailabilityMessage ?? L10n.string("create.error.mediaUnavailable"))
                     return
