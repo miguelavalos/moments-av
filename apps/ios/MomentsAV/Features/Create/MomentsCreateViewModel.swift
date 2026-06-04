@@ -437,6 +437,7 @@ final class MomentsCreateViewModel: ObservableObject {
     }
 
     func markPreparedStoryMediaEdited() {
+        clearStaleRenderPlan()
         guard !savedScenes.isEmpty || !generatedScenes.isEmpty else { return }
         hasExplicitMediaEditsAfterPreparedStory = true
     }

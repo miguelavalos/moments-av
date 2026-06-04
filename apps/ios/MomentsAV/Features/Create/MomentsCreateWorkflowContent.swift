@@ -213,6 +213,7 @@ private struct MomentsCreateMediaFirstWorkspace: View {
         .sheet(isPresented: $showsCreateVideoConfirmation) {
             MomentsCreateFinalVideoConfirmationSheet(
                 action: finalVideoAction,
+                mediaSummary: presentation.mediaSummary,
                 confirm: {
                     showsCreateVideoConfirmation = false
                     waitsForFinalRenderPlan = false
@@ -1381,6 +1382,7 @@ private struct MomentsCreatePrimaryActionBar: View {
 
 private struct MomentsCreateFinalVideoConfirmationSheet: View {
     let action: MomentsCreateFinalVideoActionPresentation
+    let mediaSummary: MomentsCreateMediaSummary
     let confirm: () -> Void
     let cancel: () -> Void
 
@@ -1465,6 +1467,10 @@ private struct MomentsCreateFinalVideoConfirmationSheet: View {
     private var mediaUsageTitle: String {
         guard let plan else {
             return L10n.string("create.final.confirmSheet.mediaPending")
+        }
+        let currentMediaCount = mediaSummary.reviewCount
+        if currentMediaCount > 0, currentMediaCount != plan.plannedAssetCount {
+            return L10n.string("create.workflowContent.assetUsageItems", currentMediaCount, currentMediaCount)
         }
         if plan.rejectedAssetCount > 0 {
             return L10n.string("create.workflowContent.assetUsageSkipped", plan.usedAssetCount, plan.rejectedAssetCount)

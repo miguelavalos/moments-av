@@ -296,6 +296,28 @@ final class MomentsCreateViewModelStoryStateTests: XCTestCase {
         XCTAssertFalse(viewModel.isStoryPreparedForCurrentInput)
     }
 
+    func testExplicitMediaEditInvalidatesPreparedFinalRenderPlan() {
+        let viewModel = MomentsCreateViewModel()
+        applyPreparedBackendStory(to: viewModel)
+        viewModel.applyFinalRenderState(
+            MomentsCreateFinalRenderState(
+                finalExport: nil,
+                latestFinalJob: nil,
+                renderPlan: MomentsCreateTestFixtures.makeRenderPlan(),
+                statusMessage: nil,
+                isGenerating: false,
+                isRefreshingStatus: false
+            )
+        )
+
+        XCTAssertNotNil(viewModel.currentRenderPlan)
+
+        viewModel.markPreparedStoryMediaEdited()
+
+        XCTAssertNil(viewModel.currentRenderPlan)
+        XCTAssertNil(viewModel.finalRenderSummary.renderPlan)
+    }
+
     func testGenerateStoryPlanShowsImmediateMomentCreationError() async {
         let harness = MomentCreationFailureHarness(error: MomentsSyncError.notConfigured)
         let viewModel = MomentsCreateViewModel()
