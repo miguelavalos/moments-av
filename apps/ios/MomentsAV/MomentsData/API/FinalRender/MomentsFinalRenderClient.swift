@@ -156,7 +156,8 @@ struct MomentsFinalRenderClient {
         template: MomentTemplate,
         creationStyle: MomentCreationStyleID?,
         form: MomentSetupForm,
-        removesWatermark: Bool
+        removesWatermark: Bool,
+        selectedSourceLocalIdentifiers: [String]
     ) async throws -> MomentsRenderPlanResponse {
         guard let baseURL = URL(string: baseURLString.trimmingCharacters(in: .whitespacesAndNewlines)) else {
             throw MomentsFinalRenderError.apiNotConfigured
@@ -176,6 +177,7 @@ struct MomentsFinalRenderClient {
             mood: form.tone.rawValue,
             duration: form.duration.rawValue,
             mediaUse: form.mediaUse.rawValue,
+            selectedSourceLocalIdentifiers: selectedSourceLocalIdentifiers.isEmpty ? nil : selectedSourceLocalIdentifiers,
             occasion: form.occasion,
             details: form.details,
             creditCost: template.creditCost,
@@ -210,6 +212,7 @@ struct MomentsFinalRenderClient {
         creationStyle: MomentCreationStyleID?,
         form: MomentSetupForm,
         removesWatermark: Bool,
+        selectedSourceLocalIdentifiers: [String],
         planId: String,
         renderOptionId: String?,
         operationId: String
@@ -233,6 +236,7 @@ struct MomentsFinalRenderClient {
             mood: form.tone.rawValue,
             duration: form.duration.rawValue,
             mediaUse: form.mediaUse.rawValue,
+            selectedSourceLocalIdentifiers: selectedSourceLocalIdentifiers.isEmpty ? nil : selectedSourceLocalIdentifiers,
             occasion: form.occasion,
             details: form.details,
             creditCost: template.creditCost,

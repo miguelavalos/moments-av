@@ -562,6 +562,7 @@ final class MomentsAPIClientTests: XCTestCase {
             creationStyle: nil,
             form: MomentSetupForm(template: .birthdayMessage),
             removesWatermark: false,
+            selectedSourceLocalIdentifiers: ["local-1", "local-2"],
             planId: "plan-1",
             renderOptionId: "standard_moment",
             operationId: "operation-1"

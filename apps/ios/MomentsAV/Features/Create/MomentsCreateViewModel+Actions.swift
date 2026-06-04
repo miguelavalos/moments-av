@@ -315,6 +315,7 @@ extension MomentsCreateViewModel {
                 template: form.template,
                 creationStyle: creationStyleId,
                 form: form,
+                selectedMedia: self.selectedMedia,
                 removesWatermark: removesWatermark,
                 allowPreparedStory: true
             )
@@ -409,6 +410,7 @@ extension MomentsCreateViewModel {
                 template: context.template,
                 creationStyle: self.selectedCreationStyle.id,
                 form: self.effectiveFinalRenderForm(),
+                selectedMedia: self.selectedMedia,
                 removesWatermark: removesWatermark
             )
         }

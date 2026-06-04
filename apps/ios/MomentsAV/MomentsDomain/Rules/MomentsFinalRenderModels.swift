@@ -97,6 +97,7 @@ struct MomentsRenderPlanRequest: Encodable {
     let mood: String
     let duration: String
     let mediaUse: String
+    let selectedSourceLocalIdentifiers: [String]?
     let occasion: String?
     let details: String?
     let creditCost: Int
@@ -113,6 +114,7 @@ struct MomentsConfirmFinalRenderRequest: Encodable {
     let mood: String
     let duration: String
     let mediaUse: String
+    let selectedSourceLocalIdentifiers: [String]?
     let occasion: String?
     let details: String?
     let creditCost: Int

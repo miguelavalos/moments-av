@@ -84,6 +84,7 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
         template: MomentTemplate,
         creationStyle: MomentCreationStyleID?,
         form: MomentSetupForm,
+        selectedMedia: [MomentsSelectedMedia],
         removesWatermark: Bool = false,
         allowPreparedStory: Bool = false
     ) async {
@@ -99,6 +100,10 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
             statusMessage = L10n.string("workflow.final.notConfigured")
             return
         }
+        let selectedSourceLocalIdentifiers = selectedMedia
+            .filter(\.selected)
+            .sorted { $0.sortOrder < $1.sortOrder }
+            .map(\.sourceLocalIdentifier)
 
         let needsRenderPlan = renderPlan == nil
             || renderPlan?.momentId != momentId
@@ -147,7 +152,8 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
                     template: template,
                     creationStyle: creationStyle,
                     form: form,
-                    removesWatermark: removesWatermark
+                    removesWatermark: removesWatermark,
+                    selectedSourceLocalIdentifiers: selectedSourceLocalIdentifiers
                 )
                 guard plan.canCreateVideo else {
                     renderPlan = plan
@@ -176,6 +182,7 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
                 creationStyle: creationStyle,
                 form: form,
                 removesWatermark: removesWatermark,
+                selectedSourceLocalIdentifiers: selectedSourceLocalIdentifiers,
                 planId: renderPlan.planId,
                 renderOptionId: renderPlan.plan.renderOptionId,
                 operationId: UUID().uuidString
@@ -240,7 +247,8 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
         template: MomentTemplate,
         creationStyle: MomentCreationStyleID?,
         form: MomentSetupForm,
-        removesWatermark: Bool
+        removesWatermark: Bool,
+        selectedSourceLocalIdentifiers: [String]
     ) async throws -> MomentsRenderPlanResponse {
         var attempt = 0
 
@@ -252,7 +260,8 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
                     template: template,
                     creationStyle: creationStyle,
                     form: form,
-                    removesWatermark: removesWatermark
+                    removesWatermark: removesWatermark,
+                    selectedSourceLocalIdentifiers: selectedSourceLocalIdentifiers
                 )
             } catch let error as MomentsAPIError where error.isRetryableMediaVisibilityError && attempt < 2 {
                 attempt += 1
