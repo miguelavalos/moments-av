@@ -1016,6 +1016,9 @@
 "create.workflowContent.retryFinalDownload" = "Retry final video download";
 "create.workflowContent.finalVideoProgress" = "Final video progress";
 "create.workflowContent.editingLocked" = "Editing is locked while the final video is being created.";
+"create.workflowContent.finalVideoInProgressTitle" = "Creating final video";
+"create.workflowContent.finalVideoInProgressDetail" = "Avi is working on this Moment now. You can leave this screen and come back later.";
+"create.workflowContent.editing" = "Editing";
 "create.workflowContent.aviOptions" = "Avi options";
 "create.workflowContent.aviAccessibility" = "Avi. %@";
 "create.workflowContent.aviTipAccessibility" = "Avi tip. %@";

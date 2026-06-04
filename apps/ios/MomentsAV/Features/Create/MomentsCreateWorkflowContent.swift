@@ -1067,39 +1067,52 @@ private struct MomentsCreateLockedFinalRenderScene: View {
     let presentation: MomentsCreateWorkflowPresentation
 
     var body: some View {
-        VStack(spacing: 18) {
-            Spacer(minLength: 22)
+        VStack(spacing: 16) {
+            Spacer(minLength: 36)
 
-            VStack(spacing: 14) {
-                ZStack(alignment: .bottomTrailing) {
-                    Image("AviFullBody")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 88, height: 88)
-                        .padding(14)
-                        .background(AVBrandColor.accent.opacity(0.10), in: Circle())
-                        .accessibilityHidden(true)
+            Image("AviFullBody")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 104, height: 104)
+                .padding(16)
+                .background(AVBrandColor.accent.opacity(0.10), in: Circle())
+                .accessibilityHidden(true)
 
+            VStack(spacing: 8) {
+                Text(L10n.string("create.workflowContent.finalVideoInProgressTitle"))
+                    .font(.system(size: 28, weight: .black))
+                    .foregroundStyle(AVBrandColor.textPrimary)
+                    .multilineTextAlignment(.center)
+                    .lineLimit(2)
+                    .minimumScaleFactor(0.72)
+
+                Text(L10n.string("create.workflowContent.finalVideoInProgressDetail"))
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundStyle(AVBrandColor.textSecondary)
+                    .multilineTextAlignment(.center)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            .padding(.horizontal, 6)
+
+            VStack(alignment: .leading, spacing: 12) {
+                HStack(alignment: .top, spacing: 10) {
                     Image(systemName: systemImage)
-                        .font(.system(size: 15, weight: .black))
+                        .font(.system(size: 14, weight: .black))
                         .foregroundStyle(.white)
-                        .frame(width: 34, height: 34)
+                        .frame(width: 32, height: 32)
                         .background(AVBrandColor.textPrimary, in: Circle())
-                }
 
-                VStack(spacing: 7) {
-                    Text(title)
-                        .font(.system(size: 28, weight: .black))
-                        .foregroundStyle(AVBrandColor.textPrimary)
-                        .multilineTextAlignment(.center)
-                        .lineLimit(2)
-                        .minimumScaleFactor(0.76)
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(statusTitle)
+                            .font(.system(size: 15, weight: .black))
+                            .foregroundStyle(AVBrandColor.textPrimary)
 
-                    Text(detail)
-                        .font(.system(size: 14, weight: .semibold))
-                        .foregroundStyle(AVBrandColor.textSecondary)
-                        .multilineTextAlignment(.center)
-                        .fixedSize(horizontal: false, vertical: true)
+                        Text(detail)
+                            .font(.system(size: 12, weight: .semibold))
+                            .foregroundStyle(AVBrandColor.textSecondary)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 }
 
                 if let progressFraction {
@@ -1111,19 +1124,10 @@ private struct MomentsCreateLockedFinalRenderScene: View {
                     ProgressView()
                         .tint(AVBrandColor.accent)
                         .controlSize(.regular)
-                        .accessibilityLabel(title)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .accessibilityLabel(statusTitle)
                 }
-            }
-            .padding(.horizontal, 18)
-            .padding(.vertical, 24)
-            .frame(maxWidth: .infinity)
-            .background(AVBrandColor.cardSurface.opacity(0.96), in: RoundedRectangle(cornerRadius: 18, style: .continuous))
-            .overlay(
-                RoundedRectangle(cornerRadius: 18, style: .continuous)
-                    .stroke(AVBrandColor.borderSubtle.opacity(0.82), lineWidth: 1)
-            )
 
-            VStack(alignment: .leading, spacing: 10) {
                 HStack(spacing: 8) {
                     MomentsCreateLockedRenderMetric(
                         title: L10n.string("create.final.confirmSheet.cost"),
@@ -1131,25 +1135,31 @@ private struct MomentsCreateLockedFinalRenderScene: View {
                         systemImage: "creditcard.fill"
                     )
                     MomentsCreateLockedRenderMetric(
-                        title: L10n.string("create.final.confirmSheet.media"),
-                        value: mediaValue,
-                        systemImage: "photo.on.rectangle.angled"
+                        title: L10n.string("create.workflowContent.editing"),
+                        value: L10n.string("create.workflowContent.locked"),
+                        systemImage: "lock.fill"
                     )
                 }
 
                 MomentsCreateLockedFinalRenderNotice()
             }
-            .padding(12)
-            .background(AVBrandColor.mutedSurface.opacity(0.78), in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+            .padding(14)
+            .frame(maxWidth: .infinity)
+            .background(AVBrandColor.cardSurface.opacity(0.96), in: RoundedRectangle(cornerRadius: 18, style: .continuous))
+            .overlay(
+                RoundedRectangle(cornerRadius: 18, style: .continuous)
+                    .stroke(AVBrandColor.borderSubtle.opacity(0.82), lineWidth: 1)
+            )
 
-            Spacer(minLength: 36)
+            Spacer(minLength: 54)
         }
-        .frame(maxWidth: .infinity, minHeight: 560)
+        .frame(maxWidth: .infinity, minHeight: 620)
+        .padding(.horizontal, 2)
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("\(title). \(detail)")
+        .accessibilityLabel("\(L10n.string("create.workflowContent.finalVideoInProgressTitle")). \(detail)")
     }
 
-    private var title: String {
+    private var statusTitle: String {
         presentation.finalRenderSummary.realtimeStatus?.title
             ?? L10n.string("create.render.status.working")
     }
@@ -1168,17 +1178,6 @@ private struct MomentsCreateLockedFinalRenderScene: View {
         presentation.finalRenderSummary.realtimeStatus?.progressFraction
     }
 
-    private var mediaValue: String {
-        let count = max(
-            presentation.mediaSummary.reviewCount,
-            presentation.mediaSummary.selectedCount,
-            presentation.mediaSummary.syncedMediaAssets.count
-        )
-        guard count > 0 else {
-            return L10n.string("create.workflowContent.locked")
-        }
-        return L10n.string("create.workflowContent.assetUsageItems", count, count)
-    }
 }
 
 private struct MomentsCreateLockedRenderMetric: View {

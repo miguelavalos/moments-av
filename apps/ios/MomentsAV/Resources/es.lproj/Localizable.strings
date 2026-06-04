@@ -1022,7 +1022,10 @@
 "create.workflowContent.uploadingMedia" = "Uploading media";
 "create.workflowContent.retryFinalDownload" = "Retry final video download";
 "create.workflowContent.finalVideoProgress" = "Final video progress";
-"create.workflowContent.editingLocked" = "Editing is locked while the final video is being created.";
+"create.workflowContent.editingLocked" = "La edición está bloqueada mientras se crea el video final.";
+"create.workflowContent.finalVideoInProgressTitle" = "Creando video final";
+"create.workflowContent.finalVideoInProgressDetail" = "Avi está trabajando en este Moment. Puedes salir de esta pantalla y volver más tarde.";
+"create.workflowContent.editing" = "Edición";
 "create.workflowContent.aviOptions" = "Avi options";
 "create.workflowContent.aviAccessibility" = "Avi. %@";
 "create.workflowContent.aviTipAccessibility" = "Avi tip. %@";
