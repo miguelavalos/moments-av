@@ -270,7 +270,7 @@ extension MomentsCreateViewModel {
             updateFinalRenderStatusMessage(finalRenderAvailabilityMessage ?? L10n.string("create.error.videoCreationNotReady"))
             return
         }
-        let form = form
+        let form = effectiveFinalRenderForm()
         let creationStyleId = selectedCreationStyle.id
         updateFinalRenderStatusMessage(nil)
 
@@ -408,7 +408,7 @@ extension MomentsCreateViewModel {
                 momentId: context.momentId,
                 template: context.template,
                 creationStyle: self.selectedCreationStyle.id,
-                form: self.form,
+                form: self.effectiveFinalRenderForm(),
                 removesWatermark: removesWatermark
             )
         }

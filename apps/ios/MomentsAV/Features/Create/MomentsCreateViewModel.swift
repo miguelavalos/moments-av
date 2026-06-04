@@ -60,6 +60,7 @@ final class MomentsCreateViewModel: ObservableObject {
     private var pendingRenderPlanInputSignature: String?
     private var hasExplicitMediaEditsAfterPreparedStory = false
     private var hasUserStyleOverride = false
+    private var hasUserDurationOverride = false
     private var autoStyleUndoSelection: (style: MomentCreationStyle, musicPreset: MomentMusicPreset, form: MomentSetupForm)?
 
     var activeMoment: InProgressMoment? {
@@ -360,6 +361,7 @@ final class MomentsCreateViewModel: ObservableObject {
         isPreparingFinalPlan = false
         hasExplicitMediaEditsAfterPreparedStory = false
         hasUserStyleOverride = false
+        hasUserDurationOverride = false
         applyStyleDefaults(selectedCreationStyle)
     }
 
@@ -369,6 +371,7 @@ final class MomentsCreateViewModel: ObservableObject {
         form.look = .real
         form.creationMode = .quick
         form.duration = .auto
+        hasUserDurationOverride = false
         form.mediaUse = .aviPick
         form.occasion = style.title
         form.tone = style.tone
@@ -405,12 +408,25 @@ final class MomentsCreateViewModel: ObservableObject {
     }
 
     func currentFinalRenderInputSignature(momentId: String, removesWatermark: Bool = false) -> String {
-        [
-            currentStoryPlanInputSignature(momentId: momentId),
+        let finalForm = effectiveFinalRenderForm()
+        return [
+            MomentsStoryPlanInputSignature.make(
+                momentId: momentId,
+                form: finalForm,
+                selectedMedia: currentStoryPlanSignatureMedia()
+            ),
             "style:\(selectedCreationStyle.id.rawValue)",
             "music:\(selectedMusicPreset.rawValue)",
             "removeWatermark:\(removesWatermark)"
         ].joined(separator: "|")
+    }
+
+    func effectiveFinalRenderForm() -> MomentSetupForm {
+        var finalForm = form
+        if !hasUserDurationOverride {
+            finalForm.duration = .auto
+        }
+        return finalForm
     }
 
     var currentRenderPlan: MomentsRenderPlanResponse? {
@@ -442,6 +458,12 @@ final class MomentsCreateViewModel: ObservableObject {
         renderPlanInputSignature = nil
         pendingRenderPlanInputSignature = nil
         finalRenderWorkflow?.clearRenderPlan()
+    }
+
+    func selectDuration(_ duration: MomentDuration) {
+        form.duration = duration
+        hasUserDurationOverride = true
+        clearStaleRenderPlan()
     }
 
     func markPreparedStoryMediaEdited() {
@@ -621,6 +643,7 @@ extension MomentsCreateViewModel {
         guard let continuedForm = MomentSetupForm.continuing(moment: moment, templates: templates) else { return }
 
         form = continuedForm
+        hasUserDurationOverride = false
         if let continuedStyle = creationStyles.first(where: { $0.template.id == continuedForm.template.id }) {
             selectedCreationStyle = continuedStyle
             selectedMusicPreset = continuedStyle.allowedMusic.first(where: { $0 == continuedStyle.defaultMusic }) ?? continuedStyle.defaultMusic
