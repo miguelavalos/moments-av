@@ -457,6 +457,16 @@ final class MomentsCreateViewModel: ObservableObject {
         return renderPlan
     }
 
+    func hasConfirmableRenderPlan(momentId: String) -> Bool {
+        confirmableRenderPlan(momentId: momentId) != nil
+    }
+
+    func confirmableRenderPlan(momentId: String) -> MomentsRenderPlanResponse? {
+        guard let renderPlan else { return nil }
+        guard renderPlan.momentId == momentId, renderPlan.canCreateVideo else { return nil }
+        return renderPlan
+    }
+
     func beginFinalPlanPreparation(inputSignature: String) {
         pendingRenderPlanInputSignature = inputSignature
         isPreparingFinalPlan = true

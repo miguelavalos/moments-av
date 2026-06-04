@@ -17,6 +17,48 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         XCTAssertFalse(presentation.showsWorkflowCards)
     }
 
+    func testWorkflowPresentationLocksEditingDuringActiveFinalRender() {
+        let activeFinalJob = MomentsCreateTestFixtures.makeRenderJob(
+            id: "final-job",
+            kind: "final",
+            status: "running",
+            canEditSetup: false
+        )
+        let presentation = MomentsCreateWorkflowPresentation(
+            activeMomentId: "moment-1",
+            hasMomentWorkspace: true,
+            template: .birthdayMessage,
+            balance: .empty,
+            mediaSummary: MomentsCreateMediaSummary(),
+            storySummary: MomentsCreateStorySummary(),
+            previewSummary: MomentsCreatePreviewSummary(),
+            finalRenderSummary: MomentsCreateFinalRenderSummary(latestFinalJob: activeFinalJob)
+        )
+
+        XCTAssertTrue(presentation.isFinalRenderEditingLocked)
+    }
+
+    func testWorkflowPresentationAllowsEditingWhenFinalRenderAllowsSetupChanges() {
+        let editableFinalJob = MomentsCreateTestFixtures.makeRenderJob(
+            id: "final-job",
+            kind: "final",
+            status: "running",
+            canEditSetup: true
+        )
+        let presentation = MomentsCreateWorkflowPresentation(
+            activeMomentId: "moment-1",
+            hasMomentWorkspace: true,
+            template: .birthdayMessage,
+            balance: .empty,
+            mediaSummary: MomentsCreateMediaSummary(),
+            storySummary: MomentsCreateStorySummary(),
+            previewSummary: MomentsCreatePreviewSummary(),
+            finalRenderSummary: MomentsCreateFinalRenderSummary(latestFinalJob: editableFinalJob)
+        )
+
+        XCTAssertFalse(presentation.isFinalRenderEditingLocked)
+    }
+
     func testWorkflowPresentationCarriesWorkflowStateForActiveMoment() {
         let preview = MomentsCreateTestFixtures.makeArtifact(id: "preview-1", kind: "preview")
         let finalExport = MomentsCreateTestFixtures.makeArtifact(id: "final-1", kind: "final_export")

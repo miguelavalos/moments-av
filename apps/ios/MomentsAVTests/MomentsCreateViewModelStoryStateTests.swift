@@ -72,6 +72,47 @@ final class MomentsCreateViewModelStoryStateTests: XCTestCase {
         )
     }
 
+    func testVisibleFinalRenderPlanCanBeConfirmedEvenWhenLocalSignatureChanged() {
+        let viewModel = MomentsCreateViewModel()
+        let plan = MomentsCreateTestFixtures.makeRenderPlan(momentId: "moment-1")
+
+        viewModel.applyFinalRenderState(
+            MomentsCreateFinalRenderState(
+                finalExport: nil,
+                latestFinalJob: nil,
+                renderPlan: plan,
+                statusMessage: nil,
+                isGenerating: false,
+                isRefreshingStatus: false
+            )
+        )
+
+        XCTAssertTrue(viewModel.hasConfirmableRenderPlan(momentId: "moment-1"))
+        XCTAssertEqual(viewModel.confirmableRenderPlan(momentId: "moment-1")?.planId, plan.planId)
+        XCTAssertFalse(viewModel.hasConfirmableRenderPlan(momentId: "other-moment"))
+    }
+
+    func testBlockedFinalRenderPlanCannotBeConfirmed() {
+        let viewModel = MomentsCreateViewModel()
+        let plan = MomentsCreateTestFixtures.makeRenderPlan(
+            momentId: "moment-1",
+            canCreateVideo: false
+        )
+
+        viewModel.applyFinalRenderState(
+            MomentsCreateFinalRenderState(
+                finalExport: nil,
+                latestFinalJob: nil,
+                renderPlan: plan,
+                statusMessage: nil,
+                isGenerating: false,
+                isRefreshingStatus: false
+            )
+        )
+
+        XCTAssertFalse(viewModel.hasConfirmableRenderPlan(momentId: "moment-1"))
+    }
+
     func testStoryScenesClearStaleErrorAndMarkCurrentInputPrepared() {
         let viewModel = MomentsCreateViewModel()
         let media = MomentsCreateTestFixtures.makeSelectedMedia(

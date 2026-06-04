@@ -72,6 +72,14 @@ struct MomentsCreateWorkflowPresentation: Equatable {
             || finalRenderSummary.isGenerating
     }
 
+    var isFinalRenderEditingLocked: Bool {
+        guard let latestFinalJob = finalRenderSummary.latestFinalJob,
+              latestFinalJob.isActiveRender else {
+            return false
+        }
+        return latestFinalJob.canEditSetup != true
+    }
+
     static func make(
         activeMomentId: String?,
         isSignedIn: Bool,

@@ -111,11 +111,18 @@ private struct MomentsCreateMediaFirstWorkspace: View {
         ZStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: showsWorkflowDashboard ? 10 : 12) {
-                    MomentsCreateCompactAviGuide(
-                        presentation: presentation
-                    )
+                    if presentation.isFinalRenderEditingLocked {
+                        MomentsCreateLockedFinalRenderCard(presentation: presentation)
+                            .padding(.top, 34)
+                    } else {
+                        MomentsCreateCompactAviGuide(
+                            presentation: presentation
+                        )
+                    }
 
-                    if hasMediaSelection {
+                    if presentation.isFinalRenderEditingLocked {
+                        EmptyView()
+                    } else if hasMediaSelection {
                         MomentsCreateAviCutDecisionCard(
                             presentation: presentation,
                             selectedDuration: form.duration,
@@ -147,11 +154,11 @@ private struct MomentsCreateMediaFirstWorkspace: View {
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.bottom, showsWorkflowDashboard ? 144 : 172)
+                .padding(.bottom, bottomContentPadding)
             }
             .scrollIndicators(.hidden)
 
-            if showsWorkflowDashboard {
+            if showsPrimaryActionBar {
                 MomentsCreatePrimaryActionBar(
                     presentation: presentation,
                     startSignInFlow: startSignInFlow,
@@ -428,6 +435,17 @@ private struct MomentsCreateMediaFirstWorkspace: View {
 
     private var showsWorkflowDashboard: Bool {
         hasMediaSelection || hasFinalVideoState
+    }
+
+    private var showsPrimaryActionBar: Bool {
+        showsWorkflowDashboard && !presentation.isFinalRenderEditingLocked
+    }
+
+    private var bottomContentPadding: CGFloat {
+        if presentation.isFinalRenderEditingLocked {
+            return 96
+        }
+        return showsWorkflowDashboard ? 144 : 172
     }
 }
 
@@ -1042,6 +1060,109 @@ private struct MomentsCreateAviCutDecisionSummary: View {
         .padding(.horizontal, 10)
         .padding(.vertical, 9)
         .background(AVBrandColor.accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+    }
+}
+
+private struct MomentsCreateLockedFinalRenderCard: View {
+    let presentation: MomentsCreateWorkflowPresentation
+
+    var body: some View {
+        AVAppShellCard {
+            VStack(alignment: .leading, spacing: 18) {
+                HStack(alignment: .center, spacing: 16) {
+                    Image("AviFullBody")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 62, height: 62)
+                        .padding(8)
+                        .background(AVBrandColor.accent.opacity(0.10), in: Circle())
+                        .accessibilityHidden(true)
+
+                    VStack(alignment: .leading, spacing: 7) {
+                        HStack(spacing: 8) {
+                            Image(systemName: systemImage)
+                                .font(.system(size: 13, weight: .black))
+                                .foregroundStyle(.white)
+                                .frame(width: 28, height: 28)
+                                .background(AVBrandColor.textPrimary, in: Circle())
+
+                            Text(title)
+                                .font(.system(size: 22, weight: .black))
+                                .foregroundStyle(AVBrandColor.textPrimary)
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.82)
+                        }
+
+                        Text(detail)
+                            .font(.system(size: 13, weight: .semibold))
+                            .foregroundStyle(AVBrandColor.textSecondary)
+                            .lineLimit(3)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                }
+
+                if let realtimeStatus = presentation.finalRenderSummary.realtimeStatus {
+                    MomentsCreateRealtimeRenderStatusPanel(status: realtimeStatus)
+                } else {
+                    Label(L10n.string("create.workflowContent.editingLocked"), systemImage: "lock.fill")
+                        .font(.caption)
+                        .fontWeight(.black)
+                        .foregroundStyle(AVBrandColor.textSecondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .padding(10)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .background(AVBrandColor.neutral100.opacity(0.72), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+                }
+
+                MomentsCreateLockedFinalRenderNotice()
+            }
+        }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("\(title). \(detail)")
+    }
+
+    private var title: String {
+        presentation.finalRenderSummary.realtimeStatus?.title
+            ?? L10n.string("create.render.status.working")
+    }
+
+    private var detail: String {
+        presentation.finalRenderSummary.realtimeStatus?.detail
+            ?? L10n.string("create.workflowContent.editingLocked")
+    }
+
+    private var systemImage: String {
+        presentation.finalRenderSummary.realtimeStatus?.systemImage
+            ?? "lock.fill"
+    }
+}
+
+private struct MomentsCreateLockedFinalRenderNotice: View {
+    var body: some View {
+        HStack(alignment: .top, spacing: 10) {
+            Image(systemName: "lock.fill")
+                .font(.system(size: 12, weight: .black))
+                .foregroundStyle(AVBrandColor.textSecondary)
+                .frame(width: 24, height: 24)
+                .background(AVBrandColor.neutral100, in: Circle())
+
+            VStack(alignment: .leading, spacing: 3) {
+                Text(L10n.string("create.workflowContent.editingLocked"))
+                    .font(.system(size: 12, weight: .black))
+                    .foregroundStyle(AVBrandColor.textPrimary)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                Text(L10n.string("workflow.final.creatingVideo"))
+                    .font(.caption)
+                    .fontWeight(.semibold)
+                    .foregroundStyle(AVBrandColor.textSecondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .padding(11)
+        .background(AVBrandColor.neutral100.opacity(0.62), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
     }
 }
 

@@ -132,7 +132,10 @@ enum MomentsCreateTestFixtures {
         )
     }
 
-    static func makeRenderPlan(momentId: String = "moment-1") -> MomentsRenderPlanResponse {
+    static func makeRenderPlan(
+        momentId: String = "moment-1",
+        canCreateVideo: Bool = true
+    ) -> MomentsRenderPlanResponse {
         MomentsRenderPlanResponse(
             appId: "momentsav",
             momentId: momentId,
@@ -153,8 +156,8 @@ enum MomentsCreateTestFixtures {
                 userMessage: "Avi will use the strongest moments.",
                 qualityWarnings: ["One item may be cropped."]
             ),
-            canCreateVideo: true,
-            createVideoBlockers: [],
+            canCreateVideo: canCreateVideo,
+            createVideoBlockers: canCreateVideo ? [] : ["blocked"],
             generatedAt: "2026-06-02T00:00:00Z"
         )
     }

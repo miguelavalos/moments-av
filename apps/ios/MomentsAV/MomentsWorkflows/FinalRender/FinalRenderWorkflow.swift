@@ -390,6 +390,11 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
         statusMessage = nil
     }
 
+    func usePreparedRenderPlan(_ plan: MomentsRenderPlanResponse) {
+        guard !isGenerating else { return }
+        renderPlan = plan
+    }
+
     func reset(force: Bool = false) {
         guard force || (!isGenerating && !isRefreshingStatus) else { return }
         advanceWorkflowGeneration()

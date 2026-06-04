@@ -286,12 +286,15 @@ extension MomentsCreateViewModel {
                 momentId: momentId,
                 removesWatermark: removesWatermark
             )
-            let hasCurrentRenderPlan = self.currentRenderPlan(removesWatermark: removesWatermark)?.momentId == momentId
+            let currentRenderPlan = self.confirmableRenderPlan(momentId: momentId)
+            let hasCurrentRenderPlan = currentRenderPlan != nil
 
             if !hasCurrentRenderPlan {
                 self.clearStaleRenderPlan()
                 self.beginFinalPlanPreparation(inputSignature: inputSignature)
                 self.updateFinalRenderStatusMessage(L10n.string("workflow.final.checkingPlan"))
+            } else if let currentRenderPlan {
+                finalRenderWorkflow.usePreparedRenderPlan(currentRenderPlan)
             }
             defer {
                 if !hasCurrentRenderPlan {
