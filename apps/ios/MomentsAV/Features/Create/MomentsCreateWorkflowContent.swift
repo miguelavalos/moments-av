@@ -247,7 +247,7 @@ private struct MomentsCreateMediaFirstWorkspace: View {
             await autoRefreshFinalRenderStatusIfNeeded()
         }
         .alert(L10n.string("create.discard.confirmTitle"), isPresented: $showsDiscardMomentConfirmation) {
-            Button(L10n.string("create.discard.keep"), role: .cancel) {}
+            Button(L10n.string("create.discard.keep")) {}
             Button(discardConfirmationActionTitle, role: .destructive) {
                 discardCurrentMoment()
             }
