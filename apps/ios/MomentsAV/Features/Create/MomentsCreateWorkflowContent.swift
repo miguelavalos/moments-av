@@ -220,7 +220,7 @@ private struct MomentsCreateMediaFirstWorkspace: View {
                     showsCreateVideoConfirmation = false
                 }
             )
-            .presentationDetents([.medium, .large])
+            .presentationDetents([.large])
             .presentationDragIndicator(.visible)
         }
         .onChange(of: presentation.finalRenderSummary.renderPlan?.planId) { _, _ in
@@ -1392,28 +1392,18 @@ private struct MomentsCreateFinalVideoConfirmationSheet: View {
     }
 
     var body: some View {
+        ScrollView(showsIndicators: false) {
+            sheetContent
+                .padding(.horizontal, 22)
+                .padding(.top, 18)
+                .padding(.bottom, 18)
+        }
+        .presentationBackground(MomentsTheme.shellBackground)
+    }
+
+    private var sheetContent: some View {
         VStack(alignment: .leading, spacing: 16) {
-            HStack(alignment: .top, spacing: 12) {
-                Image(systemName: "video.fill")
-                    .font(.system(size: 17, weight: .black))
-                    .foregroundStyle(.white)
-                    .frame(width: 42, height: 42)
-                    .background(AVBrandColor.textPrimary, in: Circle())
-
-                VStack(alignment: .leading, spacing: 5) {
-                    Text(L10n.string("create.final.confirmSheet.title"))
-                        .font(.system(size: 21, weight: .black))
-                        .foregroundStyle(AVBrandColor.textPrimary)
-                        .lineLimit(2)
-                        .fixedSize(horizontal: false, vertical: true)
-
-                    Text(L10n.string("create.final.confirmSheet.detail"))
-                        .font(.system(size: 13, weight: .semibold))
-                        .foregroundStyle(AVBrandColor.textSecondary)
-                        .lineLimit(3)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
-            }
+            header
 
             VStack(spacing: 8) {
                 MomentsCreateConfirmationMetric(
@@ -1438,22 +1428,24 @@ private struct MomentsCreateFinalVideoConfirmationSheet: View {
                 )
             }
 
+            costDetails
+
             watermarkControl
 
             Text(confirmationMessage)
                 .font(.system(size: 12, weight: .semibold))
                 .foregroundStyle(AVBrandColor.textSecondary)
-                .lineLimit(4)
+                .lineLimit(3)
                 .fixedSize(horizontal: false, vertical: true)
 
-            VStack(spacing: 10) {
+            VStack(spacing: 8) {
                 Button {
                     confirm(removesWatermark)
                 } label: {
                     Label(confirmationActionTitle, systemImage: "video.fill")
                         .font(.system(size: 15, weight: .black))
                         .frame(maxWidth: .infinity)
-                        .frame(height: 48)
+                        .frame(height: 44)
                 }
                 .buttonStyle(MomentsCreateSoftActionButtonStyle())
                 .disabled(!canAffordSelectedCost)
@@ -1463,15 +1455,70 @@ private struct MomentsCreateFinalVideoConfirmationSheet: View {
                     Text(L10n.string("create.action.notNow"))
                         .font(.system(size: 14, weight: .black))
                         .frame(maxWidth: .infinity)
-                        .frame(height: 42)
+                        .frame(height: 38)
                 }
                 .buttonStyle(MomentsCreateNeutralInlineButtonStyle())
             }
         }
-        .padding(.horizontal, 22)
-        .padding(.top, 24)
-        .padding(.bottom, 18)
-        .presentationBackground(MomentsTheme.shellBackground)
+    }
+
+    private var costDetails: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(L10n.string("create.final.costDetails.title"))
+                .font(.system(size: 12, weight: .black))
+                .foregroundStyle(AVBrandColor.textSecondary)
+                .textCase(.uppercase)
+
+            VStack(spacing: 7) {
+                MomentsCreateCostDetailRow(
+                    title: L10n.string("create.final.costDetails.video"),
+                    detail: durationTitle,
+                    value: MomentsCreditCopy.countTitle(plan?.creditCost ?? action.totalCreditCost)
+                )
+
+                MomentsCreateCostDetailRow(
+                    title: L10n.string("create.final.costDetails.watermark"),
+                    detail: watermarkCostDetail,
+                    value: watermarkCostTitle
+                )
+
+                Divider()
+                    .overlay(AVBrandColor.textSecondary.opacity(0.14))
+
+                MomentsCreateCostDetailRow(
+                    title: L10n.string("create.final.costDetails.total"),
+                    detail: L10n.string("create.final.costDetails.chargedOnCompletion"),
+                    value: selectedCreditCostTitle,
+                    isTotal: true
+                )
+            }
+            .padding(12)
+            .background(AVBrandColor.mutedSurface.opacity(0.72), in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+        }
+    }
+
+    private var header: some View {
+        HStack(alignment: .top, spacing: 10) {
+            Image(systemName: "video.fill")
+                .font(.system(size: 16, weight: .black))
+                .foregroundStyle(.white)
+                .frame(width: 38, height: 38)
+                .background(AVBrandColor.textPrimary, in: Circle())
+
+            VStack(alignment: .leading, spacing: 4) {
+                Text(L10n.string("create.final.confirmSheet.title"))
+                    .font(.system(size: 20, weight: .black))
+                    .foregroundStyle(AVBrandColor.textPrimary)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.82)
+
+                Text(L10n.string("create.final.confirmSheet.detail"))
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundStyle(AVBrandColor.textSecondary)
+                    .lineLimit(2)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
     }
 
     private var plan: MomentsRenderPlan? {
@@ -1512,10 +1559,10 @@ private struct MomentsCreateFinalVideoConfirmationSheet: View {
         if watermark?.userHasWatermarkFree == true {
             HStack(spacing: 10) {
                 Image(systemName: "checkmark.seal.fill")
-                    .font(.system(size: 13, weight: .black))
+                    .font(.system(size: 12, weight: .black))
                     .foregroundStyle(AVBrandColor.accent)
                 Text(L10n.string("create.final.watermark.proIncluded"))
-                    .font(.system(size: 12, weight: .bold))
+                    .font(.system(size: 11, weight: .bold))
                     .foregroundStyle(AVBrandColor.textSecondary)
             }
         } else if let watermark {
@@ -1525,11 +1572,11 @@ private struct MomentsCreateFinalVideoConfirmationSheet: View {
                         "create.final.watermark.remove",
                         MomentsCreditCopy.countTitle(watermark.nonProRemovalCreditCost)
                     ))
-                    .font(.system(size: 13, weight: .black))
+                    .font(.system(size: 12, weight: .black))
                     .foregroundStyle(AVBrandColor.textPrimary)
 
                     Text(L10n.string("create.final.watermark.removeDetail"))
-                        .font(.system(size: 12, weight: .semibold))
+                        .font(.system(size: 11, weight: .semibold))
                         .foregroundStyle(AVBrandColor.textSecondary)
                 }
             }
@@ -1542,6 +1589,26 @@ private struct MomentsCreateFinalVideoConfirmationSheet: View {
             return L10n.string("create.final.watermark.none")
         }
         return L10n.string("create.final.watermark.included")
+    }
+
+    private var watermarkCostTitle: String {
+        if watermark?.userHasWatermarkFree == true {
+            return L10n.string("create.final.costDetails.includedWithPro")
+        }
+        if removesWatermark {
+            return MomentsCreditCopy.countTitle(watermark?.nonProRemovalCreditCost ?? action.balance.watermarkRemovalCreditCost)
+        }
+        return L10n.string("create.final.costDetails.noExtraCost")
+    }
+
+    private var watermarkCostDetail: String {
+        if watermark?.userHasWatermarkFree == true {
+            return L10n.string("create.final.watermark.proIncluded")
+        }
+        if removesWatermark {
+            return L10n.string("create.final.watermark.removeDetail")
+        }
+        return L10n.string("create.final.costDetails.watermarkIncluded")
     }
 
     private var mediaUsageTitle: String {
@@ -1566,33 +1633,63 @@ private struct MomentsCreateFinalVideoConfirmationSheet: View {
     }
 }
 
+private struct MomentsCreateCostDetailRow: View {
+    let title: String
+    let detail: String
+    let value: String
+    var isTotal = false
+
+    var body: some View {
+        HStack(alignment: .firstTextBaseline, spacing: 10) {
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title)
+                    .font(.system(size: isTotal ? 13 : 12, weight: .black))
+                    .foregroundStyle(AVBrandColor.textPrimary)
+
+                Text(detail)
+                    .font(.system(size: 11, weight: .semibold))
+                    .foregroundStyle(AVBrandColor.textSecondary)
+                    .lineLimit(2)
+            }
+
+            Spacer(minLength: 10)
+
+            Text(value)
+                .font(.system(size: isTotal ? 13 : 12, weight: .black))
+                .foregroundStyle(AVBrandColor.textPrimary)
+                .lineLimit(1)
+                .minimumScaleFactor(0.78)
+        }
+    }
+}
+
 private struct MomentsCreateConfirmationMetric: View {
     let title: String
     let value: String
     let systemImage: String
 
     var body: some View {
-        HStack(spacing: 10) {
+        HStack(spacing: 9) {
             Image(systemName: systemImage)
-                .font(.system(size: 12, weight: .black))
+                .font(.system(size: 11, weight: .black))
                 .foregroundStyle(AVBrandColor.accent)
-                .frame(width: 24, height: 24)
+                .frame(width: 22, height: 22)
                 .background(AVBrandColor.accent.opacity(0.10), in: Circle())
 
             Text(title)
-                .font(.system(size: 12, weight: .black))
+                .font(.system(size: 11, weight: .black))
                 .foregroundStyle(AVBrandColor.textSecondary)
 
             Spacer(minLength: 10)
 
             Text(value)
-                .font(.system(size: 13, weight: .black))
+                .font(.system(size: 12, weight: .black))
                 .foregroundStyle(AVBrandColor.textPrimary)
                 .lineLimit(1)
                 .minimumScaleFactor(0.78)
         }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 10)
+        .padding(.horizontal, 11)
+        .padding(.vertical, 8)
         .background(AVBrandColor.mutedSurface, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
     }
 }

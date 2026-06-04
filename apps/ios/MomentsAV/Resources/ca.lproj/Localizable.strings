@@ -608,7 +608,7 @@
 "create.discard.confirmTitle" = "Descartar Moment?";
 "create.discard.closeDraft" = "Tancar esborrany";
 "create.discard.keep" = "Mantenir Moment";
-"create.final.confirmMessage" = "Això reserva %@ ara. Els crèdits només es finalitzen quan es lliura el vídeo final; si la creació falla abans, la reserva s'allibera.";
+"create.final.confirmMessage" = "Els crèdits només es cobren per vídeos finals completats. Aquest vídeo costa %@.";
 "create.final.confirmTitle" = "Crear vídeo?";
 "create.final.confirmSheet.title" = "Llest per crear";
 "create.final.confirmSheet.detail" = "Avi ha comprovat aquest Moment. Confirma per iniciar el render final.";
@@ -616,6 +616,16 @@
 "create.final.confirmSheet.media" = "Mèdia";
 "create.final.confirmSheet.mediaPending" = "Comprovant mèdia";
 "create.final.confirmSheet.duration" = "Durada";
+"create.final.confirmSheet.upToSeconds" = "fins a %ds";
+"create.final.confirmSheet.watermark" = "Marca d'aigua";
+"create.final.costDetails.chargedOnCompletion" = "Només es cobra si el vídeo final es completa.";
+"create.final.costDetails.includedWithPro" = "Inclòs";
+"create.final.costDetails.noExtraCost" = "Sense cost extra";
+"create.final.costDetails.title" = "Detall del cost";
+"create.final.costDetails.total" = "Total";
+"create.final.costDetails.video" = "Render del vídeo final";
+"create.final.costDetails.watermark" = "Marca d'aigua";
+"create.final.costDetails.watermarkIncluded" = "Inclosa al vídeo final.";
 "create.final.createVideo" = "Crear vídeo";
 "create.final.reviewCost" = "Revisar crèdits";
 "create.final.confirmCredits" = "Confirmar crèdits · %@";

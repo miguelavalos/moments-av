@@ -620,6 +620,14 @@
 "create.final.confirmSheet.duration" = "Duration";
 "create.final.confirmSheet.upToSeconds" = "up to %ds";
 "create.final.confirmSheet.watermark" = "Watermark";
+"create.final.costDetails.chargedOnCompletion" = "Charged only if the final video completes.";
+"create.final.costDetails.includedWithPro" = "Included";
+"create.final.costDetails.noExtraCost" = "No extra cost";
+"create.final.costDetails.title" = "Cost details";
+"create.final.costDetails.total" = "Total";
+"create.final.costDetails.video" = "Final video render";
+"create.final.costDetails.watermark" = "Watermark";
+"create.final.costDetails.watermarkIncluded" = "Included in the final video.";
 "create.final.createVideo" = "Create final video";
 "create.final.reviewCost" = "Review credits";
 "create.final.confirmCredits" = "Confirm credits · %@";

@@ -608,7 +608,7 @@
 "create.discard.confirmTitle" = "Supprimer le Moment ?";
 "create.discard.closeDraft" = "Fermer le brouillon";
 "create.discard.keep" = "Garder le Moment";
-"create.final.confirmMessage" = "Cela réserve %@ maintenant. Les crédits ne sont finalisés qu'après la livraison de la vidéo finale ; si la création échoue avant, la réservation est libérée.";
+"create.final.confirmMessage" = "Les crédits ne sont facturés que pour les vidéos finales terminées. Cette vidéo coûte %@.";
 "create.final.confirmTitle" = "Créer la vidéo ?";
 "create.final.confirmSheet.title" = "Prêt à créer";
 "create.final.confirmSheet.detail" = "Avi a vérifié ce Moment. Confirme pour lancer le rendu final.";
@@ -616,6 +616,16 @@
 "create.final.confirmSheet.media" = "Médias";
 "create.final.confirmSheet.mediaPending" = "Vérification des médias";
 "create.final.confirmSheet.duration" = "Durée";
+"create.final.confirmSheet.upToSeconds" = "jusqu'à %ds";
+"create.final.confirmSheet.watermark" = "Filigrane";
+"create.final.costDetails.chargedOnCompletion" = "Facturé uniquement si la vidéo finale est terminée.";
+"create.final.costDetails.includedWithPro" = "Inclus";
+"create.final.costDetails.noExtraCost" = "Sans coût supplémentaire";
+"create.final.costDetails.title" = "Détail du coût";
+"create.final.costDetails.total" = "Total";
+"create.final.costDetails.video" = "Rendu de la vidéo finale";
+"create.final.costDetails.watermark" = "Filigrane";
+"create.final.costDetails.watermarkIncluded" = "Inclus dans la vidéo finale.";
 "create.final.createVideo" = "Créer la vidéo";
 "create.final.reviewCost" = "Vérifier les crédits";
 "create.final.confirmCredits" = "Confirmer les crédits · %@";

@@ -610,7 +610,7 @@
 "create.discard.confirmTitle" = "Moment verwerfen?";
 "create.discard.closeDraft" = "Entwurf schließen";
 "create.discard.keep" = "Moment behalten";
-"create.final.confirmMessage" = "Dies reserviert jetzt %@. Credits werden erst finalisiert, wenn das finale Video geliefert wurde; schlägt die Erstellung vorher fehl, wird die Reservierung freigegeben.";
+"create.final.confirmMessage" = "Credits werden nur fuer abgeschlossene finale Videos berechnet. Dieses Video kostet %@.";
 "create.final.confirmTitle" = "Video erstellen?";
 "create.final.confirmSheet.title" = "Bereit zum Erstellen";
 "create.final.confirmSheet.detail" = "Avi hat diesen Moment geprüft. Bestätige, um das finale Rendering zu starten.";
@@ -618,6 +618,16 @@
 "create.final.confirmSheet.media" = "Medien";
 "create.final.confirmSheet.mediaPending" = "Medien werden geprüft";
 "create.final.confirmSheet.duration" = "Dauer";
+"create.final.confirmSheet.upToSeconds" = "bis zu %ds";
+"create.final.confirmSheet.watermark" = "Wasserzeichen";
+"create.final.costDetails.chargedOnCompletion" = "Wird nur berechnet, wenn das finale Video fertig ist.";
+"create.final.costDetails.includedWithPro" = "Inklusive";
+"create.final.costDetails.noExtraCost" = "Keine Zusatzkosten";
+"create.final.costDetails.title" = "Kostendetails";
+"create.final.costDetails.total" = "Gesamt";
+"create.final.costDetails.video" = "Finales Video-Rendering";
+"create.final.costDetails.watermark" = "Wasserzeichen";
+"create.final.costDetails.watermarkIncluded" = "Im finalen Video enthalten.";
 "create.final.createVideo" = "Video erstellen";
 "create.final.reviewCost" = "Credits prüfen";
 "create.final.confirmCredits" = "Credits bestätigen · %@";

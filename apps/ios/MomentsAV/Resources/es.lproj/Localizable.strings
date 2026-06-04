@@ -620,6 +620,14 @@
 "create.final.confirmSheet.duration" = "Duración";
 "create.final.confirmSheet.upToSeconds" = "hasta %ds";
 "create.final.confirmSheet.watermark" = "Marca de agua";
+"create.final.costDetails.chargedOnCompletion" = "Solo se cobra si el video final se completa.";
+"create.final.costDetails.includedWithPro" = "Incluido";
+"create.final.costDetails.noExtraCost" = "Sin coste extra";
+"create.final.costDetails.title" = "Detalle del coste";
+"create.final.costDetails.total" = "Total";
+"create.final.costDetails.video" = "Render del video final";
+"create.final.costDetails.watermark" = "Marca de agua";
+"create.final.costDetails.watermarkIncluded" = "Incluida en el video final.";
 "create.final.createVideo" = "Crear video final";
 "create.final.reviewCost" = "Revisar créditos";
 "create.final.confirmCredits" = "Confirmar créditos · %@";
