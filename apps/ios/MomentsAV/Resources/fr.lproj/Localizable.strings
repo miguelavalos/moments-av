@@ -332,8 +332,6 @@
 "home.avi.selected.detail" = "%d %@ sélectionnés. Continue pour créer ta vidéo.";
 "home.avi.signIn.detail" = "Connecte ton compte pour créer des vidéos souvenir et vidéos finales.";
 "home.avi.signIn.title" = "Connecte-toi pour créer";
-"home.avi.storyReviewReady.detail" = "Avi's Cut est prêt. Crée la vidéo finale quand le résultat te convient.";
-"home.avi.storyReviewReady.title" = "Avi's Cut prêt";
 "home.aviBrief.continueMoment" = "Continue %@ depuis la prochaine étape inachevée.";
 "home.aviBrief.firstMemory" = "Planifie le premier film souvenir avant d’ajouter des médias.";
 "home.aviBrief.reviewInProgress" = "Open In Progress and continue the next unfinished step.";
@@ -365,9 +363,6 @@
 "moment.nextAction.prepareStory.message" = "Continue dans Créer et laisse Avi préparer l’histoire.";
 "moment.nextAction.prepareStory.title" = "Préparer l’histoire";
 "moment.nextAction.reviewInCreate" = "Open in Create";
-"moment.nextAction.reviewStory.button" = "Open Avi's Cut in Create";
-"moment.nextAction.reviewStory.message" = "Check Avi's Cut before using video credits.";
-"moment.nextAction.reviewStory.title" = "Check Avi's Cut";
 "moment.nextAction.videoAttention.message" = "%@ a rencontré un problème. Retourne dans Créer et réessaie.";
 "moment.nextAction.videoAttention.title" = "La vidéo demande une action";
 "moment.status.creatingVideo" = "Création de la vidéo";
@@ -494,8 +489,6 @@
 "create.continuation.final.title" = "Continuer avec la vidéo";
 "create.continuation.media.message" = "Ajoute des photos ou clips et prépare l’histoire.";
 "create.continuation.media.title" = "Continuer avec les médias";
-"create.continuation.preview.message" = "Check Avi's Cut before using video credits.";
-"create.continuation.preview.title" = "Continue Avi's Cut";
 "create.continuation.review.message" = "Ouvre ce Moment et continue la prochaine étape inachevée.";
 "create.continuation.review.title" = "Continuer le Moment";
 "create.continuation.story.message" = "Prépare l'histoire à partir des médias sélectionnés.";
@@ -503,7 +496,7 @@
 "create.credits.detail" = "Des crédits sont nécessaires avant de créer la vidéo finale.";
 "create.credits.ready" = "Prêt pour créer la vidéo finale.";
 "create.credits.setupNow" = "Tu peux quand même préparer ce Moment maintenant.";
-"create.current.addMedia" = "Ajoute des photos ou clips avant Avi's Cut.";
+"create.current.addMedia" = "Ajoute des photos ou clips avant de préparer l’histoire.";
 "create.current.continue" = "Continuer le Moment actuel";
 "create.current.selected" = "%d éléments sélectionnés.";
 "create.intro.detail" = "Choisis des moments, prépare l’histoire et crée la vidéo.";
@@ -520,7 +513,6 @@
 "moment.artifact.final.title" = "Vidéo finale";
 "moment.artifact.included" = "Inclus";
 "moment.artifact.none" = "Aucun";
-"moment.artifact.preview.empty" = "Vérifie l’histoire lorsqu’elle est prête.";
 "moment.artifact.storageKey" = "Clé de stockage";
 "moment.artifact.watermark" = "Filigrane";
 "moment.job.configured" = "Configuré";
@@ -625,7 +617,6 @@
 "create.final.reviewCost" = "Vérifier les crédits";
 "create.final.confirmCredits" = "Confirmer les crédits · %@";
 "create.final.createWithCost" = "Créer la vidéo · %@";
-"create.final.summaryTitle" = "Vérifie Avi's Cut et le coût avant de lancer la vidéo.";
 "create.final.creditCost" = "%@ nécessaires";
 "create.final.creditPolicy.preflight" = "Avi vérifie les médias et confirme les crédits avant toute réservation.";
 "create.final.creditPolicy.create" = "Le lancement de la vidéo finale réserve %@. Les crédits ne sont finalisés qu'après la livraison de l'export.";
@@ -670,7 +661,6 @@
 "create.media.status.duplicatesOnly" = "Ces Moments étaient déjà sélectionnés.";
 "create.media.status.addedSkippingDuplicates" = "%d %@ ajoutés. %d déjà sélectionnés ignorés.";
 "create.aviStatus.ready.title" = "Prêt";
-"create.aviStatus.reviewReady.title" = "Avi's Cut prêt";
 "create.aviStatus.reviewing.title" = "Improving cut";
 "create.aviStatus.preparing.title" = "Préparation de l’histoire";
 "create.aviStatus.working.title" = "Avi travaille";
@@ -683,7 +673,6 @@
 "create.aviStatus.storyReady.detail" = "Avi a préparé l’histoire, le style et le rythme. La création vidéo vient ensuite.";
 "create.aviStatus.goodSelection.detail" = "Avi organisera l’histoire et tu pourras ajuster la sélection.";
 "create.aviStatus.startMedia.detail" = "Ajoute des photos ou clips. Avi façonnera l’histoire, l’ambiance et le rythme.";
-"create.primary.storyReady.detail" = "Avi can prepare Avi's Cut now.";
 "recovery.mediaImportFailure" = "Impossible d’ajouter ce média. Tes photos restent sur cet appareil ; réessaie ou choisis d’autres éléments.";
 "recovery.mediaUploadUnavailable" = "L’envoi des médias n’est pas encore prêt. Tes photos et vidéos restent sur cet appareil ; réessaie dans un instant.";
 "recovery.mediaStorySaveFailure" = "Impossible d’enregistrer les médias de l’histoire. Tes photos et vidéos restent sur cet appareil ; réessaie ou choisis d’autres éléments.";
@@ -704,11 +693,8 @@
 "create.error.discardMoment" = "Impossible de supprimer ce Moment. Réessaie.";
 "create.error.mediaUnavailable" = "Impossible d’ajouter des médias maintenant.";
 "create.error.storyPreparationUnfinished" = "La préparation de l’histoire ne s’est pas terminée. Réessaie.";
-"create.error.storyReviewNotConfigured" = "Avi's Cut n’est pas configuré pour cette build.";
 "create.error.videoCreationNotConfigured" = "La création vidéo n’est pas configurée pour cette build.";
-"create.error.reviewBeforeVideo" = "Check Avi's Cut before creating the final video.";
 "create.error.currentMomentMissing" = "Impossible de trouver le Moment actuel. Reviens en arrière et réessaie.";
-"create.error.noStoryReviewStatus" = "No Avi's Cut status is available yet.";
 "create.error.videoCreationUnavailable" = "La création vidéo n’est pas disponible dans cette build.";
 "create.error.videoCreationNotReady" = "La création vidéo n’est pas encore prête.";
 "create.error.noVideoStatus" = "Aucun statut vidéo n’est disponible pour l’instant.";
@@ -732,7 +718,6 @@
 "create.preparation.uploadForVideo.title" = "Envoi des médias";
 "create.preparation.prepareFinalPlan.title" = "Vérification crédits";
 "create.preparation.createVideo.title" = "Création de ta vidéo";
-"create.preparation.createPreview.title" = "Preparing Avi's Cut";
 "create.preparation.importMedia.detailWithCount" = "Avi lit %d %@ et prépare l’histoire.";
 "create.preparation.importMedia.detail" = "Avi lit la sélection et prépare l’histoire.";
 "create.preparation.prepareMoment.detail" = "Avi ouvre un espace sécurisé pour cette vidéo.";
@@ -741,7 +726,6 @@
 "create.preparation.uploadForVideo.detail" = "Envoi des médias sélectionnés nécessaires à la création de la vidéo finale.";
 "create.preparation.prepareFinalPlan.detail" = "Avi vérifie médias, options et coût.";
 "create.preparation.createVideo.detail" = "Avi lance le montage final. Cela peut prendre quelques minutes.";
-"create.preparation.createPreview.detail" = "Avi is preparing Avi's Cut before creating the final video.";
 "create.preparation.prepareStory.progress" = "Préparation de l’histoire...";
 "create.options.anotherTheme" = "un autre thème";
 "create.options.suggestionUsing" = "Suggestion d’Avi utilisée : %@ · %@";
@@ -758,7 +742,6 @@
 "create.primary.videoCreating" = "Avi crée la vidéo. Tu peux suivre la progression ici.";
 "create.primary.createVideoPreflight" = "Avi vérifiera les médias et confirmera les crédits avant de commencer.";
 "create.primary.reviewCostPreflight" = "Avi téléverse les médias et affiche le coût en crédits avant toute réservation.";
-"create.primary.reviewBeforeVideo" = "Vérifie Avi's Cut avant de créer la vidéo finale.";
 "create.primary.continuePreflight" = "Tu verras le coût avant de créer la vidéo.";
 "create.storyDecision.summary.aviTitle" = "Avi a choisi";
 "create.storyDecision.summary.aviDetail" = "%@, %@, %@ et %@. Avi l’a choisi pour ces médias : %@.";
@@ -806,21 +789,11 @@
 "workflow.media.uploading" = "Envoi des médias pour créer la vidéo.";
 "workflow.media.uploadingProgress" = "Envoi des médias %d sur %d.";
 "workflow.media.localReady" = "Les médias locaux sont prêts pour l’édition.";
-"workflow.media.savedReady" = "Les médias enregistrés sont prêts pour Avi's Cut et la création vidéo.";
+"workflow.media.savedReady" = "Les médias enregistrés sont prêts pour préparer l’histoire et créer la vidéo.";
 "workflow.media.savedReadyThumbnailsPending" = "Les médias enregistrés sont prêts. Certaines miniatures locales peuvent se rafraîchir en arrière-plan.";
 "workflow.story.signInPlan" = "Connecte-toi avant de rédiger l’histoire.";
 "workflow.story.signInAgainPlan" = "Reconnecte-toi avant de rédiger l’histoire.";
 "workflow.story.notConfigured" = "La rédaction de l’histoire n’est pas encore configurée.";
-"workflow.preview.signInReview" = "Sign in before preparing Avi's Cut.";
-"workflow.preview.signInAgainReview" = "Sign in again before preparing Avi's Cut.";
-"workflow.preview.missingMoment" = "Create the moment setup and story before Avi's Cut.";
-"workflow.preview.notConfigured" = "Avi's Cut n’est pas configuré pour cette build.";
-"workflow.preview.preparing" = "Avi prépare le cut.";
-"workflow.preview.notReady" = "Avi's Cut n’est pas prêt.";
-"workflow.preview.refreshSignIn" = "Connecte-toi avant d’améliorer Avi's Cut.";
-"workflow.preview.refreshMissingMoment" = "Ouvre un Moment avant d’améliorer Avi's Cut.";
-"workflow.preview.refreshMissingJob" = "Aucune tâche Avi's Cut n’est encore disponible.";
-"workflow.preview.refreshSuccess" = "État d’Avi's Cut mis à jour.";
 "workflow.final.signInRender" = "Connecte-toi avant de rendre l’export final.";
 "workflow.final.signInAgainRender" = "Reconnecte-toi avant de rendre l’export final.";
 "workflow.final.notConfigured" = "Le rendu final n’est pas configuré pour cette build.";
@@ -842,15 +815,9 @@
 "workflow.final.addCredits" = "Ajoute des crédits avant le rendu final.";
 "workflow.final.notReady" = "L’export final n’est pas prêt à être rendu.";
 
-"create.refresh.preview.unavailable" = "L’amélioration d’Avi's Cut n’est pas encore disponible.";
-"create.refresh.preview.notConfigured" = "L’amélioration d’Avi's Cut n’est pas configurée pour cette build.";
-"create.refresh.preview.missingMoment" = "Ouvre un Moment avant d’améliorer Avi's Cut.";
-"create.refresh.preview.missingJob" = "Aucune tâche Avi's Cut n’est encore disponible.";
 "create.summary.media.added" = "%d added";
 "create.summary.story.scene" = "%d scene";
 "create.summary.story.scenes" = "%d scenes";
-"create.summary.preview.ready" = "Ready";
-"create.summary.preview.notMade" = "Not made yet";
 "create.media.progress.reading" = "Reading media";
 "create.media.progress.count" = "%d of %d";
 "create.story.scene.opening" = "Opening";
@@ -926,7 +893,6 @@
 "create.workflowContent.beforeVideo" = "Avant la vidéo";
 "create.workflowContent.modePending" = "Mode pending";
 "create.workflowContent.renderPlanFallback" = "Avi vérifie les médias, la durée et la qualité avant de réserver les crédits.";
-"create.workflowContent.storyReviewTitle" = "Avi's Cut";
 "create.storyDecision.selectedSetup" = "Sélection et direction";
 "create.storyDecision.status.ready" = "L’histoire est prête. Crée la vidéo finale ou ajuste-la d’abord.";
 "create.storyDecision.status.improving" = "Avi prépare l’histoire.";
@@ -990,10 +956,8 @@
 "create.workflowContent.aviTipAccessibility" = "Avi tip. %@";
 "create.workflowContent.aviTip" = "Avi tip";
 "create.workflowContent.tipFinalReady" = "Your video is ready to export or share.";
-"create.workflowContent.tipReviewReady" = "Vérifie Avi's Cut. Si le résultat convient, crée la vidéo finale.";
 "create.workflowContent.tipFinalWorking" = "Avi termine la vidéo finale. La progression se met à jour automatiquement.";
 "create.workflowContent.tipPreviewWorking" = "Avi améliore le montage à partir de vos éléments sélectionnés.";
-"create.workflowContent.tipStoryReady" = "Avi's Cut est prêt. Étape suivante : créer la vidéo.";
 "create.workflowContent.tipMediaReady" = "Avi will shape these moments into a simple story plan.";
 "create.workflowContent.tipPickMoments" = "Pick the moments. Avi will shape the story, mood, and pacing.";
 "create.workflowContent.planDetail" = "%ds · %d éléments";
