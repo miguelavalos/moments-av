@@ -98,7 +98,7 @@ enum MomentsCreateTestFixtures {
             kind: kind,
             r2Key: "momentsav/\(id).mp4",
             status: "available",
-            hasWatermark: kind == "preview",
+            hasWatermark: false,
             expiresAt: 1_781_592_000_000
         )
     }
@@ -180,7 +180,7 @@ enum MomentsCreateTestFixtures {
     static func makeRefreshAvailability(canRefresh: Bool) -> RenderJobStatusRefreshAvailability {
         RenderJobStatusRefreshAvailability(
             momentId: canRefresh ? "moment-1" : nil,
-            job: canRefresh ? MomentsCreateTestFixtures.makeRenderJob(id: "job-1", kind: "preview", status: "running") : nil,
+            job: canRefresh ? MomentsCreateTestFixtures.makeRenderJob(id: "job-1", kind: "final", status: "running") : nil,
             isAvailable: canRefresh,
             isConfigured: canRefresh,
             isRefreshing: false,

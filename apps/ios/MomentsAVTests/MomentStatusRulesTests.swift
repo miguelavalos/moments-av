@@ -71,8 +71,8 @@ final class MomentStatusRulesTests: XCTestCase {
 
     func testDisplayHelpersFormatBackendValuesForUI() {
         XCTAssertEqual(MomentStatusRules.displayTitle(for: "story_ready"), "Story ready")
-        XCTAssertEqual(MomentStatusRules.displayKind("preview"), "Story")
         XCTAssertEqual(MomentStatusRules.displayKind("final"), "Final")
+        XCTAssertEqual(MomentStatusRules.displayKind("final_export"), "Final Export")
     }
 
     func testNextActionAsksForMediaWhenWorkspaceHasNoMedia() {
@@ -129,7 +129,7 @@ final class MomentStatusRulesTests: XCTestCase {
             for: makeWorkspace(
                 mediaAssets: [makeMediaAsset()],
                 storyScenes: [makeStoryScene()],
-                renderJobs: [makeRenderJob(kind: "preview", status: "failed")]
+                renderJobs: [makeRenderJob(kind: "final", status: "failed")]
             )
         )
 
@@ -210,7 +210,7 @@ final class MomentStatusRulesTests: XCTestCase {
             kind: kind,
             r2Key: "momentsav/user/moment/\(kind).mp4",
             status: "available",
-            hasWatermark: kind == "preview",
+            hasWatermark: false,
             expiresAt: 1_781_592_000_000
         )
     }

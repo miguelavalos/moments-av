@@ -77,7 +77,7 @@ final class MomentsInProgressProgressModelTests: XCTestCase {
             kind: kind,
             r2Key: "momentsav/user/moment/\(kind).mp4",
             status: status,
-            hasWatermark: kind == "preview",
+            hasWatermark: false,
             expiresAt: 1_781_592_000_000
         )
     }

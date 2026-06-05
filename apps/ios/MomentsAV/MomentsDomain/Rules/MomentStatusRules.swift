@@ -34,9 +34,6 @@ enum MomentStatusRules {
     }
 
     static func displayKind(_ kind: String) -> String {
-        if kind == "preview" {
-            return L10n.string("moment.kind.storyReview")
-        }
         return kind
             .replacingOccurrences(of: "_", with: " ")
             .capitalized
@@ -94,7 +91,7 @@ enum MomentStatusRules {
 
     private static func focus(forFailedJobKind kind: String) -> MomentsContinuationFocus {
         switch kind {
-        case "preview", "final":
+        case "final":
             .finalRender
         default:
             .review

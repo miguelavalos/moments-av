@@ -479,7 +479,7 @@ final class MomentsAPIClientTests: XCTestCase {
               "momentId": "moment-1",
               "renderJobId": "render-1",
               "workflowRunId": "workflow-1",
-              "renderKind": "preview",
+              "renderKind": "final",
               "status": "running",
               "progressPercent": 25,
               "artifactId": null,

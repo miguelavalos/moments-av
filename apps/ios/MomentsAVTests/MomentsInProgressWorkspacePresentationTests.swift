@@ -43,7 +43,7 @@ final class MomentsInProgressWorkspacePresentationTests: XCTestCase {
                     makeScene(id: "scene-1", sceneIndex: 0, caption: "Opening")
                 ],
                 renderJobs: [
-                    makeRenderJob(id: "job-1", kind: "preview", status: "running", updatedAt: 20)
+                    makeRenderJob(id: "job-1", kind: "final", status: "running", updatedAt: 20)
                 ]
             )
         )
@@ -66,7 +66,7 @@ final class MomentsInProgressWorkspacePresentationTests: XCTestCase {
                     makeScene(id: "scene-2", sceneIndex: 1, caption: "Middle")
                 ],
                 renderJobs: [
-                    makeRenderJob(id: "job-1", kind: "preview", status: "running", updatedAt: 20),
+                    makeRenderJob(id: "job-1", kind: "final", status: "running", updatedAt: 20),
                     makeRenderJob(id: "job-2", kind: "final", status: "queued", updatedAt: 30)
                 ]
             )
@@ -80,13 +80,13 @@ final class MomentsInProgressWorkspacePresentationTests: XCTestCase {
             workspace: makeWorkspace(
                 moment: makeMoment(status: "story_ready"),
                 renderJobs: [
-                    makeRenderJob(id: "old", kind: "preview", status: "queued", updatedAt: 10),
+                    makeRenderJob(id: "old", kind: "final", status: "queued", updatedAt: 10),
                     makeRenderJob(id: "new", kind: "final", status: "failed", updatedAt: 20)
                 ],
                 artifacts: [
-                    makeArtifact(id: "preview-1", kind: "preview", status: "expired"),
+                    makeArtifact(id: "thumbnail-1", kind: "thumbnail", status: "expired"),
                     makeArtifact(id: "final-1", kind: "final_export", status: "available"),
-                    makeArtifact(id: "preview-2", kind: "preview", status: "available")
+                    makeArtifact(id: "thumb-2", kind: "thumbnail", status: "available")
                 ]
             )
         )
@@ -215,18 +215,18 @@ final class MomentsInProgressWorkspacePresentationTests: XCTestCase {
             moment: makeMoment(),
             renderJobs: [
                 makeRenderJob(id: "final", kind: "final", status: "queued", updatedAt: 30),
-                makeRenderJob(id: "preview-old", kind: "preview", status: "queued", updatedAt: 10),
-                makeRenderJob(id: "preview-new", kind: "preview", status: "running", updatedAt: 20)
+                makeRenderJob(id: "final-old", kind: "final", status: "queued", updatedAt: 10),
+                makeRenderJob(id: "final-new", kind: "final", status: "running", updatedAt: 20)
             ],
             artifacts: [
-                makeArtifact(id: "preview-expired", kind: "preview", status: "expired"),
+                makeArtifact(id: "thumb-expired", kind: "thumbnail", status: "expired"),
                 makeArtifact(id: "final-export", kind: "final_export", status: "available"),
-                makeArtifact(id: "preview-ready", kind: "preview", status: "available")
+                makeArtifact(id: "thumb-ready", kind: "thumbnail", status: "expired")
             ]
         )
 
-        XCTAssertEqual(workspace.latestArtifact(kind: "preview")?.id, "preview-ready")
-        XCTAssertEqual(workspace.latestRenderJob(kind: "preview")?.id, "preview-new")
+        XCTAssertEqual(workspace.latestArtifact(kind: "final_export")?.id, "final-export")
+        XCTAssertEqual(workspace.latestRenderJob(kind: "final")?.id, "final")
         XCTAssertEqual(workspace.latestRenderJob()?.id, "final")
         XCTAssertTrue(workspace.hasAvailableArtifact(kind: "final_export"))
         XCTAssertFalse(workspace.hasAvailableArtifact(kind: "thumbnail"))
@@ -272,7 +272,7 @@ final class MomentsInProgressWorkspacePresentationTests: XCTestCase {
             kind: kind,
             r2Key: "momentsav/\(id).mp4",
             status: status,
-            hasWatermark: kind == "preview",
+            hasWatermark: false,
             expiresAt: 1_781_592_000_000
         )
     }

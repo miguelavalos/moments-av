@@ -4,7 +4,7 @@ import XCTest
 final class MomentsInProgressArtifactPresentationTests: XCTestCase {
     func testRenderJobsSectionPresentationFormatsTitleEmptyStateAndJobs() {
         let presentation = MomentsInProgressRenderJobsSectionPresentation(renderJobs: [
-            makeRenderJob(id: "old", kind: "preview", status: "queued", updatedAt: 10),
+            makeRenderJob(id: "old", kind: "final", status: "queued", updatedAt: 10),
             makeRenderJob(id: "new", kind: "final", status: "failed", updatedAt: 20)
         ])
 
@@ -16,9 +16,9 @@ final class MomentsInProgressArtifactPresentationTests: XCTestCase {
 
     func testArtifactSectionPresentationsFormatTitlesEmptyStatesAndSelectedArtifacts() {
         let artifacts = [
-            makeArtifact(id: "preview-1", kind: "preview", status: "expired"),
+            makeArtifact(id: "thumb-1", kind: "thumbnail", status: "expired"),
             makeArtifact(id: "final-1", kind: "final_export", status: "available"),
-            makeArtifact(id: "preview-2", kind: "preview", status: "available")
+            makeArtifact(id: "thumb-2", kind: "thumbnail", status: "available")
         ]
 
         let finalExport = MomentsInProgressArtifactSectionPresentation.finalExport(artifacts: artifacts)
@@ -35,9 +35,9 @@ final class MomentsInProgressArtifactPresentationTests: XCTestCase {
 
     func testFinalExportPicksLatestMatchingArtifact() {
         let artifacts = [
-            makeArtifact(id: "preview-1", kind: "preview", status: "expired"),
+            makeArtifact(id: "thumb-1", kind: "thumbnail", status: "expired"),
             makeArtifact(id: "final-1", kind: "final_export", status: "available"),
-            makeArtifact(id: "preview-2", kind: "preview", status: "available")
+            makeArtifact(id: "thumb-2", kind: "thumbnail", status: "available")
         ]
 
         XCTAssertEqual(MomentsInProgressArtifactPresentation.finalExport(in: artifacts)?.storageKey, "momentsav/final-1.mp4")
@@ -46,18 +46,18 @@ final class MomentsInProgressArtifactPresentationTests: XCTestCase {
     func testArtifactPresentationFormatsKindWatermarkAndExpiry() {
         let presentation = MomentsInProgressArtifactPresentation(
             artifact: makeArtifact(
-                id: "preview-1",
-                kind: "preview",
+                id: "final-1",
+                kind: "final_export",
                 status: "available",
-                hasWatermark: true,
+                hasWatermark: false,
                 expiresAt: 1_781_592_000_000
             )
         )
 
-        XCTAssertEqual(presentation.kindTitle, "Story")
-        XCTAssertEqual(presentation.watermarkTitle, "Included")
+        XCTAssertEqual(presentation.kindTitle, "Final Export")
+        XCTAssertEqual(presentation.watermarkTitle, "None")
         XCTAssertEqual(presentation.expiresAtTitle, MomentsDateFormatting.formattedDate(milliseconds: 1_781_592_000_000))
-        XCTAssertEqual(presentation.actionDetail, "Story is ready to check.")
+        XCTAssertEqual(presentation.actionDetail, "Your finished video is ready to save or share.")
     }
 
     func testFinalArtifactPresentationProvidesExportAndRecoveryCopy() {
@@ -85,7 +85,7 @@ final class MomentsInProgressArtifactPresentationTests: XCTestCase {
 
     func testRenderJobPresentationSortsNewestFirstAndUsesFallbacks() {
         let presentations = MomentsInProgressRenderJobPresentation.sorted([
-            makeRenderJob(id: "old", kind: "preview", status: "queued", updatedAt: 10),
+            makeRenderJob(id: "old", kind: "final", status: "queued", updatedAt: 10),
             makeRenderJob(
                 id: "new",
                 kind: "final",
