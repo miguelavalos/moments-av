@@ -192,6 +192,7 @@ struct MomentsAppShellView: View {
             && accountController.isSignedIn
             && [.inProgress, .gallery].contains(selectedTab)
             && !createViewModel.hasLocalMomentWorkspace
+            && !createViewModel.hasRecoverableMomentContext
     }
 
     private var hasAviActiveContext: Bool {
@@ -214,8 +215,7 @@ struct MomentsAppShellView: View {
 
     private func startOrContinueMoment() {
         if createViewModel.hasLocalMomentWorkspace {
-            createViewModel.clearSessionState()
-            beginNewMomentFromPreference()
+            selectRootTab(.create)
             return
         }
 
@@ -235,13 +235,13 @@ struct MomentsAppShellView: View {
 
     private func startFloatingMomentAction() {
         if createViewModel.hasLocalMomentWorkspace {
-            createViewModel.clearSessionState()
-            beginNewMomentFromPreference()
+            selectRootTab(.create)
             return
         }
 
-        if createViewModel.activeMomentId != nil {
-            createViewModel.clearSessionState()
+        if createViewModel.hasRecoverableMomentContext {
+            selectRootTab(.create)
+            return
         }
 
         beginNewMomentFromPreference()
