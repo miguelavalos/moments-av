@@ -42,8 +42,6 @@ struct MomentsCreateWorkflowContent: View {
                     discardMoment: viewModel.discardMoment,
                     startSignInFlow: startSignInFlow,
                     openCredits: openCredits,
-                    preparePreview: viewModel.preparePreview,
-                    refreshPreviewStatus: viewModel.refreshPreviewStatus,
                     prepareFinalRenderPlan: viewModel.prepareFinalVideoPlanFromCurrentSelection,
                     confirmFinalRender: viewModel.confirmFinalVideoFromCurrentSelection,
                     retryFinalVideoDownload: viewModel.retryFinalVideoDownload,
@@ -86,8 +84,6 @@ private struct MomentsCreateMediaFirstWorkspace: View {
     let discardMoment: () -> Void
     let startSignInFlow: () -> Void
     let openCredits: () -> Void
-    let preparePreview: () -> Void
-    let refreshPreviewStatus: () -> Void
     let prepareFinalRenderPlan: (Bool) -> Void
     let confirmFinalRender: (Bool) -> Void
     let retryFinalVideoDownload: () -> Void
@@ -163,7 +159,6 @@ private struct MomentsCreateMediaFirstWorkspace: View {
                     presentation: presentation,
                     startSignInFlow: startSignInFlow,
                     openCredits: openCredits,
-                    refreshPreviewStatus: refreshPreviewStatus,
                     generateFinalRender: primaryFinalRenderAction,
                     openCreateVideoConfirmation: { showsCreateVideoConfirmation = true },
                     retryFinalVideoDownload: retryFinalVideoDownload,
@@ -534,9 +529,6 @@ struct MomentsCreateBlockingPreparationView: View {
         if presentation.finalRenderSummary.isGenerating {
             return .createVideo
         }
-        if presentation.previewSummary.isGenerating {
-            return .createPreview
-        }
         if presentation.storySummary.isPlanning {
             return .prepareStory
         }
@@ -553,7 +545,6 @@ struct MomentsCreateBlockingPreparationView: View {
         case uploadForVideo
         case prepareFinalPlan
         case createVideo
-        case createPreview
 
         var title: String {
             switch self {
@@ -569,8 +560,6 @@ struct MomentsCreateBlockingPreparationView: View {
                 return L10n.string("create.preparation.prepareFinalPlan.title")
             case .createVideo:
                 return L10n.string("create.preparation.createVideo.title")
-            case .createPreview:
-                return L10n.string("create.preparation.createPreview.title")
             }
         }
 
@@ -588,8 +577,6 @@ struct MomentsCreateBlockingPreparationView: View {
                 return "creditcard.fill"
             case .createVideo:
                 return "video.fill"
-            case .createPreview:
-                return "text.bubble.fill"
             }
         }
 
@@ -599,7 +586,7 @@ struct MomentsCreateBlockingPreparationView: View {
                 return AVBrandColor.accent
             case .uploadForVideo, .prepareFinalPlan:
                 return AVBrandColor.textSecondary
-            case .createVideo, .createPreview:
+            case .createVideo:
                 return AVBrandColor.textPrimary
             }
         }
@@ -630,8 +617,6 @@ struct MomentsCreateBlockingPreparationView: View {
                 return L10n.string("create.preparation.prepareFinalPlan.detail")
             case .createVideo:
                 return L10n.string("create.preparation.createVideo.detail")
-            case .createPreview:
-                return L10n.string("create.preparation.createPreview.detail")
             }
         }
     }
@@ -728,7 +713,7 @@ private struct MomentsCreateAviCutDecisionCard: View {
                                 .frame(width: 30, height: 30)
                                 .background(iconColor, in: Circle())
 
-                            Text(L10n.string("create.workflowContent.storyReviewTitle"))
+                            Text(L10n.string("create.storyDirection.title"))
                                 .font(.system(size: 20, weight: .black))
                                 .foregroundStyle(AVBrandColor.textPrimary)
                                 .lineLimit(1)
@@ -1357,19 +1342,16 @@ private struct MomentsCreateCompactAviGuide: View {
         if let realtimeStatus = presentation.finalRenderSummary.realtimeStatus {
             return realtimeStatus.title
         }
-        if presentation.previewSummary.latestPreview != nil {
-            return L10n.string("create.aviStatus.reviewReady.title")
-        }
-        if presentation.previewSummary.isGenerating {
-            return L10n.string("create.aviStatus.reviewing.title")
-        }
         if presentation.storySummary.isPlanning {
             return L10n.string("create.aviStatus.preparing.title")
         }
-        if presentation.previewSummary.latestPreviewJob != nil || presentation.finalRenderSummary.latestFinalJob != nil {
+        if presentation.finalRenderSummary.latestFinalJob != nil {
             return L10n.string("create.aviStatus.working.title")
         }
-        if presentation.canGeneratePreview {
+        if presentation.storySummary.hasScenes
+            || presentation.finalRenderSummary.renderPlan != nil
+            || presentation.canPrepareFinalRenderPlan
+            || presentation.canGenerateFinalRender {
             return L10n.string("create.aviStatus.storyReady.title")
         }
         if presentation.mediaSummary.selectedCount > 0 || !presentation.mediaSummary.syncedMediaAssets.isEmpty {
@@ -1382,22 +1364,16 @@ private struct MomentsCreateCompactAviGuide: View {
         if presentation.finalRenderSummary.finalExport != nil {
             return L10n.string("create.aviStatus.exportReady.detail")
         }
-        if presentation.previewSummary.latestPreview != nil {
-            return L10n.string("create.aviStatus.previewReady.detail")
-        }
-        if presentation.previewSummary.isGenerating {
-            return presentation.previewSummary.statusMessage ?? L10n.string("create.aviStatus.reviewing.detail")
-        }
         if presentation.storySummary.isPlanning {
             return presentation.storySummary.statusMessage ?? L10n.string("create.aviStatus.preparing.detail")
         }
         if let realtimeStatus = presentation.finalRenderSummary.realtimeStatus {
             return realtimeStatus.detail
         }
-        if presentation.previewSummary.latestPreviewJob != nil {
-            return L10n.string("create.aviStatus.reviewing.detail")
-        }
-        if presentation.canGeneratePreview {
+        if presentation.storySummary.hasScenes
+            || presentation.finalRenderSummary.renderPlan != nil
+            || presentation.canPrepareFinalRenderPlan
+            || presentation.canGenerateFinalRender {
             return L10n.string("create.aviStatus.storyReady.detail")
         }
         if presentation.mediaSummary.selectedCount > 0 || !presentation.mediaSummary.syncedMediaAssets.isEmpty {
@@ -1411,7 +1387,6 @@ private struct MomentsCreatePrimaryActionBar: View {
     let presentation: MomentsCreateWorkflowPresentation
     let startSignInFlow: () -> Void
     let openCredits: () -> Void
-    let refreshPreviewStatus: () -> Void
     let generateFinalRender: () -> Void
     let openCreateVideoConfirmation: () -> Void
     let retryFinalVideoDownload: () -> Void
@@ -1513,7 +1488,7 @@ private struct MomentsCreatePrimaryActionBar: View {
     }
 
     private var statusColor: Color {
-        if presentation.finalRenderSummary.finalExport != nil || presentation.previewSummary.latestPreview != nil {
+        if presentation.finalRenderSummary.finalExport != nil {
             return AVBrandColor.accent
         }
         return AVBrandColor.textSecondary
@@ -1551,8 +1526,6 @@ private struct MomentsCreatePrimaryActionBar: View {
             } else {
                 generateFinalRender()
             }
-        } else if presentation.previewSummary.latestPreviewJob != nil {
-            refreshPreviewStatus()
         } else if primaryActionPresentation.needsSignInForStory {
             startSignInFlow()
         }

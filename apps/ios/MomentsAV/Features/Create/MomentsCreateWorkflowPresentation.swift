@@ -15,19 +15,14 @@ struct MomentsCreateWorkflowPresentation: Equatable {
     var creditBalanceLoadState = MomentsCreditBalanceLoadState.loaded
     var mediaSummary: MomentsCreateMediaSummary
     var storySummary: MomentsCreateStorySummary
-    var previewSummary: MomentsCreatePreviewSummary
     var finalRenderSummary: MomentsCreateFinalRenderSummary
     var canAddMedia = false
     var canPlanStory = false
-    var canGeneratePreview = false
-    var canRefreshPreviewStatus = false
     var canPrepareFinalRenderPlan = false
     var canGenerateFinalRender = false
     var canRefreshFinalRenderStatus = false
     var mediaAvailabilityMessage: String?
     var storyAvailabilityMessage: String?
-    var previewAvailabilityMessage: String?
-    var previewRefreshAvailabilityMessage: String?
     var finalRenderAvailabilityMessage: String?
 
     var showsWorkflowCards: Bool {
@@ -39,16 +34,11 @@ struct MomentsCreateWorkflowPresentation: Equatable {
             || hasUnsavedLocalMoment
             || mediaSummary.selectedCount > 0
             || !mediaSummary.syncedMediaAssets.isEmpty
-            || previewSummary.latestPreview != nil
             || finalRenderSummary.finalExport != nil
     }
 
     var currentStage: MomentsCreateCurrentStage {
         if finalRenderSummary.finalExport != nil {
-            return .finalVideo
-        }
-
-        if previewSummary.latestPreview != nil || previewSummary.latestPreviewJob != nil {
             return .finalVideo
         }
 
@@ -67,7 +57,6 @@ struct MomentsCreateWorkflowPresentation: Equatable {
         isCreatingMoment
             || mediaSummary.isImporting
             || storySummary.isPlanning
-            || previewSummary.isGenerating
             || finalRenderSummary.isGenerating
     }
 
@@ -126,7 +115,6 @@ struct MomentsCreateWorkflowPresentation: Equatable {
         creditBalanceLoadState: MomentsCreditBalanceLoadState = .loaded,
         mediaSummary: MomentsCreateMediaSummary,
         storySummary: MomentsCreateStorySummary,
-        previewSummary: MomentsCreatePreviewSummary,
         finalRenderSummary: MomentsCreateFinalRenderSummary,
         availability: MomentsCreateWorkflowAvailability
     ) -> MomentsCreateWorkflowPresentation {
@@ -145,19 +133,14 @@ struct MomentsCreateWorkflowPresentation: Equatable {
             creditBalanceLoadState: creditBalanceLoadState,
             mediaSummary: mediaSummary,
             storySummary: storySummary,
-            previewSummary: previewSummary,
             finalRenderSummary: finalRenderSummary,
             canAddMedia: availability.canAddMedia,
             canPlanStory: availability.canPlanStory,
-            canGeneratePreview: availability.canGeneratePreview,
-            canRefreshPreviewStatus: availability.canRefreshPreviewStatus,
             canPrepareFinalRenderPlan: availability.canPrepareFinalRenderPlan,
             canGenerateFinalRender: availability.canGenerateFinalRender,
             canRefreshFinalRenderStatus: availability.canRefreshFinalRenderStatus,
             mediaAvailabilityMessage: availability.mediaMessage,
             storyAvailabilityMessage: availability.storyMessage,
-            previewAvailabilityMessage: availability.previewMessage,
-            previewRefreshAvailabilityMessage: availability.previewRefreshMessage,
             finalRenderAvailabilityMessage: availability.finalRenderMessage
         )
     }
@@ -166,6 +149,5 @@ struct MomentsCreateWorkflowPresentation: Equatable {
 enum MomentsCreateCurrentStage: Equatable {
     case media
     case story
-    case preview
     case finalVideo
 }

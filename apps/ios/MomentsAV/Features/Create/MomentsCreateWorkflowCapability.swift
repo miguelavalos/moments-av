@@ -9,11 +9,9 @@ enum MomentsCreateWorkflowCapabilityFactory {
         isImportingMedia: Bool,
         mediaRemainingSlots: Int,
         storyPlanWorkflow: StoryPlanWorkflow?,
-        previewGenerationWorkflow: PreviewGenerationWorkflow?,
         finalRenderWorkflow: FinalRenderWorkflow?,
         creditBalanceLoadState: MomentsCreditBalanceLoadState = .loaded,
         template: MomentTemplate,
-        previewRefreshAvailability: RenderJobStatusRefreshAvailability,
         selectedMediaCount: Int
     ) -> MomentsCreateWorkflowCapability {
         MomentsCreateWorkflowCapability(
@@ -29,12 +27,6 @@ enum MomentsCreateWorkflowCapabilityFactory {
                 template: template,
                 selectedMediaCount: selectedMediaCount
             ),
-            canGeneratePreview: canGeneratePreview(
-                activeMomentId: activeMomentId,
-                previewGenerationWorkflow: previewGenerationWorkflow,
-                template: template
-            ),
-            canRefreshPreviewStatus: previewRefreshAvailability.canRefresh,
             canPrepareFinalRenderPlan: canPrepareFinalRenderPlan(
                 activeMomentId: activeMomentId,
                 finalRenderWorkflow: finalRenderWorkflow
@@ -71,15 +63,6 @@ enum MomentsCreateWorkflowCapabilityFactory {
         return storyPlanWorkflow.isConfigured
             && !storyPlanWorkflow.isPlanning
             && MomentsMediaRules.availability(template: template, selectedCount: selectedMediaCount).canUseSelection
-    }
-
-    private static func canGeneratePreview(
-        activeMomentId: String?,
-        previewGenerationWorkflow: PreviewGenerationWorkflow?,
-        template: MomentTemplate
-    ) -> Bool {
-        guard let previewGenerationWorkflow, activeMomentId != nil else { return false }
-        return previewGenerationWorkflow.canGenerate(template: template)
     }
 
     private static func canPrepareFinalRenderPlan(

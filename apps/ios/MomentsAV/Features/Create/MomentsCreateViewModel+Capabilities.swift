@@ -25,13 +25,14 @@ extension MomentsCreateViewModel {
     }
 
     var canGeneratePreview: Bool {
-        !isFinalRenderEditingLocked
-            && workflowCapability.canGeneratePreview
+        guard !isFinalRenderEditingLocked else { return false }
+        guard let previewGenerationWorkflow else { return false }
+        return previewGenerationWorkflow.canGenerate(template: form.template)
             && isStoryPreparedForCurrentInput
     }
 
     var canRefreshPreviewStatus: Bool {
-        workflowCapability.canRefreshPreviewStatus
+        previewRefreshAvailability.canRefresh
     }
 
     var canPrepareFinalRenderPlan: Bool {
@@ -53,8 +54,6 @@ extension MomentsCreateViewModel {
             return MomentsCreateWorkflowCapability(
                 canAddMedia: false,
                 canPlanStory: false,
-                canGeneratePreview: false,
-                canRefreshPreviewStatus: false,
                 canPrepareFinalRenderPlan: fixtureMode != .full
                     && !isBusy,
                 canGenerateFinalRender: fixtureMode != .full
@@ -71,11 +70,9 @@ extension MomentsCreateViewModel {
             isImportingMedia: isImportingMedia,
             mediaRemainingSlots: mediaRemainingSlots,
             storyPlanWorkflow: storyPlanWorkflow,
-            previewGenerationWorkflow: previewGenerationWorkflow,
             finalRenderWorkflow: finalRenderWorkflow,
             creditBalanceLoadState: creditBalanceLoadState,
             template: form.template,
-            previewRefreshAvailability: previewRefreshAvailability,
             selectedMediaCount: mediaSelectedCount
         )
     }

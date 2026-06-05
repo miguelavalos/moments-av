@@ -10,7 +10,6 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
             balance: .empty,
             mediaSummary: MomentsCreateMediaSummary(),
             storySummary: MomentsCreateStorySummary(),
-            previewSummary: MomentsCreatePreviewSummary(),
             finalRenderSummary: MomentsCreateFinalRenderSummary()
         )
 
@@ -31,7 +30,6 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
             balance: .empty,
             mediaSummary: MomentsCreateMediaSummary(),
             storySummary: MomentsCreateStorySummary(),
-            previewSummary: MomentsCreatePreviewSummary(),
             finalRenderSummary: MomentsCreateFinalRenderSummary(latestFinalJob: activeFinalJob)
         )
 
@@ -55,7 +53,6 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
             balance: .empty,
             mediaSummary: MomentsCreateMediaSummary(),
             storySummary: MomentsCreateStorySummary(),
-            previewSummary: MomentsCreatePreviewSummary(),
             finalRenderSummary: MomentsCreateFinalRenderSummary(latestFinalJob: activeFinalJob)
         )
 
@@ -86,7 +83,6 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
             balance: .empty,
             mediaSummary: MomentsCreateMediaSummary(),
             storySummary: MomentsCreateStorySummary(),
-            previewSummary: MomentsCreatePreviewSummary(),
             finalRenderSummary: MomentsCreateFinalRenderSummary(
                 creditCost: 2,
                 renderPlan: oneCreditPlan,
@@ -113,7 +109,6 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
             balance: .empty,
             mediaSummary: MomentsCreateMediaSummary(),
             storySummary: MomentsCreateStorySummary(),
-            previewSummary: MomentsCreatePreviewSummary(),
             finalRenderSummary: MomentsCreateFinalRenderSummary(latestFinalJob: editableFinalJob)
         )
 
@@ -121,9 +116,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
     }
 
     func testWorkflowPresentationCarriesWorkflowStateForActiveMoment() {
-        let preview = MomentsCreateTestFixtures.makeArtifact(id: "preview-1", kind: "preview")
         let finalExport = MomentsCreateTestFixtures.makeArtifact(id: "final-1", kind: "final_export")
-        let latestPreviewJob = MomentsCreateTestFixtures.makeRenderJob(id: "preview-job", kind: "preview", status: "running")
         let latestFinalJob = MomentsCreateTestFixtures.makeRenderJob(id: "final-job", kind: "final", status: "queued")
         let mediaSummary = MomentsCreateMediaSummary(
             selectedMedia: [],
@@ -136,13 +129,6 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
             generatedScenes: [],
             isPlanning: true,
             statusMessage: "Planning story."
-        )
-        let previewSummary = MomentsCreatePreviewSummary(
-            activeMoment: MomentsCreateTestFixtures.makeMoment(id: "moment-1"),
-            latestPreview: preview,
-            latestPreviewJob: latestPreviewJob,
-            isGenerating: true,
-            statusMessage: "Generating preview."
         )
         let finalRenderSummary = MomentsCreateFinalRenderSummary(
             creditCost: 2,
@@ -159,19 +145,14 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
             balance: MomentsCreditBalance(proMonthly: 0, promotional: 2, purchased: 0),
             mediaSummary: mediaSummary,
             storySummary: storySummary,
-            previewSummary: previewSummary,
             finalRenderSummary: finalRenderSummary,
             canAddMedia: true,
             canPlanStory: true,
-            canGeneratePreview: true,
-            canRefreshPreviewStatus: true,
             canPrepareFinalRenderPlan: true,
             canGenerateFinalRender: true,
             canRefreshFinalRenderStatus: true,
             mediaAvailabilityMessage: "Add media.",
             storyAvailabilityMessage: "Plan story.",
-            previewAvailabilityMessage: "Generate preview.",
-            previewRefreshAvailabilityMessage: "Refresh preview.",
             finalRenderAvailabilityMessage: "Generate final."
         )
 
@@ -180,19 +161,14 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         XCTAssertEqual(presentation.template, .birthdayMessage)
         XCTAssertEqual(presentation.mediaSummary, mediaSummary)
         XCTAssertEqual(presentation.storySummary, storySummary)
-        XCTAssertEqual(presentation.previewSummary, previewSummary)
         XCTAssertEqual(presentation.finalRenderSummary, finalRenderSummary)
         XCTAssertTrue(presentation.canAddMedia)
         XCTAssertTrue(presentation.canPlanStory)
-        XCTAssertTrue(presentation.canGeneratePreview)
-        XCTAssertTrue(presentation.canRefreshPreviewStatus)
         XCTAssertTrue(presentation.canPrepareFinalRenderPlan)
         XCTAssertTrue(presentation.canGenerateFinalRender)
         XCTAssertTrue(presentation.canRefreshFinalRenderStatus)
         XCTAssertEqual(presentation.mediaAvailabilityMessage, "Add media.")
         XCTAssertEqual(presentation.storyAvailabilityMessage, "Plan story.")
-        XCTAssertEqual(presentation.previewAvailabilityMessage, "Generate preview.")
-        XCTAssertEqual(presentation.previewRefreshAvailabilityMessage, "Refresh preview.")
         XCTAssertEqual(presentation.finalRenderAvailabilityMessage, "Generate final.")
     }
 
@@ -211,34 +187,27 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
             balance: MomentsCreditBalance(proMonthly: 0, promotional: 1, purchased: 0),
             mediaSummary: MomentsCreateMediaSummary(),
             storySummary: MomentsCreateStorySummary(),
-            previewSummary: MomentsCreatePreviewSummary(),
             finalRenderSummary: MomentsCreateFinalRenderSummary(),
             availability: MomentsCreateWorkflowAvailability(
                 canAddMedia: true,
                 canPlanStory: false,
-                canGeneratePreview: true,
-                canRefreshPreviewStatus: false,
                 canPrepareFinalRenderPlan: true,
                 canGenerateFinalRender: true,
                 canRefreshFinalRenderStatus: false,
                 mediaMessage: nil,
                 storyMessage: "Plan story.",
-                previewMessage: nil,
-                previewRefreshMessage: "Refresh preview.",
                 finalRenderMessage: nil
             )
         )
 
         XCTAssertTrue(presentation.canAddMedia)
         XCTAssertFalse(presentation.canPlanStory)
-        XCTAssertTrue(presentation.canGeneratePreview)
         XCTAssertTrue(presentation.canPrepareFinalRenderPlan)
         XCTAssertEqual(presentation.creationStyleTitle, "Birthday Story")
         XCTAssertEqual(presentation.toneTitle, "Warm")
         XCTAssertEqual(presentation.tempoTitle, "Balanced")
         XCTAssertEqual(presentation.occasionTitle, "Birthday for Ava")
         XCTAssertEqual(presentation.storyAvailabilityMessage, "Plan story.")
-        XCTAssertEqual(presentation.previewRefreshAvailabilityMessage, "Refresh preview.")
     }
 
     func testWorkflowPresentationCarriesUnsavedLocalMomentContainmentState() {
@@ -258,13 +227,10 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
                 selectedMedia: [MomentsCreateTestFixtures.makeSelectedMedia(id: "00000000-0000-0000-0000-000000000001")]
             ),
             storySummary: MomentsCreateStorySummary(),
-            previewSummary: MomentsCreatePreviewSummary(),
             finalRenderSummary: MomentsCreateFinalRenderSummary(),
             availability: MomentsCreateWorkflowAvailability(
                 canAddMedia: true,
                 canPlanStory: false,
-                canGeneratePreview: false,
-                canRefreshPreviewStatus: false,
                 canPrepareFinalRenderPlan: false,
                 canGenerateFinalRender: false,
                 canRefreshFinalRenderStatus: false
@@ -291,13 +257,10 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
             balance: .empty,
             mediaSummary: MomentsCreateMediaSummary(),
             storySummary: MomentsCreateStorySummary(),
-            previewSummary: MomentsCreatePreviewSummary(),
             finalRenderSummary: MomentsCreateFinalRenderSummary(),
             availability: MomentsCreateWorkflowAvailability(
                 canAddMedia: true,
                 canPlanStory: false,
-                canGeneratePreview: false,
-                canRefreshPreviewStatus: false,
                 canPrepareFinalRenderPlan: false,
                 canGenerateFinalRender: false,
                 canRefreshFinalRenderStatus: false
@@ -315,7 +278,6 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
             balance: .empty,
             mediaSummary: MomentsCreateMediaSummary(isImporting: true),
             storySummary: MomentsCreateStorySummary(),
-            previewSummary: MomentsCreatePreviewSummary(),
             finalRenderSummary: MomentsCreateFinalRenderSummary()
         )
 
@@ -325,14 +287,10 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         presentation.storySummary = MomentsCreateStorySummary(isPlanning: true)
         XCTAssertTrue(presentation.showsBlockingPreparation)
 
-        presentation.storySummary = MomentsCreateStorySummary()
-        presentation.previewSummary = MomentsCreatePreviewSummary(isGenerating: true)
-        XCTAssertTrue(presentation.showsBlockingPreparation)
-
-        presentation.previewSummary = MomentsCreatePreviewSummary()
         presentation.finalRenderSummary = MomentsCreateFinalRenderSummary(isGenerating: true)
         XCTAssertTrue(presentation.showsBlockingPreparation)
 
+        presentation.storySummary = MomentsCreateStorySummary()
         presentation.finalRenderSummary = MomentsCreateFinalRenderSummary()
         XCTAssertFalse(presentation.showsBlockingPreparation)
     }
@@ -592,7 +550,6 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
                 selectedMedia: [MomentsCreateTestFixtures.makeSelectedMedia(id: "00000000-0000-0000-0000-000000000001")]
             ),
             storySummary: MomentsCreateStorySummary(),
-            previewSummary: MomentsCreatePreviewSummary(),
             finalRenderSummary: MomentsCreateFinalRenderSummary(
                 creditCost: 2,
                 renderPlan: unavailablePlan
@@ -621,7 +578,6 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
                     statusMessage: "Uploading media for video creation."
                 ),
                 storySummary: MomentsCreateStorySummary(),
-                previewSummary: MomentsCreatePreviewSummary(),
                 finalRenderSummary: MomentsCreateFinalRenderSummary(creditCost: 2),
                 canPlanStory: false,
                 canPrepareFinalRenderPlan: false,
@@ -649,7 +605,6 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
                     selectedMedia: [MomentsCreateTestFixtures.makeSelectedMedia(id: "00000000-0000-0000-0000-000000000001")]
                 ),
                 storySummary: MomentsCreateStorySummary(),
-                previewSummary: MomentsCreatePreviewSummary(),
                 finalRenderSummary: MomentsCreateFinalRenderSummary(creditCost: 2),
                 canPlanStory: true,
                 canPrepareFinalRenderPlan: false,
@@ -677,7 +632,6 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
                 storySummary: MomentsCreateStorySummary(
                     savedScenes: [MomentsCreateTestFixtures.makeScene(id: "scene-1")]
                 ),
-                previewSummary: MomentsCreatePreviewSummary(),
                 finalRenderSummary: MomentsCreateFinalRenderSummary(
                     creditCost: 2,
                     renderPlan: MomentsCreateTestFixtures.makeRenderPlan()
@@ -711,7 +665,6 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
                 storySummary: MomentsCreateStorySummary(
                     savedScenes: [MomentsCreateTestFixtures.makeScene(id: "scene-1")]
                 ),
-                previewSummary: MomentsCreatePreviewSummary(),
                 finalRenderSummary: MomentsCreateFinalRenderSummary(
                     creditCost: 2,
                     renderPlan: MomentsCreateTestFixtures.makeRenderPlan(
@@ -746,7 +699,6 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
                 storySummary: MomentsCreateStorySummary(
                     savedScenes: [MomentsCreateTestFixtures.makeScene(id: "scene-1")]
                 ),
-                previewSummary: MomentsCreatePreviewSummary(),
                 finalRenderSummary: MomentsCreateFinalRenderSummary(
                     creditCost: 2,
                     renderPlan: MomentsCreateTestFixtures.makeRenderPlan(),

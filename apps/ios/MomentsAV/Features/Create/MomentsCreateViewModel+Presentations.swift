@@ -15,7 +15,6 @@ extension MomentsCreateViewModel {
             creditBalanceLoadState: creditBalanceLoadState,
             mediaSummary: mediaSummary,
             storySummary: storySummary,
-            previewSummary: previewSummary,
             finalRenderSummary: finalRenderSummary,
             availability: workflowAvailability
         )
@@ -25,15 +24,11 @@ extension MomentsCreateViewModel {
         MomentsCreateWorkflowAvailability.make(
             canAddMedia: canAddMedia,
             canPlanStory: canPlanStory,
-            canGeneratePreview: canGeneratePreview,
-            canRefreshPreviewStatus: canRefreshPreviewStatus,
             canPrepareFinalRenderPlan: canPrepareFinalRenderPlan,
             canGenerateFinalRender: canGenerateFinalRender,
             canRefreshFinalRenderStatus: canRefreshFinalRenderStatus,
             mediaMessage: mediaAvailabilityMessage,
             storyMessage: storyAvailabilityMessage,
-            previewMessage: previewAvailabilityMessage,
-            previewRefreshMessage: previewRefreshAvailabilityMessage,
             finalRenderMessage: finalRenderAvailabilityMessage
         )
     }

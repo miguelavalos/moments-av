@@ -156,9 +156,6 @@ struct MomentsCreatePrimaryActionPresentation: Equatable {
                 || workflow.canPlanStory
                 || needsSignInForStory
         }
-        if workflow.previewSummary.latestPreviewJob != nil {
-            return workflow.canRefreshPreviewStatus
-        }
         return workflow.canPlanStory || needsSignInForStory
     }
 
@@ -204,11 +201,6 @@ struct MomentsCreatePrimaryActionPresentation: Equatable {
                 ? finalVideoAction.primaryTitle
                 : L10n.string("common.continue")
         }
-        if workflow.previewSummary.latestPreviewJob != nil {
-            return workflow.previewSummary.isRefreshingStatus
-                ? L10n.string("create.status.refreshing")
-                : L10n.string("create.preview.refresh")
-        }
         if needsSignInForStory {
             return L10n.string("common.signIn")
         }
@@ -234,9 +226,6 @@ struct MomentsCreatePrimaryActionPresentation: Equatable {
             }
             return finalVideoAction.primaryIconName
         }
-        if workflow.previewSummary.latestPreviewJob != nil {
-            return "arrow.clockwise"
-        }
         if needsSignInForStory {
             return "person.crop.circle.badge.checkmark"
         }
@@ -250,9 +239,6 @@ struct MomentsCreatePrimaryActionPresentation: Equatable {
         }
         if workflow.finalRenderSummary.isGenerating {
             return workflow.finalRenderSummary.statusMessage ?? L10n.string("create.final.action.creating")
-        }
-        if workflow.previewSummary.isGenerating {
-            return workflow.previewSummary.statusMessage ?? L10n.string("create.preview.action.reviewing")
         }
         if workflow.storySummary.isPlanning {
             return workflow.storySummary.statusMessage ?? L10n.string("create.preparation.prepareStory.progress")
@@ -294,9 +280,6 @@ struct MomentsCreatePrimaryActionPresentation: Equatable {
             }
             return availabilityMessage
         }
-        if let previewMessage = workflow.previewSummary.statusMessage, !previewMessage.isEmpty {
-            return previewMessage
-        }
         if let storyMessage = workflow.storySummary.statusMessage, !storyMessage.isEmpty {
             return storyMessage
         }
@@ -319,7 +302,7 @@ struct MomentsCreatePrimaryActionPresentation: Equatable {
         if isBusy {
             return "sparkles"
         }
-        if workflow.finalRenderSummary.finalExport != nil || workflow.previewSummary.latestPreview != nil {
+        if workflow.finalRenderSummary.finalExport != nil {
             return "checkmark.circle.fill"
         }
         if !canRunPrimaryAction {
@@ -353,7 +336,6 @@ struct MomentsCreatePrimaryActionPresentation: Equatable {
     var hasFinalVideoIntent: Bool {
         workflow.mediaSummary.reviewCount > 0
             || workflow.storySummary.hasScenes
-            || workflow.previewSummary.latestPreview != nil
             || workflow.finalRenderSummary.renderPlan != nil
             || workflow.finalRenderSummary.latestFinalJob != nil
             || workflow.finalRenderSummary.finalExport != nil
@@ -363,8 +345,6 @@ struct MomentsCreatePrimaryActionPresentation: Equatable {
     var isBusy: Bool {
         workflow.mediaSummary.isImporting
             || workflow.storySummary.isPlanning
-            || workflow.previewSummary.isGenerating
-            || workflow.previewSummary.isRefreshingStatus
             || workflow.finalRenderSummary.isGenerating
     }
 
@@ -402,9 +382,6 @@ struct MomentsCreatePrimaryActionPresentation: Equatable {
             return workflow.finalRenderAvailabilityMessage
                 ?? workflow.storyAvailabilityMessage
                 ?? workflow.mediaAvailabilityMessage
-        }
-        if workflow.previewSummary.latestPreviewJob != nil {
-            return workflow.previewAvailabilityMessage
         }
         return workflow.finalRenderAvailabilityMessage ?? workflow.storyAvailabilityMessage
     }

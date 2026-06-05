@@ -123,7 +123,6 @@ enum MomentsCreateSection: Hashable {
     case review
     case media
     case story
-    case preview
     case finalRender
 
     init(focus: MomentsContinuationFocus) {
@@ -135,7 +134,7 @@ enum MomentsCreateSection: Hashable {
         case .story:
             self = .story
         case .preview:
-            self = .preview
+            self = .finalRender
         case .finalRender:
             self = .finalRender
         }

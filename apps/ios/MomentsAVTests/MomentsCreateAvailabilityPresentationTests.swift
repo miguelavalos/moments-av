@@ -7,33 +7,25 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
         let availability = MomentsCreateWorkflowAvailability.make(
             canAddMedia: true,
             canPlanStory: false,
-            canGeneratePreview: true,
-            canRefreshPreviewStatus: false,
             canPrepareFinalRenderPlan: true,
             canGenerateFinalRender: true,
             canRefreshFinalRenderStatus: false,
             mediaMessage: "Media",
             storyMessage: "Story",
-            previewMessage: "Preview",
-            previewRefreshMessage: "Preview refresh",
             finalRenderMessage: "Final"
         )
 
         XCTAssertTrue(availability.canAddMedia)
         XCTAssertFalse(availability.canPlanStory)
-        XCTAssertTrue(availability.canGeneratePreview)
-        XCTAssertFalse(availability.canRefreshPreviewStatus)
         XCTAssertTrue(availability.canPrepareFinalRenderPlan)
         XCTAssertTrue(availability.canGenerateFinalRender)
         XCTAssertFalse(availability.canRefreshFinalRenderStatus)
         XCTAssertEqual(availability.mediaMessage, "Media")
         XCTAssertEqual(availability.storyMessage, "Story")
-        XCTAssertEqual(availability.previewMessage, "Preview")
-        XCTAssertEqual(availability.previewRefreshMessage, "Preview refresh")
         XCTAssertEqual(availability.finalRenderMessage, "Final")
     }
 
-    func testWorkflowCapabilityFactoryFormatsMediaAndRefreshCapabilities() {
+    func testWorkflowCapabilityFactoryFormatsMediaAndFinalRenderCapabilities() {
         let capability = MomentsCreateWorkflowCapabilityFactory.make(
             activeMomentId: "moment-1",
             isSignedIn: true,
@@ -41,17 +33,13 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
             isImportingMedia: false,
             mediaRemainingSlots: 2,
             storyPlanWorkflow: nil,
-            previewGenerationWorkflow: nil,
             finalRenderWorkflow: nil,
             template: .birthdayMessage,
-            previewRefreshAvailability: MomentsCreateTestFixtures.makeRefreshAvailability(canRefresh: true),
             selectedMediaCount: 0
         )
 
         XCTAssertTrue(capability.canAddMedia)
         XCTAssertFalse(capability.canPlanStory)
-        XCTAssertFalse(capability.canGeneratePreview)
-        XCTAssertTrue(capability.canRefreshPreviewStatus)
         XCTAssertFalse(capability.canPrepareFinalRenderPlan)
         XCTAssertFalse(capability.canGenerateFinalRender)
         XCTAssertFalse(capability.canRefreshFinalRenderStatus)
@@ -65,10 +53,8 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
             isImportingMedia: false,
             mediaRemainingSlots: 0,
             storyPlanWorkflow: nil,
-            previewGenerationWorkflow: nil,
             finalRenderWorkflow: nil,
             template: .birthdayMessage,
-            previewRefreshAvailability: MomentsCreateTestFixtures.makeRefreshAvailability(canRefresh: false),
             selectedMediaCount: 0
         )
         let withoutMoment = MomentsCreateWorkflowCapabilityFactory.make(
@@ -78,10 +64,8 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
             isImportingMedia: false,
             mediaRemainingSlots: 2,
             storyPlanWorkflow: nil,
-            previewGenerationWorkflow: nil,
             finalRenderWorkflow: nil,
             template: .birthdayMessage,
-            previewRefreshAvailability: MomentsCreateTestFixtures.makeRefreshAvailability(canRefresh: false),
             selectedMediaCount: 0
         )
 

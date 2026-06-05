@@ -324,9 +324,6 @@ final class MomentsCreateViewModel: ObservableObject {
         if effectiveActiveWorkspace?.canEditSetupDuringRender == false {
             return false
         }
-        if effectiveLatestPreview != nil || effectiveLatestPreviewJob != nil {
-            return false
-        }
         if effectiveFinalExport != nil || latestFinalJob != nil {
             return false
         }
