@@ -4,7 +4,7 @@ import Foundation
 @MainActor
 protocol AVAccountService {
     var isAvailable: Bool { get }
-    var currentUser: AccountAVUser? { get }
+    var providerSessionUser: AccountAVUser? { get }
 
     func restoreSession() async -> AccountAVSessionRestoreResult
     func getToken() async throws -> String?
@@ -36,11 +36,11 @@ struct DefaultAVAccountService: AVAccountService {
         return accountService.isAvailable
     }
 
-    var currentUser: AccountAVUser? {
+    var providerSessionUser: AccountAVUser? {
         if let uiTestAccountUser = Self.uiTestAccountUser {
             return uiTestAccountUser
         }
-        return accountService.currentUser
+        return accountService.providerSessionUser
     }
 
     func restoreSession() async -> AccountAVSessionRestoreResult {

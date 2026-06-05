@@ -223,7 +223,7 @@ private final class StubAVAccountService: AVAccountService {
     }
 
     var isAvailable: Bool { true }
-    var currentUser: AccountAVUser? { storedUser }
+    var providerSessionUser: AccountAVUser? { storedUser }
 
     func restoreSession() async -> AccountAVSessionRestoreResult {
         if let restoreResult {
