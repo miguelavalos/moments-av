@@ -8,25 +8,59 @@ extension MomentsRemoteClient {
         kind: String,
         workflowRunId: String,
         creditReservationId: String?,
+        baseCreditCost: Int? = nil,
+        watermarkRemovalCreditCost: Int? = nil,
+        totalCreditCost: Int? = nil,
         provider: String,
         model: String,
-        providerRequestId: String
+        providerRequestId: String,
+        targetDurationMs: Int? = nil,
+        plannedAssetCount: Int? = nil,
+        usedAssetCount: Int? = nil,
+        rejectedAssetCount: Int? = nil,
+        rendererMode: String? = nil
     ) async throws -> String {
         let client = try requireClient()
+
+        var args: [String: ConvexEncodable?] = [
+            "ownerUserId": ownerUserId as ConvexEncodable,
+            "momentId": momentId as ConvexEncodable,
+            "kind": kind as ConvexEncodable,
+            "workflowRunId": workflowRunId as ConvexEncodable,
+            "creditReservationId": creditReservationId as ConvexEncodable?,
+            "provider": provider as ConvexEncodable,
+            "model": model as ConvexEncodable,
+            "providerRequestId": providerRequestId as ConvexEncodable
+        ]
+        if let baseCreditCost {
+            args["baseCreditCost"] = Double(baseCreditCost) as ConvexEncodable
+        }
+        if let watermarkRemovalCreditCost {
+            args["watermarkRemovalCreditCost"] = Double(watermarkRemovalCreditCost) as ConvexEncodable
+        }
+        if let totalCreditCost {
+            args["totalCreditCost"] = Double(totalCreditCost) as ConvexEncodable
+        }
+        if let targetDurationMs {
+            args["targetDurationMs"] = Double(targetDurationMs) as ConvexEncodable
+        }
+        if let plannedAssetCount {
+            args["plannedAssetCount"] = Double(plannedAssetCount) as ConvexEncodable
+        }
+        if let usedAssetCount {
+            args["usedAssetCount"] = Double(usedAssetCount) as ConvexEncodable
+        }
+        if let rejectedAssetCount {
+            args["rejectedAssetCount"] = Double(rejectedAssetCount) as ConvexEncodable
+        }
+        if let rendererMode {
+            args["rendererMode"] = rendererMode as ConvexEncodable
+        }
 
         let renderJobId: String? = try await retryingMutation(
             client: client,
             name: "moments:createRenderJob",
-            args: [
-                "ownerUserId": ownerUserId,
-                "momentId": momentId,
-                "kind": kind,
-                "workflowRunId": workflowRunId,
-                "creditReservationId": creditReservationId,
-                "provider": provider,
-                "model": model,
-                "providerRequestId": providerRequestId
-            ]
+            args: args
         )
 
         guard let renderJobId else {

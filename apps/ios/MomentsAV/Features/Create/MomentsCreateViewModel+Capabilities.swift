@@ -14,7 +14,6 @@ extension MomentsCreateViewModel {
             || isGeneratingPreview
             || isRefreshingPreviewStatus
             || isGeneratingFinalRender
-            || isRefreshingFinalRenderStatus
     }
 
     var canAddMedia: Bool {
@@ -77,7 +76,6 @@ extension MomentsCreateViewModel {
             creditBalanceLoadState: creditBalanceLoadState,
             template: form.template,
             previewRefreshAvailability: previewRefreshAvailability,
-            finalRenderRefreshAvailability: finalRenderRefreshAvailability,
             selectedMediaCount: mediaSelectedCount
         )
     }

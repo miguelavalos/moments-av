@@ -9,6 +9,9 @@ struct MomentRenderJob: Identifiable, Decodable, Equatable {
     let userMessage: String?
     let canEditSetup: Bool?
     let canRetry: Bool?
+    let baseCreditCost: Double?
+    let watermarkRemovalCreditCost: Double?
+    let totalCreditCost: Double?
     let targetDurationMs: Double?
     let plannedAssetCount: Double?
     let usedAssetCount: Double?
@@ -32,6 +35,9 @@ struct MomentRenderJob: Identifiable, Decodable, Equatable {
         userMessage: String? = nil,
         canEditSetup: Bool? = nil,
         canRetry: Bool? = nil,
+        baseCreditCost: Double? = nil,
+        watermarkRemovalCreditCost: Double? = nil,
+        totalCreditCost: Double? = nil,
         targetDurationMs: Double? = nil,
         plannedAssetCount: Double? = nil,
         usedAssetCount: Double? = nil,
@@ -54,6 +60,9 @@ struct MomentRenderJob: Identifiable, Decodable, Equatable {
         self.userMessage = userMessage
         self.canEditSetup = canEditSetup
         self.canRetry = canRetry
+        self.baseCreditCost = baseCreditCost
+        self.watermarkRemovalCreditCost = watermarkRemovalCreditCost
+        self.totalCreditCost = totalCreditCost
         self.targetDurationMs = targetDurationMs
         self.plannedAssetCount = plannedAssetCount
         self.usedAssetCount = usedAssetCount
@@ -76,8 +85,11 @@ struct MomentRenderJob: Identifiable, Decodable, Equatable {
         case phase
         case progressPercent
         case userMessage
-        case canEditSetup
+        case canEditSetup = "canEditMoment"
         case canRetry
+        case baseCreditCost
+        case watermarkRemovalCreditCost
+        case totalCreditCost
         case targetDurationMs
         case plannedAssetCount
         case usedAssetCount

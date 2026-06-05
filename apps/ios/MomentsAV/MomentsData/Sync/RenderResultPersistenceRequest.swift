@@ -36,23 +36,4 @@ extension RenderResultPersistenceRequest {
         )
     }
 
-    static func finalRender(
-        _ finalRender: MomentsFinalRenderResponse,
-        template: MomentTemplate
-    ) -> RenderResultPersistenceRequest {
-        RenderResultPersistenceRequest(
-            renderKind: "final",
-            artifactKind: "final_export",
-            workflowRunId: finalRender.workflowRunId,
-            creditReservationId: finalRender.reservationId,
-            provider: finalRender.provider,
-            model: finalRender.model,
-            providerRequestId: finalRender.renderJobId,
-            r2Key: finalRender.r2Key,
-            durationSeconds: template.durationSeconds,
-            creditCost: finalRender.creditsCommitted,
-            hasWatermark: finalRender.hasWatermark,
-            status: finalRender.status
-        )
-    }
 }

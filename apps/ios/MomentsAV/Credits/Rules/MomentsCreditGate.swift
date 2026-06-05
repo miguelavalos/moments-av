@@ -51,26 +51,6 @@ enum MomentsCreditGate {
         balance.spendable >= template.creditCost
     }
 
-    static func finalRenderCreditCost(
-        template: MomentTemplate,
-        removesWatermark: Bool,
-        balance: MomentsCreditBalance
-    ) -> Int {
-        template.creditCost + (removesWatermark && !balance.watermarkFreeIncluded ? balance.watermarkRemovalCreditCost : 0)
-    }
-
-    static func canAffordFinalRender(
-        template: MomentTemplate,
-        removesWatermark: Bool,
-        balance: MomentsCreditBalance
-    ) -> Bool {
-        balance.spendable >= finalRenderCreditCost(
-            template: template,
-            removesWatermark: removesWatermark,
-            balance: balance
-        )
-    }
-
     static func canAffordAny(_ templates: [MomentTemplate], balance: MomentsCreditBalance) -> Bool {
         templates.contains { canAfford($0, balance: balance) }
     }

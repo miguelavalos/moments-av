@@ -12,30 +12,20 @@ final class InProgressMomentsWorkflow: ObservableObject {
     private let workspaceSelectionWorkflow: MomentWorkspaceSelectionWorkflow
     private let momentDeletionWorkflow: MomentDeletionWorkflow
     private let currentUserProvider: any MomentsCurrentUserProviding
-    private let authTokenProvider: any MomentsAuthTokenProviding
-    private let finalRenderResultSaver: any MomentsFinalRenderResultSaving
-    private let statusClient: MomentsRenderStatusClient
     private let logger = Logger(subsystem: "com.avalsys.momentsav", category: "in-progress")
     private var currentOwnerUserId: String?
-    private var isRefreshingFinalRenderStatus = false
     private var cancellables = Set<AnyCancellable>()
 
     init(
         momentsObserver: any InProgressMomentsListProviding,
         workspaceSelectionWorkflow: MomentWorkspaceSelectionWorkflow,
         momentDeletionWorkflow: MomentDeletionWorkflow,
-        currentUserProvider: any MomentsCurrentUserProviding,
-        authTokenProvider: any MomentsAuthTokenProviding,
-        finalRenderResultSaver: any MomentsFinalRenderResultSaving,
-        statusClient: MomentsRenderStatusClient
+        currentUserProvider: any MomentsCurrentUserProviding
     ) {
         self.momentsObserver = momentsObserver
         self.workspaceSelectionWorkflow = workspaceSelectionWorkflow
         self.momentDeletionWorkflow = momentDeletionWorkflow
         self.currentUserProvider = currentUserProvider
-        self.authTokenProvider = authTokenProvider
-        self.finalRenderResultSaver = finalRenderResultSaver
-        self.statusClient = statusClient
 
         momentsObserver.momentsPublisher
             .receive(on: DispatchQueue.main)
@@ -96,60 +86,7 @@ final class InProgressMomentsWorkflow: ObservableObject {
     }
 
     func refreshActiveFinalRenderStatusIfNeeded() async {
-        guard !isRefreshingFinalRenderStatus,
-              finalRenderResultSaver.isConfigured,
-              statusClient.isConfigured,
-              let workspace = workspaceSelectionWorkflow.activeWorkspace,
-              !workspace.hasAvailableArtifact(kind: "final_export"),
-              let activeFinalRenderJob = workspace.activeFinalRenderJob else {
-            return
-        }
-        guard let ownerUserId = currentUserProvider.currentUserId else {
-            errorMessage = L10n.string("workflow.final.refreshSignIn")
-            return
-        }
-        guard let bearerToken = try? await authTokenProvider.currentBearerToken() else {
-            errorMessage = L10n.string("workflow.final.refreshSignIn")
-            return
-        }
-
-        isRefreshingFinalRenderStatus = true
-        defer { isRefreshingFinalRenderStatus = false }
-
-        do {
-            let refresh = try RenderJobStatusRefresh.make(
-                momentId: workspace.moment.id,
-                job: activeFinalRenderJob,
-                missingMomentMessage: refreshMessages.missingMoment,
-                missingJobMessage: refreshMessages.missingJob,
-                missingProviderRequestMessage: refreshMessages.missingProviderRequest
-            )
-            let status = try await refresh.fetchStatus(
-                bearerToken: bearerToken,
-                statusClient: statusClient,
-                usesProviderReconciliation: true
-            )
-            let didAttachFinalArtifact = try await refresh.saveCompletedFinalArtifactIfNeeded(
-                ownerUserId: ownerUserId,
-                status: status,
-                workspace: workspaceSelectionWorkflow.activeWorkspace,
-                statusUpdater: finalRenderResultSaver
-            )
-            do {
-                try await refresh.saveStatus(
-                    ownerUserId: ownerUserId,
-                    status: status,
-                    statusUpdater: finalRenderResultSaver
-                )
-            } catch {
-                guard didAttachFinalArtifact else { throw error }
-                logger.error("Final render status update failed after artifact attach momentId=\(refresh.momentId, privacy: .public) renderJobId=\(refresh.job.id, privacy: .public) reason=\(String(describing: error), privacy: .public)")
-            }
-            workspaceSelectionWorkflow.observeMomentWorkspace(ownerUserId: ownerUserId, momentId: refresh.momentId)
-            errorMessage = nil
-        } catch {
-            errorMessage = MomentsRecoveryCopy.renderRefreshFailure()
-        }
+        logger.debug("Final render status refresh is backend-owned; waiting for Convex realtime updates.")
     }
 
     func deleteMoment(_ moment: InProgressMoment) async -> Bool {
@@ -182,15 +119,6 @@ final class InProgressMomentsWorkflow: ObservableObject {
         workspaceSelectionWorkflow.clearMomentWorkspace()
     }
 
-    private var refreshMessages: RenderJobStatusRefreshMessages {
-        RenderJobStatusRefreshMessages(
-            signIn: L10n.string("workflow.final.refreshSignIn"),
-            missingMoment: L10n.string("workflow.final.refreshMissingMoment"),
-            missingJob: L10n.string("workflow.final.refreshMissingJob"),
-            missingProviderRequest: MomentsRecoveryCopy.finalRenderStatusMissing(),
-            success: L10n.string("workflow.final.refreshSuccess")
-        )
-    }
 }
 
 extension InProgressMomentsWorkflow: InProgressMomentsViewing {

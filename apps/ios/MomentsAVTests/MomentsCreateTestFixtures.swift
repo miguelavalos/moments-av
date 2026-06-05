@@ -111,6 +111,9 @@ enum MomentsCreateTestFixtures {
         progressPercent: Double? = nil,
         userMessage: String? = nil,
         canEditSetup: Bool? = nil,
+        totalCreditCost: Double? = nil,
+        plannedAssetCount: Double? = nil,
+        usedAssetCount: Double? = nil,
         errorMessage: String? = nil
     ) -> MomentRenderJob {
         MomentRenderJob(
@@ -121,6 +124,12 @@ enum MomentsCreateTestFixtures {
             progressPercent: progressPercent,
             userMessage: userMessage,
             canEditSetup: canEditSetup,
+            totalCreditCost: totalCreditCost,
+            targetDurationMs: nil,
+            plannedAssetCount: plannedAssetCount,
+            usedAssetCount: usedAssetCount,
+            rejectedAssetCount: nil,
+            rendererMode: nil,
             workflowRunId: "workflow-\(id)",
             provider: "mock-provider",
             model: "mock-model",
@@ -134,7 +143,12 @@ enum MomentsCreateTestFixtures {
 
     static func makeRenderPlan(
         momentId: String = "moment-1",
-        canCreateVideo: Bool = true
+        canCreateVideo: Bool = true,
+        totalCreditCost: Int = 2,
+        minimumDurationMs: Int = 16_000,
+        targetDurationMs: Int = 30_000,
+        plannedAssetCount: Int = 4,
+        usedAssetCount: Int = 3
     ) -> MomentsRenderPlanResponse {
         MomentsRenderPlanResponse(
             appId: "momentsav",
@@ -142,14 +156,14 @@ enum MomentsCreateTestFixtures {
             planId: "plan-1",
             plan: MomentsRenderPlan(
                 schemaVersion: 1,
-                minimumDurationMs: 16_000,
-                targetDurationMs: 30_000,
-                creditCost: 2,
-                totalCreditCost: 2,
+                minimumDurationMs: minimumDurationMs,
+                targetDurationMs: targetDurationMs,
+                creditCost: totalCreditCost,
+                totalCreditCost: totalCreditCost,
                 secondsPerCredit: 15,
-                plannedAssetCount: 4,
-                usedAssetCount: 3,
-                rejectedAssetCount: 1,
+                plannedAssetCount: plannedAssetCount,
+                usedAssetCount: usedAssetCount,
+                rejectedAssetCount: max(0, plannedAssetCount - usedAssetCount),
                 rendererMode: "image_to_video",
                 renderOptionId: "standard_moment",
                 renderOptionTitle: "Standard Moment",

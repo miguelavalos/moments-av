@@ -38,6 +38,67 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         XCTAssertTrue(presentation.isFinalRenderEditingLocked)
     }
 
+    func testLockedFinalRenderMediaCountUsesJobCountAfterLocalSelectionReloadsEmpty() {
+        let activeFinalJob = MomentsCreateTestFixtures.makeRenderJob(
+            id: "final-job",
+            kind: "final",
+            status: "running",
+            canEditSetup: false,
+            totalCreditCost: 1,
+            plannedAssetCount: 6,
+            usedAssetCount: 6
+        )
+        let presentation = MomentsCreateWorkflowPresentation(
+            activeMomentId: "moment-1",
+            hasMomentWorkspace: true,
+            template: .birthdayMessage,
+            balance: .empty,
+            mediaSummary: MomentsCreateMediaSummary(),
+            storySummary: MomentsCreateStorySummary(),
+            previewSummary: MomentsCreatePreviewSummary(),
+            finalRenderSummary: MomentsCreateFinalRenderSummary(latestFinalJob: activeFinalJob)
+        )
+
+        XCTAssertTrue(presentation.isFinalRenderEditingLocked)
+        XCTAssertEqual(presentation.lockedFinalRenderMediaCountTitle, "6 items")
+    }
+
+    func testLockedFinalRenderCostUsesConfirmedPlanCost() {
+        let activeFinalJob = MomentsCreateTestFixtures.makeRenderJob(
+            id: "final-job",
+            kind: "final",
+            status: "running",
+            canEditSetup: false,
+            plannedAssetCount: 6,
+            usedAssetCount: 6
+        )
+        let oneCreditPlan = MomentsCreateTestFixtures.makeRenderPlan(
+            totalCreditCost: 1,
+            minimumDurationMs: 8_000,
+            targetDurationMs: 15_000,
+            plannedAssetCount: 6,
+            usedAssetCount: 6
+        )
+        let presentation = MomentsCreateWorkflowPresentation(
+            activeMomentId: "moment-1",
+            hasMomentWorkspace: true,
+            template: .birthdayMessage,
+            balance: .empty,
+            mediaSummary: MomentsCreateMediaSummary(),
+            storySummary: MomentsCreateStorySummary(),
+            previewSummary: MomentsCreatePreviewSummary(),
+            finalRenderSummary: MomentsCreateFinalRenderSummary(
+                creditCost: 2,
+                renderPlan: oneCreditPlan,
+                latestFinalJob: activeFinalJob
+            )
+        )
+
+        XCTAssertTrue(presentation.isFinalRenderEditingLocked)
+        XCTAssertEqual(presentation.finalRenderSummary.effectiveCreditCost, 1)
+        XCTAssertEqual(presentation.lockedFinalRenderCreditCost, 1)
+    }
+
     func testWorkflowPresentationAllowsEditingWhenFinalRenderAllowsSetupChanges() {
         let editableFinalJob = MomentsCreateTestFixtures.makeRenderJob(
             id: "final-job",
@@ -113,8 +174,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
             storyAvailabilityMessage: "Plan story.",
             previewAvailabilityMessage: "Generate preview.",
             previewRefreshAvailabilityMessage: "Refresh preview.",
-            finalRenderAvailabilityMessage: "Generate final.",
-            finalRenderRefreshAvailabilityMessage: "Refresh final."
+            finalRenderAvailabilityMessage: "Generate final."
         )
 
         XCTAssertTrue(presentation.showsWorkflowCards)
@@ -136,7 +196,6 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         XCTAssertEqual(presentation.previewAvailabilityMessage, "Generate preview.")
         XCTAssertEqual(presentation.previewRefreshAvailabilityMessage, "Refresh preview.")
         XCTAssertEqual(presentation.finalRenderAvailabilityMessage, "Generate final.")
-        XCTAssertEqual(presentation.finalRenderRefreshAvailabilityMessage, "Refresh final.")
     }
 
     func testWorkflowPresentationBuilderAppliesAvailabilityState() {
@@ -168,8 +227,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
                 storyMessage: "Plan story.",
                 previewMessage: nil,
                 previewRefreshMessage: "Refresh preview.",
-                finalRenderMessage: nil,
-                finalRenderRefreshMessage: "Refresh final."
+                finalRenderMessage: nil
             )
         )
 
@@ -183,7 +241,6 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         XCTAssertEqual(presentation.occasionTitle, "Birthday for Ava")
         XCTAssertEqual(presentation.storyAvailabilityMessage, "Plan story.")
         XCTAssertEqual(presentation.previewRefreshAvailabilityMessage, "Refresh preview.")
-        XCTAssertEqual(presentation.finalRenderRefreshAvailabilityMessage, "Refresh final.")
     }
 
     func testWorkflowPresentationCarriesUnsavedLocalMomentContainmentState() {

@@ -13,7 +13,6 @@ struct MomentsCreateWorkflowAvailability: Equatable {
     var previewMessage: String?
     var previewRefreshMessage: String?
     var finalRenderMessage: String?
-    var finalRenderRefreshMessage: String?
 
     static func make(
         canAddMedia: Bool,
@@ -27,8 +26,7 @@ struct MomentsCreateWorkflowAvailability: Equatable {
         storyMessage: String?,
         previewMessage: String?,
         previewRefreshMessage: String?,
-        finalRenderMessage: String?,
-        finalRenderRefreshMessage: String?
+        finalRenderMessage: String?
     ) -> MomentsCreateWorkflowAvailability {
         MomentsCreateWorkflowAvailability(
             canAddMedia: canAddMedia,
@@ -42,8 +40,7 @@ struct MomentsCreateWorkflowAvailability: Equatable {
             storyMessage: storyMessage,
             previewMessage: previewMessage,
             previewRefreshMessage: previewRefreshMessage,
-            finalRenderMessage: finalRenderMessage,
-            finalRenderRefreshMessage: finalRenderRefreshMessage
+            finalRenderMessage: finalRenderMessage
         )
     }
 }

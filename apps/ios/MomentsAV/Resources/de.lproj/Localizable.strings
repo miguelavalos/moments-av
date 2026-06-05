@@ -633,10 +633,10 @@
 "create.final.reviewCost" = "Credits prüfen";
 "create.final.confirmCredits" = "Credits bestätigen · %@";
 "create.final.createWithCost" = "Video erstellen · %@";
-"create.final.summaryTitle" = "Prüfe Avi's Cut und die Kosten, bevor die Videoerstellung startet.";
+"create.final.summaryTitle" = "Prüfe die Kosten, bevor das finale Video erstellt wird.";
 "create.final.creditCost" = "%@ benötigt";
-"create.final.creditPolicy.preflight" = "Avi prüft Medien und bestätigt Credits, bevor etwas reserviert wird.";
-"create.final.creditPolicy.create" = "Der Start des finalen Videos reserviert %@. Credits werden erst finalisiert, wenn der Export geliefert wurde.";
+"create.final.creditPolicy.preflight" = "Avi prüft Medien und Credits, bevor das finale Video erstellt wird.";
+"create.final.creditPolicy.create" = "Credits werden nur für abgeschlossene finale Videos berechnet. Dieses Video kostet %@.";
 "create.final.blocker.providerUnavailable" = "Diese Videooption ist noch nicht verfügbar.";
 "create.final.blocker.insufficientCredits" = "Du brauchst mehr Credits, um dieses finale Video zu erstellen.";
 "create.final.blocker.noUsableMedia" = "Avi benötigt verwendbare Medien, bevor das finale Video erstellt wird.";
@@ -765,12 +765,12 @@
 "create.final.createVideoTitle" = "Video erstellen";
 "create.final.reviewCostTitle" = "Credits prüfen";
 "create.final.readyToCreateTitle" = "Bereit zum Erstellen";
-"create.final.createVideoDetail" = "Avi schneidet deine echten Medien zu einem %@ Video. Du bestätigst Credits, bevor das finale Rendering startet.";
+"create.final.createVideoDetail" = "Avi schneidet deine echten Medien zu einem %@ Video. Du siehst die Kosten, bevor das finale Video erstellt wird.";
 "create.primary.finalReady" = "Finales Video bereit.";
 "create.primary.videoCreating" = "Avi erstellt das Video. Du kannst den Fortschritt hier prüfen.";
 "create.primary.previewReady" = "Avi's Cut ready. Check it before the final video.";
 "create.primary.createVideoPreflight" = "Avi prüft Medien und bestätigt Credits, bevor es losgeht.";
-"create.primary.reviewCostPreflight" = "Avi lädt die Medien hoch und zeigt die Credit-Kosten, bevor etwas reserviert wird.";
+"create.primary.reviewCostPreflight" = "Avi lädt die Medien hoch und zeigt die Kosten, bevor das finale Video erstellt wird.";
 "create.primary.reviewBeforeVideo" = "Prüfe Avi's Cut, bevor du das finale Video erstellst.";
 "create.primary.continuePreflight" = "Du siehst die Kosten, bevor das Video erstellt wird.";
 "create.aviCut.summary.aviTitle" = "Avi hat gewählt";
@@ -959,7 +959,7 @@
 "create.workflowContent.assetUsageItems" = "%d von %d Elementen";
 "create.workflowContent.beforeVideo" = "Vor dem Video";
 "create.workflowContent.modePending" = "Mode pending";
-"create.workflowContent.renderPlanFallback" = "Avi prüft Medien, Dauer und Qualität, bevor Credits reserviert werden.";
+"create.workflowContent.renderPlanFallback" = "Avi prüft Medien, Dauer und Qualität, bevor das finale Video erstellt wird.";
 "create.workflowContent.storyReviewTitle" = "Avi's Cut";
 "create.aviCut.selectedSetup" = "Auswahl und Richtung";
 "create.aviCut.optionalPreview" = "Optionale Avi-Preview";

@@ -425,70 +425,71 @@ final class MomentsAPIClientTests: XCTestCase {
         }
     }
 
-    func testFinalRenderReservationUsesSharedAccountAPIBaseURL() async throws {
-        let session = makeMockSession(
-            json: """
-            {
-              "id": "reservation-1",
-              "appId": "momentsav",
-              "momentId": "moment-1",
-              "amount": 2,
-              "status": "reserved",
-              "expiresAt": "2026-06-16T16:00:00Z",
-              "createdAt": "2026-05-16T16:00:00Z",
-              "updatedAt": "2026-05-16T16:00:00Z"
-            }
-            """
-        )
-        let client = MomentsFinalRenderClient(baseURLString: accountAPIBaseURL, session: session)
-
-        let reservation = try await client.reserveFinalRenderCredits(
-            momentId: "moment-1",
-            bearerToken: "token-1",
-            template: .birthdayMessage,
-            removesWatermark: false,
-            balance: MomentsCreditBalance(proMonthly: 0, promotional: 2, purchased: 0),
-            operationId: "operation-1"
-        )
-
-        XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.url?.absoluteString, "\(accountAPIBaseURL)/v1/apps/momentsav/credits/reservations")
-        XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.httpMethod, "POST")
-        XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.value(forHTTPHeaderField: "Authorization"), "Bearer token-1")
-        XCTAssertEqual(reservation.id, "reservation-1")
-        XCTAssertEqual(reservation.status, "reserved")
-    }
-
-    func testFinalRenderStartWorkflowUsesAsyncEndpoint() async throws {
+    func testPrepareRenderPlanSendsContractSafePayload() async throws {
         let session = makeMockSession(
             json: """
             {
               "appId": "momentsav",
               "momentId": "moment-1",
-              "renderJobId": "render-1",
-              "workflowRunId": "workflow-1",
-              "status": "running",
-              "startedAt": "2026-05-16T16:00:00Z"
+              "planId": "plan-1",
+              "canCreateVideo": true,
+              "createVideoBlockers": [],
+              "generatedAt": "2026-05-16T16:00:00Z",
+              "plan": {
+                "schemaVersion": 1,
+                "secondsPerCredit": 15,
+                "renderOptionId": "short_moment",
+                "renderOptionTitle": "Short Moment",
+                "creationMode": "quick",
+                "look": "real",
+                "theme": "travel",
+                "mood": "cinematic",
+                "duration": "auto",
+                "mediaUse": "aviPick",
+                "creditCost": 1,
+                "totalCreditCost": 1,
+                "targetDurationMs": 15000,
+                "minimumDurationMs": 8000,
+                "fps": 24,
+                "rendererMode": "guided_generative",
+                "plannedAssetCount": 6,
+                "usedAssetCount": 6,
+                "rejectedAssetCount": 0,
+                "qualityWarnings": [],
+                "userMessage": "Ready."
+              }
             }
             """
         )
         let client = MomentsFinalRenderClient(baseURLString: accountAPIBaseURL, session: session)
+        var form = MomentSetupForm(template: .partyRecap)
+        form.theme = .travel
+        form.look = .real
+        form.tone = .cinematic
+        form.duration = .auto
+        form.mediaUse = .aviPick
+        form.occasion = "   "
+        form.details = ""
 
-        let workflow = try await client.startFinalRenderWorkflow(
+        _ = try await client.prepareRenderPlan(
             momentId: "moment-1",
             bearerToken: "token-1",
-            template: .birthdayMessage,
+            template: .partyRecap,
             creationStyle: nil,
-            form: MomentSetupForm(template: .birthdayMessage),
+            form: form,
             removesWatermark: false,
-            reservationId: "reservation-1",
-            operationId: "operation-1"
+            selectedSourceLocalIdentifiers: [" local-1 ", "", "local-2"]
         )
 
-        XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.url?.absoluteString, "\(accountAPIBaseURL)/v1/apps/momentsav/workflows/start")
+        XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.url?.absoluteString, "\(accountAPIBaseURL)/v1/apps/momentsav/renders/plan")
         XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.httpMethod, "POST")
-        XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.value(forHTTPHeaderField: "Authorization"), "Bearer token-1")
-        XCTAssertEqual(workflow.renderJobId, "render-1")
-        XCTAssertEqual(workflow.status, "running")
+        let body = try XCTUnwrap(MomentsURLProtocolMock.lastRequestBody)
+        let json = try XCTUnwrap(JSONSerialization.jsonObject(with: body) as? [String: Any])
+        XCTAssertEqual(json["appId"] as? String, "momentsav")
+        XCTAssertNil(json["occasion"])
+        XCTAssertNil(json["details"])
+        XCTAssertEqual(json["selectedSourceLocalIdentifiers"] as? [String], ["local-1", "local-2"])
+        XCTAssertNil(json["creditCost"])
     }
 
     func testConfirmFinalRenderUsesBackendOwnedEndpoint() async throws {
@@ -576,37 +577,6 @@ final class MomentsAPIClientTests: XCTestCase {
         XCTAssertEqual(confirmation.renderPlan.plan.totalCreditCost, 2)
     }
 
-    func testFinalRenderSurfacesProviderFailureMessage() async throws {
-        let session = makeMockSession(
-            statusCode: 500,
-            json: """
-            {
-              "error": {
-                "code": "moments_final_provider_failed",
-                "message": "Final render failed before a usable export was delivered."
-              }
-            }
-            """
-        )
-        let client = MomentsFinalRenderClient(baseURLString: accountAPIBaseURL, session: session)
-
-        do {
-            _ = try await client.startFinalRenderWorkflow(
-                momentId: "moment-1",
-                bearerToken: "token-1",
-                template: .birthdayMessage,
-                creationStyle: nil,
-                form: MomentSetupForm(template: .birthdayMessage),
-                removesWatermark: false,
-                reservationId: "reservation-1",
-                operationId: "operation-1"
-            )
-            XCTFail("Expected API error")
-        } catch {
-            XCTAssertEqual(error.localizedDescription, "Final render failed before a usable export was delivered.")
-        }
-    }
-
     func testRenderStatusUsesSharedAccountAPIBaseURL() async throws {
         let session = makeMockSession(
             json: """
@@ -636,37 +606,6 @@ final class MomentsAPIClientTests: XCTestCase {
         XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.value(forHTTPHeaderField: "Authorization"), "Bearer token-1")
         XCTAssertEqual(status.status, "running")
         XCTAssertEqual(status.progressPercent, 25)
-    }
-
-    func testRenderStatusReconcileUsesAsyncFinalEndpoint() async throws {
-        let session = makeMockSession(
-            json: """
-            {
-              "appId": "momentsav",
-              "momentId": "moment-1",
-              "renderJobId": "render-1",
-              "workflowRunId": "workflow-1",
-              "renderKind": "final",
-              "status": "running",
-              "progressPercent": 45,
-              "artifactId": null,
-              "artifactKind": null,
-              "artifactStatus": null,
-              "errorCode": null,
-              "errorMessage": null,
-              "updatedAt": "2026-05-16T16:00:00Z"
-            }
-            """
-        )
-        let client = MomentsRenderStatusClient(baseURLString: accountAPIBaseURL, session: session)
-
-        let status = try await client.reconcileFinalRender(renderJobId: "render-1", bearerToken: "token-1")
-
-        XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.url?.absoluteString, "\(accountAPIBaseURL)/v1/apps/momentsav/renders/render-1/reconcile")
-        XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.httpMethod, "POST")
-        XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.value(forHTTPHeaderField: "Authorization"), "Bearer token-1")
-        XCTAssertEqual(status.renderKind, "final")
-        XCTAssertEqual(status.status, "running")
     }
 
     func testRenderStatusSurfacesAPIErrorMessage() async throws {
@@ -779,6 +718,7 @@ private final class MomentsURLProtocolMock: URLProtocol {
     nonisolated(unsafe) static var statusCode = 200
     nonisolated(unsafe) static var responseData = Data()
     nonisolated(unsafe) static var lastRequest: URLRequest?
+    nonisolated(unsafe) static var lastRequestBody: Data?
     nonisolated(unsafe) static var requestCount = 0
     nonisolated(unsafe) static var failuresBeforeSuccess = 0
 
@@ -792,6 +732,22 @@ private final class MomentsURLProtocolMock: URLProtocol {
 
     override func startLoading() {
         Self.lastRequest = request
+        Self.lastRequestBody = request.httpBody
+        if Self.lastRequestBody == nil,
+           let stream = request.httpBodyStream {
+            stream.open()
+            defer { stream.close() }
+            var data = Data()
+            let bufferSize = 1024
+            let buffer = UnsafeMutablePointer<UInt8>.allocate(capacity: bufferSize)
+            defer { buffer.deallocate() }
+            while stream.hasBytesAvailable {
+                let read = stream.read(buffer, maxLength: bufferSize)
+                if read <= 0 { break }
+                data.append(buffer, count: read)
+            }
+            Self.lastRequestBody = data
+        }
         Self.requestCount += 1
         if Self.failuresBeforeSuccess > 0 {
             Self.failuresBeforeSuccess -= 1
@@ -815,6 +771,7 @@ private final class MomentsURLProtocolMock: URLProtocol {
         statusCode = 200
         responseData = Data()
         lastRequest = nil
+        lastRequestBody = nil
         requestCount = 0
         failuresBeforeSuccess = 0
     }

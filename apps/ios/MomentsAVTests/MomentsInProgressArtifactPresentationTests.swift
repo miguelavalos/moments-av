@@ -114,7 +114,7 @@ final class MomentsInProgressArtifactPresentationTests: XCTestCase {
         XCTAssertEqual(presentations[1].modelTitle, "Configured")
         XCTAssertEqual(
             presentations[0].errorMessage,
-            "Video creation hit a problem. Any reserved credits will be released if the video was not completed. Please try again or contact support."
+            "Video creation hit a problem. If the final video was not completed, credits will not be charged. Please try again or contact support."
         )
     }
 

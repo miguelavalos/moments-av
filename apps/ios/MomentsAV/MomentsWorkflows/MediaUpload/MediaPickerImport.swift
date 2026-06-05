@@ -5,6 +5,7 @@ import ImageIO
 import Photos
 import PhotosUI
 import SwiftUI
+import UIKit
 import UniformTypeIdentifiers
 
 enum MediaPickerImport {
@@ -185,21 +186,21 @@ enum MediaPickerImport {
             throw MomentsUploadError.unreadableSelection
         }
 
-        let contentType = item.supportedContentTypes.first?.preferredMIMEType ?? "application/octet-stream"
         let kind = item.supportedContentTypes.contains(where: { $0.conforms(to: .movie) }) ? "video" : "photo"
-        let digest = SHA256.hash(data: data)
+        let originalFilename = originalFilename(for: photoAsset(for: item), fallbackKind: kind)
+        let normalized = try normalizedMediaData(data: data, filename: originalFilename, kind: kind)
+        let digest = SHA256.hash(data: normalized.data)
             .map { String(format: "%02x", $0) }
             .joined()
 
         let asset = photoAsset(for: item)
         let capturedAt = capturedDate(fromImageData: data) ?? asset?.creationDate
-        let pixelSize = imagePixelSize(fromImageData: data)
-        let filename = originalFilename(for: asset, fallbackKind: kind)
+        let pixelSize = imagePixelSize(fromImageData: normalized.data) ?? imagePixelSize(fromImageData: data)
         let analysis = await analyzer.analyze(
             AVLocalMediaInput(
-                data: data,
-                filename: filename,
-                contentType: contentType,
+                data: normalized.data,
+                filename: normalized.filename,
+                contentType: normalized.contentType,
                 kind: kind == "video" ? .video : .photo,
                 capturedAt: capturedAt,
                 pixelWidth: pixelSize?.width,
@@ -210,12 +211,12 @@ enum MediaPickerImport {
         return MomentsSelectedMedia(
             id: UUID(),
             sourceLocalIdentifier: item.itemIdentifier ?? UUID().uuidString,
-            originalFilename: filename,
-            contentType: contentType,
+            originalFilename: normalized.filename,
+            contentType: normalized.contentType,
             kind: kind,
-            byteSize: data.count,
+            byteSize: normalized.data.count,
             sha256: digest,
-            data: data,
+            data: normalized.data,
             capturedAt: capturedAt,
             analysis: analysis,
             sortOrder: sortOrder,
@@ -306,17 +307,17 @@ enum MediaPickerImport {
     }
 
     private static func loadPhotoAsset(_ asset: PHAsset, sortOrder: Int) async throws -> MomentsSelectedMedia {
-        let (data, filename) = try await imageData(for: asset)
-        let contentType = contentType(for: filename) ?? "image/jpeg"
-        let digest = SHA256.hash(data: data)
+        let (sourceData, sourceFilename) = try await imageData(for: asset)
+        let normalized = try normalizedPhotoData(data: sourceData, filename: sourceFilename)
+        let digest = SHA256.hash(data: normalized.data)
             .map { String(format: "%02x", $0) }
             .joined()
-        let capturedAt = capturedDate(fromImageData: data) ?? asset.creationDate
+        let capturedAt = capturedDate(fromImageData: sourceData) ?? asset.creationDate
         let analysis = await analyzer.analyze(
             AVLocalMediaInput(
-                data: data,
-                filename: filename,
-                contentType: contentType,
+                data: normalized.data,
+                filename: normalized.filename,
+                contentType: normalized.contentType,
                 kind: .photo,
                 capturedAt: capturedAt,
                 pixelWidth: asset.pixelWidth,
@@ -327,12 +328,12 @@ enum MediaPickerImport {
         return MomentsSelectedMedia(
             id: UUID(),
             sourceLocalIdentifier: asset.localIdentifier,
-            originalFilename: filename,
-            contentType: contentType,
+            originalFilename: normalized.filename,
+            contentType: normalized.contentType,
             kind: "photo",
-            byteSize: data.count,
+            byteSize: normalized.data.count,
             sha256: digest,
-            data: data,
+            data: normalized.data,
             capturedAt: capturedAt,
             analysis: analysis,
             sortOrder: sortOrder,
@@ -442,6 +443,34 @@ enum MediaPickerImport {
         let ext = (filename as NSString).pathExtension
         guard !ext.isEmpty else { return nil }
         return UTType(filenameExtension: ext)?.preferredMIMEType
+    }
+
+    private static func normalizedMediaData(
+        data: Data,
+        filename: String,
+        kind: String
+    ) throws -> (data: Data, filename: String, contentType: String) {
+        if kind == "photo" {
+            return try normalizedPhotoData(data: data, filename: filename)
+        }
+        return (data, filename, contentType(for: filename) ?? "video/quicktime")
+    }
+
+    private static func normalizedPhotoData(
+        data: Data,
+        filename: String
+    ) throws -> (data: Data, filename: String, contentType: String) {
+        guard let image = UIImage(data: data),
+              let jpegData = image.jpegData(compressionQuality: 0.92) else {
+            throw MomentsUploadError.unreadableSelection
+        }
+        return (jpegData, jpegFilename(from: filename), "image/jpeg")
+    }
+
+    private static func jpegFilename(from filename: String) -> String {
+        let base = (filename as NSString).deletingPathExtension
+        let safeBase = base.isEmpty ? UUID().uuidString : base
+        return "\(safeBase).jpg"
     }
 
     private static func capturedDate(fromImageData data: Data) -> Date? {

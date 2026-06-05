@@ -137,17 +137,13 @@ extension MomentsCreateViewModel {
                 workflow.$renderPlan,
                 workflow.$pendingGalleryVideo
             ),
-            Publishers.CombineLatest(
-                workflow.$isGenerating,
-                workflow.$isRefreshingStatus
-            ),
+            workflow.$isGenerating,
             workflow.$statusMessage,
             workflow.$canRetryFinalVideoDownload
         )
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] content, flags, statusMessage, canRetryFinalVideoDownload in
+            .sink { [weak self] content, isGenerating, statusMessage, canRetryFinalVideoDownload in
                 let (finalExport, latestFinalJob, renderPlan, pendingGalleryVideo) = content
-                let (isGenerating, isRefreshingStatus) = flags
                 self?.applyFinalRenderState(
                     MomentsCreateFinalRenderState(
                         finalExport: finalExport,
@@ -157,7 +153,7 @@ extension MomentsCreateViewModel {
                         canRetryFinalVideoDownload: canRetryFinalVideoDownload,
                         statusMessage: statusMessage,
                         isGenerating: isGenerating,
-                        isRefreshingStatus: isRefreshingStatus
+                        isRefreshingStatus: false
                     )
                 )
             }

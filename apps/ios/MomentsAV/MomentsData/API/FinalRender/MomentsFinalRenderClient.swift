@@ -54,102 +54,6 @@ struct MomentsFinalRenderClient {
         URL(string: baseURLString.trimmingCharacters(in: .whitespacesAndNewlines)) != nil
     }
 
-    func generateFinalRender(
-        momentId: String,
-        bearerToken: String,
-        template: MomentTemplate,
-        creationStyle: MomentCreationStyleID?,
-        form: MomentSetupForm
-    ) async throws -> MomentsFinalRenderResponse {
-        guard let baseURL = URL(string: baseURLString.trimmingCharacters(in: .whitespacesAndNewlines)) else {
-            throw MomentsFinalRenderError.apiNotConfigured
-        }
-
-        let endpoint = baseURL
-            .appendingPathComponent("v1")
-            .appendingPathComponent("apps")
-            .appendingPathComponent("momentsav")
-            .appendingPathComponent("final-renders")
-            .appendingPathComponent("generate")
-        let body = MomentsFinalRenderRequest(
-            momentId: momentId,
-            creationMode: form.creationMode.rawValue,
-            look: form.look.rawValue,
-            theme: form.theme.rawValue,
-            mood: form.tone.rawValue,
-            duration: form.duration.rawValue,
-            mediaUse: form.mediaUse.rawValue,
-            occasion: form.occasion,
-            details: form.details,
-            creditCost: template.creditCost,
-            removeWatermark: false,
-            idempotencyKey: "final:\(momentId)"
-        )
-
-        var request = URLRequest(url: endpoint)
-        request.httpMethod = "POST"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.setValue("Bearer \(bearerToken)", forHTTPHeaderField: "Authorization")
-        request.httpBody = try JSONEncoder().encode(body)
-
-        let (data, response) = try await retryPolicy.run {
-            try await session.data(for: request)
-        }
-        guard let httpResponse = response as? HTTPURLResponse, 200..<300 ~= httpResponse.statusCode else {
-            throw MomentsAPIError.decode(
-                from: data,
-                fallbackCode: "moments_final_render_failed",
-                fallbackMessage: MomentsFinalRenderError.generationFailed.localizedDescription
-            )
-        }
-
-        return try JSONDecoder().decode(MomentsFinalRenderResponse.self, from: data)
-    }
-
-    func reserveFinalRenderCredits(
-        momentId: String,
-        bearerToken: String,
-        template: MomentTemplate,
-        removesWatermark: Bool,
-        balance: MomentsCreditBalance,
-        operationId: String
-    ) async throws -> MomentsCreditReservationResponse {
-        guard let baseURL = URL(string: baseURLString.trimmingCharacters(in: .whitespacesAndNewlines)) else {
-            throw MomentsFinalRenderError.apiNotConfigured
-        }
-
-        let endpoint = baseURL
-            .appendingPathComponent("v1")
-            .appendingPathComponent("apps")
-            .appendingPathComponent("momentsav")
-            .appendingPathComponent("credits")
-            .appendingPathComponent("reservations")
-        let body = MomentsCreditReservationRequest(
-            momentId: momentId,
-            amount: finalRenderCreditCost(template: template, removesWatermark: removesWatermark, balance: balance),
-            idempotencyKey: "final-reservation:\(momentId):\(template.id.rawValue):\(removesWatermark ? "clean" : "watermarked"):\(operationId)"
-        )
-
-        var request = URLRequest(url: endpoint)
-        request.httpMethod = "POST"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.setValue("Bearer \(bearerToken)", forHTTPHeaderField: "Authorization")
-        request.httpBody = try JSONEncoder().encode(body)
-
-        let (data, response) = try await retryPolicy.run {
-            try await session.data(for: request)
-        }
-        guard let httpResponse = response as? HTTPURLResponse, 200..<300 ~= httpResponse.statusCode else {
-            throw MomentsAPIError.decode(
-                from: data,
-                fallbackCode: "moments_credit_reservation_failed",
-                fallbackMessage: MomentsFinalRenderError.reservationFailed.localizedDescription
-            )
-        }
-
-        return try JSONDecoder().decode(MomentsCreditReservationResponse.self, from: data)
-    }
-
     func prepareRenderPlan(
         momentId: String,
         bearerToken: String,
@@ -177,10 +81,10 @@ struct MomentsFinalRenderClient {
             mood: form.tone.rawValue,
             duration: form.duration.rawValue,
             mediaUse: form.mediaUse.rawValue,
-            selectedSourceLocalIdentifiers: selectedSourceLocalIdentifiers.isEmpty ? nil : selectedSourceLocalIdentifiers,
-            occasion: form.occasion,
-            details: form.details,
-            creditCost: template.creditCost,
+            selectedSourceLocalIdentifiers: Self.nonBlankIdentifiers(selectedSourceLocalIdentifiers),
+            occasion: Self.nonBlankOptional(form.occasion),
+            details: Self.nonBlankOptional(form.details),
+            creditCost: nil,
             removeWatermark: removesWatermark,
             renderOptionId: nil
         )
@@ -236,10 +140,10 @@ struct MomentsFinalRenderClient {
             mood: form.tone.rawValue,
             duration: form.duration.rawValue,
             mediaUse: form.mediaUse.rawValue,
-            selectedSourceLocalIdentifiers: selectedSourceLocalIdentifiers.isEmpty ? nil : selectedSourceLocalIdentifiers,
-            occasion: form.occasion,
-            details: form.details,
-            creditCost: template.creditCost,
+            selectedSourceLocalIdentifiers: Self.nonBlankIdentifiers(selectedSourceLocalIdentifiers),
+            occasion: Self.nonBlankOptional(form.occasion),
+            details: Self.nonBlankOptional(form.details),
+            creditCost: nil,
             removeWatermark: removesWatermark,
             renderOptionId: renderOptionId,
             planId: planId,
@@ -264,64 +168,6 @@ struct MomentsFinalRenderClient {
         }
 
         return try JSONDecoder().decode(MomentsConfirmFinalRenderResponse.self, from: data)
-    }
-
-    func startFinalRenderWorkflow(
-        momentId: String,
-        bearerToken: String,
-        template: MomentTemplate,
-        creationStyle: MomentCreationStyleID?,
-        form: MomentSetupForm,
-        removesWatermark: Bool,
-        reservationId: String,
-        operationId: String
-    ) async throws -> MomentsStartWorkflowResponse {
-        guard let baseURL = URL(string: baseURLString.trimmingCharacters(in: .whitespacesAndNewlines)) else {
-            throw MomentsFinalRenderError.apiNotConfigured
-        }
-
-        let endpoint = baseURL
-            .appendingPathComponent("v1")
-            .appendingPathComponent("apps")
-            .appendingPathComponent("momentsav")
-            .appendingPathComponent("workflows")
-            .appendingPathComponent("start")
-        let body = MomentsStartWorkflowRequest(
-            momentId: momentId,
-            renderKind: "final",
-            creationMode: form.creationMode.rawValue,
-            look: form.look.rawValue,
-            theme: form.theme.rawValue,
-            mood: form.tone.rawValue,
-            duration: form.duration.rawValue,
-            mediaUse: form.mediaUse.rawValue,
-            occasion: form.occasion,
-            details: form.details,
-            creditCost: template.creditCost,
-            removeWatermark: removesWatermark,
-            idempotencyKey: "final-workflow:\(momentId):\(template.id.rawValue):\(operationId)",
-            reservationId: reservationId,
-            renderOptionId: nil
-        )
-
-        var request = URLRequest(url: endpoint)
-        request.httpMethod = "POST"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.setValue("Bearer \(bearerToken)", forHTTPHeaderField: "Authorization")
-        request.httpBody = try JSONEncoder().encode(body)
-
-        let (data, response) = try await retryPolicy.run {
-            try await session.data(for: request)
-        }
-        guard let httpResponse = response as? HTTPURLResponse, 200..<300 ~= httpResponse.statusCode else {
-            throw MomentsAPIError.decode(
-                from: data,
-                fallbackCode: "moments_final_render_failed",
-                fallbackMessage: MomentsFinalRenderError.generationFailed.localizedDescription
-            )
-        }
-
-        return try JSONDecoder().decode(MomentsStartWorkflowResponse.self, from: data)
     }
 
     func prepareFinalArtifactDownload(
@@ -386,23 +232,23 @@ struct MomentsFinalRenderClient {
         return fileURL
     }
 
-    private func finalRenderCreditCost(
-        template: MomentTemplate,
-        removesWatermark: Bool,
-        balance: MomentsCreditBalance
-    ) -> Int {
-        MomentsCreditGate.finalRenderCreditCost(
-            template: template,
-            removesWatermark: removesWatermark,
-            balance: balance
-        )
+    private static func nonBlankOptional(_ value: String?) -> String? {
+        guard let trimmed = value?.trimmingCharacters(in: .whitespacesAndNewlines),
+              !trimmed.isEmpty else {
+            return nil
+        }
+        return trimmed
+    }
+
+    private static func nonBlankIdentifiers(_ values: [String]) -> [String]? {
+        let identifiers = values.compactMap(nonBlankOptional)
+        return identifiers.isEmpty ? nil : identifiers
     }
 }
 
 enum MomentsFinalRenderError: LocalizedError {
     case apiNotConfigured
     case planFailed
-    case reservationFailed
     case generationFailed
     case downloadPreparationFailed
     case downloadFailed
@@ -411,7 +257,6 @@ enum MomentsFinalRenderError: LocalizedError {
         switch self {
         case .apiNotConfigured: "Final render is not configured for this build."
         case .planFailed: "Avi could not check this Moment for final video creation."
-        case .reservationFailed: "Credits could not be reserved for the final video."
         case .generationFailed: "Final render failed before delivery. Credits were not committed unless an export was delivered."
         case .downloadPreparationFailed: "The final video download could not be prepared."
         case .downloadFailed: "The final video could not be downloaded."

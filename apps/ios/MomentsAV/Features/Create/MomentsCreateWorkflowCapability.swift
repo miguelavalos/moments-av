@@ -14,7 +14,6 @@ enum MomentsCreateWorkflowCapabilityFactory {
         creditBalanceLoadState: MomentsCreditBalanceLoadState = .loaded,
         template: MomentTemplate,
         previewRefreshAvailability: RenderJobStatusRefreshAvailability,
-        finalRenderRefreshAvailability: RenderJobStatusRefreshAvailability,
         selectedMediaCount: Int
     ) -> MomentsCreateWorkflowCapability {
         MomentsCreateWorkflowCapability(
@@ -46,7 +45,7 @@ enum MomentsCreateWorkflowCapabilityFactory {
                 creditBalanceLoadState: creditBalanceLoadState,
                 template: template
             ),
-            canRefreshFinalRenderStatus: finalRenderRefreshAvailability.canRefresh
+            canRefreshFinalRenderStatus: false
         )
     }
 

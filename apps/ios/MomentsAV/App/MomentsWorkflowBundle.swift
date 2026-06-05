@@ -27,10 +27,7 @@ struct MomentsWorkflowBundle {
             momentsObserver: momentsObserver,
             workspaceSelectionWorkflow: momentWorkspaceSelection,
             momentDeletionWorkflow: momentDeletion,
-            currentUserProvider: accountController,
-            authTokenProvider: accountController,
-            finalRenderResultSaver: momentsRepository,
-            statusClient: clients.renderStatus
+            currentUserProvider: accountController
         )
         momentCreation = MomentCreationWorkflow(
             currentUserProvider: accountController,
@@ -65,10 +62,8 @@ struct MomentsWorkflowBundle {
             currentUserProvider: accountController,
             authTokenProvider: accountController,
             creditBalanceProvider: accountController,
-            finalRenderResultSaver: momentsRepository,
             workspaceObserver: workspaceObserver,
-            finalRenderClient: clients.finalRender,
-            statusClient: clients.renderStatus
+            finalRenderClient: clients.finalRender
         )
     }
 }

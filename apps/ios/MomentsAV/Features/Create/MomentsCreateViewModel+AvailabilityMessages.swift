@@ -58,10 +58,6 @@ extension MomentsCreateViewModel {
         )
     }
 
-    var finalRenderRefreshAvailabilityMessage: String? {
-        finalRenderRefreshAvailability.message
-    }
-
     var setupFormAvailability: MomentSetupRules.Availability {
         MomentSetupRules.availability(form: form, balance: balance)
     }
@@ -76,13 +72,4 @@ extension MomentsCreateViewModel {
         )
     }
 
-    var finalRenderRefreshAvailability: RenderJobStatusRefreshAvailability {
-        MomentsCreateRefreshAvailabilityFactory.finalRender(
-            momentId: activeMomentId,
-            job: effectiveLatestFinalJob,
-            isAvailable: finalRenderWorkflow != nil,
-            isConfigured: finalRenderWorkflow?.isConfigured ?? false,
-            isRefreshing: finalRenderWorkflow?.isRefreshingStatus ?? false
-        )
-    }
 }

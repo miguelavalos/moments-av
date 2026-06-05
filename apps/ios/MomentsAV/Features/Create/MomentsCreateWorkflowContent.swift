@@ -44,8 +44,8 @@ struct MomentsCreateWorkflowContent: View {
                     openCredits: openCredits,
                     preparePreview: viewModel.preparePreview,
                     refreshPreviewStatus: viewModel.refreshPreviewStatus,
-                    generateFinalRender: viewModel.createFinalVideoFromCurrentSelection,
-                    autoRefreshFinalRenderStatus: viewModel.autoRefreshFinalRenderStatus,
+                    prepareFinalRenderPlan: viewModel.prepareFinalVideoPlanFromCurrentSelection,
+                    confirmFinalRender: viewModel.confirmFinalVideoFromCurrentSelection,
                     retryFinalVideoDownload: viewModel.retryFinalVideoDownload,
                     finishFinalVideoToGallery: viewModel.finishFinalVideoToGallery
                 )
@@ -88,8 +88,8 @@ private struct MomentsCreateMediaFirstWorkspace: View {
     let openCredits: () -> Void
     let preparePreview: () -> Void
     let refreshPreviewStatus: () -> Void
-    let generateFinalRender: (Bool) -> Void
-    let autoRefreshFinalRenderStatus: () -> Void
+    let prepareFinalRenderPlan: (Bool) -> Void
+    let confirmFinalRender: (Bool) -> Void
     let retryFinalVideoDownload: () -> Void
     let finishFinalVideoToGallery: () -> Void
 
@@ -114,9 +114,6 @@ private struct MomentsCreateMediaFirstWorkspace: View {
                     if presentation.isFinalRenderEditingLocked {
                         MomentsCreateLockedFinalRenderScene(presentation: presentation)
                             .padding(.top, 28)
-                            .task(id: presentation.finalRenderSummary.latestFinalJob?.id) {
-                                refreshActiveFinalRenderStatusOnceIfNeeded()
-                            }
                     } else {
                         MomentsCreateCompactAviGuide(
                             presentation: presentation
@@ -226,9 +223,14 @@ private struct MomentsCreateMediaFirstWorkspace: View {
                 confirm: { removesWatermark in
                     showsCreateVideoConfirmation = false
                     let currentRemovesWatermark = presentation.finalRenderSummary.renderPlan?.watermark?.selectedRemoveWatermark ?? false
-                    waitsForFinalRenderPlan = removesWatermark != currentRemovesWatermark
+                    let needsUpdatedPlan = removesWatermark != currentRemovesWatermark
                         || presentation.finalRenderSummary.renderPlan?.canCreateVideo != true
-                    generateFinalRender(removesWatermark)
+                    waitsForFinalRenderPlan = needsUpdatedPlan
+                    if needsUpdatedPlan {
+                        prepareFinalRenderPlan(removesWatermark)
+                    } else {
+                        confirmFinalRender(removesWatermark)
+                    }
                 },
                 cancel: {
                     showsCreateVideoConfirmation = false
@@ -257,19 +259,12 @@ private struct MomentsCreateMediaFirstWorkspace: View {
         .onAppear {
             openCompactPickerIfRequested(openPickerRequest)
             openCompactAlbumIfRequested(openAlbumRequest)
-            refreshActiveFinalRenderStatusOnceIfNeeded()
         }
         .onChange(of: openPickerRequest) { _, newValue in
             openCompactPickerIfRequested(newValue)
         }
         .onChange(of: openAlbumRequest) { _, newValue in
             openCompactAlbumIfRequested(newValue)
-        }
-        .onChange(of: autoFinalRenderRefreshTaskID) { _, _ in
-            refreshActiveFinalRenderStatusOnceIfNeeded()
-        }
-        .task(id: autoFinalRenderRefreshTaskID) {
-            await autoRefreshFinalRenderStatusIfNeeded()
         }
         .alert(L10n.string("create.discard.confirmTitle"), isPresented: $showsDiscardMomentConfirmation) {
             Button(L10n.string("create.discard.keep"), role: .cancel) {}
@@ -353,7 +348,7 @@ private struct MomentsCreateMediaFirstWorkspace: View {
             showsCreateVideoConfirmation = true
         } else {
             waitsForFinalRenderPlan = true
-            generateFinalRender(false)
+            prepareFinalRenderPlan(false)
         }
     }
 
@@ -390,39 +385,6 @@ private struct MomentsCreateMediaFirstWorkspace: View {
 
     private func discardCurrentMoment() {
         discardMoment()
-    }
-
-    private var autoFinalRenderRefreshTaskID: String {
-        guard let job = presentation.finalRenderSummary.latestFinalJob,
-              job.isActiveRender,
-              presentation.finalRenderSummary.finalExport == nil else {
-            return "none"
-        }
-
-        return "\(job.id):\(job.status):\(Int(job.updatedAt))"
-    }
-
-    private func autoRefreshFinalRenderStatusIfNeeded() async {
-        guard let job = presentation.finalRenderSummary.latestFinalJob,
-              job.isActiveRender,
-              presentation.finalRenderSummary.finalExport == nil else {
-            return
-        }
-
-        while !Task.isCancelled {
-            autoRefreshFinalRenderStatus()
-            try? await Task.sleep(for: .seconds(12))
-        }
-    }
-
-    private func refreshActiveFinalRenderStatusOnceIfNeeded() {
-        guard let job = presentation.finalRenderSummary.latestFinalJob,
-              job.isActiveRender,
-              presentation.finalRenderSummary.finalExport == nil else {
-            return
-        }
-
-        autoRefreshFinalRenderStatus()
     }
 
     private var discardConfirmationActionTitle: String {
@@ -1083,54 +1045,45 @@ private struct MomentsCreateLockedFinalRenderScene: View {
     let presentation: MomentsCreateWorkflowPresentation
 
     var body: some View {
-        VStack(spacing: 16) {
-            Spacer(minLength: 36)
+        VStack(spacing: 18) {
+            Spacer(minLength: 28)
 
-            Image("AviFullBody")
-                .resizable()
-                .scaledToFit()
-                .frame(width: 104, height: 104)
-                .padding(16)
-                .background(AVBrandColor.accent.opacity(0.10), in: Circle())
-                .accessibilityHidden(true)
+            VStack(spacing: 14) {
+                ZStack(alignment: .bottomTrailing) {
+                    Image("AviFullBody")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 96, height: 96)
+                        .padding(14)
+                        .background(AVBrandColor.accent.opacity(0.10), in: Circle())
+                        .accessibilityHidden(true)
 
-            VStack(spacing: 8) {
-                Text(L10n.string("create.workflowContent.finalVideoInProgressTitle"))
-                    .font(.system(size: 28, weight: .black))
-                    .foregroundStyle(AVBrandColor.textPrimary)
-                    .multilineTextAlignment(.center)
-                    .lineLimit(2)
-                    .minimumScaleFactor(0.72)
-
-                Text(L10n.string("create.workflowContent.finalVideoInProgressDetail"))
-                    .font(.system(size: 14, weight: .semibold))
-                    .foregroundStyle(AVBrandColor.textSecondary)
-                    .multilineTextAlignment(.center)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
-            .padding(.horizontal, 6)
-
-            VStack(alignment: .leading, spacing: 12) {
-                HStack(alignment: .top, spacing: 10) {
                     Image(systemName: systemImage)
-                        .font(.system(size: 14, weight: .black))
+                        .font(.system(size: 15, weight: .black))
                         .foregroundStyle(.white)
-                        .frame(width: 32, height: 32)
+                        .frame(width: 34, height: 34)
                         .background(AVBrandColor.textPrimary, in: Circle())
-
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text(statusTitle)
-                            .font(.system(size: 15, weight: .black))
-                            .foregroundStyle(AVBrandColor.textPrimary)
-
-                        Text(detail)
-                            .font(.system(size: 12, weight: .semibold))
-                            .foregroundStyle(AVBrandColor.textSecondary)
-                            .fixedSize(horizontal: false, vertical: true)
-                    }
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                        .overlay(Circle().stroke(AVBrandColor.cardSurface, lineWidth: 3))
                 }
 
+                VStack(spacing: 7) {
+                    Text(statusTitle)
+                        .font(.system(size: 30, weight: .black))
+                        .foregroundStyle(AVBrandColor.textPrimary)
+                        .multilineTextAlignment(.center)
+                        .lineLimit(2)
+                        .minimumScaleFactor(0.70)
+
+                    Text(detail)
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundStyle(AVBrandColor.textSecondary)
+                        .multilineTextAlignment(.center)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                .frame(maxWidth: .infinity)
+            }
+
+            VStack(alignment: .leading, spacing: 12) {
                 if let progressFraction {
                     ProgressView(value: progressFraction)
                         .tint(AVBrandColor.accent)
@@ -1147,13 +1100,13 @@ private struct MomentsCreateLockedFinalRenderScene: View {
                 HStack(spacing: 8) {
                     MomentsCreateLockedRenderMetric(
                         title: L10n.string("create.final.confirmSheet.cost"),
-                        value: MomentsCreditCopy.countTitle(presentation.finalRenderSummary.creditCost),
+                        value: MomentsCreditCopy.countTitle(presentation.lockedFinalRenderCreditCost),
                         systemImage: "creditcard.fill"
                     )
                     MomentsCreateLockedRenderMetric(
-                        title: L10n.string("create.workflowContent.editing"),
-                        value: L10n.string("create.workflowContent.locked"),
-                        systemImage: "lock.fill"
+                        title: L10n.string("create.final.confirmSheet.media"),
+                        value: mediaCountTitle,
+                        systemImage: "photo.stack.fill"
                     )
                 }
 
@@ -1161,16 +1114,16 @@ private struct MomentsCreateLockedFinalRenderScene: View {
             }
             .padding(14)
             .frame(maxWidth: .infinity)
-            .background(AVBrandColor.cardSurface.opacity(0.96), in: RoundedRectangle(cornerRadius: 18, style: .continuous))
+            .background(AVBrandColor.cardSurface.opacity(0.98), in: RoundedRectangle(cornerRadius: 18, style: .continuous))
             .overlay(
                 RoundedRectangle(cornerRadius: 18, style: .continuous)
                     .stroke(AVBrandColor.borderSubtle.opacity(0.82), lineWidth: 1)
             )
 
-            Spacer(minLength: 54)
+            Spacer(minLength: 76)
         }
-        .frame(maxWidth: .infinity, minHeight: 620)
-        .padding(.horizontal, 2)
+        .frame(maxWidth: .infinity, minHeight: 660)
+        .padding(.horizontal, 8)
         .accessibilityElement(children: .combine)
         .accessibilityLabel("\(L10n.string("create.workflowContent.finalVideoInProgressTitle")). \(detail)")
     }
@@ -1192,6 +1145,10 @@ private struct MomentsCreateLockedFinalRenderScene: View {
 
     private var progressFraction: Double? {
         presentation.finalRenderSummary.realtimeStatus?.progressFraction
+    }
+
+    private var mediaCountTitle: String {
+        presentation.lockedFinalRenderMediaCountTitle
     }
 
 }

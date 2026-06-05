@@ -69,14 +69,7 @@ struct MomentsCreateFinalVideoActionPresentation: Equatable {
     }
 
     var totalCreditCost: Int {
-        if let backendCost = summary.renderPlan?.plan.totalCreditCost {
-            return backendCost
-        }
-        return MomentsCreditGate.finalRenderCreditCost(
-            template: template,
-            removesWatermark: removesWatermark,
-            balance: balance
-        )
+        summary.renderPlan?.plan.totalCreditCost ?? 0
     }
 
     var totalCreditCostTitle: String {
@@ -115,11 +108,7 @@ struct MomentsCreateFinalVideoActionPresentation: Equatable {
         if let backendCost = summary.renderPlan?.plan.totalCreditCost {
             return balance.spendable >= backendCost
         }
-        return MomentsCreditGate.canAffordFinalRender(
-            template: template,
-            removesWatermark: removesWatermark,
-            balance: balance
-        )
+        return true
     }
 }
 
@@ -284,7 +273,7 @@ struct MomentsCreatePrimaryActionPresentation: Equatable {
             }
             if let finalStatusMessage = workflow.finalRenderSummary.statusMessage,
                !finalStatusMessage.isEmpty,
-               finalStatusMessage != L10n.string("workflow.final.planReady") {
+               Self.isFinalRenderErrorMessage(finalStatusMessage) {
                 return finalStatusMessage
             }
             if finalVideoAction.hasRenderPlan {
@@ -401,7 +390,7 @@ struct MomentsCreatePrimaryActionPresentation: Equatable {
 
     private var availabilityMessage: String? {
         if workflow.finalRenderSummary.latestFinalJob != nil {
-            return workflow.finalRenderRefreshAvailabilityMessage ?? workflow.finalRenderAvailabilityMessage
+            return workflow.finalRenderAvailabilityMessage
         }
         if hasFinalVideoIntent {
             return workflow.finalRenderAvailabilityMessage
@@ -412,5 +401,17 @@ struct MomentsCreatePrimaryActionPresentation: Equatable {
             return workflow.previewAvailabilityMessage
         }
         return workflow.finalRenderAvailabilityMessage ?? workflow.storyAvailabilityMessage
+    }
+
+    private static func isFinalRenderErrorMessage(_ message: String) -> Bool {
+        let lowercased = message.lowercased()
+        return lowercased.contains("couldn’t")
+            || lowercased.contains("couldn't")
+            || lowercased.contains("failed")
+            || lowercased.contains("not configured")
+            || lowercased.contains("not available")
+            || lowercased.contains("sign in again")
+            || lowercased.contains("try again")
+            || lowercased.contains("changed")
     }
 }

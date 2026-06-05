@@ -166,6 +166,10 @@ struct MomentsCreateFinalRenderSummary: Equatable {
     var realtimeStatus: MomentsRenderRealtimePresentation? {
         latestFinalJob.map { MomentsRenderRealtimePresentation(renderJob: $0) }
     }
+
+    var effectiveCreditCost: Int {
+        renderPlan?.plan.totalCreditCost ?? creditCost
+    }
 }
 
 struct MomentsRenderRealtimePresentation: Equatable {

@@ -631,10 +631,10 @@
 "create.final.reviewCost" = "Revisar crèdits";
 "create.final.confirmCredits" = "Confirmar crèdits · %@";
 "create.final.createWithCost" = "Crear vídeo · %@";
-"create.final.summaryTitle" = "Revisa Avi's Cut i el cost abans d’iniciar el vídeo.";
+"create.final.summaryTitle" = "Revisa el cost abans de crear el vídeo final.";
 "create.final.creditCost" = "%@ necessaris";
-"create.final.creditPolicy.preflight" = "Avi comprova mèdia i confirma crèdits abans de reservar res.";
-"create.final.creditPolicy.create" = "Iniciar el vídeo final reserva %@. Els crèdits només es finalitzen quan es lliura l'exportació.";
+"create.final.creditPolicy.preflight" = "Avi comprova mèdia i crèdits abans de crear el vídeo final.";
+"create.final.creditPolicy.create" = "Els crèdits només es cobren pels vídeos finals completats. Aquest vídeo costa %@.";
 "create.final.blocker.providerUnavailable" = "Aquesta opció de vídeo encara no està disponible.";
 "create.final.blocker.insufficientCredits" = "Necessites més crèdits per crear aquest vídeo final.";
 "create.final.blocker.noUsableMedia" = "Avi necessita mèdia utilitzable abans de crear el vídeo final.";
@@ -701,7 +701,7 @@
 "recovery.renderRefreshFailure" = "No s’ha pogut actualitzar l’estat del vídeo. Els crèdits només es finalitzen quan el vídeo està a punt. Torna-ho a provar.";
 "recovery.previewStatusMissing" = "L’estat d'Avi's Cut encara no es pot actualitzar. Millora'l amb Avi una altra vegada si no s’actualitza.";
 "recovery.finalRenderStatusMissing" = "L’estat del vídeo final encara no es pot actualitzar. Els crèdits només es finalitzen quan el vídeo està a punt. Torna-ho a provar.";
-"recovery.failedRenderDetail" = "La creació del vídeo ha tingut un problema. Els crèdits reservats s’alliberaran si el vídeo no s’ha completat. Torna-ho a provar o contacta amb suport.";
+"recovery.failedRenderDetail" = "La creació del vídeo ha tingut un problema. Si el vídeo final no s'ha completat, no es cobraran crèdits. Torna-ho a provar o contacta amb suport.";
 "media.item.singular" = "ítem";
 "media.item.plural" = "ítems";
 "media.photoOrClip.singular" = "foto o clip";
@@ -763,12 +763,12 @@
 "create.final.createVideoTitle" = "Crear el vídeo";
 "create.final.reviewCostTitle" = "Revisar crèdits";
 "create.final.readyToCreateTitle" = "A punt per crear";
-"create.final.createVideoDetail" = "Avi editarà la teva mèdia real en un vídeo de %@. Confirmes crèdits abans d’iniciar el render final.";
+"create.final.createVideoDetail" = "Avi editarà la teva mèdia real en un vídeo de %@. Veuràs el cost abans de crear el vídeo final.";
 "create.primary.finalReady" = "Vídeo final a punt.";
 "create.primary.videoCreating" = "Avi està creant el vídeo. Pots comprovar el progrés aquí.";
 "create.primary.previewReady" = "Avi's Cut ready. Check it before the final video.";
 "create.primary.createVideoPreflight" = "Avi comprovarà mèdia i confirmarà crèdits abans de començar.";
-"create.primary.reviewCostPreflight" = "Avi pujarà la mèdia i mostrarà el cost en crèdits abans de reservar res.";
+"create.primary.reviewCostPreflight" = "Avi pujarà la mèdia i mostrarà el cost abans de crear el vídeo final.";
 "create.primary.reviewBeforeVideo" = "Comprova Avi's Cut abans de crear el vídeo final.";
 "create.primary.continuePreflight" = "Veuràs el cost abans de crear el vídeo.";
 "create.aviCut.summary.aviTitle" = "Avi ha decidit";
@@ -957,7 +957,7 @@
 "create.workflowContent.assetUsageItems" = "%d de %d elements";
 "create.workflowContent.beforeVideo" = "Abans del vídeo";
 "create.workflowContent.modePending" = "Mode pending";
-"create.workflowContent.renderPlanFallback" = "Avi comprova mèdia, durada i qualitat abans de reservar crèdits.";
+"create.workflowContent.renderPlanFallback" = "Avi comprova mèdia, durada i qualitat abans de crear el vídeo final.";
 "create.workflowContent.storyReviewTitle" = "Avi's Cut";
 "create.aviCut.selectedSetup" = "Selecció i direcció";
 "create.aviCut.optionalPreview" = "Preview opcional d'Avi";

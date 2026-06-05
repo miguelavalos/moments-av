@@ -39,7 +39,6 @@ struct RenderJobStatusRefresh {
         statusClient: MomentsRenderStatusClient,
         statusUpdater: any MomentsRenderJobStatusUpdating,
         workspaceObserver: any MomentsActiveWorkspaceObserving,
-        usesProviderReconciliation: Bool = false,
         shouldContinue: () -> Bool
     ) async throws -> String {
         let refresh = try make(
@@ -54,7 +53,6 @@ struct RenderJobStatusRefresh {
             bearerToken: bearerToken,
             statusClient: statusClient,
             statusUpdater: statusUpdater,
-            usesProviderReconciliation: usesProviderReconciliation,
             shouldContinue: shouldContinue
         )
         workspaceObserver.observeWorkspace(ownerUserId: ownerUserId, momentId: refresh.momentId)
@@ -67,13 +65,11 @@ struct RenderJobStatusRefresh {
         bearerToken: String,
         statusClient: MomentsRenderStatusClient,
         statusUpdater: any MomentsRenderJobStatusUpdating,
-        usesProviderReconciliation: Bool = false,
         shouldContinue: () -> Bool
     ) async throws -> MomentsRenderStatusResponse {
         let status = try await fetchStatus(
             bearerToken: bearerToken,
-            statusClient: statusClient,
-            usesProviderReconciliation: usesProviderReconciliation
+            statusClient: statusClient
         )
         guard shouldContinue() else { throw CancellationError() }
 
@@ -89,20 +85,12 @@ struct RenderJobStatusRefresh {
 
     func fetchStatus(
         bearerToken: String,
-        statusClient: MomentsRenderStatusClient,
-        usesProviderReconciliation: Bool = false
+        statusClient: MomentsRenderStatusClient
     ) async throws -> MomentsRenderStatusResponse {
-        if usesProviderReconciliation {
-            try await statusClient.reconcileFinalRender(
-                renderJobId: providerRequestId,
-                bearerToken: bearerToken
-            )
-        } else {
-            try await statusClient.fetchStatus(
-                renderJobId: providerRequestId,
-                bearerToken: bearerToken
-            )
-        }
+        try await statusClient.fetchStatus(
+            renderJobId: providerRequestId,
+            bearerToken: bearerToken
+        )
     }
 
     func saveStatus(
@@ -124,25 +112,4 @@ struct RenderJobStatusRefresh {
         )
     }
 
-    @discardableResult
-    func saveCompletedFinalArtifactIfNeeded(
-        ownerUserId: String,
-        status: MomentsRenderStatusResponse,
-        workspace: MomentWorkspace?,
-        statusUpdater: any MomentsFinalRenderResultSaving
-    ) async throws -> Bool {
-        guard status.status == "completed",
-              status.artifactStatus == "available",
-              workspace?.latestArtifact(kind: "final_export")?.r2Key != status.artifactR2Key else {
-            return false
-        }
-
-        try await statusUpdater.saveCompletedFinalRenderStatusArtifact(
-            ownerUserId: ownerUserId,
-            momentId: momentId,
-            renderJobId: job.id,
-            status: status
-        )
-        return true
-    }
 }

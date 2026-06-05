@@ -62,30 +62,6 @@ protocol MomentsPreviewResultSaving: MomentsRenderJobStatusUpdating {
 }
 
 @MainActor
-protocol MomentsFinalRenderResultSaving: MomentsRenderJobStatusUpdating {
-    func saveStartedFinalRender(
-        ownerUserId: String,
-        momentId: String,
-        reservationId: String,
-        startedWorkflow: MomentsStartWorkflowResponse
-    ) async throws -> String
-
-    func saveFinalRenderResult(
-        ownerUserId: String,
-        momentId: String,
-        finalRender: MomentsFinalRenderResponse,
-        template: MomentTemplate
-    ) async throws
-
-    func saveCompletedFinalRenderStatusArtifact(
-        ownerUserId: String,
-        momentId: String,
-        renderJobId: String,
-        status: MomentsRenderStatusResponse
-    ) async throws
-}
-
-@MainActor
 protocol MomentsDeleting {
     func deleteMoment(ownerUserId: String, momentId: String) async throws
 }
@@ -127,7 +103,6 @@ extension MomentsRepository:
     MomentsStoryPlanSaving,
     MomentsRenderJobStatusUpdating,
     MomentsPreviewResultSaving,
-    MomentsFinalRenderResultSaving,
     MomentsDeleting,
     InProgressMomentsObserving,
     MomentWorkspaceObserving {}

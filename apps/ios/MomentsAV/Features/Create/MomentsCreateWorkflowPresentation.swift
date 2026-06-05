@@ -29,7 +29,6 @@ struct MomentsCreateWorkflowPresentation: Equatable {
     var previewAvailabilityMessage: String?
     var previewRefreshAvailabilityMessage: String?
     var finalRenderAvailabilityMessage: String?
-    var finalRenderRefreshAvailabilityMessage: String?
 
     var showsWorkflowCards: Bool {
         hasMomentWorkspace
@@ -83,6 +82,35 @@ struct MomentsCreateWorkflowPresentation: Equatable {
         return latestFinalJob.canEditSetup != true
     }
 
+    var lockedFinalRenderMediaCountTitle: String {
+        let count = lockedFinalRenderMediaCount ?? mediaSummary.reviewCount
+        guard count > 0 else {
+            return L10n.string("create.final.confirmSheet.media")
+        }
+        return count == 1 ? "1 item" : "\(count) items"
+    }
+
+    private var lockedFinalRenderMediaCount: Int? {
+        guard let latestFinalJob = finalRenderSummary.latestFinalJob else {
+            return nil
+        }
+        let value = latestFinalJob.usedAssetCount ?? latestFinalJob.plannedAssetCount
+        guard let value, value.isFinite, value > 0 else {
+            return nil
+        }
+        return Int(value.rounded())
+    }
+
+    var lockedFinalRenderCreditCost: Int {
+        if let totalCreditCost = finalRenderSummary.latestFinalJob?.totalCreditCost,
+           totalCreditCost.isFinite,
+           totalCreditCost > 0 {
+            return Int(totalCreditCost.rounded())
+        }
+
+        return finalRenderSummary.effectiveCreditCost
+    }
+
     static func make(
         activeMomentId: String?,
         isSignedIn: Bool,
@@ -130,8 +158,7 @@ struct MomentsCreateWorkflowPresentation: Equatable {
             storyAvailabilityMessage: availability.storyMessage,
             previewAvailabilityMessage: availability.previewMessage,
             previewRefreshAvailabilityMessage: availability.previewRefreshMessage,
-            finalRenderAvailabilityMessage: availability.finalRenderMessage,
-            finalRenderRefreshAvailabilityMessage: availability.finalRenderRefreshMessage
+            finalRenderAvailabilityMessage: availability.finalRenderMessage
         )
     }
 }

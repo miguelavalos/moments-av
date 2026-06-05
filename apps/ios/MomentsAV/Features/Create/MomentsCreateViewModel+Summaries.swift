@@ -46,7 +46,7 @@ extension MomentsCreateViewModel {
             canRetryFinalVideoDownload: canRetryFinalVideoDownload,
             latestFinalJob: effectiveLatestFinalJob,
             isGenerating: isGeneratingFinalRender,
-            isRefreshingStatus: isRefreshingFinalRenderStatus,
+            isRefreshingStatus: false,
             statusMessage: effectiveLatestFinalJob?.userMessage ?? finalRenderStatusMessage
         )
     }

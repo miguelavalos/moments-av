@@ -257,7 +257,7 @@ extension MomentsCreateViewModel {
         }
     }
 
-    func createFinalVideoFromCurrentSelection(removesWatermark: Bool = false) {
+    func prepareFinalVideoPlanFromCurrentSelection(removesWatermark: Bool = false) {
         guard let finalRenderWorkflow else {
             updateFinalRenderStatusMessage(L10n.string("create.error.videoCreationNotConfigured"))
             return
@@ -313,14 +313,46 @@ extension MomentsCreateViewModel {
                 }
             }
 
-            await finalRenderWorkflow.generateFinalRender(
+            await finalRenderWorkflow.prepareFinalRenderPlan(
                 momentId: momentId,
                 template: form.template,
                 creationStyle: creationStyleId,
                 form: form,
                 selectedMedia: self.selectedMedia,
-                removesWatermark: removesWatermark,
-                allowPreparedStory: true
+                removesWatermark: removesWatermark
+            )
+        }
+    }
+
+    func confirmFinalVideoFromCurrentSelection(removesWatermark: Bool = false) {
+        guard let finalRenderWorkflow else {
+            updateFinalRenderStatusMessage(L10n.string("create.error.videoCreationNotConfigured"))
+            return
+        }
+        guard let context = activeTemplateContext else {
+            updateFinalRenderStatusMessage(L10n.string("create.error.currentMomentMissing"))
+            return
+        }
+        guard canGenerateFinalRender else {
+            updateFinalRenderStatusMessage(
+                finalRenderAvailabilityMessage
+                    ?? storyAvailabilityMessage
+                    ?? L10n.string("create.error.videoCreationNotReady")
+            )
+            return
+        }
+
+        let form = effectiveFinalRenderForm()
+        updateFinalRenderStatusMessage(nil)
+
+        runOperation {
+            await finalRenderWorkflow.confirmPreparedFinalRender(
+                momentId: context.momentId,
+                template: context.template,
+                creationStyle: self.selectedCreationStyle.id,
+                form: form,
+                selectedMedia: self.selectedMedia,
+                removesWatermark: removesWatermark
             )
         }
     }
@@ -386,46 +418,6 @@ extension MomentsCreateViewModel {
 
         runOperation {
             await previewGenerationWorkflow.refreshStatus()
-        }
-    }
-
-    func generateFinalRender(removesWatermark: Bool = false) {
-        guard let finalRenderWorkflow else {
-            updateFinalRenderStatusMessage(L10n.string("create.error.videoCreationUnavailable"))
-            return
-        }
-        guard let context = activeTemplateContext else {
-            updateFinalRenderStatusMessage(L10n.string("create.error.currentMomentMissing"))
-            return
-        }
-        guard canGenerateFinalRender else {
-            updateFinalRenderStatusMessage(
-                finalRenderAvailabilityMessage
-                    ?? storyAvailabilityMessage
-                    ?? L10n.string("create.error.videoCreationNotReady")
-            )
-            return
-        }
-
-        runOperation {
-            await finalRenderWorkflow.generateFinalRender(
-                momentId: context.momentId,
-                template: context.template,
-                creationStyle: self.selectedCreationStyle.id,
-                form: self.effectiveFinalRenderForm(),
-                selectedMedia: self.selectedMedia,
-                removesWatermark: removesWatermark
-            )
-        }
-    }
-
-    func autoRefreshFinalRenderStatus() {
-        guard let finalRenderWorkflow else {
-            return
-        }
-
-        runOperation {
-            await finalRenderWorkflow.refreshStatus()
         }
     }
 

@@ -34,8 +34,7 @@ extension MomentsCreateViewModel {
             storyMessage: storyAvailabilityMessage,
             previewMessage: previewAvailabilityMessage,
             previewRefreshMessage: previewRefreshAvailabilityMessage,
-            finalRenderMessage: finalRenderAvailabilityMessage,
-            finalRenderRefreshMessage: finalRenderRefreshAvailabilityMessage
+            finalRenderMessage: finalRenderAvailabilityMessage
         )
     }
 

@@ -1,50 +1,5 @@
 import Foundation
 
-struct MomentsFinalRenderRequest: Encodable {
-    let appId = "momentsav"
-    let momentId: String
-    let creationMode: String
-    let look: String
-    let theme: String
-    let mood: String
-    let duration: String
-    let mediaUse: String
-    let occasion: String?
-    let details: String?
-    let creditCost: Int
-    let removeWatermark: Bool
-    let safetyAcknowledged = true
-    let idempotencyKey: String
-}
-
-struct MomentsFinalRenderResponse: Decodable, Equatable {
-    let appId: String
-    let momentId: String
-    let renderJobId: String
-    let workflowRunId: String
-    let provider: String
-    let model: String
-    let reservationId: String
-    let artifactId: String
-    let artifactKind: String
-    let status: String
-    let progressPercent: Int
-    let r2Key: String
-    let expiresAt: String
-    let hasWatermark: Bool
-    let baseCreditCost: Int?
-    let watermarkRemovalCreditCost: Int?
-    let creditsCommitted: Int
-    let generatedAt: String
-}
-
-struct MomentsCreditReservationRequest: Encodable {
-    let appId = "momentsav"
-    let momentId: String
-    let amount: Int
-    let idempotencyKey: String
-}
-
 struct MomentsCreditReservationResponse: Decodable, Equatable {
     let id: String
     let appId: String
@@ -57,26 +12,6 @@ struct MomentsCreditReservationResponse: Decodable, Equatable {
     let expiresAt: String
     let createdAt: String
     let updatedAt: String
-}
-
-struct MomentsStartWorkflowRequest: Encodable {
-    let appId = "momentsav"
-    let momentId: String
-    let renderKind: String
-    let creationMode: String
-    let look: String
-    let theme: String
-    let mood: String
-    let duration: String
-    let mediaUse: String
-    let occasion: String?
-    let details: String?
-    let creditCost: Int
-    let removeWatermark: Bool
-    let safetyAcknowledged = true
-    let idempotencyKey: String
-    let reservationId: String
-    let renderOptionId: String?
 }
 
 struct MomentsStartWorkflowResponse: Decodable, Equatable {
@@ -100,7 +35,7 @@ struct MomentsRenderPlanRequest: Encodable {
     let selectedSourceLocalIdentifiers: [String]?
     let occasion: String?
     let details: String?
-    let creditCost: Int
+    let creditCost: Int?
     let removeWatermark: Bool
     let renderOptionId: String?
 }
@@ -117,7 +52,7 @@ struct MomentsConfirmFinalRenderRequest: Encodable {
     let selectedSourceLocalIdentifiers: [String]?
     let occasion: String?
     let details: String?
-    let creditCost: Int
+    let creditCost: Int?
     let removeWatermark: Bool
     let renderOptionId: String?
     let planId: String

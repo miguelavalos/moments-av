@@ -16,8 +16,7 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
             storyMessage: "Story",
             previewMessage: "Preview",
             previewRefreshMessage: "Preview refresh",
-            finalRenderMessage: "Final",
-            finalRenderRefreshMessage: "Final refresh"
+            finalRenderMessage: "Final"
         )
 
         XCTAssertTrue(availability.canAddMedia)
@@ -32,7 +31,6 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
         XCTAssertEqual(availability.previewMessage, "Preview")
         XCTAssertEqual(availability.previewRefreshMessage, "Preview refresh")
         XCTAssertEqual(availability.finalRenderMessage, "Final")
-        XCTAssertEqual(availability.finalRenderRefreshMessage, "Final refresh")
     }
 
     func testWorkflowCapabilityFactoryFormatsMediaAndRefreshCapabilities() {
@@ -47,7 +45,6 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
             finalRenderWorkflow: nil,
             template: .birthdayMessage,
             previewRefreshAvailability: MomentsCreateTestFixtures.makeRefreshAvailability(canRefresh: true),
-            finalRenderRefreshAvailability: MomentsCreateTestFixtures.makeRefreshAvailability(canRefresh: false),
             selectedMediaCount: 0
         )
 
@@ -72,7 +69,6 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
             finalRenderWorkflow: nil,
             template: .birthdayMessage,
             previewRefreshAvailability: MomentsCreateTestFixtures.makeRefreshAvailability(canRefresh: false),
-            finalRenderRefreshAvailability: MomentsCreateTestFixtures.makeRefreshAvailability(canRefresh: false),
             selectedMediaCount: 0
         )
         let withoutMoment = MomentsCreateWorkflowCapabilityFactory.make(
@@ -86,7 +82,6 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
             finalRenderWorkflow: nil,
             template: .birthdayMessage,
             previewRefreshAvailability: MomentsCreateTestFixtures.makeRefreshAvailability(canRefresh: false),
-            finalRenderRefreshAvailability: MomentsCreateTestFixtures.makeRefreshAvailability(canRefresh: false),
             selectedMediaCount: 0
         )
 

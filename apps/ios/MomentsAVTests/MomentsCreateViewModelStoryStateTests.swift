@@ -605,7 +605,6 @@ private final class MomentCreationFailureHarness:
     MomentsMediaAssetSaving,
     MomentsStoryPlanSaving,
     MomentsPreviewResultSaving,
-    MomentsFinalRenderResultSaving,
     MomentsActiveWorkspaceObserving
 {
     let createAttemptExpectation = XCTestExpectation(description: "Moment creation attempted")
@@ -670,10 +669,8 @@ private final class MomentCreationFailureHarness:
             currentUserProvider: self,
             authTokenProvider: self,
             creditBalanceProvider: self,
-            finalRenderResultSaver: self,
             workspaceObserver: self,
             finalRenderClient: MomentsFinalRenderClient(baseURLString: "https://api.example.com"),
-            statusClient: MomentsRenderStatusClient(baseURLString: "https://api.example.com"),
             galleryStore: TestGalleryStore()
         )
     }
@@ -779,28 +776,6 @@ private final class MomentCreationFailureHarness:
         template: MomentTemplate
     ) async throws {}
 
-    func saveStartedFinalRender(
-        ownerUserId: String,
-        momentId: String,
-        reservationId: String,
-        startedWorkflow: MomentsStartWorkflowResponse
-    ) async throws -> String {
-        "render-job-1"
-    }
-
-    func saveFinalRenderResult(
-        ownerUserId: String,
-        momentId: String,
-        finalRender: MomentsFinalRenderResponse,
-        template: MomentTemplate
-    ) async throws {}
-
-    func saveCompletedFinalRenderStatusArtifact(
-        ownerUserId: String,
-        momentId: String,
-        renderJobId: String,
-        status: MomentsRenderStatusResponse
-    ) async throws {}
 }
 
 private struct TestGalleryStore: MomentsGalleryStoring {
