@@ -3,7 +3,7 @@ import OSLog
 
 @MainActor
 final class StoryWorkflow: WorkspaceObservingWorkflow {
-    @Published private(set) var generatedPlan: MomentsStoryPlanResponse?
+    @Published private(set) var generatedPlan: MomentsStoryResponse?
     @Published private(set) var isPlanning = false
     @Published private(set) var statusMessage: String?
 
@@ -172,7 +172,7 @@ final class StoryWorkflow: WorkspaceObservingWorkflow {
     }
 
     private func validatePlanMediaReferences(
-        _ plan: MomentsStoryPlanResponse,
+        _ plan: MomentsStoryResponse,
         availableMedia: [MomentsStoryMedia]
     ) throws {
         let availableMediaIds = Set(availableMedia.map(\.mediaAssetId))

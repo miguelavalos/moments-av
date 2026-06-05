@@ -24,7 +24,7 @@ final class MomentsCreateViewModel: ObservableObject {
     @Published private(set) var autoStyleSuggestion: MomentsMediaAutoStyleSuggestion?
     @Published private(set) var canUndoAutoStyleSuggestion = false
     @Published private(set) var savedScenes: [MomentStoryScene] = []
-    @Published private(set) var generatedScenes: [MomentsStoryPlanScene] = []
+    @Published private(set) var generatedScenes: [MomentsStorySceneResponse] = []
     @Published private(set) var storyStatusMessage: String?
     @Published private(set) var isPlanningStory = false
     @Published var isPreparingStory = false

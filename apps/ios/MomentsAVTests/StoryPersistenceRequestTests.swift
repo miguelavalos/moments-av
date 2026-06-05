@@ -1,9 +1,9 @@
 import XCTest
 @testable import MomentsAV
 
-final class StoryPlanPersistenceRequestTests: XCTestCase {
+final class StoryPersistenceRequestTests: XCTestCase {
     func testSceneRequestUsesPlanSceneFieldsAndAviAuthor() {
-        let scene = MomentsStoryPlanScene(
+        let scene = MomentsStorySceneResponse(
             sceneIndex: 1,
             mediaAssetIds: ["media-1", "media-2"],
             caption: "A birthday toast",
@@ -46,7 +46,7 @@ final class StoryPlanPersistenceRequestTests: XCTestCase {
         XCTAssertEqual(request.moderationStatus, "blocked")
     }
 
-    private func makePlan(moderationStatus: String) -> MomentsStoryPlanResponse {
+    private func makePlan(moderationStatus: String) -> MomentsStoryResponse {
         let json = """
         {
           "appId": "momentsav",
@@ -66,7 +66,7 @@ final class StoryPlanPersistenceRequestTests: XCTestCase {
         """
 
         return try! JSONDecoder().decode(
-            MomentsStoryPlanResponse.self,
+            MomentsStoryResponse.self,
             from: Data(json.utf8)
         )
     }

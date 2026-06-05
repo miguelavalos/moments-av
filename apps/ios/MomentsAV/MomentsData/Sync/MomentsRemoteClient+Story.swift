@@ -5,7 +5,7 @@ extension MomentsRemoteClient {
     func saveStoryPlan(
         ownerUserId: String,
         momentId: String,
-        plan: MomentsStoryPlanResponse,
+        plan: MomentsStoryResponse,
         storyInputSignature: String
     ) async throws {
         for scene in plan.scenes {

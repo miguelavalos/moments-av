@@ -22,7 +22,7 @@ struct MomentsCreateMediaUploadState {
 struct MomentsCreateStoryPlanState {
     let activeWorkspace: MomentWorkspace?
     let savedScenes: [MomentStoryScene]
-    let generatedScenes: [MomentsStoryPlanScene]
+    let generatedScenes: [MomentsStorySceneResponse]
     let statusMessage: String?
     let isPlanning: Bool
 }

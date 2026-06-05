@@ -61,7 +61,7 @@ enum MomentsStoryInputSignature {
     }
 }
 
-struct MomentsStoryPlanScene: Decodable, Identifiable, Equatable {
+struct MomentsStorySceneResponse: Decodable, Identifiable, Equatable {
     var id: Int { sceneIndex }
     let sceneIndex: Int
     let mediaAssetIds: [String]
@@ -75,7 +75,7 @@ struct MomentsStoryPlanScene: Decodable, Identifiable, Equatable {
     let editable: Bool
 }
 
-struct MomentsStoryPlanResponse: Decodable, Equatable {
+struct MomentsStoryResponse: Decodable, Equatable {
     let appId: String
     let momentId: String
     let workflowRunId: String
@@ -87,7 +87,7 @@ struct MomentsStoryPlanResponse: Decodable, Equatable {
     let errorMessage: String?
     let narrationVoice: String
     let helperCopy: String
-    let scenes: [MomentsStoryPlanScene]
+    let scenes: [MomentsStorySceneResponse]
     let generatedAt: String
 }
 

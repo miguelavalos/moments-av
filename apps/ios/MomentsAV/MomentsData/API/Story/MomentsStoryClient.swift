@@ -15,7 +15,7 @@ struct MomentsStoryClient {
         bearerToken: String,
         form: MomentSetupForm,
         mediaAssets: [MomentMediaAsset]
-    ) async throws -> MomentsStoryPlanResponse {
+    ) async throws -> MomentsStoryResponse {
         let selectedMedia = mediaAssets
             .filter(\.selected)
             .sorted { left, right in left.sortOrder < right.sortOrder }
@@ -44,7 +44,7 @@ struct MomentsStoryClient {
         bearerToken: String,
         form: MomentSetupForm,
         selectedMedia: [MomentsStoryMedia]
-    ) async throws -> MomentsStoryPlanResponse {
+    ) async throws -> MomentsStoryResponse {
         guard let baseURL = URL(string: baseURLString.trimmingCharacters(in: .whitespacesAndNewlines)) else {
             throw MomentsStoryError.apiNotConfigured
         }
@@ -86,7 +86,7 @@ struct MomentsStoryClient {
             throw apiError
         }
 
-        let plan = try JSONDecoder().decode(MomentsStoryPlanResponse.self, from: data)
+        let plan = try JSONDecoder().decode(MomentsStoryResponse.self, from: data)
         if plan.status == "blocked" {
             throw MomentsStoryError.blocked(plan.errorMessage ?? "Avi needs safer inputs before planning this story.")
         }

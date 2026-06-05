@@ -4,7 +4,7 @@ extension MomentsRepository {
     func saveStoryPlan(
         ownerUserId: String,
         momentId: String,
-        plan: MomentsStoryPlanResponse,
+        plan: MomentsStoryResponse,
         storyInputSignature: String
     ) async throws {
         try await remoteClient.saveStoryPlan(

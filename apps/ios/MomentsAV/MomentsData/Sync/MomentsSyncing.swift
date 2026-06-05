@@ -29,7 +29,7 @@ protocol MomentsStoryPlanSaving {
     func saveStoryPlan(
         ownerUserId: String,
         momentId: String,
-        plan: MomentsStoryPlanResponse,
+        plan: MomentsStoryResponse,
         storyInputSignature: String
     ) async throws
 }
