@@ -1742,6 +1742,7 @@ private struct MomentsCreateFinalVideoConfirmationSheet: View {
     let openCredits: () -> Void
     let cancel: () -> Void
     @State private var removesWatermark: Bool
+    @State private var isSubmitting = false
 
     init(
         action: MomentsCreateFinalVideoActionPresentation,
@@ -1806,19 +1807,7 @@ private struct MomentsCreateFinalVideoConfirmationSheet: View {
                 .fixedSize(horizontal: false, vertical: true)
 
             VStack(spacing: 8) {
-                Button {
-                    if canAffordSelectedCost {
-                        confirm(removesWatermark)
-                    } else {
-                        openCredits()
-                    }
-                } label: {
-                    Label(primaryActionTitle, systemImage: primaryActionIconName)
-                        .font(.system(size: 15, weight: .black))
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 44)
-                }
-                .buttonStyle(MomentsCreateSoftActionButtonStyle())
+                primaryActionButton
 
                 Button(action: cancel) {
                     Text(L10n.string("create.action.notNow"))
@@ -1828,6 +1817,47 @@ private struct MomentsCreateFinalVideoConfirmationSheet: View {
                 }
                 .buttonStyle(MomentsCreateNeutralInlineButtonStyle())
             }
+        }
+    }
+
+    private var primaryActionButton: some View {
+        Button(action: runPrimaryAction) {
+            HStack(spacing: 8) {
+                if isSubmitting {
+                    ProgressView()
+                        .controlSize(.small)
+                        .tint(AVBrandColor.textPrimary)
+                } else {
+                    Image(systemName: primaryActionIconName)
+                }
+
+                Text(isSubmitting ? L10n.string("workflow.final.creatingVideo") : primaryActionTitle)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.78)
+            }
+            .font(.system(size: 15, weight: .black))
+            .foregroundStyle(AVBrandColor.textPrimary)
+            .frame(maxWidth: .infinity)
+            .frame(height: 48)
+            .background(AVBrandColor.accent.opacity(0.1), in: Capsule())
+            .overlay {
+                Capsule()
+                    .stroke(AVBrandColor.accent.opacity(0.24), lineWidth: 1)
+            }
+            .contentShape(Capsule())
+        }
+        .buttonStyle(.plain)
+        .disabled(isSubmitting)
+        .accessibilityLabel(primaryActionTitle)
+    }
+
+    private func runPrimaryAction() {
+        guard !isSubmitting else { return }
+        isSubmitting = true
+        if canAffordSelectedCost {
+            confirm(removesWatermark)
+        } else {
+            openCredits()
         }
     }
 
