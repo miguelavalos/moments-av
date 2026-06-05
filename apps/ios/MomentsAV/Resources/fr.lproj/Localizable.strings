@@ -531,7 +531,6 @@
 "moment.progress.noMedia" = "Aucun média";
 "moment.progress.notCreated" = "Non créé";
 "moment.progress.notReady" = "Pas prêt";
-"moment.progress.notReviewed" = "Non révisé";
 "moment.progress.notStarted" = "Non démarré";
 "moment.progress.moment" = "Moment";
 "moment.progress.scenes" = "%d scènes";
@@ -660,14 +659,12 @@
 "create.media.status.duplicatesOnly" = "Ces Moments étaient déjà sélectionnés.";
 "create.media.status.addedSkippingDuplicates" = "%d %@ ajoutés. %d déjà sélectionnés ignorés.";
 "create.aviStatus.ready.title" = "Prêt";
-"create.aviStatus.reviewing.title" = "Improving cut";
 "create.aviStatus.preparing.title" = "Préparation de l’histoire";
 "create.aviStatus.working.title" = "Avi travaille";
 "create.aviStatus.storyReady.title" = "Histoire prête";
 "create.aviStatus.goodSelection.title" = "Bonne sélection";
 "create.aviStatus.startMedia.title" = "Commence avec tes médias";
 "create.aviStatus.exportReady.detail" = "Ta vidéo est prête à exporter ou partager.";
-"create.aviStatus.reviewing.detail" = "Avi améliore le montage à partir de vos éléments sélectionnés.";
 "create.aviStatus.preparing.detail" = "Avi organise les médias en un premier plan d’histoire.";
 "create.aviStatus.storyReady.detail" = "Avi a préparé l’histoire, le style et le rythme. La création vidéo vient ensuite.";
 "create.aviStatus.goodSelection.detail" = "Avi organisera l’histoire et tu pourras ajuster la sélection.";
@@ -874,7 +871,7 @@
 "create.mediaCard.menu.yourEdits" = "Your edits";
 "create.mediaCard.menu.aviAutomatic" = "Avi automatic";
 "create.mediaCard.reorderMessage" = "Faites glisser photos et clips dans l’ordre qu’Avi doit suivre.";
-"create.mediaCard.reviewMessage" = "Vérifiez les médias, ajoutez-en ou laissez Avi suggérer un ordre.";
+"create.mediaCard.selectionMessage" = "Vérifiez les médias, ajoutez-en ou laissez Avi suggérer un ordre.";
 "create.mediaCard.noDate" = "No date";
 "create.mediaCard.kind.video" = "Vidéo";
 "create.mediaCard.kind.photo" = "Photo";
@@ -954,7 +951,6 @@
 "create.workflowContent.aviTip" = "Avi tip";
 "create.workflowContent.tipFinalReady" = "Your video is ready to export or share.";
 "create.workflowContent.tipFinalWorking" = "Avi termine la vidéo finale. La progression se met à jour automatiquement.";
-"create.workflowContent.tipPreviewWorking" = "Avi améliore le montage à partir de vos éléments sélectionnés.";
 "create.workflowContent.tipMediaReady" = "Avi will shape these moments into a simple story plan.";
 "create.workflowContent.tipPickMoments" = "Pick the moments. Avi will shape the story, mood, and pacing.";
 "create.workflowContent.planDetail" = "%ds · %d éléments";

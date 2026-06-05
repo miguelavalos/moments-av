@@ -531,7 +531,6 @@
 "moment.progress.noMedia" = "Sense media encara";
 "moment.progress.notCreated" = "No creat";
 "moment.progress.notReady" = "No està a punt";
-"moment.progress.notReviewed" = "Sense revisar";
 "moment.progress.notStarted" = "No iniciat";
 "moment.progress.moment" = "Moment";
 "moment.progress.scenes" = "%d escenes";
@@ -660,14 +659,12 @@
 "create.media.status.duplicatesOnly" = "Aquests Moments ja estaven seleccionats.";
 "create.media.status.addedSkippingDuplicates" = "Afegits %d %@. S’han omès %d ja seleccionats.";
 "create.aviStatus.ready.title" = "A punt";
-"create.aviStatus.reviewing.title" = "Improving cut";
 "create.aviStatus.preparing.title" = "Preparant història";
 "create.aviStatus.working.title" = "Avi està treballant";
 "create.aviStatus.storyReady.title" = "Història a punt";
 "create.aviStatus.goodSelection.title" = "Bona selecció";
 "create.aviStatus.startMedia.title" = "Comença amb la teva mèdia";
 "create.aviStatus.exportReady.detail" = "El teu vídeo està a punt per exportar o compartir.";
-"create.aviStatus.reviewing.detail" = "Avi està millorant el tall amb els elements seleccionats.";
 "create.aviStatus.preparing.detail" = "Avi està organitzant la mèdia en un primer pla d’història.";
 "create.aviStatus.storyReady.detail" = "Avi ha preparat la història, l’estil i el ritme. La creació del vídeo ve després.";
 "create.aviStatus.goodSelection.detail" = "Avi organitzarà la història i podràs ajustar la selecció.";
@@ -874,7 +871,7 @@
 "create.mediaCard.menu.yourEdits" = "Your edits";
 "create.mediaCard.menu.aviAutomatic" = "Avi automatic";
 "create.mediaCard.reorderMessage" = "Arrossega fotos i clips en l’ordre que Avi ha de seguir.";
-"create.mediaCard.reviewMessage" = "Revisa la media, afegeix-ne més o deixa que Avi suggereixi un ordre.";
+"create.mediaCard.selectionMessage" = "Comprova la mèdia, afegeix-ne més o deixa que Avi suggereixi un ordre.";
 "create.mediaCard.noDate" = "No date";
 "create.mediaCard.kind.video" = "Vídeo";
 "create.mediaCard.kind.photo" = "Foto";
@@ -954,7 +951,6 @@
 "create.workflowContent.aviTip" = "Avi tip";
 "create.workflowContent.tipFinalReady" = "Your video is ready to export or share.";
 "create.workflowContent.tipFinalWorking" = "Avi està acabant el vídeo final. El progrés s’actualitza automàticament.";
-"create.workflowContent.tipPreviewWorking" = "Avi està millorant el tall amb els elements seleccionats.";
 "create.workflowContent.tipMediaReady" = "Avi will shape these moments into a simple story plan.";
 "create.workflowContent.tipPickMoments" = "Pick the moments. Avi will shape the story, mood, and pacing.";
 "create.workflowContent.planDetail" = "%ds · %d elements";

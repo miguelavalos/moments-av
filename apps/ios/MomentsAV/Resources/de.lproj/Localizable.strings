@@ -533,7 +533,6 @@
 "moment.progress.noMedia" = "Noch keine Medien";
 "moment.progress.notCreated" = "Nicht erstellt";
 "moment.progress.notReady" = "Nicht bereit";
-"moment.progress.notReviewed" = "Nicht geprüft";
 "moment.progress.notStarted" = "Nicht gestartet";
 "moment.progress.moment" = "Moment";
 "moment.progress.scenes" = "%d Szenen";
@@ -662,14 +661,12 @@
 "create.media.status.duplicatesOnly" = "Diese Moments waren bereits ausgewählt.";
 "create.media.status.addedSkippingDuplicates" = "%d %@ hinzugefügt. %d bereits ausgewählte übersprungen.";
 "create.aviStatus.ready.title" = "Bereit";
-"create.aviStatus.reviewing.title" = "Improving cut";
 "create.aviStatus.preparing.title" = "Story wird vorbereitet";
 "create.aviStatus.working.title" = "Avi arbeitet";
 "create.aviStatus.storyReady.title" = "Story bereit";
 "create.aviStatus.goodSelection.title" = "Gute Auswahl";
 "create.aviStatus.startMedia.title" = "Beginne mit deinen Medien";
 "create.aviStatus.exportReady.detail" = "Dein Video ist bereit zum Exportieren oder Teilen.";
-"create.aviStatus.reviewing.detail" = "Avi verbessert den Schnitt mit deinen ausgewählten Elementen.";
 "create.aviStatus.preparing.detail" = "Avi organisiert die Medien zu einem ersten Story-Plan.";
 "create.aviStatus.storyReady.detail" = "Avi hat Story, Stil und Rhythmus vorbereitet. Als Nächstes kommt die Videoerstellung.";
 "create.aviStatus.goodSelection.detail" = "Avi organisiert die Story und du kannst die Auswahl fein abstimmen.";
@@ -876,7 +873,7 @@
 "create.mediaCard.menu.yourEdits" = "Your edits";
 "create.mediaCard.menu.aviAutomatic" = "Avi automatic";
 "create.mediaCard.reorderMessage" = "Ziehe Fotos und Clips in die Reihenfolge, der Avi folgen soll.";
-"create.mediaCard.reviewMessage" = "Prüfe die Medien, füge mehr hinzu oder lass Avi eine Reihenfolge vorschlagen.";
+"create.mediaCard.selectionMessage" = "Prüfe die Medien, füge mehr hinzu oder lass Avi eine Reihenfolge vorschlagen.";
 "create.mediaCard.noDate" = "No date";
 "create.mediaCard.kind.video" = "Video";
 "create.mediaCard.kind.photo" = "Foto";
@@ -956,7 +953,6 @@
 "create.workflowContent.aviTip" = "Avi tip";
 "create.workflowContent.tipFinalReady" = "Your video is ready to export or share.";
 "create.workflowContent.tipFinalWorking" = "Avi stellt das finale Video fertig. Der Fortschritt wird automatisch aktualisiert.";
-"create.workflowContent.tipPreviewWorking" = "Avi verbessert den Schnitt mit deinen ausgewählten Elementen.";
 "create.workflowContent.tipMediaReady" = "Avi will shape these moments into a simple story plan.";
 "create.workflowContent.tipPickMoments" = "Pick the moments. Avi will shape the story, mood, and pacing.";
 "create.workflowContent.planDetail" = "%ds · %d Elemente";

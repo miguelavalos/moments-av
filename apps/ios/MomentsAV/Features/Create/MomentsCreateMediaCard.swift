@@ -1009,7 +1009,7 @@ private struct MomentsCreateEditorAviPanel: View {
         if selectedCount == 0 {
             return L10n.string("create.media.panelDetail")
         }
-        return L10n.string("create.mediaCard.reviewMessage")
+        return L10n.string("create.mediaCard.selectionMessage")
     }
 }
 

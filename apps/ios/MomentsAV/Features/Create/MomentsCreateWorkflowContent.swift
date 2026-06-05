@@ -921,7 +921,7 @@ private struct MomentsCreateStoryDecisionCard: View {
         if presentation.storySummary.hasScenes {
             return sceneCountTitle
         }
-        return L10n.string("create.mediaCard.reviewMessage")
+        return L10n.string("create.mediaCard.selectionMessage")
     }
 
     private var sceneCountTitle: String {
