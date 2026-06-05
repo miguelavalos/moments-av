@@ -134,15 +134,15 @@ final class MomentsCreditGateTests: XCTestCase {
     }
 
     func testMediaRulesEnforceTemplateMinimumsAndMaximums() {
-        XCTAssertFalse(MomentsMediaRules.canStartPreview(template: .birthdayMessage, selectedCount: 0))
-        XCTAssertTrue(MomentsMediaRules.canStartPreview(template: .birthdayMessage, selectedCount: 1))
-        XCTAssertTrue(MomentsMediaRules.canStartPreview(template: .birthdayMessage, selectedCount: 80))
-        XCTAssertFalse(MomentsMediaRules.canStartPreview(template: .birthdayMessage, selectedCount: 81))
+        XCTAssertFalse(MomentsMediaRules.canUseSelection(template: .birthdayMessage, selectedCount: 0))
+        XCTAssertTrue(MomentsMediaRules.canUseSelection(template: .birthdayMessage, selectedCount: 1))
+        XCTAssertTrue(MomentsMediaRules.canUseSelection(template: .birthdayMessage, selectedCount: 80))
+        XCTAssertFalse(MomentsMediaRules.canUseSelection(template: .birthdayMessage, selectedCount: 81))
 
-        XCTAssertFalse(MomentsMediaRules.canStartPreview(template: .partyRecap, selectedCount: 0))
-        XCTAssertTrue(MomentsMediaRules.canStartPreview(template: .partyRecap, selectedCount: 1))
-        XCTAssertTrue(MomentsMediaRules.canStartPreview(template: .partyRecap, selectedCount: 80))
-        XCTAssertFalse(MomentsMediaRules.canStartPreview(template: .partyRecap, selectedCount: 81))
+        XCTAssertFalse(MomentsMediaRules.canUseSelection(template: .partyRecap, selectedCount: 0))
+        XCTAssertTrue(MomentsMediaRules.canUseSelection(template: .partyRecap, selectedCount: 1))
+        XCTAssertTrue(MomentsMediaRules.canUseSelection(template: .partyRecap, selectedCount: 80))
+        XCTAssertFalse(MomentsMediaRules.canUseSelection(template: .partyRecap, selectedCount: 81))
     }
 
     func testStoryPlanRulesUseSelectedConvexMediaCount() {

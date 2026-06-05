@@ -44,7 +44,7 @@ enum MomentsMediaRules {
         let blockReason: BlockReason?
     }
 
-    static func canStartPreview(template: MomentTemplate, selectedCount: Int) -> Bool {
+    static func canUseSelection(template: MomentTemplate, selectedCount: Int) -> Bool {
         availability(template: template, selectedCount: selectedCount).canUseSelection
     }
 
@@ -82,7 +82,7 @@ enum MomentsMediaRules {
 
     static func selectionMessage(
         _ availability: Availability,
-        readyMessage: String = "Ready for Avi review.",
+        readyMessage: String = "Ready to continue.",
         tooFewMessage: (Int) -> String,
         tooManyMessage: (Int) -> String
     ) -> String {
