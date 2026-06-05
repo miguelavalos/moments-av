@@ -354,7 +354,7 @@
 "moment.noun.one" = "Moment";
 "moment.noun.other" = "Moments";
 "moment.this" = "this Moment";
-"moment.kind.storyReview" = "Avi's Cut";
+"moment.kind.storyReview" = "Story";
 "moment.nextAction.addMedia.button" = "Add Media in Create";
 "moment.nextAction.addMedia.message" = "Continue in Create and add photos or clips before Avi's Cut.";
 "moment.nextAction.addMedia.title" = "Add media";
@@ -515,14 +515,14 @@
 "credits.getMore" = "Get more credits";
 "profile.account.connected" = "Connected to %@.";
 "profile.account.signedInDevice" = "Signed in on this device.";
-"moment.activity.empty" = "Avi's Cut and video creation will appear here.";
+"moment.activity.empty" = "Story and video creation will appear here.";
 "moment.activity.title" = "Video activity";
 "moment.artifact.expires" = "Expires";
-"moment.artifact.final.empty" = "Create the final video after checking Avi's Cut.";
+"moment.artifact.final.empty" = "Create the final video after preparing the story.";
 "moment.artifact.final.title" = "Final video";
 "moment.artifact.included" = "Included";
 "moment.artifact.none" = "None";
-"moment.artifact.preview.empty" = "Check Avi's Cut when it is ready.";
+"moment.artifact.preview.empty" = "Check the story when it is ready.";
 "moment.artifact.storageKey" = "Storage key";
 "moment.artifact.watermark" = "Watermark";
 "moment.job.configured" = "Configured";
@@ -738,7 +738,7 @@
 "create.media.persistence.added" = "%d %@ added to this Moment.";
 "create.preview.status.readyRefine" = "Avi's Cut is ready. You can still refine it before the final video.";
 "create.media.fixture.synced" = "3 assets synced. Avi selected the strongest opening order.";
-"create.story.status.readyToReview" = "Avi's Cut is ready.";
+"create.story.status.readyToReview" = "Story is ready.";
 "create.dashboard.title" = "Creation Dashboard";
 "create.dashboard.subtitle.finalReady" = "Your final video is ready to check and share.";
 "create.dashboard.subtitle.storyPlan" = "Avi has a story plan. Create the video when ready.";
@@ -1043,7 +1043,7 @@
 "moment.story.empty" = "Prepare the story after this Moment has enough media.";
 "moment.story.scene" = "Scene %d";
 "moment.media.title" = "Media";
-"moment.media.empty" = "No media is attached to this Moment yet. Add photos or clips from Create to prepare Avi's Cut.";
+"moment.media.empty" = "No media is attached to this Moment yet. Add photos or clips from Create to prepare the story.";
 "gallery.status.videoDeleted" = "Gallery video deleted from this device.";
 "inProgress.status.momentDeleted" = "Moment deleted.";
 "library.mode.inProgress" = "In Progress";

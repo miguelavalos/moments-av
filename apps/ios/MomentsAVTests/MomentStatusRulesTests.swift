@@ -71,7 +71,7 @@ final class MomentStatusRulesTests: XCTestCase {
 
     func testDisplayHelpersFormatBackendValuesForUI() {
         XCTAssertEqual(MomentStatusRules.displayTitle(for: "preview_ready"), "Story ready")
-        XCTAssertEqual(MomentStatusRules.displayKind("preview"), "Avi's Cut")
+        XCTAssertEqual(MomentStatusRules.displayKind("preview"), "Story")
         XCTAssertEqual(MomentStatusRules.displayKind("final"), "Final")
     }
 

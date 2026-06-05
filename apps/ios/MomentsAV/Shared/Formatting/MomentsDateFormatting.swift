@@ -12,8 +12,8 @@ enum MomentsMomentFormatting {
         "Updated \(MomentsDateFormatting.formattedDate(milliseconds: moment.updatedAt))"
     }
 
-    static func previewUsage(_ moment: InProgressMoment) -> String {
-        "Avi's Cut"
+    static func storyUsage(_ moment: InProgressMoment) -> String {
+        L10n.string("moment.kind.storyReview")
     }
 
     static func statusTitle(_ moment: InProgressMoment) -> String {

@@ -243,7 +243,7 @@ final class MomentsCreateViewModel: ObservableObject {
         mediaStatusMessage = L10n.string("create.media.fixture.synced")
         savedScenes = workspace.storyScenes
         generatedScenes = []
-        storyStatusMessage = L10n.string("create.story.status.readyToReview")
+        storyStatusMessage = L10n.string("create.story.status.ready")
         lastPreparedStoryInputSignature = workspace.moment.storyInputSignature
             ?? currentStoryPlanInputSignature(momentId: workspace.moment.id)
         activeWorkspace = workspace
@@ -253,13 +253,13 @@ final class MomentsCreateViewModel: ObservableObject {
         switch fixtureMode {
         case .videoPlanReady, .videoPlanInsufficientCredits:
             renderPlan = MomentsCreateUITestFixtures.renderPlan(for: fixtureMode)
-        case .aviCutReady, .finalQueued, .finalRunning, .full:
+        case .storyReady, .finalQueued, .finalRunning, .full:
             renderPlan = nil
         }
         renderPlanInputSignature = renderPlan.map { currentFinalRenderInputSignature(momentId: $0.momentId) }
         finalRenderStatusMessage = {
             switch fixtureMode {
-            case .aviCutReady:
+            case .storyReady:
                 return nil
             case .videoPlanReady:
                 return L10n.string("workflow.final.planReady")

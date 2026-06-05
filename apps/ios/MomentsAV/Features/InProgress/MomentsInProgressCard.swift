@@ -299,7 +299,7 @@ private struct MomentsInProgressContinueBlock: View {
             "gearshape.2.fill"
         case "gallery_ready":
             "arrow.down.circle.fill"
-        case "preview_ready":
+        case "story_ready":
             "text.bubble.fill"
         default:
             "sparkles.rectangle.stack.fill"

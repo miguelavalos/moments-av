@@ -84,7 +84,7 @@ struct MomentsInProgressListRowPresentation: Identifiable, Equatable {
             ),
             MomentsInProgressListMetadataPresentation(
                 systemImage: "text.bubble",
-                text: MomentsMomentFormatting.previewUsage(moment)
+                text: MomentsMomentFormatting.storyUsage(moment)
             )
         ]
         self.statusTitle = MomentsMomentFormatting.statusTitle(moment)

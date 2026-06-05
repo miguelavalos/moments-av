@@ -197,7 +197,6 @@ enum MomentsFinalRenderRules {
         if storySceneCount > 0 { return true }
         guard let moment else { return false }
         return moment.status == "story_ready"
-            || moment.status == "preview_ready"
             || moment.status == "gallery_ready"
     }
 

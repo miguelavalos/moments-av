@@ -222,7 +222,7 @@ final class MomentsCreditGateTests: XCTestCase {
         let moment = InProgressMoment(
             id: "moment-1",
             template: .birthdayMessage,
-            status: "preview_ready",
+            status: "story_ready",
             title: "Birthday",
             tone: nil,
             tempo: nil,
@@ -230,7 +230,7 @@ final class MomentsCreditGateTests: XCTestCase {
             details: nil,
             durationSeconds: 30,
             creditCost: 2,
-            previewCount: 1,
+            previewCount: 0,
             previewLimit: 3,
             updatedAt: 0
         )

@@ -2,7 +2,7 @@ import Foundation
 
 enum MomentsCreateUITestFixtures {
     enum Mode: String {
-        case aviCutReady = "avi_cut_ready"
+        case storyReady = "story_ready"
         case videoPlanReady = "video_plan_ready"
         case videoPlanInsufficientCredits = "video_plan_insufficient_credits"
         case finalQueued = "final_queued"
@@ -42,7 +42,7 @@ enum MomentsCreateUITestFixtures {
             storyInputSignature: nil,
             durationSeconds: 30,
             creditCost: 2,
-            previewCount: mode == .full ? 1 : 0,
+            previewCount: 0,
             previewLimit: 3,
             updatedAt: 1_781_592_000_000
         )
@@ -70,7 +70,7 @@ enum MomentsCreateUITestFixtures {
         switch mode {
         case .videoPlanInsufficientCredits:
             return .empty
-        case .aviCutReady, .videoPlanReady, .finalQueued, .finalRunning, .full:
+        case .storyReady, .videoPlanReady, .finalQueued, .finalRunning, .full:
             return MomentsCreditBalance(proMonthly: 4, promotional: 1, purchased: 3)
         }
     }
@@ -113,21 +113,18 @@ enum MomentsCreateUITestFixtures {
 
     static func renderJobs(for mode: Mode) -> [MomentRenderJob] {
         switch mode {
-        case .aviCutReady, .videoPlanReady, .videoPlanInsufficientCredits:
+        case .storyReady, .videoPlanReady, .videoPlanInsufficientCredits:
             return []
         case .finalQueued:
             return [
-                renderJob(id: "preview-job-1", kind: "preview", status: "completed", model: "moments-preview-route"),
                 renderJob(id: "final-job-1", kind: "final", status: "queued", model: "mock/moments-final-v1")
             ]
         case .finalRunning:
             return [
-                renderJob(id: "preview-job-1", kind: "preview", status: "completed", model: "moments-preview-route"),
                 renderJob(id: "final-job-1", kind: "final", status: "running", model: "mock/moments-final-v1")
             ]
         case .full:
             return [
-                renderJob(id: "preview-job-1", kind: "preview", status: "completed", model: "moments-preview-route"),
                 renderJob(id: "final-job-1", kind: "final", status: "completed", model: "mock/moments-final-v1")
             ]
         }
@@ -139,15 +136,12 @@ enum MomentsCreateUITestFixtures {
 
     static func artifacts(for mode: Mode) -> [MomentArtifact] {
         switch mode {
-        case .aviCutReady, .videoPlanReady, .videoPlanInsufficientCredits:
+        case .storyReady, .videoPlanReady, .videoPlanInsufficientCredits:
             return []
         case .finalQueued, .finalRunning:
-            return [
-                artifact(id: "preview-artifact-1", kind: "preview", key: "momentsav/ui-test/moment-1/previews/preview-1.mp4", hasWatermark: true)
-            ]
+            return []
         case .full:
             return [
-                artifact(id: "preview-artifact-1", kind: "preview", key: "momentsav/ui-test/moment-1/previews/preview-1.mp4", hasWatermark: true),
                 artifact(id: "final-artifact-1", kind: "final_export", key: "momentsav/ui-test/moment-1/final/final-1.mp4", hasWatermark: false)
             ]
         }
@@ -198,7 +192,7 @@ enum MomentsCreateUITestFixtures {
             return "gallery_ready"
         case .finalQueued, .finalRunning:
             return "rendering"
-        case .aviCutReady, .videoPlanReady, .videoPlanInsufficientCredits:
+        case .storyReady, .videoPlanReady, .videoPlanInsufficientCredits:
             return "story_ready"
         }
     }

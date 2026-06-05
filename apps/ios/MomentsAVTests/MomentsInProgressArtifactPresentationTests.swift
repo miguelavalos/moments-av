@@ -10,7 +10,7 @@ final class MomentsInProgressArtifactPresentationTests: XCTestCase {
 
         XCTAssertEqual(presentation.title, "Video activity")
         XCTAssertEqual(presentation.emptySystemImage, "gearshape.2")
-        XCTAssertEqual(presentation.emptyMessage, "Avi's Cut and video creation will appear here.")
+        XCTAssertEqual(presentation.emptyMessage, "Story and video creation will appear here.")
         XCTAssertEqual(presentation.jobs.map(\.id), ["new", "old"])
     }
 
@@ -25,7 +25,7 @@ final class MomentsInProgressArtifactPresentationTests: XCTestCase {
 
         XCTAssertEqual(finalExport.title, "Final video")
         XCTAssertEqual(finalExport.emptySystemImage, "video.fill")
-        XCTAssertEqual(finalExport.emptyMessage, "Create the final video after checking Avi's Cut.")
+        XCTAssertEqual(finalExport.emptyMessage, "Create the final video after preparing the story.")
         XCTAssertEqual(finalExport.artifact?.storageKey, "momentsav/final-1.mp4")
     }
 
@@ -54,10 +54,10 @@ final class MomentsInProgressArtifactPresentationTests: XCTestCase {
             )
         )
 
-        XCTAssertEqual(presentation.kindTitle, "Avi's Cut")
+        XCTAssertEqual(presentation.kindTitle, "Story")
         XCTAssertEqual(presentation.watermarkTitle, "Included")
         XCTAssertEqual(presentation.expiresAtTitle, MomentsDateFormatting.formattedDate(milliseconds: 1_781_592_000_000))
-        XCTAssertEqual(presentation.actionDetail, "Avi's Cut is ready to check.")
+        XCTAssertEqual(presentation.actionDetail, "Story is ready to check.")
     }
 
     func testFinalArtifactPresentationProvidesExportAndRecoveryCopy() {

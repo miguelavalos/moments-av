@@ -352,7 +352,7 @@
 "moment.noun.one" = "Moment";
 "moment.noun.other" = "Moments";
 "moment.this" = "aquest Moment";
-"moment.kind.storyReview" = "Avi's Cut";
+"moment.kind.storyReview" = "Història";
 "moment.nextAction.addMedia.button" = "Afegeix media a Crear";
 "moment.nextAction.addMedia.message" = "Continua a Crear i afegeix fotos o clips abans d'Avi's Cut.";
 "moment.nextAction.addMedia.title" = "Afegeix media";
@@ -513,14 +513,14 @@
 "credits.getMore" = "Aconseguir més crèdits";
 "profile.account.connected" = "Connectat a %@.";
 "profile.account.signedInDevice" = "Sessió iniciada en aquest dispositiu.";
-"moment.activity.empty" = "Avi's Cut and video creation will appear here.";
+"moment.activity.empty" = "La història i la creació del vídeo apareixeran aquí.";
 "moment.activity.title" = "Activitat de vídeo";
 "moment.artifact.expires" = "Caduca";
-"moment.artifact.final.empty" = "Crea el vídeo final després de comprovar Avi's Cut.";
+"moment.artifact.final.empty" = "Crea el vídeo final després de preparar la història.";
 "moment.artifact.final.title" = "Vídeo final";
 "moment.artifact.included" = "Inclosa";
 "moment.artifact.none" = "Cap";
-"moment.artifact.preview.empty" = "Check Avi's Cut when it is ready.";
+"moment.artifact.preview.empty" = "Comprova la història quan estigui a punt.";
 "moment.artifact.storageKey" = "Clau d'emmagatzematge";
 "moment.artifact.watermark" = "Marca d'aigua";
 "moment.job.configured" = "Configurat";
@@ -731,7 +731,7 @@
 "create.media.persistence.added" = "%d %@ afegits a aquest Moment.";
 "create.preview.status.readyRefine" = "Avi's Cut està a punt. Encara pots ajustar-lo abans del render final.";
 "create.media.fixture.synced" = "3 recursos sincronitzats. Avi ha seleccionat l’ordre inicial més fort.";
-"create.story.status.readyToReview" = "Avi's Cut is ready.";
+"create.story.status.readyToReview" = "La història està a punt.";
 "create.dashboard.title" = "Tauler de creació";
 "create.dashboard.subtitle.finalReady" = "Your final video is ready to check and share.";
 "create.dashboard.subtitle.storyPlan" = "Avi té un pla d’història. Crea el vídeo quan estigui a punt.";
@@ -1036,7 +1036,7 @@
 "moment.story.empty" = "Prepare the story after this Moment has enough media.";
 "moment.story.scene" = "Scene %d";
 "moment.media.title" = "Media";
-"moment.media.empty" = "No media is attached to this Moment yet. Add photos or clips from Create to prepare Avi's Cut.";
+"moment.media.empty" = "Encara no hi ha cap element adjunt a aquest Moment. Afegeix fotos o clips des de Crear per preparar la història.";
 "gallery.status.videoDeleted" = "Gallery video deleted from this device.";
 "inProgress.status.momentDeleted" = "Moment deleted.";
 "library.mode.inProgress" = "In Progress";

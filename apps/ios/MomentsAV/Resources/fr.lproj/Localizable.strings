@@ -352,7 +352,7 @@
 "moment.noun.one" = "Moment";
 "moment.noun.other" = "Moments";
 "moment.this" = "ce Moment";
-"moment.kind.storyReview" = "Avi's Cut";
+"moment.kind.storyReview" = "Histoire";
 "moment.nextAction.addMedia.button" = "Ajouter des médias dans Créer";
 "moment.nextAction.addMedia.message" = "Continue dans Créer et ajoute des photos ou clips avant Avi's Cut.";
 "moment.nextAction.addMedia.title" = "Ajouter des médias";
@@ -513,14 +513,14 @@
 "credits.getMore" = "Obtenir plus de crédits";
 "profile.account.connected" = "Connecté à %@.";
 "profile.account.signedInDevice" = "Connecté sur cet appareil.";
-"moment.activity.empty" = "Avi's Cut and video creation will appear here.";
+"moment.activity.empty" = "L’histoire et la création vidéo apparaîtront ici.";
 "moment.activity.title" = "Activité vidéo";
 "moment.artifact.expires" = "Expire";
-"moment.artifact.final.empty" = "Crée la vidéo finale après avoir vérifié Avi's Cut.";
+"moment.artifact.final.empty" = "Crée la vidéo finale après avoir préparé l’histoire.";
 "moment.artifact.final.title" = "Vidéo finale";
 "moment.artifact.included" = "Inclus";
 "moment.artifact.none" = "Aucun";
-"moment.artifact.preview.empty" = "Check Avi's Cut when it is ready.";
+"moment.artifact.preview.empty" = "Vérifie l’histoire lorsqu’elle est prête.";
 "moment.artifact.storageKey" = "Clé de stockage";
 "moment.artifact.watermark" = "Filigrane";
 "moment.job.configured" = "Configuré";
@@ -731,7 +731,7 @@
 "create.media.persistence.added" = "%d %@ ajoutés à ce Moment.";
 "create.preview.status.readyRefine" = "Avi's Cut est prêt. Tu peux encore l’ajuster avant le rendu final.";
 "create.media.fixture.synced" = "3 ressources synchronisées. Avi a choisi l’ordre d’ouverture le plus fort.";
-"create.story.status.readyToReview" = "Avi's Cut is ready.";
+"create.story.status.readyToReview" = "L’histoire est prête.";
 "create.dashboard.title" = "Tableau de création";
 "create.dashboard.subtitle.finalReady" = "Your final video is ready to check and share.";
 "create.dashboard.subtitle.storyPlan" = "Avi a un plan d’histoire. Crée la vidéo quand tu es prêt.";
@@ -1036,7 +1036,7 @@
 "moment.story.empty" = "Prepare the story after this Moment has enough media.";
 "moment.story.scene" = "Scene %d";
 "moment.media.title" = "Media";
-"moment.media.empty" = "No media is attached to this Moment yet. Add photos or clips from Create to prepare Avi's Cut.";
+"moment.media.empty" = "Aucun média n’est encore associé à ce Moment. Ajoute des photos ou des clips depuis Créer pour préparer l’histoire.";
 "gallery.status.videoDeleted" = "Gallery video deleted from this device.";
 "inProgress.status.momentDeleted" = "Moment deleted.";
 "library.mode.inProgress" = "In Progress";
