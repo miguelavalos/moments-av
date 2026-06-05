@@ -445,6 +445,9 @@ struct MomentsCreditsPaywallView: View {
                 let creditsGranted = try await claimPromotionCode(code)
                 promoStatusMessage = L10n.string("paywall.promo.added", MomentsCreditCopy.countTitle(creditsGranted))
                 promoCode = ""
+                if creditsGranted > 0 {
+                    dismiss()
+                }
             } catch {
                 promoStatusMessage = error.localizedDescription
             }

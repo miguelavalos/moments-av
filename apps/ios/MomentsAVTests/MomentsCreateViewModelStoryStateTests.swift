@@ -111,6 +111,37 @@ final class MomentsCreateViewModelStoryStateTests: XCTestCase {
         XCTAssertFalse(viewModel.hasConfirmableRenderPlan(momentId: "moment-1"))
     }
 
+    func testInsufficientCreditRenderPlanClearsWhenBalanceCanCoverCost() {
+        let viewModel = MomentsCreateViewModel()
+        let plan = MomentsCreateTestFixtures.makeRenderPlan(
+            momentId: "moment-1",
+            canCreateVideo: false,
+            totalCreditCost: 2,
+            createVideoBlockers: ["insufficient_credits"]
+        )
+
+        viewModel.applyFinalRenderState(
+            MomentsCreateFinalRenderState(
+                finalExport: nil,
+                latestFinalJob: nil,
+                renderPlan: plan,
+                statusMessage: nil,
+                isGenerating: false
+            )
+        )
+        XCTAssertEqual(viewModel.currentRenderPlan?.planId, plan.planId)
+
+        viewModel.applyAccountState(
+            MomentsCreateAccountState(
+                isSignedIn: true,
+                balance: MomentsCreditBalance(proMonthly: 0, promotional: 5, purchased: 0),
+                creditBalanceLoadState: .loaded
+            )
+        )
+
+        XCTAssertNil(viewModel.currentRenderPlan)
+    }
+
     func testStoryScenesClearStaleErrorAndMarkCurrentInputPrepared() {
         let viewModel = MomentsCreateViewModel()
         let media = MomentsCreateTestFixtures.makeSelectedMedia(

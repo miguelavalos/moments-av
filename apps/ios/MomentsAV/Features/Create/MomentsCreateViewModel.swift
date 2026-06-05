@@ -596,6 +596,18 @@ extension MomentsCreateViewModel {
         isSignedIn = state.isSignedIn
         balance = state.balance
         creditBalanceLoadState = state.creditBalanceLoadState
+        clearInsufficientCreditRenderPlanIfBalanceNowCovers(state.balance)
+    }
+
+    private func clearInsufficientCreditRenderPlanIfBalanceNowCovers(_ balance: MomentsCreditBalance) {
+        guard let renderPlan,
+              renderPlan.canCreateVideo == false,
+              renderPlan.createVideoBlockers.contains("insufficient_credits"),
+              balance.spendable >= renderPlan.plan.totalCreditCost
+        else { return }
+
+        clearStaleRenderPlan()
+        updateFinalRenderStatusMessage(nil)
     }
 
     func applyMomentCreationState(_ state: MomentsCreateMomentCreationState) {
