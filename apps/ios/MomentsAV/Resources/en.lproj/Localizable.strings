@@ -356,7 +356,7 @@
 "moment.this" = "this Moment";
 "moment.kind.storyReview" = "Story";
 "moment.nextAction.addMedia.button" = "Add Media in Create";
-"moment.nextAction.addMedia.message" = "Continue in Create and add photos or clips before Avi's Cut.";
+"moment.nextAction.addMedia.message" = "Continue in Create and add photos or clips before preparing the story.";
 "moment.nextAction.addMedia.title" = "Add media";
 "moment.nextAction.createVideo.button" = "Create Video in Create";
 "moment.nextAction.createVideo.message" = "The story is ready. Continue in Create to make the final video.";
@@ -494,7 +494,7 @@
 "create.continuation.dismiss" = "Dismiss continuation hint";
 "create.continuation.final.message" = "Create or refresh the finished video.";
 "create.continuation.final.title" = "Continue with video";
-"create.continuation.media.message" = "Add photos or clips and prepare Avi's Cut.";
+"create.continuation.media.message" = "Add photos or clips and prepare the story.";
 "create.continuation.media.title" = "Continue with media";
 "create.continuation.preview.message" = "Review the story before using video credits.";
 "create.continuation.preview.title" = "Continue story";
@@ -589,7 +589,7 @@
 "create.options.suggestionAvailable" = "Avi has a suggestion for this media. Open options to apply it or keep your current direction.";
 "create.options.title" = "Options";
 "create.discard.current" = "Discard Moment";
-"create.discard.currentMessage" = "This deletes the current Moment, selected media, and Avi's Cut.";
+"create.discard.currentMessage" = "This deletes the current Moment, selected media, and story.";
 "create.discard.local" = "Discard draft";
 "create.discard.localMessage" = "This removes this draft, selected media, and story setup before anything is saved.";
 "create.final.chooseDestination" = "Choose final video destination";
@@ -740,10 +740,10 @@
 "create.preparation.prepareFinalPlan.title" = "Checking credits";
 "create.preparation.createVideo.title" = "Creating your video";
 "create.preparation.createPreview.title" = "Preparing Avi's Cut";
-"create.preparation.importMedia.detailWithCount" = "Avi is reading %d %@ and preparing Avi's Cut.";
-"create.preparation.importMedia.detail" = "Avi is reading the selection and preparing Avi's Cut.";
+"create.preparation.importMedia.detailWithCount" = "Avi is reading %d %@ and preparing the story.";
+"create.preparation.importMedia.detail" = "Avi is reading the selection and preparing the story.";
 "create.preparation.prepareMoment.detail" = "Avi is opening a secure workspace for this video.";
-"create.preparation.prepareStory.detail" = "Avi is organizing the selected items into Avi's Cut.";
+"create.preparation.prepareStory.detail" = "Avi is organizing the selected items into the story.";
 "create.preparation.uploadForVideo.detailWithCount" = "Sending %d %@ needed for final video creation.";
 "create.preparation.uploadForVideo.detail" = "Sending the selected media needed for final video creation.";
 "create.preparation.prepareFinalPlan.detail" = "Avi checks media, options, and cost.";

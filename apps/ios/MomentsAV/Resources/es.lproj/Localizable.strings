@@ -356,7 +356,7 @@
 "moment.this" = "este Moment";
 "moment.kind.storyReview" = "Historia";
 "moment.nextAction.addMedia.button" = "Añadir media en Crear";
-"moment.nextAction.addMedia.message" = "Continúa en Crear y añade fotos o clips antes de Avi's Cut.";
+"moment.nextAction.addMedia.message" = "Continúa en Crear y añade fotos o clips antes de preparar la historia.";
 "moment.nextAction.addMedia.title" = "Añadir media";
 "moment.nextAction.createVideo.button" = "Crear video en Crear";
 "moment.nextAction.createVideo.message" = "La historia está lista. Continúa en Crear para hacer el video final.";
@@ -494,7 +494,7 @@
 "create.continuation.dismiss" = "Cerrar sugerencia de continuación";
 "create.continuation.final.message" = "Crea o actualiza el video terminado.";
 "create.continuation.final.title" = "Continuar con el video";
-"create.continuation.media.message" = "Añade fotos o clips y prepara Avi's Cut.";
+"create.continuation.media.message" = "Añade fotos o clips y prepara la historia.";
 "create.continuation.media.title" = "Continuar con media";
 "create.continuation.preview.message" = "Revisa la historia antes de usar créditos de video.";
 "create.continuation.preview.title" = "Continuar con la historia";
@@ -589,7 +589,7 @@
 "create.options.suggestionAvailable" = "Avi tiene una sugerencia para esta media. Abre opciones para aplicarla o mantener tu dirección.";
 "create.options.title" = "Opciones";
 "create.discard.current" = "Descartar Moment";
-"create.discard.currentMessage" = "Esto elimina el Moment actual, la media seleccionada y Avi's Cut.";
+"create.discard.currentMessage" = "Esto elimina el Moment actual, la media seleccionada y la historia.";
 "create.discard.local" = "Descartar borrador";
 "create.discard.localMessage" = "Esto elimina este borrador, la media seleccionada y la configuración de historia antes de guardar nada.";
 "create.final.chooseDestination" = "Elegir destino del video final";
@@ -740,10 +740,10 @@
 "create.preparation.prepareFinalPlan.title" = "Calculando créditos";
 "create.preparation.createVideo.title" = "Creando tu video";
 "create.preparation.createPreview.title" = "Preparando Avi's Cut";
-"create.preparation.importMedia.detailWithCount" = "Avi está leyendo %d %@ y preparando Avi's Cut.";
-"create.preparation.importMedia.detail" = "Avi está leyendo la selección y preparando Avi's Cut.";
+"create.preparation.importMedia.detailWithCount" = "Avi está leyendo %d %@ y preparando la historia.";
+"create.preparation.importMedia.detail" = "Avi está leyendo la selección y preparando la historia.";
 "create.preparation.prepareMoment.detail" = "Avi está abriendo un espacio seguro para este video.";
-"create.preparation.prepareStory.detail" = "Avi está organizando los elementos seleccionados en Avi's Cut.";
+"create.preparation.prepareStory.detail" = "Avi está organizando los elementos seleccionados en la historia.";
 "create.preparation.uploadForVideo.detailWithCount" = "Enviando %d %@ necesarios para crear el video final.";
 "create.preparation.uploadForVideo.detail" = "Enviando la media seleccionada necesaria para crear el video final.";
 "create.preparation.prepareFinalPlan.detail" = "Avi comprueba media, opciones y coste.";
