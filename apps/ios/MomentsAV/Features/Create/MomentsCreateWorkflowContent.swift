@@ -8,6 +8,7 @@ struct MomentsCreateWorkflowContent: View {
     @Binding var pickerItems: [PhotosPickerItem]
     let startSignInFlow: () -> Void
     let openCredits: () -> Void
+    let finishFinalVideoToGallery: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -45,7 +46,7 @@ struct MomentsCreateWorkflowContent: View {
                     prepareFinalRenderPlan: viewModel.prepareFinalVideoPlanFromCurrentSelection,
                     submitFinalVideoConfirmation: viewModel.submitFinalVideoConfirmation,
                     retryFinalVideoDownload: viewModel.retryFinalVideoDownload,
-                    finishFinalVideoToGallery: viewModel.finishFinalVideoToGallery
+                    finishFinalVideoToGallery: finishFinalVideoToGallery
                 )
             } else {
                 EmptyView()

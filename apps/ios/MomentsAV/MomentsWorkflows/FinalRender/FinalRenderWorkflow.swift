@@ -427,16 +427,18 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
         artifact.workflowArtifactId ?? artifact.id
     }
 
-    func finishFinalExportToGallery() {
+    @discardableResult
+    func finishFinalExportToGallery() -> Bool {
         guard let pendingGalleryVideo else {
             statusMessage = L10n.string("workflow.final.downloadBeforeGallery")
-            return
+            return false
         }
 
         galleryStore.addRecord(pendingGalleryVideo)
         self.pendingGalleryVideo = nil
         canRetryFinalVideoDownload = false
         statusMessage = L10n.string("workflow.final.movedToGallery")
+        return true
     }
 
     private func generateBlockMessage(_ availability: MomentsFinalRenderRules.Availability) -> String {

@@ -370,14 +370,20 @@ extension MomentsCreateViewModel {
         finalRenderWorkflow.retryFinalVideoDownload()
     }
 
-    func finishFinalVideoToGallery() {
+    @discardableResult
+    func finishFinalVideoToGallery() -> Bool {
         guard let finalRenderWorkflow else {
             updateFinalRenderStatusMessage(L10n.string("create.error.galleryUnavailable"))
-            return
+            return false
         }
 
-        finalRenderWorkflow.finishFinalExportToGallery()
+        guard finalRenderWorkflow.finishFinalExportToGallery() else {
+            beginFinalVideoCommand(.failed(finalRenderWorkflow.statusMessage ?? L10n.string("workflow.final.downloadBeforeGallery")))
+            return false
+        }
+
         beginFinalVideoCommand(.completedInGallery(L10n.string("workflow.final.movedToGallery")))
+        return true
     }
 
     private var activeTemplateContext: (momentId: String, template: MomentTemplate)? {

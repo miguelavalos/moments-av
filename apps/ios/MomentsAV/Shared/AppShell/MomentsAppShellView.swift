@@ -133,6 +133,7 @@ struct MomentsAppShellView: View {
                     startSignInFlow: startSignInFlow,
                     openCredits: openCredits,
                     cancelCreation: cancelCreation,
+                    finishFinalVideoToGallery: finishFinalVideoToGallery,
                     bottomSafeAreaPadding: 82
                 )
             case .inProgress:
@@ -200,6 +201,15 @@ struct MomentsAppShellView: View {
     private func cancelCreation() {
         createViewModel.clearSessionState()
         selectRootTab(.inProgress)
+    }
+
+    private func finishFinalVideoToGallery() {
+        guard createViewModel.finishFinalVideoToGallery() else { return }
+
+        createViewModel.clearSessionState()
+        galleryViewModel.refreshVideos()
+        chromeItem = nil
+        selectRootTab(.gallery)
     }
 
     private func startOrContinueMoment() {

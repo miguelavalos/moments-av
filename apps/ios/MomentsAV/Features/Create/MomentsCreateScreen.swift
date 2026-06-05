@@ -12,17 +12,20 @@ struct MomentsCreateScreen: View {
     let startSignInFlow: () -> Void
     let openCredits: () -> Void
     let cancelCreation: () -> Void
+    let finishFinalVideoToGallery: () -> Void
     let bottomSafeAreaPadding: CGFloat
 
     init(
         startSignInFlow: @escaping () -> Void,
         openCredits: @escaping () -> Void,
         cancelCreation: @escaping () -> Void,
+        finishFinalVideoToGallery: @escaping () -> Void,
         bottomSafeAreaPadding: CGFloat = 82
     ) {
         self.startSignInFlow = startSignInFlow
         self.openCredits = openCredits
         self.cancelCreation = cancelCreation
+        self.finishFinalVideoToGallery = finishFinalVideoToGallery
         self.bottomSafeAreaPadding = bottomSafeAreaPadding
     }
 
@@ -31,7 +34,8 @@ struct MomentsCreateScreen: View {
             viewModel: viewModel,
             pickerItems: $pickerItems,
             startSignInFlow: startSignInFlow,
-            openCredits: openCredits
+            openCredits: openCredits,
+            finishFinalVideoToGallery: finishFinalVideoToGallery
         )
         .background(MomentsTheme.shellBackground.ignoresSafeArea())
         .safeAreaPadding(.horizontal, 20)
