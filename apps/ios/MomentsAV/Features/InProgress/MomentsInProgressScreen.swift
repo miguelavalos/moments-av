@@ -5,6 +5,7 @@ struct MomentsInProgressScreen: View {
     @EnvironmentObject private var viewModel: MomentsInProgressViewModel
     @EnvironmentObject private var createViewModel: MomentsCreateViewModel
     @State private var momentPendingDeletion: InProgressMoment?
+    @State private var momentPendingRename: InProgressMoment?
     let balance: MomentsCreditBalance
     let creditBalanceLoadState: MomentsCreditBalanceLoadState
     let continueMoment: (MomentsContinuationRequest) -> Void
@@ -62,6 +63,7 @@ struct MomentsInProgressScreen: View {
                 statusMessage: viewModel.statusMessage,
                 selectMoment: viewModel.selectMoment,
                 continueMoment: continueMoment,
+                requestRenameMoment: { momentPendingRename = $0 },
                 startMoment: startMoment,
                 startSignInFlow: startSignInFlow,
                 openCredits: openCredits,
@@ -81,6 +83,12 @@ struct MomentsInProgressScreen: View {
             }
         } message: {
             Text(presentation.deletionMessage)
+        }
+        .sheet(item: $momentPendingRename) { moment in
+            MomentsInProgressRenameSheet(moment: moment) { title in
+                viewModel.renameMoment(moment, title: title)
+            }
+            .presentationDetents([.height(230)])
         }
     }
 
@@ -107,5 +115,44 @@ struct MomentsInProgressScreen: View {
 
     private func cancelMomentDeletion() {
         momentPendingDeletion = nil
+    }
+}
+
+private struct MomentsInProgressRenameSheet: View {
+    let moment: InProgressMoment
+    let save: (String) -> Void
+    @Environment(\.dismiss) private var dismiss
+    @State private var title: String
+
+    init(moment: InProgressMoment, save: @escaping (String) -> Void) {
+        self.moment = moment
+        self.save = save
+        _title = State(initialValue: moment.title)
+    }
+
+    var body: some View {
+        NavigationStack {
+            Form {
+                TextField(L10n.string("inProgress.rename.placeholder"), text: $title)
+                    .textInputAutocapitalization(.words)
+            }
+            .navigationTitle(L10n.string("inProgress.rename.title"))
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button(L10n.string("common.cancel")) {
+                        dismiss()
+                    }
+                }
+
+                ToolbarItem(placement: .confirmationAction) {
+                    Button(L10n.string("common.save")) {
+                        save(title)
+                        dismiss()
+                    }
+                    .disabled(title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                }
+            }
+        }
     }
 }

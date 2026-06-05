@@ -17,6 +17,7 @@ final class MomentsInProgressViewModel: ObservableObject {
     private var workflowCancellables = Set<AnyCancellable>()
     private var accountCancellables = Set<AnyCancellable>()
     private var deletionTask: Task<Void, Never>?
+    private var renameTask: Task<Void, Never>?
 
     init() {}
 
@@ -100,10 +101,28 @@ final class MomentsInProgressViewModel: ObservableObject {
 
     func clearSelection() {
         deletionTask?.cancel()
+        renameTask?.cancel()
         deletionTask = nil
+        renameTask = nil
         selectedMomentId = nil
         statusMessage = nil
         workflow?.clearMomentWorkspace()
+    }
+
+    func renameMoment(_ moment: InProgressMoment, title: String) {
+        guard let workflow else { return }
+        let trimmedTitle = title.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedTitle.isEmpty else { return }
+
+        renameTask?.cancel()
+        renameTask = Task { [weak self] in
+            let didRename = await workflow.renameMoment(moment, title: trimmedTitle)
+            guard !Task.isCancelled else { return }
+            if didRename {
+                self?.statusMessage = L10n.string("inProgress.rename.saved")
+            }
+            self?.renameTask = nil
+        }
     }
 
     func deleteMoment(_ moment: InProgressMoment) {

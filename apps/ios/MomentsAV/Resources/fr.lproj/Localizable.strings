@@ -399,6 +399,7 @@
 "inProgress.avi.ready.title" = "Prêt à créer un souvenir";
 "inProgress.credits.needed" = "Des crédits sont nécessaires avant la création de la vidéo finale.";
 "inProgress.credits.ready" = "Les crédits sont prêts pour la création de la vidéo finale.";
+"inProgress.card.mediaCount" = "%d médias";
 "inProgress.deleteMoment.button" = "Supprimer le Moment";
 "inProgress.deleteMoment.deleting" = "Suppression du Moment...";
 "inProgress.deleteMoment.message" = "Cela supprime %@, y compris les enregistrements de médias sélectionnés et les fichiers vidéo générés qui lui appartiennent.";
@@ -417,6 +418,10 @@
 "inProgress.title" = "En cours";
 "library.inProgressAndGallery.title" = "En cours et Galerie";
 "inProgress.newMoment" = "Nouveau Moment";
+"inProgress.rename.failed" = "Impossible de renommer le Moment. Réessaie.";
+"inProgress.rename.placeholder" = "Nom du Moment";
+"inProgress.rename.saved" = "Moment renommé.";
+"inProgress.rename.title" = "Renommer le Moment";
 "inProgress.signIn.message" = "En cours et Galerie se débloquent quand ton compte est connecté.";
 "inProgress.signIn.title" = "Connecte-toi pour créer des Moments";
 "tab.avi" = "Avi";

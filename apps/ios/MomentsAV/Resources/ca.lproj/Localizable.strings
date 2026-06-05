@@ -399,6 +399,7 @@
 "inProgress.avi.ready.title" = "A punt per crear un record";
 "inProgress.credits.needed" = "Calen crèdits abans de crear el vídeo final.";
 "inProgress.credits.ready" = "Els crèdits estan a punt per crear el vídeo final.";
+"inProgress.card.mediaCount" = "%d media";
 "inProgress.deleteMoment.button" = "Elimina el Moment";
 "inProgress.deleteMoment.deleting" = "Eliminant el Moment...";
 "inProgress.deleteMoment.message" = "Això elimina %@, inclosos els registres de media seleccionada i els fitxers de vídeo generats que hi pertanyen.";
@@ -417,6 +418,10 @@
 "inProgress.title" = "En curs";
 "library.inProgressAndGallery.title" = "En curs i Galeria";
 "inProgress.newMoment" = "Moment nou";
+"inProgress.rename.failed" = "No s’ha pogut canviar el nom del Moment. Torna-ho a provar.";
+"inProgress.rename.placeholder" = "Nom del Moment";
+"inProgress.rename.saved" = "Nom del Moment canviat.";
+"inProgress.rename.title" = "Canvia el nom del Moment";
 "inProgress.signIn.message" = "En curs i Galeria es desbloquegen quan el compte està connectat.";
 "inProgress.signIn.title" = "Inicia sessió per crear Moments";
 "tab.avi" = "Avi";

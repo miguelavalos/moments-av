@@ -26,6 +26,7 @@ struct MomentsWorkflowBundle {
             momentsObserver: momentsObserver,
             workspaceSelectionWorkflow: momentWorkspaceSelection,
             momentDeletionWorkflow: momentDeletion,
+            momentTitleUpdater: momentsRepository,
             currentUserProvider: accountController
         )
         momentCreation = MomentCreationWorkflow(

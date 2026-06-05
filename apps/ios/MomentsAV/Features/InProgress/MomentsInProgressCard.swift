@@ -15,6 +15,7 @@ struct MomentsInProgressCard: View {
     let statusMessage: String?
     let selectMoment: (InProgressMoment) -> Void
     let continueMoment: (MomentsContinuationRequest) -> Void
+    let requestRenameMoment: (InProgressMoment) -> Void
     let startMoment: () -> Void
     let startSignInFlow: () -> Void
     let openCredits: () -> Void
@@ -50,7 +51,8 @@ struct MomentsInProgressCard: View {
                 )
                 MomentsInProgressContinueBlock(
                     moments: continueMoments,
-                    continueMoment: continueMoment
+                    continueMoment: continueMoment,
+                    requestRenameMoment: requestRenameMoment
                 )
                 MomentsInProgressStatusMessage(message: statusMessage)
             }
@@ -235,6 +237,7 @@ private struct MomentsInProgressAviBlock: View {
 private struct MomentsInProgressContinueBlock: View {
     let moments: [InProgressMoment]
     let continueMoment: (MomentsContinuationRequest) -> Void
+    let requestRenameMoment: (InProgressMoment) -> Void
 
     var body: some View {
         if moments.isEmpty {
@@ -247,53 +250,108 @@ private struct MomentsInProgressContinueBlock: View {
                 action: nil
             )
         } else {
-            AVAppShellCard {
-                VStack(alignment: .leading, spacing: 12) {
-                    AVAppShellSectionHeader(title: L10n.string("inProgress.title"))
+            VStack(alignment: .leading, spacing: 12) {
+                AVAppShellSectionHeader(title: L10n.string("inProgress.title"))
 
-                    ForEach(moments) { moment in
-                        VStack(spacing: 10) {
-                            Button {
-                                continueMoment(MomentsContinuationRequest(moment: moment))
-                            } label: {
-                                HStack(alignment: .center, spacing: 12) {
-                                    Image(systemName: iconName(for: moment))
-                                        .font(.system(size: 22, weight: .bold))
-                                        .foregroundStyle(AVBrandColor.accent)
-                                        .frame(width: 32)
-
-                                    VStack(alignment: .leading, spacing: 5) {
-                                        Text(moment.title)
-                                            .font(.system(size: 17, weight: .black))
-                                            .foregroundStyle(AVBrandColor.textPrimary)
-                                            .lineLimit(2)
-
-                                        Text(MomentStatusRules.displayTitle(for: moment.status))
-                                            .font(AVBrandTypography.captionStrong)
-                                            .foregroundStyle(AVBrandColor.textSecondary)
-                                    }
-
-                                    Spacer(minLength: 0)
-
-                                    Image(systemName: "chevron.right")
-                                        .font(.system(size: 13, weight: .black))
-                                        .foregroundStyle(AVBrandColor.textSecondary)
-                                }
-                                .frame(maxWidth: .infinity, minHeight: 56, alignment: .leading)
-                                .contentShape(Rectangle())
-                            }
-                            .buttonStyle(.plain)
+                ForEach(moments) { moment in
+                    MomentsInProgressMomentCard(
+                        moment: moment,
+                        continueMoment: {
+                            continueMoment(MomentsContinuationRequest(moment: moment))
+                        },
+                        renameMoment: {
+                            requestRenameMoment(moment)
                         }
-                        if moment.id != moments.last?.id {
-                            Divider()
-                        }
-                    }
+                    )
                 }
             }
         }
     }
+}
 
-    private func iconName(for moment: InProgressMoment) -> String {
+private struct MomentsInProgressMomentCard: View {
+    let moment: InProgressMoment
+    let continueMoment: () -> Void
+    let renameMoment: () -> Void
+
+    var body: some View {
+        Button(action: continueMoment) {
+            HStack(alignment: .center, spacing: 14) {
+                mediaPreview
+
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack(alignment: .firstTextBaseline, spacing: 8) {
+                        Text(moment.title)
+                            .font(.system(size: 19, weight: .black))
+                            .foregroundStyle(AVBrandColor.textPrimary)
+                            .lineLimit(2)
+
+                        Spacer(minLength: 0)
+
+                        Menu {
+                            Button(action: renameMoment) {
+                                Label(L10n.string("common.rename"), systemImage: "pencil")
+                            }
+                        } label: {
+                            Image(systemName: "ellipsis")
+                                .font(.system(size: 13, weight: .black))
+                                .foregroundStyle(AVBrandColor.textSecondary)
+                                .frame(width: 34, height: 34)
+                                .background(AVBrandColor.neutral100, in: Circle())
+                        }
+                    }
+
+                    Text(MomentStatusRules.displayTitle(for: moment.status))
+                        .font(AVBrandTypography.captionStrong)
+                        .foregroundStyle(AVBrandColor.textSecondary)
+
+                    HStack(spacing: 8) {
+                        MomentsInProgressMomentPill(
+                            systemImage: "photo.on.rectangle",
+                            text: L10n.string("inProgress.card.mediaCount", moment.mediaCount)
+                        )
+                        MomentsInProgressMomentPill(
+                            systemImage: iconName,
+                            text: MomentsMomentFormatting.updatedAt(moment)
+                        )
+                    }
+                }
+
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 13, weight: .black))
+                    .foregroundStyle(AVBrandColor.textSecondary)
+            }
+            .padding(14)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(
+                RoundedRectangle(cornerRadius: AVBrandRadius.card, style: .continuous)
+                    .fill(AVBrandColor.elevatedSurface)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: AVBrandRadius.card, style: .continuous)
+                    .stroke(AVBrandColor.borderSubtle.opacity(0.55), lineWidth: 1)
+            )
+        }
+        .buttonStyle(.plain)
+    }
+
+    @ViewBuilder
+    private var mediaPreview: some View {
+        if moment.mediaPreview.isEmpty {
+            ZStack {
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .fill(AVBrandColor.accent.opacity(0.12))
+                Image(systemName: iconName)
+                    .font(.system(size: 24, weight: .black))
+                    .foregroundStyle(AVBrandColor.accent)
+            }
+            .frame(width: 92, height: 92)
+        } else {
+            MomentsSharedMediaSummaryStack(localMedia: [], syncedMedia: moment.mediaPreview)
+        }
+    }
+
+    private var iconName: String {
         switch moment.status {
         case "final_render_pending", "final_rendering":
             "gearshape.2.fill"
@@ -305,7 +363,21 @@ private struct MomentsInProgressContinueBlock: View {
             "sparkles.rectangle.stack.fill"
         }
     }
+}
 
+private struct MomentsInProgressMomentPill: View {
+    let systemImage: String
+    let text: String
+
+    var body: some View {
+        Label(text, systemImage: systemImage)
+            .font(.system(size: 11, weight: .black))
+            .foregroundStyle(AVBrandColor.textSecondary)
+            .lineLimit(1)
+            .padding(.horizontal, 8)
+            .padding(.vertical, 5)
+            .background(AVBrandColor.neutral100, in: Capsule())
+    }
 }
 
 private struct MomentsInProgressInlineEmptyState: View {

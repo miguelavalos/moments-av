@@ -10,6 +10,7 @@ final class InProgressMomentsWorkflow: ObservableObject {
     private let momentsObserver: any InProgressMomentsListProviding
     private let workspaceSelectionWorkflow: MomentWorkspaceSelectionWorkflow
     private let momentDeletionWorkflow: MomentDeletionWorkflow
+    private let momentTitleUpdater: any MomentsTitleUpdating
     private let currentUserProvider: any MomentsCurrentUserProviding
     private var currentOwnerUserId: String?
     private var cancellables = Set<AnyCancellable>()
@@ -18,11 +19,13 @@ final class InProgressMomentsWorkflow: ObservableObject {
         momentsObserver: any InProgressMomentsListProviding,
         workspaceSelectionWorkflow: MomentWorkspaceSelectionWorkflow,
         momentDeletionWorkflow: MomentDeletionWorkflow,
+        momentTitleUpdater: any MomentsTitleUpdating,
         currentUserProvider: any MomentsCurrentUserProviding
     ) {
         self.momentsObserver = momentsObserver
         self.workspaceSelectionWorkflow = workspaceSelectionWorkflow
         self.momentDeletionWorkflow = momentDeletionWorkflow
+        self.momentTitleUpdater = momentTitleUpdater
         self.currentUserProvider = currentUserProvider
 
         momentsObserver.momentsPublisher
@@ -81,6 +84,29 @@ final class InProgressMomentsWorkflow: ObservableObject {
 
     func clearMomentWorkspace() {
         clearActiveMoment()
+    }
+
+    func renameMoment(_ moment: InProgressMoment, title: String) async -> Bool {
+        let trimmedTitle = title.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedTitle.isEmpty else { return false }
+
+        do {
+            guard let ownerUserId = currentUserProvider.currentUserId else {
+                errorMessage = L10n.string("inProgress.rename.failed")
+                return false
+            }
+            try await momentTitleUpdater.updateMomentTitle(
+                ownerUserId: ownerUserId,
+                momentId: moment.id,
+                title: trimmedTitle
+            )
+            errorMessage = nil
+            observeInProgressMoments(ownerUserId: currentOwnerUserId)
+            return true
+        } catch {
+            errorMessage = L10n.string("inProgress.rename.failed")
+            return false
+        }
     }
 
     func deleteMoment(_ moment: InProgressMoment) async -> Bool {

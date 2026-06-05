@@ -19,6 +19,8 @@ struct InProgressMoment: Identifiable, Decodable, Equatable {
     let durationSeconds: Double
     let creditCost: Double
     let updatedAt: Double
+    let mediaCount: Int
+    let mediaPreview: [MomentMediaAsset]
 
     init(
         id: String,
@@ -38,7 +40,9 @@ struct InProgressMoment: Identifiable, Decodable, Equatable {
         storyInputSignature: String? = nil,
         durationSeconds: Double,
         creditCost: Double,
-        updatedAt: Double
+        updatedAt: Double,
+        mediaCount: Int = 0,
+        mediaPreview: [MomentMediaAsset] = []
     ) {
         self.id = id
         self.template = template
@@ -58,6 +62,8 @@ struct InProgressMoment: Identifiable, Decodable, Equatable {
         self.durationSeconds = durationSeconds
         self.creditCost = creditCost
         self.updatedAt = updatedAt
+        self.mediaCount = mediaCount
+        self.mediaPreview = mediaPreview
     }
 
     enum CodingKeys: String, CodingKey {
@@ -79,6 +85,8 @@ struct InProgressMoment: Identifiable, Decodable, Equatable {
         case durationSeconds
         case creditCost
         case updatedAt
+        case mediaCount
+        case mediaPreview
     }
 
     init(from decoder: Decoder) throws {
@@ -104,5 +112,7 @@ struct InProgressMoment: Identifiable, Decodable, Equatable {
         durationSeconds = try container.decode(Double.self, forKey: .durationSeconds)
         creditCost = try container.decode(Double.self, forKey: .creditCost)
         updatedAt = try container.decode(Double.self, forKey: .updatedAt)
+        mediaPreview = try container.decodeIfPresent([MomentMediaAsset].self, forKey: .mediaPreview) ?? []
+        mediaCount = try container.decodeIfPresent(Int.self, forKey: .mediaCount) ?? mediaPreview.count
     }
 }

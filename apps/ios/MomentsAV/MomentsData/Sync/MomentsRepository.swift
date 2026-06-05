@@ -74,4 +74,12 @@ struct MomentsRepository {
             momentId: momentId
         )
     }
+
+    func updateMomentTitle(ownerUserId: String, momentId: String, title: String) async throws {
+        try await remoteClient.updateMomentTitle(
+            ownerUserId: ownerUserId,
+            momentId: momentId,
+            title: title
+        )
+    }
 }

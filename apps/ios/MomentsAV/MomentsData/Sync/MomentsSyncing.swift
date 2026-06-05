@@ -57,6 +57,11 @@ protocol MomentsDeleting {
 }
 
 @MainActor
+protocol MomentsTitleUpdating {
+    func updateMomentTitle(ownerUserId: String, momentId: String, title: String) async throws
+}
+
+@MainActor
 protocol InProgressMomentsObserving {
     func observeInProgressMoments(ownerUserId: String) throws -> AnyPublisher<[InProgressMoment], Error>
 }
@@ -93,5 +98,6 @@ extension MomentsRepository:
     MomentsStorySaving,
     MomentsRenderJobStatusUpdating,
     MomentsDeleting,
+    MomentsTitleUpdating,
     InProgressMomentsObserving,
     MomentWorkspaceObserving {}

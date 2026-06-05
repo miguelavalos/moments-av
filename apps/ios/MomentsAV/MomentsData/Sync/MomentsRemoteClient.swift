@@ -86,6 +86,24 @@ struct MomentsRemoteClient {
         )
     }
 
+    func updateMomentTitle(ownerUserId: String, momentId: String, title: String) async throws {
+        let client = try requireClient()
+
+        let updatedMomentId: String? = try await retryingMutation(
+            client: client,
+            name: "moments:updateMomentTitle",
+            args: [
+                "ownerUserId": ownerUserId,
+                "momentId": momentId,
+                "title": title
+            ]
+        )
+
+        guard updatedMomentId != nil else {
+            throw MomentsSyncError.unexpectedResponse
+        }
+    }
+
     func deleteMomentTree(
         ownerUserId: String,
         request: MomentDeletionRequest
