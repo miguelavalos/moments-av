@@ -24,6 +24,8 @@ For signed development workflows, use the generated `staging` config. AVALSYS
 Apps AV product workflows should run against deployed preview in development,
 not a local Wrangler worker, whenever they touch Account AV, media uploads,
 credits, R2-backed artifacts, purchases, render jobs, or account deletion.
+Moments AV development validation also uses Convex cloud `dev`, not a local
+Convex runtime.
 
 ## Public Rules
 

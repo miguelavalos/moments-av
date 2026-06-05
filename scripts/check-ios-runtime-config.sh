@@ -5,8 +5,6 @@ repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 env_name=""
 configuration="Debug"
 destination_args=(-destination "generic/platform=iOS")
-local_worker_api_url="http://127.0.0.1:"
-local_worker_api_url="${local_worker_api_url}8788"
 preview_worker_api_url="https://api-account-av-preview.avalsys.com"
 production_worker_api_url="https://api-account-av.avalsys.com"
 
@@ -181,9 +179,7 @@ elif [ "$env_name" = "staging" ]; then
   [ "$api_base_url" = "$preview_worker_api_url" ] || fail "staging API URL mismatch"
   [[ "$publishable_key" == pk_test_* ]] || fail "staging publishable key must use pk_test"
 else
-  if [ "$api_base_url" != "$local_worker_api_url" ] && [ "$api_base_url" != "$preview_worker_api_url" ]; then
-    fail "dev API URL must be local worker or preview worker"
-  fi
+  [ "$api_base_url" = "$preview_worker_api_url" ] || fail "dev API URL must be preview worker"
   [[ "$publishable_key" == pk_test_* ]] || fail "$env_name publishable key must use pk_test"
 fi
 

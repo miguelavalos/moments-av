@@ -287,7 +287,7 @@
 "credits.balance.offline.title" = "Credits unavailable offline";
 "credits.balance.offline.detail" = "Connect to the internet to see your balance or get credits.";
 "credits.balance.unavailable.title" = "Credits could not load";
-"credits.balance.unavailable.detail" = "Moments AV could not reach the credit service. Try again in a moment.";
+"credits.balance.unavailable.detail" = "Moments AV could not verify your credit balance. Check your connection and try again. If it keeps failing, sign in again.";
 "credits.balance.retry.title" = "Try again";
 "credits.noun.one" = "credit";
 "credits.noun.other" = "credits";

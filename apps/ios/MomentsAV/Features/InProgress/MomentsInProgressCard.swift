@@ -70,22 +70,23 @@ private struct MomentsInProgressCreditStatus: View {
 
     var body: some View {
         AVAppShellCard {
-            HStack(alignment: .center, spacing: 12) {
+            HStack(alignment: .top, spacing: 12) {
                 Image(systemName: systemImage)
                     .font(.system(size: 18, weight: .bold))
                     .foregroundStyle(iconColor)
                     .frame(width: 28, height: 28)
 
-                VStack(alignment: .leading, spacing: 3) {
+                VStack(alignment: .leading, spacing: 4) {
                     Text(title)
                         .font(.system(size: 15, weight: .black))
                         .foregroundStyle(AVBrandColor.textPrimary)
+                        .lineLimit(2)
 
                     Text(detail)
                         .font(AVBrandTypography.captionStrong)
                         .foregroundStyle(AVBrandColor.textSecondary)
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.82)
+                        .lineLimit(3)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
 
                 Spacer(minLength: 8)
@@ -96,6 +97,7 @@ private struct MomentsInProgressCreditStatus: View {
                             .font(.system(size: 13, weight: .black))
                     }
                     .buttonStyle(.bordered)
+                    .padding(.top, 2)
                 }
             }
             .redacted(reason: creditBalanceLoadState.isLoading ? .placeholder : [])

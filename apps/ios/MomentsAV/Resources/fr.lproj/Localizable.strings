@@ -285,7 +285,7 @@
 "credits.balance.offline.title" = "Crédits indisponibles hors ligne";
 "credits.balance.offline.detail" = "Connecte-toi à internet pour voir ton solde ou obtenir des crédits.";
 "credits.balance.unavailable.title" = "Impossible de charger les crédits";
-"credits.balance.unavailable.detail" = "Moments AV n’a pas pu joindre le service de crédits. Réessaie dans un instant.";
+"credits.balance.unavailable.detail" = "Moments AV n’a pas pu vérifier ton solde de crédits. Vérifie la connexion puis réessaie. Si le problème continue, reconnecte-toi.";
 "credits.balance.retry.title" = "Réessayer";
 "credits.noun.one" = "crédit";
 "credits.noun.other" = "crédits";

@@ -175,7 +175,7 @@
 "credits.balance.offline.title" = "Guthaben offline nicht verfügbar";
 "credits.balance.offline.detail" = "Verbinde dich mit dem Internet, um dein Guthaben zu sehen oder Guthaben zu erhalten.";
 "credits.balance.unavailable.title" = "Guthaben konnte nicht geladen werden";
-"credits.balance.unavailable.detail" = "Moments AV konnte den Guthaben-Dienst nicht erreichen. Versuche es gleich erneut.";
+"credits.balance.unavailable.detail" = "Moments AV konnte dein Guthaben nicht prüfen. Prüfe die Verbindung und versuche es erneut. Wenn es weiter fehlschlägt, melde dich erneut an.";
 "credits.balance.retry.title" = "Erneut versuchen";
 "credits.noun.one" = "Guthabenpunkt";
 "credits.noun.other" = "Guthabenpunkte";

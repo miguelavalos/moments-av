@@ -53,7 +53,8 @@ the production values. See [production-config.md](production-config.md).
 For signed development smoke, generate the `staging` runtime config. In AVALSYS
 Apps AV projects, `staging` means deployed preview. Do not point Moments AV at a
 local Wrangler API worker for sign-in, credits, media upload, render-plan,
-final-render, gallery, purchase, or account-deletion testing.
+final-render, gallery, purchase, or account-deletion testing. Use Convex cloud
+`dev`, not local Convex, for the same workflow validation.
 
 After generating local settings, validate the effective build settings:
 
