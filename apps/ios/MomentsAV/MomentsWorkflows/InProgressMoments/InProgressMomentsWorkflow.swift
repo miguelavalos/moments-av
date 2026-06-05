@@ -13,6 +13,7 @@ final class InProgressMomentsWorkflow: ObservableObject {
     private let momentTitleUpdater: any MomentsTitleUpdating
     private let currentUserProvider: any MomentsCurrentUserProviding
     private var currentOwnerUserId: String?
+    private var optimisticMomentTitles: [String: String] = [:]
     private var cancellables = Set<AnyCancellable>()
 
     init(
@@ -89,9 +90,13 @@ final class InProgressMomentsWorkflow: ObservableObject {
     func renameMoment(_ moment: InProgressMoment, title: String) async -> Bool {
         let trimmedTitle = title.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmedTitle.isEmpty else { return false }
+        let previousTitle = optimisticMomentTitles[moment.id]
+        optimisticMomentTitles[moment.id] = trimmedTitle
+        applyOptimisticTitle(momentId: moment.id, title: trimmedTitle)
 
         do {
             guard let ownerUserId = currentUserProvider.currentUserId else {
+                restoreOptimisticTitle(momentId: moment.id, previousTitle: previousTitle)
                 errorMessage = L10n.string("inProgress.rename.failed")
                 return false
             }
@@ -101,9 +106,9 @@ final class InProgressMomentsWorkflow: ObservableObject {
                 title: trimmedTitle
             )
             errorMessage = nil
-            observeInProgressMoments(ownerUserId: currentOwnerUserId)
             return true
         } catch {
+            restoreOptimisticTitle(momentId: moment.id, previousTitle: previousTitle)
             errorMessage = L10n.string("inProgress.rename.failed")
             return false
         }
@@ -122,7 +127,32 @@ final class InProgressMomentsWorkflow: ObservableObject {
     }
 
     private func apply(_ moments: [InProgressMoment]) {
+        let renamedMoments = moments.map { moment in
+            guard let title = optimisticMomentTitles[moment.id] else { return moment }
+            if moment.title == title {
+                optimisticMomentTitles[moment.id] = nil
+                return moment
+            }
+            return moment.renamed(title)
+        }
+        momentsSummary = InProgressMomentsSummary.make(from: renamedMoments)
+    }
+
+    private func applyOptimisticTitle(momentId: String, title: String) {
+        let moments = momentsSummary.moments.map { moment in
+            moment.id == momentId ? moment.renamed(title) : moment
+        }
         momentsSummary = InProgressMomentsSummary.make(from: moments)
+    }
+
+    private func restoreOptimisticTitle(momentId: String, previousTitle: String?) {
+        if let previousTitle {
+            optimisticMomentTitles[momentId] = previousTitle
+            applyOptimisticTitle(momentId: momentId, title: previousTitle)
+            return
+        }
+
+        optimisticMomentTitles[momentId] = nil
     }
 
     private func applyMomentListError(_ message: String?) {

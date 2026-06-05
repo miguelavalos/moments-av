@@ -66,6 +66,31 @@ struct InProgressMoment: Identifiable, Decodable, Equatable {
         self.mediaPreview = mediaPreview
     }
 
+    func renamed(_ title: String) -> InProgressMoment {
+        InProgressMoment(
+            id: id,
+            template: template,
+            creationMode: creationMode,
+            look: look,
+            theme: theme,
+            mood: mood,
+            duration: duration,
+            mediaUse: mediaUse,
+            status: status,
+            title: title,
+            tone: tone,
+            tempo: tempo,
+            occasion: occasion,
+            details: details,
+            storyInputSignature: storyInputSignature,
+            durationSeconds: durationSeconds,
+            creditCost: creditCost,
+            updatedAt: updatedAt,
+            mediaCount: mediaCount,
+            mediaPreview: mediaPreview
+        )
+    }
+
     enum CodingKeys: String, CodingKey {
         case id = "_id"
         case template

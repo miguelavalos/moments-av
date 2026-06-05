@@ -1,5 +1,6 @@
 import Combine
 import Foundation
+import SwiftUI
 
 @MainActor
 final class MomentsInProgressViewModel: ObservableObject {
@@ -29,7 +30,9 @@ final class MomentsInProgressViewModel: ObservableObject {
             .removeDuplicates()
             .receive(on: DispatchQueue.main)
             .sink { [weak self] momentsSummary in
-                self?.momentsSummary = momentsSummary
+                withAnimation(.snappy(duration: 0.28)) {
+                    self?.momentsSummary = momentsSummary
+                }
             }
             .store(in: &workflowCancellables)
 
