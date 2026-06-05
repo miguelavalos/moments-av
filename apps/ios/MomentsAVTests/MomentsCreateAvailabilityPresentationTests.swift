@@ -144,20 +144,6 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
         )
     }
 
-    func testAvailabilityMessageFactoryFormatsPreviewReadinessStates() {
-        XCTAssertEqual(
-            MomentsCreateAvailabilityMessageFactory.preview(
-                activeMomentId: "moment-1",
-                isPreviewGenerationAvailable: true,
-                isPreviewGenerating: false,
-                isPreviewGenerationConfigured: true,
-                moment: MomentsCreateTestFixtures.makeMoment(id: "moment-1"),
-                template: .birthdayMessage
-            ),
-            "Prepare Avi's Cut before refreshing it."
-        )
-    }
-
     func testAvailabilityMessageFactoryFormatsFinalRenderPreviewRequirement() {
         XCTAssertEqual(
             MomentsCreateAvailabilityMessageFactory.finalRender(
@@ -205,15 +191,4 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
         )
     }
 
-    func testRefreshAvailabilityFactoryFormatsPreviewMessage() {
-        let preview = MomentsCreateRefreshAvailabilityFactory.preview(
-            momentId: nil,
-            job: nil,
-            isAvailable: false,
-            isConfigured: false,
-            isRefreshing: false
-        )
-
-        XCTAssertEqual(preview.message, "Open a moment before improving Avi's Cut.")
-    }
 }

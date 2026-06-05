@@ -755,10 +755,6 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
             MomentsRecoveryCopy.storyFailure(),
             "Avi couldn’t prepare the story right now. No final video credits were used. Please try again."
         )
-        XCTAssertEqual(
-            MomentsRecoveryCopy.previewStatusMissing(),
-            "Avi's Cut status cannot be refreshed yet. Improve with Avi again if this does not update."
-        )
     }
 
     func testWorkspaceSummaryFormatsProgressDetails() {

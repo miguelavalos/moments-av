@@ -69,27 +69,6 @@ enum MomentsCreateAvailabilityMessageFactory {
         )
     }
 
-    static func preview(
-        activeMomentId: String?,
-        isPreviewGenerationAvailable: Bool,
-        isPreviewGenerating: Bool,
-        isPreviewGenerationConfigured: Bool,
-        moment: InProgressMoment?,
-        template: MomentTemplate
-    ) -> String? {
-        guard activeMomentId != nil else { return MomentsCreateAvailabilityCopy.previewMissingMoment }
-        guard isPreviewGenerationAvailable else { return MomentsCreateAvailabilityCopy.previewUnavailable }
-        if isPreviewGenerating { return nil }
-        if !isPreviewGenerationConfigured { return MomentsCreateAvailabilityCopy.previewNotConfigured }
-        return MomentsPreviewRules.availabilityMessage(
-            MomentsPreviewRules.availability(
-                moment: moment,
-                template: template
-            ),
-            missingMomentMessage: MomentsCreateAvailabilityCopy.previewMissingWorkspace
-        )
-    }
-
     static func finalRender(
         activeMomentId: String?,
         isFinalRenderAvailable: Bool,

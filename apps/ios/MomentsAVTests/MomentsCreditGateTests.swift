@@ -217,60 +217,6 @@ final class MomentsCreditGateTests: XCTestCase {
         XCTAssertNotEqual(baseSignature, changedDirectionSignature)
     }
 
-    func testPreviewRulesRequireStoryReadyAndLimit() {
-        let moment = InProgressMoment(
-            id: "moment-1",
-            template: .birthdayMessage,
-            status: "story_ready",
-            title: "Birthday",
-            tone: nil,
-            tempo: nil,
-            occasion: nil,
-            details: nil,
-            durationSeconds: 30,
-            creditCost: 2,
-            previewCount: 2,
-            previewLimit: 3,
-            updatedAt: 0
-        )
-
-        XCTAssertTrue(MomentsPreviewRules.canGenerate(moment: moment, template: .birthdayMessage))
-
-        let previewReadyMoment = InProgressMoment(
-            id: moment.id,
-            template: moment.template,
-            status: "preview_ready",
-            title: moment.title,
-            tone: moment.tone,
-            tempo: moment.tempo,
-            occasion: moment.occasion,
-            details: moment.details,
-            durationSeconds: moment.durationSeconds,
-            creditCost: moment.creditCost,
-            previewCount: moment.previewCount,
-            previewLimit: moment.previewLimit,
-            updatedAt: moment.updatedAt
-        )
-        XCTAssertTrue(MomentsPreviewRules.canGenerate(moment: previewReadyMoment, template: .birthdayMessage))
-
-        let limitedMoment = InProgressMoment(
-            id: moment.id,
-            template: moment.template,
-            status: moment.status,
-            title: moment.title,
-            tone: moment.tone,
-            tempo: moment.tempo,
-            occasion: moment.occasion,
-            details: moment.details,
-            durationSeconds: moment.durationSeconds,
-            creditCost: moment.creditCost,
-            previewCount: 3,
-            previewLimit: 3,
-            updatedAt: moment.updatedAt
-        )
-        XCTAssertFalse(MomentsPreviewRules.canGenerate(moment: limitedMoment, template: .birthdayMessage))
-    }
-
     func testFinalRenderRulesRequireReadyStatusAndCredits() {
         let balance = MomentsCreditBalance(proMonthly: 0, promotional: 0, purchased: 2)
         let moment = InProgressMoment(

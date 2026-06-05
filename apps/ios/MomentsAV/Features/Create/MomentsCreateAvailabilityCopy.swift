@@ -11,10 +11,6 @@ enum MomentsCreateAvailabilityCopy {
     static var storyUnavailable: String { L10n.string("create.availability.storyUnavailable") }
     static var storyNotConfigured: String { L10n.string("create.availability.storyNotConfigured") }
     static var storyMissingMedia: String { L10n.string("create.availability.storyMissingMedia") }
-    static var previewMissingMoment: String { L10n.string("create.availability.previewMissingMoment") }
-    static var previewUnavailable: String { L10n.string("create.availability.previewUnavailable") }
-    static var previewNotConfigured: String { L10n.string("create.availability.previewNotConfigured") }
-    static var previewMissingWorkspace: String { L10n.string("create.availability.previewMissingWorkspace") }
     static var finalRenderMissingMoment: String { L10n.string("create.availability.finalRenderMissingMoment") }
     static var finalRenderUnavailable: String { L10n.string("create.availability.finalRenderUnavailable") }
     static var finalRenderNotConfigured: String { L10n.string("create.availability.finalRenderNotConfigured") }

@@ -52,16 +52,6 @@ protocol MomentsRenderJobStatusUpdating {
 }
 
 @MainActor
-protocol MomentsPreviewResultSaving: MomentsRenderJobStatusUpdating {
-    func savePreviewResult(
-        ownerUserId: String,
-        momentId: String,
-        preview: MomentsPreviewResponse,
-        template: MomentTemplate
-    ) async throws
-}
-
-@MainActor
 protocol MomentsDeleting {
     func deleteMoment(ownerUserId: String, momentId: String) async throws
 }
@@ -102,7 +92,6 @@ extension MomentsRepository:
     MomentsMediaAssetSaving,
     MomentsStoryPlanSaving,
     MomentsRenderJobStatusUpdating,
-    MomentsPreviewResultSaving,
     MomentsDeleting,
     InProgressMomentsObserving,
     MomentWorkspaceObserving {}

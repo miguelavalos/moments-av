@@ -773,13 +773,6 @@ private final class MomentCreationFailureHarness:
         errorMessage: String?
     ) async throws {}
 
-    func savePreviewResult(
-        ownerUserId: String,
-        momentId: String,
-        preview: MomentsPreviewResponse,
-        template: MomentTemplate
-    ) async throws {}
-
 }
 
 private struct TestGalleryStore: MomentsGalleryStoring {
