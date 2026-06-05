@@ -232,6 +232,10 @@ private struct MomentsCreateMediaFirstWorkspace: View {
                         confirmFinalRender(removesWatermark)
                     }
                 },
+                openCredits: {
+                    showsCreateVideoConfirmation = false
+                    openCredits()
+                },
                 cancel: {
                     showsCreateVideoConfirmation = false
                 }
@@ -1541,7 +1545,7 @@ private struct MomentsCreatePrimaryActionBar: View {
             if primaryActionPresentation.needsSignInForStory {
                 startSignInFlow()
             } else if primaryActionPresentation.needsCreditsForPreparedPlan {
-                openCredits()
+                openCreateVideoConfirmation()
             } else if primaryActionPresentation.finalVideoAction.hasRenderPlan {
                 openCreateVideoConfirmation()
             } else {
@@ -1559,6 +1563,7 @@ private struct MomentsCreateFinalVideoConfirmationSheet: View {
     let action: MomentsCreateFinalVideoActionPresentation
     let mediaSummary: MomentsCreateMediaSummary
     let confirm: (Bool) -> Void
+    let openCredits: () -> Void
     let cancel: () -> Void
     @State private var removesWatermark: Bool
 
@@ -1566,11 +1571,13 @@ private struct MomentsCreateFinalVideoConfirmationSheet: View {
         action: MomentsCreateFinalVideoActionPresentation,
         mediaSummary: MomentsCreateMediaSummary,
         confirm: @escaping (Bool) -> Void,
+        openCredits: @escaping () -> Void,
         cancel: @escaping () -> Void
     ) {
         self.action = action
         self.mediaSummary = mediaSummary
         self.confirm = confirm
+        self.openCredits = openCredits
         self.cancel = cancel
         _removesWatermark = State(initialValue: action.summary.renderPlan?.watermark?.selectedRemoveWatermark ?? false)
     }
@@ -1624,16 +1631,18 @@ private struct MomentsCreateFinalVideoConfirmationSheet: View {
 
             VStack(spacing: 8) {
                 Button {
-                    confirm(removesWatermark)
+                    if canAffordSelectedCost {
+                        confirm(removesWatermark)
+                    } else {
+                        openCredits()
+                    }
                 } label: {
-                    Label(confirmationActionTitle, systemImage: "video.fill")
+                    Label(primaryActionTitle, systemImage: primaryActionIconName)
                         .font(.system(size: 15, weight: .black))
                         .frame(maxWidth: .infinity)
                         .frame(height: 44)
                 }
                 .buttonStyle(MomentsCreateSoftActionButtonStyle())
-                .disabled(!canAffordSelectedCost)
-                .opacity(canAffordSelectedCost ? 1 : 0.62)
 
                 Button(action: cancel) {
                     Text(L10n.string("create.action.notNow"))
@@ -1730,8 +1739,20 @@ private struct MomentsCreateFinalVideoConfirmationSheet: View {
         L10n.string("create.final.createWithCost", selectedCreditCostTitle)
     }
 
+    private var primaryActionTitle: String {
+        canAffordSelectedCost ? confirmationActionTitle : L10n.string("credits.get.title")
+    }
+
+    private var primaryActionIconName: String {
+        canAffordSelectedCost ? "video.fill" : "plus.circle.fill"
+    }
+
     private var confirmationMessage: String {
-        L10n.string("create.final.confirmMessage", selectedCreditCostTitle)
+        if canAffordSelectedCost {
+            return L10n.string("create.final.confirmMessage", selectedCreditCostTitle)
+        }
+        let missingCredits = max(0, selectedCreditCost - action.balance.spendable)
+        return MomentsCreateAvailabilityCopy.finalRenderInsufficientCredits(missingCredits: missingCredits)
     }
 
     private var canAffordSelectedCost: Bool {
