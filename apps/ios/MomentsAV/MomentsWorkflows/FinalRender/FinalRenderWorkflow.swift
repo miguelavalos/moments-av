@@ -441,6 +441,21 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
         return true
     }
 
+    func clearFinalSessionAfterGalleryMove() {
+        advanceWorkflowGeneration()
+        clearActiveWorkspace()
+        finalExport = nil
+        latestFinalJob = nil
+        latestFinalJobMomentId = nil
+        renderPlan = nil
+        isGenerating = false
+        pendingGalleryVideo = nil
+        canRetryFinalVideoDownload = false
+        downloadingArtifactIds.removeAll()
+        lastCreditRefreshKey = nil
+        statusMessage = nil
+    }
+
     private func generateBlockMessage(_ availability: MomentsFinalRenderRules.Availability) -> String {
         MomentsFinalRenderRules.availabilityMessage(
             availability,

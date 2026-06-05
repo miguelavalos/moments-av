@@ -206,7 +206,7 @@ struct MomentsAppShellView: View {
     private func finishFinalVideoToGallery() {
         guard createViewModel.finishFinalVideoToGallery() else { return }
 
-        createViewModel.clearSessionState()
+        createViewModel.clearFinalSessionAfterGalleryMove()
         galleryViewModel.refreshVideos()
         chromeItem = nil
         selectRootTab(.gallery)

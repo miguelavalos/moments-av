@@ -44,6 +44,40 @@ final class MomentsCreateViewModelStoryStateTests: XCTestCase {
         XCTAssertNil(viewModel.workflowErrorAlertMessage)
     }
 
+    func testClearingFinalSessionAfterGalleryMoveRemovesDownloadState() {
+        let viewModel = MomentsCreateViewModel()
+        let finalExport = MomentsCreateTestFixtures.makeArtifact(id: "artifact-1", kind: "final_export")
+        let galleryVideo = MomentsGalleryVideoRecord(
+            id: "artifact-1",
+            momentId: "moment-1",
+            artifactId: "artifact-1",
+            title: "Travel",
+            r2Key: "momentsav/artifact-1.mp4",
+            localRelativePath: "artifact-1.mp4",
+            createdAt: 1_780_000_000_000
+        )
+
+        viewModel.applyFinalRenderState(
+            MomentsCreateFinalRenderState(
+                finalExport: finalExport,
+                latestFinalJob: nil,
+                renderPlan: nil,
+                pendingGalleryVideo: galleryVideo,
+                statusMessage: "Saved locally.",
+                isGenerating: false
+            )
+        )
+
+        viewModel.clearFinalSessionAfterGalleryMove()
+
+        XCTAssertNil(viewModel.finalExport)
+        XCTAssertNil(viewModel.pendingGalleryVideo)
+        XCTAssertNil(viewModel.latestFinalJob)
+        XCTAssertNil(viewModel.workflowPresentation.finalRenderSummary.finalExport)
+        XCTAssertNil(viewModel.workflowPresentation.finalRenderSummary.pendingGalleryVideo)
+        XCTAssertFalse(viewModel.workflowPresentation.showsMediaFirstWorkspace)
+    }
+
     func testBeginNewMomentWithoutPickerRequestShowsMediaChoice() {
         let viewModel = MomentsCreateViewModel()
         viewModel.beginNewMoment()

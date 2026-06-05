@@ -366,6 +366,7 @@ final class MomentsCreateViewModel: ObservableObject {
         mediaUploadWorkflow?.reset(force: force)
         storyWorkflow?.reset(force: force)
         finalRenderWorkflow?.reset(force: force)
+        clearWorkflowSnapshots()
 
         if let firstTemplate = templates.first {
             form = MomentSetupForm(template: firstTemplate)
@@ -384,6 +385,29 @@ final class MomentsCreateViewModel: ObservableObject {
         hasUserStyleOverride = false
         hasUserDurationOverride = false
         applyStyleDefaults(selectedCreationStyle)
+    }
+
+    func clearFinalSessionAfterGalleryMove() {
+        finalRenderWorkflow?.clearFinalSessionAfterGalleryMove()
+        clearWorkflowSnapshots()
+        finalVideoCommandState = .completedInGallery(L10n.string("workflow.final.movedToGallery"))
+    }
+
+    private func clearWorkflowSnapshots() {
+        workflowActiveMomentId = nil
+        activeWorkspace = nil
+        selectedMedia = []
+        savedScenes = []
+        generatedScenes = []
+        mediaStatusMessage = nil
+        storyStatusMessage = nil
+        finalExport = nil
+        latestFinalJob = nil
+        renderPlan = nil
+        pendingGalleryVideo = nil
+        canRetryFinalVideoDownload = false
+        finalRenderStatusMessage = nil
+        finalVideoCommandState = .idle
     }
 
     private func applyStyleDefaults(_ style: MomentCreationStyle) {
