@@ -237,7 +237,7 @@ final class MomentsCreateViewModelStoryStateTests: XCTestCase {
         let expectedLocalSignature = viewModel.currentStoryPlanInputSignature(
             momentId: "moment-1",
             persistedMedia: [
-                MomentsStoryPlanMedia(
+                MomentsStoryMedia(
                     mediaAssetId: localMedia.id.uuidString,
                     mediaKind: localMedia.kind,
                     sortOrder: localMedia.sortOrder,
@@ -249,7 +249,7 @@ final class MomentsCreateViewModelStoryStateTests: XCTestCase {
         let backendMediaSignature = viewModel.currentStoryPlanInputSignature(
             momentId: "moment-1",
             persistedMedia: [
-                MomentsStoryPlanMedia(
+                MomentsStoryMedia(
                     mediaAssetId: "backend-media-1",
                     mediaKind: "image",
                     sortOrder: 0,
@@ -593,8 +593,8 @@ final class MomentsCreateViewModelStoryStateTests: XCTestCase {
         )
     }
 
-    private func makeStoryPlanMedia(from media: MomentMediaAsset) -> MomentsStoryPlanMedia {
-        MomentsStoryPlanMedia(
+    private func makeStoryPlanMedia(from media: MomentMediaAsset) -> MomentsStoryMedia {
+        MomentsStoryMedia(
             mediaAssetId: media.id,
             mediaKind: media.kind,
             sortOrder: Int(media.sortOrder),

@@ -363,7 +363,7 @@ final class MomentsCreateViewModel: ObservableObject {
     }
 
     func currentStoryPlanInputSignature(momentId: String) -> String {
-        MomentsStoryPlanInputSignature.make(
+        MomentsStoryInputSignature.make(
             momentId: momentId,
             form: form,
             selectedMedia: currentStoryPlanSignatureMedia()
@@ -372,9 +372,9 @@ final class MomentsCreateViewModel: ObservableObject {
 
     func currentStoryPlanInputSignature(
         momentId: String,
-        persistedMedia: [MomentsStoryPlanMedia]?
+        persistedMedia: [MomentsStoryMedia]?
     ) -> String {
-        MomentsStoryPlanInputSignature.make(
+        MomentsStoryInputSignature.make(
             momentId: momentId,
             form: form,
             selectedMedia: persistedMedia ?? currentStoryPlanSignatureMedia()
@@ -493,7 +493,7 @@ final class MomentsCreateViewModel: ObservableObject {
         return recordedSignature
     }
 
-    private func currentStoryPlanSignatureMedia() -> [MomentsStoryPlanMedia] {
+    private func currentStoryPlanSignatureMedia() -> [MomentsStoryMedia] {
         let localMedia = effectiveSelectedMedia
             .filter(\.selected)
             .sorted { $0.sortOrder < $1.sortOrder }
@@ -506,7 +506,7 @@ final class MomentsCreateViewModel: ObservableObject {
             return localMedia
                 .map {
                     let syncedMedia = syncedMediaBySourceIdentifier[$0.sourceLocalIdentifier]
-                    return MomentsStoryPlanMedia(
+                    return MomentsStoryMedia(
                         mediaAssetId: syncedMedia?.id ?? $0.id.uuidString,
                         mediaKind: syncedMedia?.kind ?? $0.kind,
                         sortOrder: $0.sortOrder,
@@ -520,7 +520,7 @@ final class MomentsCreateViewModel: ObservableObject {
             .filter(\.selected)
             .sorted { $0.sortOrder < $1.sortOrder }
             .map {
-                MomentsStoryPlanMedia(
+                MomentsStoryMedia(
                     mediaAssetId: $0.id,
                     mediaKind: $0.kind,
                     sortOrder: Int($0.sortOrder),
@@ -556,14 +556,14 @@ final class MomentsCreateViewModel: ObservableObject {
             }
     }
 
-    private func currentWorkspaceStoryPlanSignatureMedia() -> [MomentsStoryPlanMedia]? {
+    private func currentWorkspaceStoryPlanSignatureMedia() -> [MomentsStoryMedia]? {
         let mediaAssets = effectiveActiveWorkspace?.mediaAssets ?? []
         guard !mediaAssets.isEmpty else { return nil }
         let selectedAssets = mediaAssets.filter(\.selected)
         return (selectedAssets.isEmpty ? mediaAssets : selectedAssets)
             .sorted { $0.sortOrder < $1.sortOrder }
             .map {
-                MomentsStoryPlanMedia(
+                MomentsStoryMedia(
                     mediaAssetId: $0.id,
                     mediaKind: $0.kind,
                     sortOrder: Int($0.sortOrder),

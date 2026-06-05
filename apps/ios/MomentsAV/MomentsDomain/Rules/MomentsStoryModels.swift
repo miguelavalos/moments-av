@@ -1,7 +1,7 @@
 import CryptoKit
 import Foundation
 
-struct MomentsStoryPlanMedia: Encodable {
+struct MomentsStoryMedia: Encodable {
     let mediaAssetId: String
     let mediaKind: String
     let sortOrder: Int
@@ -21,16 +21,16 @@ struct MomentsStoryPlanRequest: Encodable {
     let occasion: String
     let details: String
     let narrationVoice = "avi_clear"
-    let media: [MomentsStoryPlanMedia]
+    let media: [MomentsStoryMedia]
     let safetyAcknowledged = true
     let idempotencyKey: String
 }
 
-enum MomentsStoryPlanInputSignature {
+enum MomentsStoryInputSignature {
     static func make(
         momentId: String,
         form: MomentSetupForm,
-        selectedMedia: [MomentsStoryPlanMedia]
+        selectedMedia: [MomentsStoryMedia]
     ) -> String {
         let mediaSignature = selectedMedia
             .filter(\.selected)
@@ -91,7 +91,7 @@ struct MomentsStoryPlanResponse: Decodable, Equatable {
     let generatedAt: String
 }
 
-enum MomentsStoryPlanRules {
+enum MomentsStoryRules {
     enum BlockReason {
         case missingMedia
         case tooFewSelectedMedia(missingCount: Int)

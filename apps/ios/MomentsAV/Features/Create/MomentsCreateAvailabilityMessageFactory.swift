@@ -60,8 +60,8 @@ enum MomentsCreateAvailabilityMessageFactory {
             )
         }
 
-        return MomentsStoryPlanRules.availabilityMessage(
-            MomentsStoryPlanRules.availability(
+        return MomentsStoryRules.availabilityMessage(
+            MomentsStoryRules.availability(
                 mediaAssets: mediaAssets,
                 template: template
             ),

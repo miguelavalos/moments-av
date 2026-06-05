@@ -34,7 +34,7 @@ final class StoryWorkflow: WorkspaceObservingWorkflow {
     func canPlan(template: MomentTemplate) -> Bool {
         return currentUserProvider.currentUserId != nil
             && isConfigured
-            && MomentsStoryPlanRules.availability(
+            && MomentsStoryRules.availability(
                 mediaAssets: activeWorkspace?.mediaAssets,
                 template: template
             ).canPlan
@@ -45,7 +45,7 @@ final class StoryWorkflow: WorkspaceObservingWorkflow {
         momentId: String,
         form: MomentSetupForm,
         selectedMedia: [MomentsSelectedMedia],
-        persistedMedia: [MomentsStoryPlanMedia]? = nil
+        persistedMedia: [MomentsStoryMedia]? = nil
     ) async -> Bool {
         guard let ownerUserId = currentUserProvider.currentUserId else {
             statusMessage = L10n.string("workflow.story.signInPlan")
@@ -61,7 +61,7 @@ final class StoryWorkflow: WorkspaceObservingWorkflow {
         }
 
         let media = persistedMedia ?? storyMedia(from: selectedMedia, fallbackMediaAssets: activeWorkspace?.mediaAssets)
-        let storyInputSignature = MomentsStoryPlanInputSignature.make(
+        let storyInputSignature = MomentsStoryInputSignature.make(
             momentId: momentId,
             form: form,
             selectedMedia: media
@@ -141,13 +141,13 @@ final class StoryWorkflow: WorkspaceObservingWorkflow {
     private func storyMedia(
         from selectedMedia: [MomentsSelectedMedia],
         fallbackMediaAssets: [MomentMediaAsset]?
-    ) -> [MomentsStoryPlanMedia] {
+    ) -> [MomentsStoryMedia] {
         if !selectedMedia.isEmpty {
             return selectedMedia
                 .filter(\.selected)
                 .sorted { $0.sortOrder < $1.sortOrder }
                 .map {
-                    MomentsStoryPlanMedia(
+                    MomentsStoryMedia(
                         mediaAssetId: $0.id.uuidString,
                         mediaKind: $0.kind,
                         sortOrder: $0.sortOrder,
@@ -161,7 +161,7 @@ final class StoryWorkflow: WorkspaceObservingWorkflow {
             .filter(\.selected)
             .sorted { $0.sortOrder < $1.sortOrder }
             .map {
-                MomentsStoryPlanMedia(
+                MomentsStoryMedia(
                     mediaAssetId: $0.id,
                     mediaKind: $0.kind,
                     sortOrder: Int($0.sortOrder),
@@ -173,7 +173,7 @@ final class StoryWorkflow: WorkspaceObservingWorkflow {
 
     private func validatePlanMediaReferences(
         _ plan: MomentsStoryPlanResponse,
-        availableMedia: [MomentsStoryPlanMedia]
+        availableMedia: [MomentsStoryMedia]
     ) throws {
         let availableMediaIds = Set(availableMedia.map(\.mediaAssetId))
         let missingMediaIds = plan.scenes

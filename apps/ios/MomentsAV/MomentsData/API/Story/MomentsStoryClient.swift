@@ -20,7 +20,7 @@ struct MomentsStoryClient {
             .filter(\.selected)
             .sorted { left, right in left.sortOrder < right.sortOrder }
             .map {
-                MomentsStoryPlanMedia(
+                MomentsStoryMedia(
                     mediaAssetId: $0.id,
                     mediaKind: $0.kind,
                     sortOrder: Int($0.sortOrder),
@@ -43,7 +43,7 @@ struct MomentsStoryClient {
         ownerUserId: String,
         bearerToken: String,
         form: MomentSetupForm,
-        selectedMedia: [MomentsStoryPlanMedia]
+        selectedMedia: [MomentsStoryMedia]
     ) async throws -> MomentsStoryPlanResponse {
         guard let baseURL = URL(string: baseURLString.trimmingCharacters(in: .whitespacesAndNewlines)) else {
             throw MomentsStoryError.apiNotConfigured
@@ -67,7 +67,7 @@ struct MomentsStoryClient {
             occasion: form.occasion,
             details: form.details,
             media: selectedMedia,
-            idempotencyKey: "story:\(momentId):\(MomentsStoryPlanInputSignature.make(momentId: momentId, form: form, selectedMedia: selectedMedia))"
+            idempotencyKey: "story:\(momentId):\(MomentsStoryInputSignature.make(momentId: momentId, form: form, selectedMedia: selectedMedia))"
         )
 
         var request = URLRequest(url: endpoint)

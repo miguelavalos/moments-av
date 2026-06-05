@@ -226,7 +226,7 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
         }
     }
 
-    func persistSelectedMedia(momentId: String) async -> [MomentsStoryPlanMedia]? {
+    func persistSelectedMedia(momentId: String) async -> [MomentsStoryMedia]? {
         await persistSelectedMedia(
             momentId: momentId,
             requiresProductStateSave: true,
@@ -248,7 +248,7 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
         momentId: String,
         requiresProductStateSave: Bool,
         saveFailureMessage: String
-    ) async -> [MomentsStoryPlanMedia]? {
+    ) async -> [MomentsStoryMedia]? {
         guard let ownerUserId = currentUserProvider.currentUserId else {
             statusMessage = L10n.string("workflow.media.signInPrepareStory")
             return nil
@@ -267,9 +267,9 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
             guard let sourceIdentifier = $1.platformMediaAssetId else { return }
             $0[sourceIdentifier] = $1
         }
-        let alreadySyncedMedia = mediaToSave.compactMap { media -> MomentsStoryPlanMedia? in
+        let alreadySyncedMedia = mediaToSave.compactMap { media -> MomentsStoryMedia? in
             guard let synced = syncedMediaBySourceIdentifier[media.sourceLocalIdentifier] else { return nil }
-            return MomentsStoryPlanMedia(
+            return MomentsStoryMedia(
                 mediaAssetId: synced.id,
                 mediaKind: synced.kind,
                 sortOrder: media.sortOrder,
@@ -483,13 +483,13 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
         )
     }
 
-    private var activeWorkspaceStoryMedia: [MomentsStoryPlanMedia] {
+    private var activeWorkspaceStoryMedia: [MomentsStoryMedia] {
         let mediaAssets = activeWorkspace?.mediaAssets ?? []
         let selectedAssets = mediaAssets.filter(\.selected)
         return (selectedAssets.isEmpty ? mediaAssets : selectedAssets)
             .sorted { $0.sortOrder < $1.sortOrder }
             .map {
-                MomentsStoryPlanMedia(
+                MomentsStoryMedia(
                     mediaAssetId: $0.id,
                     mediaKind: $0.kind,
                     sortOrder: Int($0.sortOrder),

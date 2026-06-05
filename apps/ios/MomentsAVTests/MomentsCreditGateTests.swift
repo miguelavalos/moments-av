@@ -160,13 +160,13 @@ final class MomentsCreditGateTests: XCTestCase {
             )
         }
 
-        XCTAssertTrue(MomentsStoryPlanRules.canPlan(mediaAssets: assets, template: .birthdayMessage))
-        XCTAssertTrue(MomentsStoryPlanRules.canPlan(mediaAssets: assets, template: .partyRecap))
+        XCTAssertTrue(MomentsStoryRules.canPlan(mediaAssets: assets, template: .birthdayMessage))
+        XCTAssertTrue(MomentsStoryRules.canPlan(mediaAssets: assets, template: .partyRecap))
     }
 
     func testStoryPlanInputSignatureTracksMediaOrderAndDirection() {
-        func storyMedia(id: String, sortOrder: Int) -> MomentsStoryPlanMedia {
-            MomentsStoryPlanMedia(
+        func storyMedia(id: String, sortOrder: Int) -> MomentsStoryMedia {
+            MomentsStoryMedia(
                 mediaAssetId: id,
                 mediaKind: "image",
                 sortOrder: sortOrder,
@@ -183,12 +183,12 @@ final class MomentsCreditGateTests: XCTestCase {
             storyMedia(id: "media-b", sortOrder: 1)
         ]
 
-        let baseSignature = MomentsStoryPlanInputSignature.make(
+        let baseSignature = MomentsStoryInputSignature.make(
             momentId: "moment-1",
             form: form,
             selectedMedia: media
         )
-        let sameInputSignature = MomentsStoryPlanInputSignature.make(
+        let sameInputSignature = MomentsStoryInputSignature.make(
             momentId: "moment-1",
             form: form,
             selectedMedia: media.reversed()
@@ -196,7 +196,7 @@ final class MomentsCreditGateTests: XCTestCase {
 
         XCTAssertEqual(baseSignature, sameInputSignature)
 
-        let reorderedSignature = MomentsStoryPlanInputSignature.make(
+        let reorderedSignature = MomentsStoryInputSignature.make(
             momentId: "moment-1",
             form: form,
             selectedMedia: [
@@ -207,7 +207,7 @@ final class MomentsCreditGateTests: XCTestCase {
         XCTAssertNotEqual(baseSignature, reorderedSignature)
 
         form.details = "Use the desert photos and end on the group shot."
-        let changedDirectionSignature = MomentsStoryPlanInputSignature.make(
+        let changedDirectionSignature = MomentsStoryInputSignature.make(
             momentId: "moment-1",
             form: form,
             selectedMedia: media
