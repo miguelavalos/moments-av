@@ -174,34 +174,6 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
             guard isCurrentWorkflowGeneration(generation) else { return }
 
             workspaceObserver.observeWorkspace(ownerUserId: ownerUserId, momentId: momentId)
-            let startedJob = MomentRenderJob(
-                id: "pending-\(confirmed.workflow.renderJobId)",
-                kind: "final",
-                status: confirmed.workflow.status,
-                phase: "queued",
-                progressPercent: 10,
-                userMessage: L10n.string("workflow.final.creatingVideo"),
-                canEditSetup: false,
-                canRetry: false,
-                baseCreditCost: Double(confirmed.renderPlan.plan.creditCost),
-                watermarkRemovalCreditCost: Double(confirmed.renderPlan.watermark?.watermarkCreditCost ?? 0),
-                totalCreditCost: Double(confirmed.renderPlan.plan.totalCreditCost),
-                targetDurationMs: Double(confirmed.renderPlan.plan.targetDurationMs),
-                plannedAssetCount: Double(confirmed.renderPlan.plan.plannedAssetCount),
-                usedAssetCount: Double(confirmed.renderPlan.plan.usedAssetCount),
-                rejectedAssetCount: Double(confirmed.renderPlan.plan.rejectedAssetCount),
-                rendererMode: confirmed.renderPlan.plan.rendererMode,
-                workflowRunId: confirmed.workflow.workflowRunId,
-                provider: "appsav-api",
-                model: "moments-final-provider-async",
-                providerRequestId: confirmed.workflow.renderJobId,
-                errorCode: nil,
-                errorMessage: nil,
-                createdAt: Date().timeIntervalSince1970 * 1000,
-                updatedAt: Date().timeIntervalSince1970 * 1000
-            )
-            latestFinalJob = startedJob
-            latestFinalJobMomentId = momentId
             statusMessage = L10n.string("workflow.final.creatingVideo")
         } catch let error as MomentsAPIError {
             guard isCurrentWorkflowGeneration(generation) else { return }

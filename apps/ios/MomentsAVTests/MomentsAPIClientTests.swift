@@ -565,8 +565,7 @@ final class MomentsAPIClientTests: XCTestCase {
             removesWatermark: false,
             selectedSourceLocalIdentifiers: ["local-1", "local-2"],
             planId: "plan-1",
-            renderOptionId: "standard_moment",
-            operationId: "operation-1"
+            renderOptionId: "standard_moment"
         )
 
         XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.url?.absoluteString, "\(accountAPIBaseURL)/v1/apps/momentsav/renders/final/confirm")

@@ -12,16 +12,17 @@ final class AccountControllerSessionRestoreTests: XCTestCase {
 
     func testTemporarilyUnavailableSessionPreservesCurrentUser() async {
         let user = AccountAVUser(id: "user-1", displayName: "User One", emailAddress: "user@example.com")
-        let accountService = StubAVAccountService(
-            user: user,
-            restoreResult: .temporarilyUnavailable(nil)
-        )
+        AccountControllerURLProtocol.profileUser = user
+        let accountService = StubAVAccountService(user: user)
         let controller = AccountController(
             service: accountService,
+            accountProfileClient: accountProfileClient(),
             balanceClient: balanceClient(),
             purchaseService: StubMomentsPurchaseService(),
             userDefaults: isolatedUserDefaults()
         )
+        await controller.syncFromAccountProvider()
+        accountService.restoreResult = .temporarilyUnavailable(nil)
 
         await controller.syncFromAccountProvider()
 
@@ -34,8 +35,10 @@ final class AccountControllerSessionRestoreTests: XCTestCase {
     func testLastKnownUserPreservesColdStartDuringTemporarySessionFailure() async {
         let userDefaults = isolatedUserDefaults()
         let user = AccountAVUser(id: "cached-user", displayName: "Cached User", emailAddress: "cached@example.com")
+        AccountControllerURLProtocol.profileUser = user
         let signedInController = AccountController(
             service: StubAVAccountService(user: user),
+            accountProfileClient: accountProfileClient(),
             balanceClient: balanceClient(),
             purchaseService: StubMomentsPurchaseService(),
             userDefaults: userDefaults
@@ -44,6 +47,7 @@ final class AccountControllerSessionRestoreTests: XCTestCase {
 
         let restoredController = AccountController(
             service: StubAVAccountService(user: nil, restoreResult: .temporarilyUnavailable(nil)),
+            accountProfileClient: accountProfileClient(),
             balanceClient: balanceClient(),
             purchaseService: StubMomentsPurchaseService(),
             userDefaults: userDefaults
@@ -58,8 +62,10 @@ final class AccountControllerSessionRestoreTests: XCTestCase {
     func testConfirmedSignedOutClearsLastKnownUser() async {
         let userDefaults = isolatedUserDefaults()
         let user = AccountAVUser(id: "signed-out-user", displayName: "Signed Out User", emailAddress: nil)
+        AccountControllerURLProtocol.profileUser = user
         let signedInController = AccountController(
             service: StubAVAccountService(user: user),
+            accountProfileClient: accountProfileClient(),
             balanceClient: balanceClient(),
             purchaseService: StubMomentsPurchaseService(),
             userDefaults: userDefaults
@@ -68,6 +74,7 @@ final class AccountControllerSessionRestoreTests: XCTestCase {
 
         let signedOutController = AccountController(
             service: StubAVAccountService(user: nil, restoreResult: .signedOut),
+            accountProfileClient: accountProfileClient(),
             balanceClient: balanceClient(),
             purchaseService: StubMomentsPurchaseService(),
             userDefaults: userDefaults
@@ -81,11 +88,13 @@ final class AccountControllerSessionRestoreTests: XCTestCase {
 
     func testManualSignOutClearsLastKnownUser() async throws {
         let userDefaults = isolatedUserDefaults()
+        AccountControllerURLProtocol.profileUser = AccountAVUser(id: "manual-user", displayName: "Manual User", emailAddress: nil)
         let accountService = StubAVAccountService(
             user: AccountAVUser(id: "manual-user", displayName: "Manual User", emailAddress: nil)
         )
         let controller = AccountController(
             service: accountService,
+            accountProfileClient: accountProfileClient(),
             balanceClient: balanceClient(),
             purchaseService: StubMomentsPurchaseService(),
             userDefaults: userDefaults
@@ -97,6 +106,7 @@ final class AccountControllerSessionRestoreTests: XCTestCase {
 
         let restoredController = AccountController(
             service: StubAVAccountService(user: nil, restoreResult: .temporarilyUnavailable(nil)),
+            accountProfileClient: accountProfileClient(),
             balanceClient: balanceClient(),
             purchaseService: StubMomentsPurchaseService(),
             userDefaults: userDefaults
@@ -107,19 +117,88 @@ final class AccountControllerSessionRestoreTests: XCTestCase {
         XCTAssertTrue(accountService.didSignOut)
     }
 
+    func testActiveProviderSessionPublishesInternalAccountUserId() async {
+        let providerUser = AccountAVUser(
+            id: "user_3DLceydoveFCDDoCV1ndJz2H0C2",
+            displayName: "Clerk User",
+            emailAddress: "user@example.com"
+        )
+        let internalUser = AccountAVUser(
+            id: "63d0a87f-4ab1-4d6c-ab66-7abee9432ec9",
+            displayName: "Account AV User",
+            emailAddress: "user@example.com"
+        )
+        AccountControllerURLProtocol.profileUser = internalUser
+        let controller = AccountController(
+            service: StubAVAccountService(user: providerUser),
+            accountProfileClient: accountProfileClient(),
+            balanceClient: balanceClient(),
+            purchaseService: StubMomentsPurchaseService(),
+            userDefaults: isolatedUserDefaults()
+        )
+
+        await controller.syncFromAccountProvider()
+
+        XCTAssertTrue(controller.isSignedIn)
+        XCTAssertEqual(controller.currentUserId, internalUser.id)
+        XCTAssertNotEqual(controller.currentUserId, providerUser.id)
+    }
+
+    func testActiveProviderSessionDoesNotPublishProviderIdWhenProfileFails() async {
+        let providerUser = AccountAVUser(
+            id: "user_clerk_subject",
+            displayName: "Clerk User",
+            emailAddress: "user@example.com"
+        )
+        AccountControllerURLProtocol.profileStatusCode = 500
+        let controller = AccountController(
+            service: StubAVAccountService(user: providerUser),
+            accountProfileClient: accountProfileClient(),
+            balanceClient: balanceClient(),
+            purchaseService: StubMomentsPurchaseService(),
+            userDefaults: isolatedUserDefaults()
+        )
+
+        await controller.syncFromAccountProvider()
+
+        XCTAssertFalse(controller.isSignedIn)
+        XCTAssertNil(controller.currentUserId)
+        XCTAssertTrue(controller.isAccountSessionTemporarilyUnavailable)
+    }
+
+    func testActiveProviderSessionDoesNotPublishProviderIdWithoutToken() async {
+        let providerUser = AccountAVUser(
+            id: "user_clerk_without_token",
+            displayName: "Clerk User",
+            emailAddress: "user@example.com"
+        )
+        let controller = AccountController(
+            service: StubAVAccountService(user: providerUser, token: nil),
+            accountProfileClient: accountProfileClient(),
+            balanceClient: balanceClient(),
+            purchaseService: StubMomentsPurchaseService(),
+            userDefaults: isolatedUserDefaults()
+        )
+
+        await controller.syncFromAccountProvider()
+
+        XCTAssertFalse(controller.isSignedIn)
+        XCTAssertNil(controller.currentUserId)
+        XCTAssertTrue(controller.isAccountSessionTemporarilyUnavailable)
+    }
+
+    private func accountProfileClient() -> MomentsAccountProfileClient {
+        MomentsAccountProfileClient(baseURLString: "https://account.example.test", session: urlProtocolSession())
+    }
+
     private func balanceClient() -> MomentsCreditBalanceClient {
-        AccountControllerURLProtocol.responseJSON = """
-        {
-          "proMonthlyCredits": 10,
-          "promotionalGrantedCredits": 0,
-          "purchasedCredits": 0,
-          "watermarkRemovalCreditCost": 1,
-          "watermarkFreeIncluded": true
-        }
-        """
+        MomentsCreditBalanceClient(baseURLString: "https://account.example.test", session: urlProtocolSession())
+    }
+
+    private func urlProtocolSession() -> URLSession {
         let configuration = URLSessionConfiguration.ephemeral
         configuration.protocolClasses = [AccountControllerURLProtocol.self]
-        return MomentsCreditBalanceClient(baseURLString: "https://account.example.test", session: URLSession(configuration: configuration))
+        return URLSession(configuration: configuration)
     }
 
     private func isolatedUserDefaults() -> UserDefaults {
@@ -134,7 +213,7 @@ final class AccountControllerSessionRestoreTests: XCTestCase {
 private final class StubAVAccountService: AVAccountService {
     private var storedUser: AccountAVUser?
     private let token: String?
-    private let restoreResult: AccountAVSessionRestoreResult?
+    var restoreResult: AccountAVSessionRestoreResult?
     private(set) var didSignOut = false
 
     init(user: AccountAVUser?, token: String? = "test-token", restoreResult: AccountAVSessionRestoreResult? = nil) {
@@ -185,7 +264,8 @@ private struct StubMomentsPurchaseService: MomentsPurchaseServicing {
 }
 
 private final class AccountControllerURLProtocol: URLProtocol {
-    static var responseJSON = "{}"
+    static var profileUser = AccountAVUser(id: "user-1", displayName: "User One", emailAddress: "user@example.com")
+    static var profileStatusCode = 200
 
     override class func canInit(with request: URLRequest) -> Bool {
         true
@@ -196,20 +276,58 @@ private final class AccountControllerURLProtocol: URLProtocol {
     }
 
     override func startLoading() {
+        let path = request.url?.path ?? ""
+        let statusCode = path == "/v1/me" ? Self.profileStatusCode : 200
+        let responseJSON = Self.responseJSON(for: path)
         let response = HTTPURLResponse(
             url: request.url!,
-            statusCode: 200,
+            statusCode: statusCode,
             httpVersion: nil,
             headerFields: ["Content-Type": "application/json"]
         )!
         client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
-        client?.urlProtocol(self, didLoad: Data(Self.responseJSON.utf8))
+        client?.urlProtocol(self, didLoad: Data(responseJSON.utf8))
         client?.urlProtocolDidFinishLoading(self)
     }
 
     override func stopLoading() {}
 
     static func reset() {
-        responseJSON = "{}"
+        profileUser = AccountAVUser(id: "user-1", displayName: "User One", emailAddress: "user@example.com")
+        profileStatusCode = 200
+    }
+
+    private static func responseJSON(for path: String) -> String {
+        if path == "/v1/me" {
+            if profileStatusCode == 200 {
+                return """
+                {
+                  "user": {
+                    "id": "\(profileUser.id)",
+                    "displayName": "\(profileUser.displayName)",
+                    "email": "\(profileUser.emailAddress ?? "")"
+                  }
+                }
+                """
+            }
+            return """
+            {
+              "error": {
+                "code": "account_profile_failed",
+                "message": "Account profile could not be loaded."
+              }
+            }
+            """
+        }
+
+        return """
+        {
+          "proMonthlyCredits": 10,
+          "promotionalGrantedCredits": 0,
+          "purchasedCredits": 0,
+          "watermarkRemovalCreditCost": 1,
+          "watermarkFreeIncluded": true
+        }
+        """
     }
 }

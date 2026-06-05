@@ -16,6 +16,7 @@ final class AccountController: ObservableObject {
     @Published var errorMessage: String?
 
     private let service: AVAccountService
+    private let accountProfileClient: MomentsAccountProfileClient
     private let balanceClient: MomentsCreditBalanceClient
     private let promoCodeClient: MomentsPromoCodeClient
     private let purchaseService: MomentsPurchaseServicing
@@ -24,17 +25,19 @@ final class AccountController: ObservableObject {
 
     init(
         service: AVAccountService = DefaultAVAccountService(),
+        accountProfileClient: MomentsAccountProfileClient? = nil,
         balanceClient: MomentsCreditBalanceClient? = nil,
         promoCodeClient: MomentsPromoCodeClient? = nil,
         purchaseService: MomentsPurchaseServicing = RevenueCatMomentsPurchaseService(),
         userDefaults: UserDefaults = .standard
     ) {
         self.service = service
+        self.accountProfileClient = accountProfileClient ?? MomentsAccountProfileClient(baseURLString: AppConfig.momentsAPIBaseURL)
         self.balanceClient = balanceClient ?? MomentsCreditBalanceClient(baseURLString: AppConfig.momentsAPIBaseURL)
         self.promoCodeClient = promoCodeClient ?? MomentsPromoCodeClient(baseURLString: AppConfig.momentsAPIBaseURL)
         self.purchaseService = purchaseService
         self.userDefaults = userDefaults
-        self.user = service.currentUser ?? Self.lastKnownAccountUser(from: userDefaults)
+        self.user = Self.lastKnownAccountUser(from: userDefaults)
         refresh()
     }
 
@@ -47,7 +50,6 @@ final class AccountController: ObservableObject {
     }
 
     func refresh() {
-        user = service.currentUser ?? user
         if user == nil {
             resetSignedOutAccountState()
         } else {
@@ -59,16 +61,19 @@ final class AccountController: ObservableObject {
 
     func syncFromAccountProvider() async {
         switch await service.restoreSession() {
-        case .active(let restoredUser):
-            user = restoredUser
-            isAccountSessionTemporarilyUnavailable = false
-            persistLastKnownAccountUser(restoredUser)
-            await refreshCreditBalance()
-        case .temporarilyUnavailable(let restoredUser):
-            if let restoredUser {
-                user = restoredUser
-                persistLastKnownAccountUser(restoredUser)
+        case .active(let providerUser):
+            guard let resolvedUser = await resolveInternalAccountUser(providerUser: providerUser) else {
+                isAccountSessionTemporarilyUnavailable = true
+                if user == nil {
+                    resetSignedOutAccountState()
+                }
+                return
             }
+            user = resolvedUser
+            isAccountSessionTemporarilyUnavailable = false
+            persistLastKnownAccountUser(resolvedUser)
+            await refreshCreditBalance()
+        case .temporarilyUnavailable:
             isAccountSessionTemporarilyUnavailable = true
             if user == nil {
                 resetSignedOutAccountState()
@@ -108,7 +113,9 @@ final class AccountController: ObservableObject {
         let normalizedCode = code.trimmingCharacters(in: .whitespacesAndNewlines)
         guard let user, !normalizedCode.isEmpty else { return 0 }
 
-        let token = try await service.getToken() ?? user.id
+        guard let token = try await currentBackendBearerToken(for: user) else {
+            throw MomentsAPIError(code: "moments_auth_token_missing", message: L10n.string("access.signInRequired.generic"))
+        }
         let response = try await promoCodeClient.redeem(code: normalizedCode, bearerToken: token)
         creditBalance = response.balance
         creditBalanceLoadState = .loaded
@@ -176,7 +183,9 @@ final class AccountController: ObservableObject {
 
         creditBalanceLoadState = .loading
         do {
-            let token = try await service.getToken() ?? user.id
+            guard let token = try await currentBackendBearerToken(for: user) else {
+                throw MomentsAPIError(code: "moments_auth_token_missing", message: L10n.string("access.signInRequired.generic"))
+            }
             creditBalance = try await balanceClient.fetchBalance(bearerToken: token)
             creditBalanceLoadState = .loaded
             isAccountSessionTemporarilyUnavailable = false
@@ -189,7 +198,7 @@ final class AccountController: ObservableObject {
 
     func currentBearerToken() async throws -> String? {
         guard let user else { return nil }
-        return try await service.getToken() ?? user.id
+        return try await currentBackendBearerToken(for: user)
     }
 
     private func refreshCreditBalanceAfterBillingEvent() async {
@@ -198,6 +207,28 @@ final class AccountController: ObservableObject {
             try? await Task.sleep(nanoseconds: 1_500_000_000)
             await self?.refreshCreditBalance()
         }
+    }
+
+    private func resolveInternalAccountUser(providerUser: AccountAVUser) async -> AccountAVUser? {
+        do {
+            guard let token = try await service.getToken() else {
+                return MomentsUITestEnvironment.current.hasAccountOverride ? providerUser : nil
+            }
+            return try await accountProfileClient.fetchCurrentUser(bearerToken: token)
+        } catch {
+            errorMessage = error.localizedDescription
+            return nil
+        }
+    }
+
+    private func currentBackendBearerToken(for user: AccountAVUser) async throws -> String? {
+        if let token = try await service.getToken() {
+            return token
+        }
+        if MomentsUITestEnvironment.current.hasAccountOverride {
+            return user.id
+        }
+        return nil
     }
 
     private func resetSignedOutAccountState() {
@@ -265,6 +296,48 @@ private struct MomentsLastKnownAccountUser: Codable {
 
     var accountUser: AccountAVUser {
         AccountAVUser(id: id, displayName: displayName, emailAddress: emailAddress)
+    }
+}
+
+struct MomentsAccountProfileClient {
+    var baseURLString: String
+    var session: URLSession = .shared
+
+    func fetchCurrentUser(bearerToken: String) async throws -> AccountAVUser {
+        guard let url = URL(string: "\(baseURLString)/v1/me") else {
+            throw MomentsAPIError(code: "invalid_account_api_url", message: L10n.string("access.apiURLMissing"))
+        }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.setValue("Bearer \(bearerToken)", forHTTPHeaderField: "Authorization")
+
+        let (data, response) = try await session.data(for: request)
+        if let httpResponse = response as? HTTPURLResponse, !(200..<300).contains(httpResponse.statusCode) {
+            throw MomentsAPIError.decode(
+                from: data,
+                fallbackCode: "account_profile_failed",
+                fallbackMessage: "Account profile could not be loaded."
+            )
+        }
+
+        let decoded = try JSONDecoder().decode(MomentsAccountProfileResponse.self, from: data)
+        return AccountAVUser(
+            id: decoded.user.id,
+            displayName: decoded.user.displayName ?? L10n.string("account.displayName.user"),
+            emailAddress: decoded.user.email ?? decoded.user.emailAddress
+        )
+    }
+}
+
+private struct MomentsAccountProfileResponse: Decodable {
+    let user: User
+
+    struct User: Decodable {
+        let id: String
+        let displayName: String?
+        let email: String?
+        let emailAddress: String?
     }
 }
 

@@ -475,6 +475,7 @@
 "access.google" = "Mit Google fortfahren";
 "access.legal.fallback" = "Wenn du fortfährst, stimmst du den Bedingungen und der Datenschutzrichtlinie von Moments AV zu.";
 "access.legal.markdown" = "Wenn du fortfährst, stimmst du den [Bedingungen](%@) und der [Datenschutzrichtlinie](%@) von Moments AV zu.";
+"access.signInRequired.generic" = "Melde dich erneut an, bevor du fortfährst.";
 "access.signInRequired.purchase" = "Melde dich an, bevor du Credits kaufst.";
 "access.signInRequired.restore" = "Melde dich an, bevor du Käufe wiederherstellst.";
 "access.skip" = "Vorläufig überspringen";

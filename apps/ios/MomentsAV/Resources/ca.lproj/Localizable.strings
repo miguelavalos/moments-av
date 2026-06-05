@@ -473,6 +473,7 @@
 "access.google" = "Continuar amb Google";
 "access.legal.fallback" = "En continuar, acceptes els Termes i la Política de privadesa de Moments AV.";
 "access.legal.markdown" = "En continuar, acceptes els [Termes](%@) i la [Política de privadesa](%@) de Moments AV.";
+"access.signInRequired.generic" = "Torna a iniciar sessió abans de continuar.";
 "access.signInRequired.purchase" = "Inicia sessió abans de comprar crèdits.";
 "access.signInRequired.restore" = "Inicia sessió abans de restaurar compres.";
 "access.skip" = "Ometre per ara";

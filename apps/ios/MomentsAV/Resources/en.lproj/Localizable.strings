@@ -475,6 +475,7 @@
 "access.google" = "Continue with Google";
 "access.legal.fallback" = "By continuing, you agree to the Terms and Privacy Policy of Moments AV.";
 "access.legal.markdown" = "By continuing, you agree to the [Terms](%@) and [Privacy Policy](%@) of Moments AV.";
+"access.signInRequired.generic" = "Sign in again before continuing.";
 "access.signInRequired.purchase" = "Sign in before purchasing credits.";
 "access.signInRequired.restore" = "Sign in before restoring purchases.";
 "access.skip" = "Skip for now";

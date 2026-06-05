@@ -473,6 +473,7 @@
 "access.google" = "Continuer avec Google";
 "access.legal.fallback" = "En continuant, tu acceptes les Conditions et la Politique de confidentialité de Moments AV.";
 "access.legal.markdown" = "En continuant, tu acceptes les [Conditions](%@) et la [Politique de confidentialité](%@) de Moments AV.";
+"access.signInRequired.generic" = "Reconnecte-toi avant de continuer.";
 "access.signInRequired.purchase" = "Connecte-toi avant d'acheter des crédits.";
 "access.signInRequired.restore" = "Connecte-toi avant de restaurer les achats.";
 "access.skip" = "Ignorer pour l'instant";
