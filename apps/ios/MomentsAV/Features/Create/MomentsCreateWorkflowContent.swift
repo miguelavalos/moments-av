@@ -729,7 +729,7 @@ private struct MomentsCreateStoryDecisionCard: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
 
                     Menu {
-                        Section(L10n.string("create.aviCut.menu.userActions")) {
+                        Section(L10n.string("create.storyDecision.menu.userActions")) {
                             Button(action: editMedia) {
                                 Label(L10n.string("create.media.editTitle"), systemImage: "photo.stack")
                             }
@@ -740,7 +740,7 @@ private struct MomentsCreateStoryDecisionCard: View {
                             }
                         }
 
-                        Section(L10n.string("create.aviCut.menu.aviActions")) {
+                        Section(L10n.string("create.storyDecision.menu.aviActions")) {
                             if canUndoAutoStyleSuggestion {
                                 Button(action: undoAutoStyleSuggestion) {
                                     Label(L10n.string("create.aviDirection.undoSuggestion"), systemImage: "arrow.uturn.backward")
@@ -759,7 +759,7 @@ private struct MomentsCreateStoryDecisionCard: View {
                             .background(AVBrandColor.mutedSurface.opacity(0.62), in: Circle())
                     }
                     .buttonStyle(.plain)
-                    .accessibilityLabel(L10n.string("create.aviCut.menu.accessibility"))
+                    .accessibilityLabel(L10n.string("create.storyDecision.menu.accessibility"))
                 }
 
                 MomentsCreateStoryDecisionSummary(
@@ -770,7 +770,7 @@ private struct MomentsCreateStoryDecisionCard: View {
                 )
 
                 VStack(alignment: .leading, spacing: 7) {
-                    Text(L10n.string("create.aviCut.selectedSetup"))
+                    Text(L10n.string("create.storyDecision.selectedSetup"))
                         .font(.system(size: 11, weight: .black))
                         .foregroundStyle(AVBrandColor.textSecondary)
                         .textCase(.uppercase)
@@ -864,14 +864,14 @@ private struct MomentsCreateStoryDecisionCard: View {
 
     private var decisionSummaryTitle: String {
         isUserAdjustedFromAvi
-            ? L10n.string("create.aviCut.summary.userTitle")
-            : L10n.string("create.aviCut.summary.aviTitle")
+            ? L10n.string("create.storyDecision.summary.userTitle")
+            : L10n.string("create.storyDecision.summary.aviTitle")
     }
 
     private var decisionSummaryDetail: String {
         if isUserAdjustedFromAvi {
             return L10n.string(
-                "create.aviCut.summary.userDetail",
+                "create.storyDecision.summary.userDetail",
                 selectedStyle.title,
                 selectedMusicPreset.title,
                 selectedLook.title,
@@ -880,7 +880,7 @@ private struct MomentsCreateStoryDecisionCard: View {
         }
 
         return L10n.string(
-            "create.aviCut.summary.aviDetail",
+            "create.storyDecision.summary.aviDetail",
             selectedStyle.title,
             selectedMusicPreset.title,
             selectedLook.title,
@@ -895,7 +895,7 @@ private struct MomentsCreateStoryDecisionCard: View {
         let styleTitle = styles.first(where: { $0.id == autoStyleSuggestion.styleID })?.title
             ?? L10n.string("create.options.anotherTheme")
         return L10n.string(
-            "create.aviCut.summary.aviProposalDetail",
+            "create.storyDecision.summary.aviProposalDetail",
             styleTitle,
             autoStyleSuggestion.musicPreset.title,
             selectedLook.title,
@@ -973,7 +973,7 @@ private struct MomentsCreateStoryDecisionCard: View {
             storySummary: presentation.storySummary,
             selectedDuration: selectedDuration,
             renderPlan: presentation.finalRenderSummary.renderPlan?.plan,
-            canImproveWithAvi: presentation.canPlanStory,
+            canRefreshStory: presentation.canPlanStory,
             availabilityMessage: presentation.storyAvailabilityMessage
         )
     }
@@ -1010,7 +1010,7 @@ private struct MomentsCreateStoryDecisionSummary: View {
                     Divider()
                         .padding(.vertical, 2)
 
-                    Text(L10n.string("create.aviCut.summary.aviProposalTitle"))
+                    Text(L10n.string("create.storyDecision.summary.aviProposalTitle"))
                         .font(.system(size: 11, weight: .black))
                         .foregroundStyle(AVBrandColor.accent)
 

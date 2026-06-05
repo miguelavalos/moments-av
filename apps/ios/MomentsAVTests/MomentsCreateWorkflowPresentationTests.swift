@@ -325,7 +325,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
                 ]
             ),
             selectedDuration: .standard,
-            canImproveWithAvi: true
+            canRefreshStory: true
         )
 
         XCTAssertEqual(
@@ -337,7 +337,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         XCTAssertEqual(presentation.primaryActionTitle, "Refresh story")
         XCTAssertEqual(presentation.editActionTitle, "Edit story")
         XCTAssertTrue(presentation.canRunPrimaryAction)
-        XCTAssertTrue(presentation.canShowImproveAction)
+        XCTAssertTrue(presentation.canShowRefreshAction)
         XCTAssertEqual(presentation.visibleScenes.count, 2)
         XCTAssertEqual(presentation.remainingSceneTitle, "2 more scenes in this story")
     }
@@ -351,7 +351,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
                 savedScenes: [MomentsCreateTestFixtures.makeScene(id: "scene-1")]
             ),
             selectedDuration: .standard,
-            canImproveWithAvi: false,
+            canRefreshStory: false,
             availabilityMessage: "Improve with Avi is cooling down."
         )
 
@@ -361,7 +361,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         )
         XCTAssertEqual(presentation.primaryActionTitle, "Refresh story")
         XCTAssertFalse(presentation.canRunPrimaryAction)
-        XCTAssertFalse(presentation.canShowImproveAction)
+        XCTAssertFalse(presentation.canShowRefreshAction)
     }
 
     func testStoryDecisionPresentationFormatsPendingAndUnavailableStates() {
@@ -371,7 +371,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
             ),
             storySummary: MomentsCreateStorySummary(),
             selectedDuration: .standard,
-            canImproveWithAvi: true
+            canRefreshStory: true
         )
 
         XCTAssertEqual(presentation.statusMessage, "Ready for Avi to prepare the story.")
@@ -379,9 +379,9 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         XCTAssertEqual(presentation.mediaCountTitle, "1 item")
         XCTAssertEqual(presentation.primaryActionTitle, "Prepare story")
         XCTAssertTrue(presentation.canRunPrimaryAction)
-        XCTAssertFalse(presentation.canShowImproveAction)
+        XCTAssertFalse(presentation.canShowRefreshAction)
 
-        presentation.canImproveWithAvi = false
+        presentation.canRefreshStory = false
         presentation.availabilityMessage = "Sign in before preparing the story."
         XCTAssertEqual(presentation.statusMessage, "Sign in before preparing the story.")
         XCTAssertFalse(presentation.canRunPrimaryAction)
