@@ -56,7 +56,7 @@ struct MomentsStoryClient {
             .appendingPathComponent("story")
             .appendingPathComponent("plans")
 
-        let requestBody = MomentsStoryPlanRequest(
+        let requestBody = MomentsStoryRequest(
             momentId: momentId,
             creationMode: form.creationMode.rawValue,
             look: form.look.rawValue,

@@ -9,14 +9,14 @@ final class StoryWorkflow: WorkspaceObservingWorkflow {
 
     private let currentUserProvider: any MomentsCurrentUserProviding
     private let authTokenProvider: any MomentsAuthTokenProviding
-    private let storySaver: any MomentsStoryPlanSaving
+    private let storySaver: any MomentsStorySaving
     private let storyClient: MomentsStoryClient
     private let logger = Logger(subsystem: "com.avalsys.momentsav", category: "story")
 
     init(
         currentUserProvider: any MomentsCurrentUserProviding,
         authTokenProvider: any MomentsAuthTokenProviding,
-        storySaver: any MomentsStoryPlanSaving,
+        storySaver: any MomentsStorySaving,
         workspaceObserver: any MomentsActiveWorkspaceObserving,
         storyClient: MomentsStoryClient
     ) {
@@ -91,7 +91,7 @@ final class StoryWorkflow: WorkspaceObservingWorkflow {
             try validatePlanMediaReferences(plan, availableMedia: media)
             generatedPlan = plan
             do {
-                try await storySaver.saveStoryPlan(
+                try await storySaver.saveStory(
                     ownerUserId: ownerUserId,
                     momentId: momentId,
                     plan: plan,

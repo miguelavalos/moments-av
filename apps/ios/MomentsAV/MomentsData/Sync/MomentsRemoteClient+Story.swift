@@ -2,7 +2,7 @@
 import Foundation
 
 extension MomentsRemoteClient {
-    func saveStoryPlan(
+    func saveStory(
         ownerUserId: String,
         momentId: String,
         plan: MomentsStoryResponse,

@@ -619,7 +619,7 @@ private final class MomentCreationFailureHarness:
     MomentsCreating,
     MomentsDeleting,
     MomentsMediaAssetSaving,
-    MomentsStoryPlanSaving,
+    MomentsStorySaving,
     MomentsActiveWorkspaceObserving
 {
     let createAttemptExpectation = XCTestExpectation(description: "Moment creation attempted")
@@ -753,7 +753,7 @@ private final class MomentCreationFailureHarness:
         mediaAssets.map(\.platformMediaAssetId)
     }
 
-    func saveStoryPlan(
+    func saveStory(
         ownerUserId: String,
         momentId: String,
         plan: MomentsStoryResponse,

@@ -9,7 +9,7 @@ struct MomentsStoryMedia: Encodable {
     let moderationStatus: String
 }
 
-struct MomentsStoryPlanRequest: Encodable {
+struct MomentsStoryRequest: Encodable {
     let appId = "momentsav"
     let momentId: String
     let creationMode: String

@@ -24,9 +24,9 @@ protocol MomentsMediaAssetSaving {
 }
 
 @MainActor
-protocol MomentsStoryPlanSaving {
+protocol MomentsStorySaving {
     var isConfigured: Bool { get }
-    func saveStoryPlan(
+    func saveStory(
         ownerUserId: String,
         momentId: String,
         plan: MomentsStoryResponse,
@@ -90,7 +90,7 @@ protocol MomentsActiveWorkspaceObserving {
 extension MomentsRepository:
     MomentsCreating,
     MomentsMediaAssetSaving,
-    MomentsStoryPlanSaving,
+    MomentsStorySaving,
     MomentsRenderJobStatusUpdating,
     MomentsDeleting,
     InProgressMomentsObserving,
