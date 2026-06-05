@@ -8,6 +8,8 @@ review handoff, and private backend operations belong in the private AVALSYS
 suite.
 
 For full local setup, see [../../docs/install-ios.md](../../docs/install-ios.md).
+For client workflow ownership rules, see
+[../../docs/client-architecture-guardrails.md](../../docs/client-architecture-guardrails.md).
 For runtime-config hygiene, see
 [../../docs/production-config.md](../../docs/production-config.md).
 

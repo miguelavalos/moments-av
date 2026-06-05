@@ -15,6 +15,9 @@ handoff values belong in the private AVALSYS suite.
   guide for Account AV, app shell, settings, config hygiene, and shared package
   usage.
 - [install-ios.md](install-ios.md): local iOS setup and compile checks.
+- [client-architecture-guardrails.md](client-architecture-guardrails.md):
+  public-safe iOS ownership rules for backend-owned workflows and realtime
+  state.
 - [production-config.md](production-config.md): public runtime-config hygiene,
   with no production values.
 - [release-checklist.md](release-checklist.md): public repo readiness checks.
