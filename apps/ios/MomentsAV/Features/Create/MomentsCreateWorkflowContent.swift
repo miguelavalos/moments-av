@@ -32,6 +32,7 @@ struct MomentsCreateWorkflowContent: View {
                     restoreLocalMediaForEditing: viewModel.restoreLocalMediaForEditing,
                     autoPickStrongMoments: viewModel.autoPickStrongMoments,
                     selectStyle: viewModel.selectCreationStyle,
+                    selectLook: viewModel.selectLook,
                     selectDuration: viewModel.selectDuration,
                     selectMusicPreset: viewModel.selectMusicPreset,
                     useAutoStyleSuggestion: viewModel.useAutoStyleSuggestion,
@@ -74,6 +75,7 @@ private struct MomentsCreateMediaFirstWorkspace: View {
     let restoreLocalMediaForEditing: () -> Void
     let autoPickStrongMoments: () -> Void
     let selectStyle: (MomentCreationStyle) -> Void
+    let selectLook: (MomentLook) -> Void
     let selectDuration: (MomentDuration) -> Void
     let selectMusicPreset: (MomentMusicPreset) -> Void
     let useAutoStyleSuggestion: () -> Void
@@ -289,7 +291,7 @@ private struct MomentsCreateMediaFirstWorkspace: View {
             MomentsCreateLookChooserPage(
                 selectedLook: form.look,
                 selectLook: {
-                    form.look = $0
+                    selectLook($0)
                     showsLookChooser = false
                 },
                 dismiss: { showsLookChooser = false }

@@ -89,6 +89,7 @@ final class MomentsCreateViewModel: ObservableObject {
     private var renderPlanInputSignature: String?
     private var pendingRenderPlanInputSignature: String?
     private var hasExplicitMediaEditsAfterPreparedStory = false
+    private var hasLocalSetupEdits = false
     private var hasUserStyleOverride = false
     private var hasUserDurationOverride = false
     private var autoStyleUndoSelection: (style: MomentCreationStyle, musicPreset: MomentMusicPreset, form: MomentSetupForm)?
@@ -172,6 +173,7 @@ final class MomentsCreateViewModel: ObservableObject {
         guard !isSetupLocked else { return }
         guard let template = templates.first(where: { $0.id == id }) else { return }
         form.template = template
+        markLocalSetupEdited()
     }
 
     func selectCreationStyle(_ style: MomentCreationStyle) {
@@ -183,6 +185,7 @@ final class MomentsCreateViewModel: ObservableObject {
         canUndoAutoStyleSuggestion = false
         autoStyleUndoSelection = nil
         applyStyleDefaults(style)
+        markLocalSetupEdited()
     }
 
     func selectMusicPreset(_ preset: MomentMusicPreset) {
@@ -192,6 +195,7 @@ final class MomentsCreateViewModel: ObservableObject {
         autoStyleUndoSelection = nil
         selectedMusicPreset = preset
         form.tone = MomentSetupTone(musicPreset: preset)
+        markLocalSetupEdited()
     }
 
     func useAutoStyleSuggestion() {
@@ -205,6 +209,7 @@ final class MomentsCreateViewModel: ObservableObject {
         canUndoAutoStyleSuggestion = true
         applyStyleDefaults(suggestedStyle)
         form.tone = MomentSetupTone(musicPreset: suggestion.musicPreset)
+        markLocalSetupEdited()
     }
 
     func undoAutoStyleSuggestion() {
@@ -216,6 +221,7 @@ final class MomentsCreateViewModel: ObservableObject {
         hasUserStyleOverride = true
         canUndoAutoStyleSuggestion = false
         autoStyleUndoSelection = nil
+        markLocalSetupEdited()
     }
 
     func clearSessionState() {
@@ -226,12 +232,14 @@ final class MomentsCreateViewModel: ObservableObject {
         isContinuingMoment = false
         continuationFocusHint = nil
         isLocalMomentStarted = false
+        hasLocalSetupEdits = false
     }
 
     func continueMoment(_ moment: InProgressMoment, focus: MomentsContinuationFocus = .moment) {
         cancelOperations()
         isContinuingMoment = true
         isLocalMomentStarted = false
+        hasLocalSetupEdits = false
         pendingFocus = focus
         continuationFocusHint = focus
 
@@ -382,6 +390,7 @@ final class MomentsCreateViewModel: ObservableObject {
         pendingRenderPlanInputSignature = nil
         isPreparingFinalPlan = false
         hasExplicitMediaEditsAfterPreparedStory = false
+        hasLocalSetupEdits = false
         hasUserStyleOverride = false
         hasUserDurationOverride = false
         applyStyleDefaults(selectedCreationStyle)
@@ -544,6 +553,16 @@ final class MomentsCreateViewModel: ObservableObject {
     func selectDuration(_ duration: MomentDuration) {
         form.duration = duration
         hasUserDurationOverride = true
+        markLocalSetupEdited()
+    }
+
+    func selectLook(_ look: MomentLook) {
+        form.look = look
+        markLocalSetupEdited()
+    }
+
+    private func markLocalSetupEdited() {
+        hasLocalSetupEdits = true
         clearStaleRenderPlan()
     }
 
@@ -565,6 +584,7 @@ final class MomentsCreateViewModel: ObservableObject {
         }
         lastPreparedStoryInputSignature = recordedSignature
         hasExplicitMediaEditsAfterPreparedStory = false
+        hasLocalSetupEdits = false
         return recordedSignature
     }
 
@@ -743,6 +763,7 @@ extension MomentsCreateViewModel {
     }
 
     private func syncFormWithActiveWorkspace(_ workspace: MomentWorkspace?) {
+        guard !hasLocalSetupEdits else { return }
         guard let moment = workspace?.moment else { return }
         guard moment.id == activeMomentId else { return }
         guard let continuedForm = MomentSetupForm.continuing(moment: moment, templates: templates) else { return }
