@@ -15,6 +15,7 @@ protocol MomentsGalleryStoring {
         createdAt: Date
     ) throws -> MomentsGalleryVideoRecord
     func addRecord(_ record: MomentsGalleryVideoRecord)
+    func renameRecord(_ record: MomentsGalleryVideoRecord, title: String)
     func deleteRecord(_ record: MomentsGalleryVideoRecord, deleteLocalFile: Bool)
 }
 
@@ -97,6 +98,15 @@ struct MomentsGalleryStore: MomentsGalleryStoring {
     func addRecord(_ record: MomentsGalleryVideoRecord) {
         let remainingRecords = loadRecords().filter { $0.artifactId != record.artifactId }
         saveRecords([record] + remainingRecords)
+    }
+
+    func renameRecord(_ record: MomentsGalleryVideoRecord, title: String) {
+        let trimmedTitle = title.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedTitle.isEmpty else { return }
+
+        saveRecords(loadRecords().map { currentRecord in
+            currentRecord.id == record.id ? currentRecord.renamed(trimmedTitle) : currentRecord
+        })
     }
 
     func deleteRecord(_ record: MomentsGalleryVideoRecord, deleteLocalFile: Bool = true) {

@@ -157,6 +157,8 @@
 "common.manage" = "Verwalten";
 "common.open" = "Öffnen";
 "common.remove" = "Entfernen";
+"common.rename" = "Umbenennen";
+"common.save" = "Speichern";
 "common.share" = "Teilen";
 "common.signIn" = "Anmelden";
 "common.soon" = "Bald";
@@ -208,6 +210,8 @@
 "gallery.delete.button" = "Von diesem Gerät löschen";
 "gallery.delete.message" = "Dadurch werden die lokale Videodatei und der Galerie-Eintrag von diesem Gerät entfernt.";
 "gallery.delete.title" = "Galerie-Video löschen?";
+"gallery.rename.placeholder" = "Videoname";
+"gallery.rename.title" = "Video umbenennen";
 "gallery.empty.detail" = "Deine fertigen Videos erscheinen hier, nachdem sie gespeichert wurden.";
 "gallery.empty.downloadDetail" = "Fertige Videos erscheinen hier erst, nachdem sie auf dieses Gerät geladen wurden.";
 "gallery.empty.shortTitle" = "Galerie ist leer";

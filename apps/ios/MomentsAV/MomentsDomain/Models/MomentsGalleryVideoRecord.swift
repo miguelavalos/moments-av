@@ -26,6 +26,18 @@ struct MomentsGalleryVideoRecord: Identifiable, Codable, Equatable {
         self.localRelativePath = localRelativePath
         self.createdAt = createdAt
     }
+
+    func renamed(_ title: String) -> MomentsGalleryVideoRecord {
+        MomentsGalleryVideoRecord(
+            id: id,
+            momentId: momentId,
+            artifactId: artifactId,
+            title: title,
+            r2Key: r2Key,
+            localRelativePath: localRelativePath,
+            createdAt: createdAt
+        )
+    }
 }
 
 struct MomentsGalleryVideoPresentation: Identifiable, Equatable {

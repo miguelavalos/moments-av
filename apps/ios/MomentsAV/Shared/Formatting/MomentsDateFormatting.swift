@@ -12,6 +12,10 @@ enum MomentsMomentFormatting {
         "Updated \(MomentsDateFormatting.formattedDate(milliseconds: moment.updatedAt))"
     }
 
+    static func galleryDate(_ milliseconds: Double) -> String {
+        "Saved \(MomentsDateFormatting.formattedDate(milliseconds: milliseconds))"
+    }
+
     static func storyUsage(_ moment: InProgressMoment) -> String {
         L10n.string("moment.kind.story")
     }

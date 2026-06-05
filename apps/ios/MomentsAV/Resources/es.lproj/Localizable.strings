@@ -270,6 +270,8 @@
 "common.manage" = "Gestionar";
 "common.open" = "Abrir";
 "common.remove" = "Quitar";
+"common.rename" = "Renombrar";
+"common.save" = "Guardar";
 "common.share" = "Compartir";
 "common.signIn" = "Iniciar sesión";
 "credits.available.detail" = "%@ disponibles";
@@ -320,6 +322,8 @@
 "gallery.delete.button" = "Eliminar de este dispositivo";
 "gallery.delete.message" = "Esto elimina el archivo local del video y el registro de Galería de este dispositivo.";
 "gallery.delete.title" = "¿Eliminar video de Galería?";
+"gallery.rename.placeholder" = "Nombre del video";
+"gallery.rename.title" = "Renombrar video";
 "gallery.empty.detail" = "Tus videos terminados aparecerán aquí después de guardarse.";
 "gallery.empty.downloadDetail" = "Los videos terminados aparecen aquí solo después de descargarse en este dispositivo.";
 "gallery.empty.shortTitle" = "Galería está vacía";

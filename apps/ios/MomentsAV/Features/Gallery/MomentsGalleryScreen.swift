@@ -1,5 +1,6 @@
 import AVAppShellFoundation
 import AVBrandFoundation
+import AVFoundation
 import AVKit
 import SwiftUI
 
@@ -7,6 +8,7 @@ struct MomentsGalleryScreen: View {
     @EnvironmentObject private var viewModel: MomentsGalleryViewModel
     @State private var videoPendingDeletion: MomentsGalleryVideoPresentation?
     @State private var selectedVideo: MomentsGalleryVideoPlayerItem?
+    @State private var videoPendingRename: MomentsGalleryVideoPresentation?
 
     var body: some View {
         AVAppShellScrollableScreenScaffold {
@@ -33,6 +35,9 @@ struct MomentsGalleryScreen: View {
                             openVideo: {
                                 selectedVideo = MomentsGalleryVideoPlayerItem(video: video)
                             },
+                            renameVideo: {
+                                videoPendingRename = video
+                            },
                             deleteVideo: {
                                 videoPendingDeletion = video
                             }
@@ -57,6 +62,12 @@ struct MomentsGalleryScreen: View {
         }
         .sheet(item: $selectedVideo) { item in
             MomentsGalleryVideoPlayerSheet(item: item)
+        }
+        .sheet(item: $videoPendingRename) { video in
+            MomentsGalleryRenameSheet(video: video) { title in
+                viewModel.renameVideo(video, title: title)
+            }
+            .presentationDetents([.height(230)])
         }
     }
 
@@ -116,58 +127,206 @@ private struct MomentsGalleryEmptyState: View {
 private struct MomentsGalleryVideoRow: View {
     let video: MomentsGalleryVideoPresentation
     let openVideo: () -> Void
+    let renameVideo: () -> Void
     let deleteVideo: () -> Void
 
     var body: some View {
-        AVAppShellCard {
-            VStack(alignment: .leading, spacing: 12) {
-                Button(action: openVideo) {
-                    HStack(alignment: .center, spacing: 14) {
-                        ZStack {
-                            RoundedRectangle(cornerRadius: 6, style: .continuous)
-                                .fill(AVBrandColor.accent.opacity(0.12))
-                                .frame(width: 74, height: 54)
+        VStack(alignment: .leading, spacing: 12) {
+            Button(action: openVideo) {
+                ZStack {
+                    MomentsGalleryVideoThumbnail(url: video.localFileURL, isAvailable: video.isLocalFileAvailable)
+                        .frame(height: 176)
+                        .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
 
-                            Image(systemName: video.isLocalFileAvailable ? "play.fill" : "exclamationmark.triangle.fill")
-                                .font(.system(size: 22, weight: .black))
-                                .foregroundStyle(video.isLocalFileAvailable ? AVBrandColor.accent : AVBrandColor.textSecondary)
-                        }
+                    LinearGradient(
+                        colors: [.black.opacity(0.02), .black.opacity(0.56)],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                    .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
 
-                        VStack(alignment: .leading, spacing: 5) {
-                            Text(video.title)
-                                .font(.system(size: 17, weight: .black))
-                                .foregroundStyle(AVBrandColor.textPrimary)
-                                .lineLimit(2)
+                    Image(systemName: video.isLocalFileAvailable ? "play.fill" : "exclamationmark.triangle.fill")
+                        .font(.system(size: 23, weight: .black))
+                        .foregroundStyle(.white)
+                        .frame(width: 58, height: 58)
+                        .background(.black.opacity(0.28), in: Circle())
 
+                    VStack {
+                        HStack {
                             Text(video.availabilityTitle)
-                                .font(AVBrandTypography.captionStrong)
-                                .foregroundStyle(AVBrandColor.textSecondary)
+                                .font(.system(size: 12, weight: .black))
+                                .foregroundStyle(.white)
+                                .padding(.horizontal, 11)
+                                .padding(.vertical, 7)
+                                .background(.black.opacity(0.28), in: Capsule())
+
+                            Spacer(minLength: 0)
+
+                            MomentsGalleryVideoMenu(
+                                video: video,
+                                renameVideo: renameVideo,
+                                deleteVideo: deleteVideo
+                            )
                         }
 
                         Spacer(minLength: 0)
-                    }
-                }
-                .buttonStyle(.plain)
-                .disabled(!video.isLocalFileAvailable)
 
-                HStack(spacing: 10) {
-                    Button(action: openVideo) {
-                        Label(L10n.string("common.open"), systemImage: "play.fill")
-                    }
-                    .disabled(!video.isLocalFileAvailable)
+                        HStack(alignment: .bottom) {
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(video.title)
+                                    .font(.system(size: 22, weight: .black))
+                                    .foregroundStyle(.white)
+                                    .lineLimit(2)
 
-                    if video.isLocalFileAvailable {
-                        ShareLink(item: video.localFileURL) {
-                            Label(L10n.string("common.share"), systemImage: "square.and.arrow.up")
+                                Text(MomentsMomentFormatting.galleryDate(video.record.createdAt))
+                                    .font(.system(size: 13, weight: .bold))
+                                    .foregroundStyle(.white.opacity(0.82))
+                            }
+
+                            Spacer(minLength: 0)
+
+                            if video.isLocalFileAvailable {
+                                ShareLink(item: video.localFileURL) {
+                                    Image(systemName: "square.and.arrow.up")
+                                        .font(.system(size: 15, weight: .black))
+                                        .foregroundStyle(AVBrandColor.textPrimary)
+                                        .frame(width: 42, height: 42)
+                                        .background(.white.opacity(0.92), in: Circle())
+                                }
+                            }
                         }
                     }
+                    .padding(14)
+                }
+            }
+            .buttonStyle(.plain)
+            .disabled(!video.isLocalFileAvailable)
+        }
+        .padding(8)
+        .background(
+            RoundedRectangle(cornerRadius: 28, style: .continuous)
+                .fill(AVBrandColor.elevatedSurface)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 28, style: .continuous)
+                .stroke(AVBrandColor.borderSubtle.opacity(0.55), lineWidth: 1)
+        )
+        .shadow(color: AVBrandColor.ink.opacity(0.05), radius: 18, x: 0, y: 10)
+    }
+}
 
-                    Button(role: .destructive, action: deleteVideo) {
-                        Label(video.isLocalFileAvailable ? L10n.string("common.delete") : L10n.string("common.remove"), systemImage: "trash")
+private struct MomentsGalleryVideoMenu: View {
+    let video: MomentsGalleryVideoPresentation
+    let renameVideo: () -> Void
+    let deleteVideo: () -> Void
+
+    var body: some View {
+        Menu {
+            Button(action: renameVideo) {
+                Label(L10n.string("common.rename"), systemImage: "pencil")
+            }
+
+            if video.isLocalFileAvailable {
+                ShareLink(item: video.localFileURL) {
+                    Label(L10n.string("common.share"), systemImage: "square.and.arrow.up")
+                }
+            }
+
+            Button(role: .destructive, action: deleteVideo) {
+                Label(video.isLocalFileAvailable ? L10n.string("common.delete") : L10n.string("common.remove"), systemImage: "trash")
+            }
+        } label: {
+            Image(systemName: "ellipsis")
+                .font(.system(size: 15, weight: .black))
+                .foregroundStyle(AVBrandColor.textPrimary)
+                .frame(width: 42, height: 42)
+                .background(.white.opacity(0.92), in: Circle())
+        }
+    }
+}
+
+private struct MomentsGalleryVideoThumbnail: View {
+    let url: URL
+    let isAvailable: Bool
+    @State private var image: UIImage?
+
+    var body: some View {
+        ZStack {
+            LinearGradient(
+                colors: [
+                    AVBrandColor.accent.opacity(0.18),
+                    AVBrandColor.accent.opacity(0.06),
+                    AVBrandColor.neutral100
+                ],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+
+            if let image {
+                Image(uiImage: image)
+                    .resizable()
+                    .scaledToFill()
+            } else {
+                Image(systemName: isAvailable ? "play.rectangle.fill" : "exclamationmark.triangle.fill")
+                    .font(.system(size: 42, weight: .black))
+                    .foregroundStyle(AVBrandColor.accent.opacity(isAvailable ? 0.80 : 0.45))
+            }
+        }
+        .task(id: url) {
+            guard isAvailable else { return }
+            image = await Self.loadThumbnail(url: url)
+        }
+    }
+
+    private static func loadThumbnail(url: URL) async -> UIImage? {
+        await Task.detached(priority: .utility) {
+            let asset = AVURLAsset(url: url)
+            let generator = AVAssetImageGenerator(asset: asset)
+            generator.appliesPreferredTrackTransform = true
+            generator.maximumSize = CGSize(width: 720, height: 720)
+
+            guard let cgImage = try? generator.copyCGImage(at: .zero, actualTime: nil) else {
+                return nil
+            }
+            return UIImage(cgImage: cgImage)
+        }.value
+    }
+}
+
+private struct MomentsGalleryRenameSheet: View {
+    let video: MomentsGalleryVideoPresentation
+    let save: (String) -> Void
+    @Environment(\.dismiss) private var dismiss
+    @State private var title: String
+
+    init(video: MomentsGalleryVideoPresentation, save: @escaping (String) -> Void) {
+        self.video = video
+        self.save = save
+        _title = State(initialValue: video.title)
+    }
+
+    var body: some View {
+        NavigationStack {
+            Form {
+                TextField(L10n.string("gallery.rename.placeholder"), text: $title)
+                    .textInputAutocapitalization(.words)
+            }
+            .navigationTitle(L10n.string("gallery.rename.title"))
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button(L10n.string("common.cancel")) {
+                        dismiss()
                     }
                 }
-                .font(.system(size: 13, weight: .bold))
-                .buttonStyle(.bordered)
+
+                ToolbarItem(placement: .confirmationAction) {
+                    Button(L10n.string("common.save")) {
+                        save(title)
+                        dismiss()
+                    }
+                    .disabled(title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                }
             }
         }
     }

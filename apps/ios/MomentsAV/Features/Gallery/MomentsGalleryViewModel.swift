@@ -36,4 +36,9 @@ final class MomentsGalleryViewModel: ObservableObject {
         galleryStore.deleteRecord(video.record, deleteLocalFile: true)
         refreshVideos()
     }
+
+    func renameVideo(_ video: MomentsGalleryVideoPresentation, title: String) {
+        galleryStore.renameRecord(video.record, title: title)
+        refreshVideos()
+    }
 }
