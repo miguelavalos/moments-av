@@ -21,7 +21,7 @@ struct MomentsAviScreen: View {
             detail: L10n.string("avi.landing.detail"),
             chips: [
                 AVAviLandingChip(title: L10n.string("avi.landing.choose"), systemImage: "photo.on.rectangle"),
-                AVAviLandingChip(title: L10n.string("avi.landing.review"), systemImage: "text.bubble"),
+                AVAviLandingChip(title: L10n.string("avi.landing.story"), systemImage: "text.bubble"),
                 AVAviLandingChip(title: L10n.string("avi.landing.create"), systemImage: "video.fill")
             ],
             accessibilityIdentifier: "moments.avi.hero"

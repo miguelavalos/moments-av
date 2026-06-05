@@ -13,8 +13,8 @@ struct MomentsAviHelpCard: View {
                 systemImage: "photo.on.rectangle"
             )
             AVAviInfoRow(
-                title: L10n.string("avi.help.review.title"),
-                detail: L10n.string("avi.help.review.detail"),
+                title: L10n.string("avi.help.story.title"),
+                detail: L10n.string("avi.help.story.detail"),
                 systemImage: "text.bubble"
             )
             AVAviInfoRow(

@@ -20,8 +20,8 @@ struct MomentsAviPreparationCard: View {
                 systemImage: "photo.on.rectangle"
             )
             AVAviInfoRow(
-                title: L10n.string("avi.prepare.review.title"),
-                detail: L10n.string("avi.prepare.review.detail"),
+                title: L10n.string("avi.prepare.story.title"),
+                detail: L10n.string("avi.prepare.story.detail"),
                 systemImage: "text.bubble"
             )
             AVAviActionInfoRow(
