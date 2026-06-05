@@ -40,7 +40,7 @@ struct MomentsUploadClient: Sendable {
         return try JSONDecoder().decode(MomentsPreparedUpload.self, from: data)
     }
 
-    func upload(media: MomentsSelectedMedia, preparedUpload: MomentsPreparedUpload) async throws {
+    func upload(media: MomentsSelectedMedia, preparedUpload: MomentsPreparedUpload) async throws -> MomentsUploadCompletion {
         guard let uploadURL = preparedUpload.uploadUrl else {
             throw MomentsUploadError.signedUploadUnavailable
         }
@@ -54,14 +54,16 @@ struct MomentsUploadClient: Sendable {
             request.setValue(value, forHTTPHeaderField: key)
         }
 
-        try await uploadWithRetry(request: request, data: media.data)
+        let uploadCompletion = try await uploadWithRetry(request: request, data: media.data)
 
         if let completionUrl = preparedUpload.completionUrl {
-            try await completeUpload(uploadId: preparedUpload.uploadId, completionUrl: completionUrl)
+            return try await completeUpload(uploadId: preparedUpload.uploadId, completionUrl: completionUrl)
         }
+
+        return uploadCompletion
     }
 
-    private func completeUpload(uploadId: String, completionUrl: URL) async throws {
+    private func completeUpload(uploadId: String, completionUrl: URL) async throws -> MomentsUploadCompletion {
         var request = URLRequest(url: completionUrl)
         request.httpMethod = "POST"
         request.timeoutInterval = 20
@@ -75,9 +77,11 @@ struct MomentsUploadClient: Sendable {
                 fallbackMessage: MomentsUploadError.uploadFailed.localizedDescription
             )
         }
+
+        return try JSONDecoder().decode(MomentsUploadCompletion.self, from: data)
     }
 
-    private func uploadWithRetry(request: URLRequest, data: Data) async throws {
+    private func uploadWithRetry(request: URLRequest, data: Data) async throws -> MomentsUploadCompletion {
         var attempt = 0
 
         while true {
@@ -90,7 +94,7 @@ struct MomentsUploadClient: Sendable {
                         fallbackMessage: MomentsUploadError.uploadFailed.localizedDescription
                     )
                 }
-                return
+                return try JSONDecoder().decode(MomentsUploadCompletion.self, from: responseData)
             } catch {
                 guard uploadRetryPolicy.shouldRetry(error: error, attempt: attempt) else {
                     throw error

@@ -16,13 +16,14 @@ extension MediaAssetPersistenceRequest {
     static func asset(
         _ media: MomentsSelectedMedia,
         preparedUpload: MomentsPreparedUpload,
+        uploadCompletion: MomentsUploadCompletion,
         uploadedAt: Date = Date()
     ) -> MediaAssetPersistenceRequest {
         MediaAssetPersistenceRequest(
             platformMediaAssetId: media.sourceLocalIdentifier,
             uploadId: preparedUpload.uploadId,
             kind: media.kind,
-            r2Key: nil,
+            r2Key: uploadCompletion.storageKey,
             thumbnailR2Key: nil,
             sortOrder: Double(media.sortOrder),
             selected: media.selected,

@@ -33,6 +33,18 @@ struct MomentsPreparedUpload: Decodable, Equatable, Sendable {
     let generatedAt: String
 }
 
+struct MomentsUploadCompletion: Decodable, Equatable, Sendable {
+    let appId: String
+    let userId: String
+    let momentId: String
+    let mediaAssetId: String
+    let uploadId: String
+    let storageKey: String
+    let status: String
+    let uploadedAt: String
+    let bytesReceived: Int
+}
+
 enum MomentsMediaRules {
     enum BlockReason {
         case tooFewSelected(missingCount: Int)

@@ -5,13 +5,15 @@ extension MomentsRepository {
         ownerUserId: String,
         momentId: String,
         media: MomentsSelectedMedia,
-        preparedUpload: MomentsPreparedUpload
+        preparedUpload: MomentsPreparedUpload,
+        uploadCompletion: MomentsUploadCompletion
     ) async throws -> String {
         try await remoteClient.addMediaAsset(
             ownerUserId: ownerUserId,
             momentId: momentId,
             media: media,
-            preparedUpload: preparedUpload
+            preparedUpload: preparedUpload,
+            uploadCompletion: uploadCompletion
         )
     }
 

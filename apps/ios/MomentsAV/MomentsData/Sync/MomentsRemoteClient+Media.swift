@@ -7,12 +7,18 @@ extension MomentsRemoteClient {
         momentId: String,
         media: MomentsSelectedMedia,
         preparedUpload: MomentsPreparedUpload,
+        uploadCompletion: MomentsUploadCompletion,
         uploadedAt: Date = Date()
     ) async throws -> String {
         try await addMediaAsset(
             ownerUserId: ownerUserId,
             momentId: momentId,
-            request: .asset(media, preparedUpload: preparedUpload, uploadedAt: uploadedAt)
+            request: .asset(
+                media,
+                preparedUpload: preparedUpload,
+                uploadCompletion: uploadCompletion,
+                uploadedAt: uploadedAt
+            )
         )
     }
 

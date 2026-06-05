@@ -14,7 +14,8 @@ protocol MomentsMediaAssetSaving {
         ownerUserId: String,
         momentId: String,
         media: MomentsSelectedMedia,
-        preparedUpload: MomentsPreparedUpload
+        preparedUpload: MomentsPreparedUpload,
+        uploadCompletion: MomentsUploadCompletion
     ) async throws -> String
     func saveMediaAssets(
         ownerUserId: String,

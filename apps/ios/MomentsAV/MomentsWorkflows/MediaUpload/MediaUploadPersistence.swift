@@ -27,6 +27,7 @@ enum MediaUploadPersistence {
     private struct UploadedMedia {
         let media: MomentsSelectedMedia
         let preparedUpload: MomentsPreparedUpload
+        let uploadCompletion: MomentsUploadCompletion
     }
 
     @MainActor
@@ -64,7 +65,11 @@ enum MediaUploadPersistence {
         }
 
         let mediaAssetRequests = uploadedMedia.map {
-            MediaAssetPersistenceRequest.asset($0.media, preparedUpload: $0.preparedUpload)
+            MediaAssetPersistenceRequest.asset(
+                $0.media,
+                preparedUpload: $0.preparedUpload,
+                uploadCompletion: $0.uploadCompletion
+            )
         }
         let savedMediaAssetIds: [String]
         do {
@@ -123,12 +128,12 @@ enum MediaUploadPersistence {
                         media: media
                     )
 
-                    try await uploadClient.upload(
+                    let completion = try await uploadClient.upload(
                         media: media,
                         preparedUpload: prepared
                     )
 
-                    return UploadedMedia(media: media, preparedUpload: prepared)
+                    return UploadedMedia(media: media, preparedUpload: prepared, uploadCompletion: completion)
                 }
             }
 
