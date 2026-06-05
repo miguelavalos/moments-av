@@ -51,3 +51,11 @@ Do not include secrets, signing material, production config, private URLs,
 purchase receipts, account identifiers, selected user media, generated videos,
 provider request IDs, internal logs, or demo account details in public issues,
 pull requests, screenshots, or release evidence.
+
+## Signed Workflow Validation
+
+This public repo is not the source of truth for signed preview/dev validation.
+When a task touches Account AV identity, credits, uploads, Convex state, final
+render, artifacts, purchases, or deletion, follow the private native validation
+runbook in `private/avalsys-suite`. Public docs may describe client behavior,
+but not private Cloudflare/Convex/provider procedures.

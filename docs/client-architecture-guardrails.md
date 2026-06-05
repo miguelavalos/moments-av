@@ -29,6 +29,9 @@ The iOS app may:
 - confirm the selected backend render plan;
 - subscribe to synced workspace state and render progress, failure, and final
   artifact availability;
+- download the completed final artifact to local device storage;
+- move the downloaded final video into the local Gallery and clear the active
+  Create draft/session;
 - show a temporary local loading state while waiting for synced state to arrive.
 
 ## UI Rule
@@ -36,6 +39,11 @@ The iOS app may:
 After final video confirmation, editing must lock from synced workflow state
 until the final render reaches a terminal state. The user should see exactly one
 clear status: waiting, creating, failed, or ready.
+
+When the final video is ready, v1 shows only the download/finish path. After
+finish, the Create screen closes and Gallery shows the newest saved video first.
+The v1 client must not offer final-video versions or "create another version"
+from the completed state.
 
 If the app appears to need a timer or manual status loop for final video
 creation, stop and review the private architecture contract before adding code.
