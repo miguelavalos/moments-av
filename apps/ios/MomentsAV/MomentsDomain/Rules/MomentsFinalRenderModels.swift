@@ -145,7 +145,7 @@ struct MomentsArtifactDownloadResponse: Decodable, Equatable {
     let downloadUrl: String
     let method: String
     let headers: [String: String]
-    let r2Key: String
+    let r2Key: String?
     let expiresAt: String
     let generatedAt: String
 }

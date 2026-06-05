@@ -543,10 +543,16 @@
 "access.apiURLMissing" = "Moments AV API URL is not configured.";
 "create.final.createAnother" = "Create new video";
 "create.final.detail" = "Create the final video file. Credits are only charged for completed final videos.";
+"create.final.downloadVideo" = "Download final video";
 "create.final.finishGallery" = "Finish and move to Gallery";
-"create.final.ready" = "Export ready";
+"create.final.ready" = "Video ready";
+"create.final.readyToDownload.title" = "Video ready";
+"create.final.readyToDownload.detail" = "Download the final video to this device, then finish and move it to Gallery.";
+"create.final.readyToDownload.retryDetail" = "The final video is ready. Retry the download, then finish and move it to Gallery.";
+"create.final.readyToFinish.title" = "Ready for Gallery";
+"create.final.readyToFinish.detail" = "The final video is saved on this device. Finish to move this Moment to Gallery.";
 "create.final.retryDownload" = "Retry final video download";
-"create.final.saved" = "The final video is saved on this device. Choose where this Moment goes next.";
+"create.final.saved" = "The final video is saved on this device. Finish to move this Moment to Gallery.";
 "create.progress.finalNotMade" = "Not made yet";
 "create.progress.media" = "Photos and clips";
 "create.progress.title" = "Workspace progress";
@@ -582,7 +588,7 @@
 "create.discard.currentMessage" = "This deletes the current Moment, selected media, and story.";
 "create.discard.local" = "Discard draft";
 "create.discard.localMessage" = "This removes this draft, selected media, and story setup before anything is saved.";
-"create.final.chooseDestination" = "Choose final video destination";
+"create.final.chooseDestination" = "Finish and move to Gallery";
 "create.final.create" = "Create final";
 "create.final.creating" = "Creating final...";
 "create.final.video" = "Video";
@@ -671,7 +677,7 @@
 "create.aviStatus.storyReady.title" = "Story ready";
 "create.aviStatus.goodSelection.title" = "Good selection";
 "create.aviStatus.startMedia.title" = "Start with your media";
-"create.aviStatus.exportReady.detail" = "Your video is ready to export or share.";
+"create.aviStatus.exportReady.detail" = "Your video is ready to download and move to Gallery.";
 "create.aviStatus.preparing.detail" = "Avi is organizing the media into your story.";
 "create.aviStatus.storyReady.detail" = "Avi prepared the story, style, and pacing. Video creation comes next.";
 "create.aviStatus.goodSelection.detail" = "Avi will organize the story and you can fine tune the selection.";
@@ -955,7 +961,7 @@
 "create.workflowContent.aviAccessibility" = "Avi. %@";
 "create.workflowContent.aviTipAccessibility" = "Avi tip. %@";
 "create.workflowContent.aviTip" = "Avi tip";
-"create.workflowContent.tipFinalReady" = "Your video is ready to export or share.";
+"create.workflowContent.tipFinalReady" = "Your video is ready to download and move to Gallery.";
 "create.workflowContent.tipFinalWorking" = "Avi is finishing the final video. Progress updates automatically.";
 "create.workflowContent.tipPickMoments" = "Pick the moments. Avi will shape the story, mood, and pacing.";
 "create.workflowContent.planDetail" = "%ds · %d media items";

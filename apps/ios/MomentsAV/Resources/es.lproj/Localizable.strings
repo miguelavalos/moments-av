@@ -543,10 +543,16 @@
 "access.apiURLMissing" = "La URL de API de Moments AV no está configurada.";
 "create.final.createAnother" = "Crear nuevo video";
 "create.final.detail" = "Crea el archivo de video final. Solo se descuentan créditos por videos finales completados.";
+"create.final.downloadVideo" = "Descargar video final";
 "create.final.finishGallery" = "Terminar y mover a Galería";
-"create.final.ready" = "Export listo";
+"create.final.ready" = "Video listo";
+"create.final.readyToDownload.title" = "Video listo";
+"create.final.readyToDownload.detail" = "Descarga el video final en este dispositivo y después muévelo a la Galería.";
+"create.final.readyToDownload.retryDetail" = "El video final está listo. Reintenta la descarga y después muévelo a la Galería.";
+"create.final.readyToFinish.title" = "Listo para Galería";
+"create.final.readyToFinish.detail" = "El video final está guardado en este dispositivo. Termina para mover este Moment a la Galería.";
 "create.final.retryDownload" = "Reintentar descarga del video final";
-"create.final.saved" = "El video final está guardado en este dispositivo. Elige dónde va este Moment.";
+"create.final.saved" = "El video final está guardado en este dispositivo. Termina para mover este Moment a la Galería.";
 "create.progress.finalNotMade" = "No creado todavía";
 "create.progress.media" = "Fotos y clips";
 "create.progress.title" = "Progreso del Moment";
@@ -582,7 +588,7 @@
 "create.discard.currentMessage" = "Esto elimina el Moment actual, la media seleccionada y la historia.";
 "create.discard.local" = "Descartar borrador";
 "create.discard.localMessage" = "Esto elimina este borrador, la media seleccionada y la configuración de historia antes de guardar nada.";
-"create.final.chooseDestination" = "Elegir destino del video final";
+"create.final.chooseDestination" = "Terminar y mover a Galería";
 "create.final.create" = "Crear final";
 "create.final.creating" = "Creando final...";
 "create.final.video" = "Vídeo";
@@ -671,7 +677,7 @@
 "create.aviStatus.storyReady.title" = "Historia lista";
 "create.aviStatus.goodSelection.title" = "Buena selección";
 "create.aviStatus.startMedia.title" = "Empieza con tu media";
-"create.aviStatus.exportReady.detail" = "Tu video está listo para exportar o compartir.";
+"create.aviStatus.exportReady.detail" = "Tu video está listo para descargar y mover a la Galería.";
 "create.aviStatus.preparing.detail" = "Avi está organizando la media para tu historia.";
 "create.aviStatus.storyReady.detail" = "Avi preparó la historia, el estilo y el ritmo. La creación del video viene después.";
 "create.aviStatus.goodSelection.detail" = "Avi organizará la historia y podrás ajustar la selección.";
@@ -955,7 +961,7 @@
 "create.workflowContent.aviAccessibility" = "Avi. %@";
 "create.workflowContent.aviTipAccessibility" = "Avi tip. %@";
 "create.workflowContent.aviTip" = "Avi tip";
-"create.workflowContent.tipFinalReady" = "Your video is ready to export or share.";
+"create.workflowContent.tipFinalReady" = "Tu video está listo para descargar y mover a la Galería.";
 "create.workflowContent.tipFinalWorking" = "Avi está terminando el video final. El progreso se actualiza automáticamente.";
 "create.workflowContent.tipPickMoments" = "Pick the moments. Avi will shape the story, mood, and pacing.";
 "create.workflowContent.planDetail" = "%ds · %d elementos";

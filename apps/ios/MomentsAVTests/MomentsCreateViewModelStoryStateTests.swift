@@ -53,6 +53,22 @@ final class MomentsCreateViewModelStoryStateTests: XCTestCase {
         )
     }
 
+    func testFinalRenderDownloadUsesBackendWorkflowArtifactIdWhenAvailable() {
+        let harness = MomentCreationFailureHarness(error: NSError(domain: "test", code: 1))
+        let workflow = harness.finalRenderWorkflow
+        let artifact = MomentArtifact(
+            id: "convex-artifact-doc",
+            workflowArtifactId: "workflow-artifact-1",
+            kind: "final_export",
+            r2Key: "momentsav/user/moment/final-exports/workflow-artifact-1.mp4",
+            status: "available",
+            hasWatermark: false,
+            expiresAt: 0
+        )
+
+        XCTAssertEqual(workflow.finalDownloadArtifactId(for: artifact), "workflow-artifact-1")
+    }
+
     func testFinalRenderPlanWithoutWatermarkIsCurrentForWatermarkedRender() {
         let plan = MomentsCreateTestFixtures.makeRenderPlan(momentId: "moment-1")
 

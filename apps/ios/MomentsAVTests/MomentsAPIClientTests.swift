@@ -471,6 +471,37 @@ final class MomentsAPIClientTests: XCTestCase {
         XCTAssertEqual(confirmation.renderPlan.plan.totalCreditCost, 2)
     }
 
+    func testPrepareFinalArtifactDownloadAcceptsPublicSafeResponseWithoutR2Key() async throws {
+        let session = makeMockSession(
+            json: """
+            {
+              "appId": "momentsav",
+              "momentId": "moment-1",
+              "artifactId": "artifact-1",
+              "artifactKind": "final_export",
+              "downloadUrl": "https://account-1.r2.cloudflarestorage.com/moments-bucket/momentsav/user/moment-1/final%20exports/artifact-1.mp4?X-Amz-Signature=test",
+              "method": "GET",
+              "headers": {},
+              "expiresAt": "2026-05-16T17:00:00Z",
+              "generatedAt": "2026-05-16T16:00:00Z"
+            }
+            """
+        )
+        let client = MomentsFinalRenderClient(baseURLString: accountAPIBaseURL, session: session)
+
+        let response = try await client.prepareFinalArtifactDownload(
+            momentId: "moment-1",
+            artifactId: "artifact-1",
+            bearerToken: "token-1"
+        )
+
+        XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.url?.absoluteString, "\(accountAPIBaseURL)/v1/apps/momentsav/artifacts/artifact-1/download")
+        XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.httpMethod, "POST")
+        XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.value(forHTTPHeaderField: "Authorization"), "Bearer token-1")
+        XCTAssertNil(response.r2Key)
+        XCTAssertEqual(response.artifactKind, "final_export")
+    }
+
     func testRenderStatusUsesSharedAccountAPIBaseURL() async throws {
         let session = makeMockSession(
             json: """

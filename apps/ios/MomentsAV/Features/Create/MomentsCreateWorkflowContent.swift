@@ -107,7 +107,10 @@ private struct MomentsCreateMediaFirstWorkspace: View {
         ZStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: showsWorkflowDashboard ? 10 : 12) {
-                    if presentation.isFinalRenderEditingLocked {
+                    if showsFinalVideoCompletion {
+                        MomentsCreateFinalVideoReadyScene(presentation: presentation)
+                            .padding(.top, 28)
+                    } else if presentation.isFinalRenderEditingLocked {
                         MomentsCreateLockedFinalRenderScene(presentation: presentation)
                             .padding(.top, 28)
                     } else {
@@ -116,7 +119,7 @@ private struct MomentsCreateMediaFirstWorkspace: View {
                         )
                     }
 
-                    if presentation.isFinalRenderEditingLocked {
+                    if showsFinalVideoCompletion || presentation.isFinalRenderEditingLocked {
                         EmptyView()
                     } else if hasMediaSelection {
                         MomentsCreateStoryDecisionCard(
@@ -410,6 +413,11 @@ private struct MomentsCreateMediaFirstWorkspace: View {
             || presentation.finalRenderSummary.pendingGalleryVideo != nil
     }
 
+    private var showsFinalVideoCompletion: Bool {
+        presentation.finalRenderSummary.finalExport != nil
+            || presentation.finalRenderSummary.pendingGalleryVideo != nil
+    }
+
     private var showsWorkflowDashboard: Bool {
         hasMediaSelection || hasFinalVideoState
     }
@@ -419,6 +427,9 @@ private struct MomentsCreateMediaFirstWorkspace: View {
     }
 
     private var bottomContentPadding: CGFloat {
+        if showsFinalVideoCompletion {
+            return 150
+        }
         if presentation.isFinalRenderEditingLocked {
             return 118
         }
@@ -619,6 +630,91 @@ struct MomentsCreateBlockingPreparationView: View {
                 return L10n.string("create.preparation.createVideo.detail")
             }
         }
+    }
+}
+
+private struct MomentsCreateFinalVideoReadyScene: View {
+    let presentation: MomentsCreateWorkflowPresentation
+
+    @State private var isAnimating = false
+
+    var body: some View {
+        VStack(spacing: 18) {
+            Spacer(minLength: 42)
+
+            ZStack {
+                Circle()
+                    .fill(AVBrandColor.accent.opacity(0.10))
+                    .frame(width: 128, height: 128)
+
+                Circle()
+                    .stroke(AVBrandColor.accent.opacity(0.18), lineWidth: 2)
+                    .frame(width: 156, height: 156)
+                    .scaleEffect(isAnimating ? 1.08 : 0.92)
+                    .opacity(isAnimating ? 0.20 : 0.58)
+
+                Image("AviFullBody")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 86, height: 86)
+                    .offset(y: isAnimating ? -4 : 3)
+
+                Image(systemName: iconName)
+                    .font(.system(size: 20, weight: .black))
+                    .foregroundStyle(.white)
+                    .frame(width: 42, height: 42)
+                    .background(AVBrandColor.accent, in: Circle())
+                    .offset(x: 54, y: 48)
+                    .shadow(color: AVBrandColor.accent.opacity(0.24), radius: 10, y: 4)
+            }
+
+            VStack(spacing: 8) {
+                Text(title)
+                    .font(.system(size: 22, weight: .black))
+                    .foregroundStyle(AVBrandColor.textPrimary)
+
+                Text(message)
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundStyle(AVBrandColor.textSecondary)
+                    .multilineTextAlignment(.center)
+                    .lineLimit(3)
+                    .padding(.horizontal, 24)
+            }
+
+            Spacer(minLength: 120)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(MomentsTheme.shellBackground.ignoresSafeArea())
+        .transition(.opacity.combined(with: .scale(scale: 0.98)))
+        .onAppear {
+            withAnimation(.easeInOut(duration: 1.05).repeatForever(autoreverses: true)) {
+                isAnimating = true
+            }
+        }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("\(title). \(message)")
+    }
+
+    private var title: String {
+        presentation.finalRenderSummary.pendingGalleryVideo != nil
+            ? L10n.string("create.final.readyToFinish.title")
+            : L10n.string("create.final.readyToDownload.title")
+    }
+
+    private var message: String {
+        if presentation.finalRenderSummary.pendingGalleryVideo != nil {
+            return L10n.string("create.final.readyToFinish.detail")
+        }
+        if presentation.finalRenderSummary.canRetryFinalVideoDownload {
+            return L10n.string("create.final.readyToDownload.retryDetail")
+        }
+        return L10n.string("create.final.readyToDownload.detail")
+    }
+
+    private var iconName: String {
+        presentation.finalRenderSummary.pendingGalleryVideo != nil
+            ? "checkmark.circle.fill"
+            : "arrow.down.circle.fill"
     }
 }
 
@@ -1455,13 +1551,11 @@ private struct MomentsCreatePrimaryActionBar: View {
                 .font(.system(size: 14, weight: .black))
             } else if presentation.finalRenderSummary.finalExport != nil {
                 VStack(spacing: 10) {
-                    if presentation.finalRenderSummary.canRetryFinalVideoDownload {
-                        Button(action: retryFinalVideoDownload) {
-                            Label(L10n.string("create.workflowContent.retryFinalDownload"), systemImage: "arrow.down.circle.fill")
-                                .frame(maxWidth: .infinity)
-                        }
-                        .buttonStyle(MomentsCreateSoftActionButtonStyle())
+                    Button(action: retryFinalVideoDownload) {
+                        Label(finalVideoDownloadButtonTitle, systemImage: "arrow.down.circle.fill")
+                            .frame(maxWidth: .infinity)
                     }
+                    .buttonStyle(MomentsCreateSoftActionButtonStyle())
                 }
                 .font(.system(size: 14, weight: .black))
             } else if presentation.finalRenderSummary.canRetryFinalVideoDownload {
@@ -1485,6 +1579,12 @@ private struct MomentsCreatePrimaryActionBar: View {
 
     private var primaryActionPresentation: MomentsCreatePrimaryActionPresentation {
         MomentsCreatePrimaryActionPresentation(workflow: presentation)
+    }
+
+    private var finalVideoDownloadButtonTitle: String {
+        presentation.finalRenderSummary.canRetryFinalVideoDownload
+            ? L10n.string("create.workflowContent.retryFinalDownload")
+            : L10n.string("create.final.downloadVideo")
     }
 
     private var statusColor: Color {

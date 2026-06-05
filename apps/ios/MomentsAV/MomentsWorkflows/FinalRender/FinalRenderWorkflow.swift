@@ -339,8 +339,8 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
             let workspace,
             let artifact = workspace.latestArtifact(kind: "final_export"),
             artifact.status == "available",
-            pendingGalleryVideo?.artifactId != artifact.id,
-            !galleryStore.contains(artifactId: artifact.id),
+            pendingGalleryVideo?.artifactId != finalDownloadArtifactId(for: artifact),
+            !galleryStore.contains(artifactId: finalDownloadArtifactId(for: artifact)),
             !downloadingArtifactIds.contains(artifact.id)
         else {
             return
@@ -366,18 +366,19 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
 
         do {
             statusMessage = L10n.string("workflow.final.savingToGallery")
+            let downloadArtifactId = finalDownloadArtifactId(for: artifact)
             let download = try await finalRenderClient.prepareFinalArtifactDownload(
                 momentId: workspace.moment.id,
-                artifactId: artifact.id,
+                artifactId: downloadArtifactId,
                 bearerToken: bearerToken
             )
             let temporaryFileURL = try await finalRenderClient.downloadFinalArtifact(from: download)
             pendingGalleryVideo = try galleryStore.saveDownloadedVideo(
                 temporaryFileURL: temporaryFileURL,
                 momentId: workspace.moment.id,
-                artifactId: artifact.id,
+                artifactId: downloadArtifactId,
                 title: workspace.moment.title,
-                r2Key: download.r2Key,
+                r2Key: download.r2Key ?? artifact.r2Key,
                 createdAt: Date()
             )
             canRetryFinalVideoDownload = false
@@ -386,6 +387,10 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
             canRetryFinalVideoDownload = true
             statusMessage = L10n.string("workflow.final.saveLocalFailed")
         }
+    }
+
+    func finalDownloadArtifactId(for artifact: MomentArtifact) -> String {
+        artifact.workflowArtifactId ?? artifact.id
     }
 
     func finishFinalExportToGallery() {

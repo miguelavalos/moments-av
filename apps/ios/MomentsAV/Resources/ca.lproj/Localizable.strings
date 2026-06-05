@@ -541,10 +541,16 @@
 "access.apiURLMissing" = "La URL de l'API de Moments AV no està configurada.";
 "create.final.createAnother" = "Crear una altra versió";
 "create.final.detail" = "Crea el fitxer de vídeo final. Els crèdits només es finalitzen quan es lliura una exportació usable.";
+"create.final.downloadVideo" = "Download final video";
 "create.final.finishGallery" = "Acabar i moure a Galeria";
-"create.final.ready" = "Export a punt";
+"create.final.ready" = "Video ready";
+"create.final.readyToDownload.title" = "Video ready";
+"create.final.readyToDownload.detail" = "Download the final video to this device, then finish and move it to Gallery.";
+"create.final.readyToDownload.retryDetail" = "The final video is ready. Retry the download, then finish and move it to Gallery.";
+"create.final.readyToFinish.title" = "Ready for Gallery";
+"create.final.readyToFinish.detail" = "The final video is saved on this device. Finish to move this Moment to Gallery.";
 "create.final.retryDownload" = "Reintentar la descàrrega del vídeo final";
-"create.final.saved" = "El vídeo final està desat en aquest dispositiu. Tria on va aquest Moment després.";
+"create.final.saved" = "The final video is saved on this device. Finish to move this Moment to Gallery.";
 "create.progress.finalNotMade" = "Encara no creat";
 "create.progress.media" = "Fotos i clips";
 "create.progress.title" = "Progrés de l'espai";
@@ -580,7 +586,7 @@
 "create.discard.currentMessage" = "Això elimina el Moment actual, la media seleccionada i la història.";
 "create.discard.local" = "Descartar esborrany";
 "create.discard.localMessage" = "Això elimina aquest esborrany, la media seleccionada i la configuració d’història abans que es desi res.";
-"create.final.chooseDestination" = "Triar destí del vídeo final";
+"create.final.chooseDestination" = "Finish and move to Gallery";
 "create.final.create" = "Crear final";
 "create.final.creating" = "Creant final...";
 "create.final.video" = "Vídeo";
@@ -664,7 +670,7 @@
 "create.aviStatus.storyReady.title" = "Història a punt";
 "create.aviStatus.goodSelection.title" = "Bona selecció";
 "create.aviStatus.startMedia.title" = "Comença amb la teva mèdia";
-"create.aviStatus.exportReady.detail" = "El teu vídeo està a punt per exportar o compartir.";
+"create.aviStatus.exportReady.detail" = "Your video is ready to download and move to Gallery.";
 "create.aviStatus.preparing.detail" = "Avi està organitzant la mèdia per a la teva història.";
 "create.aviStatus.storyReady.detail" = "Avi ha preparat la història, l’estil i el ritme. La creació del vídeo ve després.";
 "create.aviStatus.goodSelection.detail" = "Avi organitzarà la història i podràs ajustar la selecció.";
@@ -948,7 +954,7 @@
 "create.workflowContent.aviAccessibility" = "Avi. %@";
 "create.workflowContent.aviTipAccessibility" = "Avi tip. %@";
 "create.workflowContent.aviTip" = "Avi tip";
-"create.workflowContent.tipFinalReady" = "Your video is ready to export or share.";
+"create.workflowContent.tipFinalReady" = "Your video is ready to download and move to Gallery.";
 "create.workflowContent.tipFinalWorking" = "Avi està acabant el vídeo final. El progrés s’actualitza automàticament.";
 "create.workflowContent.tipPickMoments" = "Pick the moments. Avi will shape the story, mood, and pacing.";
 "create.workflowContent.planDetail" = "%ds · %d elements";
