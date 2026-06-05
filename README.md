@@ -12,6 +12,10 @@ It intentionally excludes credentials, signing material, production runtime
 values, private backend implementation, provider/model policy, pricing strategy,
 App Store review handoff material, promo codes, and internal business planning.
 
+Before validating signed account, credit, upload, render, billing, or deletion
+workflows, read [AGENTS.md](AGENTS.md). Those workflows are governed by private
+AVALSYS runbooks and must not be replaced with an invented local backend flow.
+
 ## Repository Shape
 
 ```text
