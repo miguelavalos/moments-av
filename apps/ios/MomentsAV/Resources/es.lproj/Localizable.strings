@@ -621,12 +621,14 @@
 "create.final.costDetails.watermarkIncluded" = "Incluida en el video final.";
 "create.final.createVideo" = "Crear video final";
 "create.final.checkCredits" = "Comprobar créditos";
+"create.final.retrySetup" = "Intentar de nuevo";
 "create.final.confirmCredits" = "Confirmar créditos · %@";
 "create.final.createWithCost" = "Crear video final · %@";
 "create.final.creditCost" = "%@ necesarios";
 "create.final.creditPolicy.preflight" = "Avi comprueba media y créditos antes de crear el video final.";
 "create.final.creditPolicy.create" = "Solo se descuentan créditos por videos finales completados. Este video cuesta %@.";
 "create.final.blocker.providerUnavailable" = "Esta opción de video aún no está disponible.";
+"create.final.blocker.videoSetupUnavailable" = "Avi no pudo preparar la creación del video. Inténtalo de nuevo o ajusta la media y las opciones.";
 "create.final.blocker.insufficientCredits" = "Necesitas más créditos para crear este video final.";
 "create.final.blocker.noUsableMedia" = "Avi necesita media utilizable antes de crear el video final.";
 "create.final.blocker.default" = "Avi aún no puede crear este video final.";

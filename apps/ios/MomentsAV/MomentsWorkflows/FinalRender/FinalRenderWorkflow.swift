@@ -105,6 +105,11 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
                 ? L10n.string("workflow.final.planReady")
                 : L10n.string("workflow.final.needsUsableMedia")
             logger.info("Final render plan ready momentId=\(momentId, privacy: .public) planId=\(plan.planId, privacy: .public) cost=\(plan.plan.totalCreditCost, privacy: .public)")
+            if !plan.canCreateVideo {
+                logger.warning(
+                    "Final render plan blocked momentId=\(momentId, privacy: .public) planId=\(plan.planId, privacy: .public) blockers=\(plan.createVideoBlockers.joined(separator: ","), privacy: .public) cost=\(plan.plan.totalCreditCost, privacy: .public) plannedAssets=\(plan.plan.plannedAssetCount, privacy: .public) usedAssets=\(plan.plan.usedAssetCount, privacy: .public)"
+                )
+            }
         } catch let error as MomentsAPIError {
             guard isCurrentWorkflowGeneration(generation) else { return }
             logger.error("Final render plan API error code=\(error.code, privacy: .public) message=\(error.message, privacy: .public) momentId=\(momentId, privacy: .public)")

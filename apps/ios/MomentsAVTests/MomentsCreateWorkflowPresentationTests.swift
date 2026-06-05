@@ -538,7 +538,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         )
     }
 
-    func testPrimaryActionPresentationBlocksUnavailableFinalProviderPlan() {
+    func testPrimaryActionPresentationAllowsRetryForUnavailableFinalProviderPlan() {
         let unavailablePlan = MomentsRenderPlanResponse(
             appId: "momentsav",
             momentId: "moment-1",
@@ -567,9 +567,13 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         )
         let presentation = MomentsCreatePrimaryActionPresentation(workflow: workflow)
 
-        XCTAssertFalse(presentation.canRunPrimaryAction)
-        XCTAssertEqual(presentation.buttonIconName, "exclamationmark.triangle.fill")
-        XCTAssertEqual(presentation.statusMessage, "This video option is not available yet.")
+        XCTAssertTrue(presentation.canRunPrimaryAction)
+        XCTAssertEqual(presentation.buttonTitle, "Try again")
+        XCTAssertEqual(presentation.buttonIconName, "arrow.clockwise")
+        XCTAssertEqual(
+            presentation.statusMessage,
+            "Avi could not prepare video creation. Try again, or adjust the media and options."
+        )
     }
 
     func testPrimaryActionPresentationKeepsCreateVideoIntentWhileUploadingMedia() {

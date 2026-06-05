@@ -619,12 +619,14 @@
 "create.final.costDetails.watermarkIncluded" = "Inclosa al vídeo final.";
 "create.final.createVideo" = "Crear vídeo";
 "create.final.checkCredits" = "Comprovar crèdits";
+"create.final.retrySetup" = "Torna-ho a provar";
 "create.final.confirmCredits" = "Confirmar crèdits · %@";
 "create.final.createWithCost" = "Crear vídeo · %@";
 "create.final.creditCost" = "%@ necessaris";
 "create.final.creditPolicy.preflight" = "Avi comprova mèdia i crèdits abans de crear el vídeo final.";
 "create.final.creditPolicy.create" = "Els crèdits només es cobren pels vídeos finals completats. Aquest vídeo costa %@.";
 "create.final.blocker.providerUnavailable" = "Aquesta opció de vídeo encara no està disponible.";
+"create.final.blocker.videoSetupUnavailable" = "Avi no ha pogut preparar la creació del vídeo. Torna-ho a provar o ajusta la mèdia i les opcions.";
 "create.final.blocker.insufficientCredits" = "Necessites més crèdits per crear aquest vídeo final.";
 "create.final.blocker.noUsableMedia" = "Avi necessita mèdia utilitzable abans de crear el vídeo final.";
 "create.final.blocker.default" = "Avi encara no pot crear aquest vídeo final.";

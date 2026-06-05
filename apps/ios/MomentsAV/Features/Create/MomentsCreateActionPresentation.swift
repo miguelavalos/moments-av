@@ -18,7 +18,7 @@ struct MomentsCreateFinalVideoActionPresentation: Equatable {
         guard hasBlockedRenderPlan else { return nil }
         let blockers = summary.renderPlan?.createVideoBlockers ?? []
         if blockers.contains("provider_adapter_unavailable") || blockers.contains("render_option_unavailable") {
-            return L10n.string("create.final.blocker.providerUnavailable")
+            return L10n.string("create.final.blocker.videoSetupUnavailable")
         }
         if blockers.contains("insufficient_credits") {
             return L10n.string("create.final.blocker.insufficientCredits")
@@ -31,6 +31,10 @@ struct MomentsCreateFinalVideoActionPresentation: Equatable {
 
     var blockedRenderPlanIsInsufficientCredits: Bool {
         hasBlockedRenderPlan && (summary.renderPlan?.createVideoBlockers ?? []).contains("insufficient_credits")
+    }
+
+    var canRetryBlockedRenderPlan: Bool {
+        hasBlockedRenderPlan && !blockedRenderPlanIsInsufficientCredits
     }
 
     var canShowConfirmationSheet: Bool {
@@ -108,6 +112,9 @@ struct MomentsCreatePrimaryActionPresentation: Equatable {
             if needsCreditsForPreparedPlan {
                 return true
             }
+            if finalVideoAction.canRetryBlockedRenderPlan {
+                return workflow.canPrepareFinalRenderPlan || canPrepareLocalVideoPlan
+            }
             if finalVideoAction.hasBlockedRenderPlan {
                 return false
             }
@@ -156,7 +163,9 @@ struct MomentsCreatePrimaryActionPresentation: Equatable {
         }
         if hasFinalVideoIntent {
             if finalVideoAction.hasBlockedRenderPlan {
-                return L10n.string("create.final.checkCredits")
+                return finalVideoAction.canRetryBlockedRenderPlan
+                    ? L10n.string("create.final.retrySetup")
+                    : L10n.string("create.final.checkCredits")
             }
             return finalVideoAction.hasRenderPlan
                 ? finalVideoAction.primaryTitle
@@ -183,7 +192,9 @@ struct MomentsCreatePrimaryActionPresentation: Equatable {
         }
         if hasFinalVideoIntent {
             if finalVideoAction.hasBlockedRenderPlan {
-                return "exclamationmark.triangle.fill"
+                return finalVideoAction.canRetryBlockedRenderPlan
+                    ? "arrow.clockwise"
+                    : "exclamationmark.triangle.fill"
             }
             return finalVideoAction.primaryIconName
         }
