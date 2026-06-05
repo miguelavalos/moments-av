@@ -152,7 +152,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
             canGenerateFinalRender: true,
             canRefreshFinalRenderStatus: true,
             mediaAvailabilityMessage: "Add media.",
-            storyAvailabilityMessage: "Plan story.",
+            storyAvailabilityMessage: "Prepare story.",
             finalRenderAvailabilityMessage: "Generate final."
         )
 
@@ -168,7 +168,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         XCTAssertTrue(presentation.canGenerateFinalRender)
         XCTAssertTrue(presentation.canRefreshFinalRenderStatus)
         XCTAssertEqual(presentation.mediaAvailabilityMessage, "Add media.")
-        XCTAssertEqual(presentation.storyAvailabilityMessage, "Plan story.")
+        XCTAssertEqual(presentation.storyAvailabilityMessage, "Prepare story.")
         XCTAssertEqual(presentation.finalRenderAvailabilityMessage, "Generate final.")
     }
 
@@ -195,7 +195,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
                 canGenerateFinalRender: true,
                 canRefreshFinalRenderStatus: false,
                 mediaMessage: nil,
-                storyMessage: "Plan story.",
+                storyMessage: "Prepare story.",
                 finalRenderMessage: nil
             )
         )
@@ -207,7 +207,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         XCTAssertEqual(presentation.toneTitle, "Warm")
         XCTAssertEqual(presentation.tempoTitle, "Balanced")
         XCTAssertEqual(presentation.occasionTitle, "Birthday for Ava")
-        XCTAssertEqual(presentation.storyAvailabilityMessage, "Plan story.")
+        XCTAssertEqual(presentation.storyAvailabilityMessage, "Prepare story.")
     }
 
     func testWorkflowPresentationCarriesUnsavedLocalMomentContainmentState() {
@@ -429,7 +429,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         XCTAssertEqual(presentation.selectionMessage, "")
     }
 
-    func testStoryPresentationFormatsPlanStateAndSortsSavedScenes() {
+    func testStoryPresentationFormatsPreparationStateAndSortsSavedScenes() {
         let presentation = MomentsCreateStoryPresentation(
             summary: MomentsCreateStorySummary(
                 savedScenes: [

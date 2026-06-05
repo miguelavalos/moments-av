@@ -2,7 +2,7 @@ import XCTest
 @testable import MomentsAV
 
 final class StoryPersistenceRequestTests: XCTestCase {
-    func testSceneRequestUsesPlanSceneFieldsAndAviAuthor() {
+    func testSceneRequestUsesStorySceneFieldsAndAviAuthor() {
         let scene = MomentsStorySceneResponse(
             sceneIndex: 1,
             mediaAssetIds: ["media-1", "media-2"],
@@ -28,25 +28,25 @@ final class StoryPersistenceRequestTests: XCTestCase {
         XCTAssertEqual(request.createdBy, "avi")
     }
 
-    func testReadyRequestApprovesAllowedPlans() {
-        let plan = makePlan(moderationStatus: "allowed")
+    func testReadyRequestApprovesAllowedStory() {
+        let story = makeStory(moderationStatus: "allowed")
 
-        let request = StoryReadyPersistenceRequest.plan(plan, storyInputSignature: "signature-1")
+        let request = StoryReadyPersistenceRequest.plan(story, storyInputSignature: "signature-1")
 
         XCTAssertEqual(request.workflowRunId, "workflow-1")
         XCTAssertEqual(request.moderationStatus, "approved")
         XCTAssertEqual(request.storyInputSignature, "signature-1")
     }
 
-    func testReadyRequestBlocksNonAllowedPlans() {
-        let plan = makePlan(moderationStatus: "rejected")
+    func testReadyRequestBlocksNonAllowedStory() {
+        let story = makeStory(moderationStatus: "rejected")
 
-        let request = StoryReadyPersistenceRequest.plan(plan, storyInputSignature: "signature-1")
+        let request = StoryReadyPersistenceRequest.plan(story, storyInputSignature: "signature-1")
 
         XCTAssertEqual(request.moderationStatus, "blocked")
     }
 
-    private func makePlan(moderationStatus: String) -> MomentsStoryResponse {
+    private func makeStory(moderationStatus: String) -> MomentsStoryResponse {
         let json = """
         {
           "appId": "momentsav",
