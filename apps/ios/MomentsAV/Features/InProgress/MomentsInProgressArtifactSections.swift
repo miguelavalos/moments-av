@@ -26,29 +26,6 @@ struct MomentsInProgressRenderJobsSection: View {
     }
 }
 
-struct MomentsInProgressPreviewArtifactSection: View {
-    let artifacts: [MomentArtifact]
-
-    private var presentation: MomentsInProgressArtifactSectionPresentation {
-        MomentsInProgressArtifactSectionPresentation.preview(artifacts: artifacts)
-    }
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            AVAppShellSectionHeader(title: presentation.title)
-
-            if let artifact = presentation.artifact {
-                MomentsInProgressArtifactDetail(presentation: artifact)
-            } else {
-                MomentsInProgressEmptySectionRow(
-                    systemImage: presentation.emptySystemImage,
-                    message: presentation.emptyMessage
-                )
-            }
-        }
-    }
-}
-
 struct MomentsInProgressFinalExportSection: View {
     let artifacts: [MomentArtifact]
 

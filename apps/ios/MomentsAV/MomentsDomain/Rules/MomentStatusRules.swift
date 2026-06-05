@@ -73,16 +73,6 @@ enum MomentStatusRules {
             )
         }
 
-        if !workspace.artifacts.containsAvailable(kind: "preview") {
-            return MomentNextAction(
-                title: L10n.string("moment.nextAction.reviewStory.title"),
-                message: L10n.string("moment.nextAction.reviewStory.message"),
-                systemImage: "text.bubble",
-                primaryButtonTitle: L10n.string("moment.nextAction.reviewStory.button"),
-                continuationFocus: .preview
-            )
-        }
-
         if !workspace.artifacts.containsAvailable(kind: "final_export") {
             return MomentNextAction(
                 title: L10n.string("moment.nextAction.createVideo.title"),
@@ -104,9 +94,7 @@ enum MomentStatusRules {
 
     private static func focus(forFailedJobKind kind: String) -> MomentsContinuationFocus {
         switch kind {
-        case "preview":
-            .preview
-        case "final":
+        case "preview", "final":
             .finalRender
         default:
             .review

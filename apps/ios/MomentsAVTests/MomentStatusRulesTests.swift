@@ -93,26 +93,11 @@ final class MomentStatusRulesTests: XCTestCase {
         XCTAssertEqual(action.continuationFocus, .story)
     }
 
-    func testNextActionAsksForPreviewWhenStoryExistsWithoutPreviewArtifact() {
+    func testNextActionAsksForFinalWhenStoryExistsWithoutFinalArtifact() {
         let action = MomentStatusRules.nextAction(
             for: makeWorkspace(
                 mediaAssets: [makeMediaAsset()],
                 storyScenes: [makeStoryScene()]
-            )
-        )
-
-        XCTAssertEqual(action.title, "Check Avi's Cut")
-        XCTAssertEqual(action.systemImage, "text.bubble")
-        XCTAssertEqual(action.primaryButtonTitle, "Open Avi's Cut in Create")
-        XCTAssertEqual(action.continuationFocus, .preview)
-    }
-
-    func testNextActionAsksForFinalWhenPreviewIsAvailable() {
-        let action = MomentStatusRules.nextAction(
-            for: makeWorkspace(
-                mediaAssets: [makeMediaAsset()],
-                storyScenes: [makeStoryScene()],
-                artifacts: [makeArtifact(kind: "preview")]
             )
         )
 
@@ -128,7 +113,6 @@ final class MomentStatusRulesTests: XCTestCase {
                 mediaAssets: [makeMediaAsset()],
                 storyScenes: [makeStoryScene()],
                 artifacts: [
-                    makeArtifact(kind: "preview"),
                     makeArtifact(kind: "final_export")
                 ]
             )
@@ -152,7 +136,7 @@ final class MomentStatusRulesTests: XCTestCase {
         XCTAssertEqual(action.title, "Video needs attention")
         XCTAssertEqual(action.systemImage, "exclamationmark.triangle")
         XCTAssertEqual(action.primaryButtonTitle, "Open in Create")
-        XCTAssertEqual(action.continuationFocus, .preview)
+        XCTAssertEqual(action.continuationFocus, .finalRender)
     }
 
     private func makeMoment(

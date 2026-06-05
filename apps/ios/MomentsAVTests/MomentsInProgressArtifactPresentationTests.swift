@@ -21,13 +21,7 @@ final class MomentsInProgressArtifactPresentationTests: XCTestCase {
             makeArtifact(id: "preview-2", kind: "preview", status: "available")
         ]
 
-        let preview = MomentsInProgressArtifactSectionPresentation.preview(artifacts: artifacts)
         let finalExport = MomentsInProgressArtifactSectionPresentation.finalExport(artifacts: artifacts)
-
-        XCTAssertEqual(preview.title, "Avi's Cut")
-        XCTAssertEqual(preview.emptySystemImage, "text.bubble")
-        XCTAssertEqual(preview.emptyMessage, "Check Avi's Cut when it is ready.")
-        XCTAssertEqual(preview.artifact?.storageKey, "momentsav/preview-2.mp4")
 
         XCTAssertEqual(finalExport.title, "Final video")
         XCTAssertEqual(finalExport.emptySystemImage, "video.fill")
@@ -36,19 +30,16 @@ final class MomentsInProgressArtifactPresentationTests: XCTestCase {
     }
 
     func testArtifactSectionPresentationsUseEmptyArtifactWhenMissing() {
-        XCTAssertNil(MomentsInProgressArtifactSectionPresentation.preview(artifacts: []).artifact)
         XCTAssertNil(MomentsInProgressArtifactSectionPresentation.finalExport(artifacts: []).artifact)
     }
 
-    func testPreviewAndFinalExportPickLatestMatchingArtifact() {
+    func testFinalExportPicksLatestMatchingArtifact() {
         let artifacts = [
             makeArtifact(id: "preview-1", kind: "preview", status: "expired"),
             makeArtifact(id: "final-1", kind: "final_export", status: "available"),
             makeArtifact(id: "preview-2", kind: "preview", status: "available")
         ]
 
-        XCTAssertEqual(MomentsInProgressArtifactPresentation.preview(in: artifacts)?.status, "available")
-        XCTAssertEqual(MomentsInProgressArtifactPresentation.preview(in: artifacts)?.storageKey, "momentsav/preview-2.mp4")
         XCTAssertEqual(MomentsInProgressArtifactPresentation.finalExport(in: artifacts)?.storageKey, "momentsav/final-1.mp4")
     }
 

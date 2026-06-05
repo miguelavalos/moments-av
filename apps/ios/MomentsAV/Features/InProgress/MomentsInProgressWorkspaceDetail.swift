@@ -19,7 +19,6 @@ struct MomentsInProgressWorkspaceDetail: View {
             MomentsInProgressWorkspaceSummary(workspace: workspace)
             MomentsInProgressProgressSection(workspace: workspace)
 
-            MomentsInProgressPreviewArtifactSection(artifacts: workspace.artifacts)
             MomentsInProgressFinalExportSection(artifacts: workspace.artifacts)
 
             MomentsInProgressMediaSection(mediaAssets: workspace.mediaAssets)

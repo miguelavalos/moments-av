@@ -16,7 +16,6 @@ struct MomentsInProgressWorkspaceSummaryPresentation: Equatable {
     }
 
     init(workspace: MomentWorkspace) {
-        let latestPreview = workspace.latestArtifact(kind: "preview")
         let finalExport = workspace.latestArtifact(kind: "final_export")
         let latestRenderJob = workspace.latestRenderJob()
 
@@ -25,11 +24,6 @@ struct MomentsInProgressWorkspaceSummaryPresentation: Equatable {
                 title: L10n.string("moment.summary.status"),
                 value: MomentStatusRules.displayTitle(for: workspace.moment.status),
                 systemImage: "circle.dashed"
-            ),
-            MomentsInProgressSummaryTilePresentation(
-                title: L10n.string("moment.kind.storyReview"),
-                value: Self.summaryValue(for: latestPreview),
-                systemImage: "text.bubble"
             ),
             MomentsInProgressSummaryTilePresentation(
                 title: L10n.string("moment.summary.final"),

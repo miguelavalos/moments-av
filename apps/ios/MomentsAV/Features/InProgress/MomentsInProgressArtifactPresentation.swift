@@ -17,15 +17,6 @@ struct MomentsInProgressArtifactSectionPresentation: Equatable {
     let emptyMessage: String
     let artifact: MomentsInProgressArtifactPresentation?
 
-    static func preview(artifacts: [MomentArtifact]) -> MomentsInProgressArtifactSectionPresentation {
-        MomentsInProgressArtifactSectionPresentation(
-            title: L10n.string("moment.kind.storyReview"),
-            emptySystemImage: "text.bubble",
-            emptyMessage: L10n.string("moment.artifact.preview.empty"),
-            artifact: MomentsInProgressArtifactPresentation.preview(in: artifacts)
-        )
-    }
-
     static func finalExport(artifacts: [MomentArtifact]) -> MomentsInProgressArtifactSectionPresentation {
         MomentsInProgressArtifactSectionPresentation(
             title: L10n.string("moment.artifact.final.title"),
@@ -51,10 +42,6 @@ struct MomentsInProgressArtifactPresentation: Equatable {
         expiresAtTitle = MomentsDateFormatting.formattedDate(milliseconds: artifact.expiresAt)
         storageKey = artifact.r2Key
         actionDetail = MomentsRecoveryCopy.artifactActionDetail(kind: artifact.kind, status: artifact.status)
-    }
-
-    static func preview(in artifacts: [MomentArtifact]) -> MomentsInProgressArtifactPresentation? {
-        artifacts.last { $0.kind == "preview" }.map(MomentsInProgressArtifactPresentation.init)
     }
 
     static func finalExport(in artifacts: [MomentArtifact]) -> MomentsInProgressArtifactPresentation? {

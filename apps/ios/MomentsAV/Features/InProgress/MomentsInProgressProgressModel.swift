@@ -24,12 +24,6 @@ struct MomentsInProgressProgressModel {
                 state: workspace.storyScenes.isEmpty ? .waiting : .complete
             ),
             MomentsInProgressProgressPhase(
-                title: L10n.string("moment.kind.storyReview"),
-                detail: Self.renderDetail(workspace: workspace, kind: "preview", fallback: L10n.string("moment.progress.notReviewed")),
-                systemImage: "text.bubble",
-                state: Self.renderState(workspace: workspace, kind: "preview", artifactKind: "preview")
-            ),
-            MomentsInProgressProgressPhase(
                 title: L10n.string("moment.progress.createVideo"),
                 detail: Self.renderDetail(workspace: workspace, kind: "final", fallback: L10n.string("moment.progress.notCreated")),
                 systemImage: "video.fill",

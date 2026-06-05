@@ -4,7 +4,6 @@ enum MomentsContinuationFocus: Hashable {
     case review
     case media
     case story
-    case preview
     case finalRender
 }
 

@@ -91,9 +91,9 @@ final class MomentsInProgressWorkspacePresentationTests: XCTestCase {
             )
         )
 
-        XCTAssertEqual(presentation.tiles.map(\.title), ["Status", "Avi's Cut", "Final", "Latest job"])
-        XCTAssertEqual(presentation.tiles.map(\.value), ["Story ready", "Available", "Available", "Final · Failed"])
-        XCTAssertEqual(presentation.tiles.map(\.systemImage), ["circle.dashed", "text.bubble", "video.fill", "gearshape.2"])
+        XCTAssertEqual(presentation.tiles.map(\.title), ["Status", "Final", "Latest job"])
+        XCTAssertEqual(presentation.tiles.map(\.value), ["Story ready", "Available", "Final · Failed"])
+        XCTAssertEqual(presentation.tiles.map(\.systemImage), ["circle.dashed", "video.fill", "gearshape.2"])
     }
 
     func testWorkspaceSummaryPresentationUsesFallbacksWhenNoArtifactsOrJobsExist() {
@@ -101,7 +101,7 @@ final class MomentsInProgressWorkspacePresentationTests: XCTestCase {
             workspace: makeWorkspace(moment: makeMoment(status: "in_progress"))
         )
 
-        XCTAssertEqual(presentation.tiles.map(\.value), ["In Progress", "Not ready", "Not ready", "Not started"])
+        XCTAssertEqual(presentation.tiles.map(\.value), ["In Progress", "Not ready", "Not started"])
     }
 
     func testMediaSectionPresentationFormatsTitleEmptyStateAndRows() {

@@ -133,8 +133,6 @@ enum MomentsCreateSection: Hashable {
             self = .media
         case .story:
             self = .story
-        case .preview:
-            self = .finalRender
         case .finalRender:
             self = .finalRender
         }

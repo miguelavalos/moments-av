@@ -5,25 +5,24 @@ final class MomentsInProgressProgressModelTests: XCTestCase {
     func testEmptyWorkspaceMarksMomentCreatedAndRemainingStepsWaiting() {
         let model = MomentsInProgressProgressModel(workspace: makeWorkspace())
 
-        XCTAssertEqual(model.phases.map(\.title), ["Moment", "Media", "Story", "Avi's Cut", "Create Video"])
-        XCTAssertEqual(model.phases.map(\.state), [.complete, .waiting, .waiting, .waiting, .waiting])
+        XCTAssertEqual(model.phases.map(\.title), ["Moment", "Media", "Story", "Create Video"])
+        XCTAssertEqual(model.phases.map(\.state), [.complete, .waiting, .waiting, .waiting])
         XCTAssertEqual(model.phases.map(\.detail), [
             "In Progress",
             "No media yet",
             "Not ready",
-            "Not reviewed",
             "Not created"
         ])
     }
 
-    func testRenderJobStatusDrivesPreviewProgressUntilArtifactIsAvailable() {
+    func testRenderJobStatusDrivesFinalProgressUntilArtifactIsAvailable() {
         let model = MomentsInProgressProgressModel(
-            workspace: makeWorkspace(renderJobs: [makeRenderJob(kind: "preview", status: "running")])
+            workspace: makeWorkspace(renderJobs: [makeRenderJob(kind: "final", status: "running")])
         )
 
-        let preview = model.phases.first { $0.title == "Avi's Cut" }
-        XCTAssertEqual(preview?.state, .active)
-        XCTAssertEqual(preview?.detail, "Running")
+        let final = model.phases.first { $0.title == "Create Video" }
+        XCTAssertEqual(final?.state, .active)
+        XCTAssertEqual(final?.detail, "Running")
     }
 
     func testAvailableFinalExportArtifactCompletesFinalProgress() {

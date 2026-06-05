@@ -127,8 +127,6 @@ private extension MomentsContinuationFocus {
             L10n.string("create.continuation.media.title")
         case .story:
             L10n.string("create.continuation.story.title")
-        case .preview:
-            L10n.string("create.continuation.preview.title")
         case .finalRender:
             L10n.string("create.continuation.final.title")
         }
@@ -142,8 +140,6 @@ private extension MomentsContinuationFocus {
             L10n.string("create.continuation.media.message")
         case .story:
             L10n.string("create.continuation.story.message")
-        case .preview:
-            L10n.string("create.continuation.preview.message")
         case .finalRender:
             L10n.string("create.continuation.final.message")
         }
@@ -156,8 +152,6 @@ private extension MomentsContinuationFocus {
         case .media:
             "photo.badge.plus"
         case .story:
-            "text.bubble"
-        case .preview:
             "text.bubble"
         case .finalRender:
             "square.and.arrow.up"
