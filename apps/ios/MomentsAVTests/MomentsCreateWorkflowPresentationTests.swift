@@ -295,7 +295,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         XCTAssertFalse(presentation.showsBlockingPreparation)
     }
 
-    func testStorySummaryBuildsReviewScenesFromSavedScenes() {
+    func testStorySummaryBuildsPresentedScenesFromSavedScenes() {
         let summary = MomentsCreateStorySummary(
             savedScenes: [
                 MomentsCreateTestFixtures.makeScene(id: "scene-2", sceneIndex: 1, caption: "Show the trip highlights."),
@@ -304,8 +304,8 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         )
 
         XCTAssertTrue(summary.hasScenes)
-        XCTAssertEqual(summary.reviewScenes.map(\.title), ["Opening", "Main moments"])
-        XCTAssertEqual(summary.reviewScenes.map(\.caption), ["Open with the arrival.", "Show the trip highlights."])
+        XCTAssertEqual(summary.presentedScenes.map(\.title), ["Opening", "Main moments"])
+        XCTAssertEqual(summary.presentedScenes.map(\.caption), ["Open with the arrival.", "Show the trip highlights."])
     }
 
     func testStoryDecisionPresentationFormatsReadyStoryState() {

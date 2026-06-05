@@ -399,7 +399,7 @@ private struct MomentsCreateMediaFirstWorkspace: View {
     }
 
     private var hasMediaSelection: Bool {
-        presentation.mediaSummary.reviewCount > 0
+        presentation.mediaSummary.effectiveMediaCount > 0
             || !presentation.mediaSummary.syncedMediaAssets.isEmpty
     }
 
@@ -646,7 +646,7 @@ private struct MomentsCreateStoryReviewCard: View {
                     .foregroundStyle(AVBrandColor.textSecondary)
 
                 VStack(alignment: .leading, spacing: 10) {
-                    if presentation.storySummary.reviewScenes.isEmpty {
+                    if presentation.storySummary.presentedScenes.isEmpty {
                         Label(L10n.string("create.storyDirection.needsStory"), systemImage: "text.bubble.fill")
                             .font(.system(size: 12, weight: .bold))
                             .foregroundStyle(AVBrandColor.textSecondary)
@@ -655,14 +655,14 @@ private struct MomentsCreateStoryReviewCard: View {
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .background(AVBrandColor.neutral100.opacity(0.68), in: RoundedRectangle(cornerRadius: 8, style: .continuous))
                     } else {
-                        ForEach(presentation.storySummary.reviewScenes) { scene in
-                            MomentsCreateStoryReviewSceneRow(scene: scene)
+                        ForEach(presentation.storySummary.presentedScenes) { scene in
+                            MomentsCreatePresentedStorySceneRow(scene: scene)
                         }
                     }
                 }
 
                 HStack(spacing: 8) {
-                    MomentsCreateOptionPill(title: "\(presentation.mediaSummary.reviewCount) items", systemImage: "photo.on.rectangle")
+                    MomentsCreateOptionPill(title: "\(presentation.mediaSummary.effectiveMediaCount) items", systemImage: "photo.on.rectangle")
                     MomentsCreateOptionPill(title: "\(presentation.template.duration)", systemImage: "timer")
                 }
             }
@@ -670,7 +670,7 @@ private struct MomentsCreateStoryReviewCard: View {
     }
 
     private var sceneCountTitle: String {
-        let count = presentation.storySummary.reviewScenes.count
+        let count = presentation.storySummary.presentedScenes.count
         return "\(count) \(count == 1 ? "scene" : "scenes")"
     }
 }
@@ -832,7 +832,7 @@ private struct MomentsCreateStoryDecisionCard: View {
                 if presentation.storySummary.hasScenes {
                     VStack(alignment: .leading, spacing: 7) {
                         ForEach(storyDecision.visibleScenes.prefix(1)) { scene in
-                            MomentsCreateStoryReviewSceneRow(scene: scene)
+                            MomentsCreatePresentedStorySceneRow(scene: scene)
                         }
 
                         if let remainingSceneTitle = storyDecision.remainingSceneTitle {
@@ -925,7 +925,7 @@ private struct MomentsCreateStoryDecisionCard: View {
     }
 
     private var sceneCountTitle: String {
-        let count = presentation.storySummary.reviewScenes.count
+        let count = presentation.storySummary.presentedScenes.count
         return count == 1
             ? L10n.string("create.workflowContent.sceneReady", count)
             : L10n.string("create.workflowContent.scenesReady", count)
@@ -1203,8 +1203,8 @@ private struct MomentsCreateLockedFinalRenderNotice: View {
     }
 }
 
-private struct MomentsCreateStoryReviewSceneRow: View {
-    let scene: MomentsCreateStoryReviewScene
+private struct MomentsCreatePresentedStorySceneRow: View {
+    let scene: MomentsCreateStoryScenePresentation
 
     var body: some View {
         HStack(alignment: .top, spacing: 10) {
@@ -1793,7 +1793,7 @@ private struct MomentsCreateFinalVideoConfirmationSheet: View {
         guard let plan else {
             return L10n.string("create.final.confirmSheet.mediaPending")
         }
-        let currentMediaCount = mediaSummary.reviewCount
+        let currentMediaCount = mediaSummary.effectiveMediaCount
         if currentMediaCount > 0, currentMediaCount != plan.plannedAssetCount {
             return L10n.string("create.workflowContent.assetUsageItems", currentMediaCount, currentMediaCount)
         }

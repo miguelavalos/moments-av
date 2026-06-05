@@ -147,12 +147,12 @@ struct MomentsCreateStoryDecisionPresentation: Equatable {
         storySummary.hasScenes && canRunPrimaryAction
     }
 
-    var visibleScenes: [MomentsCreateStoryReviewScene] {
-        Array(storySummary.reviewScenes.prefix(2))
+    var visibleScenes: [MomentsCreateStoryScenePresentation] {
+        Array(storySummary.presentedScenes.prefix(2))
     }
 
     var remainingSceneCount: Int {
-        max(storySummary.reviewScenes.count - visibleScenes.count, 0)
+        max(storySummary.presentedScenes.count - visibleScenes.count, 0)
     }
 
     var remainingSceneTitle: String? {
@@ -164,6 +164,6 @@ struct MomentsCreateStoryDecisionPresentation: Equatable {
     }
 
     private var mediaCount: Int {
-        mediaSummary.reviewCount
+        mediaSummary.effectiveMediaCount
     }
 }

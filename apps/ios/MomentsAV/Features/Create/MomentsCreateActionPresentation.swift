@@ -295,7 +295,7 @@ struct MomentsCreatePrimaryActionPresentation: Equatable {
     }
 
     var hasFinalVideoIntent: Bool {
-        workflow.mediaSummary.reviewCount > 0
+        workflow.mediaSummary.effectiveMediaCount > 0
             || workflow.storySummary.hasScenes
             || workflow.finalRenderSummary.renderPlan != nil
             || workflow.finalRenderSummary.latestFinalJob != nil
@@ -316,13 +316,13 @@ struct MomentsCreatePrimaryActionPresentation: Equatable {
 
     var canPrepareLocalVideoPlan: Bool {
         workflow.isSignedIn
-            && workflow.mediaSummary.reviewCount > 0
+            && workflow.mediaSummary.effectiveMediaCount > 0
             && workflow.finalRenderSummary.renderPlan == nil
     }
 
     var needsSignInForStory: Bool {
         !workflow.isSignedIn
-            && workflow.mediaSummary.reviewCount > 0
+            && workflow.mediaSummary.effectiveMediaCount > 0
             && !workflow.storySummary.isPlanning
     }
 

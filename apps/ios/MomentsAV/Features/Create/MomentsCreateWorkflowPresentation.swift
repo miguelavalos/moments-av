@@ -72,7 +72,7 @@ struct MomentsCreateWorkflowPresentation: Equatable {
     }
 
     var lockedFinalRenderMediaCountTitle: String {
-        let count = lockedFinalRenderMediaCount ?? mediaSummary.reviewCount
+        let count = lockedFinalRenderMediaCount ?? mediaSummary.effectiveMediaCount
         guard count > 0 else {
             return L10n.string("create.final.confirmSheet.media")
         }

@@ -39,7 +39,7 @@ struct MomentsCreateMediaSummary: Equatable {
         selectedMedia.filter(\.selected).count
     }
 
-    var reviewCount: Int {
+    var effectiveMediaCount: Int {
         if selectedCount > 0 {
             return selectedCount
         }
@@ -62,7 +62,7 @@ struct MomentsCreateMediaSummary: Equatable {
     }
 
     func remainingSlots(template: MomentTemplate) -> Int {
-        MomentsMediaRules.remainingSlots(template: template, selectedCount: reviewCount)
+        MomentsMediaRules.remainingSlots(template: template, selectedCount: effectiveMediaCount)
     }
 }
 
@@ -91,12 +91,12 @@ struct MomentsCreateStorySummary: Equatable {
         !savedScenes.isEmpty || !generatedScenes.isEmpty
     }
 
-    var reviewScenes: [MomentsCreateStoryReviewScene] {
+    var presentedScenes: [MomentsCreateStoryScenePresentation] {
         if !savedScenes.isEmpty {
             return savedScenes
                 .sorted { $0.sceneIndex < $1.sceneIndex }
                 .map {
-                    MomentsCreateStoryReviewScene(
+                    MomentsCreateStoryScenePresentation(
                         title: Self.sceneTitle(Int($0.sceneIndex)),
                         caption: $0.caption,
                         detail: $0.narrationText
@@ -107,7 +107,7 @@ struct MomentsCreateStorySummary: Equatable {
         return generatedScenes
             .sorted { $0.sceneIndex < $1.sceneIndex }
             .map {
-                MomentsCreateStoryReviewScene(
+                MomentsCreateStoryScenePresentation(
                     title: Self.sceneTitle($0.sceneIndex),
                     caption: $0.caption,
                     detail: $0.narrationText
@@ -129,7 +129,7 @@ struct MomentsCreateStorySummary: Equatable {
     }
 }
 
-struct MomentsCreateStoryReviewScene: Equatable, Identifiable {
+struct MomentsCreateStoryScenePresentation: Equatable, Identifiable {
     var id: String { "\(title)-\(caption)" }
     let title: String
     let caption: String
