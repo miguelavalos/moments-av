@@ -14,6 +14,8 @@ protocol MomentsAuthTokenProviding: AnyObject {
 @MainActor
 protocol MomentsCreditBalanceProviding: AnyObject {
     var currentCreditBalance: MomentsCreditBalance { get }
+
+    func refreshCreditBalance() async
 }
 
 @MainActor

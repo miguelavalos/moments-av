@@ -18,13 +18,14 @@ struct MomentsCreditBalance: Equatable {
     var proMonthly: Int
     var promotional: Int
     var purchased: Int
+    var availableCredits: Int?
     var watermarkRemovalCreditCost: Int = 1
     var watermarkFreeIncluded: Bool = false
 
     static let empty = MomentsCreditBalance(proMonthly: 0, promotional: 0, purchased: 0)
 
     var spendable: Int {
-        proMonthly + promotional + purchased
+        availableCredits ?? (proMonthly + promotional + purchased)
     }
 
     func amount(for source: CreditSource) -> Int {

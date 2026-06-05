@@ -20,6 +20,7 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
     private let galleryStore: any MomentsGalleryStoring
     private let logger = Logger(subsystem: "com.avalsys.momentsav", category: "final-render")
     private var downloadingArtifactIds = Set<String>()
+    private var lastCreditRefreshKey: String?
 
     init(
         currentUserProvider: any MomentsCurrentUserProviding,
@@ -47,6 +48,7 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
             latestFinalJob = nil
             latestFinalJobMomentId = momentId
         }
+        refreshCreditBalanceIfTerminalStateChanged(workspace: workspace)
         scheduleLocalGalleryDownloadIfNeeded(workspace: workspace)
     }
 
@@ -109,6 +111,9 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
                 logger.warning(
                     "Final render plan blocked momentId=\(momentId, privacy: .public) planId=\(plan.planId, privacy: .public) blockers=\(plan.createVideoBlockers.joined(separator: ","), privacy: .public) cost=\(plan.plan.totalCreditCost, privacy: .public) plannedAssets=\(plan.plan.plannedAssetCount, privacy: .public) usedAssets=\(plan.plan.usedAssetCount, privacy: .public)"
                 )
+                if plan.createVideoBlockers.contains("insufficient_credits") {
+                    await creditBalanceProvider.refreshCreditBalance()
+                }
             }
         } catch let error as MomentsAPIError {
             guard isCurrentWorkflowGeneration(generation) else { return }
@@ -178,6 +183,7 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
 
             guard isCurrentWorkflowGeneration(generation) else { return }
 
+            await creditBalanceProvider.refreshCreditBalance()
             workspaceObserver.observeWorkspace(ownerUserId: ownerUserId, momentId: momentId)
             statusMessage = L10n.string("workflow.final.creatingVideo")
         } catch let error as MomentsAPIError {
@@ -194,6 +200,29 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
 
         guard isCurrentWorkflowGeneration(generation) else { return }
         isGenerating = false
+    }
+
+    private func refreshCreditBalanceIfTerminalStateChanged(workspace: MomentWorkspace?) {
+        guard let workspace else {
+            lastCreditRefreshKey = nil
+            return
+        }
+
+        let refreshKey: String?
+        if let finalExport = workspace.latestArtifact(kind: "final_export") {
+            refreshKey = "artifact:\(finalExport.id)"
+        } else if let finalJob = workspace.latestRenderJob(kind: "final"),
+                  !finalJob.isActiveRender {
+            refreshKey = "job:\(finalJob.id):\(finalJob.status)"
+        } else {
+            refreshKey = nil
+        }
+
+        guard let refreshKey, refreshKey != lastCreditRefreshKey else { return }
+        lastCreditRefreshKey = refreshKey
+        Task { [creditBalanceProvider] in
+            await creditBalanceProvider.refreshCreditBalance()
+        }
     }
 
     private func validatedBearerTokenForFinalRender() async -> String? {

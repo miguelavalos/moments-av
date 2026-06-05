@@ -32,7 +32,6 @@ struct MomentsCreateFinalVideoActionPresentation: Equatable {
     var blockedRenderPlanIsInsufficientCredits: Bool {
         hasBlockedRenderPlan
             && (summary.renderPlan?.createVideoBlockers ?? []).contains("insufficient_credits")
-            && !canAffordSelectedCost
     }
 
     var canRetryBlockedRenderPlan: Bool {
@@ -230,6 +229,9 @@ struct MomentsCreatePrimaryActionPresentation: Equatable {
         }
         if hasFinalVideoIntent {
             if needsCreditsForPreparedPlan {
+                guard missingCreditsForPreparedPlan > 0 else {
+                    return L10n.string("workflow.final.addCredits")
+                }
                 return MomentsCreateAvailabilityCopy.finalRenderInsufficientCredits(
                     missingCredits: missingCreditsForPreparedPlan
                 )
@@ -340,8 +342,11 @@ struct MomentsCreatePrimaryActionPresentation: Equatable {
     }
 
     var needsCreditsForPreparedPlan: Bool {
-        missingCreditsForPreparedPlan > 0
-            && (finalVideoAction.hasRenderPlan || finalVideoAction.blockedRenderPlanIsInsufficientCredits)
+        if finalVideoAction.blockedRenderPlanIsInsufficientCredits {
+            return true
+        }
+
+        return missingCreditsForPreparedPlan > 0 && finalVideoAction.hasRenderPlan
     }
 
     private var missingCreditsForPreparedPlan: Int {

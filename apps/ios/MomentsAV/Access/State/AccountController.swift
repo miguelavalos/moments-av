@@ -368,6 +368,7 @@ struct MomentsCreditBalanceClient {
             proMonthly: decoded.proMonthlyCredits,
             promotional: decoded.promotionalGrantedCredits,
             purchased: decoded.purchasedCredits,
+            availableCredits: decoded.spendableCredits,
             watermarkRemovalCreditCost: decoded.watermarkRemovalCreditCost,
             watermarkFreeIncluded: decoded.watermarkFreeIncluded
         )
@@ -375,6 +376,7 @@ struct MomentsCreditBalanceClient {
 }
 
 private struct MomentsCreditBalanceResponse: Decodable {
+    let spendableCredits: Int
     let proMonthlyCredits: Int
     let promotionalGrantedCredits: Int
     let purchasedCredits: Int
@@ -382,6 +384,7 @@ private struct MomentsCreditBalanceResponse: Decodable {
     let watermarkFreeIncluded: Bool
 
     private enum CodingKeys: String, CodingKey {
+        case spendableCredits
         case proMonthlyCredits
         case promotionalGrantedCredits
         case purchasedCredits
@@ -391,6 +394,7 @@ private struct MomentsCreditBalanceResponse: Decodable {
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
+        spendableCredits = try container.decode(Int.self, forKey: .spendableCredits)
         proMonthlyCredits = try container.decode(Int.self, forKey: .proMonthlyCredits)
         promotionalGrantedCredits = try container.decode(Int.self, forKey: .promotionalGrantedCredits)
         purchasedCredits = try container.decode(Int.self, forKey: .purchasedCredits)
@@ -441,6 +445,7 @@ struct MomentsPromoCodeRedemptionResponse: Decodable {
     }
 
     private enum BalanceCodingKeys: String, CodingKey {
+        case spendableCredits
         case proMonthlyCredits
         case promotionalGrantedCredits
         case purchasedCredits
@@ -456,6 +461,7 @@ struct MomentsPromoCodeRedemptionResponse: Decodable {
             proMonthly: try balanceContainer.decode(Int.self, forKey: .proMonthlyCredits),
             promotional: try balanceContainer.decode(Int.self, forKey: .promotionalGrantedCredits),
             purchased: try balanceContainer.decode(Int.self, forKey: .purchasedCredits),
+            availableCredits: try balanceContainer.decodeIfPresent(Int.self, forKey: .spendableCredits),
             watermarkRemovalCreditCost: try balanceContainer.decodeIfPresent(Int.self, forKey: .watermarkRemovalCreditCost) ?? 1,
             watermarkFreeIncluded: try balanceContainer.decodeIfPresent(Bool.self, forKey: .watermarkFreeIncluded) ?? false
         )

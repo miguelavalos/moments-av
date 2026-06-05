@@ -697,7 +697,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         XCTAssertEqual(presentation.statusMessage, "Add 2 more credits before creating the final video.")
     }
 
-    func testPrimaryActionPresentationRetriesMixedBlockedPlanWhenCreditsCoverCost() {
+    func testPrimaryActionPresentationTrustsBackendInsufficientCreditBlockerWhenLocalBalanceIsStale() {
         let presentation = MomentsCreatePrimaryActionPresentation(
             workflow: MomentsCreateWorkflowPresentation(
                 activeMomentId: "moment-1",
@@ -726,13 +726,10 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         )
 
         XCTAssertTrue(presentation.canRunPrimaryAction)
-        XCTAssertFalse(presentation.needsCreditsForPreparedPlan)
-        XCTAssertEqual(presentation.buttonTitle, "Try again")
-        XCTAssertEqual(presentation.buttonIconName, "arrow.clockwise")
-        XCTAssertEqual(
-            presentation.statusMessage,
-            "Avi could not prepare video creation. Try again, or adjust the media and options."
-        )
+        XCTAssertTrue(presentation.needsCreditsForPreparedPlan)
+        XCTAssertEqual(presentation.buttonTitle, "Get credits")
+        XCTAssertEqual(presentation.buttonIconName, "plus.circle.fill")
+        XCTAssertEqual(presentation.statusMessage, "Add credits before creating the final video.")
     }
 
     func testPrimaryActionPresentationShowsFinalRenderErrorOverPreparedPlanCopy() {

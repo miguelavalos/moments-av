@@ -763,6 +763,8 @@ private final class MomentCreationFailureHarness:
         balanceSubject.value
     }
 
+    func refreshCreditBalance() async {}
+
     var isConfigured: Bool {
         true
     }

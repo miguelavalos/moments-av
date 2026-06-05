@@ -35,6 +35,18 @@ final class MomentsCreditGateTests: XCTestCase {
         )
     }
 
+    func testSpendableUsesBackendAvailableCreditsWhenProvided() {
+        let balance = MomentsCreditBalance(
+            proMonthly: 0,
+            promotional: 5,
+            purchased: 0,
+            availableCredits: 0
+        )
+
+        XCTAssertEqual(balance.spendable, 0)
+        XCTAssertFalse(MomentsCreditGate.canAfford(MomentTemplate.birthdayMessage, balance: balance))
+    }
+
     func testPartyRecapRequiresTwoSpendableCredits() {
         XCTAssertTrue(
             MomentsCreditGate.canAfford(
