@@ -61,6 +61,7 @@ struct MomentsInProgressScreen: View {
                 activeWorkspace: viewModel.activeWorkspace,
                 isDeletingMoment: viewModel.isDeletingMoment,
                 statusMessage: viewModel.statusMessage,
+                localMediaForMoment: localMediaForMoment(_:),
                 selectMoment: viewModel.selectMoment,
                 continueMoment: continueMoment,
                 requestRenameMoment: { momentPendingRename = $0 },
@@ -115,6 +116,20 @@ struct MomentsInProgressScreen: View {
 
     private func cancelMomentDeletion() {
         momentPendingDeletion = nil
+    }
+
+    private func localMediaForMoment(_ moment: InProgressMoment) -> [MomentsSelectedMedia] {
+        if createViewModel.activeMomentId == moment.id {
+            return createViewModel.selectedMedia
+        }
+
+        guard !createViewModel.selectedMedia.isEmpty,
+              viewModel.momentsSummary.latestInProgressMoment?.id == moment.id,
+              viewModel.momentsSummary.inProgressCount == 1 else {
+            return []
+        }
+
+        return createViewModel.selectedMedia
     }
 }
 

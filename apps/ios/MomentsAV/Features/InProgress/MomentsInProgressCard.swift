@@ -13,6 +13,7 @@ struct MomentsInProgressCard: View {
     let activeWorkspace: MomentWorkspace?
     let isDeletingMoment: Bool
     let statusMessage: String?
+    let localMediaForMoment: (InProgressMoment) -> [MomentsSelectedMedia]
     let selectMoment: (InProgressMoment) -> Void
     let continueMoment: (MomentsContinuationRequest) -> Void
     let requestRenameMoment: (InProgressMoment) -> Void
@@ -51,6 +52,7 @@ struct MomentsInProgressCard: View {
                 )
                 MomentsInProgressContinueBlock(
                     moments: continueMoments,
+                    localMediaForMoment: localMediaForMoment,
                     continueMoment: continueMoment,
                     requestRenameMoment: requestRenameMoment
                 )
@@ -236,6 +238,7 @@ private struct MomentsInProgressAviBlock: View {
 
 private struct MomentsInProgressContinueBlock: View {
     let moments: [InProgressMoment]
+    let localMediaForMoment: (InProgressMoment) -> [MomentsSelectedMedia]
     let continueMoment: (MomentsContinuationRequest) -> Void
     let requestRenameMoment: (InProgressMoment) -> Void
 
@@ -256,6 +259,7 @@ private struct MomentsInProgressContinueBlock: View {
                 ForEach(moments) { moment in
                     MomentsInProgressMomentCard(
                         moment: moment,
+                        localMedia: localMediaForMoment(moment),
                         continueMoment: {
                             continueMoment(MomentsContinuationRequest(moment: moment))
                         },
@@ -271,6 +275,7 @@ private struct MomentsInProgressContinueBlock: View {
 
 private struct MomentsInProgressMomentCard: View {
     let moment: InProgressMoment
+    let localMedia: [MomentsSelectedMedia]
     let continueMoment: () -> Void
     let renameMoment: () -> Void
 
@@ -308,7 +313,7 @@ private struct MomentsInProgressMomentCard: View {
                     HStack(spacing: 8) {
                         MomentsInProgressMomentPill(
                             systemImage: "photo.on.rectangle",
-                            text: L10n.string("inProgress.card.mediaCount", moment.mediaCount)
+                            text: L10n.string("inProgress.card.mediaCount", effectiveMediaCount)
                         )
                         MomentsInProgressMomentPill(
                             systemImage: iconName,
@@ -337,7 +342,9 @@ private struct MomentsInProgressMomentCard: View {
 
     @ViewBuilder
     private var mediaPreview: some View {
-        if moment.mediaPreview.isEmpty {
+        if !localMedia.isEmpty {
+            MomentsSharedMediaSummaryStack(localMedia: localMedia, syncedMedia: [])
+        } else if moment.mediaPreview.isEmpty {
             ZStack {
                 RoundedRectangle(cornerRadius: 16, style: .continuous)
                     .fill(AVBrandColor.accent.opacity(0.12))
@@ -349,6 +356,15 @@ private struct MomentsInProgressMomentCard: View {
         } else {
             MomentsSharedMediaSummaryStack(localMedia: [], syncedMedia: moment.mediaPreview)
         }
+    }
+
+    private var effectiveMediaCount: Int {
+        if !localMedia.isEmpty {
+            let selectedCount = localMedia.filter(\.selected).count
+            return selectedCount > 0 ? selectedCount : localMedia.count
+        }
+
+        return moment.mediaCount
     }
 
     private var iconName: String {
