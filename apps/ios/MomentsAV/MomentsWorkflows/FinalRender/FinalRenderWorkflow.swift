@@ -167,8 +167,7 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
                 removesWatermark: removesWatermark,
                 selectedSourceLocalIdentifiers: selectedSourceLocalIdentifiers,
                 planId: renderPlan.planId,
-                renderOptionId: renderPlan.plan.renderOptionId,
-                operationId: UUID().uuidString
+                renderOptionId: renderPlan.plan.renderOptionId
             )
             self.renderPlan = confirmed.renderPlan
 

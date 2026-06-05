@@ -118,8 +118,7 @@ struct MomentsFinalRenderClient {
         removesWatermark: Bool,
         selectedSourceLocalIdentifiers: [String],
         planId: String,
-        renderOptionId: String?,
-        operationId: String
+        renderOptionId: String?
     ) async throws -> MomentsConfirmFinalRenderResponse {
         guard let baseURL = URL(string: baseURLString.trimmingCharacters(in: .whitespacesAndNewlines)) else {
             throw MomentsFinalRenderError.apiNotConfigured
@@ -147,7 +146,7 @@ struct MomentsFinalRenderClient {
             removeWatermark: removesWatermark,
             renderOptionId: renderOptionId,
             planId: planId,
-            idempotencyKey: "final-confirm:\(momentId):\(template.id.rawValue):\(removesWatermark ? "clean" : "watermarked"):\(operationId)"
+            idempotencyKey: "final-confirm:\(momentId):\(planId):\(template.id.rawValue):\(removesWatermark ? "clean" : "watermarked")"
         )
 
         var request = URLRequest(url: endpoint)
