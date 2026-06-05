@@ -172,8 +172,7 @@ private struct MomentsCreateMediaFirstWorkspace: View {
                     generateFinalRender: primaryFinalRenderAction,
                     openCreateVideoConfirmation: { showsCreateVideoConfirmation = true },
                     retryFinalVideoDownload: retryFinalVideoDownload,
-                    finishFinalVideoToGallery: finishFinalVideoToGallery,
-                    discardMoment: { showsDiscardMomentConfirmation = true }
+                    finishFinalVideoToGallery: finishFinalVideoToGallery
                 )
                 .padding(.horizontal, 2)
                 .frame(maxHeight: .infinity, alignment: .bottom)
@@ -1563,7 +1562,6 @@ private struct MomentsCreatePrimaryActionBar: View {
     let openCreateVideoConfirmation: () -> Void
     let retryFinalVideoDownload: () -> Void
     let finishFinalVideoToGallery: () -> Void
-    let discardMoment: () -> Void
 
     @ViewBuilder
     var body: some View {
@@ -1653,15 +1651,6 @@ private struct MomentsCreatePrimaryActionBar: View {
                     .buttonStyle(MomentsCreateSoftActionButtonStyle())
                     .font(.system(size: 14, weight: .black))
                 }
-
-                if showsTerminalFailureRecoveryActions {
-                    Button(role: .destructive, action: discardMoment) {
-                        Label(L10n.string("create.final.recovery.discard"), systemImage: "trash")
-                            .frame(maxWidth: .infinity)
-                    }
-                    .buttonStyle(MomentsCreateSoftActionButtonStyle())
-                    .font(.system(size: 14, weight: .black))
-                }
             }
             .padding(.horizontal, 12)
             .padding(.vertical, 12)
@@ -1677,12 +1666,6 @@ private struct MomentsCreatePrimaryActionBar: View {
     private var showsFinalVideoDock: Bool {
         presentation.finalRenderSummary.finalExport != nil
             || presentation.finalRenderSummary.pendingGalleryVideo != nil
-    }
-
-    private var showsTerminalFailureRecoveryActions: Bool {
-        presentation.finalRenderSummary.finalExport == nil
-            && presentation.finalRenderSummary.pendingGalleryVideo == nil
-            && presentation.finalRenderSummary.latestFinalJob?.isTerminalFailure == true
     }
 
     private var primaryActionPresentation: MomentsCreatePrimaryActionPresentation {
