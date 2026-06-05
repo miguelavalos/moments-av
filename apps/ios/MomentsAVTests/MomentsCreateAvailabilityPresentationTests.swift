@@ -144,7 +144,7 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
         )
     }
 
-    func testAvailabilityMessageFactoryFormatsFinalRenderPreviewRequirement() {
+    func testAvailabilityMessageFactoryFormatsFinalRenderStoryRequirement() {
         XCTAssertEqual(
             MomentsCreateAvailabilityMessageFactory.finalRender(
                 activeMomentId: "moment-1",

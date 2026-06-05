@@ -59,7 +59,7 @@ final class StoryPlanPersistenceRequestTests: XCTestCase {
           "errorCode": null,
           "errorMessage": null,
           "narrationVoice": "avi_clear",
-          "helperCopy": "Ready for preview.",
+          "helperCopy": "Ready to continue.",
           "scenes": [],
           "generatedAt": "2026-05-16T16:00:00Z"
         }

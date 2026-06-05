@@ -665,7 +665,7 @@
 "create.aviStatus.goodSelection.title" = "Bonne sélection";
 "create.aviStatus.startMedia.title" = "Commence avec tes médias";
 "create.aviStatus.exportReady.detail" = "Ta vidéo est prête à exporter ou partager.";
-"create.aviStatus.preparing.detail" = "Avi organise les médias en un premier plan d’histoire.";
+"create.aviStatus.preparing.detail" = "Avi organise les médias pour ton histoire.";
 "create.aviStatus.storyReady.detail" = "Avi a préparé l’histoire, le style et le rythme. La création vidéo vient ensuite.";
 "create.aviStatus.goodSelection.detail" = "Avi organisera l’histoire et tu pourras ajuster la sélection.";
 "create.aviStatus.startMedia.detail" = "Ajoute des photos ou clips. Avi façonnera l’histoire, l’ambiance et le rythme.";
@@ -706,7 +706,6 @@
 "create.story.status.readyToReview" = "L’histoire est prête.";
 "create.dashboard.title" = "Tableau de création";
 "create.dashboard.subtitle.finalReady" = "Your final video is ready to check and share.";
-"create.dashboard.subtitle.storyPlan" = "Avi a un plan d’histoire. Crée la vidéo quand tu es prêt.";
 "create.dashboard.subtitle.default" = "Check what Avi prepared and create the video when ready.";
 "create.preparation.importMedia.title" = "Lecture de ta sélection";
 "create.preparation.prepareMoment.title" = "Préparation de ce Moment";
@@ -847,7 +846,7 @@
 "create.media.asset.plural" = "photos or clips";
 "create.story.action.preparing" = "Preparing story...";
 "create.story.action.prepare" = "Prepare story";
-"create.story.empty.ready" = "Avi can prepare a story plan from your photos and clips.";
+"create.story.empty.ready" = "Avi peut préparer une histoire avec tes photos et tes clips.";
 "create.story.empty.needsMedia" = "Add enough photos or clips before preparing the story.";
 "create.final.status.ready" = "Final video is ready.";
 "create.story.status.alreadyReady" = "Story plan is already ready.";
@@ -951,7 +950,6 @@
 "create.workflowContent.aviTip" = "Avi tip";
 "create.workflowContent.tipFinalReady" = "Your video is ready to export or share.";
 "create.workflowContent.tipFinalWorking" = "Avi termine la vidéo finale. La progression se met à jour automatiquement.";
-"create.workflowContent.tipMediaReady" = "Avi will shape these moments into a simple story plan.";
 "create.workflowContent.tipPickMoments" = "Pick the moments. Avi will shape the story, mood, and pacing.";
 "create.workflowContent.planDetail" = "%ds · %d éléments";
 

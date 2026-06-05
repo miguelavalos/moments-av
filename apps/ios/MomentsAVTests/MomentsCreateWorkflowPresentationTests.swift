@@ -445,7 +445,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         )
 
         XCTAssertEqual(presentation.planButtonTitle, "Preparing story...")
-        XCTAssertEqual(presentation.emptyMessage, "Avi can prepare a story plan from your photos and clips.")
+        XCTAssertEqual(presentation.emptyMessage, "Avi can prepare a story from your photos and clips.")
         XCTAssertEqual(presentation.savedScenes.map(\.id), ["scene-1", "scene-2"])
         XCTAssertTrue(presentation.canPlanStory)
         XCTAssertEqual(presentation.availabilityMessage, "Ready.")
