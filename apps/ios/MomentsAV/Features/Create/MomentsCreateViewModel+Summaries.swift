@@ -26,17 +26,6 @@ extension MomentsCreateViewModel {
         )
     }
 
-    var previewSummary: MomentsCreatePreviewSummary {
-        MomentsCreatePreviewSummary(
-            activeMoment: activeMoment,
-            latestPreview: effectiveLatestPreview,
-            latestPreviewJob: effectiveLatestPreviewJob,
-            isGenerating: isGeneratingPreview,
-            isRefreshingStatus: isRefreshingPreviewStatus,
-            statusMessage: previewStatusMessage
-        )
-    }
-
     var finalRenderSummary: MomentsCreateFinalRenderSummary {
         MomentsCreateFinalRenderSummary(
             creditCost: form.template.creditCost,

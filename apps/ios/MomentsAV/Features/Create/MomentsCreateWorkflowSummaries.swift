@@ -143,15 +143,6 @@ struct MomentsCreateStoryReviewScene: Equatable, Identifiable {
     let detail: String?
 }
 
-struct MomentsCreatePreviewSummary: Equatable {
-    var activeMoment: InProgressMoment?
-    var latestPreview: MomentArtifact?
-    var latestPreviewJob: MomentRenderJob?
-    var isGenerating = false
-    var isRefreshingStatus = false
-    var statusMessage: String?
-}
-
 struct MomentsCreateFinalRenderSummary: Equatable {
     var creditCost = 0
     var renderPlan: MomentsRenderPlanResponse?

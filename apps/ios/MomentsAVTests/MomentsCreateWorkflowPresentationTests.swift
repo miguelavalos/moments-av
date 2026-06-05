@@ -451,48 +451,6 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         XCTAssertEqual(presentation.availabilityMessage, "Ready.")
     }
 
-    func testPreviewPresentationFormatsUsageActionsAndArtifactState() {
-        let presentation = MomentsCreatePreviewPresentation(
-            summary: MomentsCreatePreviewSummary(
-                activeMoment: MomentsCreateTestFixtures.makeMoment(id: "moment-1"),
-                latestPreview: MomentsCreateTestFixtures.makeArtifact(id: "preview-1", kind: "preview"),
-                latestPreviewJob: MomentsCreateTestFixtures.makeRenderJob(id: "preview-job", kind: "preview", status: "running"),
-                isGenerating: true,
-                isRefreshingStatus: true,
-                statusMessage: "Generating."
-            ),
-            canGeneratePreview: true,
-            canRefreshPreviewStatus: true,
-            availabilityMessage: "Generate preview.",
-            refreshAvailabilityMessage: "Refresh preview."
-        )
-
-        XCTAssertEqual(presentation.usageTitle, "Avi's Cut")
-        XCTAssertEqual(presentation.previewArtifactMessage, "Avi's Cut is ready for your final check.")
-        XCTAssertEqual(presentation.refreshButtonTitle, "Improving with Avi...")
-        XCTAssertEqual(presentation.generateButtonTitle, "Creating preview...")
-        XCTAssertEqual(presentation.emptyMessage, "Avi can prepare the cut before the final video.")
-        XCTAssertFalse(presentation.showsEmptyState)
-        XCTAssertTrue(presentation.canGeneratePreview)
-        XCTAssertTrue(presentation.canRefreshPreviewStatus)
-        XCTAssertEqual(presentation.availabilityMessage, "Generate preview.")
-        XCTAssertEqual(presentation.refreshAvailabilityMessage, "Refresh preview.")
-    }
-
-    func testPreviewPresentationFormatsUnavailableEmptyState() {
-        let presentation = MomentsCreatePreviewPresentation(
-            summary: MomentsCreatePreviewSummary(),
-            canGeneratePreview: false
-        )
-
-        XCTAssertNil(presentation.usageTitle)
-        XCTAssertNil(presentation.previewArtifactMessage)
-        XCTAssertEqual(presentation.refreshButtonTitle, "Improve with Avi")
-        XCTAssertEqual(presentation.generateButtonTitle, "Create preview")
-        XCTAssertEqual(presentation.emptyMessage, "Prepare the story before Avi's Cut.")
-        XCTAssertTrue(presentation.showsEmptyState)
-    }
-
     func testFinalVideoActionPresentationSeparatesPlanAndCreditConfirmation() {
         let planning = MomentsCreateFinalVideoActionPresentation(
             summary: MomentsCreateFinalRenderSummary(creditCost: 2),

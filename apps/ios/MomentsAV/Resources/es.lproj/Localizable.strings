@@ -331,7 +331,7 @@
 "home.avi.currentMoment.title" = "Moment actual";
 "home.avi.preparing.detail" = "Avi está preparando tu historia.";
 "home.avi.preparing.title" = "Avi está preparando";
-"home.avi.selected.detail" = "%d %@ seleccionados. Continúa hacia Avi's Cut.";
+"home.avi.selected.detail" = "%d %@ seleccionados. Continúa para crear tu video.";
 "home.avi.signIn.detail" = "Conecta tu cuenta para crear videos recuerdo y videos finales.";
 "home.avi.signIn.title" = "Inicia sesión para crear";
 "home.avi.storyReviewReady.detail" = "Avi's Cut está listo. Crea el video final cuando te encaje.";

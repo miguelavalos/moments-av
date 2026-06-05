@@ -101,10 +101,7 @@ struct MomentsHomeScreen: View {
     private var aviContextTitle: String {
         guard viewModel.isSignedIn else { return L10n.string("home.avi.signIn.title") }
         if createViewModel.hasRecoverableMomentContext {
-            if createViewModel.previewSummary.latestPreview != nil {
-                return L10n.string("home.avi.storyReviewReady.title")
-            }
-            if createViewModel.previewSummary.isGenerating {
+            if createViewModel.finalRenderSummary.latestFinalJob != nil || createViewModel.finalRenderSummary.isGenerating {
                 return L10n.string("home.avi.creating.title")
             }
             if createViewModel.storySummary.isPlanning {
@@ -121,11 +118,8 @@ struct MomentsHomeScreen: View {
         }
         if createViewModel.hasRecoverableMomentContext {
             let count = createViewModel.mediaSelectedCount
-            if createViewModel.previewSummary.latestPreview != nil {
-                return L10n.string("home.avi.storyReviewReady.detail")
-            }
-            if createViewModel.previewSummary.isGenerating {
-                return L10n.string("home.avi.creating.detail")
+            if createViewModel.finalRenderSummary.latestFinalJob != nil || createViewModel.finalRenderSummary.isGenerating {
+                return createViewModel.finalRenderSummary.statusMessage ?? L10n.string("home.avi.creating.detail")
             }
             if createViewModel.storySummary.isPlanning {
                 return L10n.string("home.avi.preparing.detail")
