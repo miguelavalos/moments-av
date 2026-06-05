@@ -11,8 +11,6 @@ extension MomentsCreateViewModel {
         isCreatingMoment
             || isImportingMedia
             || isPlanningStory
-            || isGeneratingPreview
-            || isRefreshingPreviewStatus
             || isGeneratingFinalRender
     }
 
@@ -22,17 +20,6 @@ extension MomentsCreateViewModel {
 
     var canPlanStory: Bool {
         !isFinalRenderEditingLocked && workflowCapability.canPlanStory
-    }
-
-    var canGeneratePreview: Bool {
-        guard !isFinalRenderEditingLocked else { return false }
-        guard let previewGenerationWorkflow else { return false }
-        return previewGenerationWorkflow.canGenerate(template: form.template)
-            && isStoryPreparedForCurrentInput
-    }
-
-    var canRefreshPreviewStatus: Bool {
-        previewRefreshAvailability.canRefresh
     }
 
     var canPrepareFinalRenderPlan: Bool {

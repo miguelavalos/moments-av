@@ -8,7 +8,6 @@ struct MomentsWorkflowBundle {
     let momentCreation: MomentCreationWorkflow
     let mediaUpload: MediaUploadWorkflow
     let storyPlan: StoryPlanWorkflow
-    let previewGeneration: PreviewGenerationWorkflow
     let finalRender: FinalRenderWorkflow
 
     init(
@@ -50,14 +49,6 @@ struct MomentsWorkflowBundle {
             workspaceObserver: workspaceObserver,
             storyClient: clients.story
         )
-        previewGeneration = PreviewGenerationWorkflow(
-            currentUserProvider: accountController,
-            authTokenProvider: accountController,
-            previewResultSaver: momentsRepository,
-            workspaceObserver: workspaceObserver,
-            previewClient: clients.preview,
-            statusClient: clients.renderStatus
-        )
         finalRender = FinalRenderWorkflow(
             currentUserProvider: accountController,
             authTokenProvider: accountController,
@@ -71,16 +62,12 @@ struct MomentsWorkflowBundle {
 struct MomentsWorkflowClients {
     let upload: MomentsUploadClient
     let story: MomentsStoryClient
-    let preview: MomentsPreviewClient
     let finalRender: MomentsFinalRenderClient
-    let renderStatus: MomentsRenderStatusClient
 
     init(baseURLString: String) {
         upload = MomentsUploadClient(baseURLString: baseURLString, session: Self.makeUploadSession())
         story = MomentsStoryClient(baseURLString: baseURLString)
-        preview = MomentsPreviewClient(baseURLString: baseURLString)
         finalRender = MomentsFinalRenderClient(baseURLString: baseURLString)
-        renderStatus = MomentsRenderStatusClient(baseURLString: baseURLString)
     }
 
     private static func makeUploadSession() -> URLSession {

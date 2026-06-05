@@ -2,7 +2,6 @@ extension MomentsCreateViewModel {
     var workspaceSummary: MomentsCreateWorkspaceSummary {
         MomentsCreateWorkspaceSummary.make(
             workspace: effectiveActiveWorkspace,
-            latestPreview: effectiveLatestPreview,
             finalExport: effectiveFinalExport
         )
     }

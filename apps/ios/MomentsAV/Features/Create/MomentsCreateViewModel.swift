@@ -29,11 +29,6 @@ final class MomentsCreateViewModel: ObservableObject {
     @Published private(set) var isPlanningStory = false
     @Published var isPreparingStory = false
     @Published private(set) var activeWorkspace: MomentWorkspace?
-    @Published private(set) var latestPreview: MomentArtifact?
-    @Published private(set) var latestPreviewJob: MomentRenderJob?
-    @Published private(set) var previewStatusMessage: String?
-    @Published private(set) var isGeneratingPreview = false
-    @Published private(set) var isRefreshingPreviewStatus = false
     @Published private(set) var finalExport: MomentArtifact?
     @Published private(set) var latestFinalJob: MomentRenderJob?
     @Published private(set) var renderPlan: MomentsRenderPlanResponse?
@@ -50,7 +45,6 @@ final class MomentsCreateViewModel: ObservableObject {
     private(set) var momentCreationWorkflow: MomentCreationWorkflow?
     private(set) var mediaUploadWorkflow: MediaUploadWorkflow?
     private(set) var storyPlanWorkflow: StoryPlanWorkflow?
-    private(set) var previewGenerationWorkflow: PreviewGenerationWorkflow?
     private(set) var finalRenderWorkflow: FinalRenderWorkflow?
     let operationRunner = MomentsCreateOperationRunner()
     var cancellables = Set<AnyCancellable>()
@@ -86,8 +80,6 @@ final class MomentsCreateViewModel: ObservableObject {
             || isPlanningStory
             || !savedScenes.isEmpty
             || !generatedScenes.isEmpty
-            || latestPreview != nil
-            || latestPreviewJob != nil
             || finalExport != nil
             || latestFinalJob != nil
             || renderPlan != nil
@@ -102,7 +94,6 @@ final class MomentsCreateViewModel: ObservableObject {
             setupErrorMessage,
             mediaStatusMessage,
             storyStatusMessage,
-            previewStatusMessage,
             finalRenderAlertMessage
         ]
             .compactMap(\.self)
@@ -114,14 +105,12 @@ final class MomentsCreateViewModel: ObservableObject {
         momentCreationWorkflow: MomentCreationWorkflow,
         mediaUploadWorkflow: MediaUploadWorkflow,
         storyPlanWorkflow: StoryPlanWorkflow,
-        previewGenerationWorkflow: PreviewGenerationWorkflow,
         finalRenderWorkflow: FinalRenderWorkflow
     ) {
         cancelOperations()
         self.momentCreationWorkflow = momentCreationWorkflow
         self.mediaUploadWorkflow = mediaUploadWorkflow
         self.storyPlanWorkflow = storyPlanWorkflow
-        self.previewGenerationWorkflow = previewGenerationWorkflow
         self.finalRenderWorkflow = finalRenderWorkflow
         templates = momentCreationWorkflow.launchTemplates
         creationStyles = MomentCreationStyle.launchStyles
@@ -138,7 +127,6 @@ final class MomentsCreateViewModel: ObservableObject {
             momentCreationWorkflow: momentCreationWorkflow,
             mediaUploadWorkflow: mediaUploadWorkflow,
             storyPlanWorkflow: storyPlanWorkflow,
-            previewGenerationWorkflow: previewGenerationWorkflow,
             finalRenderWorkflow: finalRenderWorkflow
         )
     }
@@ -259,9 +247,6 @@ final class MomentsCreateViewModel: ObservableObject {
         lastPreparedStoryInputSignature = workspace.moment.storyInputSignature
             ?? currentStoryPlanInputSignature(momentId: workspace.moment.id)
         activeWorkspace = workspace
-        latestPreview = workspace.latestArtifact(kind: "preview")
-        latestPreviewJob = workspace.latestRenderJob(kind: "preview")
-        previewStatusMessage = latestPreview == nil ? nil : L10n.string("create.preview.status.available")
         finalExport = workspace.latestArtifact(kind: "final_export")
         pendingGalleryVideo = nil
         latestFinalJob = workspace.latestRenderJob(kind: "final")
@@ -307,14 +292,6 @@ final class MomentsCreateViewModel: ObservableObject {
         effectiveActiveWorkspace?.storyScenes ?? savedScenes
     }
 
-    var effectiveLatestPreview: MomentArtifact? {
-        effectiveActiveWorkspace?.latestArtifact(kind: "preview") ?? latestPreview
-    }
-
-    var effectiveLatestPreviewJob: MomentRenderJob? {
-        effectiveActiveWorkspace?.latestRenderJob(kind: "preview") ?? latestPreviewJob
-    }
-
     var effectiveFinalExport: MomentArtifact? {
         effectiveActiveWorkspace?.latestArtifact(kind: "final_export") ?? finalExport
     }
@@ -351,7 +328,6 @@ final class MomentsCreateViewModel: ObservableObject {
         momentCreationWorkflow?.resetMomentSetup(force: force)
         mediaUploadWorkflow?.reset(force: force)
         storyPlanWorkflow?.reset(force: force)
-        previewGenerationWorkflow?.reset(force: force)
         finalRenderWorkflow?.reset(force: force)
 
         if let firstTemplate = templates.first {
@@ -642,6 +618,8 @@ extension MomentsCreateViewModel {
 
     func applyStoryPlanState(_ state: MomentsCreateStoryPlanState) {
         guard !usesCreateUITestFixture else { return }
+        activeWorkspace = state.activeWorkspace
+        syncFormWithActiveWorkspace(state.activeWorkspace)
         savedScenes = state.savedScenes
         generatedScenes = state.generatedScenes
         isPlanningStory = state.isPlanning
@@ -659,28 +637,12 @@ extension MomentsCreateViewModel {
         storyStatusMessage = message
     }
 
-    func updatePreviewStatusMessage(_ message: String?) {
-        previewStatusMessage = message
-    }
-
     func updateSetupErrorMessage(_ message: String?) {
         setupErrorMessage = message
     }
 
     func updateFinalRenderStatusMessage(_ message: String?) {
         finalRenderStatusMessage = message
-    }
-
-    func applyPreviewGenerationState(_ state: MomentsCreatePreviewGenerationState) {
-        guard !usesCreateUITestFixture else { return }
-        activeWorkspace = state.activeWorkspace
-        syncFormWithActiveWorkspace(state.activeWorkspace)
-        reconcilePreparedStorySignature()
-        latestPreview = state.latestPreview
-        latestPreviewJob = state.latestPreviewJob
-        previewStatusMessage = state.statusMessage
-        isGeneratingPreview = state.isGenerating
-        isRefreshingPreviewStatus = state.isRefreshingStatus
     }
 
     func applyFinalRenderState(_ state: MomentsCreateFinalRenderState) {

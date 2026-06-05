@@ -4,7 +4,6 @@ struct MomentsCreateWorkspaceSummary: Equatable {
     var mediaCount = 0
     var sceneCount = 0
     var renderJobCount = 0
-    var hasPreviewArtifact = false
     var hasFinalExport = false
 
     var mediaDetail: String {
@@ -15,20 +14,14 @@ struct MomentsCreateWorkspaceSummary: Equatable {
         L10n.string(sceneCount == 1 ? "create.summary.story.scene" : "create.summary.story.scenes", sceneCount)
     }
 
-    var previewDetail: String {
-        hasPreviewArtifact ? L10n.string("create.summary.preview.ready") : L10n.string("create.summary.preview.notMade")
-    }
-
     static func make(
         workspace: MomentWorkspace?,
-        latestPreview: MomentArtifact?,
         finalExport: MomentArtifact?
     ) -> MomentsCreateWorkspaceSummary {
         MomentsCreateWorkspaceSummary(
             mediaCount: workspace?.mediaAssets.count ?? 0,
             sceneCount: workspace?.storyScenes.count ?? 0,
             renderJobCount: workspace?.renderJobs.count ?? 0,
-            hasPreviewArtifact: latestPreview != nil,
             hasFinalExport: finalExport != nil
         )
     }

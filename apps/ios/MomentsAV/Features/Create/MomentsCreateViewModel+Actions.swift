@@ -193,70 +193,6 @@ extension MomentsCreateViewModel {
         }
     }
 
-    func generatePreview() {
-        guard canGeneratePreview, let previewGenerationWorkflow, let context = activeTemplateContext else {
-            updatePreviewStatusMessage(previewAvailabilityMessage ?? L10n.string("create.preview.status.notReady"))
-            return
-        }
-
-        updatePreviewStatusMessage(L10n.string("create.preview.action.reviewing"))
-        runOperation {
-            await previewGenerationWorkflow.generatePreview(
-                momentId: context.momentId,
-                template: context.template,
-                form: self.form
-            )
-        }
-    }
-
-    func preparePreview() {
-        if canGeneratePreview {
-            generatePreview()
-            return
-        }
-
-        guard canPlanStory, let storyPlanWorkflow else {
-            updateStoryStatusMessage(storyAvailabilityMessage ?? L10n.string("create.error.storyPreparationNotReady"))
-            return
-        }
-        let form = form
-        let selectedMedia = selectedMedia
-        isPreparingStory = true
-        updateStoryStatusMessage(L10n.string("create.preparation.prepareStory.progress"))
-        updatePreviewStatusMessage(L10n.string("create.preview.status.creating"))
-
-        runOperation {
-            defer { self.isPreparingStory = false }
-            self.updateStoryStatusMessage(L10n.string("create.preparation.uploadForVideo.title"))
-            let momentId = await self.resolveMomentIdForPreparation(form: form)
-
-            guard let momentId else {
-                self.updateStoryStatusMessage(self.momentCreationFailureMessage())
-                return
-            }
-            self.updateStoryStatusMessage(L10n.string("create.preparation.prepareStory.progress"))
-            guard await self.prepareStoryIfNeeded(
-                momentId: momentId,
-                form: form,
-                selectedMedia: selectedMedia,
-                storyPlanWorkflow: storyPlanWorkflow
-            ) else {
-                return
-            }
-
-            guard let previewGenerationWorkflow = self.previewGenerationWorkflow else {
-                self.updatePreviewStatusMessage(L10n.string("create.error.storyReviewNotConfigured"))
-                return
-            }
-            self.updatePreviewStatusMessage(L10n.string("create.preview.action.reviewing"))
-            await previewGenerationWorkflow.generatePreview(
-                momentId: momentId,
-                template: form.template,
-                form: form
-            )
-        }
-    }
-
     func prepareFinalVideoPlanFromCurrentSelection(removesWatermark: Bool = false) {
         guard let finalRenderWorkflow else {
             updateFinalRenderStatusMessage(L10n.string("create.error.videoCreationNotConfigured"))
@@ -408,17 +344,6 @@ extension MomentsCreateViewModel {
             return false
         }
         return true
-    }
-
-    func refreshPreviewStatus() {
-        guard canRefreshPreviewStatus, let previewGenerationWorkflow else {
-            updatePreviewStatusMessage(previewRefreshAvailabilityMessage ?? L10n.string("create.error.noStoryReviewStatus"))
-            return
-        }
-
-        runOperation {
-            await previewGenerationWorkflow.refreshStatus()
-        }
     }
 
     func retryFinalVideoDownload() {

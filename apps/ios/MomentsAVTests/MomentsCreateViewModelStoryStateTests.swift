@@ -165,6 +165,7 @@ final class MomentsCreateViewModelStoryStateTests: XCTestCase {
         )
         viewModel.applyStoryPlanState(
             MomentsCreateStoryPlanState(
+                activeWorkspace: nil,
                 savedScenes: [],
                 generatedScenes: [],
                 statusMessage: MomentsRecoveryCopy.storyFailure(),
@@ -177,6 +178,7 @@ final class MomentsCreateViewModelStoryStateTests: XCTestCase {
 
         viewModel.applyStoryPlanState(
             MomentsCreateStoryPlanState(
+                activeWorkspace: nil,
                 savedScenes: [MomentsCreateTestFixtures.makeScene(id: "scene-1")],
                 generatedScenes: [],
                 statusMessage: MomentsRecoveryCopy.storyFailure(),
@@ -211,25 +213,24 @@ final class MomentsCreateViewModelStoryStateTests: XCTestCase {
             )
         )
 
-        viewModel.applyPreviewGenerationState(
-            MomentsCreatePreviewGenerationState(
+        viewModel.applyStoryPlanState(
+            MomentsCreateStoryPlanState(
                 activeWorkspace: MomentWorkspace(
-                moment: MomentsCreateTestFixtures.makeMoment(id: "moment-1"),
-                mediaAssets: [
-                    MomentsCreateTestFixtures.makeMediaAsset(
-                        id: "backend-media-1",
-                        sortOrder: 0
-                    )
-                ],
-                storyScenes: [],
-                renderJobs: [],
-                artifacts: []
+                    moment: MomentsCreateTestFixtures.makeMoment(id: "moment-1"),
+                    mediaAssets: [
+                        MomentsCreateTestFixtures.makeMediaAsset(
+                            id: "backend-media-1",
+                            sortOrder: 0
+                        )
+                    ],
+                    storyScenes: [],
+                    renderJobs: [],
+                    artifacts: []
                 ),
-                latestPreview: nil,
-                latestPreviewJob: nil,
+                savedScenes: [],
+                generatedScenes: [],
                 statusMessage: nil,
-                isGenerating: false,
-                isRefreshingStatus: false
+                isPlanning: false
             )
         )
 
@@ -292,6 +293,7 @@ final class MomentsCreateViewModelStoryStateTests: XCTestCase {
 
         viewModel.applyStoryPlanState(
             MomentsCreateStoryPlanState(
+                activeWorkspace: nil,
                 savedScenes: [MomentsCreateTestFixtures.makeScene(id: "scene-1")],
                 generatedScenes: [],
                 statusMessage: nil,
@@ -300,8 +302,8 @@ final class MomentsCreateViewModelStoryStateTests: XCTestCase {
         )
         XCTAssertTrue(viewModel.isStoryPreparedForCurrentInput)
 
-        viewModel.applyPreviewGenerationState(
-            MomentsCreatePreviewGenerationState(
+        viewModel.applyStoryPlanState(
+            MomentsCreateStoryPlanState(
                 activeWorkspace: MomentWorkspace(
                     moment: MomentsCreateTestFixtures.makeMoment(
                         id: "moment-1",
@@ -313,11 +315,10 @@ final class MomentsCreateViewModelStoryStateTests: XCTestCase {
                     renderJobs: [],
                     artifacts: []
                 ),
-                latestPreview: nil,
-                latestPreviewJob: nil,
+                savedScenes: [MomentsCreateTestFixtures.makeScene(id: "scene-1")],
+                generatedScenes: [],
                 statusMessage: nil,
-                isGenerating: false,
-                isRefreshingStatus: false
+                isPlanning: false
             )
         )
 
@@ -383,8 +384,8 @@ final class MomentsCreateViewModelStoryStateTests: XCTestCase {
 
         XCTAssertFalse(viewModel.isStoryPreparedForCurrentInput)
 
-        viewModel.applyPreviewGenerationState(
-            MomentsCreatePreviewGenerationState(
+        viewModel.applyStoryPlanState(
+            MomentsCreateStoryPlanState(
                 activeWorkspace: MomentWorkspace(
                     moment: MomentsCreateTestFixtures.makeMoment(
                         id: "moment-1",
@@ -396,11 +397,10 @@ final class MomentsCreateViewModelStoryStateTests: XCTestCase {
                     renderJobs: [],
                     artifacts: []
                 ),
-                latestPreview: nil,
-                latestPreviewJob: nil,
+                savedScenes: [MomentsCreateTestFixtures.makeScene(id: "scene-1")],
+                generatedScenes: [],
                 statusMessage: nil,
-                isGenerating: false,
-                isRefreshingStatus: false
+                isPlanning: false
             )
         )
 
@@ -462,8 +462,8 @@ final class MomentsCreateViewModelStoryStateTests: XCTestCase {
         let signatureBeforeSync = viewModel.currentFinalRenderInputSignatureSource(momentId: "moment-1")
         XCTAssertNotNil(viewModel.currentRenderPlan)
 
-        viewModel.applyPreviewGenerationState(
-            MomentsCreatePreviewGenerationState(
+        viewModel.applyStoryPlanState(
+            MomentsCreateStoryPlanState(
                 activeWorkspace: MomentWorkspace(
                     moment: MomentsCreateTestFixtures.makeMoment(
                         id: "moment-1",
@@ -485,11 +485,10 @@ final class MomentsCreateViewModelStoryStateTests: XCTestCase {
                     renderJobs: [],
                     artifacts: []
                 ),
-                latestPreview: nil,
-                latestPreviewJob: nil,
+                savedScenes: [],
+                generatedScenes: [],
                 statusMessage: nil,
-                isGenerating: false,
-                isRefreshingStatus: false
+                isPlanning: false
             )
         )
 
@@ -507,7 +506,6 @@ final class MomentsCreateViewModelStoryStateTests: XCTestCase {
             momentCreationWorkflow: harness.momentCreationWorkflow,
             mediaUploadWorkflow: harness.mediaUploadWorkflow,
             storyPlanWorkflow: harness.storyPlanWorkflow,
-            previewGenerationWorkflow: harness.previewGenerationWorkflow,
             finalRenderWorkflow: harness.finalRenderWorkflow
         )
         await Task.yield()
@@ -558,8 +556,8 @@ final class MomentsCreateViewModelStoryStateTests: XCTestCase {
                 setupErrorMessage: nil
             )
         )
-        viewModel.applyPreviewGenerationState(
-            MomentsCreatePreviewGenerationState(
+        viewModel.applyStoryPlanState(
+            MomentsCreateStoryPlanState(
                 activeWorkspace: MomentWorkspace(
                     moment: MomentsCreateTestFixtures.makeMoment(
                         id: momentId,
@@ -571,15 +569,6 @@ final class MomentsCreateViewModelStoryStateTests: XCTestCase {
                     renderJobs: [],
                     artifacts: []
                 ),
-                latestPreview: nil,
-                latestPreviewJob: nil,
-                statusMessage: nil,
-                isGenerating: false,
-                isRefreshingStatus: false
-            )
-        )
-        viewModel.applyStoryPlanState(
-            MomentsCreateStoryPlanState(
                 savedScenes: [MomentsCreateTestFixtures.makeScene(id: "scene-1")],
                 generatedScenes: [],
                 statusMessage: nil,
@@ -631,7 +620,6 @@ private final class MomentCreationFailureHarness:
     MomentsDeleting,
     MomentsMediaAssetSaving,
     MomentsStoryPlanSaving,
-    MomentsPreviewResultSaving,
     MomentsActiveWorkspaceObserving
 {
     let createAttemptExpectation = XCTestExpectation(description: "Moment creation attempted")
@@ -677,17 +665,6 @@ private final class MomentCreationFailureHarness:
             storyPlanSaver: self,
             workspaceObserver: self,
             storyClient: MomentsStoryClient(baseURLString: "https://api.example.com")
-        )
-    }
-
-    var previewGenerationWorkflow: PreviewGenerationWorkflow {
-        PreviewGenerationWorkflow(
-            currentUserProvider: self,
-            authTokenProvider: self,
-            previewResultSaver: self,
-            workspaceObserver: self,
-            previewClient: MomentsPreviewClient(baseURLString: "https://api.example.com"),
-            statusClient: MomentsRenderStatusClient(baseURLString: "https://api.example.com")
         )
     }
 

@@ -21,12 +21,6 @@ struct MomentsCreateWorkspaceProgress: View {
                 isComplete: summary.sceneCount > 0,
             )
             AVAppShellProgressRow(
-                title: L10n.string("moment.kind.storyReview"),
-                detail: summary.previewDetail,
-                systemImage: "text.bubble",
-                isComplete: summary.hasPreviewArtifact,
-            )
-            AVAppShellProgressRow(
                 title: L10n.string("moment.artifact.final.title"),
                 detail: summary.hasFinalExport ? L10n.string("create.status.ready") : L10n.string("create.progress.finalNotMade"),
                 systemImage: "square.and.arrow.up",

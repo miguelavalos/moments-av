@@ -7,14 +7,12 @@ extension MomentsCreateViewModel {
         momentCreationWorkflow: MomentCreationWorkflow,
         mediaUploadWorkflow: MediaUploadWorkflow,
         storyPlanWorkflow: StoryPlanWorkflow,
-        previewGenerationWorkflow: PreviewGenerationWorkflow,
         finalRenderWorkflow: FinalRenderWorkflow
     ) {
         bindAccount(accountStateProvider)
         bindMomentCreation(momentCreationWorkflow)
         bindMediaUpload(mediaUploadWorkflow)
         bindStoryPlan(storyPlanWorkflow)
-        bindPreviewGeneration(previewGenerationWorkflow)
         bindFinalRender(finalRenderWorkflow)
     }
 
@@ -79,50 +77,20 @@ extension MomentsCreateViewModel {
 
     private func bindStoryPlan(_ workflow: StoryPlanWorkflow) {
         Publishers.CombineLatest4(
-            workflow.$activeWorkspace.map { $0?.storyScenes ?? [] },
+            workflow.$activeWorkspace,
             workflow.$generatedPlan.map { $0?.scenes ?? [] },
             workflow.$statusMessage,
             workflow.$isPlanning
         )
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] savedScenes, generatedScenes, statusMessage, isPlanning in
+            .sink { [weak self] activeWorkspace, generatedScenes, statusMessage, isPlanning in
                 self?.applyStoryPlanState(
                     MomentsCreateStoryPlanState(
-                        savedScenes: savedScenes,
+                        activeWorkspace: activeWorkspace,
+                        savedScenes: activeWorkspace?.storyScenes ?? [],
                         generatedScenes: generatedScenes,
                         statusMessage: statusMessage,
                         isPlanning: isPlanning
-                    )
-                )
-            }
-            .store(in: &cancellables)
-    }
-
-    private func bindPreviewGeneration(_ workflow: PreviewGenerationWorkflow) {
-        Publishers.CombineLatest(
-            Publishers.CombineLatest4(
-                workflow.$activeWorkspace,
-                workflow.$latestPreview,
-                workflow.$latestPreviewJob,
-                workflow.$statusMessage
-            ),
-            Publishers.CombineLatest(
-                workflow.$isGenerating,
-                workflow.$isRefreshingStatus
-            )
-        )
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] content, flags in
-                let (activeWorkspace, latestPreview, latestPreviewJob, statusMessage) = content
-                let (isGenerating, isRefreshingStatus) = flags
-                self?.applyPreviewGenerationState(
-                    MomentsCreatePreviewGenerationState(
-                        activeWorkspace: activeWorkspace,
-                        latestPreview: latestPreview,
-                        latestPreviewJob: latestPreviewJob,
-                        statusMessage: statusMessage,
-                        isGenerating: isGenerating,
-                        isRefreshingStatus: isRefreshingStatus
                     )
                 )
             }

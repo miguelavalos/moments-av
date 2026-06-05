@@ -30,21 +30,6 @@ extension MomentsCreateViewModel {
         )
     }
 
-    var previewAvailabilityMessage: String? {
-        MomentsCreateAvailabilityMessageFactory.preview(
-            activeMomentId: activeMomentId,
-            isPreviewGenerationAvailable: previewGenerationWorkflow != nil,
-            isPreviewGenerating: previewGenerationWorkflow?.isGenerating ?? false,
-            isPreviewGenerationConfigured: previewGenerationWorkflow?.isConfigured ?? false,
-            moment: activeMoment,
-            template: form.template
-        )
-    }
-
-    var previewRefreshAvailabilityMessage: String? {
-        previewRefreshAvailability.message
-    }
-
     var finalRenderAvailabilityMessage: String? {
         MomentsCreateAvailabilityMessageFactory.finalRender(
             activeMomentId: activeMomentId,
@@ -60,16 +45,6 @@ extension MomentsCreateViewModel {
 
     var setupFormAvailability: MomentSetupRules.Availability {
         MomentSetupRules.availability(form: form, balance: balance)
-    }
-
-    var previewRefreshAvailability: RenderJobStatusRefreshAvailability {
-        MomentsCreateRefreshAvailabilityFactory.preview(
-            momentId: activeMomentId,
-            job: effectiveLatestPreviewJob,
-            isAvailable: previewGenerationWorkflow != nil,
-            isConfigured: previewGenerationWorkflow?.isConfigured ?? false,
-            isRefreshing: previewGenerationWorkflow?.isRefreshingStatus ?? false
-        )
     }
 
 }

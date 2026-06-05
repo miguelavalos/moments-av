@@ -766,13 +766,11 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
             mediaCount: 2,
             sceneCount: 1,
             renderJobCount: 1,
-            hasPreviewArtifact: false,
             hasFinalExport: false
         )
 
         XCTAssertEqual(summary.mediaDetail, "2 added")
         XCTAssertEqual(summary.storyDetail, "1 scene")
-        XCTAssertEqual(summary.previewDetail, "Not made yet")
     }
 
     func testCreateUITestFixturesExposePreRenderStates() {

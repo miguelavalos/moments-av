@@ -22,7 +22,6 @@ struct MomentsViewModelBundle {
             momentCreationWorkflow: workflows.momentCreation,
             mediaUploadWorkflow: workflows.mediaUpload,
             storyPlanWorkflow: workflows.storyPlan,
-            previewGenerationWorkflow: workflows.previewGeneration,
             finalRenderWorkflow: workflows.finalRender
         )
         inProgress.bind(to: workflows.inProgressMoments)

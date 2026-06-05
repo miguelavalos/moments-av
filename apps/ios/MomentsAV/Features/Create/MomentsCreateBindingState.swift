@@ -20,19 +20,11 @@ struct MomentsCreateMediaUploadState {
 }
 
 struct MomentsCreateStoryPlanState {
+    let activeWorkspace: MomentWorkspace?
     let savedScenes: [MomentStoryScene]
     let generatedScenes: [MomentsStoryPlanScene]
     let statusMessage: String?
     let isPlanning: Bool
-}
-
-struct MomentsCreatePreviewGenerationState {
-    let activeWorkspace: MomentWorkspace?
-    let latestPreview: MomentArtifact?
-    let latestPreviewJob: MomentRenderJob?
-    let statusMessage: String?
-    let isGenerating: Bool
-    let isRefreshingStatus: Bool
 }
 
 struct MomentsCreateFinalRenderState {
