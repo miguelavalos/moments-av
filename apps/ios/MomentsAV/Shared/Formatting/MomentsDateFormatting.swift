@@ -13,7 +13,7 @@ enum MomentsMomentFormatting {
     }
 
     static func storyUsage(_ moment: InProgressMoment) -> String {
-        L10n.string("moment.kind.storyReview")
+        L10n.string("moment.kind.story")
     }
 
     static func statusTitle(_ moment: InProgressMoment) -> String {

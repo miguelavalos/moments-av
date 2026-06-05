@@ -54,7 +54,7 @@ final class MomentsHomePresentationTests: XCTestCase {
         XCTAssertTrue(presentation.latestInProgressAction?.isProminent == true)
         XCTAssertFalse(presentation.createAction.isProminent)
         XCTAssertEqual(presentation.latestInProgressContinuationRequest?.moment.id, "latest-plan")
-        XCTAssertEqual(presentation.latestInProgressContinuationRequest?.focus, .review)
+        XCTAssertEqual(presentation.latestInProgressContinuationRequest?.focus, .moment)
     }
 
     func testMomentCountDrivesStatusAndReviewDetail() {

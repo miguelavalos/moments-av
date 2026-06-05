@@ -45,7 +45,7 @@ enum MomentStatusRules {
                 title: L10n.string("moment.nextAction.videoAttention.title"),
                 message: L10n.string("moment.nextAction.videoAttention.message", displayKind(failedJob.kind)),
                 systemImage: "exclamationmark.triangle",
-                primaryButtonTitle: L10n.string("moment.nextAction.reviewInCreate"),
+                primaryButtonTitle: L10n.string("moment.nextAction.openInCreate"),
                 continuationFocus: focus(forFailedJobKind: failedJob.kind)
             )
         }
@@ -94,7 +94,7 @@ enum MomentStatusRules {
         case "final":
             .finalRender
         default:
-            .review
+            .moment
         }
     }
 

@@ -1,7 +1,7 @@
 import Foundation
 
 enum MomentsContinuationFocus: Hashable {
-    case review
+    case moment
     case media
     case story
     case finalRender
@@ -19,7 +19,7 @@ struct MomentsContinuationRequest: Equatable {
     let moment: InProgressMoment
     let focus: MomentsContinuationFocus
 
-    init(moment: InProgressMoment, focus: MomentsContinuationFocus = .review) {
+    init(moment: InProgressMoment, focus: MomentsContinuationFocus = .moment) {
         self.moment = moment
         self.focus = focus
     }

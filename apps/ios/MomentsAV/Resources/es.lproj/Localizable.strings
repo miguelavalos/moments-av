@@ -352,7 +352,7 @@
 "moment.noun.one" = "Moment";
 "moment.noun.other" = "Moments";
 "moment.this" = "este Moment";
-"moment.kind.storyReview" = "Historia";
+"moment.kind.story" = "Historia";
 "moment.nextAction.addMedia.button" = "Añadir media en Crear";
 "moment.nextAction.addMedia.message" = "Continúa en Crear y añade fotos o clips antes de preparar la historia.";
 "moment.nextAction.addMedia.title" = "Añadir media";
@@ -364,7 +364,6 @@
 "moment.nextAction.prepareStory.button" = "Preparar historia en Crear";
 "moment.nextAction.prepareStory.message" = "Continúa en Crear y deja que Avi prepare la historia.";
 "moment.nextAction.prepareStory.title" = "Preparar historia";
-"moment.nextAction.reviewInCreate" = "Abrir en Crear";
 "moment.nextAction.videoAttention.message" = "%@ ha tenido un problema. Vuelve a Crear e inténtalo de nuevo.";
 "moment.nextAction.videoAttention.title" = "El video necesita atención";
 "moment.status.creatingVideo" = "Creando video";
@@ -491,8 +490,8 @@
 "create.continuation.final.title" = "Continuar con el video";
 "create.continuation.media.message" = "Añade fotos o clips y prepara la historia.";
 "create.continuation.media.title" = "Continuar con media";
-"create.continuation.review.message" = "Abre este Moment y continúa el siguiente paso pendiente.";
-"create.continuation.review.title" = "Continuar Moment";
+"create.continuation.moment.message" = "Abre este Moment y continúa el siguiente paso pendiente.";
+"create.continuation.moment.title" = "Continuar Moment";
 "create.continuation.story.message" = "Prepara la historia a partir de la media seleccionada.";
 "create.continuation.story.title" = "Continuar con historia";
 "create.credits.detail" = "Los créditos son necesarios antes de crear el video final.";

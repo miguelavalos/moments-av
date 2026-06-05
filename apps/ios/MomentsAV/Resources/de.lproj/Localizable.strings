@@ -240,7 +240,7 @@
 "moment.noun.one" = "Moment";
 "moment.noun.other" = "Moments";
 "moment.this" = "dieser Moment";
-"moment.kind.storyReview" = "Story";
+"moment.kind.story" = "Story";
 "moment.nextAction.addMedia.button" = "Medien in Erstellen hinzufügen";
 "moment.nextAction.addMedia.message" = "Füge in Erstellen Fotos oder Clips hinzu, bevor du die Story vorbereitest.";
 "moment.nextAction.addMedia.title" = "Medien hinzufügen";
@@ -252,7 +252,6 @@
 "moment.nextAction.prepareStory.button" = "Story in Erstellen vorbereiten";
 "moment.nextAction.prepareStory.message" = "Fahre in Erstellen fort und lass Avi die Story vorbereiten.";
 "moment.nextAction.prepareStory.title" = "Story vorbereiten";
-"moment.nextAction.reviewInCreate" = "Open in Create";
 "moment.nextAction.videoAttention.message" = "%@ hatte ein Problem. Kehre zu Erstellen zurück und versuche es erneut.";
 "moment.nextAction.videoAttention.title" = "Video braucht Aufmerksamkeit";
 "moment.status.creatingVideo" = "Video wird erstellt";
@@ -491,8 +490,8 @@
 "create.continuation.final.title" = "Mit Video fortfahren";
 "create.continuation.media.message" = "Füge Fotos oder Clips hinzu und bereite die Story vor.";
 "create.continuation.media.title" = "Mit Medien fortfahren";
-"create.continuation.review.message" = "Öffne diesen Moment und fahre mit dem nächsten offenen Schritt fort.";
-"create.continuation.review.title" = "Moment fortsetzen";
+"create.continuation.moment.message" = "Öffne diesen Moment und fahre mit dem nächsten offenen Schritt fort.";
+"create.continuation.moment.title" = "Moment fortsetzen";
 "create.continuation.story.message" = "Bereite die Story aus den ausgewählten Medien vor.";
 "create.continuation.story.title" = "Mit Story fortfahren";
 "create.credits.detail" = "Credits werden vor dem finalen Video benötigt.";

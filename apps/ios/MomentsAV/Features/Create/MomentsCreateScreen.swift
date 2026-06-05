@@ -120,15 +120,15 @@ struct MomentsCreateScreen: View {
 }
 
 enum MomentsCreateSection: Hashable {
-    case review
+    case moment
     case media
     case story
     case finalRender
 
     init(focus: MomentsContinuationFocus) {
         switch focus {
-        case .review:
-            self = .review
+        case .moment:
+            self = .moment
         case .media:
             self = .media
         case .story:

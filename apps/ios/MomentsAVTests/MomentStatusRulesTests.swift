@@ -54,7 +54,7 @@ final class MomentStatusRulesTests: XCTestCase {
         XCTAssertEqual(summary.latestMoment?.id, "newest-finished")
         XCTAssertEqual(summary.latestInProgressMoment?.id, "latest-plan")
         XCTAssertEqual(summary.latestInProgressContinuationRequest?.moment.id, "latest-plan")
-        XCTAssertEqual(summary.latestInProgressContinuationRequest?.focus, .review)
+        XCTAssertEqual(summary.latestInProgressContinuationRequest?.focus, .moment)
     }
 
     func testEmptyListSummaryHasNoMoments() {

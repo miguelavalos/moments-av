@@ -191,7 +191,7 @@ final class MomentsCreateViewModel: ObservableObject {
         isLocalMomentStarted = false
     }
 
-    func continueMoment(_ moment: InProgressMoment, focus: MomentsContinuationFocus = .review) {
+    func continueMoment(_ moment: InProgressMoment, focus: MomentsContinuationFocus = .moment) {
         cancelOperations()
         isContinuingMoment = true
         isLocalMomentStarted = false
@@ -273,8 +273,8 @@ final class MomentsCreateViewModel: ObservableObject {
                 return L10n.string("create.final.status.ready")
             }
         }()
-        pendingFocus = .review
-        continuationFocusHint = .review
+        pendingFocus = .moment
+        continuationFocusHint = .moment
     }
 
     var effectiveActiveWorkspace: MomentWorkspace? {

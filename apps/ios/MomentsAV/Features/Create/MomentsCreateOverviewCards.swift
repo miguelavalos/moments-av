@@ -121,8 +121,8 @@ struct MomentsCurrentCreationCard: View {
 private extension MomentsContinuationFocus {
     var title: String {
         switch self {
-        case .review:
-            L10n.string("create.continuation.review.title")
+        case .moment:
+            L10n.string("create.continuation.moment.title")
         case .media:
             L10n.string("create.continuation.media.title")
         case .story:
@@ -134,8 +134,8 @@ private extension MomentsContinuationFocus {
 
     var message: String {
         switch self {
-        case .review:
-            L10n.string("create.continuation.review.message")
+        case .moment:
+            L10n.string("create.continuation.moment.message")
         case .media:
             L10n.string("create.continuation.media.message")
         case .story:
@@ -147,7 +147,7 @@ private extension MomentsContinuationFocus {
 
     var systemImage: String {
         switch self {
-        case .review:
+        case .moment:
             "rectangle.stack"
         case .media:
             "photo.badge.plus"

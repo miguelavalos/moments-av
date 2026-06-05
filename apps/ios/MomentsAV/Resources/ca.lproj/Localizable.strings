@@ -350,7 +350,7 @@
 "moment.noun.one" = "Moment";
 "moment.noun.other" = "Moments";
 "moment.this" = "aquest Moment";
-"moment.kind.storyReview" = "Història";
+"moment.kind.story" = "Història";
 "moment.nextAction.addMedia.button" = "Afegeix media a Crear";
 "moment.nextAction.addMedia.message" = "Continua a Crear i afegeix fotos o clips abans de preparar la història.";
 "moment.nextAction.addMedia.title" = "Afegeix media";
@@ -362,7 +362,6 @@
 "moment.nextAction.prepareStory.button" = "Prepara la història a Crear";
 "moment.nextAction.prepareStory.message" = "Continua a Crear i deixa que Avi prepari la història.";
 "moment.nextAction.prepareStory.title" = "Prepara la història";
-"moment.nextAction.reviewInCreate" = "Open in Create";
 "moment.nextAction.videoAttention.message" = "%@ ha tingut un problema. Torna a Crear i prova-ho de nou.";
 "moment.nextAction.videoAttention.title" = "El vídeo necessita atenció";
 "moment.status.creatingVideo" = "Creant vídeo";
@@ -489,8 +488,8 @@
 "create.continuation.final.title" = "Continuar amb el vídeo";
 "create.continuation.media.message" = "Afegeix fotos o clips i prepara la història.";
 "create.continuation.media.title" = "Continuar amb media";
-"create.continuation.review.message" = "Obre aquest Moment i continua el següent pas pendent.";
-"create.continuation.review.title" = "Continuar Moment";
+"create.continuation.moment.message" = "Obre aquest Moment i continua el següent pas pendent.";
+"create.continuation.moment.title" = "Continuar Moment";
 "create.continuation.story.message" = "Prepara la història a partir de la mèdia seleccionada.";
 "create.continuation.story.title" = "Continuar amb història";
 "create.credits.detail" = "Calen crèdits abans de crear el vídeo final.";
