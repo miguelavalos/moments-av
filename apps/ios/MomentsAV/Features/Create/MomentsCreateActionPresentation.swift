@@ -20,7 +20,7 @@ struct MomentsCreateFinalVideoActionPresentation: Equatable {
         if blockers.contains("provider_adapter_unavailable") || blockers.contains("render_option_unavailable") {
             return L10n.string("create.final.blocker.videoSetupUnavailable")
         }
-        if blockers.contains("insufficient_credits") {
+        if blockedRenderPlanIsInsufficientCredits {
             return L10n.string("create.final.blocker.insufficientCredits")
         }
         if blockers.contains("no_usable_media") || blockers.contains("all_media_rejected") {
@@ -30,7 +30,9 @@ struct MomentsCreateFinalVideoActionPresentation: Equatable {
     }
 
     var blockedRenderPlanIsInsufficientCredits: Bool {
-        hasBlockedRenderPlan && (summary.renderPlan?.createVideoBlockers ?? []).contains("insufficient_credits")
+        hasBlockedRenderPlan
+            && (summary.renderPlan?.createVideoBlockers ?? []).contains("insufficient_credits")
+            && !canAffordSelectedCost
     }
 
     var canRetryBlockedRenderPlan: Bool {

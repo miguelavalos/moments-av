@@ -697,6 +697,44 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         XCTAssertEqual(presentation.statusMessage, "Add 2 more credits before creating the final video.")
     }
 
+    func testPrimaryActionPresentationRetriesMixedBlockedPlanWhenCreditsCoverCost() {
+        let presentation = MomentsCreatePrimaryActionPresentation(
+            workflow: MomentsCreateWorkflowPresentation(
+                activeMomentId: "moment-1",
+                isSignedIn: true,
+                hasMomentWorkspace: true,
+                template: .birthdayMessage,
+                balance: MomentsCreditBalance(proMonthly: 0, promotional: 5, purchased: 0),
+                mediaSummary: MomentsCreateMediaSummary(
+                    syncedMediaAssets: [MomentsCreateTestFixtures.makeMediaAsset(id: "media-1")]
+                ),
+                storySummary: MomentsCreateStorySummary(
+                    savedScenes: [MomentsCreateTestFixtures.makeScene(id: "scene-1")]
+                ),
+                finalRenderSummary: MomentsCreateFinalRenderSummary(
+                    creditCost: 1,
+                    renderPlan: MomentsCreateTestFixtures.makeRenderPlan(
+                        canCreateVideo: false,
+                        totalCreditCost: 1,
+                        createVideoBlockers: ["provider_adapter_unavailable", "insufficient_credits"]
+                    )
+                ),
+                canPlanStory: false,
+                canPrepareFinalRenderPlan: true,
+                canGenerateFinalRender: false
+            )
+        )
+
+        XCTAssertTrue(presentation.canRunPrimaryAction)
+        XCTAssertFalse(presentation.needsCreditsForPreparedPlan)
+        XCTAssertEqual(presentation.buttonTitle, "Try again")
+        XCTAssertEqual(presentation.buttonIconName, "arrow.clockwise")
+        XCTAssertEqual(
+            presentation.statusMessage,
+            "Avi could not prepare video creation. Try again, or adjust the media and options."
+        )
+    }
+
     func testPrimaryActionPresentationShowsFinalRenderErrorOverPreparedPlanCopy() {
         let presentation = MomentsCreatePrimaryActionPresentation(
             workflow: MomentsCreateWorkflowPresentation(
