@@ -91,6 +91,7 @@ final class MomentsCreateViewModel: ObservableObject {
     private var hasExplicitMediaEditsAfterPreparedStory = false
     private var hasLocalSetupEdits = false
     private var hasUserStyleOverride = false
+    private var hasUserLookOverride = false
     private var hasUserDurationOverride = false
     private var autoStyleUndoSelection: (style: MomentCreationStyle, musicPreset: MomentMusicPreset, form: MomentSetupForm)?
 
@@ -184,7 +185,7 @@ final class MomentsCreateViewModel: ObservableObject {
         hasUserStyleOverride = true
         canUndoAutoStyleSuggestion = false
         autoStyleUndoSelection = nil
-        applyStyleDefaults(style)
+        applyStyleDefaults(style, preserveUserOverrides: true)
         markLocalSetupEdited()
     }
 
@@ -207,7 +208,7 @@ final class MomentsCreateViewModel: ObservableObject {
         selectedMusicPreset = suggestion.musicPreset
         hasUserStyleOverride = false
         canUndoAutoStyleSuggestion = true
-        applyStyleDefaults(suggestedStyle)
+        applyStyleDefaults(suggestedStyle, preserveUserOverrides: true)
         form.tone = MomentSetupTone(musicPreset: suggestion.musicPreset)
         markLocalSetupEdited()
     }
@@ -233,6 +234,7 @@ final class MomentsCreateViewModel: ObservableObject {
         continuationFocusHint = nil
         isLocalMomentStarted = false
         hasLocalSetupEdits = false
+        hasUserLookOverride = false
     }
 
     func continueMoment(_ moment: InProgressMoment, focus: MomentsContinuationFocus = .moment) {
@@ -240,6 +242,7 @@ final class MomentsCreateViewModel: ObservableObject {
         isContinuingMoment = true
         isLocalMomentStarted = false
         hasLocalSetupEdits = false
+        hasUserLookOverride = false
         pendingFocus = focus
         continuationFocusHint = focus
 
@@ -392,6 +395,7 @@ final class MomentsCreateViewModel: ObservableObject {
         hasExplicitMediaEditsAfterPreparedStory = false
         hasLocalSetupEdits = false
         hasUserStyleOverride = false
+        hasUserLookOverride = false
         hasUserDurationOverride = false
         applyStyleDefaults(selectedCreationStyle)
     }
@@ -419,13 +423,17 @@ final class MomentsCreateViewModel: ObservableObject {
         finalVideoCommandState = .idle
     }
 
-    private func applyStyleDefaults(_ style: MomentCreationStyle) {
+    private func applyStyleDefaults(_ style: MomentCreationStyle, preserveUserOverrides: Bool = false) {
+        let currentLook = form.look
+        let currentDuration = form.duration
         form.template = style.template
         form.theme = style.id
-        form.look = .real
+        form.look = preserveUserOverrides && hasUserLookOverride ? currentLook : .real
         form.creationMode = .quick
-        form.duration = .auto
-        hasUserDurationOverride = false
+        form.duration = preserveUserOverrides && hasUserDurationOverride ? currentDuration : .auto
+        if !preserveUserOverrides {
+            hasUserDurationOverride = false
+        }
         form.mediaUse = .aviPick
         form.occasion = style.title
         form.tone = style.tone
@@ -558,6 +566,7 @@ final class MomentsCreateViewModel: ObservableObject {
 
     func selectLook(_ look: MomentLook) {
         form.look = look
+        hasUserLookOverride = true
         markLocalSetupEdited()
     }
 
@@ -789,6 +798,8 @@ extension MomentsCreateViewModel {
                 hasExplicitMediaEditsAfterPreparedStory = false
             }
             lastPreparedStoryInputSignature = workspaceSignature
+            hasLocalSetupEdits = false
+            hasUserLookOverride = false
             return
         }
 
