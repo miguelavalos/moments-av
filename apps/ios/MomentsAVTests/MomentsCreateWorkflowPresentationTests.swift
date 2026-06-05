@@ -3,6 +3,56 @@ import XCTest
 
 @MainActor
 final class MomentsCreateWorkflowPresentationTests: XCTestCase {
+    func testPrimaryActionDoesNotRequestCreditsWhenPreparedPlanCostIsCovered() {
+        let presentation = MomentsCreatePrimaryActionPresentation(
+            workflow: MomentsCreateWorkflowPresentation(
+                activeMomentId: "moment-1",
+                isSignedIn: true,
+                hasMomentWorkspace: true,
+                template: .birthdayMessage,
+                balance: MomentsCreditBalance(proMonthly: 0, promotional: 1, purchased: 0),
+                mediaSummary: MomentsCreateMediaSummary(
+                    selectedMedia: [MomentsCreateTestFixtures.makeSelectedMedia(id: "00000000-0000-0000-0000-000000000001")]
+                ),
+                storySummary: MomentsCreateStorySummary(),
+                finalRenderSummary: MomentsCreateFinalRenderSummary(
+                    creditCost: 1,
+                    renderPlan: MomentsCreateTestFixtures.makeRenderPlan(totalCreditCost: 1)
+                ),
+                canPrepareFinalRenderPlan: true,
+                canGenerateFinalRender: true
+            )
+        )
+
+        XCTAssertFalse(presentation.needsCreditsForPreparedPlan)
+        XCTAssertEqual(presentation.buttonTitle, "Confirm credits · 1 credit")
+        XCTAssertEqual(presentation.statusMessage, "Credits are only charged for completed final videos. This video costs 1 credit.")
+    }
+
+    func testPrimaryActionShowsFinalVideoCommandStatus() {
+        let presentation = MomentsCreatePrimaryActionPresentation(
+            workflow: MomentsCreateWorkflowPresentation(
+                activeMomentId: "moment-1",
+                isSignedIn: true,
+                hasMomentWorkspace: true,
+                template: .birthdayMessage,
+                balance: MomentsCreditBalance(proMonthly: 0, promotional: 1, purchased: 0),
+                mediaSummary: MomentsCreateMediaSummary(
+                    selectedMedia: [MomentsCreateTestFixtures.makeSelectedMedia(id: "00000000-0000-0000-0000-000000000001")]
+                ),
+                storySummary: MomentsCreateStorySummary(),
+                finalRenderSummary: MomentsCreateFinalRenderSummary(
+                    creditCost: 1,
+                    statusMessage: "Creating final video."
+                ),
+                canPrepareFinalRenderPlan: true,
+                canGenerateFinalRender: true
+            )
+        )
+
+        XCTAssertEqual(presentation.statusMessage, "Creating final video.")
+    }
+
     func testWorkflowPresentationHidesWorkflowCardsWithoutMoment() {
         let presentation = MomentsCreateWorkflowPresentation(
             activeMomentId: nil,

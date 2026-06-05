@@ -327,8 +327,8 @@ struct MomentsCreatePrimaryActionPresentation: Equatable {
     }
 
     var needsCreditsForPreparedPlan: Bool {
-        finalVideoAction.hasRenderPlan && !finalVideoAction.canAffordSelectedCost
-            || finalVideoAction.blockedRenderPlanIsInsufficientCredits
+        missingCreditsForPreparedPlan > 0
+            && (finalVideoAction.hasRenderPlan || finalVideoAction.blockedRenderPlanIsInsufficientCredits)
     }
 
     private var missingCreditsForPreparedPlan: Int {
