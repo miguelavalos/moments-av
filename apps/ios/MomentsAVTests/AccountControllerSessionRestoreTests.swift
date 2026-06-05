@@ -144,6 +144,40 @@ final class AccountControllerSessionRestoreTests: XCTestCase {
         XCTAssertNotEqual(controller.currentUserId, providerUser.id)
     }
 
+    func testPurchasesUseInternalAccountUserId() async throws {
+        let providerUser = AccountAVUser(
+            id: "user_clerk_subject",
+            displayName: "Clerk User",
+            emailAddress: "user@example.com"
+        )
+        let internalUser = AccountAVUser(
+            id: "appsav-internal-user-id",
+            displayName: "Account AV User",
+            emailAddress: "user@example.com"
+        )
+        let purchaseService = CapturingMomentsPurchaseService()
+        AccountControllerURLProtocol.profileUser = internalUser
+        let controller = AccountController(
+            service: StubAVAccountService(user: providerUser),
+            accountProfileClient: accountProfileClient(),
+            balanceClient: balanceClient(),
+            purchaseService: purchaseService,
+            userDefaults: isolatedUserDefaults()
+        )
+
+        await controller.syncFromAccountProvider()
+        await controller.loadPurchaseCatalog()
+        _ = try await controller.purchase(.starterPack)
+        _ = try await controller.restorePurchases()
+
+        XCTAssertEqual(purchaseService.loadedCatalogUserIds, [internalUser.id])
+        XCTAssertEqual(purchaseService.purchaseUserIds, [internalUser.id])
+        XCTAssertEqual(purchaseService.restoreUserIds, [internalUser.id])
+        XCTAssertFalse(purchaseService.loadedCatalogUserIds.contains(providerUser.id))
+        XCTAssertFalse(purchaseService.purchaseUserIds.contains(providerUser.id))
+        XCTAssertFalse(purchaseService.restoreUserIds.contains(providerUser.id))
+    }
+
     func testActiveProviderSessionDoesNotPublishProviderIdWhenProfileFails() async {
         let providerUser = AccountAVUser(
             id: "user_clerk_subject",
@@ -258,6 +292,39 @@ private struct StubMomentsPurchaseService: MomentsPurchaseServicing {
 
     func restorePurchases(userId: String) async throws -> MomentsPurchaseResult {
         MomentsPurchaseResult(status: .cancelled, productId: nil, transactionId: nil)
+    }
+
+    func logOut() async {}
+}
+
+@MainActor
+private final class CapturingMomentsPurchaseService: MomentsPurchaseServicing {
+    private(set) var loadedCatalogUserIds: [String] = []
+    private(set) var purchaseUserIds: [String] = []
+    private(set) var restoreUserIds: [String] = []
+
+    func loadCatalog(userId: String) async throws -> MomentsPurchaseCatalog {
+        loadedCatalogUserIds.append(userId)
+        return MomentsPurchaseCatalog(
+            entriesByProductId: [
+                MomentsCreditPaywallProduct.starterPack.id: MomentsPurchaseCatalog.Entry(
+                    productId: MomentsCreditPaywallProduct.starterPack.id,
+                    packageIdentifier: "test-five-credits",
+                    localizedTitle: "Five credits",
+                    localizedPrice: "$5.00"
+                )
+            ]
+        )
+    }
+
+    func purchase(productId: String, userId: String) async throws -> MomentsPurchaseResult {
+        purchaseUserIds.append(userId)
+        return MomentsPurchaseResult(status: .cancelled, productId: productId, transactionId: nil)
+    }
+
+    func restorePurchases(userId: String) async throws -> MomentsPurchaseResult {
+        restoreUserIds.append(userId)
+        return MomentsPurchaseResult(status: .cancelled, productId: nil, transactionId: nil)
     }
 
     func logOut() async {}
