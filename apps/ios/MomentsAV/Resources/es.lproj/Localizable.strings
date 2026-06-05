@@ -638,6 +638,9 @@
 "create.final.createVideo" = "Crear video final";
 "create.final.checkCredits" = "Comprobar créditos";
 "create.final.retrySetup" = "Intentar de nuevo";
+"create.final.recovery.title" = "El video necesita revisión";
+"create.final.recovery.detail" = "Avi no pudo terminar este video. Puedes intentarlo de nuevo o descartar este Moment y empezar limpio.";
+"create.final.recovery.discard" = "Descartar Moment";
 "create.final.confirmCredits" = "Confirmar créditos · %@";
 "create.final.createWithCost" = "Crear video final · %@";
 "create.final.creditCost" = "%@ necesarios";

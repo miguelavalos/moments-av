@@ -34,4 +34,9 @@ extension MomentRenderJob {
     var isActiveRender: Bool {
         ["queued", "running", "processing", "in_progress"].contains(status)
     }
+
+    var isTerminalFailure: Bool {
+        ["failed", "blocked", "cancelled"].contains(status)
+            || ["failed_recoverable", "failed_terminal", "cancelled"].contains(phase ?? "")
+    }
 }

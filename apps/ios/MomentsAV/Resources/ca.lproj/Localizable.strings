@@ -636,6 +636,9 @@
 "create.final.createVideo" = "Crear vídeo";
 "create.final.checkCredits" = "Comprovar crèdits";
 "create.final.retrySetup" = "Torna-ho a provar";
+"create.final.recovery.title" = "El vídeo necessita atenció";
+"create.final.recovery.detail" = "Avi no ha pogut acabar aquest vídeo. Pots tornar-ho a provar o descartar aquest Moment i començar de nou.";
+"create.final.recovery.discard" = "Descartar Moment";
 "create.final.confirmCredits" = "Confirmar crèdits · %@";
 "create.final.createWithCost" = "Crear vídeo · %@";
 "create.final.creditCost" = "%@ necessaris";

@@ -111,6 +111,12 @@ private struct MomentsCreateMediaFirstWorkspace: View {
                     if showsFinalVideoCompletion {
                         MomentsCreateFinalVideoReadyScene(presentation: presentation)
                             .padding(.top, 28)
+                    } else if showsFinalVideoRecovery {
+                        MomentsCreateFinalVideoRecoveryScene(
+                            presentation: presentation,
+                            discardMoment: { showsDiscardMomentConfirmation = true }
+                        )
+                        .padding(.top, 28)
                     } else if presentation.isFinalRenderEditingLocked {
                         MomentsCreateLockedFinalRenderScene(presentation: presentation)
                             .padding(.top, 28)
@@ -166,7 +172,8 @@ private struct MomentsCreateMediaFirstWorkspace: View {
                     generateFinalRender: primaryFinalRenderAction,
                     openCreateVideoConfirmation: { showsCreateVideoConfirmation = true },
                     retryFinalVideoDownload: retryFinalVideoDownload,
-                    finishFinalVideoToGallery: finishFinalVideoToGallery
+                    finishFinalVideoToGallery: finishFinalVideoToGallery,
+                    discardMoment: { showsDiscardMomentConfirmation = true }
                 )
                 .padding(.horizontal, 2)
                 .frame(maxHeight: .infinity, alignment: .bottom)
@@ -412,6 +419,12 @@ private struct MomentsCreateMediaFirstWorkspace: View {
             || presentation.finalRenderSummary.pendingGalleryVideo != nil
     }
 
+    private var showsFinalVideoRecovery: Bool {
+        guard presentation.finalRenderSummary.finalExport == nil,
+              presentation.finalRenderSummary.pendingGalleryVideo == nil else { return false }
+        return presentation.finalRenderSummary.latestFinalJob?.isTerminalFailure == true
+    }
+
     private var showsWorkflowDashboard: Bool {
         hasMediaSelection || hasFinalVideoState
     }
@@ -423,6 +436,9 @@ private struct MomentsCreateMediaFirstWorkspace: View {
     private var bottomContentPadding: CGFloat {
         if showsFinalVideoCompletion {
             return 150
+        }
+        if showsFinalVideoRecovery {
+            return 190
         }
         if presentation.isFinalRenderEditingLocked {
             return 118
@@ -709,6 +725,72 @@ private struct MomentsCreateFinalVideoReadyScene: View {
         presentation.finalRenderSummary.pendingGalleryVideo != nil
             ? "checkmark.circle.fill"
             : "arrow.down.circle.fill"
+    }
+}
+
+private struct MomentsCreateFinalVideoRecoveryScene: View {
+    let presentation: MomentsCreateWorkflowPresentation
+    let discardMoment: () -> Void
+
+    var body: some View {
+        VStack(spacing: 18) {
+            Spacer(minLength: 42)
+
+            ZStack {
+                Circle()
+                    .fill(AVBrandColor.textSecondary.opacity(0.10))
+                    .frame(width: 128, height: 128)
+
+                Circle()
+                    .stroke(AVBrandColor.textSecondary.opacity(0.18), lineWidth: 2)
+                    .frame(width: 156, height: 156)
+
+                Image("AviFullBody")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 86, height: 86)
+
+                Image(systemName: "exclamationmark.triangle.fill")
+                    .font(.system(size: 18, weight: .black))
+                    .foregroundStyle(.white)
+                    .frame(width: 42, height: 42)
+                    .background(AVBrandColor.textSecondary, in: Circle())
+                    .offset(x: 54, y: 48)
+                    .shadow(color: AVBrandColor.textSecondary.opacity(0.22), radius: 10, y: 4)
+            }
+
+            VStack(spacing: 8) {
+                Text(L10n.string("create.final.recovery.title"))
+                    .font(.system(size: 22, weight: .black))
+                    .foregroundStyle(AVBrandColor.textPrimary)
+
+                Text(recoveryMessage)
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundStyle(AVBrandColor.textSecondary)
+                    .multilineTextAlignment(.center)
+                    .lineLimit(4)
+                    .padding(.horizontal, 24)
+            }
+
+            Button(role: .destructive, action: discardMoment) {
+                Label(L10n.string("create.final.recovery.discard"), systemImage: "trash")
+                    .font(.system(size: 14, weight: .black))
+                    .frame(maxWidth: 240)
+                    .frame(height: 44)
+            }
+            .buttonStyle(MomentsCreateSoftActionButtonStyle())
+
+            Spacer(minLength: 100)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(MomentsTheme.shellBackground.ignoresSafeArea())
+        .accessibilityElement(children: .contain)
+    }
+
+    private var recoveryMessage: String {
+        presentation.finalRenderSummary.realtimeStatus?.detail
+            ?? presentation.finalRenderSummary.statusMessage
+            ?? L10n.string("create.final.recovery.detail")
     }
 }
 
@@ -1481,6 +1563,7 @@ private struct MomentsCreatePrimaryActionBar: View {
     let openCreateVideoConfirmation: () -> Void
     let retryFinalVideoDownload: () -> Void
     let finishFinalVideoToGallery: () -> Void
+    let discardMoment: () -> Void
 
     @ViewBuilder
     var body: some View {
@@ -1570,6 +1653,15 @@ private struct MomentsCreatePrimaryActionBar: View {
                     .buttonStyle(MomentsCreateSoftActionButtonStyle())
                     .font(.system(size: 14, weight: .black))
                 }
+
+                if showsTerminalFailureRecoveryActions {
+                    Button(role: .destructive, action: discardMoment) {
+                        Label(L10n.string("create.final.recovery.discard"), systemImage: "trash")
+                            .frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(MomentsCreateSoftActionButtonStyle())
+                    .font(.system(size: 14, weight: .black))
+                }
             }
             .padding(.horizontal, 12)
             .padding(.vertical, 12)
@@ -1585,6 +1677,12 @@ private struct MomentsCreatePrimaryActionBar: View {
     private var showsFinalVideoDock: Bool {
         presentation.finalRenderSummary.finalExport != nil
             || presentation.finalRenderSummary.pendingGalleryVideo != nil
+    }
+
+    private var showsTerminalFailureRecoveryActions: Bool {
+        presentation.finalRenderSummary.finalExport == nil
+            && presentation.finalRenderSummary.pendingGalleryVideo == nil
+            && presentation.finalRenderSummary.latestFinalJob?.isTerminalFailure == true
     }
 
     private var primaryActionPresentation: MomentsCreatePrimaryActionPresentation {
