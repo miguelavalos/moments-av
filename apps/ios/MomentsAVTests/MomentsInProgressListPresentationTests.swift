@@ -34,7 +34,7 @@ final class MomentsInProgressListPresentationTests: XCTestCase {
     func testRowPresentationFormatsMomentMetadataAndSelection() {
         let moment = makeMoment(
             id: "moment-1",
-            status: "preview_ready",
+            status: "story_ready",
             title: "Family Weekend",
             creditCost: 3,
             previewCount: 1,

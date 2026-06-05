@@ -4,12 +4,12 @@ import XCTest
 final class MomentStatusRulesTests: XCTestCase {
     func testGroupsCompletedMomentsAsFinished() {
         let plan = makeMoment(id: "in_progress", status: "in_progress", updatedAt: 10)
-        let preview = makeMoment(id: "preview", status: "preview_ready", updatedAt: 20)
+        let story = makeMoment(id: "story", status: "story_ready", updatedAt: 20)
         let completed = makeMoment(id: "completed", status: "gallery_ready", updatedAt: 30)
 
-        let groups = MomentStatusRules.group([plan, preview, completed])
+        let groups = MomentStatusRules.group([plan, story, completed])
 
-        XCTAssertEqual(groups.inProgress.map(\.id), ["preview", "in_progress"])
+        XCTAssertEqual(groups.inProgress.map(\.id), ["story", "in_progress"])
         XCTAssertEqual(groups.finished.map(\.id), ["completed"])
     }
 
@@ -70,7 +70,7 @@ final class MomentStatusRulesTests: XCTestCase {
     }
 
     func testDisplayHelpersFormatBackendValuesForUI() {
-        XCTAssertEqual(MomentStatusRules.displayTitle(for: "preview_ready"), "Story ready")
+        XCTAssertEqual(MomentStatusRules.displayTitle(for: "story_ready"), "Story ready")
         XCTAssertEqual(MomentStatusRules.displayKind("preview"), "Story")
         XCTAssertEqual(MomentStatusRules.displayKind("final"), "Final")
     }

@@ -19,7 +19,7 @@ enum MomentStatusRules {
     }
 
     static func displayTitle(for status: String) -> String {
-        if status == "preview_ready" {
+        if status == "story_ready" {
             return L10n.string("moment.status.storyReady")
         }
         if status == "final_render_pending" || status == "final_rendering" {

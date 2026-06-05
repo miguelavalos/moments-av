@@ -78,7 +78,7 @@ final class MomentsInProgressWorkspacePresentationTests: XCTestCase {
     func testWorkspaceSummaryPresentationFormatsStatusArtifactsAndLatestJob() {
         let presentation = MomentsInProgressWorkspaceSummaryPresentation(
             workspace: makeWorkspace(
-                moment: makeMoment(status: "preview_ready"),
+                moment: makeMoment(status: "story_ready"),
                 renderJobs: [
                     makeRenderJob(id: "old", kind: "preview", status: "queued", updatedAt: 10),
                     makeRenderJob(id: "new", kind: "final", status: "failed", updatedAt: 20)
