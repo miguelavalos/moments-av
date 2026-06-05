@@ -37,8 +37,6 @@ final class MomentsInProgressListPresentationTests: XCTestCase {
             status: "story_ready",
             title: "Family Weekend",
             creditCost: 3,
-            previewCount: 1,
-            previewLimit: 4
         )
         let row = MomentsInProgressListRowPresentation(moment: moment, isSelected: true)
 
@@ -69,8 +67,6 @@ final class MomentsInProgressListPresentationTests: XCTestCase {
         status: String,
         title: String? = nil,
         creditCost: Double = 2,
-        previewCount: Double = 0,
-        previewLimit: Double = 3,
         updatedAt: Double = 10
     ) -> InProgressMoment {
         InProgressMoment(
@@ -84,8 +80,6 @@ final class MomentsInProgressListPresentationTests: XCTestCase {
             details: nil,
             durationSeconds: 30,
             creditCost: creditCost,
-            previewCount: previewCount,
-            previewLimit: previewLimit,
             updatedAt: updatedAt
         )
     }

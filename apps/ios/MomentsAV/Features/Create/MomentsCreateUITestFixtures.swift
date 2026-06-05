@@ -42,8 +42,6 @@ enum MomentsCreateUITestFixtures {
             storyInputSignature: nil,
             durationSeconds: 30,
             creditCost: 2,
-            previewCount: 0,
-            previewLimit: 3,
             updatedAt: 1_781_592_000_000
         )
     }

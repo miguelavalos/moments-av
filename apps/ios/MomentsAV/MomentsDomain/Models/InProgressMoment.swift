@@ -18,8 +18,6 @@ struct InProgressMoment: Identifiable, Decodable, Equatable {
     let storyInputSignature: String?
     let durationSeconds: Double
     let creditCost: Double
-    let previewCount: Double
-    let previewLimit: Double
     let updatedAt: Double
 
     init(
@@ -40,8 +38,6 @@ struct InProgressMoment: Identifiable, Decodable, Equatable {
         storyInputSignature: String? = nil,
         durationSeconds: Double,
         creditCost: Double,
-        previewCount: Double,
-        previewLimit: Double,
         updatedAt: Double
     ) {
         self.id = id
@@ -61,8 +57,6 @@ struct InProgressMoment: Identifiable, Decodable, Equatable {
         self.storyInputSignature = storyInputSignature
         self.durationSeconds = durationSeconds
         self.creditCost = creditCost
-        self.previewCount = previewCount
-        self.previewLimit = previewLimit
         self.updatedAt = updatedAt
     }
 
@@ -84,8 +78,6 @@ struct InProgressMoment: Identifiable, Decodable, Equatable {
         case storyInputSignature
         case durationSeconds
         case creditCost
-        case previewCount
-        case previewLimit
         case updatedAt
     }
 
@@ -111,8 +103,6 @@ struct InProgressMoment: Identifiable, Decodable, Equatable {
         storyInputSignature = try container.decodeIfPresent(String.self, forKey: .storyInputSignature)
         durationSeconds = try container.decode(Double.self, forKey: .durationSeconds)
         creditCost = try container.decode(Double.self, forKey: .creditCost)
-        previewCount = try container.decode(Double.self, forKey: .previewCount)
-        previewLimit = try container.decode(Double.self, forKey: .previewLimit)
         updatedAt = try container.decode(Double.self, forKey: .updatedAt)
     }
 }

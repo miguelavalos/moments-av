@@ -117,8 +117,6 @@ final class MomentsCreditGateTests: XCTestCase {
             details: "Use the beach clips.",
             durationSeconds: 30,
             creditCost: 2,
-            previewCount: 0,
-            previewLimit: 3,
             updatedAt: 0
         )
 
@@ -230,8 +228,6 @@ final class MomentsCreditGateTests: XCTestCase {
             details: nil,
             durationSeconds: 30,
             creditCost: 2,
-            previewCount: 0,
-            previewLimit: 3,
             updatedAt: 0
         )
         XCTAssertTrue(
@@ -268,8 +264,6 @@ final class MomentsCreditGateTests: XCTestCase {
             details: moment.details,
             durationSeconds: moment.durationSeconds,
             creditCost: moment.creditCost,
-            previewCount: moment.previewCount,
-            previewLimit: moment.previewLimit,
             updatedAt: moment.updatedAt
         )
         XCTAssertFalse(MomentsFinalRenderRules.canPreparePlan(moment: staleStoryMoment))

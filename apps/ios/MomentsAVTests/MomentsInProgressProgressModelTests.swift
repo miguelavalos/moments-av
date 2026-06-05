@@ -65,8 +65,6 @@ final class MomentsInProgressProgressModelTests: XCTestCase {
             details: nil,
             durationSeconds: 30,
             creditCost: 2,
-            previewCount: 0,
-            previewLimit: 3,
             updatedAt: updatedAt
         )
     }
