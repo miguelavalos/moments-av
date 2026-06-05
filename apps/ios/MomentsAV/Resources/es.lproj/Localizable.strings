@@ -986,6 +986,8 @@
 "create.workflowContent.editingLocked" = "La edición está bloqueada mientras se crea el video final.";
 "create.workflowContent.finalVideoInProgressTitle" = "Creando video final";
 "create.workflowContent.finalVideoInProgressDetail" = "Avi está trabajando en este Moment. Puedes salir de esta pantalla y volver más tarde.";
+"create.workflowContent.renderMayTakeMinutes" = "La generación de video con IA puede tardar varios minutos. Esta pantalla se actualiza automáticamente cuando el video final está listo.";
+"create.workflowContent.waitingForProvider" = "Esperando al renderizador de video";
 "create.workflowContent.editing" = "Edición";
 "create.workflowContent.aviOptions" = "Avi options";
 "create.workflowContent.aviAccessibility" = "Avi. %@";

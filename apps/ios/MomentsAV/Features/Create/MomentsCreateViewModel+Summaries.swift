@@ -41,7 +41,7 @@ extension MomentsCreateViewModel {
     }
 
     var mediaSelectedCount: Int {
-        mediaSummary.selectedCount
+        mediaSummary.effectiveMediaCount
     }
 
     var mediaRemainingSlots: Int {

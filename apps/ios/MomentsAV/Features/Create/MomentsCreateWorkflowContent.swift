@@ -1246,18 +1246,10 @@ private struct MomentsCreateLockedFinalRenderScene: View {
             }
 
             VStack(alignment: .leading, spacing: 12) {
-                if let progressFraction {
-                    ProgressView(value: progressFraction)
-                        .tint(AVBrandColor.accent)
-                        .accessibilityLabel(L10n.string("create.workflowContent.finalVideoProgress"))
-                        .accessibilityValue("\(Int((progressFraction * 100).rounded())) percent")
-                } else {
-                    ProgressView()
-                        .tint(AVBrandColor.accent)
-                        .controlSize(.regular)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .accessibilityLabel(statusTitle)
-                }
+                MomentsCreateFinalRenderActivityIndicator(
+                    progressFraction: progressFraction,
+                    accentColor: AVBrandColor.accent
+                )
 
                 HStack(spacing: 8) {
                     MomentsCreateLockedRenderMetric(
@@ -1273,6 +1265,12 @@ private struct MomentsCreateLockedFinalRenderScene: View {
                 }
 
                 MomentsCreateLockedFinalRenderNotice()
+
+                Text(L10n.string("create.workflowContent.renderMayTakeMinutes"))
+                    .font(.caption)
+                    .fontWeight(.semibold)
+                    .foregroundStyle(AVBrandColor.textSecondary)
+                    .fixedSize(horizontal: false, vertical: true)
             }
             .padding(14)
             .frame(maxWidth: .infinity)
@@ -1313,6 +1311,72 @@ private struct MomentsCreateLockedFinalRenderScene: View {
         presentation.lockedFinalRenderMediaCountTitle
     }
 
+}
+
+private struct MomentsCreateFinalRenderActivityIndicator: View {
+    let progressFraction: Double?
+    let accentColor: Color
+
+    @State private var phase = false
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 7) {
+            GeometryReader { proxy in
+                ZStack(alignment: .leading) {
+                    Capsule(style: .continuous)
+                        .fill(AVBrandColor.borderSubtle.opacity(0.65))
+
+                    if let progressFraction {
+                        Capsule(style: .continuous)
+                            .fill(accentColor)
+                            .frame(width: max(10, proxy.size.width * progressFraction))
+                    } else {
+                        Capsule(style: .continuous)
+                            .fill(
+                                LinearGradient(
+                                    colors: [
+                                        accentColor.opacity(0.20),
+                                        accentColor,
+                                        accentColor.opacity(0.20)
+                                    ],
+                                    startPoint: .leading,
+                                    endPoint: .trailing
+                                )
+                            )
+                            .frame(width: max(58, proxy.size.width * 0.30))
+                            .offset(x: phase ? proxy.size.width * 0.70 : 0)
+                            .animation(.easeInOut(duration: 1.35).repeatForever(autoreverses: true), value: phase)
+                    }
+                }
+            }
+            .frame(height: 5)
+            .accessibilityLabel(L10n.string("create.workflowContent.finalVideoProgress"))
+            .accessibilityValue(accessibilityValue)
+
+            if progressFraction == nil {
+                HStack(spacing: 6) {
+                    ProgressView()
+                        .controlSize(.mini)
+                        .tint(accentColor)
+
+                    Text(L10n.string("create.workflowContent.waitingForProvider"))
+                        .font(.caption2)
+                        .fontWeight(.bold)
+                        .foregroundStyle(AVBrandColor.textSecondary)
+                }
+            }
+        }
+        .onAppear {
+            phase = true
+        }
+    }
+
+    private var accessibilityValue: String {
+        guard let progressFraction else {
+            return L10n.string("create.workflowContent.waitingForProvider")
+        }
+        return "\(Int((progressFraction * 100).rounded())) percent"
+    }
 }
 
 private struct MomentsCreateLockedRenderMetric: View {
