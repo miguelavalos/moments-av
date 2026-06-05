@@ -188,7 +188,8 @@ struct MomentsAppShellView: View {
 
     private var showsNewMomentFloatingAction: Bool {
         chromeItem == nil
-            && selectedTab == .gallery
+            && accountController.isSignedIn
+            && [.home, .inProgress, .gallery].contains(selectedTab)
             && !createViewModel.hasLocalMomentWorkspace
     }
 

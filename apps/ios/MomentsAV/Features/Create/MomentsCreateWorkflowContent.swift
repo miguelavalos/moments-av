@@ -1488,93 +1488,109 @@ private struct MomentsCreatePrimaryActionBar: View {
     let retryFinalVideoDownload: () -> Void
     let finishFinalVideoToGallery: () -> Void
 
+    @ViewBuilder
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            if presentation.finalRenderSummary.finalExport == nil,
-               let realtimeStatus = presentation.finalRenderSummary.realtimeStatus {
-                MomentsCreateRealtimeRenderStatusPanel(status: realtimeStatus)
-            }
+        if showsFinalVideoDock {
+            MomentsCreateFinalVideoActionDock(
+                presentation: presentation,
+                downloadTitle: finalVideoDownloadButtonTitle,
+                download: retryFinalVideoDownload,
+                finish: finishFinalVideoToGallery
+            )
+            .transition(.move(edge: .bottom).combined(with: .opacity))
+        } else {
+            VStack(alignment: .leading, spacing: 10) {
+                if presentation.finalRenderSummary.finalExport == nil,
+                   let realtimeStatus = presentation.finalRenderSummary.realtimeStatus {
+                    MomentsCreateRealtimeRenderStatusPanel(status: realtimeStatus)
+                }
 
-            HStack(alignment: .center, spacing: 10) {
-                Image(systemName: primaryActionPresentation.primaryHeaderIconName)
-                    .font(.system(size: 14, weight: .black))
-                    .foregroundStyle(.white)
-                    .frame(width: 32, height: 32)
-                    .background(primaryHeaderColor, in: Circle())
-
-                VStack(alignment: .leading, spacing: 3) {
-                    Text(primaryActionPresentation.title)
+                HStack(alignment: .center, spacing: 10) {
+                    Image(systemName: primaryActionPresentation.primaryHeaderIconName)
                         .font(.system(size: 14, weight: .black))
-                        .foregroundStyle(AVBrandColor.textPrimary)
-                        .lineLimit(1)
+                        .foregroundStyle(.white)
+                        .frame(width: 32, height: 32)
+                        .background(primaryHeaderColor, in: Circle())
 
-                    Text(primaryActionPresentation.statusMessage ?? L10n.string("create.primary.creditPreflight"))
-                        .font(.system(size: 12, weight: .semibold))
-                        .foregroundStyle(statusColor)
-                        .lineLimit(2)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text(primaryActionPresentation.title)
+                            .font(.system(size: 14, weight: .black))
+                            .foregroundStyle(AVBrandColor.textPrimary)
+                            .lineLimit(1)
 
-            }
-
-            if primaryActionPresentation.showsPrimaryActionButton {
-                Button(action: primaryAction) {
-                    Label(primaryActionPresentation.buttonTitle, systemImage: primaryActionPresentation.buttonIconName)
-                        .font(.system(size: 15, weight: .black))
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.8)
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 46)
-                }
-                .disabled(!primaryActionPresentation.canRunPrimaryAction)
-                .buttonStyle(MomentsCreateSoftActionButtonStyle())
-                .opacity(primaryActionPresentation.canRunPrimaryAction ? 1 : 0.72)
-            }
-
-            if let uploadProgress = presentation.mediaSummary.importProgress,
-               presentation.mediaSummary.isImporting {
-                ProgressView(value: uploadProgress.fractionCompleted ?? 0)
-                    .tint(AVBrandColor.accent)
-                    .accessibilityLabel(L10n.string("create.workflowContent.uploadingMedia"))
-                    .accessibilityValue(uploadProgress.title)
-            }
-
-            if presentation.finalRenderSummary.pendingGalleryVideo != nil {
-                VStack(spacing: 10) {
-                    Button(action: finishFinalVideoToGallery) {
-                        Label(L10n.string("create.final.finishGallery"), systemImage: "checkmark.circle.fill")
-                            .frame(maxWidth: .infinity)
+                        Text(primaryActionPresentation.statusMessage ?? L10n.string("create.primary.creditPreflight"))
+                            .font(.system(size: 12, weight: .semibold))
+                            .foregroundStyle(statusColor)
+                            .lineLimit(2)
+                            .fixedSize(horizontal: false, vertical: true)
                     }
-                    .buttonStyle(MomentsCreateSoftActionButtonStyle())
+                    .frame(maxWidth: .infinity, alignment: .leading)
+
                 }
-                .font(.system(size: 14, weight: .black))
-            } else if presentation.finalRenderSummary.finalExport != nil {
-                VStack(spacing: 10) {
+
+                if primaryActionPresentation.showsPrimaryActionButton {
+                    Button(action: primaryAction) {
+                        Label(primaryActionPresentation.buttonTitle, systemImage: primaryActionPresentation.buttonIconName)
+                            .font(.system(size: 15, weight: .black))
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.8)
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 46)
+                    }
+                    .disabled(!primaryActionPresentation.canRunPrimaryAction)
+                    .buttonStyle(MomentsCreateSoftActionButtonStyle())
+                    .opacity(primaryActionPresentation.canRunPrimaryAction ? 1 : 0.72)
+                }
+
+                if let uploadProgress = presentation.mediaSummary.importProgress,
+                   presentation.mediaSummary.isImporting {
+                    ProgressView(value: uploadProgress.fractionCompleted ?? 0)
+                        .tint(AVBrandColor.accent)
+                        .accessibilityLabel(L10n.string("create.workflowContent.uploadingMedia"))
+                        .accessibilityValue(uploadProgress.title)
+                }
+
+                if presentation.finalRenderSummary.pendingGalleryVideo != nil {
+                    VStack(spacing: 10) {
+                        Button(action: finishFinalVideoToGallery) {
+                            Label(L10n.string("create.final.finishGallery"), systemImage: "checkmark.circle.fill")
+                                .frame(maxWidth: .infinity)
+                        }
+                        .buttonStyle(MomentsCreateSoftActionButtonStyle())
+                    }
+                    .font(.system(size: 14, weight: .black))
+                } else if presentation.finalRenderSummary.finalExport != nil {
+                    VStack(spacing: 10) {
+                        Button(action: retryFinalVideoDownload) {
+                            Label(finalVideoDownloadButtonTitle, systemImage: "arrow.down.circle.fill")
+                                .frame(maxWidth: .infinity)
+                        }
+                        .buttonStyle(MomentsCreateSoftActionButtonStyle())
+                    }
+                    .font(.system(size: 14, weight: .black))
+                } else if presentation.finalRenderSummary.canRetryFinalVideoDownload {
                     Button(action: retryFinalVideoDownload) {
-                        Label(finalVideoDownloadButtonTitle, systemImage: "arrow.down.circle.fill")
+                        Label(L10n.string("create.workflowContent.retryFinalDownload"), systemImage: "arrow.down.circle.fill")
                             .frame(maxWidth: .infinity)
                     }
                     .buttonStyle(MomentsCreateSoftActionButtonStyle())
+                    .font(.system(size: 14, weight: .black))
                 }
-                .font(.system(size: 14, weight: .black))
-            } else if presentation.finalRenderSummary.canRetryFinalVideoDownload {
-                Button(action: retryFinalVideoDownload) {
-                    Label(L10n.string("create.workflowContent.retryFinalDownload"), systemImage: "arrow.down.circle.fill")
-                        .frame(maxWidth: .infinity)
-                }
-                .buttonStyle(MomentsCreateSoftActionButtonStyle())
-                .font(.system(size: 14, weight: .black))
             }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 12)
+            .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 20, style: .continuous))
+            .overlay {
+                RoundedRectangle(cornerRadius: 20, style: .continuous)
+                    .stroke(AVBrandColor.glassStroke.opacity(0.82), lineWidth: 1)
+            }
+            .shadow(color: AVBrandColor.glassShadow.opacity(0.7), radius: 12, y: 3)
         }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 12)
-        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 20, style: .continuous))
-        .overlay {
-            RoundedRectangle(cornerRadius: 20, style: .continuous)
-                .stroke(AVBrandColor.glassStroke.opacity(0.82), lineWidth: 1)
-        }
-        .shadow(color: AVBrandColor.glassShadow.opacity(0.7), radius: 12, y: 3)
+    }
+
+    private var showsFinalVideoDock: Bool {
+        presentation.finalRenderSummary.finalExport != nil
+            || presentation.finalRenderSummary.pendingGalleryVideo != nil
     }
 
     private var primaryActionPresentation: MomentsCreatePrimaryActionPresentation {
@@ -1629,6 +1645,93 @@ private struct MomentsCreatePrimaryActionBar: View {
         } else if primaryActionPresentation.needsSignInForStory {
             startSignInFlow()
         }
+    }
+}
+
+private struct MomentsCreateFinalVideoActionDock: View {
+    let presentation: MomentsCreateWorkflowPresentation
+    let downloadTitle: String
+    let download: () -> Void
+    let finish: () -> Void
+
+    var body: some View {
+        VStack(spacing: 0) {
+            Button(action: action) {
+                Label(buttonTitle, systemImage: buttonIconName)
+                    .font(.system(size: 16, weight: .black))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.82)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 54)
+            }
+            .buttonStyle(MomentsCreateFinalVideoButtonStyle())
+        }
+        .padding(10)
+        .background {
+            Capsule(style: .continuous)
+                .fill(.ultraThinMaterial)
+                .overlay(
+                    LinearGradient(
+                        colors: [
+                            Color.white.opacity(0.56),
+                            AVBrandColor.accent.opacity(0.10),
+                            AVBrandColor.accent.opacity(0.05)
+                        ],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+        }
+        .overlay {
+            Capsule(style: .continuous)
+                .stroke(AVBrandColor.glassStroke.opacity(0.78), lineWidth: 1)
+        }
+        .shadow(color: AVBrandColor.glassShadow.opacity(0.82), radius: 20, y: 8)
+        .accessibilityElement(children: .contain)
+    }
+
+    private var isReadyToFinish: Bool {
+        presentation.finalRenderSummary.pendingGalleryVideo != nil
+    }
+
+    private var buttonTitle: String {
+        isReadyToFinish ? L10n.string("create.final.finishGallery") : downloadTitle
+    }
+
+    private var buttonIconName: String {
+        isReadyToFinish ? "checkmark.circle.fill" : "arrow.down.to.line.compact"
+    }
+
+    private var action: () -> Void {
+        isReadyToFinish ? finish : download
+    }
+}
+
+private struct MomentsCreateFinalVideoButtonStyle: ButtonStyle {
+    @Environment(\.isEnabled) private var isEnabled
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .foregroundStyle(.white)
+            .padding(.horizontal, 18)
+            .background(
+                LinearGradient(
+                    colors: [
+                        AVBrandColor.accent.opacity(isEnabled ? 1 : 0.52),
+                        AVBrandColor.accent.opacity(isEnabled ? 0.82 : 0.42)
+                    ],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                ),
+                in: Capsule()
+            )
+            .overlay {
+                Capsule()
+                    .stroke(Color.white.opacity(configuration.isPressed ? 0.26 : 0.18), lineWidth: 1)
+            }
+            .shadow(color: AVBrandColor.accent.opacity(isEnabled ? 0.26 : 0), radius: 14, y: 6)
+            .scaleEffect(configuration.isPressed ? 0.98 : 1)
+            .opacity(isEnabled ? 1 : 0.72)
     }
 }
 
