@@ -108,7 +108,7 @@
 "avi.focus.firstMemory.title" = "Erste Erinnerung erstellen";
 "avi.focus.inProgress.message" = "%d %@ in In Arbeit. Fahre mit dem nächsten offenen Schritt fort.";
 "avi.focus.nextMemory.title" = "Nächste Erinnerung starten";
-"avi.focus.reviewActive.title" = "Aktive Arbeit prüfen";
+"avi.focus.activeWork.title" = "Aktive Arbeit";
 "avi.focus.signIn.message" = "Avi-Hinweise werden nach der Anmeldung freigeschaltet, weil Moments und Credits mit deinem Konto verknüpft sind.";
 "avi.focus.signIn.title" = "Zuerst anmelden";
 "avi.help.choose.detail" = "Wähle Fotos und Clips für einen Anlass.";
@@ -224,7 +224,7 @@
 "home.avi.signIn.title" = "Anmelden zum Erstellen";
 "home.aviBrief.continueMoment" = "Fahre mit %@ beim nächsten offenen Schritt fort.";
 "home.aviBrief.firstMemory" = "Plane den ersten Erinnerungsfilm, bevor du Medien hinzufügst.";
-"home.aviBrief.reviewInProgress" = "Open In Progress and continue the next unfinished step.";
+"home.aviBrief.openInProgress" = "Open In Progress and continue the next unfinished step.";
 "home.aviBrief.signIn" = "Melde dich an, um Moments zu erstellen, Videos zu speichern und Credits im Konto zu behalten.";
 "home.header.subtitle" = "Erstelle private Erinnerungsvideos aus deinen Fotos und Clips.";
 "home.header.title" = "Erinnerungsstudio";

@@ -15,7 +15,7 @@ final class MomentsHomePresentationTests: XCTestCase {
             "Sign in is required before creating and saving Moments."
         )
         XCTAssertTrue(presentation.createAction.isDisabled)
-        XCTAssertTrue(presentation.reviewInProgressAction.isDisabled)
+        XCTAssertTrue(presentation.openInProgressAction.isDisabled)
         XCTAssertNil(presentation.latestInProgressAction)
         XCTAssertNil(presentation.latestInProgressContinuationRequest)
     }
@@ -33,7 +33,7 @@ final class MomentsHomePresentationTests: XCTestCase {
         XCTAssertTrue(presentation.createAction.isProminent)
         XCTAssertFalse(presentation.createAction.isDisabled)
         XCTAssertEqual(
-            presentation.reviewInProgressAction.detail,
+            presentation.openInProgressAction.detail,
             "Moments appear after you start one."
         )
     }
@@ -72,7 +72,7 @@ final class MomentsHomePresentationTests: XCTestCase {
             "2 synced Moments tracked across the current account."
         )
         XCTAssertEqual(
-            presentation.reviewInProgressAction.detail,
+            presentation.openInProgressAction.detail,
             "Continue Moments that still need action."
         )
     }
@@ -91,7 +91,7 @@ final class MomentsHomePresentationTests: XCTestCase {
             "1 synced Moment tracked across the current account."
         )
         XCTAssertEqual(
-            presentation.reviewInProgressAction.detail,
+            presentation.openInProgressAction.detail,
             "Continue Moments that still need action."
         )
     }

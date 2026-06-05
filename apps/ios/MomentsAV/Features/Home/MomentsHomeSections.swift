@@ -156,7 +156,7 @@ struct MomentsHomeNextActionsCard: View {
 
                 homeActionRow(action: presentation.createAction, perform: startMoment)
 
-                homeActionRow(action: presentation.reviewInProgressAction) {
+                homeActionRow(action: presentation.openInProgressAction) {
                     selectTab(.inProgress)
                 }
 

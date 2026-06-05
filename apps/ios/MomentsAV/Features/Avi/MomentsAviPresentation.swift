@@ -35,7 +35,7 @@ struct MomentsAviPresentation: Equatable {
         momentsSummary: InProgressMomentsSummary
     ) -> String {
         guard isSignedIn else { return L10n.string("avi.focus.signIn.title") }
-        if momentsSummary.inProgressCount > 0 { return L10n.string("avi.focus.reviewActive.title") }
+        if momentsSummary.inProgressCount > 0 { return L10n.string("avi.focus.activeWork.title") }
         if momentsSummary.finishedCount > 0 { return L10n.string("avi.focus.nextMemory.title") }
         return L10n.string("avi.focus.firstMemory.title")
     }

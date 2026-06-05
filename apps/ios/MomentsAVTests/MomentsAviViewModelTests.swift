@@ -26,7 +26,7 @@ final class MomentsAviViewModelTests: XCTestCase {
             creditBalance: .empty
         )
 
-        XCTAssertEqual(presentation.workflowFocusTitle, "Review active work")
+        XCTAssertEqual(presentation.workflowFocusTitle, "Active work")
         XCTAssertTrue(presentation.workflowFocusMessage.contains("1 Moment in In Progress"))
         XCTAssertEqual(presentation.workflowFocusSystemImage, "clock.badge.checkmark")
     }
@@ -106,7 +106,7 @@ final class MomentsAviViewModelTests: XCTestCase {
             ])
         )
 
-        XCTAssertEqual(viewModel.presentation.workflowFocusTitle, "Review active work")
+        XCTAssertEqual(viewModel.presentation.workflowFocusTitle, "Active work")
         XCTAssertTrue(viewModel.presentation.creditGuidanceMessage.contains("1 credit available"))
     }
 

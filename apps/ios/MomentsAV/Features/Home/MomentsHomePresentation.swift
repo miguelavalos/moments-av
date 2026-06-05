@@ -6,7 +6,7 @@ struct MomentsHomePresentation {
     let aviBriefDetail: String
     let momentStatusDetail: String
     let createAction: MomentsHomeAction
-    let reviewInProgressAction: MomentsHomeAction
+    let openInProgressAction: MomentsHomeAction
     let aviGuidanceAction: MomentsHomeAction
     let latestInProgressAction: MomentsHomeAction?
     let latestInProgressContinuationRequest: MomentsContinuationRequest?
@@ -38,7 +38,7 @@ struct MomentsHomePresentation {
                 isProminent: latestInProgressMoment == nil,
                 isDisabled: !isSignedIn
             ),
-            reviewInProgressAction: MomentsHomeAction(
+            openInProgressAction: MomentsHomeAction(
                 title: L10n.string("home.action.openInProgress.title"),
                 detail: momentsSummary.hasMoments
                     ? L10n.string("home.action.openInProgress.detail.hasMoments")
@@ -82,7 +82,7 @@ struct MomentsHomePresentation {
         }
 
         if momentsSummary.hasMoments {
-            return L10n.string("home.aviBrief.reviewInProgress")
+            return L10n.string("home.aviBrief.openInProgress")
         }
 
         return L10n.string("home.aviBrief.firstMemory")
