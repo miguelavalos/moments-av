@@ -4,6 +4,46 @@ import Combine
 
 @MainActor
 final class MomentsCreateViewModelStoryStateTests: XCTestCase {
+    func testSubmittingFinalVideoWithoutWorkflowFailsVisibly() {
+        let viewModel = MomentsCreateViewModel()
+
+        viewModel.submitFinalVideoConfirmation()
+
+        XCTAssertEqual(
+            viewModel.finalVideoCommandState,
+            .failed("Video creation is not configured for this build.")
+        )
+        XCTAssertEqual(viewModel.workflowErrorAlertMessage, "Video creation is not configured for this build.")
+    }
+
+    func testFinalVideoCommandTracksQueuedBackendJob() {
+        let viewModel = MomentsCreateViewModel()
+        let job = MomentsCreateTestFixtures.makeRenderJob(
+            id: "render-job-1",
+            kind: "final",
+            status: "queued",
+            userMessage: "Avi is creating your video."
+        )
+
+        viewModel.beginFinalVideoCommand(.confirming("Creating final video."))
+        viewModel.applyFinalRenderState(
+            MomentsCreateFinalRenderState(
+                finalExport: nil,
+                latestFinalJob: job,
+                renderPlan: nil,
+                statusMessage: "Creating final video.",
+                isGenerating: false
+            )
+        )
+
+        XCTAssertEqual(
+            viewModel.finalVideoCommandState,
+            .queued("Avi is creating your video.")
+        )
+        XCTAssertFalse(viewModel.finalVideoCommandState.isRunning)
+        XCTAssertNil(viewModel.workflowErrorAlertMessage)
+    }
+
     func testBeginNewMomentWithoutPickerRequestShowsMediaChoice() {
         let viewModel = MomentsCreateViewModel()
         viewModel.beginNewMoment()

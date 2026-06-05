@@ -12,6 +12,7 @@ extension MomentsCreateViewModel {
             || isImportingMedia
             || isPlanningStory
             || isGeneratingFinalRender
+            || finalVideoCommandState.isRunning
     }
 
     var canAddMedia: Bool {

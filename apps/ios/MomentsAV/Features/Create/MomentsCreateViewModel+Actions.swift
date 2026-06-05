@@ -195,26 +195,27 @@ extension MomentsCreateViewModel {
 
     func prepareFinalVideoPlanFromCurrentSelection(removesWatermark: Bool = false) {
         guard let finalRenderWorkflow else {
-            updateFinalRenderStatusMessage(L10n.string("create.error.videoCreationNotConfigured"))
+            failFinalVideoCommand(L10n.string("create.error.videoCreationNotConfigured"))
             return
         }
         guard mediaSelectedCount > 0 else {
-            updateFinalRenderStatusMessage(mediaAvailabilityMessage ?? L10n.string("create.error.mediaUnavailable"))
+            failFinalVideoCommand(mediaAvailabilityMessage ?? L10n.string("create.error.mediaUnavailable"))
             return
         }
         guard !isFinalRenderEditingLocked else {
-            updateFinalRenderStatusMessage(finalRenderAvailabilityMessage ?? L10n.string("create.error.videoCreationNotReady"))
+            failFinalVideoCommand(finalRenderAvailabilityMessage ?? L10n.string("create.error.videoCreationNotReady"))
             return
         }
         let form = effectiveFinalRenderForm()
         let creationStyleId = selectedCreationStyle.id
-        updateFinalRenderStatusMessage(nil)
+        beginFinalVideoCommand(.preparingPlan(L10n.string("workflow.final.checkingPlan")))
+        updateFinalRenderStatusMessage(L10n.string("workflow.final.checkingPlan"))
 
         runOperation {
             let momentId = await self.resolveMomentIdForPreparation(form: form)
 
             guard let momentId else {
-                self.updateFinalRenderStatusMessage(self.momentCreationFailureMessage())
+                self.failFinalVideoCommand(self.momentCreationFailureMessage())
                 return
             }
 
@@ -231,6 +232,7 @@ extension MomentsCreateViewModel {
                 self.updateFinalRenderStatusMessage(L10n.string("workflow.final.checkingPlan"))
             } else if let currentRenderPlan {
                 finalRenderWorkflow.usePreparedRenderPlan(currentRenderPlan)
+                self.beginFinalVideoCommand(.idle)
             }
             defer {
                 if !hasCurrentRenderPlan {
@@ -240,11 +242,11 @@ extension MomentsCreateViewModel {
 
             if !hasCurrentRenderPlan {
                 guard let mediaUploadWorkflow = self.mediaUploadWorkflow else {
-                    self.updateFinalRenderStatusMessage(self.mediaAvailabilityMessage ?? L10n.string("create.error.mediaUnavailable"))
+                    self.failFinalVideoCommand(self.mediaAvailabilityMessage ?? L10n.string("create.error.mediaUnavailable"))
                     return
                 }
                 guard await mediaUploadWorkflow.persistSelectedMediaForFinalVideo(momentId: momentId) else {
-                    self.updateFinalRenderStatusMessage(self.mediaStatusMessage ?? MomentsRecoveryCopy.mediaVideoSaveFailure())
+                    self.failFinalVideoCommand(self.mediaStatusMessage ?? MomentsRecoveryCopy.mediaVideoSaveFailure())
                     return
                 }
             }
@@ -260,17 +262,29 @@ extension MomentsCreateViewModel {
         }
     }
 
+    func submitFinalVideoConfirmation(removesWatermark: Bool = false) {
+        beginFinalVideoCommand(.validating(L10n.string("workflow.final.checkingPlan")))
+        let currentRemovesWatermark = renderPlan?.watermark?.selectedRemoveWatermark ?? false
+        let needsUpdatedPlan = removesWatermark != currentRemovesWatermark
+            || renderPlan?.canCreateVideo != true
+        if needsUpdatedPlan {
+            prepareFinalVideoPlanFromCurrentSelection(removesWatermark: removesWatermark)
+        } else {
+            confirmFinalVideoFromCurrentSelection(removesWatermark: removesWatermark)
+        }
+    }
+
     func confirmFinalVideoFromCurrentSelection(removesWatermark: Bool = false) {
         guard let finalRenderWorkflow else {
-            updateFinalRenderStatusMessage(L10n.string("create.error.videoCreationNotConfigured"))
+            failFinalVideoCommand(L10n.string("create.error.videoCreationNotConfigured"))
             return
         }
         guard let context = activeTemplateContext else {
-            updateFinalRenderStatusMessage(L10n.string("create.error.currentMomentMissing"))
+            failFinalVideoCommand(L10n.string("create.error.currentMomentMissing"))
             return
         }
         guard canGenerateFinalRender else {
-            updateFinalRenderStatusMessage(
+            failFinalVideoCommand(
                 finalRenderAvailabilityMessage
                     ?? storyAvailabilityMessage
                     ?? L10n.string("create.error.videoCreationNotReady")
@@ -279,7 +293,8 @@ extension MomentsCreateViewModel {
         }
 
         let form = effectiveFinalRenderForm()
-        updateFinalRenderStatusMessage(nil)
+        beginFinalVideoCommand(.confirming(L10n.string("workflow.final.creatingVideo")))
+        updateFinalRenderStatusMessage(L10n.string("workflow.final.creatingVideo"))
 
         runOperation {
             await finalRenderWorkflow.confirmPreparedFinalRender(
@@ -362,6 +377,7 @@ extension MomentsCreateViewModel {
         }
 
         finalRenderWorkflow.finishFinalExportToGallery()
+        beginFinalVideoCommand(.completedInGallery(L10n.string("workflow.final.movedToGallery")))
     }
 
     private var activeTemplateContext: (momentId: String, template: MomentTemplate)? {

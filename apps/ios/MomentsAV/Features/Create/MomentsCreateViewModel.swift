@@ -2,6 +2,41 @@ import Combine
 import CryptoKit
 import Foundation
 
+enum MomentsFinalVideoCommandState: Equatable {
+    case idle
+    case validating(String)
+    case preparingPlan(String)
+    case confirming(String)
+    case queued(String)
+    case failed(String)
+    case completedDownloadReady(String)
+    case completedInGallery(String)
+
+    var message: String? {
+        switch self {
+        case .idle:
+            return nil
+        case let .validating(message),
+             let .preparingPlan(message),
+             let .confirming(message),
+             let .queued(message),
+             let .failed(message),
+             let .completedDownloadReady(message),
+             let .completedInGallery(message):
+            return message
+        }
+    }
+
+    var isRunning: Bool {
+        switch self {
+        case .validating, .preparingPlan, .confirming:
+            return true
+        case .idle, .queued, .failed, .completedDownloadReady, .completedInGallery:
+            return false
+        }
+    }
+}
+
 @MainActor
 final class MomentsCreateViewModel: ObservableObject {
     @Published private(set) var isSignedIn = false
@@ -37,6 +72,7 @@ final class MomentsCreateViewModel: ObservableObject {
     @Published private(set) var finalRenderStatusMessage: String?
     @Published private(set) var isGeneratingFinalRender = false
     @Published private(set) var isPreparingFinalPlan = false
+    @Published private(set) var finalVideoCommandState = MomentsFinalVideoCommandState.idle
     @Published var pendingFocus: MomentsContinuationFocus?
     @Published private(set) var continuationFocusHint: MomentsContinuationFocus?
     @Published var mediaPickerOpenRequest = 0
@@ -94,6 +130,7 @@ final class MomentsCreateViewModel: ObservableObject {
             setupErrorMessage,
             mediaStatusMessage,
             storyStatusMessage,
+            finalVideoCommandFailureMessage,
             finalRenderAlertMessage
         ]
             .compactMap(\.self)
@@ -459,6 +496,20 @@ final class MomentsCreateViewModel: ObservableObject {
         isPreparingFinalPlan = false
     }
 
+    func beginFinalVideoCommand(_ state: MomentsFinalVideoCommandState) {
+        finalVideoCommandState = state
+    }
+
+    func failFinalVideoCommand(_ message: String) {
+        finalVideoCommandState = .failed(message)
+        updateFinalRenderStatusMessage(message)
+    }
+
+    func clearFinalVideoCommandIfIdleSafe() {
+        guard !finalVideoCommandState.isRunning else { return }
+        finalVideoCommandState = .idle
+    }
+
     func clearStaleRenderPlan() {
         renderPlan = nil
         renderPlanInputSignature = nil
@@ -664,6 +715,7 @@ extension MomentsCreateViewModel {
             latestFinalJob: state.latestFinalJob
         )
         isGeneratingFinalRender = state.isGenerating
+        reconcileFinalVideoCommandState(with: state)
     }
 
     private func syncFormWithActiveWorkspace(_ workspace: MomentWorkspace?) {
@@ -738,6 +790,11 @@ extension MomentsCreateViewModel {
         return finalRenderStatusMessage
     }
 
+    private var finalVideoCommandFailureMessage: String? {
+        guard case let .failed(message) = finalVideoCommandState else { return nil }
+        return message
+    }
+
     private var hasActiveFinalRenderJob: Bool {
         guard let latestFinalJob else { return false }
         return latestFinalJob.status == "queued" || latestFinalJob.status == "running"
@@ -756,6 +813,52 @@ extension MomentsCreateViewModel {
         }
 
         return latestFinalJob.userMessage
+    }
+
+    private func reconcileFinalVideoCommandState(with state: MomentsCreateFinalRenderState) {
+        if state.pendingGalleryVideo != nil {
+            finalVideoCommandState = .completedDownloadReady(
+                state.statusMessage ?? L10n.string("workflow.final.savedLocal")
+            )
+            return
+        }
+        if state.finalExport != nil {
+            finalVideoCommandState = .completedDownloadReady(
+                state.statusMessage ?? L10n.string("create.primary.finalReady")
+            )
+            return
+        }
+        if let latestFinalJob = state.latestFinalJob,
+           latestFinalJob.status == "queued" || latestFinalJob.status == "running" {
+            finalVideoCommandState = .queued(
+                latestFinalJob.userMessage
+                    ?? state.statusMessage
+                    ?? L10n.string("workflow.final.creatingVideo")
+            )
+            return
+        }
+        if state.isGenerating {
+            finalVideoCommandState = .confirming(
+                state.statusMessage ?? L10n.string("workflow.final.creatingVideo")
+            )
+            return
+        }
+        if let statusMessage = state.statusMessage,
+           Self.isUserFacingErrorMessage(statusMessage),
+           finalVideoCommandState.isRunning {
+            finalVideoCommandState = .failed(statusMessage)
+            return
+        }
+        if case .failed = finalVideoCommandState {
+            return
+        }
+        if case .completedDownloadReady = finalVideoCommandState {
+            return
+        }
+        if case .completedInGallery = finalVideoCommandState {
+            return
+        }
+        finalVideoCommandState = .idle
     }
 
     private static func isUserFacingErrorMessage(_ message: String) -> Bool {

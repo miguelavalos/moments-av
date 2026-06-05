@@ -43,7 +43,7 @@ struct MomentsCreateWorkflowContent: View {
                     startSignInFlow: startSignInFlow,
                     openCredits: openCredits,
                     prepareFinalRenderPlan: viewModel.prepareFinalVideoPlanFromCurrentSelection,
-                    confirmFinalRender: viewModel.confirmFinalVideoFromCurrentSelection,
+                    submitFinalVideoConfirmation: viewModel.submitFinalVideoConfirmation,
                     retryFinalVideoDownload: viewModel.retryFinalVideoDownload,
                     finishFinalVideoToGallery: viewModel.finishFinalVideoToGallery
                 )
@@ -85,7 +85,7 @@ private struct MomentsCreateMediaFirstWorkspace: View {
     let startSignInFlow: () -> Void
     let openCredits: () -> Void
     let prepareFinalRenderPlan: (Bool) -> Void
-    let confirmFinalRender: (Bool) -> Void
+    let submitFinalVideoConfirmation: (Bool) -> Void
     let retryFinalVideoDownload: () -> Void
     let finishFinalVideoToGallery: () -> Void
 
@@ -220,15 +220,8 @@ private struct MomentsCreateMediaFirstWorkspace: View {
                 mediaSummary: presentation.mediaSummary,
                 confirm: { removesWatermark in
                     showsCreateVideoConfirmation = false
-                    let currentRemovesWatermark = presentation.finalRenderSummary.renderPlan?.watermark?.selectedRemoveWatermark ?? false
-                    let needsUpdatedPlan = removesWatermark != currentRemovesWatermark
-                        || presentation.finalRenderSummary.renderPlan?.canCreateVideo != true
-                    waitsForFinalRenderPlan = needsUpdatedPlan
-                    if needsUpdatedPlan {
-                        prepareFinalRenderPlan(removesWatermark)
-                    } else {
-                        confirmFinalRender(removesWatermark)
-                    }
+                    waitsForFinalRenderPlan = false
+                    submitFinalVideoConfirmation(removesWatermark)
                 },
                 openCredits: {
                     showsCreateVideoConfirmation = false
