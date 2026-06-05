@@ -11,6 +11,7 @@ final class AccountController: ObservableObject {
     @Published private(set) var isPurchaseCatalogLoading = false
     @Published private(set) var purchaseCatalogErrorMessage: String?
     @Published private(set) var isPurchaseInProgress = false
+    @Published private(set) var isAccountSessionTemporarilyUnavailable = false
     @Published private(set) var isBusy = false
     @Published var errorMessage: String?
 
@@ -18,17 +19,22 @@ final class AccountController: ObservableObject {
     private let balanceClient: MomentsCreditBalanceClient
     private let promoCodeClient: MomentsPromoCodeClient
     private let purchaseService: MomentsPurchaseServicing
+    private let userDefaults: UserDefaults
+    private let lastKnownAccountUserKey = "momentsav.account.lastKnownUser"
 
     init(
         service: AVAccountService = DefaultAVAccountService(),
         balanceClient: MomentsCreditBalanceClient? = nil,
         promoCodeClient: MomentsPromoCodeClient? = nil,
-        purchaseService: MomentsPurchaseServicing = RevenueCatMomentsPurchaseService()
+        purchaseService: MomentsPurchaseServicing = RevenueCatMomentsPurchaseService(),
+        userDefaults: UserDefaults = .standard
     ) {
         self.service = service
         self.balanceClient = balanceClient ?? MomentsCreditBalanceClient(baseURLString: AppConfig.momentsAPIBaseURL)
         self.promoCodeClient = promoCodeClient ?? MomentsPromoCodeClient(baseURLString: AppConfig.momentsAPIBaseURL)
         self.purchaseService = purchaseService
+        self.userDefaults = userDefaults
+        self.user = service.currentUser ?? Self.lastKnownAccountUser(from: userDefaults)
         refresh()
     }
 
@@ -41,29 +47,37 @@ final class AccountController: ObservableObject {
     }
 
     func refresh() {
-        user = service.currentUser
+        user = service.currentUser ?? user
         if user == nil {
             resetSignedOutAccountState()
         } else {
+            persistLastKnownAccountUser(user)
             creditBalanceLoadState = .loading
             Task { await refreshCreditBalance() }
         }
     }
 
     func syncFromAccountProvider() async {
-        user = service.currentUser
-        if user == nil {
-            do {
-                _ = try await service.getToken()
-                user = service.currentUser
-            } catch {
-                errorMessage = error.localizedDescription
-            }
-        }
-        if user == nil {
-            resetSignedOutAccountState()
-        } else {
+        switch await service.restoreSession() {
+        case .active(let restoredUser):
+            user = restoredUser
+            isAccountSessionTemporarilyUnavailable = false
+            persistLastKnownAccountUser(restoredUser)
             await refreshCreditBalance()
+        case .temporarilyUnavailable(let restoredUser):
+            if let restoredUser {
+                user = restoredUser
+                persistLastKnownAccountUser(restoredUser)
+            }
+            isAccountSessionTemporarilyUnavailable = true
+            if user == nil {
+                resetSignedOutAccountState()
+            }
+        case .signedOut, .invalidated:
+            user = nil
+            isAccountSessionTemporarilyUnavailable = false
+            clearLastKnownAccountUser()
+            resetSignedOutAccountState()
         }
     }
 
@@ -84,6 +98,8 @@ final class AccountController: ObservableObject {
             try await self.service.signOut()
             await self.purchaseService.logOut()
             self.user = nil
+            self.isAccountSessionTemporarilyUnavailable = false
+            self.clearLastKnownAccountUser()
             self.resetSignedOutAccountState()
         }
     }
@@ -163,6 +179,8 @@ final class AccountController: ObservableObject {
             let token = try await service.getToken() ?? user.id
             creditBalance = try await balanceClient.fetchBalance(bearerToken: token)
             creditBalanceLoadState = .loaded
+            isAccountSessionTemporarilyUnavailable = false
+            persistLastKnownAccountUser(user)
         } catch {
             creditBalanceLoadState = MomentsCreditBalanceLoadState.failureState(for: error)
             errorMessage = error.localizedDescription
@@ -189,6 +207,25 @@ final class AccountController: ObservableObject {
         purchaseCatalogErrorMessage = nil
     }
 
+    private static func lastKnownAccountUser(from userDefaults: UserDefaults) -> AccountAVUser? {
+        guard let data = userDefaults.data(forKey: "momentsav.account.lastKnownUser"),
+              let snapshot = try? JSONDecoder().decode(MomentsLastKnownAccountUser.self, from: data) else {
+            return nil
+        }
+        return snapshot.accountUser
+    }
+
+    private func persistLastKnownAccountUser(_ user: AccountAVUser?) {
+        guard let user else { return }
+        let snapshot = MomentsLastKnownAccountUser(user: user)
+        guard let data = try? JSONEncoder().encode(snapshot) else { return }
+        userDefaults.set(data, forKey: lastKnownAccountUserKey)
+    }
+
+    private func clearLastKnownAccountUser() {
+        userDefaults.removeObject(forKey: lastKnownAccountUserKey)
+    }
+
     private func startAuthTask(_ operation: @escaping () async throws -> Void) {
         Task {
             do {
@@ -212,6 +249,22 @@ final class AccountController: ObservableObject {
             errorMessage = error.localizedDescription
             throw error
         }
+    }
+}
+
+private struct MomentsLastKnownAccountUser: Codable {
+    let id: String
+    let displayName: String
+    let emailAddress: String?
+
+    init(user: AccountAVUser) {
+        id = user.id
+        displayName = user.displayName
+        emailAddress = user.emailAddress
+    }
+
+    var accountUser: AccountAVUser {
+        AccountAVUser(id: id, displayName: displayName, emailAddress: emailAddress)
     }
 }
 
