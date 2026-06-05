@@ -54,13 +54,13 @@ struct MomentsUploadClient: Sendable {
             request.setValue(value, forHTTPHeaderField: key)
         }
 
-        let uploadCompletion = try await uploadWithRetry(request: request, data: media.data)
-
         if let completionUrl = preparedUpload.completionUrl {
+            _ = try await uploadWithRetry(request: request, data: media.data)
             return try await completeUpload(uploadId: preparedUpload.uploadId, completionUrl: completionUrl)
         }
 
-        return uploadCompletion
+        let uploadResponseData = try await uploadWithRetry(request: request, data: media.data)
+        return try JSONDecoder().decode(MomentsUploadCompletion.self, from: uploadResponseData)
     }
 
     private func completeUpload(uploadId: String, completionUrl: URL) async throws -> MomentsUploadCompletion {
@@ -81,7 +81,7 @@ struct MomentsUploadClient: Sendable {
         return try JSONDecoder().decode(MomentsUploadCompletion.self, from: data)
     }
 
-    private func uploadWithRetry(request: URLRequest, data: Data) async throws -> MomentsUploadCompletion {
+    private func uploadWithRetry(request: URLRequest, data: Data) async throws -> Data {
         var attempt = 0
 
         while true {
@@ -94,7 +94,7 @@ struct MomentsUploadClient: Sendable {
                         fallbackMessage: MomentsUploadError.uploadFailed.localizedDescription
                     )
                 }
-                return try JSONDecoder().decode(MomentsUploadCompletion.self, from: responseData)
+                return responseData
             } catch {
                 guard uploadRetryPolicy.shouldRetry(error: error, attempt: attempt) else {
                     throw error
