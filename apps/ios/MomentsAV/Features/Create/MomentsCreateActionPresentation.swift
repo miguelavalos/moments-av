@@ -48,7 +48,7 @@ struct MomentsCreateFinalVideoActionPresentation: Equatable {
     var primaryTitle: String {
         hasRenderPlan
             ? L10n.string("create.final.confirmCredits", totalCreditCostTitle)
-            : L10n.string("create.final.reviewCost")
+            : L10n.string("create.final.checkCredits")
     }
 
     var primaryIconName: String {
@@ -156,7 +156,7 @@ struct MomentsCreatePrimaryActionPresentation: Equatable {
         }
         if hasFinalVideoIntent {
             if finalVideoAction.hasBlockedRenderPlan {
-                return L10n.string("create.final.reviewCost")
+                return L10n.string("create.final.checkCredits")
             }
             return finalVideoAction.hasRenderPlan
                 ? finalVideoAction.primaryTitle

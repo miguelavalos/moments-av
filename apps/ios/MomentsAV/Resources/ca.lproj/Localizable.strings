@@ -613,7 +613,7 @@
 "create.final.costDetails.watermark" = "Marca d'aigua";
 "create.final.costDetails.watermarkIncluded" = "Inclosa al vídeo final.";
 "create.final.createVideo" = "Crear vídeo";
-"create.final.reviewCost" = "Revisar crèdits";
+"create.final.checkCredits" = "Comprovar crèdits";
 "create.final.confirmCredits" = "Confirmar crèdits · %@";
 "create.final.createWithCost" = "Crear vídeo · %@";
 "create.final.creditCost" = "%@ necessaris";
@@ -731,16 +731,14 @@
 "create.storyDirection.title" = "Direcció de la història";
 "create.storyDirection.detail" = "Comprova el ritme i el missatge abans de gastar crèdits de vídeo.";
 "create.storyDirection.needsStory" = "Avi necessita preparar la història abans de crear el vídeo.";
-"create.reviewBeforeCreating.title" = "Check before creating";
 "create.media.itemCount" = "%d ítems";
 "create.final.createVideoTitle" = "Crear el vídeo";
-"create.final.reviewCostTitle" = "Revisar crèdits";
 "create.final.readyToCreateTitle" = "A punt per crear";
 "create.final.createVideoDetail" = "Avi editarà la teva mèdia real en un vídeo de %@. Veuràs el cost abans de crear el vídeo final.";
 "create.primary.finalReady" = "Vídeo final a punt.";
 "create.primary.videoCreating" = "Avi està creant el vídeo. Pots comprovar el progrés aquí.";
 "create.primary.createVideoPreflight" = "Avi comprovarà mèdia i confirmarà crèdits abans de començar.";
-"create.primary.reviewCostPreflight" = "Avi pujarà la mèdia i mostrarà el cost abans de crear el vídeo final.";
+"create.primary.creditPreflight" = "Avi pujarà la mèdia i mostrarà el cost abans de crear el vídeo final.";
 "create.primary.continuePreflight" = "Veuràs el cost abans de crear el vídeo.";
 "create.storyDecision.summary.aviTitle" = "Avi ha decidit";
 "create.storyDecision.summary.aviDetail" = "%@, %@, %@ i %@. Avi ho ha triat per la media: %@.";

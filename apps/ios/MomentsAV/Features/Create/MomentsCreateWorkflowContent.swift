@@ -1412,7 +1412,7 @@ private struct MomentsCreatePrimaryActionBar: View {
                         .foregroundStyle(AVBrandColor.textPrimary)
                         .lineLimit(1)
 
-                    Text(primaryActionPresentation.statusMessage ?? L10n.string("create.primary.reviewCostPreflight"))
+                    Text(primaryActionPresentation.statusMessage ?? L10n.string("create.primary.creditPreflight"))
                         .font(.system(size: 12, weight: .semibold))
                         .foregroundStyle(statusColor)
                         .lineLimit(2)

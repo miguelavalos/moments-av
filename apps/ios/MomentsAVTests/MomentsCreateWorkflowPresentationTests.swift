@@ -459,7 +459,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         )
 
         XCTAssertFalse(planning.hasRenderPlan)
-        XCTAssertEqual(planning.primaryTitle, "Review credits")
+        XCTAssertEqual(planning.primaryTitle, "Check credits")
         XCTAssertEqual(planning.primaryIconName, "creditcard.fill")
         XCTAssertEqual(planning.creditPolicyMessage, "Avi checks media and credits before creating the final video.")
         XCTAssertTrue(planning.canAffordSelectedCost)

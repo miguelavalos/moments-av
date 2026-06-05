@@ -615,7 +615,7 @@
 "create.final.costDetails.watermark" = "Watermark";
 "create.final.costDetails.watermarkIncluded" = "Included in the final video.";
 "create.final.createVideo" = "Create final video";
-"create.final.reviewCost" = "Review credits";
+"create.final.checkCredits" = "Check credits";
 "create.final.confirmCredits" = "Confirm credits · %@";
 "create.final.createWithCost" = "Create final video · %@";
 "create.final.creditCost" = "%@ needed";
@@ -738,16 +738,14 @@
 "create.storyDirection.title" = "Story direction";
 "create.storyDirection.detail" = "Check the pacing and message before spending video credits.";
 "create.storyDirection.needsStory" = "Avi needs to prepare the story before the video can be created.";
-"create.reviewBeforeCreating.title" = "Check before creating";
 "create.media.itemCount" = "%d items";
 "create.final.createVideoTitle" = "Create the video";
-"create.final.reviewCostTitle" = "Review credits";
 "create.final.readyToCreateTitle" = "Ready to create";
 "create.final.createVideoDetail" = "Avi will edit your real media into a %@ video. You will see the cost before creating the final video.";
 "create.primary.finalReady" = "Final video ready.";
 "create.primary.videoCreating" = "Avi is creating the video. You can check progress here.";
 "create.primary.createVideoPreflight" = "Avi will check media and confirm credits before starting.";
-"create.primary.reviewCostPreflight" = "Avi will upload media and show the cost before creating the final video.";
+"create.primary.creditPreflight" = "Avi will upload media and show the cost before creating the final video.";
 "create.primary.continuePreflight" = "You will see the cost before creating the video.";
 "create.storyDecision.summary.aviTitle" = "Avi selected";
 "create.storyDecision.summary.aviDetail" = "%@, %@, %@, and %@. Avi selected this setup for the media: %@.";

@@ -615,7 +615,7 @@
 "create.final.costDetails.watermark" = "Marca de agua";
 "create.final.costDetails.watermarkIncluded" = "Incluida en el video final.";
 "create.final.createVideo" = "Crear video final";
-"create.final.reviewCost" = "Revisar créditos";
+"create.final.checkCredits" = "Comprobar créditos";
 "create.final.confirmCredits" = "Confirmar créditos · %@";
 "create.final.createWithCost" = "Crear video final · %@";
 "create.final.creditCost" = "%@ necesarios";
@@ -738,16 +738,14 @@
 "create.storyDirection.title" = "Dirección de historia";
 "create.storyDirection.detail" = "Comprueba el ritmo y el mensaje antes de gastar créditos de video.";
 "create.storyDirection.needsStory" = "Avi necesita preparar la historia antes de crear el video.";
-"create.reviewBeforeCreating.title" = "Comprobar antes de crear";
 "create.media.itemCount" = "%d ítems";
 "create.final.createVideoTitle" = "Crear el video";
-"create.final.reviewCostTitle" = "Revisar créditos";
 "create.final.readyToCreateTitle" = "Listo para crear";
 "create.final.createVideoDetail" = "Avi editará tu media real en un video de %@. Verás el coste antes de crear el video final.";
 "create.primary.finalReady" = "Video final listo.";
 "create.primary.videoCreating" = "Avi está creando el video. Puedes comprobar el progreso aquí.";
 "create.primary.createVideoPreflight" = "Avi comprobará media y confirmará créditos antes de empezar.";
-"create.primary.reviewCostPreflight" = "Avi subirá la media y mostrará el coste antes de crear el video final.";
+"create.primary.creditPreflight" = "Avi subirá la media y mostrará el coste antes de crear el video final.";
 "create.primary.continuePreflight" = "Verás el coste antes de crear el video.";
 "create.storyDecision.summary.aviTitle" = "Avi eligió";
 "create.storyDecision.summary.aviDetail" = "%@, %@, %@ y %@. Avi eligió esta configuración para la media: %@.";
