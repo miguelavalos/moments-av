@@ -247,7 +247,7 @@ final class MomentsCreateViewModel: ObservableObject {
             details: workspace.moment.details ?? ""
         )
         isSignedIn = true
-        balance = MomentsCreateUITestFixtures.balance
+        balance = MomentsCreateUITestFixtures.balance(for: fixtureMode)
         isContinuingMoment = true
         workflowActiveMomentId = workspace.moment.id
         setupErrorMessage = nil
@@ -265,7 +265,12 @@ final class MomentsCreateViewModel: ObservableObject {
         finalExport = workspace.latestArtifact(kind: "final_export")
         pendingGalleryVideo = nil
         latestFinalJob = workspace.latestRenderJob(kind: "final")
-        renderPlan = fixtureMode == .videoPlanReady ? MomentsCreateUITestFixtures.renderPlan : nil
+        switch fixtureMode {
+        case .videoPlanReady, .videoPlanInsufficientCredits:
+            renderPlan = MomentsCreateUITestFixtures.renderPlan(for: fixtureMode)
+        case .aviCutReady, .finalQueued, .finalRunning, .full:
+            renderPlan = nil
+        }
         renderPlanInputSignature = renderPlan.map { currentFinalRenderInputSignature(momentId: $0.momentId) }
         finalRenderStatusMessage = {
             switch fixtureMode {
@@ -273,6 +278,12 @@ final class MomentsCreateViewModel: ObservableObject {
                 return nil
             case .videoPlanReady:
                 return L10n.string("workflow.final.planReady")
+            case .videoPlanInsufficientCredits:
+                return L10n.string("create.final.blocker.insufficientCredits")
+            case .finalQueued:
+                return L10n.string("create.render.status.queued")
+            case .finalRunning:
+                return L10n.string("create.final.action.creating")
             case .full:
                 return L10n.string("create.final.status.ready")
             }

@@ -4,6 +4,9 @@ enum MomentsCreateUITestFixtures {
     enum Mode: String {
         case aviCutReady = "avi_cut_ready"
         case videoPlanReady = "video_plan_ready"
+        case videoPlanInsufficientCredits = "video_plan_insufficient_credits"
+        case finalQueued = "final_queued"
+        case finalRunning = "final_running"
         case full
 
         static var current: Mode? {
@@ -30,7 +33,7 @@ enum MomentsCreateUITestFixtures {
         InProgressMoment(
             id: momentId,
             template: .birthdayMessage,
-            status: mode == .full ? "gallery_ready" : "story_ready",
+            status: momentStatus(for: mode),
             title: "Family Weekend",
             tone: "warm",
             tempo: "balanced",
@@ -60,7 +63,16 @@ enum MomentsCreateUITestFixtures {
     }
 
     static var balance: MomentsCreditBalance {
-        MomentsCreditBalance(proMonthly: 4, promotional: 1, purchased: 3)
+        balance(for: .full)
+    }
+
+    static func balance(for mode: Mode) -> MomentsCreditBalance {
+        switch mode {
+        case .videoPlanInsufficientCredits:
+            return .empty
+        case .aviCutReady, .videoPlanReady, .finalQueued, .finalRunning, .full:
+            return MomentsCreditBalance(proMonthly: 4, promotional: 1, purchased: 3)
+        }
     }
 
     static var selectedMedia: [MomentsSelectedMedia] {
@@ -100,12 +112,25 @@ enum MomentsCreateUITestFixtures {
     }
 
     static func renderJobs(for mode: Mode) -> [MomentRenderJob] {
-        guard mode == .full else { return [] }
-
-        return [
-            renderJob(id: "preview-job-1", kind: "preview", status: "completed", model: "moments-preview-route"),
-            renderJob(id: "final-job-1", kind: "final", status: "completed", model: "moments-final-route")
-        ]
+        switch mode {
+        case .aviCutReady, .videoPlanReady, .videoPlanInsufficientCredits:
+            return []
+        case .finalQueued:
+            return [
+                renderJob(id: "preview-job-1", kind: "preview", status: "completed", model: "moments-preview-route"),
+                renderJob(id: "final-job-1", kind: "final", status: "queued", model: "mock/moments-final-v1")
+            ]
+        case .finalRunning:
+            return [
+                renderJob(id: "preview-job-1", kind: "preview", status: "completed", model: "moments-preview-route"),
+                renderJob(id: "final-job-1", kind: "final", status: "running", model: "mock/moments-final-v1")
+            ]
+        case .full:
+            return [
+                renderJob(id: "preview-job-1", kind: "preview", status: "completed", model: "moments-preview-route"),
+                renderJob(id: "final-job-1", kind: "final", status: "completed", model: "mock/moments-final-v1")
+            ]
+        }
     }
 
     static var artifacts: [MomentArtifact] {
@@ -113,19 +138,31 @@ enum MomentsCreateUITestFixtures {
     }
 
     static func artifacts(for mode: Mode) -> [MomentArtifact] {
-        guard mode == .full else { return [] }
-
-        return [
-            artifact(id: "preview-artifact-1", kind: "preview", key: "momentsav/ui-test/moment-1/previews/preview-1.mp4", hasWatermark: true),
-            artifact(id: "final-artifact-1", kind: "final_export", key: "momentsav/ui-test/moment-1/final/final-1.mp4", hasWatermark: false)
-        ]
+        switch mode {
+        case .aviCutReady, .videoPlanReady, .videoPlanInsufficientCredits:
+            return []
+        case .finalQueued, .finalRunning:
+            return [
+                artifact(id: "preview-artifact-1", kind: "preview", key: "momentsav/ui-test/moment-1/previews/preview-1.mp4", hasWatermark: true)
+            ]
+        case .full:
+            return [
+                artifact(id: "preview-artifact-1", kind: "preview", key: "momentsav/ui-test/moment-1/previews/preview-1.mp4", hasWatermark: true),
+                artifact(id: "final-artifact-1", kind: "final_export", key: "momentsav/ui-test/moment-1/final/final-1.mp4", hasWatermark: false)
+            ]
+        }
     }
 
     static var renderPlan: MomentsRenderPlanResponse {
-        MomentsRenderPlanResponse(
+        renderPlan(for: .videoPlanReady)
+    }
+
+    static func renderPlan(for mode: Mode) -> MomentsRenderPlanResponse {
+        let hasCredits = mode != .videoPlanInsufficientCredits
+        return MomentsRenderPlanResponse(
             appId: "momentsav",
             momentId: momentId,
-            planId: "ui-test-plan-1",
+            planId: hasCredits ? "ui-test-plan-1" : "ui-test-plan-low-credits",
             watermark: MomentsRenderWatermarkPlan(
                 includedForPro: true,
                 userHasWatermarkFree: false,
@@ -149,10 +186,21 @@ enum MomentsCreateUITestFixtures {
                 userMessage: "Avi will use the strongest clips, keep the beach toast as the ending, and render a 30 second video.",
                 qualityWarnings: []
             ),
-            canCreateVideo: true,
-            createVideoBlockers: [],
+            canCreateVideo: hasCredits,
+            createVideoBlockers: hasCredits ? [] : ["insufficient_credits"],
             generatedAt: "2026-06-02T00:00:00Z"
         )
+    }
+
+    private static func momentStatus(for mode: Mode) -> String {
+        switch mode {
+        case .full:
+            return "gallery_ready"
+        case .finalQueued, .finalRunning:
+            return "rendering"
+        case .aviCutReady, .videoPlanReady, .videoPlanInsufficientCredits:
+            return "story_ready"
+        }
     }
 
     private static func selectedMedia(
@@ -216,13 +264,16 @@ enum MomentsCreateUITestFixtures {
         status: String,
         model: String
     ) -> MomentRenderJob {
-        MomentRenderJob(
+        let isCompleted = status == "completed"
+        let isQueued = status == "queued"
+
+        return MomentRenderJob(
             id: id,
             kind: kind,
             status: status,
-            phase: status == "completed" ? "completed" : "queued",
-            progressPercent: status == "completed" ? 100 : 10,
-            userMessage: status == "completed" ? "Your video is ready." : "Avi has started creating the video.",
+            phase: isCompleted ? "completed" : isQueued ? "queued" : "running",
+            progressPercent: isCompleted ? 100 : isQueued ? 10 : 56,
+            userMessage: isCompleted ? "Your video is ready." : isQueued ? "Your video is queued." : "Avi is creating the final video.",
             canEditSetup: status != "running",
             canRetry: status == "failed",
             targetDurationMs: 15_000,
