@@ -2,33 +2,33 @@ import Foundation
 import OSLog
 
 @MainActor
-final class StoryPlanWorkflow: WorkspaceObservingWorkflow {
+final class StoryWorkflow: WorkspaceObservingWorkflow {
     @Published private(set) var generatedPlan: MomentsStoryPlanResponse?
     @Published private(set) var isPlanning = false
     @Published private(set) var statusMessage: String?
 
     private let currentUserProvider: any MomentsCurrentUserProviding
     private let authTokenProvider: any MomentsAuthTokenProviding
-    private let storyPlanSaver: any MomentsStoryPlanSaving
+    private let storySaver: any MomentsStoryPlanSaving
     private let storyClient: MomentsStoryClient
     private let logger = Logger(subsystem: "com.avalsys.momentsav", category: "story")
 
     init(
         currentUserProvider: any MomentsCurrentUserProviding,
         authTokenProvider: any MomentsAuthTokenProviding,
-        storyPlanSaver: any MomentsStoryPlanSaving,
+        storySaver: any MomentsStoryPlanSaving,
         workspaceObserver: any MomentsActiveWorkspaceObserving,
         storyClient: MomentsStoryClient
     ) {
         self.currentUserProvider = currentUserProvider
         self.authTokenProvider = authTokenProvider
-        self.storyPlanSaver = storyPlanSaver
+        self.storySaver = storySaver
         self.storyClient = storyClient
         super.init(workspaceObserver: workspaceObserver)
     }
 
     var isConfigured: Bool {
-        storyPlanSaver.isConfigured && storyClient.isConfigured
+        storySaver.isConfigured && storyClient.isConfigured
     }
 
     func canPlan(template: MomentTemplate) -> Bool {
@@ -91,7 +91,7 @@ final class StoryPlanWorkflow: WorkspaceObservingWorkflow {
             try validatePlanMediaReferences(plan, availableMedia: media)
             generatedPlan = plan
             do {
-                try await storyPlanSaver.saveStoryPlan(
+                try await storySaver.saveStoryPlan(
                     ownerUserId: ownerUserId,
                     momentId: momentId,
                     plan: plan,
@@ -99,12 +99,12 @@ final class StoryPlanWorkflow: WorkspaceObservingWorkflow {
                 )
             } catch {
                 logger.error("Story plan save failed momentId=\(momentId, privacy: .public) error=\(String(describing: error), privacy: .public)")
-                throw StoryPlanWorkflowError.saveFailed
+                throw StoryWorkflowError.saveFailed
             }
             guard isCurrentWorkflowGeneration(generation) else { return false }
             workspaceObserver.observeWorkspace(ownerUserId: ownerUserId, momentId: momentId)
             statusMessage = plan.helperCopy
-        } catch let error as StoryPlanWorkflowError {
+        } catch let error as StoryWorkflowError {
             guard isCurrentWorkflowGeneration(generation) else { return false }
             logger.error("Story plan workflow failed momentId=\(momentId, privacy: .public) reason=\(error.localizedDescription, privacy: .public)")
             statusMessage = error.localizedDescription
@@ -181,7 +181,7 @@ final class StoryPlanWorkflow: WorkspaceObservingWorkflow {
             .filter { !availableMediaIds.contains($0) }
 
         guard missingMediaIds.isEmpty else {
-            throw StoryPlanWorkflowError.invalidMediaReferences
+            throw StoryWorkflowError.invalidMediaReferences
         }
     }
 
@@ -203,7 +203,7 @@ final class StoryPlanWorkflow: WorkspaceObservingWorkflow {
     }
 }
 
-private enum StoryPlanWorkflowError: LocalizedError {
+private enum StoryWorkflowError: LocalizedError {
     case invalidMediaReferences
     case saveFailed
 

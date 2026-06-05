@@ -56,7 +56,7 @@ extension MomentsCreateViewModel {
             hasMomentWorkspace: hasMomentWorkspace,
             isImportingMedia: isImportingMedia,
             mediaRemainingSlots: mediaRemainingSlots,
-            storyPlanWorkflow: storyPlanWorkflow,
+            storyWorkflow: storyWorkflow,
             finalRenderWorkflow: finalRenderWorkflow,
             creditBalanceLoadState: creditBalanceLoadState,
             template: form.template,

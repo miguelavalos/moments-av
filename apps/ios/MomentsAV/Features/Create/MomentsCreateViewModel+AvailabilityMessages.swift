@@ -21,9 +21,9 @@ extension MomentsCreateViewModel {
         MomentsCreateAvailabilityMessageFactory.story(
             isSignedIn: isSignedIn,
             hasMomentWorkspace: hasMomentWorkspace,
-            isStoryPlanning: storyPlanWorkflow?.isPlanning ?? false,
-            isStoryPlanAvailable: storyPlanWorkflow != nil,
-            isStoryPlanConfigured: storyPlanWorkflow?.isConfigured ?? false,
+            isStoryPlanning: storyWorkflow?.isPlanning ?? false,
+            isStoryPlanAvailable: storyWorkflow != nil,
+            isStoryPlanConfigured: storyWorkflow?.isConfigured ?? false,
             mediaAssets: effectiveActiveWorkspace?.mediaAssets,
             selectedMediaCount: mediaSelectedCount,
             template: form.template

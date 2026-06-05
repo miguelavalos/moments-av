@@ -6,13 +6,13 @@ extension MomentsCreateViewModel {
         accountStateProvider: any MomentsAccountStateProviding,
         momentCreationWorkflow: MomentCreationWorkflow,
         mediaUploadWorkflow: MediaUploadWorkflow,
-        storyPlanWorkflow: StoryPlanWorkflow,
+        storyWorkflow: StoryWorkflow,
         finalRenderWorkflow: FinalRenderWorkflow
     ) {
         bindAccount(accountStateProvider)
         bindMomentCreation(momentCreationWorkflow)
         bindMediaUpload(mediaUploadWorkflow)
-        bindStoryPlan(storyPlanWorkflow)
+        bindStory(storyWorkflow)
         bindFinalRender(finalRenderWorkflow)
     }
 
@@ -75,7 +75,7 @@ extension MomentsCreateViewModel {
             .store(in: &cancellables)
     }
 
-    private func bindStoryPlan(_ workflow: StoryPlanWorkflow) {
+    private func bindStory(_ workflow: StoryWorkflow) {
         Publishers.CombineLatest4(
             workflow.$activeWorkspace,
             workflow.$generatedPlan.map { $0?.scenes ?? [] },

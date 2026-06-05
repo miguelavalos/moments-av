@@ -137,7 +137,7 @@ extension MomentsCreateViewModel {
     }
 
     func generateStoryPlan() {
-        guard canPlanStory, let storyPlanWorkflow else {
+        guard canPlanStory, let storyWorkflow else {
             updateStoryStatusMessage(storyAvailabilityMessage ?? L10n.string("create.error.storyPreparationNotReady"))
             return
         }
@@ -181,7 +181,7 @@ extension MomentsCreateViewModel {
                 persistedMedia: persistedMedia
             )
 
-            let didPrepareStory = await storyPlanWorkflow.generatePlan(
+            let didPrepareStory = await storyWorkflow.generatePlan(
                 momentId: momentId,
                 form: form,
                 selectedMedia: selectedMedia,
@@ -311,7 +311,7 @@ extension MomentsCreateViewModel {
         momentId: String,
         form: MomentSetupForm,
         selectedMedia: [MomentsSelectedMedia],
-        storyPlanWorkflow: StoryPlanWorkflow
+        storyWorkflow: StoryWorkflow
     ) async -> Bool {
         var inputSignature = preparedStoryComparisonInputSignature(momentId: momentId)
         if storySummary.hasScenes, lastPreparedStoryInputSignature == inputSignature {
@@ -329,7 +329,7 @@ extension MomentsCreateViewModel {
             persistedMedia: persistedMedia
         )
 
-        let didPrepareStory = await storyPlanWorkflow.generatePlan(
+        let didPrepareStory = await storyWorkflow.generatePlan(
             momentId: momentId,
             form: form,
             selectedMedia: selectedMedia,

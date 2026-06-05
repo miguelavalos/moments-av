@@ -44,7 +44,7 @@ final class MomentsCreateViewModel: ObservableObject {
 
     private(set) var momentCreationWorkflow: MomentCreationWorkflow?
     private(set) var mediaUploadWorkflow: MediaUploadWorkflow?
-    private(set) var storyPlanWorkflow: StoryPlanWorkflow?
+    private(set) var storyWorkflow: StoryWorkflow?
     private(set) var finalRenderWorkflow: FinalRenderWorkflow?
     let operationRunner = MomentsCreateOperationRunner()
     var cancellables = Set<AnyCancellable>()
@@ -104,13 +104,13 @@ final class MomentsCreateViewModel: ObservableObject {
         accountStateProvider: any MomentsAccountStateProviding,
         momentCreationWorkflow: MomentCreationWorkflow,
         mediaUploadWorkflow: MediaUploadWorkflow,
-        storyPlanWorkflow: StoryPlanWorkflow,
+        storyWorkflow: StoryWorkflow,
         finalRenderWorkflow: FinalRenderWorkflow
     ) {
         cancelOperations()
         self.momentCreationWorkflow = momentCreationWorkflow
         self.mediaUploadWorkflow = mediaUploadWorkflow
-        self.storyPlanWorkflow = storyPlanWorkflow
+        self.storyWorkflow = storyWorkflow
         self.finalRenderWorkflow = finalRenderWorkflow
         templates = momentCreationWorkflow.launchTemplates
         creationStyles = MomentCreationStyle.launchStyles
@@ -126,7 +126,7 @@ final class MomentsCreateViewModel: ObservableObject {
             accountStateProvider: accountStateProvider,
             momentCreationWorkflow: momentCreationWorkflow,
             mediaUploadWorkflow: mediaUploadWorkflow,
-            storyPlanWorkflow: storyPlanWorkflow,
+            storyWorkflow: storyWorkflow,
             finalRenderWorkflow: finalRenderWorkflow
         )
     }
@@ -327,7 +327,7 @@ final class MomentsCreateViewModel: ObservableObject {
         continuationFocusHint = nil
         momentCreationWorkflow?.resetMomentSetup(force: force)
         mediaUploadWorkflow?.reset(force: force)
-        storyPlanWorkflow?.reset(force: force)
+        storyWorkflow?.reset(force: force)
         finalRenderWorkflow?.reset(force: force)
 
         if let firstTemplate = templates.first {

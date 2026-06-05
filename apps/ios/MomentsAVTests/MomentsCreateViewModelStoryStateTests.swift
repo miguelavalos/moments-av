@@ -505,7 +505,7 @@ final class MomentsCreateViewModelStoryStateTests: XCTestCase {
             accountStateProvider: harness,
             momentCreationWorkflow: harness.momentCreationWorkflow,
             mediaUploadWorkflow: harness.mediaUploadWorkflow,
-            storyPlanWorkflow: harness.storyPlanWorkflow,
+            storyWorkflow: harness.storyWorkflow,
             finalRenderWorkflow: harness.finalRenderWorkflow
         )
         await Task.yield()
@@ -658,11 +658,11 @@ private final class MomentCreationFailureHarness:
         )
     }
 
-    var storyPlanWorkflow: StoryPlanWorkflow {
-        StoryPlanWorkflow(
+    var storyWorkflow: StoryWorkflow {
+        StoryWorkflow(
             currentUserProvider: self,
             authTokenProvider: self,
-            storyPlanSaver: self,
+            storySaver: self,
             workspaceObserver: self,
             storyClient: MomentsStoryClient(baseURLString: "https://api.example.com")
         )

@@ -32,7 +32,7 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
             hasMomentWorkspace: true,
             isImportingMedia: false,
             mediaRemainingSlots: 2,
-            storyPlanWorkflow: nil,
+            storyWorkflow: nil,
             finalRenderWorkflow: nil,
             template: .birthdayMessage,
             selectedMediaCount: 0
@@ -52,7 +52,7 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
             hasMomentWorkspace: true,
             isImportingMedia: false,
             mediaRemainingSlots: 0,
-            storyPlanWorkflow: nil,
+            storyWorkflow: nil,
             finalRenderWorkflow: nil,
             template: .birthdayMessage,
             selectedMediaCount: 0
@@ -63,7 +63,7 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
             hasMomentWorkspace: false,
             isImportingMedia: false,
             mediaRemainingSlots: 2,
-            storyPlanWorkflow: nil,
+            storyWorkflow: nil,
             finalRenderWorkflow: nil,
             template: .birthdayMessage,
             selectedMediaCount: 0
