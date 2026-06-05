@@ -22,8 +22,8 @@ extension MomentsCreateViewModel {
             isSignedIn: isSignedIn,
             hasMomentWorkspace: hasMomentWorkspace,
             isStoryPlanning: storyWorkflow?.isPlanning ?? false,
-            isStoryPlanAvailable: storyWorkflow != nil,
-            isStoryPlanConfigured: storyWorkflow?.isConfigured ?? false,
+            isStoryAvailable: storyWorkflow != nil,
+            isStoryConfigured: storyWorkflow?.isConfigured ?? false,
             mediaAssets: effectiveActiveWorkspace?.mediaAssets,
             selectedMediaCount: mediaSelectedCount,
             template: form.template

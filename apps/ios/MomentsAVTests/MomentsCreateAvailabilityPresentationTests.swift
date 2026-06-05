@@ -122,8 +122,8 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
                 isSignedIn: true,
                 hasMomentWorkspace: true,
                 isStoryPlanning: false,
-                isStoryPlanAvailable: true,
-                isStoryPlanConfigured: true,
+                isStoryAvailable: true,
+                isStoryConfigured: true,
                 mediaAssets: [],
                 selectedMediaCount: 0,
                 template: .birthdayMessage
@@ -135,8 +135,8 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
                 isSignedIn: true,
                 hasMomentWorkspace: true,
                 isStoryPlanning: true,
-                isStoryPlanAvailable: true,
-                isStoryPlanConfigured: false,
+                isStoryAvailable: true,
+                isStoryConfigured: false,
                 mediaAssets: [],
                 selectedMediaCount: 0,
                 template: .birthdayMessage

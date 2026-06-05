@@ -145,7 +145,7 @@ final class MomentsCreditGateTests: XCTestCase {
         XCTAssertFalse(MomentsMediaRules.canUseSelection(template: .partyRecap, selectedCount: 81))
     }
 
-    func testStoryPlanRulesUseSelectedConvexMediaCount() {
+    func testStoryRulesUseSelectedConvexMediaCount() {
         let assets = (0..<3).map {
             MomentMediaAsset(
                 id: "media-\($0)",
@@ -164,7 +164,7 @@ final class MomentsCreditGateTests: XCTestCase {
         XCTAssertTrue(MomentsStoryRules.canPlan(mediaAssets: assets, template: .partyRecap))
     }
 
-    func testStoryPlanInputSignatureTracksMediaOrderAndDirection() {
+    func testStoryInputSignatureTracksMediaOrderAndDirection() {
         func storyMedia(id: String, sortOrder: Int) -> MomentsStoryMedia {
             MomentsStoryMedia(
                 mediaAssetId: id,

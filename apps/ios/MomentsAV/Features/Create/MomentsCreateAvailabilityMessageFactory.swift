@@ -30,17 +30,17 @@ enum MomentsCreateAvailabilityMessageFactory {
         isSignedIn: Bool,
         hasMomentWorkspace: Bool,
         isStoryPlanning: Bool,
-        isStoryPlanAvailable: Bool,
-        isStoryPlanConfigured: Bool,
+        isStoryAvailable: Bool,
+        isStoryConfigured: Bool,
         mediaAssets: [MomentMediaAsset]?,
         selectedMediaCount: Int,
         template: MomentTemplate
     ) -> String? {
         guard isSignedIn else { return MomentsCreateAvailabilityCopy.storySignInRequired }
         guard hasMomentWorkspace else { return MomentsCreateAvailabilityCopy.storyMissingMoment }
-        guard isStoryPlanAvailable else { return MomentsCreateAvailabilityCopy.storyUnavailable }
+        guard isStoryAvailable else { return MomentsCreateAvailabilityCopy.storyUnavailable }
         if isStoryPlanning { return nil }
-        if !isStoryPlanConfigured { return MomentsCreateAvailabilityCopy.storyNotConfigured }
+        if !isStoryConfigured { return MomentsCreateAvailabilityCopy.storyNotConfigured }
 
         if selectedMediaCount > 0 {
             let availability = MomentsMediaRules.availability(template: template, selectedCount: selectedMediaCount)

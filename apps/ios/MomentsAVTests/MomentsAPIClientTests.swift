@@ -248,7 +248,7 @@ final class MomentsAPIClientTests: XCTestCase {
         XCTAssertEqual(MomentsURLProtocolMock.requestCount, 2)
     }
 
-    func testStoryPlanUsesSharedAccountAPIBaseURL() async throws {
+    func testStoryUsesSharedAccountAPIBaseURL() async throws {
         let session = makeMockSession(
             json: """
             {
@@ -282,7 +282,7 @@ final class MomentsAPIClientTests: XCTestCase {
         XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.value(forHTTPHeaderField: "Authorization"), "Bearer token-1")
     }
 
-    func testStoryPlanRetriesTransientNetworkLoss() async throws {
+    func testStoryRetriesTransientNetworkLoss() async throws {
         MomentsURLProtocolMock.failuresBeforeSuccess = 1
         let session = makeMockSession(
             json: """

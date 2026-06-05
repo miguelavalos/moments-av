@@ -498,7 +498,7 @@ final class MomentsCreateViewModelStoryStateTests: XCTestCase {
         XCTAssertNotNil(viewModel.finalRenderSummary.renderPlan)
     }
 
-    func testGenerateStoryPlanShowsImmediateMomentCreationError() async {
+    func testGenerateStoryShowsImmediateMomentCreationError() async {
         let harness = MomentCreationFailureHarness(error: MomentsSyncError.notConfigured)
         let viewModel = MomentsCreateViewModel()
         viewModel.bind(
