@@ -119,7 +119,7 @@ private struct MomentsCreateMediaFirstWorkspace: View {
                     if presentation.isFinalRenderEditingLocked {
                         EmptyView()
                     } else if hasMediaSelection {
-                        MomentsCreateAviCutDecisionCard(
+                        MomentsCreateStoryDecisionCard(
                             presentation: presentation,
                             selectedDuration: form.duration,
                             selectedLook: form.look,
@@ -675,7 +675,7 @@ private struct MomentsCreateStoryReviewCard: View {
     }
 }
 
-private struct MomentsCreateAviCutDecisionCard: View {
+private struct MomentsCreateStoryDecisionCard: View {
     let presentation: MomentsCreateWorkflowPresentation
     let selectedDuration: MomentDuration
     let selectedLook: MomentLook
@@ -707,7 +707,7 @@ private struct MomentsCreateAviCutDecisionCard: View {
 
                     VStack(alignment: .leading, spacing: 7) {
                         HStack(spacing: 9) {
-                            Image(systemName: aviCut.iconName)
+                            Image(systemName: storyDecision.iconName)
                                 .font(.system(size: 14, weight: .black))
                                 .foregroundStyle(.white)
                                 .frame(width: 30, height: 30)
@@ -720,7 +720,7 @@ private struct MomentsCreateAviCutDecisionCard: View {
                                 .minimumScaleFactor(0.82)
                         }
 
-                        Text(aviCut.statusMessage)
+                        Text(storyDecision.statusMessage)
                             .font(.system(size: 13, weight: .semibold))
                             .foregroundStyle(AVBrandColor.textSecondary)
                             .lineLimit(2)
@@ -762,7 +762,7 @@ private struct MomentsCreateAviCutDecisionCard: View {
                     .accessibilityLabel(L10n.string("create.aviCut.menu.accessibility"))
                 }
 
-                MomentsCreateAviCutDecisionSummary(
+                MomentsCreateStoryDecisionSummary(
                     isUserAdjusted: isUserAdjustedFromAvi,
                     title: decisionSummaryTitle,
                     detail: decisionSummaryDetail,
@@ -776,15 +776,15 @@ private struct MomentsCreateAviCutDecisionCard: View {
                         .textCase(.uppercase)
 
                     VStack(spacing: 0) {
-                        MomentsCreateAviCutSummaryRow(
+                        MomentsCreateStoryDecisionSummaryRow(
                             title: L10n.string("create.workflowContent.mediaSelected"),
-                            value: aviCut.mediaCountTitle,
+                            value: storyDecision.mediaCountTitle,
                             detail: mediaDetail,
                             systemImage: "photo.stack",
                             action: editMedia
                         )
                         MomentsCreateOptionDivider()
-                        MomentsCreateAviCutSummaryRow(
+                        MomentsCreateStoryDecisionSummaryRow(
                             title: L10n.string("create.workflowContent.theme"),
                             value: selectedStyle.title,
                             detail: selectedStyle.subtitle,
@@ -792,7 +792,7 @@ private struct MomentsCreateAviCutDecisionCard: View {
                             action: changeTheme
                         )
                         MomentsCreateOptionDivider()
-                        MomentsCreateAviCutSummaryRow(
+                        MomentsCreateStoryDecisionSummaryRow(
                             title: L10n.string("create.guide.look.title"),
                             value: selectedLook.title,
                             detail: selectedLook.subtitle,
@@ -800,7 +800,7 @@ private struct MomentsCreateAviCutDecisionCard: View {
                             action: changeLook
                         )
                         MomentsCreateOptionDivider()
-                        MomentsCreateAviCutSummaryRow(
+                        MomentsCreateStoryDecisionSummaryRow(
                             title: L10n.string("create.workflowContent.tone"),
                             value: selectedMusicPreset.title,
                             detail: L10n.string("create.guide.mood.detail"),
@@ -808,15 +808,15 @@ private struct MomentsCreateAviCutDecisionCard: View {
                             action: changeMood
                         )
                         MomentsCreateOptionDivider()
-                        MomentsCreateAviCutSummaryRow(
+                        MomentsCreateStoryDecisionSummaryRow(
                             title: L10n.string("create.workflowContent.pacing"),
-                            value: aviCut.durationTitle,
+                            value: storyDecision.durationTitle,
                             detail: lengthDetail,
                             systemImage: "timer",
                             action: changeLength
                         )
                         MomentsCreateOptionDivider()
-                        MomentsCreateAviCutSummaryRow(
+                        MomentsCreateStoryDecisionSummaryRow(
                             title: L10n.string("create.note.field.title"),
                             value: noteTitle,
                             detail: noteDetail,
@@ -831,11 +831,11 @@ private struct MomentsCreateAviCutDecisionCard: View {
 
                 if presentation.storySummary.hasScenes {
                     VStack(alignment: .leading, spacing: 7) {
-                        ForEach(aviCut.visibleScenes.prefix(1)) { scene in
+                        ForEach(storyDecision.visibleScenes.prefix(1)) { scene in
                             MomentsCreateStoryReviewSceneRow(scene: scene)
                         }
 
-                        if let remainingSceneTitle = aviCut.remainingSceneTitle {
+                        if let remainingSceneTitle = storyDecision.remainingSceneTitle {
                             Text(remainingSceneTitle)
                                 .font(.caption2)
                                 .fontWeight(.black)
@@ -875,7 +875,7 @@ private struct MomentsCreateAviCutDecisionCard: View {
                 selectedStyle.title,
                 selectedMusicPreset.title,
                 selectedLook.title,
-                aviCut.durationTitle
+                storyDecision.durationTitle
             )
         }
 
@@ -884,7 +884,7 @@ private struct MomentsCreateAviCutDecisionCard: View {
             selectedStyle.title,
             selectedMusicPreset.title,
             selectedLook.title,
-            aviCut.durationTitle,
+            storyDecision.durationTitle,
             mediaDetail
         )
     }
@@ -899,7 +899,7 @@ private struct MomentsCreateAviCutDecisionCard: View {
             styleTitle,
             autoStyleSuggestion.musicPreset.title,
             selectedLook.title,
-            aviCut.durationTitle
+            storyDecision.durationTitle
         )
     }
 
@@ -967,8 +967,8 @@ private struct MomentsCreateAviCutDecisionCard: View {
         presentation.finalRenderSummary.latestFinalJob?.isActiveRender != true
     }
 
-    private var aviCut: MomentsCreateAviCutPresentation {
-        MomentsCreateAviCutPresentation(
+    private var storyDecision: MomentsCreateStoryDecisionPresentation {
+        MomentsCreateStoryDecisionPresentation(
             mediaSummary: presentation.mediaSummary,
             storySummary: presentation.storySummary,
             selectedDuration: selectedDuration,
@@ -980,7 +980,7 @@ private struct MomentsCreateAviCutDecisionCard: View {
 
 }
 
-private struct MomentsCreateAviCutDecisionSummary: View {
+private struct MomentsCreateStoryDecisionSummary: View {
     let isUserAdjusted: Bool
     let title: String
     let detail: String
@@ -1256,7 +1256,7 @@ private struct MomentsCreateOptionPill: View {
     }
 }
 
-private struct MomentsCreateAviCutSummaryRow: View {
+private struct MomentsCreateStoryDecisionSummaryRow: View {
     let title: String
     let value: String
     let detail: String

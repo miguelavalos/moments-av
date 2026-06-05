@@ -308,8 +308,8 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         XCTAssertEqual(summary.reviewScenes.map(\.caption), ["Open with the arrival.", "Show the trip highlights."])
     }
 
-    func testAviCutPresentationFormatsReadyCutState() {
-        let presentation = MomentsCreateAviCutPresentation(
+    func testStoryDecisionPresentationFormatsReadyStoryState() {
+        let presentation = MomentsCreateStoryDecisionPresentation(
             mediaSummary: MomentsCreateMediaSummary(
                 selectedMedia: [
                     MomentsCreateTestFixtures.makeSelectedMedia(id: "00000000-0000-0000-0000-000000000001"),
@@ -330,20 +330,20 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
 
         XCTAssertEqual(
             presentation.statusMessage,
-            "Avi's Cut is ready. Create the final video or adjust the cut first."
+            "Story is ready. Create the final video or adjust it first."
         )
-        XCTAssertEqual(presentation.modeTitle, "Avi's choice")
+        XCTAssertEqual(presentation.modeTitle, "Story")
         XCTAssertEqual(presentation.mediaCountTitle, "2 items")
         XCTAssertEqual(presentation.primaryActionTitle, "Improve with Avi")
-        XCTAssertEqual(presentation.editActionTitle, "Edit Cut")
+        XCTAssertEqual(presentation.editActionTitle, "Edit story")
         XCTAssertTrue(presentation.canRunPrimaryAction)
         XCTAssertTrue(presentation.canShowImproveAction)
         XCTAssertEqual(presentation.visibleScenes.count, 2)
-        XCTAssertEqual(presentation.remainingSceneTitle, "2 more scenes in this cut")
+        XCTAssertEqual(presentation.remainingSceneTitle, "2 more scenes in this story")
     }
 
-    func testAviCutPresentationKeepsFinalPathNonBlockingWhenImproveIsUnavailable() {
-        let presentation = MomentsCreateAviCutPresentation(
+    func testStoryDecisionPresentationKeepsFinalPathNonBlockingWhenImproveIsUnavailable() {
+        let presentation = MomentsCreateStoryDecisionPresentation(
             mediaSummary: MomentsCreateMediaSummary(
                 selectedMedia: [MomentsCreateTestFixtures.makeSelectedMedia(id: "00000000-0000-0000-0000-000000000001")]
             ),
@@ -357,15 +357,15 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
 
         XCTAssertEqual(
             presentation.statusMessage,
-            "Avi's Cut is ready. Create the final video or adjust the cut first."
+            "Story is ready. Create the final video or adjust it first."
         )
         XCTAssertEqual(presentation.primaryActionTitle, "Improve with Avi")
         XCTAssertFalse(presentation.canRunPrimaryAction)
         XCTAssertFalse(presentation.canShowImproveAction)
     }
 
-    func testAviCutPresentationFormatsPendingAndUnavailableStates() {
-        var presentation = MomentsCreateAviCutPresentation(
+    func testStoryDecisionPresentationFormatsPendingAndUnavailableStates() {
+        var presentation = MomentsCreateStoryDecisionPresentation(
             mediaSummary: MomentsCreateMediaSummary(
                 selectedMedia: [MomentsCreateTestFixtures.makeSelectedMedia(id: "00000000-0000-0000-0000-000000000001")]
             ),
@@ -374,10 +374,10 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
             canImproveWithAvi: true
         )
 
-        XCTAssertEqual(presentation.statusMessage, "Ready for Avi to prepare a first cut.")
+        XCTAssertEqual(presentation.statusMessage, "Ready for Avi to prepare the story.")
         XCTAssertEqual(presentation.modeTitle, "Ready")
         XCTAssertEqual(presentation.mediaCountTitle, "1 item")
-        XCTAssertEqual(presentation.primaryActionTitle, "Create preview")
+        XCTAssertEqual(presentation.primaryActionTitle, "Prepare story")
         XCTAssertTrue(presentation.canRunPrimaryAction)
         XCTAssertFalse(presentation.canShowImproveAction)
 

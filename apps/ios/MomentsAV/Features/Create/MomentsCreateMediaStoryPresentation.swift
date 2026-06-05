@@ -57,7 +57,7 @@ struct MomentsCreateStoryPresentation: Equatable {
     }
 }
 
-struct MomentsCreateAviCutPresentation: Equatable {
+struct MomentsCreateStoryDecisionPresentation: Equatable {
     var mediaSummary: MomentsCreateMediaSummary
     var storySummary: MomentsCreateStorySummary
     var selectedDuration: MomentDuration
