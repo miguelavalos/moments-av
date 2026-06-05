@@ -341,7 +341,7 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
         } catch {
             guard isCurrentWorkflowGeneration(generation) else { return nil }
             logger.error(
-                "Media persistence failed errorType=\(String(describing: type(of: error)), privacy: .public) selected=\(mediaToSave.count, privacy: .public) pending=\(pendingMediaToSave.count, privacy: .public)"
+                "Media persistence failed errorType=\(String(describing: type(of: error)), privacy: .public) description=\(error.localizedDescription, privacy: .public) selected=\(mediaToSave.count, privacy: .public) pending=\(pendingMediaToSave.count, privacy: .public)"
             )
             statusMessage = saveFailureMessage
             isImporting = false

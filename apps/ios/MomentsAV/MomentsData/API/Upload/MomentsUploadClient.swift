@@ -1,10 +1,12 @@
 import Foundation
+import OSLog
 
 struct MomentsUploadClient: Sendable {
     var baseURLString: String
     var session: URLSession = .shared
     var uploadRetryPolicy = MomentsUploadRetryPolicy()
     var networkRetryPolicy = MomentsNetworkRetryPolicy()
+    private let logger = Logger(subsystem: "com.avalsys.momentsav", category: "upload-client")
 
     var isConfigured: Bool {
         URL(string: baseURLString.trimmingCharacters(in: .whitespacesAndNewlines)) != nil
@@ -30,6 +32,8 @@ struct MomentsUploadClient: Sendable {
 
         let (data, response) = try await retryingData(for: request)
         guard let httpResponse = response as? HTTPURLResponse, 200..<300 ~= httpResponse.statusCode else {
+            let statusCode = (response as? HTTPURLResponse)?.statusCode ?? -1
+            logger.error("prepare-upload failed status=\(statusCode, privacy: .public)")
             throw MomentsAPIError.decode(
                 from: data,
                 fallbackCode: "moments_upload_prepare_failed",
@@ -37,7 +41,14 @@ struct MomentsUploadClient: Sendable {
             )
         }
 
-        return try JSONDecoder().decode(MomentsPreparedUpload.self, from: data)
+        do {
+            let preparedUpload = try JSONDecoder().decode(MomentsPreparedUpload.self, from: data)
+            logger.info("prepare-upload succeeded direct=\(preparedUpload.completionUrl != nil, privacy: .public)")
+            return preparedUpload
+        } catch {
+            logger.error("prepare-upload decode failed error=\(error.localizedDescription, privacy: .public)")
+            throw error
+        }
     }
 
     func upload(media: MomentsSelectedMedia, preparedUpload: MomentsPreparedUpload) async throws -> MomentsUploadCompletion {
@@ -56,11 +67,19 @@ struct MomentsUploadClient: Sendable {
 
         if let completionUrl = preparedUpload.completionUrl {
             _ = try await uploadWithRetry(request: request, data: media.data)
+            logger.info("direct upload put succeeded uploadId=\(preparedUpload.uploadId, privacy: .public)")
             return try await completeUpload(uploadId: preparedUpload.uploadId, completionUrl: completionUrl)
         }
 
         let uploadResponseData = try await uploadWithRetry(request: request, data: media.data)
-        return try JSONDecoder().decode(MomentsUploadCompletion.self, from: uploadResponseData)
+        do {
+            let completion = try JSONDecoder().decode(MomentsUploadCompletion.self, from: uploadResponseData)
+            logger.info("api upload completed uploadId=\(completion.uploadId, privacy: .public)")
+            return completion
+        } catch {
+            logger.error("api upload completion decode failed error=\(error.localizedDescription, privacy: .public)")
+            throw error
+        }
     }
 
     private func completeUpload(uploadId: String, completionUrl: URL) async throws -> MomentsUploadCompletion {
@@ -71,6 +90,8 @@ struct MomentsUploadClient: Sendable {
 
         let (data, response) = try await retryingData(for: request)
         guard let httpResponse = response as? HTTPURLResponse, 200..<300 ~= httpResponse.statusCode else {
+            let statusCode = (response as? HTTPURLResponse)?.statusCode ?? -1
+            logger.error("direct upload complete failed uploadId=\(uploadId, privacy: .public) status=\(statusCode, privacy: .public)")
             throw MomentsAPIError.decode(
                 from: data,
                 fallbackCode: "moments_upload_complete_failed",
@@ -78,7 +99,14 @@ struct MomentsUploadClient: Sendable {
             )
         }
 
-        return try JSONDecoder().decode(MomentsUploadCompletion.self, from: data)
+        do {
+            let completion = try JSONDecoder().decode(MomentsUploadCompletion.self, from: data)
+            logger.info("direct upload completed uploadId=\(uploadId, privacy: .public)")
+            return completion
+        } catch {
+            logger.error("direct upload completion decode failed uploadId=\(uploadId, privacy: .public) error=\(error.localizedDescription, privacy: .public)")
+            throw error
+        }
     }
 
     private func uploadWithRetry(request: URLRequest, data: Data) async throws -> Data {
@@ -88,6 +116,8 @@ struct MomentsUploadClient: Sendable {
             do {
                 let (responseData, response) = try await session.upload(for: request, from: data)
                 guard let httpResponse = response as? HTTPURLResponse, 200..<300 ~= httpResponse.statusCode else {
+                    let statusCode = (response as? HTTPURLResponse)?.statusCode ?? -1
+                    logger.error("upload request failed status=\(statusCode, privacy: .public) attempt=\(attempt, privacy: .public)")
                     throw MomentsAPIError.decode(
                         from: responseData,
                         fallbackCode: "moments_upload_failed",

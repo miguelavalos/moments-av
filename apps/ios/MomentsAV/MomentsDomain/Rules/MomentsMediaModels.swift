@@ -35,7 +35,6 @@ struct MomentsPreparedUpload: Decodable, Equatable, Sendable {
 
 struct MomentsUploadCompletion: Decodable, Equatable, Sendable {
     let appId: String
-    let userId: String
     let momentId: String
     let mediaAssetId: String
     let uploadId: String
