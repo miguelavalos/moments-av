@@ -576,6 +576,36 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         )
     }
 
+    func testPrimaryActionPresentationShowsRetryForRecoverableFinalRenderFailure() {
+        let failedJob = MomentsCreateTestFixtures.makeRenderJob(
+            id: "final-job",
+            kind: "final",
+            status: "failed",
+            userMessage: "Avi could not collect the finished video. You can try again.",
+            canRetry: true
+        )
+        let workflow = MomentsCreateWorkflowPresentation(
+            activeMomentId: "moment-1",
+            isSignedIn: true,
+            hasMomentWorkspace: true,
+            template: .birthdayMessage,
+            balance: MomentsCreditBalance(proMonthly: 0, promotional: 3, purchased: 0),
+            mediaSummary: MomentsCreateMediaSummary(
+                selectedMedia: [MomentsCreateTestFixtures.makeSelectedMedia(id: "00000000-0000-0000-0000-000000000001")]
+            ),
+            storySummary: MomentsCreateStorySummary(),
+            finalRenderSummary: MomentsCreateFinalRenderSummary(latestFinalJob: failedJob),
+            canPrepareFinalRenderPlan: true,
+            canGenerateFinalRender: true
+        )
+        let presentation = MomentsCreatePrimaryActionPresentation(workflow: workflow)
+
+        XCTAssertTrue(presentation.showsPrimaryActionButton)
+        XCTAssertTrue(presentation.canRunPrimaryAction)
+        XCTAssertEqual(presentation.buttonTitle, "Try again")
+        XCTAssertEqual(presentation.buttonIconName, "arrow.clockwise")
+    }
+
     func testPrimaryActionPresentationKeepsCreateVideoIntentWhileUploadingMedia() {
         let presentation = MomentsCreatePrimaryActionPresentation(
             workflow: MomentsCreateWorkflowPresentation(

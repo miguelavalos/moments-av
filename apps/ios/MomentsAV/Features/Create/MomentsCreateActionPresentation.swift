@@ -106,6 +106,11 @@ struct MomentsCreatePrimaryActionPresentation: Equatable {
         if workflow.finalRenderSummary.pendingGalleryVideo != nil || workflow.finalRenderSummary.finalExport != nil {
             return false
         }
+        if hasRetryableFinalRenderJob {
+            return workflow.canGenerateFinalRender
+                || canPrepareVideoPlan
+                || canPrepareLocalVideoPlan
+        }
         if workflow.finalRenderSummary.latestFinalJob != nil {
             return false
         }
@@ -131,7 +136,7 @@ struct MomentsCreatePrimaryActionPresentation: Equatable {
     var showsPrimaryActionButton: Bool {
         workflow.finalRenderSummary.pendingGalleryVideo == nil
             && workflow.finalRenderSummary.finalExport == nil
-            && workflow.finalRenderSummary.latestFinalJob == nil
+            && (workflow.finalRenderSummary.latestFinalJob == nil || hasRetryableFinalRenderJob)
     }
 
     var title: String {
@@ -154,6 +159,9 @@ struct MomentsCreatePrimaryActionPresentation: Equatable {
             return L10n.string("create.final.videoReady")
         }
         if workflow.finalRenderSummary.latestFinalJob != nil {
+            if hasRetryableFinalRenderJob {
+                return L10n.string("create.final.retrySetup")
+            }
             return L10n.string("create.final.video")
         }
         if workflow.finalRenderSummary.isGenerating {
@@ -186,6 +194,9 @@ struct MomentsCreatePrimaryActionPresentation: Equatable {
             return "checkmark.circle.fill"
         }
         if workflow.finalRenderSummary.latestFinalJob != nil {
+            if hasRetryableFinalRenderJob {
+                return "arrow.clockwise"
+            }
             return "video.fill"
         }
         if hasFinalVideoIntent, needsCreditsForPreparedPlan {
@@ -294,6 +305,9 @@ struct MomentsCreatePrimaryActionPresentation: Equatable {
         if workflow.finalRenderSummary.finalExport != nil {
             return "checkmark.circle.fill"
         }
+        if hasRetryableFinalRenderJob {
+            return "arrow.clockwise"
+        }
         if let realtimeStatus = workflow.finalRenderSummary.realtimeStatus {
             return realtimeStatus.systemImage
         }
@@ -322,6 +336,14 @@ struct MomentsCreatePrimaryActionPresentation: Equatable {
         workflow.mediaSummary.isImporting
             || workflow.storySummary.isPlanning
             || workflow.finalRenderSummary.isGenerating
+    }
+
+    var hasRetryableFinalRenderJob: Bool {
+        guard let latestFinalJob = workflow.finalRenderSummary.latestFinalJob,
+              latestFinalJob.canRetry == true else {
+            return false
+        }
+        return latestFinalJob.status == "failed" || latestFinalJob.status == "cancelled"
     }
 
     var canPrepareVideoPlan: Bool {

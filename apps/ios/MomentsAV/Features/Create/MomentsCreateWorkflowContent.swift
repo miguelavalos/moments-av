@@ -1624,7 +1624,9 @@ private struct MomentsCreatePrimaryActionBar: View {
         if presentation.finalRenderSummary.finalExport != nil {
             return
         }
-        if presentation.finalRenderSummary.latestFinalJob != nil {
+        if primaryActionPresentation.hasRetryableFinalRenderJob {
+            generateFinalRender()
+        } else if presentation.finalRenderSummary.latestFinalJob != nil {
             return
         } else if primaryActionPresentation.hasFinalVideoIntent {
             if primaryActionPresentation.needsSignInForStory {
