@@ -222,10 +222,7 @@ struct MomentsProfileScreen: View {
     private var creditsCard: some View {
         AVSettingsSectionCard(
             title: localized("credits.title"),
-            subtitle: MomentsCreditCopy.balanceStatusDetail(
-                accountController.creditBalanceLoadState,
-                balance: accountController.creditBalance
-            )
+            subtitle: creditsSubtitle
         ) {
             VStack(alignment: .leading, spacing: 12) {
                 AVSettingsInfoRow(
@@ -491,12 +488,19 @@ struct MomentsProfileScreen: View {
 
     private var accessDetail: String {
         if accountController.isSignedIn {
-            return MomentsCreditCopy.balanceStatusDetail(
-                accountController.creditBalanceLoadState,
-                balance: accountController.creditBalance
-            )
+            guard accountController.creditBalanceLoadState.hasLoadedBalance else {
+                return MomentsCreditCopy.balanceStatusDetail(accountController.creditBalanceLoadState)
+            }
+            return MomentsCreditCopy.accessDetail(accountController.creditBalance)
         }
         return localized("profile.summary.plan.detail.guest")
+    }
+
+    private var creditsSubtitle: String {
+        guard accountController.creditBalanceLoadState.hasLoadedBalance else {
+            return MomentsCreditCopy.balanceStatusDetail(accountController.creditBalanceLoadState)
+        }
+        return MomentsCreditCopy.walletSubtitle(accountController.creditBalance)
     }
 
     private var creditBalanceRowTitle: String {
@@ -514,7 +518,10 @@ struct MomentsProfileScreen: View {
 
     private var momentsProSubtitle: String {
         if accountController.isSignedIn {
-            return localized("profile.pro.subtitle.free")
+            guard accountController.creditBalanceLoadState.hasLoadedBalance else {
+                return MomentsCreditCopy.balanceStatusDetail(accountController.creditBalanceLoadState)
+            }
+            return MomentsCreditCopy.accessDetail(accountController.creditBalance)
         }
         return localized("profile.pro.subtitle.guest")
     }

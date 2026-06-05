@@ -19,6 +19,7 @@ struct MomentsCreditBalance: Equatable {
     var promotional: Int
     var purchased: Int
     var availableCredits: Int?
+    var walletSummary: MomentsCreditWalletSummary?
     var watermarkRemovalCreditCost: Int = 1
     var watermarkFreeIncluded: Bool = false
 
@@ -34,6 +35,40 @@ struct MomentsCreditBalance: Equatable {
         case .promotional: promotional
         case .purchased: purchased
         }
+    }
+}
+
+struct MomentsCreditWalletSummary: Decodable, Equatable {
+    let plan: Plan
+    let period: Period
+    let credits: Credits
+
+    struct Plan: Decodable, Equatable {
+        let tier: String
+        let status: String
+        let source: String
+        let expiresAt: String?
+        let includesMonthlyCredits: Bool
+
+        var isProActive: Bool {
+            tier == "pro" && status == "active"
+        }
+    }
+
+    struct Period: Decodable, Equatable {
+        let startsAt: String
+        let endsAt: String
+        let includedCredits: Int
+        let usedCredits: Int
+        let remainingIncludedCredits: Int
+    }
+
+    struct Credits: Decodable, Equatable {
+        let available: Int
+        let reserved: Int
+        let purchasedTotal: Int
+        let promoGrantedTotal: Int
+        let subscriptionGrantedTotal: Int
     }
 }
 

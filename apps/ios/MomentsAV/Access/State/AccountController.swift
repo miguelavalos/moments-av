@@ -369,6 +369,7 @@ struct MomentsCreditBalanceClient {
             promotional: decoded.promotionalGrantedCredits,
             purchased: decoded.purchasedCredits,
             availableCredits: decoded.spendableCredits,
+            walletSummary: decoded.walletSummary,
             watermarkRemovalCreditCost: decoded.watermarkRemovalCreditCost,
             watermarkFreeIncluded: decoded.watermarkFreeIncluded
         )
@@ -382,6 +383,7 @@ private struct MomentsCreditBalanceResponse: Decodable {
     let purchasedCredits: Int
     let watermarkRemovalCreditCost: Int
     let watermarkFreeIncluded: Bool
+    let walletSummary: MomentsCreditWalletSummary?
 
     private enum CodingKeys: String, CodingKey {
         case spendableCredits
@@ -390,6 +392,7 @@ private struct MomentsCreditBalanceResponse: Decodable {
         case purchasedCredits
         case watermarkRemovalCreditCost
         case watermarkFreeIncluded
+        case walletSummary
     }
 
     init(from decoder: Decoder) throws {
@@ -400,6 +403,7 @@ private struct MomentsCreditBalanceResponse: Decodable {
         purchasedCredits = try container.decode(Int.self, forKey: .purchasedCredits)
         watermarkRemovalCreditCost = try container.decodeIfPresent(Int.self, forKey: .watermarkRemovalCreditCost) ?? 1
         watermarkFreeIncluded = try container.decodeIfPresent(Bool.self, forKey: .watermarkFreeIncluded) ?? false
+        walletSummary = try container.decodeIfPresent(MomentsCreditWalletSummary.self, forKey: .walletSummary)
     }
 }
 
@@ -451,6 +455,7 @@ struct MomentsPromoCodeRedemptionResponse: Decodable {
         case purchasedCredits
         case watermarkRemovalCreditCost
         case watermarkFreeIncluded
+        case walletSummary
     }
 
     init(from decoder: Decoder) throws {
@@ -462,6 +467,7 @@ struct MomentsPromoCodeRedemptionResponse: Decodable {
             promotional: try balanceContainer.decode(Int.self, forKey: .promotionalGrantedCredits),
             purchased: try balanceContainer.decode(Int.self, forKey: .purchasedCredits),
             availableCredits: try balanceContainer.decodeIfPresent(Int.self, forKey: .spendableCredits),
+            walletSummary: try balanceContainer.decodeIfPresent(MomentsCreditWalletSummary.self, forKey: .walletSummary),
             watermarkRemovalCreditCost: try balanceContainer.decodeIfPresent(Int.self, forKey: .watermarkRemovalCreditCost) ?? 1,
             watermarkFreeIncluded: try balanceContainer.decodeIfPresent(Bool.self, forKey: .watermarkFreeIncluded) ?? false
         )
