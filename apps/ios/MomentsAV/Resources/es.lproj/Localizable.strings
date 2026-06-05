@@ -70,6 +70,8 @@
 "profile.pro.avi.detail" = "Videos finales sin marca de agua mientras Pro esté activo.";
 "profile.pro.avi.title" = "Sin marca de agua";
 "profile.pro.library.detail" = "Mejor valor mensual que comprar créditos uno a uno.";
+"profile.pro.library.promo.detail" = "Pro promocional mantiene activas las funciones Pro. Los créditos de vídeo se muestran aparte.";
+"profile.pro.library.promo.title" = "Acceso Pro promocional";
 "profile.pro.library.title" = "6 Créditos de vídeo mensuales";
 "profile.pro.manage" = "Gestionar suscripción";
 "profile.pro.signIn" = "Iniciar sesión primero";
@@ -273,6 +275,8 @@
 "credits.available.detail" = "%@ disponibles";
 "credits.available.none" = "No hay créditos disponibles";
 "credits.available.title" = "Disponibles";
+"credits.availableNow.detail" = "%@ listos para vídeos finales.";
+"credits.availableNow.title" = "Disponibles ahora";
 "credits.countTitle" = "%d %@";
 "credits.get.detail" = "Añade créditos antes de crear tu próximo video recuerdo.";
 "credits.get.title" = "Obtener créditos";
@@ -299,6 +303,8 @@
 "credits.plan.pro.promo" = "Acceso Pro promocional";
 "credits.plan.pro.promoUntil" = "Pro promocional hasta %@";
 "credits.plan.pro.subscription" = "Suscripción Pro";
+"credits.plan.promo.detail" = "Pro promocional está activo. Los créditos de vídeo se muestran aparte.";
+"credits.plan.title" = "Plan";
 "credits.proMonthly.detail" = "Quedan %d de %d";
 "credits.proMonthly.none.detail" = "Los créditos mensuales están disponibles con una suscripción Pro.";
 "credits.proMonthly.period.detail" = "Quedan %d de %d créditos mensuales. %d usados este periodo.";
@@ -307,7 +313,7 @@
 "credits.purchased.detail" = "%d comprados";
 "credits.purchased.title" = "Comprados";
 "credits.reserved.detail" = "%d reservados para vídeos en progreso.";
-"credits.reserved.title" = "Reservados";
+"credits.reserved.title" = "En progreso";
 "credits.title" = "Créditos";
 "credits.wallet.subtitle.free" = "%@ disponibles. Pasa a Pro para créditos mensuales y sin marca de agua.";
 "credits.wallet.subtitle.pro" = "%@ · %@ disponibles.";

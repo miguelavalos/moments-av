@@ -70,6 +70,8 @@
 "profile.pro.avi.detail" = "Vídeos finals sense marca d'aigua mentre Pro sigui actiu.";
 "profile.pro.avi.title" = "Sense marca d'aigua";
 "profile.pro.library.detail" = "Millor valor mensual que comprar crèdits un a un.";
+"profile.pro.library.promo.detail" = "Pro promocional manté actives les funcions Pro. Els crèdits de vídeo es mostren a part.";
+"profile.pro.library.promo.title" = "Accés Pro promocional";
 "profile.pro.library.title" = "6 Crèdits de vídeo mensuals";
 "profile.pro.manage" = "Gestionar subscripció";
 "profile.pro.signIn" = "Iniciar sessió primer";
@@ -271,6 +273,8 @@
 "credits.available.detail" = "%@ disponibles";
 "credits.available.none" = "Cap crèdit disponible";
 "credits.available.title" = "Disponibles";
+"credits.availableNow.detail" = "%@ llestos per a vídeos finals.";
+"credits.availableNow.title" = "Disponibles ara";
 "credits.countTitle" = "%d %@";
 "credits.get.detail" = "Afegeix crèdits abans de crear el proper film de record.";
 "credits.get.title" = "Obtén crèdits";
@@ -297,6 +301,8 @@
 "credits.plan.pro.promo" = "Accés Pro promocional";
 "credits.plan.pro.promoUntil" = "Pro promocional fins a %@";
 "credits.plan.pro.subscription" = "Subscripció Pro";
+"credits.plan.promo.detail" = "Pro promocional és actiu. Els crèdits de vídeo es mostren a part.";
+"credits.plan.title" = "Pla";
 "credits.proMonthly.detail" = "%d de %d restants";
 "credits.proMonthly.none.detail" = "Els crèdits mensuals estan disponibles amb una subscripció Pro.";
 "credits.proMonthly.period.detail" = "%d de %d crèdits mensuals restants. %d usats aquest període.";
@@ -305,7 +311,7 @@
 "credits.purchased.detail" = "%d comprats";
 "credits.purchased.title" = "Comprats";
 "credits.reserved.detail" = "%d reservats per a vídeos en curs.";
-"credits.reserved.title" = "Reservats";
+"credits.reserved.title" = "En curs";
 "credits.title" = "Crèdits";
 "credits.wallet.subtitle.free" = "%@ disponibles. Passa a Pro per a crèdits mensuals i sense marca d’aigua.";
 "credits.wallet.subtitle.pro" = "%@ · %@ disponibles.";

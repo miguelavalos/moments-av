@@ -288,8 +288,8 @@ struct MomentsProfileScreen: View {
             VStack(alignment: .leading, spacing: 12) {
                 AVSettingsInfoRow(
                     systemImage: "film.stack",
-                    title: localized("profile.pro.library.title"),
-                    detail: localized("profile.pro.library.detail")
+                    title: proCreditsBenefitTitle,
+                    detail: proCreditsBenefitDetail
                 )
                 AVSettingsInfoRow(
                     systemImage: "checkmark.seal.fill",
@@ -524,6 +524,20 @@ struct MomentsProfileScreen: View {
             return MomentsCreditCopy.accessDetail(accountController.creditBalance)
         }
         return localized("profile.pro.subtitle.guest")
+    }
+
+    private var proCreditsBenefitTitle: String {
+        guard accountController.creditBalance.walletSummary?.plan.includesMonthlyCredits == false else {
+            return localized("profile.pro.library.title")
+        }
+        return localized("profile.pro.library.promo.title")
+    }
+
+    private var proCreditsBenefitDetail: String {
+        guard accountController.creditBalance.walletSummary?.plan.includesMonthlyCredits == false else {
+            return localized("profile.pro.library.detail")
+        }
+        return localized("profile.pro.library.promo.detail")
     }
 
     private var settingsLegalLinks: AVAppLegalLinks {

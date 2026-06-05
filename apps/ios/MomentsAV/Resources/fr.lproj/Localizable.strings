@@ -70,6 +70,8 @@
 "profile.pro.avi.detail" = "Vidéos finales sans filigrane tant que Pro est actif.";
 "profile.pro.avi.title" = "Sans filigrane";
 "profile.pro.library.detail" = "Meilleure valeur mensuelle que l'achat de crédits un par un.";
+"profile.pro.library.promo.detail" = "Pro promotionnel garde les fonctions Pro actives. Les crédits vidéo sont suivis séparément.";
+"profile.pro.library.promo.title" = "Accès Pro promotionnel";
 "profile.pro.library.title" = "6 Crédits vidéo mensuels";
 "profile.pro.manage" = "Gérer l'abonnement";
 "profile.pro.signIn" = "Connectez-vous d'abord";
@@ -271,6 +273,8 @@
 "credits.available.detail" = "%@ disponibles";
 "credits.available.none" = "Aucun crédit disponible";
 "credits.available.title" = "Disponibles";
+"credits.availableNow.detail" = "%@ prêts pour les vidéos finales.";
+"credits.availableNow.title" = "Disponibles maintenant";
 "credits.countTitle" = "%d %@";
 "credits.get.detail" = "Ajoute des crédits avant de créer ton prochain film souvenir.";
 "credits.get.title" = "Obtenir des crédits";
@@ -297,6 +301,8 @@
 "credits.plan.pro.promo" = "Accès Pro promotionnel";
 "credits.plan.pro.promoUntil" = "Pro promotionnel jusqu’au %@";
 "credits.plan.pro.subscription" = "Abonnement Pro";
+"credits.plan.promo.detail" = "Pro promotionnel est actif. Les crédits vidéo sont suivis séparément.";
+"credits.plan.title" = "Forfait";
 "credits.proMonthly.detail" = "%d sur %d restants";
 "credits.proMonthly.none.detail" = "Les crédits mensuels sont disponibles avec un abonnement Pro.";
 "credits.proMonthly.period.detail" = "%d sur %d crédits mensuels restants. %d utilisés cette période.";
@@ -305,7 +311,7 @@
 "credits.purchased.detail" = "%d achetés";
 "credits.purchased.title" = "Achetés";
 "credits.reserved.detail" = "%d réservés pour des vidéos en cours.";
-"credits.reserved.title" = "Réservés";
+"credits.reserved.title" = "En cours";
 "credits.title" = "Crédits";
 "credits.wallet.subtitle.free" = "%@ disponibles. Passez à Pro pour des crédits mensuels et sans filigrane.";
 "credits.wallet.subtitle.pro" = "%@ · %@ disponibles.";

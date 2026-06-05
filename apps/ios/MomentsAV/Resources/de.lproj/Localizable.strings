@@ -70,6 +70,8 @@
 "profile.pro.avi.detail" = "Finale Videos ohne Wasserzeichen, solange Pro aktiv ist.";
 "profile.pro.avi.title" = "Ohne Wasserzeichen";
 "profile.pro.library.detail" = "Besserer Monatswert als Credits einzeln zu kaufen.";
+"profile.pro.library.promo.detail" = "Pro-Promo hält Pro-Funktionen aktiv. Video-Credits werden separat angezeigt.";
+"profile.pro.library.promo.title" = "Pro-Promo-Zugang";
 "profile.pro.library.title" = "6 monatliche Video-Credits";
 "profile.pro.manage" = "Abonnement verwalten";
 "profile.pro.signIn" = "Zuerst anmelden";
@@ -161,6 +163,8 @@
 "credits.available.detail" = "%@ verfügbar";
 "credits.available.none" = "Kein Guthaben verfügbar";
 "credits.available.title" = "Verfügbar";
+"credits.availableNow.detail" = "%@ bereit für finale Videos.";
+"credits.availableNow.title" = "Jetzt verfügbar";
 "credits.countTitle" = "%d %@";
 "credits.get.detail" = "Füge Credits hinzu, bevor du deinen nächsten Erinnerungsfilm erstellst.";
 "credits.get.title" = "Guthaben holen";
@@ -187,6 +191,8 @@
 "credits.plan.pro.promo" = "Pro-Promo-Zugang";
 "credits.plan.pro.promoUntil" = "Pro-Promo bis %@";
 "credits.plan.pro.subscription" = "Pro-Abonnement";
+"credits.plan.promo.detail" = "Pro-Promo ist aktiv. Video-Credits werden separat angezeigt.";
+"credits.plan.title" = "Plan";
 "credits.proMonthly.detail" = "%d von %d übrig";
 "credits.proMonthly.none.detail" = "Monatliche Credits sind mit einem Pro-Abonnement verfügbar.";
 "credits.proMonthly.period.detail" = "%d von %d monatlichen Credits übrig. %d in diesem Zeitraum verwendet.";
@@ -195,7 +201,7 @@
 "credits.purchased.detail" = "%d gekauft";
 "credits.purchased.title" = "Gekauft";
 "credits.reserved.detail" = "%d für laufende Videos reserviert.";
-"credits.reserved.title" = "Reserviert";
+"credits.reserved.title" = "In Arbeit";
 "credits.title" = "Guthaben";
 "credits.wallet.subtitle.free" = "%@ verfügbar. Upgrade auf Pro für monatliche Credits und ohne Wasserzeichen.";
 "credits.wallet.subtitle.pro" = "%@ · %@ verfügbar.";

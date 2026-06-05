@@ -70,6 +70,8 @@
 "profile.pro.avi.detail" = "Create final videos without the Moments AV watermark while Pro is active.";
 "profile.pro.avi.title" = "No watermark";
 "profile.pro.library.detail" = "Better monthly value than buying credits one by one.";
+"profile.pro.library.promo.detail" = "Promo Pro keeps Pro features active. Video credits are tracked separately.";
+"profile.pro.library.promo.title" = "Promo Pro access";
 "profile.pro.library.title" = "6 monthly Video Credits";
 "profile.pro.manage" = "Manage subscription";
 "profile.pro.signIn" = "Sign in first";
@@ -273,6 +275,8 @@
 "credits.available.detail" = "%@ available";
 "credits.available.none" = "No credits available";
 "credits.available.title" = "Available";
+"credits.availableNow.detail" = "%@ ready for final videos.";
+"credits.availableNow.title" = "Available now";
 "credits.countTitle" = "%d %@";
 "credits.get.detail" = "Add credits before creating your next memory film.";
 "credits.get.title" = "Get credits";
@@ -299,6 +303,8 @@
 "credits.plan.pro.promo" = "Pro promo access";
 "credits.plan.pro.promoUntil" = "Pro promo until %@";
 "credits.plan.pro.subscription" = "Pro subscription";
+"credits.plan.promo.detail" = "Promo Pro is active. Video credits are tracked separately.";
+"credits.plan.title" = "Plan";
 "credits.proMonthly.detail" = "%d of %d left";
 "credits.proMonthly.none.detail" = "Monthly credits are available with a Pro subscription.";
 "credits.proMonthly.period.detail" = "%d of %d monthly credits left. %d used this period.";
@@ -307,7 +313,7 @@
 "credits.purchased.detail" = "%d purchased";
 "credits.purchased.title" = "Purchased";
 "credits.reserved.detail" = "%d reserved for videos in progress.";
-"credits.reserved.title" = "Reserved";
+"credits.reserved.title" = "In progress";
 "credits.title" = "Credits";
 "credits.wallet.subtitle.free" = "%@ available. Upgrade to Pro for monthly credits and no watermark.";
 "credits.wallet.subtitle.pro" = "%@ · %@ available.";

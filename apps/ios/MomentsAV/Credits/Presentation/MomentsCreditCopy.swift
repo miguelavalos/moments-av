@@ -119,12 +119,12 @@ enum MomentsCreditCopy {
 
     static func detailRows(for balance: MomentsCreditBalance) -> [MomentsCreditDetailRow] {
         if let summary = balance.walletSummary {
-            return [
+            var rows = [
                 MomentsCreditDetailRow(
-                    id: "available",
-                    title: L10n.string("credits.available.title"),
+                    id: "availableNow",
+                    title: L10n.string("credits.availableNow.title"),
                     value: summary.credits.available,
-                    detail: L10n.string("credits.available.detail", countTitle(summary.credits.available)),
+                    detail: L10n.string("credits.availableNow.detail", countTitle(summary.credits.available)),
                     systemImage: "creditcard"
                 ),
                 MomentsCreditDetailRow(
@@ -140,29 +140,24 @@ enum MomentsCreditCopy {
                     value: summary.period.usedCredits,
                     detail: periodDetail(summary),
                     systemImage: "calendar"
-                ),
-                MomentsCreditDetailRow(
-                    id: "proMonthly",
-                    title: L10n.string("credits.proMonthly.title"),
-                    value: summary.period.remainingIncludedCredits,
-                    detail: proMonthlyDetail(balance),
-                    systemImage: "sparkles.rectangle.stack"
-                ),
-                MomentsCreditDetailRow(
-                    id: "purchased",
-                    title: L10n.string("credits.purchased.title"),
-                    value: summary.credits.purchasedTotal,
-                    detail: purchasedDetail(balance),
-                    systemImage: "creditcard"
-                ),
-                MomentsCreditDetailRow(
-                    id: "other",
-                    title: L10n.string("credits.other.title"),
-                    value: summary.credits.promoGrantedTotal,
-                    detail: otherDetail(balance),
-                    systemImage: "gift"
                 )
             ]
+
+            if summary.plan.isProActive {
+                rows.append(
+                    MomentsCreditDetailRow(
+                        id: "plan",
+                        title: L10n.string("credits.plan.title"),
+                        value: summary.plan.includesMonthlyCredits ? summary.period.remainingIncludedCredits : summary.credits.available,
+                        detail: summary.plan.includesMonthlyCredits
+                            ? proMonthlyDetail(balance)
+                            : L10n.string("credits.plan.promo.detail"),
+                        systemImage: "sparkles.rectangle.stack"
+                    )
+                )
+            }
+
+            return rows
         }
 
         return [
