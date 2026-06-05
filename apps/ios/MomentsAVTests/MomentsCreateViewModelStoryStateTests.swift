@@ -820,6 +820,8 @@ private final class MomentCreationFailureHarness:
         throw creationError
     }
 
+    func updateMomentSetup(ownerUserId: String, momentId: String, form: MomentSetupForm) async throws {}
+
     func deleteMoment(ownerUserId: String, momentId: String) async throws {}
 
     func observeWorkspace(ownerUserId: String?, momentId: String?) {}

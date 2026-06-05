@@ -104,6 +104,44 @@ struct MomentsRemoteClient {
         }
     }
 
+    func updateMomentSetup(ownerUserId: String, momentId: String, form: MomentSetupForm) async throws {
+        try await updateMomentSetup(
+            ownerUserId: ownerUserId,
+            momentId: momentId,
+            request: .setup(form)
+        )
+    }
+
+    func updateMomentSetup(
+        ownerUserId: String,
+        momentId: String,
+        request: MomentCreationRequest
+    ) async throws {
+        let client = try requireClient()
+
+        let updatedMomentId: String? = try await retryingMutation(
+            client: client,
+            name: "moments:updateMomentSetup",
+            args: [
+                "ownerUserId": ownerUserId,
+                "momentId": momentId,
+                "creationMode": request.creationMode,
+                "look": request.look,
+                "theme": request.theme,
+                "mood": request.mood,
+                "duration": request.duration,
+                "mediaUse": request.mediaUse,
+                "title": request.title,
+                "occasion": request.occasion,
+                "details": request.details
+            ]
+        )
+
+        guard updatedMomentId != nil else {
+            throw MomentsSyncError.unexpectedResponse
+        }
+    }
+
     func deleteMomentTree(
         ownerUserId: String,
         request: MomentDeletionRequest

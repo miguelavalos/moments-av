@@ -127,6 +127,10 @@ final class MomentsCreateViewModel: ObservableObject {
         activeMomentId == nil && isLocalMomentStarted
     }
 
+    var hasPendingLocalSetupEdits: Bool {
+        hasLocalSetupEdits
+    }
+
     var workflowErrorAlertMessage: String? {
         [
             setupErrorMessage,
@@ -772,10 +776,17 @@ extension MomentsCreateViewModel {
     }
 
     private func syncFormWithActiveWorkspace(_ workspace: MomentWorkspace?) {
-        guard !hasLocalSetupEdits else { return }
         guard let moment = workspace?.moment else { return }
         guard moment.id == activeMomentId else { return }
         guard let continuedForm = MomentSetupForm.continuing(moment: moment, templates: templates) else { return }
+        if hasLocalSetupEdits {
+            if continuedForm.matchesPersistedSetup(of: form) {
+                hasLocalSetupEdits = false
+                hasUserLookOverride = false
+                hasUserDurationOverride = false
+            }
+            return
+        }
 
         form = continuedForm
         hasUserDurationOverride = false

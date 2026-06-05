@@ -5,6 +5,7 @@ import Foundation
 protocol MomentsCreating {
     var isConfigured: Bool { get }
     func createMoment(ownerUserId: String, form: MomentSetupForm) async throws -> String
+    func updateMomentSetup(ownerUserId: String, momentId: String, form: MomentSetupForm) async throws
 }
 
 @MainActor

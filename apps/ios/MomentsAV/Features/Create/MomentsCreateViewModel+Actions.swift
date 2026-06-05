@@ -219,6 +219,11 @@ extension MomentsCreateViewModel {
                 return
             }
 
+            guard await self.persistSetupEditsIfNeeded(momentId: momentId, form: form) else {
+                self.failFinalVideoCommand(self.momentCreationFailureMessage())
+                return
+            }
+
             let inputSignature = self.currentFinalRenderInputSignature(
                 momentId: momentId,
                 removesWatermark: removesWatermark
@@ -320,6 +325,12 @@ extension MomentsCreateViewModel {
             isLocalMomentStarted = false
         }
         return momentId
+    }
+
+    private func persistSetupEditsIfNeeded(momentId: String, form: MomentSetupForm) async -> Bool {
+        guard hasPendingLocalSetupEdits else { return true }
+        guard let momentCreationWorkflow else { return false }
+        return await momentCreationWorkflow.updateMomentSetup(momentId: momentId, form: form)
     }
 
     private func prepareStoryIfNeeded(

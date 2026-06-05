@@ -100,6 +100,18 @@ struct MomentSetupForm: Equatable {
         form.mediaUse = MomentMediaUse(rawValue: moment.mediaUse) ?? .aviPick
         return form
     }
+
+    func matchesPersistedSetup(of other: MomentSetupForm) -> Bool {
+        creationMode == other.creationMode
+            && look == other.look
+            && theme == other.theme
+            && duration == other.duration
+            && mediaUse == other.mediaUse
+            && occasion.trimmingCharacters(in: .whitespacesAndNewlines) == other.occasion.trimmingCharacters(in: .whitespacesAndNewlines)
+            && tone == other.tone
+            && tempo == other.tempo
+            && details.trimmingCharacters(in: .whitespacesAndNewlines) == other.details.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
 }
 
 enum MomentSetupRules {

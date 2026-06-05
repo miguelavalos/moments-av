@@ -42,6 +42,18 @@ struct MomentsRepository {
         )
     }
 
+    func updateMomentSetup(ownerUserId: String, momentId: String, form: MomentSetupForm) async throws {
+        guard form.canCreateMoment else {
+            throw MomentsSyncError.invalidForm
+        }
+
+        try await remoteClient.updateMomentSetup(
+            ownerUserId: ownerUserId,
+            momentId: momentId,
+            form: form
+        )
+    }
+
     func updateRenderJobStatus(
         ownerUserId: String,
         renderJobId: String,

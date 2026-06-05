@@ -82,6 +82,38 @@ final class MomentCreationWorkflow: ObservableObject {
         }
     }
 
+    func updateMomentSetup(momentId: String, form: MomentSetupForm) async -> Bool {
+        guard !isCreatingMoment else { return false }
+        guard let ownerUserId = currentUserProvider.currentUserId else {
+            errorMessage = L10n.string("workflow.moment.signInContinue")
+            return false
+        }
+
+        let availability = MomentSetupRules.availability(form: form, balance: balance)
+        guard availability.canCreateMoment else {
+            errorMessage = createMomentBlockMessage(availability)
+            return false
+        }
+
+        isCreatingMoment = true
+        errorMessage = nil
+
+        do {
+            try await momentCreator.updateMomentSetup(
+                ownerUserId: ownerUserId,
+                momentId: momentId,
+                form: form
+            )
+            isCreatingMoment = false
+            return true
+        } catch {
+            logger.error("Moment setup update failed reason=\(String(describing: error), privacy: .public)")
+            errorMessage = error.localizedDescription
+            isCreatingMoment = false
+            return false
+        }
+    }
+
     func continueMoment(_ moment: InProgressMoment) {
         guard let ownerUserId = currentUserProvider.currentUserId else {
             errorMessage = L10n.string("workflow.moment.signInContinue")
