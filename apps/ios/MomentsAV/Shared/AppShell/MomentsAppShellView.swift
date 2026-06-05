@@ -192,7 +192,6 @@ struct MomentsAppShellView: View {
             && accountController.isSignedIn
             && [.inProgress, .gallery].contains(selectedTab)
             && !createViewModel.hasLocalMomentWorkspace
-            && !createViewModel.hasRecoverableMomentContext
     }
 
     private var hasAviActiveContext: Bool {
@@ -239,9 +238,8 @@ struct MomentsAppShellView: View {
             return
         }
 
-        if createViewModel.hasRecoverableMomentContext {
-            selectRootTab(.create)
-            return
+        if createViewModel.activeMomentId != nil {
+            createViewModel.clearSessionState()
         }
 
         beginNewMomentFromPreference()
