@@ -557,9 +557,6 @@
 "create.final.ready" = "Export ready";
 "create.final.retryDownload" = "Retry final video download";
 "create.final.saved" = "The final video is saved on this device. Choose where this Moment goes next.";
-"create.preview.detail" = "Check the story order and pacing before creating the final video.";
-"create.preview.ready" = "Avi's Cut ready";
-"create.preview.title" = "Avi's Cut";
 "create.progress.finalNotMade" = "Not made yet";
 "create.progress.media" = "Photos and clips";
 "create.progress.title" = "Workspace progress";
@@ -601,10 +598,6 @@
 "create.final.video" = "Video";
 "create.final.videoReady" = "Final video ready";
 "create.guide.title" = "Guide Avi";
-"create.preview.preparing" = "Preparing Avi's Cut...";
-"create.preview.refresh" = "Improve with Avi";
-"create.preview.reviewFirst" = "Prepare Avi's Cut first";
-"create.preview.view" = "View Avi's Cut";
 "create.status.checking" = "Checking...";
 "create.status.refreshing" = "Refreshing...";
 "create.action.notNow" = "Not now";
@@ -692,7 +685,6 @@
 "create.aviStatus.goodSelection.title" = "Good selection";
 "create.aviStatus.startMedia.title" = "Start with your media";
 "create.aviStatus.exportReady.detail" = "Your video is ready to export or share.";
-"create.aviStatus.previewReady.detail" = "Check Avi's Cut. If it works, Avi can create the final video.";
 "create.aviStatus.reviewing.detail" = "Avi is improving the cut from your selected items.";
 "create.aviStatus.preparing.detail" = "Avi is organizing the media into a first story plan.";
 "create.aviStatus.storyReady.detail" = "Avi prepared the story, style, and pacing. Video creation comes next.";
@@ -707,7 +699,6 @@
 "recovery.storyFailure" = "Avi couldn’t prepare the story right now. No final video credits were used. Please try again.";
 "recovery.renderStartFailure" = "Couldn’t start video creation. No final video credits were used. Please try again in a moment.";
 "recovery.renderRefreshFailure" = "Couldn’t refresh the video status. Credits are only finalized when the video is ready. Please try again.";
-"recovery.previewStatusMissing" = "Avi's Cut status cannot be refreshed yet. Improve with Avi again if this does not update.";
 "recovery.failedRenderDetail" = "Video creation hit a problem. If the final video was not completed, credits will not be charged. Please try again or contact support.";
 "media.item.singular" = "item";
 "media.item.plural" = "items";
@@ -736,7 +727,6 @@
 "create.story.error.invalidMediaReferences" = "Avi prepared the story, but it did not match the saved media. Please save the media again.";
 "create.story.error.saveFailed" = "Avi prepared the story, but couldn’t save it to this Moment. Please try again.";
 "create.media.persistence.added" = "%d %@ added to this Moment.";
-"create.preview.status.readyRefine" = "Avi's Cut is ready. You can still refine it before the final video.";
 "create.media.fixture.synced" = "3 assets synced. Avi selected the strongest opening order.";
 "create.story.status.readyToReview" = "Story is ready.";
 "create.dashboard.title" = "Creation Dashboard";
@@ -773,7 +763,6 @@
 "create.final.createVideoDetail" = "Avi will edit your real media into a %@ video. You will see the cost before creating the final video.";
 "create.primary.finalReady" = "Final video ready.";
 "create.primary.videoCreating" = "Avi is creating the video. You can check progress here.";
-"create.primary.previewReady" = "Avi's Cut ready. Check it before the final video.";
 "create.primary.createVideoPreflight" = "Avi will check media and confirm credits before starting.";
 "create.primary.reviewCostPreflight" = "Avi will upload media and show the cost before creating the final video.";
 "create.primary.reviewBeforeVideo" = "Check Avi's Cut before creating the final video.";
@@ -798,10 +787,6 @@
 "create.availability.storyUnavailable" = "Story preparation is not available yet.";
 "create.availability.storyNotConfigured" = "Story preparation is not configured for this build.";
 "create.availability.storyMissingMedia" = "Add photos or clips before preparing the story.";
-"create.availability.previewMissingMoment" = "Start or continue a moment before Avi's Cut.";
-"create.availability.previewUnavailable" = "Avi's Cut is not available yet.";
-"create.availability.previewNotConfigured" = "Avi's Cut is not configured for this build.";
-"create.availability.previewMissingWorkspace" = "Wait for the moment workspace to sync before Avi's Cut.";
 "create.availability.finalRenderMissingMoment" = "Start or continue a Moment before creating the final video.";
 "create.availability.finalRenderUnavailable" = "Final video creation is not available yet.";
 "create.availability.finalRenderNotConfigured" = "Final video creation is not configured for this build.";
@@ -910,18 +895,9 @@
 "create.story.action.prepare" = "Prepare story";
 "create.story.empty.ready" = "Avi can prepare a story plan from your photos and clips.";
 "create.story.empty.needsMedia" = "Add enough photos or clips before preparing the story.";
-"create.preview.status.available" = "Avi's Cut is available.";
 "create.final.status.ready" = "Final video is ready.";
 "create.story.status.alreadyReady" = "Story plan is already ready.";
-"create.preview.status.notReady" = "Avi's Cut is not ready yet.";
 "create.final.status.startAnother" = "Start a new Moment when you want to create another video.";
-"create.preview.artifact.readyFinalCheck" = "Avi's Cut is ready for your final check.";
-"create.preview.action.refreshing" = "Improving with Avi...";
-"create.preview.action.refresh" = "Improve with Avi";
-"create.preview.action.reviewing" = "Creating preview...";
-"create.preview.action.review" = "Create preview";
-"create.preview.empty.ready" = "Avi can prepare the cut before the final video.";
-"create.preview.empty.prepareStory" = "Prepare the story before Avi's Cut.";
 "create.final.action.creating" = "Creating final video...";
 "create.final.empty.ready" = "Ready to create the final video when you are.";
 "create.final.empty.createVideo" = "Create the video when you are ready. Avi checks media and credits first.";
@@ -969,7 +945,6 @@
 "create.storyDecision.pill.ready" = "Ready";
 "create.storyDecision.pill.noMedia" = "No media";
 "create.storyDecision.action.prepare" = "Prepare story";
-"create.preview.status.creating" = "Avi is creating the preview.";
 "create.storyDecision.action.refresh" = "Refresh story";
 "create.storyDecision.action.edit" = "Edit story";
 "create.storyDecision.empty.prepare" = "Avi will arrange the selected items before creating the final video.";

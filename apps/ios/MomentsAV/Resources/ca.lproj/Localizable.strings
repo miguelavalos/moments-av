@@ -555,9 +555,6 @@
 "create.final.ready" = "Export a punt";
 "create.final.retryDownload" = "Reintentar la descàrrega del vídeo final";
 "create.final.saved" = "El vídeo final està desat en aquest dispositiu. Tria on va aquest Moment després.";
-"create.preview.detail" = "Comprova l'ordre i el ritme d'Avi's Cut abans de crear el vídeo final.";
-"create.preview.ready" = "Avi's Cut a punt";
-"create.preview.title" = "Avi's Cut";
 "create.progress.finalNotMade" = "Encara no creat";
 "create.progress.media" = "Fotos i clips";
 "create.progress.title" = "Progrés de l'espai";
@@ -599,10 +596,6 @@
 "create.final.video" = "Vídeo";
 "create.final.videoReady" = "Vídeo final a punt";
 "create.guide.title" = "Guiar Avi";
-"create.preview.preparing" = "Preparing Avi's Cut...";
-"create.preview.refresh" = "Improve with Avi";
-"create.preview.reviewFirst" = "Prepare Avi's Cut first";
-"create.preview.view" = "Veure Avi's Cut";
 "create.status.checking" = "Comprovant...";
 "create.status.refreshing" = "Actualitzant...";
 "create.action.notNow" = "Ara no";
@@ -685,7 +678,6 @@
 "create.aviStatus.goodSelection.title" = "Bona selecció";
 "create.aviStatus.startMedia.title" = "Comença amb la teva mèdia";
 "create.aviStatus.exportReady.detail" = "El teu vídeo està a punt per exportar o compartir.";
-"create.aviStatus.previewReady.detail" = "Comprova Avi's Cut. Si encaixa, Avi pot crear el vídeo final.";
 "create.aviStatus.reviewing.detail" = "Avi està millorant el tall amb els elements seleccionats.";
 "create.aviStatus.preparing.detail" = "Avi està organitzant la mèdia en un primer pla d’història.";
 "create.aviStatus.storyReady.detail" = "Avi ha preparat la història, l’estil i el ritme. La creació del vídeo ve després.";
@@ -700,7 +692,6 @@
 "recovery.storyFailure" = "Avi no ha pogut preparar la història ara mateix. No s’han fet servir crèdits del vídeo final. Torna-ho a provar.";
 "recovery.renderStartFailure" = "No s’ha pogut iniciar la creació del vídeo. No s’han fet servir crèdits del vídeo final. Torna-ho a provar d’aquí a un moment.";
 "recovery.renderRefreshFailure" = "No s’ha pogut actualitzar l’estat del vídeo. Els crèdits només es finalitzen quan el vídeo està a punt. Torna-ho a provar.";
-"recovery.previewStatusMissing" = "L’estat d'Avi's Cut encara no es pot actualitzar. Millora'l amb Avi una altra vegada si no s’actualitza.";
 "recovery.failedRenderDetail" = "La creació del vídeo ha tingut un problema. Si el vídeo final no s'ha completat, no es cobraran crèdits. Torna-ho a provar o contacta amb suport.";
 "media.item.singular" = "ítem";
 "media.item.plural" = "ítems";
@@ -729,7 +720,6 @@
 "create.story.error.invalidMediaReferences" = "Avi ha preparat la història, però no coincidia amb la mèdia guardada. Guarda la mèdia una altra vegada.";
 "create.story.error.saveFailed" = "Avi ha preparat la història, però no ha pogut guardar-la en aquest Moment. Torna-ho a provar.";
 "create.media.persistence.added" = "%d %@ afegits a aquest Moment.";
-"create.preview.status.readyRefine" = "Avi's Cut està a punt. Encara pots ajustar-lo abans del render final.";
 "create.media.fixture.synced" = "3 recursos sincronitzats. Avi ha seleccionat l’ordre inicial més fort.";
 "create.story.status.readyToReview" = "La història està a punt.";
 "create.dashboard.title" = "Tauler de creació";
@@ -766,7 +756,6 @@
 "create.final.createVideoDetail" = "Avi editarà la teva mèdia real en un vídeo de %@. Veuràs el cost abans de crear el vídeo final.";
 "create.primary.finalReady" = "Vídeo final a punt.";
 "create.primary.videoCreating" = "Avi està creant el vídeo. Pots comprovar el progrés aquí.";
-"create.primary.previewReady" = "Avi's Cut ready. Check it before the final video.";
 "create.primary.createVideoPreflight" = "Avi comprovarà mèdia i confirmarà crèdits abans de començar.";
 "create.primary.reviewCostPreflight" = "Avi pujarà la mèdia i mostrarà el cost abans de crear el vídeo final.";
 "create.primary.reviewBeforeVideo" = "Comprova Avi's Cut abans de crear el vídeo final.";
@@ -791,10 +780,6 @@
 "create.availability.storyUnavailable" = "La preparació d’història encara no està disponible.";
 "create.availability.storyNotConfigured" = "La preparació d’història no està configurada per a aquesta build.";
 "create.availability.storyMissingMedia" = "Afegeix fotos o clips abans de preparar la història.";
-"create.availability.previewMissingMoment" = "Start or continue a moment before Avi's Cut.";
-"create.availability.previewUnavailable" = "Avi's Cut is not available yet.";
-"create.availability.previewNotConfigured" = "Avi's Cut is not configured for this build.";
-"create.availability.previewMissingWorkspace" = "Wait for the moment workspace to sync before Avi's Cut.";
 "create.availability.finalRenderMissingMoment" = "Inicia o continua un Moment abans de crear el vídeo final.";
 "create.availability.finalRenderUnavailable" = "La creació del vídeo final encara no està disponible.";
 "create.availability.finalRenderNotConfigured" = "La creació del vídeo final no està configurada per a aquesta build.";
@@ -903,18 +888,9 @@
 "create.story.action.prepare" = "Prepare story";
 "create.story.empty.ready" = "Avi can prepare a story plan from your photos and clips.";
 "create.story.empty.needsMedia" = "Add enough photos or clips before preparing the story.";
-"create.preview.status.available" = "Avi's Cut està disponible.";
 "create.final.status.ready" = "Final video is ready.";
 "create.story.status.alreadyReady" = "Story plan is already ready.";
-"create.preview.status.notReady" = "Avi's Cut encara no està llest.";
 "create.final.status.startAnother" = "Start another version with a fresh Moment.";
-"create.preview.artifact.readyFinalCheck" = "Avi's Cut is ready for your final check.";
-"create.preview.action.refreshing" = "Improving with Avi...";
-"create.preview.action.refresh" = "Improve with Avi";
-"create.preview.action.reviewing" = "Creant preview...";
-"create.preview.action.review" = "Crear preview";
-"create.preview.empty.ready" = "Avi can prepare the cut before the final video.";
-"create.preview.empty.prepareStory" = "Prepare the story before Avi's Cut.";
 "create.final.action.creating" = "Creating final video...";
 "create.final.empty.ready" = "Llest per crear el vídeo final quan vulguis.";
 "create.final.empty.createVideo" = "Crea el vídeo quan estiguis a punt. Avi comprova mèdia i crèdits primer.";
@@ -962,7 +938,6 @@
 "create.storyDecision.pill.ready" = "Ready";
 "create.storyDecision.pill.noMedia" = "No media";
 "create.storyDecision.action.prepare" = "Preparar història";
-"create.preview.status.creating" = "Avi està creant el preview.";
 "create.storyDecision.action.refresh" = "Improve with Avi";
 "create.storyDecision.action.edit" = "Editar història";
 "create.storyDecision.empty.prepare" = "Avi ordenarà els elements seleccionats abans de crear el vídeo final.";
