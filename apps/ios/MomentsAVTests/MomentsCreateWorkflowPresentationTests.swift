@@ -697,6 +697,41 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         )
     }
 
+    func testPrimaryActionPresentationOpensCreditsForBackendInsufficientCreditPlan() {
+        let presentation = MomentsCreatePrimaryActionPresentation(
+            workflow: MomentsCreateWorkflowPresentation(
+                activeMomentId: "moment-1",
+                isSignedIn: true,
+                hasMomentWorkspace: true,
+                template: .birthdayMessage,
+                balance: MomentsCreditBalance(proMonthly: 0, promotional: 0, purchased: 0),
+                mediaSummary: MomentsCreateMediaSummary(
+                    syncedMediaAssets: [MomentsCreateTestFixtures.makeMediaAsset(id: "media-1")]
+                ),
+                storySummary: MomentsCreateStorySummary(
+                    savedScenes: [MomentsCreateTestFixtures.makeScene(id: "scene-1")]
+                ),
+                previewSummary: MomentsCreatePreviewSummary(),
+                finalRenderSummary: MomentsCreateFinalRenderSummary(
+                    creditCost: 2,
+                    renderPlan: MomentsCreateTestFixtures.makeRenderPlan(
+                        canCreateVideo: false,
+                        createVideoBlockers: ["insufficient_credits"]
+                    )
+                ),
+                canPlanStory: false,
+                canPrepareFinalRenderPlan: false,
+                canGenerateFinalRender: false
+            )
+        )
+
+        XCTAssertTrue(presentation.canRunPrimaryAction)
+        XCTAssertTrue(presentation.needsCreditsForPreparedPlan)
+        XCTAssertEqual(presentation.buttonTitle, "Get credits")
+        XCTAssertEqual(presentation.buttonIconName, "plus.circle.fill")
+        XCTAssertEqual(presentation.statusMessage, "Add 2 more credits before creating the final video.")
+    }
+
     func testPrimaryActionPresentationShowsFinalRenderErrorOverPreparedPlanCopy() {
         let presentation = MomentsCreatePrimaryActionPresentation(
             workflow: MomentsCreateWorkflowPresentation(

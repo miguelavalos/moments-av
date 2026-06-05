@@ -148,7 +148,8 @@ enum MomentsCreateTestFixtures {
         minimumDurationMs: Int = 16_000,
         targetDurationMs: Int = 30_000,
         plannedAssetCount: Int = 4,
-        usedAssetCount: Int = 3
+        usedAssetCount: Int = 3,
+        createVideoBlockers: [String]? = nil
     ) -> MomentsRenderPlanResponse {
         MomentsRenderPlanResponse(
             appId: "momentsav",
@@ -171,7 +172,7 @@ enum MomentsCreateTestFixtures {
                 qualityWarnings: ["One item may be cropped."]
             ),
             canCreateVideo: canCreateVideo,
-            createVideoBlockers: canCreateVideo ? [] : ["blocked"],
+            createVideoBlockers: createVideoBlockers ?? (canCreateVideo ? [] : ["blocked"]),
             generatedAt: "2026-06-02T00:00:00Z"
         )
     }

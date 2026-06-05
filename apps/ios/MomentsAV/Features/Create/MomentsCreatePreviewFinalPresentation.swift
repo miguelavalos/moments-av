@@ -68,6 +68,10 @@ struct MomentsCreateFinalVideoActionPresentation: Equatable {
         return L10n.string("create.final.blocker.default")
     }
 
+    var blockedRenderPlanIsInsufficientCredits: Bool {
+        hasBlockedRenderPlan && (summary.renderPlan?.createVideoBlockers ?? []).contains("insufficient_credits")
+    }
+
     var totalCreditCost: Int {
         summary.renderPlan?.plan.totalCreditCost ?? 0
     }
@@ -136,11 +140,11 @@ struct MomentsCreatePrimaryActionPresentation: Equatable {
             return false
         }
         if hasFinalVideoIntent {
-            if finalVideoAction.hasBlockedRenderPlan {
-                return false
-            }
             if needsCreditsForPreparedPlan {
                 return true
+            }
+            if finalVideoAction.hasBlockedRenderPlan {
+                return false
             }
             return workflow.canGenerateFinalRender
                 || canPrepareVideoPlan
@@ -261,13 +265,13 @@ struct MomentsCreatePrimaryActionPresentation: Equatable {
                 ?? L10n.string("create.primary.videoCreating")
         }
         if hasFinalVideoIntent {
-            if let blockedRenderPlanMessage = finalVideoAction.blockedRenderPlanMessage {
-                return blockedRenderPlanMessage
-            }
             if needsCreditsForPreparedPlan {
                 return MomentsCreateAvailabilityCopy.finalRenderInsufficientCredits(
                     missingCredits: missingCreditsForPreparedPlan
                 )
+            }
+            if let blockedRenderPlanMessage = finalVideoAction.blockedRenderPlanMessage {
+                return blockedRenderPlanMessage
             }
             if let finalStatusMessage = workflow.finalRenderSummary.statusMessage,
                !finalStatusMessage.isEmpty,
@@ -379,6 +383,7 @@ struct MomentsCreatePrimaryActionPresentation: Equatable {
 
     var needsCreditsForPreparedPlan: Bool {
         finalVideoAction.hasRenderPlan && !finalVideoAction.canAffordSelectedCost
+            || finalVideoAction.blockedRenderPlanIsInsufficientCredits
     }
 
     private var missingCreditsForPreparedPlan: Int {
