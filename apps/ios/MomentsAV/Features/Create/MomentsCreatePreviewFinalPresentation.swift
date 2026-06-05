@@ -72,6 +72,10 @@ struct MomentsCreateFinalVideoActionPresentation: Equatable {
         hasBlockedRenderPlan && (summary.renderPlan?.createVideoBlockers ?? []).contains("insufficient_credits")
     }
 
+    var canShowConfirmationSheet: Bool {
+        hasRenderPlan || blockedRenderPlanIsInsufficientCredits
+    }
+
     var totalCreditCost: Int {
         summary.renderPlan?.plan.totalCreditCost ?? 0
     }

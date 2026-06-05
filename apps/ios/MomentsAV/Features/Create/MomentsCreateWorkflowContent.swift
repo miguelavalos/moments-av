@@ -246,7 +246,7 @@ private struct MomentsCreateMediaFirstWorkspace: View {
         .onChange(of: presentation.finalRenderSummary.renderPlan?.planId) { _, _ in
             guard waitsForFinalRenderPlan,
                   presentation.finalRenderSummary.latestFinalJob == nil,
-                  presentation.finalRenderSummary.renderPlan?.canCreateVideo == true else { return }
+                  finalVideoAction.canShowConfirmationSheet else { return }
             waitsForFinalRenderPlan = false
             showsCreateVideoConfirmation = true
         }
