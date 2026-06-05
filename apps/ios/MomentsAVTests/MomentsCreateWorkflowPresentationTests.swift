@@ -334,7 +334,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         )
         XCTAssertEqual(presentation.modeTitle, "Story")
         XCTAssertEqual(presentation.mediaCountTitle, "2 items")
-        XCTAssertEqual(presentation.primaryActionTitle, "Improve with Avi")
+        XCTAssertEqual(presentation.primaryActionTitle, "Refresh story")
         XCTAssertEqual(presentation.editActionTitle, "Edit story")
         XCTAssertTrue(presentation.canRunPrimaryAction)
         XCTAssertTrue(presentation.canShowImproveAction)
@@ -359,7 +359,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
             presentation.statusMessage,
             "Story is ready. Create the final video or adjust it first."
         )
-        XCTAssertEqual(presentation.primaryActionTitle, "Improve with Avi")
+        XCTAssertEqual(presentation.primaryActionTitle, "Refresh story")
         XCTAssertFalse(presentation.canRunPrimaryAction)
         XCTAssertFalse(presentation.canShowImproveAction)
     }
@@ -382,8 +382,8 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         XCTAssertFalse(presentation.canShowImproveAction)
 
         presentation.canImproveWithAvi = false
-        presentation.availabilityMessage = "Sign in before preparing Avi's Cut."
-        XCTAssertEqual(presentation.statusMessage, "Sign in before preparing Avi's Cut.")
+        presentation.availabilityMessage = "Sign in before preparing the story."
+        XCTAssertEqual(presentation.statusMessage, "Sign in before preparing the story.")
         XCTAssertFalse(presentation.canRunPrimaryAction)
     }
 
