@@ -4,7 +4,7 @@ import SwiftUI
 
 struct MomentsCreateStoryCard: View {
     let presentation: MomentsCreateStoryPresentation
-    let generateStoryPlan: () -> Void
+    let generateStory: () -> Void
 
     var body: some View {
         AVAppShellCard {
@@ -20,7 +20,7 @@ struct MomentsCreateStoryCard: View {
                     presentation.planButtonTitle,
                     systemImage: "text.bubble.fill",
                     isDisabled: !presentation.canPlanStory || presentation.summary.isPlanning,
-                    action: generateStoryPlan
+                    action: generateStory
                 )
 
                 if let availabilityMessage = presentation.availabilityMessage {

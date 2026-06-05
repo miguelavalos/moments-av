@@ -245,7 +245,7 @@ final class MomentsCreateViewModel: ObservableObject {
         generatedScenes = []
         storyStatusMessage = L10n.string("create.story.status.ready")
         lastPreparedStoryInputSignature = workspace.moment.storyInputSignature
-            ?? currentStoryPlanInputSignature(momentId: workspace.moment.id)
+            ?? currentStoryInputSignature(momentId: workspace.moment.id)
         activeWorkspace = workspace
         finalExport = workspace.latestArtifact(kind: "final_export")
         pendingGalleryVideo = nil
@@ -362,33 +362,33 @@ final class MomentsCreateViewModel: ObservableObject {
         form.tempo = style.tempo
     }
 
-    func currentStoryPlanInputSignature(momentId: String) -> String {
+    func currentStoryInputSignature(momentId: String) -> String {
         MomentsStoryInputSignature.make(
             momentId: momentId,
             form: form,
-            selectedMedia: currentStoryPlanSignatureMedia()
+            selectedMedia: currentStorySignatureMedia()
         )
     }
 
-    func currentStoryPlanInputSignature(
+    func currentStoryInputSignature(
         momentId: String,
         persistedMedia: [MomentsStoryMedia]?
     ) -> String {
         MomentsStoryInputSignature.make(
             momentId: momentId,
             form: form,
-            selectedMedia: persistedMedia ?? currentStoryPlanSignatureMedia()
+            selectedMedia: persistedMedia ?? currentStorySignatureMedia()
         )
     }
 
     func preparedStoryComparisonInputSignature(momentId: String) -> String {
         if !hasExplicitMediaEditsAfterPreparedStory,
-           let workspaceMedia = currentWorkspaceStoryPlanSignatureMedia(),
+           let workspaceMedia = currentWorkspaceStorySignatureMedia(),
            !workspaceMedia.isEmpty {
-            return currentStoryPlanInputSignature(momentId: momentId, persistedMedia: workspaceMedia)
+            return currentStoryInputSignature(momentId: momentId, persistedMedia: workspaceMedia)
         }
 
-        return currentStoryPlanInputSignature(momentId: momentId)
+        return currentStoryInputSignature(momentId: momentId)
     }
 
     func currentFinalRenderInputSignature(momentId: String, removesWatermark: Bool = false) -> String {
@@ -483,17 +483,17 @@ final class MomentsCreateViewModel: ObservableObject {
         let recordedSignature: String
         if let workspaceSignature = effectiveActiveWorkspace?.moment.storyInputSignature {
             recordedSignature = workspaceSignature
-        } else if currentWorkspaceStoryPlanSignatureMedia()?.isEmpty == false {
+        } else if currentWorkspaceStorySignatureMedia()?.isEmpty == false {
             recordedSignature = inputSignature
         } else {
-            recordedSignature = currentStoryPlanInputSignature(momentId: momentId)
+            recordedSignature = currentStoryInputSignature(momentId: momentId)
         }
         lastPreparedStoryInputSignature = recordedSignature
         hasExplicitMediaEditsAfterPreparedStory = false
         return recordedSignature
     }
 
-    private func currentStoryPlanSignatureMedia() -> [MomentsStoryMedia] {
+    private func currentStorySignatureMedia() -> [MomentsStoryMedia] {
         let localMedia = effectiveSelectedMedia
             .filter(\.selected)
             .sorted { $0.sortOrder < $1.sortOrder }
@@ -556,7 +556,7 @@ final class MomentsCreateViewModel: ObservableObject {
             }
     }
 
-    private func currentWorkspaceStoryPlanSignatureMedia() -> [MomentsStoryMedia]? {
+    private func currentWorkspaceStorySignatureMedia() -> [MomentsStoryMedia]? {
         let mediaAssets = effectiveActiveWorkspace?.mediaAssets ?? []
         guard !mediaAssets.isEmpty else { return nil }
         let selectedAssets = mediaAssets.filter(\.selected)
@@ -616,7 +616,7 @@ extension MomentsCreateViewModel {
         updateAutoStyleSuggestion(for: state.selectedMedia)
     }
 
-    func applyStoryPlanState(_ state: MomentsCreateStoryPlanState) {
+    func applyStoryState(_ state: MomentsCreateStoryState) {
         guard !usesCreateUITestFixture else { return }
         activeWorkspace = state.activeWorkspace
         syncFormWithActiveWorkspace(state.activeWorkspace)
@@ -695,7 +695,7 @@ extension MomentsCreateViewModel {
             return
         }
 
-        if lastPreparedStoryInputSignature == nil || currentWorkspaceStoryPlanSignatureMedia()?.isEmpty == false {
+        if lastPreparedStoryInputSignature == nil || currentWorkspaceStorySignatureMedia()?.isEmpty == false {
             lastPreparedStoryInputSignature = preparedStoryComparisonInputSignature(momentId: activeMomentId)
         }
     }

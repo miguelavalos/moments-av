@@ -19,7 +19,7 @@ struct MomentsCreateMediaUploadState {
     let importProgress: MomentsMediaImportProgress?
 }
 
-struct MomentsCreateStoryPlanState {
+struct MomentsCreateStoryState {
     let activeWorkspace: MomentWorkspace?
     let savedScenes: [MomentStoryScene]
     let generatedScenes: [MomentsStorySceneResponse]

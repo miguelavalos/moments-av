@@ -84,8 +84,8 @@ extension MomentsCreateViewModel {
         )
             .receive(on: DispatchQueue.main)
             .sink { [weak self] activeWorkspace, generatedScenes, statusMessage, isPlanning in
-                self?.applyStoryPlanState(
-                    MomentsCreateStoryPlanState(
+                self?.applyStoryState(
+                    MomentsCreateStoryState(
                         activeWorkspace: activeWorkspace,
                         savedScenes: activeWorkspace?.storyScenes ?? [],
                         generatedScenes: generatedScenes,

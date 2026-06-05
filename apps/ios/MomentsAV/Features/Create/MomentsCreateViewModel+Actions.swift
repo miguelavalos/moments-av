@@ -136,7 +136,7 @@ extension MomentsCreateViewModel {
         mediaUploadWorkflow?.restoreLocalMediaForEditing()
     }
 
-    func generateStoryPlan() {
+    func generateStory() {
         guard canPlanStory, let storyWorkflow else {
             updateStoryStatusMessage(storyAvailabilityMessage ?? L10n.string("create.error.storyPreparationNotReady"))
             return
@@ -176,7 +176,7 @@ extension MomentsCreateViewModel {
                 )
                 return
             }
-            let inputSignature = self.currentStoryPlanInputSignature(
+            let inputSignature = self.currentStoryInputSignature(
                 momentId: momentId,
                 persistedMedia: persistedMedia
             )
@@ -324,7 +324,7 @@ extension MomentsCreateViewModel {
             updateStoryStatusMessage(mediaStatusMessage ?? MomentsRecoveryCopy.mediaStorySaveFailure())
             return false
         }
-        inputSignature = currentStoryPlanInputSignature(
+        inputSignature = currentStoryInputSignature(
             momentId: momentId,
             persistedMedia: persistedMedia
         )

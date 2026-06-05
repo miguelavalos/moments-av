@@ -163,8 +163,8 @@ final class MomentsCreateViewModelStoryStateTests: XCTestCase {
                 importProgress: nil
             )
         )
-        viewModel.applyStoryPlanState(
-            MomentsCreateStoryPlanState(
+        viewModel.applyStoryState(
+            MomentsCreateStoryState(
                 activeWorkspace: nil,
                 savedScenes: [],
                 generatedScenes: [],
@@ -176,8 +176,8 @@ final class MomentsCreateViewModelStoryStateTests: XCTestCase {
         XCTAssertEqual(viewModel.storySummary.statusMessage, MomentsRecoveryCopy.storyFailure())
         XCTAssertFalse(viewModel.isStoryPreparedForCurrentInput)
 
-        viewModel.applyStoryPlanState(
-            MomentsCreateStoryPlanState(
+        viewModel.applyStoryState(
+            MomentsCreateStoryState(
                 activeWorkspace: nil,
                 savedScenes: [MomentsCreateTestFixtures.makeScene(id: "scene-1")],
                 generatedScenes: [],
@@ -213,8 +213,8 @@ final class MomentsCreateViewModelStoryStateTests: XCTestCase {
             )
         )
 
-        viewModel.applyStoryPlanState(
-            MomentsCreateStoryPlanState(
+        viewModel.applyStoryState(
+            MomentsCreateStoryState(
                 activeWorkspace: MomentWorkspace(
                     moment: MomentsCreateTestFixtures.makeMoment(id: "moment-1"),
                     mediaAssets: [
@@ -234,7 +234,7 @@ final class MomentsCreateViewModelStoryStateTests: XCTestCase {
             )
         )
 
-        let expectedLocalSignature = viewModel.currentStoryPlanInputSignature(
+        let expectedLocalSignature = viewModel.currentStoryInputSignature(
             momentId: "moment-1",
             persistedMedia: [
                 MomentsStoryMedia(
@@ -246,7 +246,7 @@ final class MomentsCreateViewModelStoryStateTests: XCTestCase {
                 )
             ]
         )
-        let backendMediaSignature = viewModel.currentStoryPlanInputSignature(
+        let backendMediaSignature = viewModel.currentStoryInputSignature(
             momentId: "moment-1",
             persistedMedia: [
                 MomentsStoryMedia(
@@ -259,8 +259,8 @@ final class MomentsCreateViewModelStoryStateTests: XCTestCase {
             ]
         )
 
-        XCTAssertEqual(viewModel.currentStoryPlanInputSignature(momentId: "moment-1"), expectedLocalSignature)
-        XCTAssertNotEqual(viewModel.currentStoryPlanInputSignature(momentId: "moment-1"), backendMediaSignature)
+        XCTAssertEqual(viewModel.currentStoryInputSignature(momentId: "moment-1"), expectedLocalSignature)
+        XCTAssertNotEqual(viewModel.currentStoryInputSignature(momentId: "moment-1"), backendMediaSignature)
     }
 
     func testWorkspaceSignatureReconcilesAfterStoryScenesArriveFirst() {
@@ -270,9 +270,9 @@ final class MomentsCreateViewModelStoryStateTests: XCTestCase {
             sourceLocalIdentifier: "local-asset-1"
         )
         let backendMedia = makeBackendMedia()
-        let backendSignature = viewModel.currentStoryPlanInputSignature(
+        let backendSignature = viewModel.currentStoryInputSignature(
             momentId: "moment-1",
-            persistedMedia: [makeStoryPlanMedia(from: backendMedia)]
+            persistedMedia: [makeStoryMedia(from: backendMedia)]
         )
 
         viewModel.applyMomentCreationState(
@@ -291,8 +291,8 @@ final class MomentsCreateViewModelStoryStateTests: XCTestCase {
             )
         )
 
-        viewModel.applyStoryPlanState(
-            MomentsCreateStoryPlanState(
+        viewModel.applyStoryState(
+            MomentsCreateStoryState(
                 activeWorkspace: nil,
                 savedScenes: [MomentsCreateTestFixtures.makeScene(id: "scene-1")],
                 generatedScenes: [],
@@ -302,8 +302,8 @@ final class MomentsCreateViewModelStoryStateTests: XCTestCase {
         )
         XCTAssertTrue(viewModel.isStoryPreparedForCurrentInput)
 
-        viewModel.applyStoryPlanState(
-            MomentsCreateStoryPlanState(
+        viewModel.applyStoryState(
+            MomentsCreateStoryState(
                 activeWorkspace: MomentWorkspace(
                     moment: MomentsCreateTestFixtures.makeMoment(
                         id: "moment-1",
@@ -346,7 +346,7 @@ final class MomentsCreateViewModelStoryStateTests: XCTestCase {
             )
         )
 
-        XCTAssertNotEqual(viewModel.currentStoryPlanInputSignature(momentId: "moment-1"), preparedStory.signature)
+        XCTAssertNotEqual(viewModel.currentStoryInputSignature(momentId: "moment-1"), preparedStory.signature)
         XCTAssertTrue(viewModel.isStoryPreparedForCurrentInput)
     }
 
@@ -384,8 +384,8 @@ final class MomentsCreateViewModelStoryStateTests: XCTestCase {
 
         XCTAssertFalse(viewModel.isStoryPreparedForCurrentInput)
 
-        viewModel.applyStoryPlanState(
-            MomentsCreateStoryPlanState(
+        viewModel.applyStoryState(
+            MomentsCreateStoryState(
                 activeWorkspace: MomentWorkspace(
                     moment: MomentsCreateTestFixtures.makeMoment(
                         id: "moment-1",
@@ -462,8 +462,8 @@ final class MomentsCreateViewModelStoryStateTests: XCTestCase {
         let signatureBeforeSync = viewModel.currentFinalRenderInputSignatureSource(momentId: "moment-1")
         XCTAssertNotNil(viewModel.currentRenderPlan)
 
-        viewModel.applyStoryPlanState(
-            MomentsCreateStoryPlanState(
+        viewModel.applyStoryState(
+            MomentsCreateStoryState(
                 activeWorkspace: MomentWorkspace(
                     moment: MomentsCreateTestFixtures.makeMoment(
                         id: "moment-1",
@@ -531,7 +531,7 @@ final class MomentsCreateViewModelStoryStateTests: XCTestCase {
             )
         )
 
-        viewModel.generateStoryPlan()
+        viewModel.generateStory()
         await fulfillment(of: [harness.createAttemptExpectation], timeout: 1)
         await waitForStoryStatusMessage(in: viewModel)
 
@@ -544,9 +544,9 @@ final class MomentsCreateViewModelStoryStateTests: XCTestCase {
         momentId: String = "moment-1"
     ) -> (media: MomentMediaAsset, signature: String) {
         let media = makeBackendMedia()
-        let signature = viewModel.currentStoryPlanInputSignature(
+        let signature = viewModel.currentStoryInputSignature(
             momentId: momentId,
-            persistedMedia: [makeStoryPlanMedia(from: media)]
+            persistedMedia: [makeStoryMedia(from: media)]
         )
 
         viewModel.applyMomentCreationState(
@@ -556,8 +556,8 @@ final class MomentsCreateViewModelStoryStateTests: XCTestCase {
                 setupErrorMessage: nil
             )
         )
-        viewModel.applyStoryPlanState(
-            MomentsCreateStoryPlanState(
+        viewModel.applyStoryState(
+            MomentsCreateStoryState(
                 activeWorkspace: MomentWorkspace(
                     moment: MomentsCreateTestFixtures.makeMoment(
                         id: momentId,
@@ -593,7 +593,7 @@ final class MomentsCreateViewModelStoryStateTests: XCTestCase {
         )
     }
 
-    private func makeStoryPlanMedia(from media: MomentMediaAsset) -> MomentsStoryMedia {
+    private func makeStoryMedia(from media: MomentMediaAsset) -> MomentsStoryMedia {
         MomentsStoryMedia(
             mediaAssetId: media.id,
             mediaKind: media.kind,
