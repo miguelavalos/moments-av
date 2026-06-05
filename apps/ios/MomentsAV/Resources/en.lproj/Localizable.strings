@@ -707,7 +707,6 @@
 "recovery.renderStartFailure" = "Couldn’t start video creation. No final video credits were used. Please try again in a moment.";
 "recovery.renderRefreshFailure" = "Couldn’t refresh the video status. Credits are only finalized when the video is ready. Please try again.";
 "recovery.previewStatusMissing" = "Avi's Cut status cannot be refreshed yet. Improve with Avi again if this does not update.";
-"recovery.finalRenderStatusMissing" = "Final video status cannot be refreshed yet. Credits are only finalized when the video is ready. Please try again.";
 "recovery.failedRenderDetail" = "Video creation hit a problem. If the final video was not completed, credits will not be charged. Please try again or contact support.";
 "media.item.singular" = "item";
 "media.item.plural" = "items";
@@ -863,19 +862,11 @@
 "workflow.final.missingMoment" = "Start or continue a Moment before creating the final video.";
 "workflow.final.addCredits" = "Add credits before creating the final video.";
 "workflow.final.notReady" = "Final video is not ready to create.";
-"workflow.final.refreshSignIn" = "Sign in before refreshing final video status.";
-"workflow.final.refreshMissingMoment" = "Open a moment before refreshing final status.";
-"workflow.final.refreshMissingJob" = "No final video job is available yet.";
-"workflow.final.refreshSuccess" = "Video status updated.";
 
 "create.refresh.preview.unavailable" = "Avi's Cut refresh is not available yet.";
 "create.refresh.preview.notConfigured" = "Avi's Cut refresh is not configured for this build.";
 "create.refresh.preview.missingMoment" = "Open a moment before improving Avi's Cut.";
 "create.refresh.preview.missingJob" = "No Avi's Cut job is available yet.";
-"create.refresh.final.unavailable" = "Final status refresh is not available yet.";
-"create.refresh.final.notConfigured" = "Final status refresh is not configured for this build.";
-"create.refresh.final.missingMoment" = "Open a moment before refreshing final status.";
-"create.refresh.final.missingJob" = "No final video is available yet.";
 "create.summary.media.added" = "%d added";
 "create.summary.story.scene" = "%d scene";
 "create.summary.story.scenes" = "%d scenes";

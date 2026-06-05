@@ -152,8 +152,7 @@ extension MomentsCreateViewModel {
                         pendingGalleryVideo: pendingGalleryVideo,
                         canRetryFinalVideoDownload: canRetryFinalVideoDownload,
                         statusMessage: statusMessage,
-                        isGenerating: isGenerating,
-                        isRefreshingStatus: false
+                        isGenerating: isGenerating
                     )
                 )
             }

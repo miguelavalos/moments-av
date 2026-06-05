@@ -37,10 +37,6 @@ enum MomentsRecoveryCopy {
         L10n.string("recovery.previewStatusMissing")
     }
 
-    static func finalRenderStatusMissing() -> String {
-        L10n.string("recovery.finalRenderStatusMissing")
-    }
-
     static func failedRenderDetail(userMessage: String?, errorMessage: String?) -> String {
         if let userMessage, !userMessage.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             return userMessage

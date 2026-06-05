@@ -180,9 +180,7 @@ struct MomentsCreatePrimaryActionPresentation: Equatable {
             return L10n.string("create.final.videoReady")
         }
         if workflow.finalRenderSummary.latestFinalJob != nil {
-            return workflow.finalRenderSummary.isRefreshingStatus
-                ? L10n.string("create.status.checking")
-                : L10n.string("create.final.video")
+            return L10n.string("create.final.video")
         }
         if workflow.finalRenderSummary.isGenerating {
             return L10n.string("create.final.creating")
@@ -360,7 +358,6 @@ struct MomentsCreatePrimaryActionPresentation: Equatable {
             || workflow.previewSummary.isGenerating
             || workflow.previewSummary.isRefreshingStatus
             || workflow.finalRenderSummary.isGenerating
-            || workflow.finalRenderSummary.isRefreshingStatus
     }
 
     var canPrepareVideoPlan: Bool {

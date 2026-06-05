@@ -142,7 +142,6 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
             latestPreview: preview,
             latestPreviewJob: latestPreviewJob,
             isGenerating: true,
-            isRefreshingStatus: false,
             statusMessage: "Generating preview."
         )
         let finalRenderSummary = MomentsCreateFinalRenderSummary(
@@ -150,8 +149,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
             finalExport: finalExport,
             latestFinalJob: latestFinalJob,
             isGenerating: false,
-            isRefreshingStatus: true,
-            statusMessage: "Refreshing final render."
+            statusMessage: "Final render is queued."
         )
 
         let presentation = MomentsCreateWorkflowPresentation(
@@ -815,10 +813,6 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         XCTAssertEqual(
             MomentsRecoveryCopy.previewStatusMissing(),
             "Avi's Cut status cannot be refreshed yet. Improve with Avi again if this does not update."
-        )
-        XCTAssertEqual(
-            MomentsRecoveryCopy.finalRenderStatusMissing(),
-            "Final video status cannot be refreshed yet. Credits are only finalized when the video is ready. Please try again."
         )
     }
 

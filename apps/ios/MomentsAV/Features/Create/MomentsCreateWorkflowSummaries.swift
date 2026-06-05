@@ -160,7 +160,6 @@ struct MomentsCreateFinalRenderSummary: Equatable {
     var canRetryFinalVideoDownload = false
     var latestFinalJob: MomentRenderJob?
     var isGenerating = false
-    var isRefreshingStatus = false
     var statusMessage: String?
 
     var realtimeStatus: MomentsRenderRealtimePresentation? {

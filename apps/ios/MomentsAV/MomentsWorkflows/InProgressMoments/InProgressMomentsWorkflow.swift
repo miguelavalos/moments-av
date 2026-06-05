@@ -1,6 +1,5 @@
 import Combine
 import Foundation
-import OSLog
 
 @MainActor
 final class InProgressMomentsWorkflow: ObservableObject {
@@ -12,7 +11,6 @@ final class InProgressMomentsWorkflow: ObservableObject {
     private let workspaceSelectionWorkflow: MomentWorkspaceSelectionWorkflow
     private let momentDeletionWorkflow: MomentDeletionWorkflow
     private let currentUserProvider: any MomentsCurrentUserProviding
-    private let logger = Logger(subsystem: "com.avalsys.momentsav", category: "in-progress")
     private var currentOwnerUserId: String?
     private var cancellables = Set<AnyCancellable>()
 
@@ -83,10 +81,6 @@ final class InProgressMomentsWorkflow: ObservableObject {
 
     func clearMomentWorkspace() {
         clearActiveMoment()
-    }
-
-    func refreshActiveFinalRenderStatusIfNeeded() async {
-        logger.debug("Final render status refresh is backend-owned; waiting for Convex realtime updates.")
     }
 
     func deleteMoment(_ moment: InProgressMoment) async -> Bool {

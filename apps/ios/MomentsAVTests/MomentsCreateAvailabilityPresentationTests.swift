@@ -221,7 +221,7 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
         )
     }
 
-    func testRefreshAvailabilityFactoryFormatsPreviewAndFinalMessages() {
+    func testRefreshAvailabilityFactoryFormatsPreviewMessage() {
         let preview = MomentsCreateRefreshAvailabilityFactory.preview(
             momentId: nil,
             job: nil,
@@ -229,15 +229,7 @@ final class MomentsCreateAvailabilityPresentationTests: XCTestCase {
             isConfigured: false,
             isRefreshing: false
         )
-        let finalRender = MomentsCreateRefreshAvailabilityFactory.finalRender(
-            momentId: "moment-1",
-            job: nil,
-            isAvailable: true,
-            isConfigured: true,
-            isRefreshing: false
-        )
 
         XCTAssertEqual(preview.message, "Open a moment before improving Avi's Cut.")
-        XCTAssertEqual(finalRender.message, "No final video is available yet.")
     }
 }

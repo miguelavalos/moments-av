@@ -21,25 +21,4 @@ enum MomentsCreateRefreshAvailabilityFactory {
             missingProviderRequestMessage: MomentsRecoveryCopy.previewStatusMissing()
         )
     }
-
-    static func finalRender(
-        momentId: String?,
-        job: MomentRenderJob?,
-        isAvailable: Bool,
-        isConfigured: Bool,
-        isRefreshing: Bool
-    ) -> RenderJobStatusRefreshAvailability {
-        RenderJobStatusRefreshAvailability(
-            momentId: momentId,
-            job: job,
-            isAvailable: isAvailable,
-            isConfigured: isConfigured,
-            isRefreshing: isRefreshing,
-            unavailableMessage: L10n.string("create.refresh.final.unavailable"),
-            notConfiguredMessage: L10n.string("create.refresh.final.notConfigured"),
-            missingMomentMessage: L10n.string("create.refresh.final.missingMoment"),
-            missingJobMessage: L10n.string("create.refresh.final.missingJob"),
-            missingProviderRequestMessage: MomentsRecoveryCopy.finalRenderStatusMissing()
-        )
-    }
 }

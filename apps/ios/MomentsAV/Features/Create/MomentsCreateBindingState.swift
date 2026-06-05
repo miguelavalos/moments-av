@@ -43,5 +43,4 @@ struct MomentsCreateFinalRenderState {
     var canRetryFinalVideoDownload = false
     let statusMessage: String?
     let isGenerating: Bool
-    let isRefreshingStatus: Bool
 }

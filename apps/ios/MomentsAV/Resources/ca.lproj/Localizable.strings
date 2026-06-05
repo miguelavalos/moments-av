@@ -700,7 +700,6 @@
 "recovery.renderStartFailure" = "No s’ha pogut iniciar la creació del vídeo. No s’han fet servir crèdits del vídeo final. Torna-ho a provar d’aquí a un moment.";
 "recovery.renderRefreshFailure" = "No s’ha pogut actualitzar l’estat del vídeo. Els crèdits només es finalitzen quan el vídeo està a punt. Torna-ho a provar.";
 "recovery.previewStatusMissing" = "L’estat d'Avi's Cut encara no es pot actualitzar. Millora'l amb Avi una altra vegada si no s’actualitza.";
-"recovery.finalRenderStatusMissing" = "L’estat del vídeo final encara no es pot actualitzar. Els crèdits només es finalitzen quan el vídeo està a punt. Torna-ho a provar.";
 "recovery.failedRenderDetail" = "La creació del vídeo ha tingut un problema. Si el vídeo final no s'ha completat, no es cobraran crèdits. Torna-ho a provar o contacta amb suport.";
 "media.item.singular" = "ítem";
 "media.item.plural" = "ítems";
@@ -856,19 +855,11 @@
 "workflow.final.missingMoment" = "Inicia o continua un Moment abans de renderitzar l’exportació final.";
 "workflow.final.addCredits" = "Afegeix crèdits abans del render final.";
 "workflow.final.notReady" = "L’exportació final encara no està llesta per renderitzar-se.";
-"workflow.final.refreshSignIn" = "Inicia sessió abans d’actualitzar l’estat del render final.";
-"workflow.final.refreshMissingMoment" = "Obre un Moment abans d’actualitzar l’estat final.";
-"workflow.final.refreshMissingJob" = "Encara no hi ha cap tasca de render final disponible.";
-"workflow.final.refreshSuccess" = "Estat del vídeo actualitzat.";
 
 "create.refresh.preview.unavailable" = "La millora d'Avi's Cut encara no està disponible.";
 "create.refresh.preview.notConfigured" = "La millora d'Avi's Cut no està configurada per a aquesta build.";
 "create.refresh.preview.missingMoment" = "Obre un Moment abans de millorar Avi's Cut.";
 "create.refresh.preview.missingJob" = "Encara no hi ha cap tasca d'Avi's Cut disponible.";
-"create.refresh.final.unavailable" = "Final status refresh is not available yet.";
-"create.refresh.final.notConfigured" = "Final status refresh is not configured for this build.";
-"create.refresh.final.missingMoment" = "Open a moment before refreshing final status.";
-"create.refresh.final.missingJob" = "No final video is available yet.";
 "create.summary.media.added" = "%d added";
 "create.summary.story.scene" = "%d scene";
 "create.summary.story.scenes" = "%d scenes";

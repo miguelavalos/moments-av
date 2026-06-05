@@ -82,8 +82,7 @@ final class MomentsCreateViewModelStoryStateTests: XCTestCase {
                 latestFinalJob: nil,
                 renderPlan: plan,
                 statusMessage: nil,
-                isGenerating: false,
-                isRefreshingStatus: false
+                isGenerating: false
             )
         )
 
@@ -105,8 +104,7 @@ final class MomentsCreateViewModelStoryStateTests: XCTestCase {
                 latestFinalJob: nil,
                 renderPlan: plan,
                 statusMessage: nil,
-                isGenerating: false,
-                isRefreshingStatus: false
+                isGenerating: false
             )
         )
 
@@ -387,8 +385,7 @@ final class MomentsCreateViewModelStoryStateTests: XCTestCase {
                 latestFinalJob: nil,
                 renderPlan: MomentsCreateTestFixtures.makeRenderPlan(),
                 statusMessage: nil,
-                isGenerating: false,
-                isRefreshingStatus: false
+                isGenerating: false
             )
         )
 
@@ -427,8 +424,7 @@ final class MomentsCreateViewModelStoryStateTests: XCTestCase {
                 latestFinalJob: nil,
                 renderPlan: MomentsCreateTestFixtures.makeRenderPlan(),
                 statusMessage: nil,
-                isGenerating: false,
-                isRefreshingStatus: false
+                isGenerating: false
             )
         )
 
