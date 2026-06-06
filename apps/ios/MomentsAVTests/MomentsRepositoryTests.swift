@@ -15,30 +15,25 @@ final class MomentsRepositoryTests: XCTestCase {
         XCTAssertTrue(repository.isConfigured)
     }
 
-    func testCreateMomentThrowsNotConfiguredWhenConvexIsNotConfigured() async {
+    func testObserveInProgressThrowsNotConfiguredWhenConvexIsNotConfigured() {
         let repository = MomentsRepository(deploymentURL: "")
 
         do {
-            _ = try await repository.createMoment(
-                ownerUserId: "user-1",
-                form: MomentSetupForm(template: .birthdayMessage)
-            )
+            _ = try repository.observeInProgressMoments(ownerUserId: "user-1")
             XCTFail("Expected not configured error")
         } catch {
             XCTAssertEqual(error as? MomentsSyncError, .notConfigured)
         }
     }
 
-    func testCreateMomentThrowsInvalidFormBeforeRemoteCall() async {
+    func testObserveGalleryThrowsNotConfiguredWhenConvexIsNotConfigured() {
         let repository = MomentsRepository(deploymentURL: "")
-        var form = MomentSetupForm(template: .birthdayMessage)
-        form.occasion = "  "
 
         do {
-            _ = try await repository.createMoment(ownerUserId: "user-1", form: form)
-            XCTFail("Expected invalid form error")
+            _ = try repository.observeGalleryMoments(ownerUserId: "user-1")
+            XCTFail("Expected not configured error")
         } catch {
-            XCTAssertEqual(error as? MomentsSyncError, .invalidForm)
+            XCTAssertEqual(error as? MomentsSyncError, .notConfigured)
         }
     }
 }
