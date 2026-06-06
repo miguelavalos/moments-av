@@ -81,38 +81,78 @@ final class RevenueCatMomentsPurchaseService: MomentsPurchaseServicing {
     }
 
     func loadCatalog(userId: String) async throws -> MomentsPurchaseCatalog {
-        try await configureIfNeeded(userId: userId)
-        let offering = try await momentsOffering()
-        return catalog(from: offering)
+        MomentsCreditsDiagnostics.addBreadcrumb(operation: "load_catalog")
+        do {
+            try await configureIfNeeded(userId: userId)
+            let offering = try await momentsOffering()
+            let catalog = catalog(from: offering)
+            MomentsCreditsDiagnostics.addBreadcrumb(
+                operation: "catalog_loaded",
+                data: ["product_count": String(catalog.entriesByProductId.count)]
+            )
+            return catalog
+        } catch {
+            MomentsCreditsDiagnostics.capture(error, operation: "load_catalog", step: "catalog")
+            throw error
+        }
     }
 
     func purchase(productId: String, userId: String) async throws -> MomentsPurchaseResult {
-        try await configureIfNeeded(userId: userId)
-
-        if packagesByProductId[productId] == nil {
-            _ = try await loadCatalog(userId: userId)
-        }
-
-        guard let package = packagesByProductId[productId] else {
-            throw MomentsPurchaseError.productUnavailable(productId)
-        }
-
-        let result = try await Purchases.shared.purchase(package: package)
-        guard !result.userCancelled else {
-            return MomentsPurchaseResult(status: .cancelled, productId: productId, transactionId: nil)
-        }
-
-        return MomentsPurchaseResult(
-            status: .purchased,
-            productId: result.transaction?.productIdentifier ?? productId,
-            transactionId: result.transaction?.transactionIdentifier
+        MomentsCreditsDiagnostics.addBreadcrumb(
+            operation: "purchase",
+            data: ["product_key": MomentsCreditsDiagnostics.productKey(for: productId)]
         )
+        do {
+            try await configureIfNeeded(userId: userId)
+
+            if packagesByProductId[productId] == nil {
+                _ = try await loadCatalog(userId: userId)
+            }
+
+            guard let package = packagesByProductId[productId] else {
+                throw MomentsPurchaseError.productUnavailable(productId)
+            }
+
+            let result = try await Purchases.shared.purchase(package: package)
+            guard !result.userCancelled else {
+                MomentsCreditsDiagnostics.addBreadcrumb(
+                    operation: "purchase_cancelled",
+                    data: ["product_key": MomentsCreditsDiagnostics.productKey(for: productId)]
+                )
+                return MomentsPurchaseResult(status: .cancelled, productId: productId, transactionId: nil)
+            }
+
+            MomentsCreditsDiagnostics.addBreadcrumb(
+                operation: "purchase_completed",
+                data: ["product_key": MomentsCreditsDiagnostics.productKey(for: productId)]
+            )
+            return MomentsPurchaseResult(
+                status: .purchased,
+                productId: result.transaction?.productIdentifier ?? productId,
+                transactionId: result.transaction?.transactionIdentifier
+            )
+        } catch {
+            MomentsCreditsDiagnostics.capture(
+                error,
+                operation: "purchase",
+                step: "revenuecat",
+                data: ["product_key": MomentsCreditsDiagnostics.productKey(for: productId)]
+            )
+            throw error
+        }
     }
 
     func restorePurchases(userId: String) async throws -> MomentsPurchaseResult {
-        try await configureIfNeeded(userId: userId)
-        _ = try await Purchases.shared.restorePurchases()
-        return MomentsPurchaseResult(status: .restored, productId: nil, transactionId: nil)
+        MomentsCreditsDiagnostics.addBreadcrumb(operation: "restore")
+        do {
+            try await configureIfNeeded(userId: userId)
+            _ = try await Purchases.shared.restorePurchases()
+            MomentsCreditsDiagnostics.addBreadcrumb(operation: "restore_completed")
+            return MomentsPurchaseResult(status: .restored, productId: nil, transactionId: nil)
+        } catch {
+            MomentsCreditsDiagnostics.capture(error, operation: "restore", step: "revenuecat")
+            throw error
+        }
     }
 
     func logOut() async {
@@ -143,6 +183,7 @@ final class RevenueCatMomentsPurchaseService: MomentsPurchaseServicing {
         do {
             offerings = try await Purchases.shared.offerings()
         } catch {
+            MomentsCreditsDiagnostics.capture(error, operation: "load_catalog", step: "offerings")
             throw MomentsPurchaseError.offeringUnavailable
         }
         let offeringID = offeringIDProvider().trimmingCharacters(in: .whitespacesAndNewlines)
@@ -185,5 +226,43 @@ final class RevenueCatMomentsPurchaseService: MomentsPurchaseServicing {
             return
         }
         packagesByProductId[MomentsCreditProductID.proMonthlyProduct] = package
+    }
+}
+
+private enum MomentsCreditsDiagnostics {
+    static func addBreadcrumb(operation: String, data: [String: String] = [:]) {
+        MomentsWorkflowDiagnostics.addBreadcrumb(
+            feature: "moments.credits",
+            operation: operation,
+            data: data
+        )
+    }
+
+    static func capture(
+        _ error: any Error,
+        operation: String,
+        step: String,
+        data: [String: String] = [:]
+    ) {
+        MomentsWorkflowDiagnostics.capture(
+            error,
+            feature: "moments.credits",
+            operation: operation,
+            step: step,
+            data: data
+        )
+    }
+
+    static func productKey(for productId: String) -> String {
+        switch productId {
+        case MomentsCreditProductID.starterPackProduct:
+            return "starter_pack"
+        case MomentsCreditProductID.creatorPackProduct:
+            return "creator_pack"
+        case MomentsCreditProductID.proMonthlyProduct:
+            return "pro_monthly"
+        default:
+            return "unknown"
+        }
     }
 }

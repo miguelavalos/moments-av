@@ -44,6 +44,9 @@ enum MomentsWorkflowDiagnostics {
         if let renderError = error as? MomentsFinalRenderError {
             return String(describing: renderError)
         }
+        if let purchaseError = error as? MomentsPurchaseError {
+            return String(describing: purchaseError)
+        }
         if let refreshError = error as? RenderJobStatusRefreshError {
             return refreshError.message
         }
