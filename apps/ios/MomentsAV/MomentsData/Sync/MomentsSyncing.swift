@@ -4,68 +4,18 @@ import Foundation
 @MainActor
 protocol MomentsCreating {
     var isConfigured: Bool { get }
-    func createMoment(ownerUserId: String, form: MomentSetupForm) async throws -> String
-    func updateMomentSetup(ownerUserId: String, momentId: String, form: MomentSetupForm) async throws
-}
-
-@MainActor
-protocol MomentsMediaAssetSaving {
-    var isConfigured: Bool { get }
-    func saveMediaAsset(
-        ownerUserId: String,
-        momentId: String,
-        media: MomentsSelectedMedia,
-        preparedUpload: MomentsPreparedUpload,
-        uploadCompletion: MomentsUploadCompletion
-    ) async throws -> String
-    func saveMediaAssets(
-        ownerUserId: String,
-        momentId: String,
-        mediaAssets: [MediaAssetPersistenceRequest]
-    ) async throws -> [String]
-}
-
-@MainActor
-protocol MomentsStorySaving {
-    var isConfigured: Bool { get }
-    func saveStory(
-        ownerUserId: String,
-        momentId: String,
-        plan: MomentsStoryResponse,
-        storyInputSignature: String
-    ) async throws
-}
-
-@MainActor
-protocol MomentsRenderJobStatusUpdating {
-    var isConfigured: Bool { get }
-    func updateRenderJobStatus(
-        ownerUserId: String,
-        renderJobId: String,
-        status: String,
-        phase: String?,
-        progressPercent: Int?,
-        userMessage: String?,
-        canEditSetup: Bool?,
-        canRetry: Bool?,
-        errorCode: String?,
-        errorMessage: String?
-    ) async throws
+    func createMoment(bearerToken: String, form: MomentSetupForm) async throws -> String
+    func updateMomentSetup(bearerToken: String, momentId: String, form: MomentSetupForm) async throws
 }
 
 @MainActor
 protocol MomentsDeleting {
-    func deleteMoment(ownerUserId: String, momentId: String) async throws
+    func deleteMoment(bearerToken: String, momentId: String) async throws
 }
 
 @MainActor
 protocol MomentsTitleUpdating {
-    func updateMomentTitle(ownerUserId: String, momentId: String, title: String) async throws
-}
-
-@MainActor
-protocol MomentsGalleryMarking {
-    func markMomentMovedToGallery(ownerUserId: String, momentId: String) async throws
+    func updateMomentTitle(bearerToken: String, momentId: String, title: String) async throws
 }
 
 @MainActor
@@ -114,13 +64,8 @@ protocol MomentsActiveWorkspaceObserving {
 }
 
 extension MomentsRepository:
-    MomentsCreating,
-    MomentsMediaAssetSaving,
-    MomentsStorySaving,
-    MomentsRenderJobStatusUpdating,
-    MomentsDeleting,
-    MomentsTitleUpdating,
-    MomentsGalleryMarking,
     InProgressMomentsObserving,
     GalleryMomentsObserving,
     MomentWorkspaceObserving {}
+
+extension MomentsWorkspaceCommandClient: MomentsCreating, MomentsDeleting, MomentsTitleUpdating {}

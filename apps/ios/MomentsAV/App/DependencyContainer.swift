@@ -18,6 +18,9 @@ final class MomentsDependencyContainer: ObservableObject {
     let inProgressViewModel: MomentsInProgressViewModel
     let galleryViewModel: MomentsGalleryViewModel
     let aviViewModel: MomentsAviViewModel
+    private let realtimeSessionClient: MomentsRealtimeSessionClient
+    private let realtimeSessionStore: MomentsRealtimeSessionStore
+    private var realtimeSessionTask: Task<Void, Never>?
     private var observedOwnerUserId: ObservedOwnerUserId = .unobserved
 
     init(
@@ -49,6 +52,8 @@ final class MomentsDependencyContainer: ObservableObject {
         self.mediaUploadWorkflow = workflows.mediaUpload
         self.storyWorkflow = workflows.story
         self.finalRenderWorkflow = workflows.finalRender
+        self.realtimeSessionClient = clients.realtimeSession
+        self.realtimeSessionStore = .shared
         let viewModels = MomentsViewModelBundle(
             accountController: accountController,
             workflows: workflows,
@@ -67,11 +72,27 @@ final class MomentsDependencyContainer: ObservableObject {
         let nextObservedOwnerUserId = ObservedOwnerUserId.observed(ownerUserId)
         guard observedOwnerUserId != nextObservedOwnerUserId else { return }
         observedOwnerUserId = nextObservedOwnerUserId
-        inProgressMomentsWorkflow.observeInProgressMoments(ownerUserId: ownerUserId)
-        galleryMomentsObserver.observeGalleryMoments(ownerUserId: ownerUserId)
+        realtimeSessionTask?.cancel()
+        realtimeSessionStore.clear()
+        inProgressMomentsWorkflow.observeInProgressMoments(ownerUserId: nil)
+        galleryMomentsObserver.observeGalleryMoments(ownerUserId: nil)
         inProgressViewModel.clearSelection()
         createViewModel.clearSessionState()
         applyUITestFixturesIfNeeded()
+        guard let ownerUserId else { return }
+
+        realtimeSessionTask = Task { [weak self, accountController, realtimeSessionClient] in
+            guard let bearerToken = try? await accountController.currentBearerToken(),
+                  let realtimeSessionId = try? await realtimeSessionClient.createRealtimeSession(bearerToken: bearerToken)
+            else { return }
+
+            await MainActor.run {
+                guard self?.observedOwnerUserId == .observed(ownerUserId) else { return }
+                self?.realtimeSessionStore.update(ownerUserId: ownerUserId, realtimeSessionId: realtimeSessionId)
+                self?.inProgressMomentsWorkflow.observeInProgressMoments(ownerUserId: ownerUserId)
+                self?.galleryMomentsObserver.observeGalleryMoments(ownerUserId: ownerUserId)
+            }
+        }
     }
 
     func applyUITestFixturesIfNeeded() {

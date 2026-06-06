@@ -64,11 +64,13 @@ struct MomentsUploadClient: Sendable {
         preparedUpload.headers.forEach { key, value in
             request.setValue(value, forHTTPHeaderField: key)
         }
+        request.setValue(String(media.sortOrder), forHTTPHeaderField: "x-appsav-moments-sort-order")
+        request.setValue(media.selected ? "true" : "false", forHTTPHeaderField: "x-appsav-moments-selected")
 
         if let completionUrl = preparedUpload.completionUrl {
             _ = try await uploadWithRetry(request: request, data: media.data)
             logger.info("direct upload put succeeded uploadId=\(preparedUpload.uploadId, privacy: .public)")
-            return try await completeUpload(uploadId: preparedUpload.uploadId, completionUrl: completionUrl)
+            return try await completeUpload(uploadId: preparedUpload.uploadId, completionUrl: completionUrl, media: media)
         }
 
         let uploadResponseData = try await uploadWithRetry(request: request, data: media.data)
@@ -82,11 +84,13 @@ struct MomentsUploadClient: Sendable {
         }
     }
 
-    private func completeUpload(uploadId: String, completionUrl: URL) async throws -> MomentsUploadCompletion {
+    private func completeUpload(uploadId: String, completionUrl: URL, media: MomentsSelectedMedia) async throws -> MomentsUploadCompletion {
         var request = URLRequest(url: completionUrl)
         request.httpMethod = "POST"
         request.timeoutInterval = 20
         request.cachePolicy = .reloadIgnoringLocalAndRemoteCacheData
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpBody = try JSONEncoder().encode(MomentsUploadCompletionIntent(media: media))
 
         let (data, response) = try await retryingData(for: request)
         guard let httpResponse = response as? HTTPURLResponse, 200..<300 ~= httpResponse.statusCode else {
@@ -151,6 +155,16 @@ struct MomentsUploadClient: Sendable {
                 try await Task.sleep(nanoseconds: networkRetryPolicy.delayNanoseconds(forAttempt: attempt))
             }
         }
+    }
+}
+
+private struct MomentsUploadCompletionIntent: Encodable {
+    let sortOrder: Int
+    let selected: Bool
+
+    init(media: MomentsSelectedMedia) {
+        sortOrder = media.sortOrder
+        selected = media.selected
     }
 }
 

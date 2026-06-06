@@ -8,6 +8,7 @@ final class MomentCreationWorkflow: ObservableObject {
     @Published private(set) var errorMessage: String?
 
     private let currentUserProvider: any MomentsCurrentUserProviding
+    private let authTokenProvider: any MomentsAuthTokenProviding
     private let creditBalanceProvider: any MomentsCreditBalanceProviding
     private let momentCreator: any MomentsCreating
     private let momentDeleter: any MomentsDeleting
@@ -17,12 +18,14 @@ final class MomentCreationWorkflow: ObservableObject {
 
     init(
         currentUserProvider: any MomentsCurrentUserProviding,
+        authTokenProvider: any MomentsAuthTokenProviding,
         creditBalanceProvider: any MomentsCreditBalanceProviding,
         momentCreator: any MomentsCreating,
         momentDeleter: any MomentsDeleting,
         workspaceObserver: any MomentsActiveWorkspaceObserving
     ) {
         self.currentUserProvider = currentUserProvider
+        self.authTokenProvider = authTokenProvider
         self.creditBalanceProvider = creditBalanceProvider
         self.momentCreator = momentCreator
         self.momentDeleter = momentDeleter
@@ -55,6 +58,10 @@ final class MomentCreationWorkflow: ObservableObject {
             errorMessage = L10n.string("workflow.moment.signInStart")
             return nil
         }
+        guard let bearerToken = try? await authTokenProvider.currentBearerToken() else {
+            errorMessage = L10n.string("workflow.story.signInAgainPlan")
+            return nil
+        }
 
         let availability = MomentSetupRules.availability(form: form, balance: balance)
         guard availability.canCreateMoment else {
@@ -67,7 +74,7 @@ final class MomentCreationWorkflow: ObservableObject {
         errorMessage = nil
 
         do {
-            let momentId = try await momentCreator.createMoment(ownerUserId: ownerUserId, form: form)
+            let momentId = try await momentCreator.createMoment(bearerToken: bearerToken, form: form)
             guard workflowGeneration.isCurrent(generation) else { return nil }
             activeMomentId = momentId
             workspaceObserver.observeWorkspace(ownerUserId: ownerUserId, momentId: momentId)
@@ -88,6 +95,10 @@ final class MomentCreationWorkflow: ObservableObject {
             errorMessage = L10n.string("workflow.moment.signInContinue")
             return false
         }
+        guard let bearerToken = try? await authTokenProvider.currentBearerToken() else {
+            errorMessage = L10n.string("workflow.story.signInAgainPlan")
+            return false
+        }
 
         let availability = MomentSetupRules.availability(form: form, balance: balance)
         guard availability.canCreateMoment else {
@@ -100,7 +111,7 @@ final class MomentCreationWorkflow: ObservableObject {
 
         do {
             try await momentCreator.updateMomentSetup(
-                ownerUserId: ownerUserId,
+                bearerToken: bearerToken,
                 momentId: momentId,
                 form: form
             )
@@ -142,6 +153,10 @@ final class MomentCreationWorkflow: ObservableObject {
             errorMessage = L10n.string("workflow.moment.signInDiscard")
             return false
         }
+        guard let bearerToken = try? await authTokenProvider.currentBearerToken() else {
+            errorMessage = L10n.string("workflow.story.signInAgainPlan")
+            return false
+        }
         guard let momentId = momentIdOverride ?? activeMomentId else { return true }
 
         let generation = workflowGeneration.begin()
@@ -149,7 +164,7 @@ final class MomentCreationWorkflow: ObservableObject {
         errorMessage = nil
 
         do {
-            try await momentDeleter.deleteMoment(ownerUserId: ownerUserId, momentId: momentId)
+            try await momentDeleter.deleteMoment(bearerToken: bearerToken, momentId: momentId)
             guard workflowGeneration.isCurrent(generation) else { return false }
             isCreatingMoment = false
             self.activeMomentId = nil

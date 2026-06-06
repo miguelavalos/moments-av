@@ -740,9 +740,6 @@ private final class MomentCreationFailureHarness:
     MomentsCreditBalanceProviding,
     MomentsCreating,
     MomentsDeleting,
-    MomentsGalleryMarking,
-    MomentsMediaAssetSaving,
-    MomentsStorySaving,
     MomentsActiveWorkspaceObserving
 {
     let createAttemptExpectation = XCTestExpectation(description: "Moment creation attempted")
@@ -764,6 +761,7 @@ private final class MomentCreationFailureHarness:
     var momentCreationWorkflow: MomentCreationWorkflow {
         MomentCreationWorkflow(
             currentUserProvider: self,
+            authTokenProvider: self,
             creditBalanceProvider: self,
             momentCreator: self,
             momentDeleter: self,
@@ -775,7 +773,6 @@ private final class MomentCreationFailureHarness:
         MediaUploadWorkflow(
             currentUserProvider: self,
             authTokenProvider: self,
-            mediaAssetSaver: self,
             workspaceObserver: self,
             uploadClient: MomentsUploadClient(baseURLString: "https://api.example.com")
         )
@@ -785,7 +782,6 @@ private final class MomentCreationFailureHarness:
         StoryWorkflow(
             currentUserProvider: self,
             authTokenProvider: self,
-            storySaver: self,
             workspaceObserver: self,
             storyClient: MomentsStoryClient(baseURLString: "https://api.example.com")
         )
@@ -798,8 +794,7 @@ private final class MomentCreationFailureHarness:
             creditBalanceProvider: self,
             workspaceObserver: self,
             finalRenderClient: MomentsFinalRenderClient(baseURLString: "https://api.example.com"),
-            galleryStore: TestGalleryStore(),
-            momentGalleryMarker: self
+            galleryStore: TestGalleryStore()
         )
     }
 
@@ -849,16 +844,14 @@ private final class MomentCreationFailureHarness:
         "token-1"
     }
 
-    func createMoment(ownerUserId: String, form: MomentSetupForm) async throws -> String {
+    func createMoment(bearerToken: String, form: MomentSetupForm) async throws -> String {
         createAttemptExpectation.fulfill()
         throw creationError
     }
 
-    func updateMomentSetup(ownerUserId: String, momentId: String, form: MomentSetupForm) async throws {}
+    func updateMomentSetup(bearerToken: String, momentId: String, form: MomentSetupForm) async throws {}
 
-    func deleteMoment(ownerUserId: String, momentId: String) async throws {}
-
-    func markMomentMovedToGallery(ownerUserId: String, momentId: String) async throws {}
+    func deleteMoment(bearerToken: String, momentId: String) async throws {}
 
     func observeWorkspace(ownerUserId: String?, momentId: String?) {}
 
@@ -869,44 +862,6 @@ private final class MomentCreationFailureHarness:
     func publishWorkspace(_ workspace: MomentWorkspace) {
         workspaceSubject.send(workspace)
     }
-
-    func saveMediaAsset(
-        ownerUserId: String,
-        momentId: String,
-        media: MomentsSelectedMedia,
-        preparedUpload: MomentsPreparedUpload,
-        uploadCompletion: MomentsUploadCompletion
-    ) async throws -> String {
-        media.id.uuidString
-    }
-
-    func saveMediaAssets(
-        ownerUserId: String,
-        momentId: String,
-        mediaAssets: [MediaAssetPersistenceRequest]
-    ) async throws -> [String] {
-        mediaAssets.map(\.platformMediaAssetId)
-    }
-
-    func saveStory(
-        ownerUserId: String,
-        momentId: String,
-        plan: MomentsStoryResponse,
-        storyInputSignature: String
-    ) async throws {}
-
-    func updateRenderJobStatus(
-        ownerUserId: String,
-        renderJobId: String,
-        status: String,
-        phase: String?,
-        progressPercent: Int?,
-        userMessage: String?,
-        canEditSetup: Bool?,
-        canRetry: Bool?,
-        errorCode: String?,
-        errorMessage: String?
-    ) async throws {}
 
 }
 

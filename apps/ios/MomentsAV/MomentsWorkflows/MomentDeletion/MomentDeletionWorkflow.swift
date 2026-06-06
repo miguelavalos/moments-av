@@ -7,14 +7,17 @@ final class MomentDeletionWorkflow: ObservableObject {
     @Published private(set) var errorMessage: String?
 
     private let currentUserProvider: any MomentsCurrentUserProviding
+    private let authTokenProvider: any MomentsAuthTokenProviding
     private let momentDeleter: any MomentsDeleting
     private var deletionGeneration = 0
 
     init(
         currentUserProvider: any MomentsCurrentUserProviding,
+        authTokenProvider: any MomentsAuthTokenProviding,
         momentDeleter: any MomentsDeleting
     ) {
         self.currentUserProvider = currentUserProvider
+        self.authTokenProvider = authTokenProvider
         self.momentDeleter = momentDeleter
     }
 
@@ -32,6 +35,11 @@ final class MomentDeletionWorkflow: ObservableObject {
             errorMessage = "Sign in before deleting a moment."
             return false
         }
+        guard let bearerToken = try? await authTokenProvider.currentBearerToken() else {
+            errorMessage = "Sign in again before deleting a moment."
+            return false
+        }
+        _ = ownerUserId
 
         isDeletingMoment = true
         errorMessage = nil
@@ -39,7 +47,7 @@ final class MomentDeletionWorkflow: ObservableObject {
         let generation = deletionGeneration
 
         do {
-            try await momentDeleter.deleteMoment(ownerUserId: ownerUserId, momentId: moment.id)
+            try await momentDeleter.deleteMoment(bearerToken: bearerToken, momentId: moment.id)
             guard deletionGeneration == generation else { return false }
             isDeletingMoment = false
             return true

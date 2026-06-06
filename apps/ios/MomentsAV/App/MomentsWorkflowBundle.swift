@@ -19,34 +19,35 @@ struct MomentsWorkflowBundle {
     ) {
         momentDeletion = MomentDeletionWorkflow(
             currentUserProvider: accountController,
-            momentDeleter: momentsRepository
+            authTokenProvider: accountController,
+            momentDeleter: clients.workspaceCommands
         )
         momentWorkspaceSelection = MomentWorkspaceSelectionWorkflow(workspaceObserver: workspaceObserver)
         inProgressMoments = InProgressMomentsWorkflow(
             momentsObserver: momentsObserver,
             workspaceSelectionWorkflow: momentWorkspaceSelection,
             momentDeletionWorkflow: momentDeletion,
-            momentTitleUpdater: momentsRepository,
-            currentUserProvider: accountController
+            momentTitleUpdater: clients.workspaceCommands,
+            currentUserProvider: accountController,
+            authTokenProvider: accountController
         )
         momentCreation = MomentCreationWorkflow(
             currentUserProvider: accountController,
+            authTokenProvider: accountController,
             creditBalanceProvider: accountController,
-            momentCreator: momentsRepository,
-            momentDeleter: momentsRepository,
+            momentCreator: clients.workspaceCommands,
+            momentDeleter: clients.workspaceCommands,
             workspaceObserver: workspaceObserver
         )
         mediaUpload = MediaUploadWorkflow(
             currentUserProvider: accountController,
             authTokenProvider: accountController,
-            mediaAssetSaver: momentsRepository,
             workspaceObserver: workspaceObserver,
             uploadClient: clients.upload
         )
         story = StoryWorkflow(
             currentUserProvider: accountController,
             authTokenProvider: accountController,
-            storySaver: momentsRepository,
             workspaceObserver: workspaceObserver,
             storyClient: clients.story
         )
@@ -55,18 +56,21 @@ struct MomentsWorkflowBundle {
             authTokenProvider: accountController,
             creditBalanceProvider: accountController,
             workspaceObserver: workspaceObserver,
-            finalRenderClient: clients.finalRender,
-            momentGalleryMarker: momentsRepository
+            finalRenderClient: clients.finalRender
         )
     }
 }
 
 struct MomentsWorkflowClients {
+    let workspaceCommands: MomentsWorkspaceCommandClient
+    let realtimeSession: MomentsRealtimeSessionClient
     let upload: MomentsUploadClient
     let story: MomentsStoryClient
     let finalRender: MomentsFinalRenderClient
 
     init(baseURLString: String) {
+        workspaceCommands = MomentsWorkspaceCommandClient(baseURLString: baseURLString)
+        realtimeSession = MomentsRealtimeSessionClient(baseURLString: baseURLString)
         upload = MomentsUploadClient(baseURLString: baseURLString, session: Self.makeUploadSession())
         story = MomentsStoryClient(baseURLString: baseURLString)
         finalRender = MomentsFinalRenderClient(baseURLString: baseURLString)

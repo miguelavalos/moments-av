@@ -12,7 +12,6 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
 
     private let currentUserProvider: any MomentsCurrentUserProviding
     private let authTokenProvider: any MomentsAuthTokenProviding
-    private let mediaAssetSaver: any MomentsMediaAssetSaving
     private let uploadClient: MomentsUploadClient
     private let logger = Logger(subsystem: "com.avalsys.momentsav", category: "media-upload")
     private var restoredWorkspaceMomentId: String?
@@ -20,13 +19,11 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
     init(
         currentUserProvider: any MomentsCurrentUserProviding,
         authTokenProvider: any MomentsAuthTokenProviding,
-        mediaAssetSaver: any MomentsMediaAssetSaving,
         workspaceObserver: any MomentsActiveWorkspaceObserving,
         uploadClient: MomentsUploadClient
     ) {
         self.currentUserProvider = currentUserProvider
         self.authTokenProvider = authTokenProvider
-        self.mediaAssetSaver = mediaAssetSaver
         self.uploadClient = uploadClient
         super.init(workspaceObserver: workspaceObserver)
     }
@@ -338,7 +335,6 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
                 bearerToken: bearerToken,
                 momentId: momentId,
                 uploadClient: uploadClient,
-                mediaAssetSaver: mediaAssetSaver,
                 requiresProductStateSave: requiresProductStateSave,
                 progress: { [weak self] completedCount, totalCount in
                     self?.updateImportProgress(completedCount: completedCount, totalCount: totalCount)

@@ -177,18 +177,4 @@ enum MomentsCreateTestFixtures {
         )
     }
 
-    static func makeRefreshAvailability(canRefresh: Bool) -> RenderJobStatusRefreshAvailability {
-        RenderJobStatusRefreshAvailability(
-            momentId: canRefresh ? "moment-1" : nil,
-            job: canRefresh ? MomentsCreateTestFixtures.makeRenderJob(id: "job-1", kind: "final", status: "running") : nil,
-            isAvailable: canRefresh,
-            isConfigured: canRefresh,
-            isRefreshing: false,
-            unavailableMessage: "Unavailable.",
-            notConfiguredMessage: "Not configured.",
-            missingMomentMessage: "Missing Moment.",
-            missingJobMessage: "Missing job.",
-            missingProviderRequestMessage: "Missing request."
-        )
-    }
 }

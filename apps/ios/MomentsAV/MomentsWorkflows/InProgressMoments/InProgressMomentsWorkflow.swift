@@ -12,6 +12,7 @@ final class InProgressMomentsWorkflow: ObservableObject {
     private let momentDeletionWorkflow: MomentDeletionWorkflow
     private let momentTitleUpdater: any MomentsTitleUpdating
     private let currentUserProvider: any MomentsCurrentUserProviding
+    private let authTokenProvider: any MomentsAuthTokenProviding
     private var currentOwnerUserId: String?
     private var optimisticMomentTitles: [String: String] = [:]
     private var cancellables = Set<AnyCancellable>()
@@ -21,13 +22,15 @@ final class InProgressMomentsWorkflow: ObservableObject {
         workspaceSelectionWorkflow: MomentWorkspaceSelectionWorkflow,
         momentDeletionWorkflow: MomentDeletionWorkflow,
         momentTitleUpdater: any MomentsTitleUpdating,
-        currentUserProvider: any MomentsCurrentUserProviding
+        currentUserProvider: any MomentsCurrentUserProviding,
+        authTokenProvider: any MomentsAuthTokenProviding
     ) {
         self.momentsObserver = momentsObserver
         self.workspaceSelectionWorkflow = workspaceSelectionWorkflow
         self.momentDeletionWorkflow = momentDeletionWorkflow
         self.momentTitleUpdater = momentTitleUpdater
         self.currentUserProvider = currentUserProvider
+        self.authTokenProvider = authTokenProvider
 
         momentsObserver.momentsPublisher
             .receive(on: DispatchQueue.main)
@@ -95,13 +98,18 @@ final class InProgressMomentsWorkflow: ObservableObject {
         applyOptimisticTitle(momentId: moment.id, title: trimmedTitle)
 
         do {
-            guard let ownerUserId = currentUserProvider.currentUserId else {
+            guard currentUserProvider.currentUserId != nil else {
+                restoreOptimisticTitle(momentId: moment.id, previousTitle: previousTitle)
+                errorMessage = L10n.string("inProgress.rename.failed")
+                return false
+            }
+            guard let bearerToken = try? await authTokenProvider.currentBearerToken() else {
                 restoreOptimisticTitle(momentId: moment.id, previousTitle: previousTitle)
                 errorMessage = L10n.string("inProgress.rename.failed")
                 return false
             }
             try await momentTitleUpdater.updateMomentTitle(
-                ownerUserId: ownerUserId,
+                bearerToken: bearerToken,
                 momentId: moment.id,
                 title: trimmedTitle
             )

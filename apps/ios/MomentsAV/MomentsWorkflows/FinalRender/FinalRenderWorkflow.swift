@@ -19,7 +19,6 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
     private let creditBalanceProvider: any MomentsCreditBalanceProviding
     private let finalRenderClient: MomentsFinalRenderClient
     private let galleryStore: any MomentsGalleryStoring
-    private let momentGalleryMarker: any MomentsGalleryMarking
     private let logger = Logger(subsystem: "com.avalsys.momentsav", category: "final-render")
     private var downloadingArtifactIds = Set<String>()
     private var lastCreditRefreshKey: String?
@@ -30,15 +29,13 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
         creditBalanceProvider: any MomentsCreditBalanceProviding,
         workspaceObserver: any MomentsActiveWorkspaceObserving,
         finalRenderClient: MomentsFinalRenderClient,
-        galleryStore: any MomentsGalleryStoring = MomentsGalleryStore(),
-        momentGalleryMarker: any MomentsGalleryMarking
+        galleryStore: any MomentsGalleryStoring = MomentsGalleryStore()
     ) {
         self.currentUserProvider = currentUserProvider
         self.authTokenProvider = authTokenProvider
         self.creditBalanceProvider = creditBalanceProvider
         self.finalRenderClient = finalRenderClient
         self.galleryStore = galleryStore
-        self.momentGalleryMarker = momentGalleryMarker
         super.init(workspaceObserver: workspaceObserver)
     }
 
@@ -534,36 +531,10 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
         }
 
         galleryStore.addRecord(pendingGalleryVideo)
-        markRemoteMomentMovedToGallery(momentId: pendingGalleryVideo.momentId)
         self.pendingGalleryVideo = nil
         canRetryFinalVideoDownload = false
         statusMessage = L10n.string("workflow.final.movedToGallery")
         return true
-    }
-
-    private func markRemoteMomentMovedToGallery(momentId: String) {
-        guard let ownerUserId = currentUserProvider.currentUserId else {
-            logger.warning("Cannot mark Moment moved to Gallery without current owner user id momentId=\(momentId, privacy: .public)")
-            return
-        }
-
-        Task { [momentGalleryMarker, logger] in
-            do {
-                try await momentGalleryMarker.markMomentMovedToGallery(
-                    ownerUserId: ownerUserId,
-                    momentId: momentId
-                )
-                logger.info("Marked Moment moved to Gallery momentId=\(momentId, privacy: .public)")
-            } catch {
-                logger.error("Failed to mark Moment moved to Gallery momentId=\(momentId, privacy: .public) error=\(error.localizedDescription, privacy: .public)")
-                MomentsWorkflowDiagnostics.capture(
-                    error,
-                    feature: "moments.final_render",
-                    operation: "move_to_gallery",
-                    step: "remote_marker"
-                )
-            }
-        }
     }
 
     func clearFinalSessionAfterGalleryMove() {

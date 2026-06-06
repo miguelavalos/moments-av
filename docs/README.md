@@ -16,8 +16,8 @@ handoff values belong in the private AVALSYS suite.
   usage.
 - [install-ios.md](install-ios.md): local iOS setup and compile checks.
 - [client-architecture-guardrails.md](client-architecture-guardrails.md):
-  public-safe iOS ownership rules for backend-owned workflows and realtime
-  state.
+  public-safe iOS ownership rules for backend-owned workflows, backend-issued
+  realtime sessions, and subscription-only Convex state.
 - [production-config.md](production-config.md): public runtime-config hygiene,
   with no production values.
 - [release-checklist.md](release-checklist.md): public repo readiness checks.
@@ -44,6 +44,11 @@ Backend-backed in-progress Moments and finished Gallery metadata may recover
 after sign-in. Local video files remain device-local availability: a Gallery
 item can exist while its video file is missing on the current device, and
 redownload is offered only when the backend reports an available final artifact.
+
+The public client must treat realtime state as read-only synced product state.
+User actions go through authenticated backend commands; owner-scoped realtime
+subscriptions start only after the backend issues a realtime session for the
+signed-in account.
 
 ## Private-Only Topics
 

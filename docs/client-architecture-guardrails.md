@@ -24,10 +24,14 @@ The iOS app must not:
 
 - calculate final video credit cost;
 - calculate final provider route, provider capability, or final duration;
+- call Convex mutations for backend-owned Moment, media, story, render,
+  artifact, Gallery, or workflow state;
 - create or persist final render jobs as local authority;
 - update final render job status;
 - attach final render artifacts;
 - poll backend status endpoints for normal product UI;
+- treat a locally supplied owner id as sufficient authorization for realtime
+  reads;
 - call provider APIs directly.
 
 The iOS app may:
@@ -36,8 +40,10 @@ The iOS app may:
 - show local editing affordances before final confirmation;
 - request an official backend render plan;
 - confirm the selected backend render plan;
+- ask the authenticated backend for a realtime session before starting
+  owner-scoped subscriptions;
 - subscribe to synced workspace state and render progress, failure, and final
-  artifact availability;
+  artifact availability after that realtime session is available;
 - download the completed final artifact to local device storage;
 - move the downloaded final video into Gallery and clear the active
   Create draft/session;
@@ -73,6 +79,23 @@ The iOS app must:
 
 If the app appears to need a timer or manual status loop for final video
 creation, stop and review the private architecture contract before adding code.
+
+## Realtime Subscription Rule
+
+Owner-scoped realtime reads must be established in this order:
+
+1. Account AV session is available.
+2. A bearer token is available.
+3. The authenticated backend creates a realtime session for the current user.
+4. The app stores that realtime session locally in memory.
+5. The app starts Convex subscriptions with the current owner id and the
+   backend-issued realtime session.
+
+On sign-out or account change, the app must clear the local realtime session and
+stop owner-scoped subscriptions before observing the next user.
+
+The client should fail closed if no realtime session is available. Do not add a
+fallback that subscribes with only an owner id.
 
 ## V1 Media Rule
 

@@ -9,26 +9,23 @@ final class StoryWorkflow: WorkspaceObservingWorkflow {
 
     private let currentUserProvider: any MomentsCurrentUserProviding
     private let authTokenProvider: any MomentsAuthTokenProviding
-    private let storySaver: any MomentsStorySaving
     private let storyClient: MomentsStoryClient
     private let logger = Logger(subsystem: "com.avalsys.momentsav", category: "story")
 
     init(
         currentUserProvider: any MomentsCurrentUserProviding,
         authTokenProvider: any MomentsAuthTokenProviding,
-        storySaver: any MomentsStorySaving,
         workspaceObserver: any MomentsActiveWorkspaceObserving,
         storyClient: MomentsStoryClient
     ) {
         self.currentUserProvider = currentUserProvider
         self.authTokenProvider = authTokenProvider
-        self.storySaver = storySaver
         self.storyClient = storyClient
         super.init(workspaceObserver: workspaceObserver)
     }
 
     var isConfigured: Bool {
-        storySaver.isConfigured && storyClient.isConfigured
+        storyClient.isConfigured
     }
 
     func canPlan(template: MomentTemplate) -> Bool {
@@ -61,11 +58,6 @@ final class StoryWorkflow: WorkspaceObservingWorkflow {
         }
 
         let media = persistedMedia ?? storyMedia(from: selectedMedia, fallbackMediaAssets: activeWorkspace?.mediaAssets)
-        let storyInputSignature = MomentsStoryInputSignature.make(
-            momentId: momentId,
-            form: form,
-            selectedMedia: media
-        )
         let availability = MomentsMediaRules.availability(
             template: form.template,
             selectedCount: media.filter(\.selected).count
@@ -98,27 +90,6 @@ final class StoryWorkflow: WorkspaceObservingWorkflow {
             guard isCurrentWorkflowGeneration(generation) else { return false }
             try validatePlanMediaReferences(plan, availableMedia: media)
             generatedPlan = plan
-            do {
-                try await storySaver.saveStory(
-                    ownerUserId: ownerUserId,
-                    momentId: momentId,
-                    plan: plan,
-                    storyInputSignature: storyInputSignature
-                )
-            } catch {
-                logger.error("Story plan save failed momentId=\(momentId, privacy: .public) error=\(String(describing: error), privacy: .public)")
-                MomentsWorkflowDiagnostics.capture(
-                    error,
-                    feature: "moments.story",
-                    operation: "generate_plan",
-                    step: "save_story",
-                    data: [
-                        "scene_count": String(plan.scenes.count),
-                        "selected_count": String(media.filter(\.selected).count),
-                    ]
-                )
-                throw StoryWorkflowError.saveFailed
-            }
             guard isCurrentWorkflowGeneration(generation) else { return false }
             workspaceObserver.observeWorkspace(ownerUserId: ownerUserId, momentId: momentId)
             statusMessage = plan.helperCopy
