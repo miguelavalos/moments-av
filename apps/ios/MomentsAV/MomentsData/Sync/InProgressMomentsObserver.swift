@@ -9,6 +9,7 @@ final class InProgressMomentsObserver: ObservableObject {
     private let momentsObserver: any InProgressMomentsObserving
     private var momentsTask: Task<Void, Never>?
     private var observationGeneration = 0
+    private let diagnosticsObserverName = "in_progress"
 
     init(momentsRepository: any InProgressMomentsObserving = MomentsRepository()) {
         momentsObserver = momentsRepository
@@ -30,6 +31,7 @@ final class InProgressMomentsObserver: ObservableObject {
         errorMessage = nil
 
         guard let ownerUserId else { return }
+        MomentsSyncDiagnostics.addObserverBreadcrumb(observer: diagnosticsObserverName, message: "observer_started")
 
         do {
             let updates = try momentsObserver.observeInProgressMoments(ownerUserId: ownerUserId).values
@@ -46,6 +48,7 @@ final class InProgressMomentsObserver: ObservableObject {
                 } catch {
                     await MainActor.run {
                         guard self?.observationGeneration == generation else { return }
+                        MomentsSyncDiagnostics.captureObserverError(error, observer: self?.diagnosticsObserverName ?? "in_progress")
                         self?.moments = []
                         self?.errorMessage = error.localizedDescription
                     }
@@ -53,6 +56,7 @@ final class InProgressMomentsObserver: ObservableObject {
             }
         } catch {
             guard observationGeneration == generation else { return }
+            MomentsSyncDiagnostics.captureObserverError(error, observer: diagnosticsObserverName)
             moments = []
             errorMessage = error.localizedDescription
         }

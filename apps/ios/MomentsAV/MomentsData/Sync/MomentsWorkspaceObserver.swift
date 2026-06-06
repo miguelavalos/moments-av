@@ -9,6 +9,7 @@ final class MomentsWorkspaceObserver: ObservableObject {
     private let workspaceObserver: any MomentWorkspaceObserving
     private var activeWorkspaceTask: Task<Void, Never>?
     private var observationGeneration = 0
+    private let diagnosticsObserverName = "workspace"
 
     init(momentsRepository: any MomentWorkspaceObserving = MomentsRepository()) {
         workspaceObserver = momentsRepository
@@ -30,6 +31,7 @@ final class MomentsWorkspaceObserver: ObservableObject {
         errorMessage = nil
 
         guard let ownerUserId, let momentId else { return }
+        MomentsSyncDiagnostics.addObserverBreadcrumb(observer: diagnosticsObserverName, message: "observer_started")
 
         do {
             let updates = try workspaceObserver.observeMomentWorkspace(
@@ -50,6 +52,7 @@ final class MomentsWorkspaceObserver: ObservableObject {
                 } catch {
                     await MainActor.run {
                         guard self?.observationGeneration == generation else { return }
+                        MomentsSyncDiagnostics.captureObserverError(error, observer: self?.diagnosticsObserverName ?? "workspace")
                         self?.activeWorkspace = nil
                         self?.errorMessage = error.localizedDescription
                     }
@@ -57,6 +60,7 @@ final class MomentsWorkspaceObserver: ObservableObject {
             }
         } catch {
             guard observationGeneration == generation else { return }
+            MomentsSyncDiagnostics.captureObserverError(error, observer: diagnosticsObserverName)
             activeWorkspace = nil
             errorMessage = error.localizedDescription
         }

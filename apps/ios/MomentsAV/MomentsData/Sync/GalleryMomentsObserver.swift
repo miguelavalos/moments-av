@@ -9,6 +9,7 @@ final class GalleryMomentsObserver: ObservableObject {
     private let momentsObserver: any GalleryMomentsObserving
     private var momentsTask: Task<Void, Never>?
     private var observationGeneration = 0
+    private let diagnosticsObserverName = "gallery"
 
     init(momentsRepository: any GalleryMomentsObserving = MomentsRepository()) {
         momentsObserver = momentsRepository
@@ -30,6 +31,7 @@ final class GalleryMomentsObserver: ObservableObject {
         errorMessage = nil
 
         guard let ownerUserId else { return }
+        MomentsSyncDiagnostics.addObserverBreadcrumb(observer: diagnosticsObserverName, message: "observer_started")
 
         do {
             let updates = try momentsObserver.observeGalleryMoments(ownerUserId: ownerUserId).values
@@ -46,6 +48,7 @@ final class GalleryMomentsObserver: ObservableObject {
                 } catch {
                     await MainActor.run {
                         guard self?.observationGeneration == generation else { return }
+                        MomentsSyncDiagnostics.captureObserverError(error, observer: self?.diagnosticsObserverName ?? "gallery")
                         self?.moments = []
                         self?.errorMessage = error.localizedDescription
                     }
@@ -53,6 +56,7 @@ final class GalleryMomentsObserver: ObservableObject {
             }
         } catch {
             guard observationGeneration == generation else { return }
+            MomentsSyncDiagnostics.captureObserverError(error, observer: diagnosticsObserverName)
             moments = []
             errorMessage = error.localizedDescription
         }
