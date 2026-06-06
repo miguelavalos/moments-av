@@ -1,4 +1,5 @@
 import AccountAV
+import AVDiagnosticsFoundation
 import Combine
 import Foundation
 
@@ -60,9 +61,15 @@ final class AccountController: ObservableObject {
     }
 
     func syncFromAccountProvider() async {
+        addAccountBreadcrumb("restore_started")
         switch await service.restoreSession() {
         case .active(let providerUser):
             guard let resolvedUser = await resolveInternalAccountUser(providerUser: providerUser) else {
+                captureAccountError(
+                    MomentsAPIError(code: "moments_account_profile_resolution_failed", message: "Account profile resolution failed."),
+                    operation: "restore",
+                    data: ["restore_result": "active_without_internal_user"]
+                )
                 isAccountSessionTemporarilyUnavailable = true
                 if user == nil {
                     resetSignedOutAccountState()
@@ -70,16 +77,21 @@ final class AccountController: ObservableObject {
                 return
             }
             user = resolvedUser
+            AVDiagnostics.setUserContext(AVDiagnosticsUserContext(id: resolvedUser.id))
+            addAccountBreadcrumb("restore_active")
             isAccountSessionTemporarilyUnavailable = false
             persistLastKnownAccountUser(resolvedUser)
             await refreshCreditBalance()
         case .temporarilyUnavailable:
+            addAccountBreadcrumb("restore_temporarily_unavailable")
             isAccountSessionTemporarilyUnavailable = true
             if user == nil {
                 resetSignedOutAccountState()
             }
         case .signedOut, .invalidated:
             user = nil
+            AVDiagnostics.clearUserContext()
+            addAccountBreadcrumb("restore_signed_out")
             isAccountSessionTemporarilyUnavailable = false
             clearLastKnownAccountUser()
             resetSignedOutAccountState()
@@ -87,22 +99,27 @@ final class AccountController: ObservableObject {
     }
 
     func signInWithApple() async throws {
+        addAccountBreadcrumb("sign_in_started", data: ["provider": "apple"])
         try await runAuthOperation {
             try await service.signInWithApple()
         }
     }
 
     func signInWithGoogle() async throws {
+        addAccountBreadcrumb("sign_in_started", data: ["provider": "google"])
         try await runAuthOperation {
             try await service.signInWithGoogle()
         }
     }
 
     func signOut() {
+        addAccountBreadcrumb("sign_out_started")
         startAuthTask { [self] in
             try await self.service.signOut()
             await self.purchaseService.logOut()
             self.user = nil
+            AVDiagnostics.clearUserContext()
+            self.addAccountBreadcrumb("sign_out_completed")
             self.isAccountSessionTemporarilyUnavailable = false
             self.clearLastKnownAccountUser()
             self.resetSignedOutAccountState()
@@ -191,6 +208,7 @@ final class AccountController: ObservableObject {
             isAccountSessionTemporarilyUnavailable = false
             persistLastKnownAccountUser(user)
         } catch {
+            captureAccountError(error, operation: "credit_balance")
             creditBalanceLoadState = MomentsCreditBalanceLoadState.failureState(for: error)
             errorMessage = error.localizedDescription
         }
@@ -216,6 +234,7 @@ final class AccountController: ObservableObject {
             }
             return try await accountProfileClient.fetchCurrentUser(bearerToken: token)
         } catch {
+            captureAccountError(error, operation: "profile_resolution")
             errorMessage = error.localizedDescription
             return nil
         }
@@ -275,11 +294,43 @@ final class AccountController: ObservableObject {
 
         do {
             try await operation()
+            addAccountBreadcrumb("auth_operation_completed")
             await syncFromAccountProvider()
         } catch {
+            captureAccountError(error, operation: "auth_operation")
             errorMessage = error.localizedDescription
             throw error
         }
+    }
+
+    private func addAccountBreadcrumb(_ message: String, data: [String: String] = [:]) {
+        AVDiagnostics.addBreadcrumb(
+            AVDiagnosticsBreadcrumb(
+                category: "moments.account",
+                message: message,
+                data: data
+            )
+        )
+    }
+
+    private func captureAccountError(_ error: Error, operation: String, data: [String: String] = [:]) {
+        var contextData = data
+        contextData["operation"] = operation
+        AVDiagnostics.capture(
+            error: error,
+            context: AVDiagnosticsContext(
+                feature: "moments.account",
+                code: diagnosticsErrorCode(for: error),
+                data: contextData
+            )
+        )
+    }
+
+    private func diagnosticsErrorCode(for error: Error) -> String {
+        if let momentsError = error as? MomentsAPIError {
+            return momentsError.code
+        }
+        return String(describing: type(of: error))
     }
 }
 

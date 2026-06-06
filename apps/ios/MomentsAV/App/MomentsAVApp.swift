@@ -1,3 +1,4 @@
+import AVDiagnosticsFoundation
 import SwiftUI
 
 @main
@@ -8,6 +9,7 @@ struct MomentsAVApp: App {
 
     init() {
         AppConfig.configureAVAccountIfPossible()
+        AVDiagnostics.configure(AppConfig.diagnosticsConfiguration)
     }
 
     var body: some Scene {

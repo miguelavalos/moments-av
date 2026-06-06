@@ -1,4 +1,5 @@
 import AccountAV
+import AVDiagnosticsFoundation
 import Foundation
 
 @MainActor
@@ -9,6 +10,16 @@ enum AppConfig {
 
     static var isAVAccountAvailable: Bool {
         !avAccountKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
+
+    static var diagnosticsConfiguration: AVDiagnosticsConfiguration {
+        AVDiagnosticsConfiguration(
+            dsn: configuredString(for: "MOMENTSAV_IOS_SENTRY_DSN", fallback: ""),
+            environment: diagnosticsEnvironment,
+            releaseName: diagnosticsReleaseName,
+            tracesSampleRate: 0,
+            isEnabled: isDiagnosticsEnabled
+        )
     }
 
     static var revenueCatPublicAPIKey: String {
@@ -56,6 +67,34 @@ enum AppConfig {
 
     static func configureAVAccountIfPossible() {
         AccountAVClerk.configureIfPossible(publishableKey: avAccountKey)
+    }
+
+    private static var diagnosticsEnvironment: AVDiagnosticsEnvironment {
+        switch configuredString(for: "MOMENTSAV_CONFIG_ENVIRONMENT", fallback: "dev").lowercased() {
+        case "prod", "production":
+            return .production
+        case "staging", "preview":
+            return .preview
+        case "dev", "debug":
+            return .debug
+        default:
+            return .debug
+        }
+    }
+
+    private static var diagnosticsReleaseName: String? {
+        let bundleIdentifier = Bundle.main.bundleIdentifier ?? "com.avalsys.momentsav"
+        let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "0"
+        let build = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "0"
+        return "\(bundleIdentifier)@\(version)+\(build)"
+    }
+
+    private static var isDiagnosticsEnabled: Bool {
+        #if DEBUG
+        false
+        #else
+        !configuredString(for: "MOMENTSAV_IOS_SENTRY_DSN", fallback: "").isEmpty
+        #endif
     }
 
     private static func configuredURL(for key: String, fallback: String) -> URL {

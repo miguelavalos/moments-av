@@ -32,6 +32,8 @@ schemes:
     run:
       config: Debug
       executable: MomentsAV
+      environmentVariables:
+        MOMENTSAV_APP_LANGUAGE: en
     analyze:
       config: Debug
     profile:
@@ -57,6 +59,8 @@ targets:
     dependencies:
       - package: AccountAV
         product: AccountAV
+      - package: AppsAV
+        product: AVDiagnosticsFoundation
       - package: AppsAV
         product: AVBrandFoundation
       - package: AppsAV
