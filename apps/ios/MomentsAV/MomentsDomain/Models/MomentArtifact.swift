@@ -8,6 +8,7 @@ struct MomentArtifact: Identifiable, Decodable, Equatable {
     let status: String
     let hasWatermark: Bool?
     let expiresAt: Double
+    let createdAt: Double
 
     init(
         id: String,
@@ -16,7 +17,8 @@ struct MomentArtifact: Identifiable, Decodable, Equatable {
         r2Key: String,
         status: String,
         hasWatermark: Bool?,
-        expiresAt: Double
+        expiresAt: Double,
+        createdAt: Double = 0
     ) {
         self.id = id
         self.workflowArtifactId = workflowArtifactId
@@ -25,6 +27,7 @@ struct MomentArtifact: Identifiable, Decodable, Equatable {
         self.status = status
         self.hasWatermark = hasWatermark
         self.expiresAt = expiresAt
+        self.createdAt = createdAt
     }
 
     enum CodingKeys: String, CodingKey {
@@ -35,5 +38,19 @@ struct MomentArtifact: Identifiable, Decodable, Equatable {
         case status
         case hasWatermark
         case expiresAt
+        case createdAt
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decodeIfPresent(String.self, forKey: .id)
+            ?? container.decode(String.self, forKey: .workflowArtifactId)
+        workflowArtifactId = try container.decodeIfPresent(String.self, forKey: .workflowArtifactId)
+        kind = try container.decode(String.self, forKey: .kind)
+        r2Key = try container.decode(String.self, forKey: .r2Key)
+        status = try container.decode(String.self, forKey: .status)
+        hasWatermark = try container.decodeIfPresent(Bool.self, forKey: .hasWatermark)
+        expiresAt = try container.decodeIfPresent(Double.self, forKey: .expiresAt) ?? 0
+        createdAt = try container.decodeIfPresent(Double.self, forKey: .createdAt) ?? 0
     }
 }

@@ -143,6 +143,38 @@ final class MomentsCreateViewModelStoryStateTests: XCTestCase {
         XCTAssertEqual(workflow.finalDownloadArtifactId(for: artifact), "workflow-artifact-1")
     }
 
+    func testFinalRenderPlanBlocksRecoveredWorkspaceWhenSourceMediaIsMissing() async {
+        let harness = MomentCreationFailureHarness(error: NSError(domain: "test", code: 1))
+        let workflow = harness.finalRenderWorkflow
+        harness.publishWorkspace(
+            MomentWorkspace(
+                moment: MomentsCreateTestFixtures.makeMoment(id: "moment-1"),
+                mediaAssets: [
+                    MomentsCreateTestFixtures.makeMediaAsset(
+                        id: "backend-media-1",
+                        sourceLocalIdentifier: "missing-photos-asset"
+                    )
+                ],
+                storyScenes: [],
+                renderJobs: [],
+                artifacts: []
+            )
+        )
+        await Task.yield()
+
+        await workflow.prepareFinalRenderPlan(
+            momentId: "moment-1",
+            template: .birthdayMessage,
+            creationStyle: nil,
+            form: MomentSetupForm(template: .birthdayMessage),
+            selectedMedia: []
+        )
+
+        XCTAssertEqual(workflow.statusMessage, L10n.string("workflow.final.sourceMediaMissing"))
+        XCTAssertFalse(workflow.isGenerating)
+        XCTAssertNil(workflow.renderPlan)
+    }
+
     func testFinalRenderPlanWithoutWatermarkIsCurrentForWatermarkedRender() {
         let plan = MomentsCreateTestFixtures.makeRenderPlan(momentId: "moment-1")
 
@@ -834,11 +866,16 @@ private final class MomentCreationFailureHarness:
         workspaceSubject.send(nil)
     }
 
+    func publishWorkspace(_ workspace: MomentWorkspace) {
+        workspaceSubject.send(workspace)
+    }
+
     func saveMediaAsset(
         ownerUserId: String,
         momentId: String,
         media: MomentsSelectedMedia,
-        preparedUpload: MomentsPreparedUpload
+        preparedUpload: MomentsPreparedUpload,
+        uploadCompletion: MomentsUploadCompletion
     ) async throws -> String {
         media.id.uuidString
     }
@@ -898,5 +935,6 @@ private struct TestGalleryStore: MomentsGalleryStoring {
         )
     }
     func addRecord(_ record: MomentsGalleryVideoRecord) {}
+    func renameRecord(_ record: MomentsGalleryVideoRecord, title: String) {}
     func deleteRecord(_ record: MomentsGalleryVideoRecord, deleteLocalFile: Bool) {}
 }

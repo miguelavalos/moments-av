@@ -4,6 +4,7 @@ import Foundation
 final class MomentsDependencyContainer: ObservableObject {
     let accountController: AccountController
     let momentsObserver: InProgressMomentsObserver
+    let galleryMomentsObserver: GalleryMomentsObserver
     let workspaceObserver: MomentsWorkspaceObserver
     let momentDeletionWorkflow: MomentDeletionWorkflow
     let momentWorkspaceSelectionWorkflow: MomentWorkspaceSelectionWorkflow
@@ -23,13 +24,16 @@ final class MomentsDependencyContainer: ObservableObject {
         accountController: AccountController = AccountController(),
         momentsRepository: MomentsRepository = MomentsRepository(),
         momentsObserver: InProgressMomentsObserver? = nil,
+        galleryMomentsObserver: GalleryMomentsObserver? = nil,
         workspaceObserver: MomentsWorkspaceObserver? = nil
     ) {
         let clients = MomentsWorkflowClients(baseURLString: AppConfig.momentsAPIBaseURL)
         self.accountController = accountController
         let resolvedMomentsObserver = momentsObserver ?? InProgressMomentsObserver(momentsRepository: momentsRepository)
+        let resolvedGalleryMomentsObserver = galleryMomentsObserver ?? GalleryMomentsObserver(momentsRepository: momentsRepository)
         let resolvedWorkspaceObserver = workspaceObserver ?? MomentsWorkspaceObserver(momentsRepository: momentsRepository)
         self.momentsObserver = resolvedMomentsObserver
+        self.galleryMomentsObserver = resolvedGalleryMomentsObserver
         self.workspaceObserver = resolvedWorkspaceObserver
         let workflows = MomentsWorkflowBundle(
             accountController: accountController,
@@ -45,7 +49,13 @@ final class MomentsDependencyContainer: ObservableObject {
         self.mediaUploadWorkflow = workflows.mediaUpload
         self.storyWorkflow = workflows.story
         self.finalRenderWorkflow = workflows.finalRender
-        let viewModels = MomentsViewModelBundle(accountController: accountController, workflows: workflows)
+        let viewModels = MomentsViewModelBundle(
+            accountController: accountController,
+            workflows: workflows,
+            galleryMomentsProvider: resolvedGalleryMomentsObserver,
+            authTokenProvider: accountController,
+            finalRenderClient: clients.finalRender
+        )
         self.homeViewModel = viewModels.home
         self.createViewModel = viewModels.create
         self.inProgressViewModel = viewModels.inProgress
@@ -58,6 +68,7 @@ final class MomentsDependencyContainer: ObservableObject {
         guard observedOwnerUserId != nextObservedOwnerUserId else { return }
         observedOwnerUserId = nextObservedOwnerUserId
         inProgressMomentsWorkflow.observeInProgressMoments(ownerUserId: ownerUserId)
+        galleryMomentsObserver.observeGalleryMoments(ownerUserId: ownerUserId)
         inProgressViewModel.clearSelection()
         createViewModel.clearSessionState()
         applyUITestFixturesIfNeeded()

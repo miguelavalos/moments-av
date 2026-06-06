@@ -327,10 +327,16 @@
 "gallery.empty.shortTitle" = "La galerie est vide";
 "gallery.empty.title" = "Aucune vidéo enregistrée";
 "gallery.open" = "Ouvrir la galerie";
-"gallery.subtitle" = "Vidéos terminées enregistrées sur cet appareil.";
+"gallery.subtitle" = "Vidéos terminées enregistrées ici ou disponibles depuis ton compte.";
 "gallery.title" = "Galerie";
 "gallery.video.localFileMissing" = "Fichier local manquant";
 "gallery.video.savedOnDevice" = "Enregistrée sur cet appareil";
+"gallery.video.downloadAvailable" = "Téléchargement disponible";
+"gallery.video.downloadUnavailable" = "Téléchargement indisponible";
+"gallery.video.remoteMetadataOnly" = "Métadonnées cloud uniquement";
+"gallery.video.redownload" = "Télécharger à nouveau";
+"gallery.video.downloaded" = "Vidéo téléchargée sur cet appareil.";
+"gallery.video.downloadFailed" = "La vidéo n’a pas pu être téléchargée.";
 "home.account.connected.title" = "Compte connecté";
 "home.account.defaultUser" = "Utilisateur Moments AV";
 "home.account.required.title" = "Compte requis";
@@ -829,6 +835,7 @@
 "workflow.final.preparing" = "Avi prépare l’export final.";
 "workflow.final.checkingPlan" = "Vérification des médias et des crédits.";
 "workflow.final.needsUsableMedia" = "Avi a besoin de médias utilisables avant de créer la vidéo.";
+"workflow.final.sourceMediaMissing" = "Des médias Photos d’origine manquent sur cet appareil. Modifie les médias avant de créer la vidéo finale.";
 "workflow.final.planReady" = "Prêt à créer. Confirme quand tu veux lancer la vidéo.";
 "workflow.final.creatingVideo" = "Avi crée la vidéo. Tu peux suivre la progression ici.";
 "workflow.final.savingStatus" = "Enregistrement de l’état de la vidéo.";

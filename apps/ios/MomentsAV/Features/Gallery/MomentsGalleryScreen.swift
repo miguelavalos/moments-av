@@ -33,7 +33,12 @@ struct MomentsGalleryScreen: View {
                         MomentsGalleryVideoRow(
                             video: video,
                             openVideo: {
-                                selectedVideo = MomentsGalleryVideoPlayerItem(video: video)
+                                if video.isLocalFileAvailable {
+                                    selectedVideo = MomentsGalleryVideoPlayerItem(video: video)
+                                }
+                            },
+                            downloadVideo: {
+                                viewModel.redownloadVideo(video)
                             },
                             renameVideo: {
                                 videoPendingRename = video
@@ -127,6 +132,7 @@ private struct MomentsGalleryEmptyState: View {
 private struct MomentsGalleryVideoRow: View {
     let video: MomentsGalleryVideoPresentation
     let openVideo: () -> Void
+    let downloadVideo: () -> Void
     let renameVideo: () -> Void
     let deleteVideo: () -> Void
 
@@ -164,6 +170,7 @@ private struct MomentsGalleryVideoRow: View {
 
                             MomentsGalleryVideoMenu(
                                 video: video,
+                                downloadVideo: downloadVideo,
                                 renameVideo: renameVideo,
                                 deleteVideo: deleteVideo
                             )
@@ -185,8 +192,8 @@ private struct MomentsGalleryVideoRow: View {
 
                             Spacer(minLength: 0)
 
-                            if video.isLocalFileAvailable {
-                                ShareLink(item: video.localFileURL) {
+                            if video.isLocalFileAvailable, let localFileURL = video.localFileURL {
+                                ShareLink(item: localFileURL) {
                                     Image(systemName: "square.and.arrow.up")
                                         .font(.system(size: 15, weight: .black))
                                         .foregroundStyle(AVBrandColor.textPrimary)
@@ -201,6 +208,15 @@ private struct MomentsGalleryVideoRow: View {
             }
             .buttonStyle(.plain)
             .disabled(!video.isLocalFileAvailable)
+
+            if video.canDownload {
+                Button(action: downloadVideo) {
+                    Label(L10n.string("gallery.video.redownload"), systemImage: "arrow.down.circle.fill")
+                        .font(.system(size: 14, weight: .black))
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.borderedProminent)
+            }
         }
         .padding(8)
         .background(
@@ -217,17 +233,24 @@ private struct MomentsGalleryVideoRow: View {
 
 private struct MomentsGalleryVideoMenu: View {
     let video: MomentsGalleryVideoPresentation
+    let downloadVideo: () -> Void
     let renameVideo: () -> Void
     let deleteVideo: () -> Void
 
     var body: some View {
         Menu {
+            if video.canDownload {
+                Button(action: downloadVideo) {
+                    Label(L10n.string("gallery.video.redownload"), systemImage: "arrow.down.circle")
+                }
+            }
+
             Button(action: renameVideo) {
                 Label(L10n.string("common.rename"), systemImage: "pencil")
             }
 
-            if video.isLocalFileAvailable {
-                ShareLink(item: video.localFileURL) {
+            if video.isLocalFileAvailable, let localFileURL = video.localFileURL {
+                ShareLink(item: localFileURL) {
                     Label(L10n.string("common.share"), systemImage: "square.and.arrow.up")
                 }
             }
@@ -246,7 +269,7 @@ private struct MomentsGalleryVideoMenu: View {
 }
 
 private struct MomentsGalleryVideoThumbnail: View {
-    let url: URL
+    let url: URL?
     let isAvailable: Bool
     @State private var image: UIImage?
 
@@ -273,7 +296,7 @@ private struct MomentsGalleryVideoThumbnail: View {
             }
         }
         .task(id: url) {
-            guard isAvailable else { return }
+            guard isAvailable, let url else { return }
             image = await Self.loadThumbnail(url: url)
         }
     }
@@ -340,7 +363,7 @@ private struct MomentsGalleryVideoPlayerItem: Identifiable {
     init(video: MomentsGalleryVideoPresentation) {
         id = video.id
         title = video.title
-        url = video.localFileURL
+        url = video.localFileURL ?? URL(fileURLWithPath: "/dev/null")
     }
 }
 

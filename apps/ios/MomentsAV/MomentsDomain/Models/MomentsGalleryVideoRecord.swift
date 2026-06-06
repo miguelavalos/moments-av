@@ -42,12 +42,34 @@ struct MomentsGalleryVideoRecord: Identifiable, Codable, Equatable {
 
 struct MomentsGalleryVideoPresentation: Identifiable, Equatable {
     let record: MomentsGalleryVideoRecord
-    let isLocalFileAvailable: Bool
-    let localFileURL: URL
+    let localFileURL: URL?
+    let availability: MomentsGalleryVideoAvailability
+    let remoteArtifact: MomentArtifact?
 
     var id: String { record.id }
     var title: String { record.title }
+    var isLocalFileAvailable: Bool { availability == .savedOnDevice }
+    var canDownload: Bool { availability == .downloadAvailable }
     var availabilityTitle: String {
-        isLocalFileAvailable ? L10n.string("gallery.video.savedOnDevice") : L10n.string("gallery.video.localFileMissing")
+        switch availability {
+        case .savedOnDevice:
+            return L10n.string("gallery.video.savedOnDevice")
+        case .localFileMissing:
+            return L10n.string("gallery.video.localFileMissing")
+        case .downloadAvailable:
+            return L10n.string("gallery.video.downloadAvailable")
+        case .downloadUnavailable:
+            return L10n.string("gallery.video.downloadUnavailable")
+        case .remoteMetadataOnly:
+            return L10n.string("gallery.video.remoteMetadataOnly")
+        }
     }
+}
+
+enum MomentsGalleryVideoAvailability: String, Equatable {
+    case savedOnDevice
+    case localFileMissing
+    case downloadAvailable
+    case downloadUnavailable
+    case remoteMetadataOnly
 }

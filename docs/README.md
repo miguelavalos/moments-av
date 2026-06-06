@@ -38,7 +38,12 @@ Choose moments -> edit options -> Create video -> confirm credits -> final rende
 
 The public client should not describe a generated preview step, a Story Review
 balance, model/provider choices, generated audio, captions, subtitles, text
-overlays, or cloud-backed Gallery recovery as v1 features.
+overlays, or permanent cloud video storage as v1 features.
+
+Backend-backed in-progress Moments and finished Gallery metadata may recover
+after sign-in. Local video files remain device-local availability: a Gallery
+item can exist while its video file is missing on the current device, and
+redownload is offered only when the backend reports an available final artifact.
 
 ## Private-Only Topics
 

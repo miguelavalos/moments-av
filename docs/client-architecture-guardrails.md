@@ -39,8 +39,10 @@ The iOS app may:
 - subscribe to synced workspace state and render progress, failure, and final
   artifact availability;
 - download the completed final artifact to local device storage;
-- move the downloaded final video into the local Gallery and clear the active
+- move the downloaded final video into Gallery and clear the active
   Create draft/session;
+- render recovered Gallery metadata separately from current-device file
+  availability;
 - show a temporary local loading state while waiting for synced state to arrive.
 
 ## UI Rule
@@ -50,9 +52,24 @@ until the final render reaches a terminal state. The user should see exactly one
 clear status: waiting, creating, failed, or ready.
 
 When the final video is ready, v1 shows only the download/finish path. After
-finish, the Create screen closes and Gallery shows the newest saved video first.
-The v1 client must not offer final-video versions or "create another version"
-from the completed state.
+finish, the Create screen closes and Gallery shows the newest finished video
+first. A Gallery item may be remote metadata only until the final video exists
+on the current device. The v1 client must not offer final-video versions or
+"create another version" from the completed state.
+
+## Local Availability Rule
+
+Signed-in product state and local file availability are different things.
+
+The iOS app must:
+
+- keep backend-backed Moments visible after sign-in when synced state exists;
+- keep Gallery metadata visible when the local final video file is missing;
+- show whether a video is saved on this device, downloadable, unavailable, or
+  missing locally;
+- block playback/share when no local video file exists;
+- validate required Photos assets before final-render actions that need local
+  source media.
 
 If the app appears to need a timer or manual status loop for final video
 creation, stop and review the private architecture contract before adding code.

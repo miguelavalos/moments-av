@@ -327,10 +327,16 @@
 "gallery.empty.shortTitle" = "La galeria és buida";
 "gallery.empty.title" = "Encara no hi ha vídeos desats";
 "gallery.open" = "Obre la galeria";
-"gallery.subtitle" = "Vídeos acabats desats en aquest dispositiu.";
+"gallery.subtitle" = "Vídeos acabats desats aquí o disponibles des del teu compte.";
 "gallery.title" = "Galeria";
 "gallery.video.localFileMissing" = "Falta el fitxer local";
 "gallery.video.savedOnDevice" = "Desat en aquest dispositiu";
+"gallery.video.downloadAvailable" = "Descàrrega disponible";
+"gallery.video.downloadUnavailable" = "Descàrrega no disponible";
+"gallery.video.remoteMetadataOnly" = "Només metadades al núvol";
+"gallery.video.redownload" = "Torna a descarregar";
+"gallery.video.downloaded" = "Vídeo descarregat en aquest dispositiu.";
+"gallery.video.downloadFailed" = "No s’ha pogut descarregar el vídeo.";
 "home.account.connected.title" = "Compte connectat";
 "home.account.defaultUser" = "Usuari de Moments AV";
 "home.account.required.title" = "Cal un compte";
@@ -829,6 +835,7 @@
 "workflow.final.preparing" = "Avi està preparant l’exportació final.";
 "workflow.final.checkingPlan" = "Comprovant mèdia i crèdits.";
 "workflow.final.needsUsableMedia" = "Avi necessita mèdia utilitzable abans de crear el vídeo.";
+"workflow.final.sourceMediaMissing" = "Falten mèdia originals de Fotos en aquest dispositiu. Edita la mèdia abans de crear el vídeo final.";
 "workflow.final.planReady" = "Llest per crear. Confirma quan vulguis iniciar el vídeo.";
 "workflow.final.creatingVideo" = "Avi està creant el vídeo. Pots consultar el progrés aquí.";
 "workflow.final.savingStatus" = "Desant l’estat del vídeo.";

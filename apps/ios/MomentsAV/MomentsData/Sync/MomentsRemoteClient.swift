@@ -30,6 +30,21 @@ struct MomentsRemoteClient {
         .eraseToAnyPublisher()
     }
 
+    func observeGalleryMoments(ownerUserId: String) throws -> AnyPublisher<[InProgressMoment], Error> {
+        let client = try requireClient()
+
+        return client.subscribe(
+            to: "moments:listMoments",
+            with: [
+                "ownerUserId": ownerUserId,
+                "collection": "gallery"
+            ],
+            yielding: [InProgressMoment].self
+        )
+        .mapError { $0 as Error }
+        .eraseToAnyPublisher()
+    }
+
     func observeMomentWorkspace(
         ownerUserId: String,
         momentId: String

@@ -8,11 +8,21 @@ struct MomentsViewModelBundle {
     let gallery: MomentsGalleryViewModel
     let avi: MomentsAviViewModel
 
-    init(accountController: AccountController, workflows: MomentsWorkflowBundle) {
+    init(
+        accountController: AccountController,
+        workflows: MomentsWorkflowBundle,
+        galleryMomentsProvider: any GalleryMomentsListProviding,
+        authTokenProvider: any MomentsAuthTokenProviding,
+        finalRenderClient: MomentsFinalRenderClient
+    ) {
         home = MomentsHomeViewModel()
         create = MomentsCreateViewModel()
         inProgress = MomentsInProgressViewModel()
-        gallery = MomentsGalleryViewModel()
+        gallery = MomentsGalleryViewModel(
+            galleryMomentsProvider: galleryMomentsProvider,
+            authTokenProvider: authTokenProvider,
+            finalRenderClient: finalRenderClient
+        )
         avi = MomentsAviViewModel()
 
         home.bind(to: workflows.inProgressMoments)

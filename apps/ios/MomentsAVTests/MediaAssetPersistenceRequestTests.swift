@@ -33,13 +33,23 @@ final class MediaAssetPersistenceRequestTests: XCTestCase {
         let request = MediaAssetPersistenceRequest.asset(
             media,
             preparedUpload: preparedUpload,
+            uploadCompletion: MomentsUploadCompletion(
+                appId: "momentsav",
+                momentId: "moment-1",
+                mediaAssetId: "asset-1",
+                uploadId: "upload-1",
+                storageKey: "uploads/moment-1/asset-1.mov",
+                status: "uploaded",
+                uploadedAt: "2026-05-16T16:01:00Z",
+                bytesReceived: 4
+            ),
             uploadedAt: uploadedAt
         )
 
         XCTAssertEqual(request.platformMediaAssetId, "local-1")
         XCTAssertEqual(request.uploadId, "upload-1")
         XCTAssertEqual(request.kind, "video")
-        XCTAssertNil(request.r2Key)
+        XCTAssertEqual(request.r2Key, "uploads/moment-1/asset-1.mov")
         XCTAssertNil(request.thumbnailR2Key)
         XCTAssertEqual(request.sortOrder, 2.0)
         XCTAssertTrue(request.selected)

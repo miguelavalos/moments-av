@@ -47,6 +47,7 @@
 		39CBF61EA02C64562003A173 /* MomentsMediaAutoStyleSuggestion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC38C1DFDA768A007ECE041 /* MomentsMediaAutoStyleSuggestion.swift */; };
 		3A028D53D0387A1CF1C27A91 /* MomentsHomePresentationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 750B382E2243221F970E3804 /* MomentsHomePresentationTests.swift */; };
 		3D1BDEB4E71A35F51D31E184 /* InProgressMomentsObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD4293CACC9FC541018A11E8 /* InProgressMomentsObserver.swift */; };
+		3D1BDEB4E71A35F51D31E185 /* GalleryMomentsObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD4293CACC9FC541018A11E9 /* GalleryMomentsObserver.swift */; };
 		3FD3EA6B5E80E695A5E06CFC /* InProgressMomentsWorkflow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 740E9D476A1647106FBA791A /* InProgressMomentsWorkflow.swift */; };
 		4172632E981686DEDC63611F /* AccountController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10E6147A66969036F332BBD0 /* AccountController.swift */; };
 		42A6AE364876575197FFEF81 /* MomentsInProgressListPresentation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98C4AAE5C654AFD15766A37E /* MomentsInProgressListPresentation.swift */; };
@@ -348,6 +349,7 @@
 		BC7B609A230378E800EACB03 /* MomentsInProgressWorkspaceSummaryPresentation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MomentsInProgressWorkspaceSummaryPresentation.swift; sourceTree = "<group>"; };
 		BD2E6EB4B6ACF7CC5E41A109 /* ca */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ca; path = ca.lproj/Localizable.strings; sourceTree = "<group>"; };
 		BD4293CACC9FC541018A11E8 /* InProgressMomentsObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InProgressMomentsObserver.swift; sourceTree = "<group>"; };
+		BD4293CACC9FC541018A11E9 /* GalleryMomentsObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GalleryMomentsObserver.swift; sourceTree = "<group>"; };
 		BECB9593302AA2DE777181E3 /* MomentsCreateAvailabilityCopy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MomentsCreateAvailabilityCopy.swift; sourceTree = "<group>"; };
 		BFC0F348A918CA94F94A55BC /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C0B4DF9B7BE802FE507B39D4 /* StoryWorkflow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryWorkflow.swift; sourceTree = "<group>"; };
@@ -596,6 +598,7 @@
 				AB23CBD4FFBED5E0711A8099 /* MomentsRepository+MediaPersistence.swift */,
 				C77AFD6135689BAE9493E2EB /* MomentsRepository+StoryPersistence.swift */,
 				BD4293CACC9FC541018A11E8 /* InProgressMomentsObserver.swift */,
+				BD4293CACC9FC541018A11E9 /* GalleryMomentsObserver.swift */,
 				DE8EEBB13FE91BF8B9714E68 /* MomentsSyncError.swift */,
 				E163CE3EE0FBE5B4F97A9BA3 /* MomentsSyncing.swift */,
 				7EF0E97795065AB5F237585F /* MomentsWorkspaceObserver.swift */,
@@ -1261,6 +1264,7 @@
 				51B26577F89BB928E7E090F2 /* MomentsInProgressListSummaryPill.swift in Sources */,
 				AE97A23F224DD8775B340A33 /* MomentsInProgressListSummaryRow.swift in Sources */,
 				3D1BDEB4E71A35F51D31E184 /* InProgressMomentsObserver.swift in Sources */,
+				3D1BDEB4E71A35F51D31E185 /* GalleryMomentsObserver.swift in Sources */,
 				4C899DC6327E43883E2FF689 /* MomentsInProgressPresentation.swift in Sources */,
 				6029E7CA9CB8D32D976E0810 /* MomentsInProgressScreen.swift in Sources */,
 				6029E7CA9CB8D32D976E0808 /* MomentsGalleryScreen.swift in Sources */,

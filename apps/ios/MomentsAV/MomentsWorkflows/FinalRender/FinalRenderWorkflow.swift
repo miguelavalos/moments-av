@@ -1,5 +1,6 @@
 import Foundation
 import OSLog
+import Photos
 
 @MainActor
 final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
@@ -82,6 +83,7 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
         removesWatermark: Bool = false
     ) async {
         guard let bearerToken = await validatedBearerTokenForFinalRender() else { return }
+        guard validateRecoveredSourceMediaAvailable(selectedMedia: selectedMedia) else { return }
         guard needsRenderPlanForFinalRender(momentId: momentId, removesWatermark: removesWatermark) else {
             statusMessage = L10n.string("workflow.final.planReady")
             return
@@ -150,6 +152,7 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
             statusMessage = L10n.string("workflow.final.checkingPlan")
             return
         }
+        guard validateRecoveredSourceMediaAvailable(selectedMedia: selectedMedia) else { return }
         guard !needsRenderPlanForFinalRender(momentId: momentId, removesWatermark: removesWatermark) else {
             self.renderPlan = nil
             statusMessage = L10n.string("workflow.final.checkingPlan")
@@ -305,6 +308,24 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
             return nil
         }
         return trimmed
+    }
+
+    private func validateRecoveredSourceMediaAvailable(selectedMedia: [MomentsSelectedMedia]) -> Bool {
+        guard selectedMedia.isEmpty else { return true }
+        let sourceIdentifiers = selectedSourceLocalIdentifiersForFinalRender(
+            from: selectedMedia,
+            workspaceMedia: activeWorkspace?.mediaAssets ?? []
+        )
+        guard !sourceIdentifiers.isEmpty else { return true }
+
+        let result = PHAsset.fetchAssets(withLocalIdentifiers: sourceIdentifiers, options: nil)
+        guard result.count == sourceIdentifiers.count else {
+            renderPlan = nil
+            statusMessage = L10n.string("workflow.final.sourceMediaMissing")
+            return false
+        }
+
+        return true
     }
 
     func needsRenderPlanForFinalRender(momentId: String, removesWatermark: Bool) -> Bool {

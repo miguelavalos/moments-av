@@ -74,12 +74,26 @@ protocol InProgressMomentsObserving {
 }
 
 @MainActor
+protocol GalleryMomentsObserving {
+    func observeGalleryMoments(ownerUserId: String) throws -> AnyPublisher<[InProgressMoment], Error>
+}
+
+@MainActor
 protocol InProgressMomentsListProviding {
     var momentsPublisher: AnyPublisher<[InProgressMoment], Never> { get }
     var momentsErrorPublisher: AnyPublisher<String?, Never> { get }
 
     func observeInProgressMoments(ownerUserId: String?)
     func clearInProgressMoments()
+}
+
+@MainActor
+protocol GalleryMomentsListProviding {
+    var galleryMomentsPublisher: AnyPublisher<[InProgressMoment], Never> { get }
+    var galleryMomentsErrorPublisher: AnyPublisher<String?, Never> { get }
+
+    func observeGalleryMoments(ownerUserId: String?)
+    func clearGalleryMoments()
 }
 
 @MainActor
@@ -108,4 +122,5 @@ extension MomentsRepository:
     MomentsTitleUpdating,
     MomentsGalleryMarking,
     InProgressMomentsObserving,
+    GalleryMomentsObserving,
     MomentWorkspaceObserving {}

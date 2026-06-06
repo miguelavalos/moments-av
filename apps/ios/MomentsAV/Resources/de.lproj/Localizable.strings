@@ -217,10 +217,16 @@
 "gallery.empty.shortTitle" = "Galerie ist leer";
 "gallery.empty.title" = "Noch keine gespeicherten Videos";
 "gallery.open" = "Galerie öffnen";
-"gallery.subtitle" = "Fertige Videos, die auf diesem Gerät gespeichert sind.";
+"gallery.subtitle" = "Fertige Videos, die hier gespeichert oder über dein Konto verfügbar sind.";
 "gallery.title" = "Galerie";
 "gallery.video.localFileMissing" = "Lokale Datei fehlt";
 "gallery.video.savedOnDevice" = "Auf diesem Gerät gespeichert";
+"gallery.video.downloadAvailable" = "Download verfügbar";
+"gallery.video.downloadUnavailable" = "Download nicht verfügbar";
+"gallery.video.remoteMetadataOnly" = "Nur Cloud-Metadaten";
+"gallery.video.redownload" = "Erneut laden";
+"gallery.video.downloaded" = "Video auf dieses Gerät geladen.";
+"gallery.video.downloadFailed" = "Das Video konnte nicht geladen werden.";
 "home.account.connected.title" = "Konto verbunden";
 "home.account.defaultUser" = "Moments AV-Nutzer";
 "home.account.required.title" = "Konto erforderlich";
@@ -831,6 +837,7 @@
 "workflow.final.preparing" = "Avi bereitet den finalen Export vor.";
 "workflow.final.checkingPlan" = "Medien und Credits werden geprüft.";
 "workflow.final.needsUsableMedia" = "Avi benötigt verwendbare Medien, bevor das Video erstellt wird.";
+"workflow.final.sourceMediaMissing" = "Einige ursprüngliche Fotos-Medien fehlen auf diesem Gerät. Bearbeite die Medien, bevor du das finale Video erstellst.";
 "workflow.final.planReady" = "Bereit zum Erstellen. Bestätige, wenn du das Video starten möchtest.";
 "workflow.final.creatingVideo" = "Avi erstellt das Video. Du kannst den Fortschritt hier prüfen.";
 "workflow.final.savingStatus" = "Videostatus wird gespeichert.";

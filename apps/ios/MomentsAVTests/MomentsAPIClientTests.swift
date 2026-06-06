@@ -87,7 +87,7 @@ final class MomentsAPIClientTests: XCTestCase {
     }
 
     func testUploadUsesPreparedURLAndHeaders() async throws {
-        let session = makeMockSession(json: "{}")
+        let session = makeMockSession(json: uploadCompletionJSON)
         let client = MomentsUploadClient(baseURLString: accountAPIBaseURL, session: session)
         let uploadURL = URL(string: "\(accountAPIBaseURL)/v1/apps/momentsav/uploads/upload-1")!
         let media = MomentsSelectedMedia(
@@ -168,7 +168,7 @@ final class MomentsAPIClientTests: XCTestCase {
     }
 
     func testDirectUploadCompletesPreparedUploadAfterR2Put() async throws {
-        let session = makeMockSession(json: "{}")
+        let session = makeMockSession(json: uploadCompletionJSON)
         let client = MomentsUploadClient(baseURLString: accountAPIBaseURL, session: session)
         let uploadURL = URL(string: "https://account-1.r2.cloudflarestorage.com/appsav-assets-preview/momentsav/user/moment/source/media-1?X-Amz-Signature=test")!
         let completionURL = URL(string: "\(accountAPIBaseURL)/v1/apps/momentsav/uploads/upload-1/complete")!
@@ -210,7 +210,7 @@ final class MomentsAPIClientTests: XCTestCase {
 
     func testUploadRetriesTransientNetworkLoss() async throws {
         MomentsURLProtocolMock.failuresBeforeSuccess = 1
-        let session = makeMockSession(json: "{}")
+        let session = makeMockSession(json: uploadCompletionJSON)
         let client = MomentsUploadClient(
             baseURLString: accountAPIBaseURL,
             session: session,
@@ -628,6 +628,21 @@ final class MomentsAPIClientTests: XCTestCase {
 
     private var accountAPIBaseURL: String {
         "https://api-account-av-preview.avalsys.com"
+    }
+
+    private var uploadCompletionJSON: String {
+        """
+        {
+          "appId": "momentsav",
+          "momentId": "moment-1",
+          "mediaAssetId": "media-1",
+          "uploadId": "upload-1",
+          "storageKey": "uploads/moment-1/media-1.jpg",
+          "status": "uploaded",
+          "uploadedAt": "2026-05-16T16:00:00Z",
+          "bytesReceived": 4
+        }
+        """
     }
 
     private func makeMockSession(statusCode: Int = 200, json: String) -> URLSession {
