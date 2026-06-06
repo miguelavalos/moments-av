@@ -104,6 +104,23 @@ struct MomentsRemoteClient {
         }
     }
 
+    func markMomentMovedToGallery(ownerUserId: String, momentId: String) async throws {
+        let client = try requireClient()
+
+        let updatedMomentId: String? = try await retryingMutation(
+            client: client,
+            name: "moments:markMomentMovedToGallery",
+            args: [
+                "ownerUserId": ownerUserId,
+                "momentId": momentId
+            ]
+        )
+
+        guard updatedMomentId != nil else {
+            throw MomentsSyncError.unexpectedResponse
+        }
+    }
+
     func updateMomentSetup(ownerUserId: String, momentId: String, form: MomentSetupForm) async throws {
         try await updateMomentSetup(
             ownerUserId: ownerUserId,

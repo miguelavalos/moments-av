@@ -55,7 +55,8 @@ struct MomentsWorkflowBundle {
             authTokenProvider: accountController,
             creditBalanceProvider: accountController,
             workspaceObserver: workspaceObserver,
-            finalRenderClient: clients.finalRender
+            finalRenderClient: clients.finalRender,
+            momentGalleryMarker: momentsRepository
         )
     }
 }

@@ -64,6 +64,11 @@ protocol MomentsTitleUpdating {
 }
 
 @MainActor
+protocol MomentsGalleryMarking {
+    func markMomentMovedToGallery(ownerUserId: String, momentId: String) async throws
+}
+
+@MainActor
 protocol InProgressMomentsObserving {
     func observeInProgressMoments(ownerUserId: String) throws -> AnyPublisher<[InProgressMoment], Error>
 }
@@ -101,5 +106,6 @@ extension MomentsRepository:
     MomentsRenderJobStatusUpdating,
     MomentsDeleting,
     MomentsTitleUpdating,
+    MomentsGalleryMarking,
     InProgressMomentsObserving,
     MomentWorkspaceObserving {}

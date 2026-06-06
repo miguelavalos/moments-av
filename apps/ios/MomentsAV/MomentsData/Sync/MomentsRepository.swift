@@ -94,4 +94,11 @@ struct MomentsRepository {
             title: title
         )
     }
+
+    func markMomentMovedToGallery(ownerUserId: String, momentId: String) async throws {
+        try await remoteClient.markMomentMovedToGallery(
+            ownerUserId: ownerUserId,
+            momentId: momentId
+        )
+    }
 }

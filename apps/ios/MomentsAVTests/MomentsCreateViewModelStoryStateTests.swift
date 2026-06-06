@@ -708,6 +708,7 @@ private final class MomentCreationFailureHarness:
     MomentsCreditBalanceProviding,
     MomentsCreating,
     MomentsDeleting,
+    MomentsGalleryMarking,
     MomentsMediaAssetSaving,
     MomentsStorySaving,
     MomentsActiveWorkspaceObserving
@@ -765,7 +766,8 @@ private final class MomentCreationFailureHarness:
             creditBalanceProvider: self,
             workspaceObserver: self,
             finalRenderClient: MomentsFinalRenderClient(baseURLString: "https://api.example.com"),
-            galleryStore: TestGalleryStore()
+            galleryStore: TestGalleryStore(),
+            momentGalleryMarker: self
         )
     }
 
@@ -823,6 +825,8 @@ private final class MomentCreationFailureHarness:
     func updateMomentSetup(ownerUserId: String, momentId: String, form: MomentSetupForm) async throws {}
 
     func deleteMoment(ownerUserId: String, momentId: String) async throws {}
+
+    func markMomentMovedToGallery(ownerUserId: String, momentId: String) async throws {}
 
     func observeWorkspace(ownerUserId: String?, momentId: String?) {}
 
