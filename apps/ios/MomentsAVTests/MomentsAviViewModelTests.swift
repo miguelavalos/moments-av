@@ -60,7 +60,7 @@ final class MomentsAviViewModelTests: XCTestCase {
 
         XCTAssertEqual(
             presentation.creditGuidanceMessage,
-            "No credits are available. Video credits are needed before creating the final video."
+            "No credits are available. Credits are needed before creating the final video."
         )
     }
 

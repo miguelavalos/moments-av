@@ -70,9 +70,9 @@
 "profile.pro.avi.detail" = "Create final videos without Moments AV branding while Pro is active.";
 "profile.pro.avi.title" = "No branding";
 "profile.pro.library.detail" = "Better monthly value than buying credits one by one.";
-"profile.pro.library.promo.detail" = "Promo Pro keeps Pro features active. Video credits are tracked separately.";
+"profile.pro.library.promo.detail" = "Promo Pro keeps Pro features active. Credits are tracked separately.";
 "profile.pro.library.promo.title" = "Promo Pro access";
-"profile.pro.library.title" = "6 monthly Video Credits";
+"profile.pro.library.title" = "6 monthly credits";
 "profile.pro.manage" = "Manage subscription";
 "profile.pro.signIn" = "Sign in first";
 "profile.pro.subtitle.free" = "Monthly credits and branding-free final videos. No unlimited generation.";
@@ -210,12 +210,12 @@
 "create.tone.warm.title" = "Warm";
 
 /* Main app pages */
-"avi.creditGuidance.detail" = "Video credits are used when you create the final video.";
+"avi.creditGuidance.detail" = "Credits are used when you create the final video.";
 "avi.creditGuidance.title" = "Credit guidance";
 "avi.creditOrder.first" = "First";
 "avi.creditOrder.then" = "Then";
 "avi.credits.available.message" = "%@ available for video creation.";
-"avi.credits.none.message" = "No credits are available. Video credits are needed before creating the final video.";
+"avi.credits.none.message" = "No credits are available. Credits are needed before creating the final video.";
 "avi.credits.signIn.message" = "Credits appear here after sign in.";
 "avi.currentFocus.detail" = "Avi highlights what needs your attention next.";
 "avi.currentFocus.title" = "Current focus";
@@ -232,7 +232,7 @@
 "avi.help.create.detail" = "Generate and save the finished video.";
 "avi.help.create.title" = "Create video";
 "avi.help.detail" = "Avi helps you move from photos and clips to a finished video.";
-"avi.help.story.detail" = "Let Avi organize the story before using video credits.";
+"avi.help.story.detail" = "Let Avi organize the story before using credits.";
 "avi.help.story.title" = "Prepare story";
 "avi.help.title" = "How Avi helps";
 "avi.landing.choose" = "Choose";
@@ -249,7 +249,7 @@
 "avi.prepare.media.title" = "Use a tight media set";
 "avi.prepare.occasion.detail" = "Birthdays, trips, milestones, and recaps work best with one clear purpose.";
 "avi.prepare.occasion.title" = "Choose a focused occasion";
-"avi.prepare.story.detail" = "Prepare the story before using video credits.";
+"avi.prepare.story.detail" = "Prepare the story before using credits.";
 "avi.prepare.story.title" = "Prepare story";
 "avi.prepare.title" = "Create a Moment";
 "avi.library.detail" = "Use In Progress for Moments that still need action.";
@@ -305,7 +305,7 @@
 "credits.plan.pro.promo" = "Pro promo access";
 "credits.plan.pro.promoUntil" = "Pro promo until %@";
 "credits.plan.pro.subscription" = "Pro subscription";
-"credits.plan.promo.detail" = "Promo Pro is active. Video credits are tracked separately.";
+"credits.plan.promo.detail" = "Promo Pro is active. Credits are tracked separately.";
 "credits.plan.title" = "Plan";
 "credits.proMonthly.detail" = "%d of %d left";
 "credits.proMonthly.none.detail" = "Monthly credits are available with a Pro subscription.";
@@ -442,7 +442,7 @@
 "home.moments.emptyRow.title" = "No Moments yet";
 "home.moments.emptyRow.detail" = "Start in Create to sync the first story and final video.";
 "credits.available.count" = "%d available";
-"credits.videoCredits.title" = "Video Credits";
+"credits.videoCredits.title" = "Credits";
 "paywall.balance.noCredits" = "No credits";
 "paywall.header.eyebrow" = "Moments AV";
 "paywall.header.subtitle.guest" = "Sign in first so credits and purchases stay attached to your account.";
@@ -456,21 +456,21 @@
 "paywall.price.month" = "%@/month";
 "paywall.privacy" = "Privacy";
 "paywall.pro.benefit.noWatermark" = "Final videos without Moments AV branding";
-"paywall.pro.benefit.videoCredits" = "6 Video Credits each month";
+"paywall.pro.benefit.videoCredits" = "6 credits each month";
 "paywall.pro.noWatermark" = "No branding";
 "paywall.product.bestValue" = "Best value";
 "paywall.product.buyFor" = "%@ - %@";
 "paywall.product.continueFor" = "Continue for %@";
 "paywall.product.creator.button" = "Buy 20 credits";
-"paywall.product.creator.detail" = "Adds 20 Video Credits for bigger batches.";
-"paywall.product.creator.title" = "20 Video Credits";
+"paywall.product.creator.detail" = "Adds 20 credits for bigger batches.";
+"paywall.product.creator.title" = "20 credits";
 "paywall.product.pro.button" = "Start Pro";
-"paywall.product.pro.detail" = "6 Video Credits each month, plus branding-free final videos while Pro is active.";
+"paywall.product.pro.detail" = "6 credits each month, plus branding-free final videos while Pro is active.";
 "paywall.product.pro.title" = "Moments AV Pro";
 "paywall.product.starter.button" = "Buy 5 credits";
-"paywall.product.starter.detail" = "Adds 5 Video Credits for final videos.";
+"paywall.product.starter.detail" = "Adds 5 credits for final videos.";
 "paywall.product.starter.eyebrow" = "Starter pack";
-"paywall.product.starter.title" = "5 Video Credits";
+"paywall.product.starter.title" = "5 credits";
 "paywall.proMonthly.detail" = "Better monthly credit value with Pro-only branding removal. No unlimited generation.";
 "paywall.proMonthly.title" = "Pro monthly";
 "paywall.promo.added" = "%@ added.";
@@ -722,9 +722,9 @@
 "recovery.mediaUploadUnavailable" = "Media upload is not ready yet. Your photos and videos are still on this device; please try again in a moment.";
 "recovery.mediaStorySaveFailure" = "Couldn’t save media for the story. Your photos and videos are still on this device; try again or choose different items.";
 "recovery.mediaVideoSaveFailure" = "Couldn’t save media for video creation. Your photos and videos are still on this device; try again or choose different items.";
-"recovery.storyStartFailure" = "Couldn’t start a Moment for this story. No final video credits were used. Please try again.";
-"recovery.storyFailure" = "Avi couldn’t prepare the story right now. No final video credits were used. Please try again.";
-"recovery.renderStartFailure" = "Couldn’t start video creation. No final video credits were used. Please try again in a moment.";
+"recovery.storyStartFailure" = "Couldn’t start a Moment for this story. No credits were used. Please try again.";
+"recovery.storyFailure" = "Avi couldn’t prepare the story right now. No credits were used. Please try again.";
+"recovery.renderStartFailure" = "Couldn’t start video creation. No credits were used. Please try again in a moment.";
 "recovery.renderRefreshFailure" = "Couldn’t refresh the video status. Credits are only finalized when the video is ready. Please try again.";
 "recovery.failedRenderDetail" = "Video creation hit a problem. If the final video was not completed, credits will not be charged. Please try again or contact support.";
 "media.item.singular" = "item";
@@ -774,7 +774,7 @@
 "create.options.anotherTheme" = "another theme";
 "create.options.suggestionUsing" = "Using Avi suggestion: %@ · %@";
 "create.storyDirection.title" = "Story direction";
-"create.storyDirection.detail" = "Check the pacing and message before spending video credits.";
+"create.storyDirection.detail" = "Check the pacing and message before spending credits.";
 "create.storyDirection.needsStory" = "Avi needs to prepare the story before the video can be created.";
 "create.media.itemCount" = "%d items";
 "create.final.createVideoTitle" = "Create the video";

@@ -70,9 +70,9 @@
 "profile.pro.avi.detail" = "Finale Videos ohne Branding, solange Pro aktiv ist.";
 "profile.pro.avi.title" = "Kein Branding";
 "profile.pro.library.detail" = "Besserer Monatswert als Credits einzeln zu kaufen.";
-"profile.pro.library.promo.detail" = "Pro-Promo hält Pro-Funktionen aktiv. Video-Credits werden separat angezeigt.";
+"profile.pro.library.promo.detail" = "Pro-Promo hält Pro-Funktionen aktiv. Credits werden separat angezeigt.";
 "profile.pro.library.promo.title" = "Pro-Promo-Zugang";
-"profile.pro.library.title" = "6 monatliche Video-Credits";
+"profile.pro.library.title" = "6 monatliche Credits";
 "profile.pro.manage" = "Abonnement verwalten";
 "profile.pro.signIn" = "Zuerst anmelden";
 "profile.pro.subtitle.free" = "Monatliche Credits und finale Videos ohne Branding. Nichts ist unbegrenzt.";
@@ -96,12 +96,12 @@
 "profile.summary.plan.title" = "Zugriff";
 
 /* Main app pages */
-"avi.creditGuidance.detail" = "Videocredits werden verwendet, wenn du das finale Video erstellst.";
+"avi.creditGuidance.detail" = "Credits werden verwendet, wenn du das finale Video erstellst.";
 "avi.creditGuidance.title" = "Credit-Hinweise";
 "avi.creditOrder.first" = "Zuerst";
 "avi.creditOrder.then" = "Dann";
 "avi.credits.available.message" = "%@ für Videoerstellung verfügbar.";
-"avi.credits.none.message" = "Keine Credits verfügbar. Videocredits werden vor dem Erstellen des finalen Videos benötigt.";
+"avi.credits.none.message" = "Keine Credits verfügbar. Credits werden vor dem Erstellen des finalen Videos benötigt.";
 "avi.credits.signIn.message" = "Credits erscheinen hier nach der Anmeldung.";
 "avi.currentFocus.detail" = "Avi zeigt, was als Nächstes deine Aufmerksamkeit braucht.";
 "avi.currentFocus.title" = "Aktueller Fokus";
@@ -118,7 +118,7 @@
 "avi.help.create.detail" = "Erstelle und speichere das fertige Video.";
 "avi.help.create.title" = "Video erstellen";
 "avi.help.detail" = "Avi hilft dir, aus Fotos und Clips ein fertiges Video zu machen.";
-"avi.help.story.detail" = "Lass Avi die Story vorbereiten, bevor du Videocredits verwendest.";
+"avi.help.story.detail" = "Lass Avi die Story vorbereiten, bevor du Credits verwendest.";
 "avi.help.story.title" = "Story vorbereiten";
 "avi.help.title" = "Wie Avi hilft";
 "avi.landing.choose" = "Wählen";
@@ -135,7 +135,7 @@
 "avi.prepare.media.title" = "Klare Medienauswahl nutzen";
 "avi.prepare.occasion.detail" = "Geburtstage, Reisen, Meilensteine und Rückblicke funktionieren am besten mit einem klaren Zweck.";
 "avi.prepare.occasion.title" = "Fokussierten Anlass wählen";
-"avi.prepare.story.detail" = "Bereite die Story vor, bevor du Videocredits verwendest.";
+"avi.prepare.story.detail" = "Bereite die Story vor, bevor du Credits verwendest.";
 "avi.prepare.story.title" = "Story vorbereiten";
 "avi.prepare.title" = "Moment erstellen";
 "avi.library.detail" = "Nutze In Arbeit für Moments, die noch Aktion brauchen.";
@@ -193,7 +193,7 @@
 "credits.plan.pro.promo" = "Pro-Promo-Zugang";
 "credits.plan.pro.promoUntil" = "Pro-Promo bis %@";
 "credits.plan.pro.subscription" = "Pro-Abonnement";
-"credits.plan.promo.detail" = "Pro-Promo ist aktiv. Video-Credits werden separat angezeigt.";
+"credits.plan.promo.detail" = "Pro-Promo ist aktiv. Credits werden separat angezeigt.";
 "credits.plan.title" = "Plan";
 "credits.proMonthly.detail" = "%d von %d übrig";
 "credits.proMonthly.none.detail" = "Monatliche Credits sind mit einem Pro-Abonnement verfügbar.";
@@ -442,7 +442,7 @@
 "home.moments.emptyRow.title" = "Noch keine Moments";
 "home.moments.emptyRow.detail" = "Starte in Erstellen, um die erste Story und das finale Video zu synchronisieren.";
 "credits.available.count" = "%d verfügbar";
-"credits.videoCredits.title" = "Video-Credits";
+"credits.videoCredits.title" = "Credits";
 "paywall.balance.noCredits" = "Keine Credits";
 "paywall.header.eyebrow" = "Moments AV";
 "paywall.header.subtitle.guest" = "Melde dich zuerst an, damit Credits und Käufe mit deinem Konto verbunden bleiben.";
@@ -456,21 +456,21 @@
 "paywall.price.month" = "%@/Monat";
 "paywall.privacy" = "Datenschutz";
 "paywall.pro.benefit.noWatermark" = "Finale Videos ohne Moments AV Branding";
-"paywall.pro.benefit.videoCredits" = "6 Video-Credits pro Monat";
+"paywall.pro.benefit.videoCredits" = "6 Credits pro Monat";
 "paywall.pro.noWatermark" = "Kein Branding";
 "paywall.product.bestValue" = "Bester Wert";
 "paywall.product.buyFor" = "%@ - %@";
 "paywall.product.continueFor" = "Weiter für %@";
 "paywall.product.creator.button" = "20 Credits kaufen";
-"paywall.product.creator.detail" = "Fügt 20 Video-Credits für größere Serien hinzu.";
-"paywall.product.creator.title" = "20 Video-Credits";
+"paywall.product.creator.detail" = "Fügt 20 Credits für größere Serien hinzu.";
+"paywall.product.creator.title" = "20 Credits";
 "paywall.product.pro.button" = "Pro starten";
-"paywall.product.pro.detail" = "6 Video-Credits jeden Monat, plus finale Videos ohne Branding, solange Pro aktiv ist.";
+"paywall.product.pro.detail" = "6 Credits jeden Monat, plus finale Videos ohne Branding, solange Pro aktiv ist.";
 "paywall.product.pro.title" = "Moments AV Pro";
 "paywall.product.starter.button" = "5 Credits kaufen";
-"paywall.product.starter.detail" = "Fügt 5 Video-Credits für finale Videos hinzu.";
+"paywall.product.starter.detail" = "Fügt 5 Credits für finale Videos hinzu.";
 "paywall.product.starter.eyebrow" = "Starter-Pack";
-"paywall.product.starter.title" = "5 Video-Credits";
+"paywall.product.starter.title" = "5 Credits";
 "paywall.proMonthly.detail" = "Besserer monatlicher Credit-Wert mit Pro-exklusiver Branding-Entfernung. Keine unbegrenzte Generierung.";
 "paywall.proMonthly.title" = "Pro monatlich";
 "paywall.promo.added" = "%@ hinzugefügt.";
@@ -769,7 +769,7 @@
 "create.options.anotherTheme" = "ein anderes Thema";
 "create.options.suggestionUsing" = "Avi-Vorschlag wird verwendet: %@ · %@";
 "create.storyDirection.title" = "Story-Richtung";
-"create.storyDirection.detail" = "Prüfe Timing und Botschaft, bevor du Videocredits ausgibst.";
+"create.storyDirection.detail" = "Prüfe Timing und Botschaft, bevor du Credits ausgibst.";
 "create.storyDirection.needsStory" = "Avi muss die Story vorbereiten, bevor das Video erstellt werden kann.";
 "create.media.itemCount" = "%d Elemente";
 "create.final.createVideoTitle" = "Video erstellen";

@@ -868,11 +868,11 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         )
         XCTAssertEqual(
             MomentsRecoveryCopy.storyStartFailure(),
-            "Couldn’t start a Moment for this story. No final video credits were used. Please try again."
+            "Couldn’t start a Moment for this story. No credits were used. Please try again."
         )
         XCTAssertEqual(
             MomentsRecoveryCopy.storyFailure(),
-            "Avi couldn’t prepare the story right now. No final video credits were used. Please try again."
+            "Avi couldn’t prepare the story right now. No credits were used. Please try again."
         )
     }
 

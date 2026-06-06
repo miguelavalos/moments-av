@@ -70,9 +70,9 @@
 "profile.pro.avi.detail" = "Videos finales sin branding mientras Pro esté activo.";
 "profile.pro.avi.title" = "Sin branding";
 "profile.pro.library.detail" = "Mejor valor mensual que comprar créditos uno a uno.";
-"profile.pro.library.promo.detail" = "Pro promocional mantiene activas las funciones Pro. Los créditos de vídeo se muestran aparte.";
+"profile.pro.library.promo.detail" = "Pro promocional mantiene activas las funciones Pro. Los créditos se muestran aparte.";
 "profile.pro.library.promo.title" = "Acceso Pro promocional";
-"profile.pro.library.title" = "6 Créditos de vídeo mensuales";
+"profile.pro.library.title" = "6 créditos mensuales";
 "profile.pro.manage" = "Gestionar suscripción";
 "profile.pro.signIn" = "Iniciar sesión primero";
 "profile.pro.subtitle.free" = "Créditos mensuales y videos finales sin branding. Nada ilimitado.";
@@ -210,12 +210,12 @@
 "create.tone.warm.title" = "Cálido";
 
 /* Main app pages */
-"avi.creditGuidance.detail" = "Los créditos de video se usan cuando creas el video final.";
+"avi.creditGuidance.detail" = "Los créditos se usan cuando creas el video final.";
 "avi.creditGuidance.title" = "Guía de créditos";
 "avi.creditOrder.first" = "Primero";
 "avi.creditOrder.then" = "Después";
 "avi.credits.available.message" = "%@ disponibles para crear videos.";
-"avi.credits.none.message" = "No hay créditos disponibles. Necesitas créditos de video antes de crear el video final.";
+"avi.credits.none.message" = "No hay créditos disponibles. Necesitas créditos antes de crear el video final.";
 "avi.credits.signIn.message" = "Los créditos aparecerán aquí después de iniciar sesión.";
 "avi.currentFocus.detail" = "Avi destaca lo que necesita tu atención ahora.";
 "avi.currentFocus.title" = "Foco actual";
@@ -232,7 +232,7 @@
 "avi.help.create.detail" = "Genera y guarda el video terminado.";
 "avi.help.create.title" = "Crea video";
 "avi.help.detail" = "Avi te ayuda a pasar de fotos y clips a un video terminado.";
-"avi.help.story.detail" = "Deja que Avi organice la historia antes de usar créditos de video.";
+"avi.help.story.detail" = "Deja que Avi organice la historia antes de usar créditos.";
 "avi.help.story.title" = "Preparar historia";
 "avi.help.title" = "Cómo ayuda Avi";
 "avi.landing.choose" = "Elige";
@@ -249,7 +249,7 @@
 "avi.prepare.media.title" = "Usa una selección clara";
 "avi.prepare.occasion.detail" = "Cumpleaños, viajes, hitos y resúmenes funcionan mejor con un propósito claro.";
 "avi.prepare.occasion.title" = "Elige una ocasión concreta";
-"avi.prepare.story.detail" = "Prepara la historia antes de usar créditos de video.";
+"avi.prepare.story.detail" = "Prepara la historia antes de usar créditos.";
 "avi.prepare.story.title" = "Preparar historia";
 "avi.prepare.title" = "Crear un Moment";
 "avi.library.detail" = "Usa En progreso para Moments que todavía necesitan acción.";
@@ -289,7 +289,7 @@
 "credits.balance.signedOut.title" = "Inicia sesión para ver créditos";
 "credits.balance.signedOut.detail" = "Los créditos aparecerán aquí después de iniciar sesión.";
 "credits.balance.loading.title" = "Comprobando créditos";
-"credits.balance.loading.detail" = "Cargando tu saldo de créditos de video.";
+"credits.balance.loading.detail" = "Cargando tu saldo de créditos.";
 "credits.balance.offline.title" = "Créditos no disponibles sin conexión";
 "credits.balance.offline.detail" = "Conéctate a internet para ver tu saldo u obtener créditos.";
 "credits.balance.unavailable.title" = "No se pudieron cargar los créditos";
@@ -305,7 +305,7 @@
 "credits.plan.pro.promo" = "Acceso Pro promocional";
 "credits.plan.pro.promoUntil" = "Pro promocional hasta %@";
 "credits.plan.pro.subscription" = "Suscripción Pro";
-"credits.plan.promo.detail" = "Pro promocional está activo. Los créditos de vídeo se muestran aparte.";
+"credits.plan.promo.detail" = "Pro promocional está activo. Los créditos se muestran aparte.";
 "credits.plan.title" = "Plan";
 "credits.proMonthly.detail" = "Quedan %d de %d";
 "credits.proMonthly.none.detail" = "Los créditos mensuales están disponibles con una suscripción Pro.";
@@ -442,7 +442,7 @@
 "home.moments.emptyRow.title" = "Aún no hay Moments";
 "home.moments.emptyRow.detail" = "Empieza en Crear para sincronizar la primera historia y el video final.";
 "credits.available.count" = "%d disponibles";
-"credits.videoCredits.title" = "Créditos de vídeo";
+"credits.videoCredits.title" = "Créditos";
 "paywall.balance.noCredits" = "Sin créditos";
 "paywall.header.eyebrow" = "Moments AV";
 "paywall.header.subtitle.guest" = "Inicia sesión primero para que créditos y compras queden ligados a tu cuenta.";
@@ -456,21 +456,21 @@
 "paywall.price.month" = "%@/mes";
 "paywall.privacy" = "Privacidad";
 "paywall.pro.benefit.noWatermark" = "Videos finales sin branding de Moments AV";
-"paywall.pro.benefit.videoCredits" = "6 Créditos de vídeo cada mes";
+"paywall.pro.benefit.videoCredits" = "6 créditos cada mes";
 "paywall.pro.noWatermark" = "Sin branding";
 "paywall.product.bestValue" = "Mejor valor";
 "paywall.product.buyFor" = "%@ - %@";
 "paywall.product.continueFor" = "Continuar por %@";
 "paywall.product.creator.button" = "Comprar 20 créditos";
-"paywall.product.creator.detail" = "Añade 20 Créditos de vídeo para tandas grandes.";
-"paywall.product.creator.title" = "20 créditos de vídeo";
+"paywall.product.creator.detail" = "Añade 20 créditos para tandas grandes.";
+"paywall.product.creator.title" = "20 créditos";
 "paywall.product.pro.button" = "Activar Pro";
-"paywall.product.pro.detail" = "6 Créditos de vídeo cada mes, más videos finales sin branding mientras Pro esté activo.";
+"paywall.product.pro.detail" = "6 créditos cada mes, más videos finales sin branding mientras Pro esté activo.";
 "paywall.product.pro.title" = "Moments AV Pro";
 "paywall.product.starter.button" = "Comprar 5 créditos";
-"paywall.product.starter.detail" = "Añade 5 Créditos de vídeo para videos finales.";
+"paywall.product.starter.detail" = "Añade 5 créditos para videos finales.";
 "paywall.product.starter.eyebrow" = "Pack inicial";
-"paywall.product.starter.title" = "5 créditos de vídeo";
+"paywall.product.starter.title" = "5 créditos";
 "paywall.proMonthly.detail" = "Mejor valor mensual con eliminación de branding solo para Pro. Nada de generación ilimitada.";
 "paywall.proMonthly.title" = "Pro mensual";
 "paywall.promo.added" = "%@ añadidos.";
@@ -722,9 +722,9 @@
 "recovery.mediaUploadUnavailable" = "La subida de media aún no está lista. Tus fotos y videos siguen en este dispositivo; inténtalo de nuevo en un momento.";
 "recovery.mediaStorySaveFailure" = "No se pudo guardar la media de la historia. Tus fotos y videos siguen en este dispositivo; inténtalo de nuevo o elige otros ítems.";
 "recovery.mediaVideoSaveFailure" = "No se pudo guardar la media para crear el video. Tus fotos y videos siguen en este dispositivo; inténtalo de nuevo o elige otros ítems.";
-"recovery.storyStartFailure" = "No se pudo iniciar este Moment para esta historia. No se usaron créditos del video final. Inténtalo de nuevo.";
-"recovery.storyFailure" = "Avi no pudo preparar la historia ahora. No se usaron créditos del video final. Inténtalo de nuevo.";
-"recovery.renderStartFailure" = "No se pudo iniciar la creación del video. No se usaron créditos del video final. Inténtalo de nuevo en un momento.";
+"recovery.storyStartFailure" = "No se pudo iniciar este Moment para esta historia. No se usaron créditos. Inténtalo de nuevo.";
+"recovery.storyFailure" = "Avi no pudo preparar la historia ahora. No se usaron créditos. Inténtalo de nuevo.";
+"recovery.renderStartFailure" = "No se pudo iniciar la creación del video. No se usaron créditos. Inténtalo de nuevo en un momento.";
 "recovery.renderRefreshFailure" = "No se pudo actualizar el estado del video. Los créditos solo se finalizan cuando el video está listo. Inténtalo de nuevo.";
 "recovery.failedRenderDetail" = "La creación del video tuvo un problema. Si el video final no se completó, no se descontarán créditos. Inténtalo de nuevo o contacta con soporte.";
 "media.item.singular" = "ítem";
@@ -774,7 +774,7 @@
 "create.options.anotherTheme" = "otro tema";
 "create.options.suggestionUsing" = "Usando sugerencia de Avi: %@ · %@";
 "create.storyDirection.title" = "Dirección de historia";
-"create.storyDirection.detail" = "Comprueba el ritmo y el mensaje antes de gastar créditos de video.";
+"create.storyDirection.detail" = "Comprueba el ritmo y el mensaje antes de gastar créditos.";
 "create.storyDirection.needsStory" = "Avi necesita preparar la historia antes de crear el video.";
 "create.media.itemCount" = "%d ítems";
 "create.final.createVideoTitle" = "Crear el video";
