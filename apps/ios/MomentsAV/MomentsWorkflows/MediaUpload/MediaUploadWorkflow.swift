@@ -52,6 +52,11 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
 
         let generation = beginWorkflowGeneration()
         beginImport(totalCount: min(items.count, remainingSlots))
+        MomentsMediaUploadDiagnostics.addBreadcrumb(
+            operation: "import",
+            source: "picker",
+            assetCount: min(items.count, remainingSlots)
+        )
 
         do {
             let imported = try await MediaPickerImport.load(
@@ -77,6 +82,12 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
             )
         } catch {
             guard isCurrentWorkflowGeneration(generation) else { return }
+            MomentsMediaUploadDiagnostics.captureImportError(
+                error,
+                source: "picker",
+                requestedCount: min(items.count, remainingSlots),
+                remainingSlots: remainingSlots
+            )
             statusMessage = MomentsRecoveryCopy.mediaImportFailure()
         }
 
@@ -99,6 +110,11 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
 
         let generation = beginWorkflowGeneration()
         beginImport(totalCount: remainingSlots)
+        MomentsMediaUploadDiagnostics.addBreadcrumb(
+            operation: "import",
+            source: "latest_photos",
+            assetCount: remainingSlots
+        )
 
         do {
             let imported = try await MediaPickerImport.loadLatestPhotos(
@@ -123,6 +139,12 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
             )
         } catch {
             guard isCurrentWorkflowGeneration(generation) else { return }
+            MomentsMediaUploadDiagnostics.captureImportError(
+                error,
+                source: "latest_photos",
+                requestedCount: remainingSlots,
+                remainingSlots: remainingSlots
+            )
             statusMessage = MomentsRecoveryCopy.mediaImportFailure()
         }
 
@@ -146,6 +168,11 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
 
         let generation = beginWorkflowGeneration()
         beginImport(totalCount: remainingSlots)
+        MomentsMediaUploadDiagnostics.addBreadcrumb(
+            operation: "import",
+            source: "album",
+            assetCount: remainingSlots
+        )
 
         do {
             let imported = try await MediaPickerImport.loadPhotoAlbum(
@@ -171,6 +198,12 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
             )
         } catch {
             guard isCurrentWorkflowGeneration(generation) else { return }
+            MomentsMediaUploadDiagnostics.captureImportError(
+                error,
+                source: "album",
+                requestedCount: remainingSlots,
+                remainingSlots: remainingSlots
+            )
             statusMessage = MomentsRecoveryCopy.mediaImportFailure()
         }
 
@@ -289,6 +322,11 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
         isImporting = true
         importProgress = MomentsMediaImportProgress(completedCount: 0, totalCount: pendingMediaToSave.count)
         statusMessage = L10n.string("workflow.media.uploading")
+        MomentsMediaUploadDiagnostics.addBreadcrumb(
+            operation: "persist",
+            source: "selected_media",
+            assetCount: pendingMediaToSave.count
+        )
         logger.info(
             "Persisting selected media selected=\(mediaToSave.count, privacy: .public) alreadySynced=\(alreadySyncedMedia.count, privacy: .public) pending=\(pendingMediaToSave.count, privacy: .public)"
         )
@@ -322,6 +360,14 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
             return (alreadySyncedMedia + result.savedMedia).sorted { $0.sortOrder < $1.sortOrder }
         } catch MomentsUploadError.signedUploadUnavailable {
             guard isCurrentWorkflowGeneration(generation) else { return nil }
+            MomentsMediaUploadDiagnostics.capturePersistenceError(
+                MomentsUploadError.signedUploadUnavailable,
+                step: "signed_upload_unavailable",
+                selectedCount: mediaToSave.count,
+                pendingCount: pendingMediaToSave.count,
+                alreadySyncedCount: alreadySyncedMedia.count,
+                requiresProductStateSave: requiresProductStateSave
+            )
             logger.error(
                 "Media persistence failed error=signedUploadUnavailable selected=\(mediaToSave.count, privacy: .public) pending=\(pendingMediaToSave.count, privacy: .public)"
             )
@@ -331,6 +377,14 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
             return nil
         } catch let error as MomentsAPIError {
             guard isCurrentWorkflowGeneration(generation) else { return nil }
+            MomentsMediaUploadDiagnostics.capturePersistenceError(
+                error,
+                step: "api",
+                selectedCount: mediaToSave.count,
+                pendingCount: pendingMediaToSave.count,
+                alreadySyncedCount: alreadySyncedMedia.count,
+                requiresProductStateSave: requiresProductStateSave
+            )
             logger.error(
                 "Media persistence failed apiCode=\(error.code, privacy: .public) selected=\(mediaToSave.count, privacy: .public) pending=\(pendingMediaToSave.count, privacy: .public)"
             )
@@ -340,6 +394,14 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
             return nil
         } catch {
             guard isCurrentWorkflowGeneration(generation) else { return nil }
+            MomentsMediaUploadDiagnostics.capturePersistenceError(
+                error,
+                step: "unknown",
+                selectedCount: mediaToSave.count,
+                pendingCount: pendingMediaToSave.count,
+                alreadySyncedCount: alreadySyncedMedia.count,
+                requiresProductStateSave: requiresProductStateSave
+            )
             logger.error(
                 "Media persistence failed errorType=\(String(describing: type(of: error)), privacy: .public) description=\(error.localizedDescription, privacy: .public) selected=\(mediaToSave.count, privacy: .public) pending=\(pendingMediaToSave.count, privacy: .public)"
             )
@@ -364,6 +426,11 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
     private func restoreLocalMedia(from workspace: MomentWorkspace) async {
         let selectedAssetCount = workspace.mediaAssets.filter(\.selected).count
         let expectedSelectedCount = selectedAssetCount > 0 ? selectedAssetCount : workspace.mediaAssets.count
+        MomentsMediaUploadDiagnostics.addBreadcrumb(
+            operation: "restore",
+            source: "local_media",
+            assetCount: expectedSelectedCount
+        )
         do {
             let restoredMedia = try await MediaPickerImport.loadLocalMediaAssets(workspace.mediaAssets)
             guard activeWorkspace?.moment.id == workspace.moment.id, selectedMedia.isEmpty else { return }
@@ -381,6 +448,7 @@ final class MediaUploadWorkflow: WorkspaceObservingWorkflow {
             statusMessage = L10n.string("workflow.media.savedReady")
         } catch {
             guard activeWorkspace?.moment.id == workspace.moment.id else { return }
+            MomentsMediaUploadDiagnostics.captureRestoreError(error, expectedAssetCount: expectedSelectedCount)
             statusMessage = L10n.string("workflow.media.savedReady")
         }
     }
