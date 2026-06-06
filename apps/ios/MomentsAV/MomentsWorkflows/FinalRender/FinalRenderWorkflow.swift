@@ -93,6 +93,14 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
         isGenerating = true
         renderPlan = nil
         statusMessage = L10n.string("workflow.final.preparing")
+        MomentsWorkflowDiagnostics.addBreadcrumb(
+            feature: "moments.final_render",
+            operation: "prepare_plan",
+            data: [
+                "selected_count": String(selectedMedia.filter(\.selected).count),
+                "removes_watermark": String(removesWatermark),
+            ]
+        )
 
         do {
             statusMessage = L10n.string("workflow.final.checkingPlan")
@@ -123,10 +131,30 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
         } catch let error as MomentsAPIError {
             guard isCurrentWorkflowGeneration(generation) else { return }
             logger.error("Final render plan API error code=\(error.code, privacy: .public) message=\(error.message, privacy: .public) momentId=\(momentId, privacy: .public)")
+            MomentsWorkflowDiagnostics.capture(
+                error,
+                feature: "moments.final_render",
+                operation: "prepare_plan",
+                step: "api",
+                data: [
+                    "selected_count": String(selectedMedia.filter(\.selected).count),
+                    "removes_watermark": String(removesWatermark),
+                ]
+            )
             renderPlan = nil
             statusMessage = error.localizedDescription
         } catch {
             guard isCurrentWorkflowGeneration(generation) else { return }
+            MomentsWorkflowDiagnostics.capture(
+                error,
+                feature: "moments.final_render",
+                operation: "prepare_plan",
+                step: "unknown",
+                data: [
+                    "selected_count": String(selectedMedia.filter(\.selected).count),
+                    "removes_watermark": String(removesWatermark),
+                ]
+            )
             renderPlan = nil
             statusMessage = MomentsRecoveryCopy.renderStartFailure()
         }
@@ -170,6 +198,15 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
         let generation = beginWorkflowGeneration()
         isGenerating = true
         statusMessage = L10n.string("workflow.final.creatingVideo")
+        MomentsWorkflowDiagnostics.addBreadcrumb(
+            feature: "moments.final_render",
+            operation: "confirm",
+            data: [
+                "selected_count": String(selectedMedia.filter(\.selected).count),
+                "required_credits": String(requiredCredits),
+                "removes_watermark": String(removesWatermark),
+            ]
+        )
 
         do {
             let selectedSourceLocalIdentifiers = selectedSourceLocalIdentifiersForFinalRender(from: selectedMedia)
@@ -195,12 +232,34 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
         } catch let error as MomentsAPIError {
             guard isCurrentWorkflowGeneration(generation) else { return }
             logger.error("Final render API error code=\(error.code, privacy: .public) message=\(error.message, privacy: .public) momentId=\(momentId, privacy: .public)")
+            MomentsWorkflowDiagnostics.capture(
+                error,
+                feature: "moments.final_render",
+                operation: "confirm",
+                step: "api",
+                data: [
+                    "selected_count": String(selectedMedia.filter(\.selected).count),
+                    "required_credits": String(requiredCredits),
+                    "removes_watermark": String(removesWatermark),
+                ]
+            )
             if error.code == "moments_render_plan_stale" {
                 self.renderPlan = nil
             }
             statusMessage = error.localizedDescription
         } catch {
             guard isCurrentWorkflowGeneration(generation) else { return }
+            MomentsWorkflowDiagnostics.capture(
+                error,
+                feature: "moments.final_render",
+                operation: "confirm",
+                step: "unknown",
+                data: [
+                    "selected_count": String(selectedMedia.filter(\.selected).count),
+                    "required_credits": String(requiredCredits),
+                    "removes_watermark": String(removesWatermark),
+                ]
+            )
             statusMessage = MomentsRecoveryCopy.renderStartFailure()
         }
 
@@ -424,6 +483,13 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
 
         do {
             statusMessage = L10n.string("workflow.final.savingToGallery")
+            MomentsWorkflowDiagnostics.addBreadcrumb(
+                feature: "moments.final_render",
+                operation: "download",
+                data: [
+                    "artifact_status": artifact.status,
+                ]
+            )
             let downloadArtifactId = finalDownloadArtifactId(for: artifact)
             let download = try await finalRenderClient.prepareFinalArtifactDownload(
                 momentId: workspace.moment.id,
@@ -442,6 +508,15 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
             canRetryFinalVideoDownload = false
             statusMessage = L10n.string("workflow.final.savedLocal")
         } catch {
+            MomentsWorkflowDiagnostics.capture(
+                error,
+                feature: "moments.final_render",
+                operation: "download",
+                step: "gallery_save",
+                data: [
+                    "artifact_status": artifact.status,
+                ]
+            )
             canRetryFinalVideoDownload = true
             statusMessage = L10n.string("workflow.final.saveLocalFailed")
         }
@@ -481,6 +556,12 @@ final class FinalRenderWorkflow: WorkspaceObservingWorkflow {
                 logger.info("Marked Moment moved to Gallery momentId=\(momentId, privacy: .public)")
             } catch {
                 logger.error("Failed to mark Moment moved to Gallery momentId=\(momentId, privacy: .public) error=\(error.localizedDescription, privacy: .public)")
+                MomentsWorkflowDiagnostics.capture(
+                    error,
+                    feature: "moments.final_render",
+                    operation: "move_to_gallery",
+                    step: "remote_marker"
+                )
             }
         }
     }
