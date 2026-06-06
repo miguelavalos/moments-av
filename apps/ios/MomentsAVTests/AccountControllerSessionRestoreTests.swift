@@ -166,7 +166,7 @@ final class AccountControllerSessionRestoreTests: XCTestCase {
         )
 
         await controller.syncFromAccountProvider()
-        await controller.loadPurchaseCatalog()
+        await controller.loadPurchaseProducts()
         _ = try await controller.purchase(.starterPack)
         _ = try await controller.restorePurchases()
 
@@ -331,8 +331,8 @@ private final class CapturingMomentsPurchaseService: MomentsPurchaseServicing {
 }
 
 private final class AccountControllerURLProtocol: URLProtocol {
-    static var profileUser = AccountAVUser(id: "user-1", displayName: "User One", emailAddress: "user@example.com")
-    static var profileStatusCode = 200
+    nonisolated(unsafe) static var profileUser = AccountAVUser(id: "user-1", displayName: "User One", emailAddress: "user@example.com")
+    nonisolated(unsafe) static var profileStatusCode = 200
 
     override class func canInit(with request: URLRequest) -> Bool {
         true
