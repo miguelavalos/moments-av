@@ -11,6 +11,15 @@ runtime configuration.
 Final video creation is backend-owned. The iOS app sends user intent and renders
 the state returned by the configured backend/realtime layer.
 
+The current v1 user flow is:
+
+```text
+Choose moments -> edit options -> Create video -> confirm credits -> final render -> local download -> Gallery
+```
+
+There is no public generated preview step and no separate Story Review currency
+in v1. Story preparation is internal planning support for final render.
+
 The iOS app must not:
 
 - calculate final video credit cost;
@@ -47,6 +56,12 @@ from the completed state.
 
 If the app appears to need a timer or manual status loop for final video
 creation, stop and review the private architecture contract before adding code.
+
+## V1 Media Rule
+
+V1 final videos are silent visual memory videos. The client must not present
+generated audio, narration, voiceover, voice cloning, music, captions,
+subtitles, text overlays, or user audio uploads as available v1 features.
 
 ## Public Documentation Boundary
 

@@ -28,6 +28,18 @@ handoff values belong in the private AVALSYS suite.
 - [app-store-screenshots.md](app-store-screenshots.md): public screenshot safety
   rules for non-secret captures.
 
+## Current Public Product Shape
+
+V1 is a signed-in memory-video workflow:
+
+```text
+Choose moments -> edit options -> Create video -> confirm credits -> final render -> local download -> Gallery
+```
+
+The public client should not describe a generated preview step, a Story Review
+balance, model/provider choices, generated audio, captions, subtitles, text
+overlays, or cloud-backed Gallery recovery as v1 features.
+
 ## Private-Only Topics
 
 These topics must not be documented in this public repo:

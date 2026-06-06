@@ -19,6 +19,22 @@ Committed config files keep runtime values blank or public-safe. Local and
 release values are generated into ignored local config by private maintainer
 tooling.
 
+## Client Scope
+
+The iOS app is the local media selection, editing, realtime display, download,
+and local Gallery surface. Backend services own final-render planning, credit
+costs, provider routing, render status, artifacts, and credit commit/release.
+
+Current v1 flow:
+
+```text
+Choose moments -> edit options -> Create video -> confirm credits -> final render -> local download -> Gallery
+```
+
+Do not add public preview, Story Review balance, generated audio, captions,
+subtitles, text overlays, provider/model selection, or cloud Gallery recovery
+as v1 client features.
+
 Do not commit:
 
 - generated `Local.xcconfig`;
