@@ -1206,12 +1206,21 @@ private struct MomentsCreateStoryDecisionSummary: View {
 private struct MomentsCreateLockedFinalRenderScene: View {
     let presentation: MomentsCreateWorkflowPresentation
 
+    @State private var pulse = false
+
     var body: some View {
         VStack(spacing: 18) {
             Spacer(minLength: 28)
 
             VStack(spacing: 14) {
                 ZStack(alignment: .bottomTrailing) {
+                    Circle()
+                        .stroke(AVBrandColor.accent.opacity(0.20), lineWidth: 2)
+                        .frame(width: 132, height: 132)
+                        .scaleEffect(pulse ? 1.10 : 0.94)
+                        .opacity(pulse ? 0.16 : 0.82)
+                        .animation(.easeInOut(duration: 1.35).repeatForever(autoreverses: true), value: pulse)
+
                     Image("AviFullBody")
                         .resizable()
                         .scaledToFit()
@@ -1226,6 +1235,7 @@ private struct MomentsCreateLockedFinalRenderScene: View {
                         .frame(width: 34, height: 34)
                         .background(AVBrandColor.textPrimary, in: Circle())
                         .overlay(Circle().stroke(AVBrandColor.cardSurface, lineWidth: 3))
+                        .symbolEffect(.rotate, options: .repeating, isActive: isRendering)
                 }
 
                 VStack(spacing: 7) {
@@ -1241,16 +1251,24 @@ private struct MomentsCreateLockedFinalRenderScene: View {
                         .foregroundStyle(AVBrandColor.textSecondary)
                         .multilineTextAlignment(.center)
                         .fixedSize(horizontal: false, vertical: true)
+
+                    if isRendering {
+                        HStack(spacing: 7) {
+                            ProgressView()
+                                .controlSize(.mini)
+                                .tint(AVBrandColor.accent)
+
+                            Text(L10n.string("create.workflowContent.waitingForProvider"))
+                                .font(.caption)
+                                .fontWeight(.bold)
+                                .foregroundStyle(AVBrandColor.textSecondary)
+                        }
+                    }
                 }
                 .frame(maxWidth: .infinity)
             }
 
             VStack(alignment: .leading, spacing: 12) {
-                MomentsCreateFinalRenderActivityIndicator(
-                    progressFraction: progressFraction,
-                    accentColor: AVBrandColor.accent
-                )
-
                 HStack(spacing: 8) {
                     MomentsCreateLockedRenderMetric(
                         title: L10n.string("create.final.confirmSheet.cost"),
@@ -1286,6 +1304,9 @@ private struct MomentsCreateLockedFinalRenderScene: View {
         .padding(.horizontal, 8)
         .accessibilityElement(children: .combine)
         .accessibilityLabel("\(L10n.string("create.workflowContent.finalVideoInProgressTitle")). \(detail)")
+        .onAppear {
+            pulse = true
+        }
     }
 
     private var statusTitle: String {
@@ -1303,80 +1324,14 @@ private struct MomentsCreateLockedFinalRenderScene: View {
             ?? "lock.fill"
     }
 
-    private var progressFraction: Double? {
-        presentation.finalRenderSummary.realtimeStatus?.progressFraction
+    private var isRendering: Bool {
+        presentation.finalRenderSummary.realtimeStatus?.isActive ?? true
     }
 
     private var mediaCountTitle: String {
         presentation.lockedFinalRenderMediaCountTitle
     }
 
-}
-
-private struct MomentsCreateFinalRenderActivityIndicator: View {
-    let progressFraction: Double?
-    let accentColor: Color
-
-    @State private var phase = false
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 7) {
-            GeometryReader { proxy in
-                ZStack(alignment: .leading) {
-                    Capsule(style: .continuous)
-                        .fill(AVBrandColor.borderSubtle.opacity(0.65))
-
-                    if let progressFraction {
-                        Capsule(style: .continuous)
-                            .fill(accentColor)
-                            .frame(width: max(10, proxy.size.width * progressFraction))
-                    } else {
-                        Capsule(style: .continuous)
-                            .fill(
-                                LinearGradient(
-                                    colors: [
-                                        accentColor.opacity(0.20),
-                                        accentColor,
-                                        accentColor.opacity(0.20)
-                                    ],
-                                    startPoint: .leading,
-                                    endPoint: .trailing
-                                )
-                            )
-                            .frame(width: max(58, proxy.size.width * 0.30))
-                            .offset(x: phase ? proxy.size.width * 0.70 : 0)
-                            .animation(.easeInOut(duration: 1.35).repeatForever(autoreverses: true), value: phase)
-                    }
-                }
-            }
-            .frame(height: 5)
-            .accessibilityLabel(L10n.string("create.workflowContent.finalVideoProgress"))
-            .accessibilityValue(accessibilityValue)
-
-            if progressFraction == nil {
-                HStack(spacing: 6) {
-                    ProgressView()
-                        .controlSize(.mini)
-                        .tint(accentColor)
-
-                    Text(L10n.string("create.workflowContent.waitingForProvider"))
-                        .font(.caption2)
-                        .fontWeight(.bold)
-                        .foregroundStyle(AVBrandColor.textSecondary)
-                }
-            }
-        }
-        .onAppear {
-            phase = true
-        }
-    }
-
-    private var accessibilityValue: String {
-        guard let progressFraction else {
-            return L10n.string("create.workflowContent.waitingForProvider")
-        }
-        return "\(Int((progressFraction * 100).rounded())) percent"
-    }
 }
 
 private struct MomentsCreateLockedRenderMetric: View {
