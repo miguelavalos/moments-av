@@ -16,6 +16,16 @@ The current implementation should keep using code-level brand tokens and
 system-symbol Avi placeholders until a reviewed asset package is approved and
 recorded here.
 
+Moments AV follows the shared Apps AV first-run branding pattern:
+
+```text
+native launch logo + icon -> product splash with Avi -> onboarding
+```
+
+When an approved asset package is recorded, it must preserve those three
+separate runtime roles. Do not reuse Moments AV artwork as final branding for a
+different Apps AV product.
+
 ## Asset Package
 
 - Package name:
@@ -47,6 +57,14 @@ Notes:
 ## Required Rules
 
 - [ ] App icon source is approved for Moments AV.
+- [ ] Native launch logo source is approved for Moments AV.
+- [ ] Splash artwork source is approved for Moments AV.
+- [ ] Onboarding artwork source is approved for Moments AV.
+- [ ] Splash artwork shows Avi as a useful assistant, not as the app icon.
+- [ ] Onboarding artwork does not duplicate Avi when Avi is already rendered
+  near the primary call-to-action.
+- [ ] Splash and onboarding artwork integrate with the app background without
+  visible rectangular canvas edges.
 - [ ] Any embedded AV mark uses the canonical AVALSYS monogram.
 - [ ] AV mark is small and secondary, not the primary product icon.
 - [ ] Avi is not used as the app icon, product logo, or wordmark.
@@ -63,6 +81,11 @@ Before opening the asset PR:
 
 - [ ] Compare app icon at small home-screen sizes.
 - [ ] Compare App Store icon at full resolution.
+- [ ] Clean-install the app and verify native launch, splash, and onboarding
+  appear in order.
+- [ ] Confirm native launch shows Moments AV logo plus icon, not copied branding
+  from another Apps AV app.
+- [ ] Confirm splash and onboarding use product-specific Moments AV artwork.
 - [ ] Confirm dark/light appearance where relevant.
 - [ ] Confirm Reduce Transparency/Increase Contrast do not break app UI around
   the asset.

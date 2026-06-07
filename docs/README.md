@@ -45,6 +45,20 @@ after sign-in. Local video files remain device-local availability: a Gallery
 item can exist while its video file is missing on the current device, and
 redownload is offered only when the backend reports an available final artifact.
 
+## Branding And First Run
+
+Moments AV follows the shared Apps AV first-run sequence:
+
+```text
+native launch logo + icon -> product splash with Avi -> onboarding
+```
+
+Use Moments AV as a public reference for the structure of the sequence, not as
+a source of final assets for another app. The native launch frame is the short
+identity frame. The splash is product-specific generated artwork with Avi in an
+assistant role. Onboarding can reuse the same concept, but should avoid
+duplicating Avi when Avi is already rendered near the primary call-to-action.
+
 The public client must treat realtime state as read-only synced product state.
 User actions go through authenticated backend commands; owner-scoped realtime
 subscriptions start only after the backend issues a realtime session for the
