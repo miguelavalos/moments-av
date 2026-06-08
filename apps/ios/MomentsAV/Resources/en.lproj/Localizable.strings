@@ -478,6 +478,7 @@
 "paywall.promo.detail" = "Enter a code if one was provided to you.";
 "paywall.promo.optional" = "Codes are optional and are not required to buy Pro or credit packs.";
 "paywall.promo.placeholder" = "Code";
+"paywall.promo.link" = "Redeem code";
 "paywall.promo.title" = "Redeem a code?";
 "paywall.purchase.cancelled" = "Purchase cancelled.";
 "paywall.purchase.purchased" = "%@ purchased. Credits may take a moment to appear.";

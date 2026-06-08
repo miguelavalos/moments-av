@@ -476,6 +476,7 @@
 "paywall.promo.detail" = "Introdueix un codi si te n’han donat un.";
 "paywall.promo.optional" = "Els codis són opcionals i no calen per comprar Pro o packs de crèdits.";
 "paywall.promo.placeholder" = "Codi";
+"paywall.promo.link" = "Bescanvia codi";
 "paywall.promo.title" = "Vols bescanviar un codi?";
 "paywall.purchase.cancelled" = "Compra cancel·lada.";
 "paywall.purchase.purchased" = "%@ comprat. Els crèdits poden trigar un moment a aparèixer.";

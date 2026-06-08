@@ -478,6 +478,7 @@
 "paywall.promo.detail" = "Gib einen Code ein, falls du einen erhalten hast.";
 "paywall.promo.optional" = "Codes sind optional und nicht erforderlich, um Pro oder Credit-Packs zu kaufen.";
 "paywall.promo.placeholder" = "Code";
+"paywall.promo.link" = "Code einlösen";
 "paywall.promo.title" = "Code einlösen?";
 "paywall.purchase.cancelled" = "Kauf abgebrochen.";
 "paywall.purchase.purchased" = "%@ gekauft. Credits können einen Moment brauchen, bis sie erscheinen.";

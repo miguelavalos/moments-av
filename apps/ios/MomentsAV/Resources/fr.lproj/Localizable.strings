@@ -476,6 +476,7 @@
 "paywall.promo.detail" = "Entre un code si tu en as reçu un.";
 "paywall.promo.optional" = "Les codes sont optionnels et ne sont pas requis pour acheter Pro ou des packs de crédits.";
 "paywall.promo.placeholder" = "Code";
+"paywall.promo.link" = "Utiliser un code";
 "paywall.promo.title" = "Utiliser un code ?";
 "paywall.purchase.cancelled" = "Achat annulé.";
 "paywall.purchase.purchased" = "%@ acheté. Les crédits peuvent prendre un moment à apparaître.";
