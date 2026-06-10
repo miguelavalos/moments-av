@@ -84,7 +84,6 @@ final class AccountController: ObservableObject {
             configuration: .momentsAV,
             provider: MomentsProductAccountProvider(accountService: service),
             resolver: MomentsProductAccountResolver(
-                accountService: service,
                 profileResolver: MomentsPlatformAccountProfileResolver(
                     accountService: service,
                     accountProfileClient: accountProfileClient
@@ -278,19 +277,6 @@ final class AccountController: ObservableObject {
         }
     }
 
-    private func resolveInternalAccountUser(providerUser: AccountAVUser) async -> AccountAVUser? {
-        do {
-            guard let token = try await service.getToken() else {
-                return MomentsUITestEnvironment.current.hasAccountOverride ? providerUser : nil
-            }
-            return try await accountProfileClient.fetchCurrentUser(bearerToken: token)
-        } catch {
-            captureAccountError(error, operation: "profile_resolution")
-            errorMessage = error.localizedDescription
-            return nil
-        }
-    }
-
     private func currentBackendBearerToken(for user: AccountAVUser) async throws -> String? {
         if let token = try await service.getToken() {
             return token
@@ -465,7 +451,6 @@ private struct MomentsProductAccountProvider: AVProductAccountProviderSessioning
 
 @MainActor
 private struct MomentsProductAccountResolver: AVProductAccountResolving {
-    let accountService: AVAccountService
     let profileResolver: MomentsAccountProfileResolving
 
     func resolveProductAccount(
@@ -474,11 +459,6 @@ private struct MomentsProductAccountResolver: AVProductAccountResolving {
     ) async throws -> AVProductAccountUser {
         _ = providerToken
         _ = configuration
-
-        if MomentsUITestEnvironment.current.hasAccountOverride,
-           let providerUser = accountService.providerSessionUser {
-            return providerUser.productAccountUser
-        }
 
         let accountUser = try await profileResolver.resolveCurrentAccountUser()
         return accountUser.productAccountUser
