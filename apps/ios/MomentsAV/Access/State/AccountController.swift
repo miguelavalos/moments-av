@@ -1,5 +1,6 @@
 import AccountAV
 import AVDiagnosticsFoundation
+import AVProductAccountFoundation
 import Combine
 import Foundation
 
@@ -50,6 +51,21 @@ final class AccountController: ObservableObject {
         user != nil
     }
 
+    var productAccountState: AVProductAccountState {
+        if isAccountSessionTemporarilyUnavailable, let user {
+            return .temporarilyUnavailable(AVProductAccountSession(
+                user: user.productAccountUser,
+                isTemporarilyUnavailable: true
+            ))
+        }
+
+        if let user {
+            return .signedIn(AVProductAccountSession(user: user.productAccountUser))
+        }
+
+        return .guest
+    }
+
     func refresh() {
         if user == nil {
             resetSignedOutAccountState()
@@ -62,36 +78,71 @@ final class AccountController: ObservableObject {
 
     func syncFromAccountProvider() async {
         addAccountBreadcrumb("restore_started")
-        switch await service.restoreSession() {
-        case .active(let providerUser):
-            guard let resolvedUser = await resolveInternalAccountUser(providerUser: providerUser) else {
-                captureAccountError(
-                    MomentsAPIError(code: "moments_account_profile_resolution_failed", message: "Account profile resolution failed."),
-                    operation: "restore",
-                    data: ["restore_result": "active_without_internal_user"]
+
+        let diagnostics = MomentsProductAccountDiagnostics()
+        let sessionController = AVProductAccountSessionController(
+            configuration: .momentsAV,
+            provider: MomentsProductAccountProvider(accountService: service),
+            resolver: MomentsProductAccountResolver(
+                accountService: service,
+                profileResolver: MomentsPlatformAccountProfileResolver(
+                    accountService: service,
+                    accountProfileClient: accountProfileClient
                 )
-                isAccountSessionTemporarilyUnavailable = true
-                if user == nil {
-                    resetSignedOutAccountState()
-                }
-                return
-            }
+            ),
+            persistence: MomentsProductAccountPersistence(userDefaults: userDefaults, key: lastKnownAccountUserKey),
+            diagnostics: diagnostics
+        )
+
+        let productAccountState = await sessionController.restore()
+        let diagnosticEvents = await diagnostics.events
+
+        if diagnosticEvents.contains(.providerSessionActive) {
+            addAccountBreadcrumb("restore_active")
+        }
+
+        if diagnosticEvents.contains(.providerSessionUnavailable) ||
+            diagnosticEvents.contains(.providerTokenUnavailable) ||
+            diagnosticEvents.contains(.productUserResolutionTemporarilyUnavailable) {
+            addAccountBreadcrumb("restore_temporarily_unavailable")
+        }
+
+        if diagnosticEvents.contains(.providerSignedOut), productAccountState.user != nil {
+            addAccountBreadcrumb("restore_signed_out_preserved_local_user")
+        } else if diagnosticEvents.contains(.providerSignedOut) {
+            addAccountBreadcrumb("restore_signed_out")
+        }
+
+        switch productAccountState {
+        case .signedIn(let session):
+            let resolvedUser = AccountAVUser(productAccountUser: session.user)
             user = resolvedUser
             AVDiagnostics.setUserContext(AVDiagnosticsUserContext(id: resolvedUser.id))
-            addAccountBreadcrumb("restore_active")
             isAccountSessionTemporarilyUnavailable = false
-            persistLastKnownAccountUser(resolvedUser)
             await refreshCreditBalance()
-        case .temporarilyUnavailable:
-            addAccountBreadcrumb("restore_temporarily_unavailable")
+        case .temporarilyUnavailable(let session):
+            user = AccountAVUser(productAccountUser: session.user)
+            AVDiagnostics.setUserContext(AVDiagnosticsUserContext(id: session.user.id))
             isAccountSessionTemporarilyUnavailable = true
-            if user == nil {
+            if creditBalanceLoadState == .signedOut {
                 resetSignedOutAccountState()
             }
-        case .signedOut, .invalidated:
+        case .restoring(let lastKnownUser):
+            user = lastKnownUser.map(AccountAVUser.init(productAccountUser:))
+            isAccountSessionTemporarilyUnavailable = lastKnownUser != nil
+        case .guest:
+            if diagnosticEvents.contains(.productUserResolutionTemporarilyUnavailable) ||
+                diagnosticEvents.contains(.providerTokenUnavailable) ||
+                diagnosticEvents.contains(.providerSessionUnavailable) {
+                user = nil
+                AVDiagnostics.clearUserContext()
+                isAccountSessionTemporarilyUnavailable = true
+                resetSignedOutAccountState()
+                return
+            }
+
             user = nil
             AVDiagnostics.clearUserContext()
-            addAccountBreadcrumb("restore_signed_out")
             isAccountSessionTemporarilyUnavailable = false
             clearLastKnownAccountUser()
             resetSignedOutAccountState()
@@ -347,6 +398,122 @@ private struct MomentsLastKnownAccountUser: Codable {
 
     var accountUser: AccountAVUser {
         AccountAVUser(id: id, displayName: displayName, emailAddress: emailAddress)
+    }
+}
+
+@MainActor
+protocol MomentsAccountProfileResolving {
+    func resolveCurrentAccountUser() async throws -> AccountAVUser
+}
+
+@MainActor
+private struct MomentsPlatformAccountProfileResolver: MomentsAccountProfileResolving {
+    let accountService: AVAccountService
+    let accountProfileClient: MomentsAccountProfileClient
+
+    func resolveCurrentAccountUser() async throws -> AccountAVUser {
+        guard let token = try await accountService.getToken() else {
+            throw MomentsAPIError(code: "moments_auth_token_missing", message: L10n.string("access.signInRequired.generic"))
+        }
+        return try await accountProfileClient.fetchCurrentUser(bearerToken: token)
+    }
+}
+
+private extension AVProductAccountConfiguration {
+    static let momentsAV = AVProductAccountConfiguration(
+        appIdentifier: "moments-av",
+        appDisplayName: "Moments AV",
+        allowsGuestMode: true
+    )
+}
+
+private extension AccountAVUser {
+    init(productAccountUser user: AVProductAccountUser) {
+        self.init(id: user.id, displayName: user.displayName, emailAddress: user.emailAddress)
+    }
+
+    var productAccountUser: AVProductAccountUser {
+        AVProductAccountUser(id: id, displayName: displayName, emailAddress: emailAddress)
+    }
+}
+
+@MainActor
+private struct MomentsProductAccountProvider: AVProductAccountProviderSessioning {
+    let accountService: AVAccountService
+
+    func restoreProviderSession() async -> AVProductAccountProviderRestoreResult {
+        switch await accountService.restoreSession() {
+        case .signedOut:
+            return .signedOut
+        case .active:
+            return .active
+        case .temporarilyUnavailable:
+            return .temporarilyUnavailable
+        case .invalidated:
+            return .invalidated
+        }
+    }
+
+    func getProviderToken() async throws -> String? {
+        try await accountService.getToken()
+    }
+
+    func signOutProvider() async throws {
+        try await accountService.signOut()
+    }
+}
+
+@MainActor
+private struct MomentsProductAccountResolver: AVProductAccountResolving {
+    let accountService: AVAccountService
+    let profileResolver: MomentsAccountProfileResolving
+
+    func resolveProductAccount(
+        providerToken: String,
+        configuration: AVProductAccountConfiguration
+    ) async throws -> AVProductAccountUser {
+        _ = providerToken
+        _ = configuration
+
+        if MomentsUITestEnvironment.current.hasAccountOverride,
+           let providerUser = accountService.providerSessionUser {
+            return providerUser.productAccountUser
+        }
+
+        let accountUser = try await profileResolver.resolveCurrentAccountUser()
+        return accountUser.productAccountUser
+    }
+}
+
+@MainActor
+private struct MomentsProductAccountPersistence: AVProductAccountPersistence {
+    let userDefaults: UserDefaults
+    let key: String
+
+    func loadLastKnownUser() async -> AVProductAccountUser? {
+        guard let data = userDefaults.data(forKey: key),
+              let snapshot = try? JSONDecoder().decode(MomentsLastKnownAccountUser.self, from: data) else {
+            return nil
+        }
+        return snapshot.accountUser.productAccountUser
+    }
+
+    func saveLastKnownUser(_ user: AVProductAccountUser) async throws {
+        let snapshot = MomentsLastKnownAccountUser(user: AccountAVUser(productAccountUser: user))
+        guard let data = try? JSONEncoder().encode(snapshot) else { return }
+        userDefaults.set(data, forKey: key)
+    }
+
+    func clearLastKnownUser() async throws {
+        userDefaults.removeObject(forKey: key)
+    }
+}
+
+private actor MomentsProductAccountDiagnostics: AVProductAccountDiagnostics {
+    private(set) var events: [AVProductAccountDiagnosticEvent] = []
+
+    func recordAccountEvent(_ event: AVProductAccountDiagnosticEvent) {
+        events.append(event)
     }
 }
 

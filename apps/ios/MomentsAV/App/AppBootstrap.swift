@@ -1,13 +1,14 @@
 import AVLaunchFoundation
+import AVProductAccountFoundation
 import SwiftUI
 
 struct MomentsAppBootstrapView: View {
     @Environment(\.scenePhase) private var scenePhase
     @StateObject private var dependencies = MomentsDependencyContainer()
     @State private var selectedTab: MomentsRootTab = .home
-    @State private var authOptionsArePresented = false
+    @State private var authPresentationState: AVProductAccountAuthPresentationState = .hidden
     @State private var authenticationWasSkipped = false
-    @State private var isShowingAccountOnboarding = true
+    @State private var initialAccountRestoreCompleted = false
     @State private var didApplyLaunchTab = false
     @State private var postAuthenticationSplashIsPresented = false
 
@@ -20,7 +21,7 @@ struct MomentsAppBootstrapView: View {
         Group {
             if shouldShowOnboarding {
                 MomentsAuthOnboardingView(
-                    authOptionsArePresented: $authOptionsArePresented,
+                    authPresentationState: $authPresentationState,
                     accountIsAvailable: dependencies.accountController.isAccountAvailable,
                     onContinueWithApple: startAppleSignIn,
                     onContinueWithGoogle: startGoogleSignIn,
@@ -53,13 +54,16 @@ struct MomentsAppBootstrapView: View {
         .environmentObject(dependencies.aviViewModel)
         .task {
             applyLaunchTabIfNeeded()
+            await restoreInitialAccountSessionIfNeeded()
             dependencies.applyUITestFixturesIfNeeded()
             await Task.yield()
             dependencies.applyUITestFixturesIfNeeded()
+            showInitialOnboardingAfterRestoreIfNeeded()
         }
         .task(id: scenePhase) {
             guard scenePhase == .active else { return }
             await dependencies.accountController.syncFromAccountProvider()
+            initialAccountRestoreCompleted = true
         }
         .onReceive(dependencies.accountController.currentUserIdPublisher) { ownerUserId in
             dependencies.handleAccountChange(ownerUserId: ownerUserId)
@@ -67,7 +71,25 @@ struct MomentsAppBootstrapView: View {
     }
 
     private var shouldShowOnboarding: Bool {
-        !dependencies.accountController.isSignedIn && !authenticationWasSkipped && isShowingAccountOnboarding
+        guard !authenticationWasSkipped else { return false }
+        let rootGate = AVProductAccountAuthFlowRootGate(
+            accountState: dependencies.accountController.productAccountState,
+            authPresentationState: authPresentationState
+        )
+        return rootGate.shouldShowOnboarding
+    }
+
+    private func restoreInitialAccountSessionIfNeeded() async {
+        guard !initialAccountRestoreCompleted else { return }
+        await dependencies.accountController.syncFromAccountProvider()
+        initialAccountRestoreCompleted = true
+    }
+
+    private func showInitialOnboardingAfterRestoreIfNeeded() {
+        guard initialAccountRestoreCompleted else { return }
+        guard !dependencies.accountController.isSignedIn else { return }
+        guard !authenticationWasSkipped else { return }
+        authPresentationState = .onboardingCollapsed
     }
 
     private func applyLaunchTabIfNeeded() {
@@ -78,8 +100,7 @@ struct MomentsAppBootstrapView: View {
     }
 
     private func skipAuthentication() {
-        authOptionsArePresented = false
-        isShowingAccountOnboarding = false
+        authPresentationState = .hidden
         postAuthenticationSplashIsPresented = true
         authenticationWasSkipped = true
         Task {
@@ -95,24 +116,21 @@ struct MomentsAppBootstrapView: View {
     private func startSignInFlow(showAuthOptions: Bool = false) {
         postAuthenticationSplashIsPresented = false
         authenticationWasSkipped = false
-        isShowingAccountOnboarding = true
-        authOptionsArePresented = showAuthOptions
+        authPresentationState = showAuthOptions ? .onboardingOptions : .onboardingCollapsed
     }
 
     private func startAppleSignIn() async throws {
         try await dependencies.accountController.signInWithApple()
         await dependencies.accountController.syncFromAccountProvider()
         authenticationWasSkipped = false
-        isShowingAccountOnboarding = false
-        authOptionsArePresented = false
+        authPresentationState = .hidden
     }
 
     private func startGoogleSignIn() async throws {
         try await dependencies.accountController.signInWithGoogle()
         await dependencies.accountController.syncFromAccountProvider()
         authenticationWasSkipped = false
-        isShowingAccountOnboarding = false
-        authOptionsArePresented = false
+        authPresentationState = .hidden
     }
 }
 
