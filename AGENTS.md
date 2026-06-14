@@ -1,5 +1,17 @@
 # Moments AV Agent Rules
 
+Before work that touches signed runtime, credits, paid providers, final renders,
+billing, deployment, TestFlight/App Store, Convex, Cloudflare remote state, or
+cross-app workflow behavior, run the private workspace preflight first:
+
+```bash
+bash ../../private/avalsys-suite/scripts/agent-preflight.sh --app moments-av --intent <intent>
+```
+
+Read `../../private/avalsys-suite/docs/agents/workspace-guardrails.md` and every doc
+printed by the preflight before executing commands. If the private repo is
+unavailable, stop instead of guessing.
+
 This public repo does not define the full signed-runtime testing workflow.
 
 For any native app workflow validation that touches signed account state,
@@ -8,7 +20,7 @@ billing, or deletion flows, follow the private AVALSYS guide. Do not invent a
 local runtime flow from this public repo.
 
 - `private/avalsys-suite/docs/platform/native-preview-dev-validation-guide.md`
-- `private/avalsys-suite/docs/moments-av/preview-dev-validation-guide.md`
+- `private/avalsys-suite/docs/moments-av/release-validation-runbook.md`
 - `private/avalsys-suite/docs/agents/plan-step.md` when the user says
   `usa plan-step` or asks for step-by-step plan execution.
 - `private/avalsys-suite/docs/agents/plan-goal.md` when the user says
