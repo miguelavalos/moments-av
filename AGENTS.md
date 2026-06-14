@@ -20,6 +20,7 @@ billing, or deletion flows, follow the private AVALSYS guide. Do not invent a
 local runtime flow from this public repo.
 
 - `private/avalsys-suite/docs/platform/native-preview-dev-validation-guide.md`
+- `private/avalsys-suite/docs/platform/account-av-ios-testflight-contract.md`
 - `private/avalsys-suite/docs/moments-av/release-validation-runbook.md`
 - `private/avalsys-suite/docs/agents/plan-step.md` when the user says
   `usa plan-step` or asks for step-by-step plan execution.
@@ -35,6 +36,10 @@ Mandatory rules:
   defines one;
 - use Infisical/Varlock-backed private tooling for config, deploy keys, and
   secret resolution;
+- Account AV iOS login must match Tune AV's keychain pattern:
+  `ACCOUNTAV_PUBLISHABLE_KEY`, `ACCOUNTAV_KEYCHAIN_SERVICE`, and
+  `ACCOUNTAV_KEYCHAIN_ACCESS_GROUP` must be exposed through Info.plist,
+  passed to Account AV, and validated by the runtime config check;
 - use the mock final-render route for no-spend validation unless private docs
   explicitly approve a paid provider smoke;
 - treat "no-spend" as "no paid provider call", not "skip user credit workflow";

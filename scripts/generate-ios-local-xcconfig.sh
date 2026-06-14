@@ -167,6 +167,11 @@ escape_xcconfig_value() {
 moments_convex_url="$(read_required_config MOMENTSAV_CONVEX_URL)"
 account_api_base_url="$(read_required_config ACCOUNTAV_API_BASE_URL)"
 account_publishable_key="$(read_required_config ACCOUNTAV_PUBLISHABLE_KEY)"
+if [ "$env_name" = "prod" ]; then
+  account_keychain_access_group="935PM55U6R.com.avalsys.momentsav"
+else
+  account_keychain_access_group="935PM55U6R.com.avalsys.momentsav.dev"
+fi
 revenuecat_api_key="$(read_required_config MOMENTSAV_REVENUECAT_PUBLIC_API_KEY)"
 revenuecat_offering_id="$(read_required_config MOMENTSAV_REVENUECAT_OFFERING_ID)"
 revenuecat_monthly_package_id="$(read_required_config MOMENTSAV_REVENUECAT_MONTHLY_PACKAGE_ID)"
@@ -215,6 +220,8 @@ XCCONFIG_SLASH = /
 MOMENTSAV_CONFIG_ENVIRONMENT = $env_name
 AVALSYS_APPLE_DEVELOPMENT_TEAM = $development_team
 ACCOUNTAV_PUBLISHABLE_KEY = $account_publishable_key
+ACCOUNTAV_KEYCHAIN_SERVICE = 
+ACCOUNTAV_KEYCHAIN_ACCESS_GROUP = $account_keychain_access_group
 MOMENTSAV_REVENUECAT_PUBLIC_API_KEY = $revenuecat_api_key
 MOMENTSAV_REVENUECAT_OFFERING_ID = $revenuecat_offering_id
 MOMENTSAV_REVENUECAT_MONTHLY_PACKAGE_ID = $revenuecat_monthly_package_id
