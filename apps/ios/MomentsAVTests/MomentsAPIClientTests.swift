@@ -8,7 +8,7 @@ final class MomentsAPIClientTests: XCTestCase {
         super.tearDown()
     }
 
-    func testPrepareUploadUsesSharedAccountAPIBaseURL() async throws {
+    func testPrepareUploadUsesMomentsAPIBaseURL() async throws {
         let session = makeMockSession(
             json: """
             {
@@ -24,7 +24,7 @@ final class MomentsAPIClientTests: XCTestCase {
             }
             """
         )
-        let client = MomentsUploadClient(baseURLString: accountAPIBaseURL, session: session)
+        let client = MomentsUploadClient(baseURLString: momentsAPIBaseURL, session: session)
         let media = MomentsSelectedMedia(
             id: UUID(uuidString: "00000000-0000-0000-0000-000000000001")!,
             sourceLocalIdentifier: "local-1",
@@ -41,7 +41,7 @@ final class MomentsAPIClientTests: XCTestCase {
 
         _ = try await client.prepareUpload(momentId: "moment-1", bearerToken: "token-1", media: media)
 
-        XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.url?.absoluteString, "\(accountAPIBaseURL)/v1/apps/momentsav/media/prepare-upload")
+        XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.url?.absoluteString, "\(momentsAPIBaseURL)/v1/apps/momentsav/media/prepare-upload")
         XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.value(forHTTPHeaderField: "Authorization"), "Bearer token-1")
     }
 
@@ -63,7 +63,7 @@ final class MomentsAPIClientTests: XCTestCase {
             """
         )
         let client = MomentsUploadClient(
-            baseURLString: accountAPIBaseURL,
+            baseURLString: momentsAPIBaseURL,
             session: session,
             networkRetryPolicy: MomentsNetworkRetryPolicy(maximumRetries: 1, baseDelayNanoseconds: 1)
         )
@@ -88,8 +88,8 @@ final class MomentsAPIClientTests: XCTestCase {
 
     func testUploadUsesPreparedURLAndHeaders() async throws {
         let session = makeMockSession(json: uploadCompletionJSON)
-        let client = MomentsUploadClient(baseURLString: accountAPIBaseURL, session: session)
-        let uploadURL = URL(string: "\(accountAPIBaseURL)/v1/apps/momentsav/uploads/upload-1")!
+        let client = MomentsUploadClient(baseURLString: momentsAPIBaseURL, session: session)
+        let uploadURL = URL(string: "\(momentsAPIBaseURL)/v1/apps/momentsav/uploads/upload-1")!
         let media = MomentsSelectedMedia(
             id: UUID(uuidString: "00000000-0000-0000-0000-000000000002")!,
             sourceLocalIdentifier: "local-1",
@@ -130,7 +130,7 @@ final class MomentsAPIClientTests: XCTestCase {
 
     func testUploadWithoutSignedURLFailsBeforeSavingMedia() async throws {
         let session = makeMockSession(json: "{}")
-        let client = MomentsUploadClient(baseURLString: accountAPIBaseURL, session: session)
+        let client = MomentsUploadClient(baseURLString: momentsAPIBaseURL, session: session)
         let media = MomentsSelectedMedia(
             id: UUID(uuidString: "00000000-0000-0000-0000-000000000012")!,
             sourceLocalIdentifier: "local-1",
@@ -169,9 +169,9 @@ final class MomentsAPIClientTests: XCTestCase {
 
     func testDirectUploadCompletesPreparedUploadAfterR2Put() async throws {
         let session = makeMockSession(json: uploadCompletionJSON)
-        let client = MomentsUploadClient(baseURLString: accountAPIBaseURL, session: session)
+        let client = MomentsUploadClient(baseURLString: momentsAPIBaseURL, session: session)
         let uploadURL = URL(string: "https://account-1.r2.cloudflarestorage.com/appsav-assets-preview/momentsav/user/moment/source/media-1?X-Amz-Signature=test")!
-        let completionURL = URL(string: "\(accountAPIBaseURL)/v1/apps/momentsav/uploads/upload-1/complete")!
+        let completionURL = URL(string: "\(momentsAPIBaseURL)/v1/apps/momentsav/uploads/upload-1/complete")!
         let media = MomentsSelectedMedia(
             id: UUID(uuidString: "00000000-0000-0000-0000-000000000010")!,
             sourceLocalIdentifier: "local-1",
@@ -212,11 +212,11 @@ final class MomentsAPIClientTests: XCTestCase {
         MomentsURLProtocolMock.failuresBeforeSuccess = 1
         let session = makeMockSession(json: uploadCompletionJSON)
         let client = MomentsUploadClient(
-            baseURLString: accountAPIBaseURL,
+            baseURLString: momentsAPIBaseURL,
             session: session,
             uploadRetryPolicy: MomentsUploadRetryPolicy(maximumRetries: 1, baseDelayNanoseconds: 1)
         )
-        let uploadURL = URL(string: "\(accountAPIBaseURL)/v1/apps/momentsav/uploads/upload-1")!
+        let uploadURL = URL(string: "\(momentsAPIBaseURL)/v1/apps/momentsav/uploads/upload-1")!
         let media = MomentsSelectedMedia(
             id: UUID(uuidString: "00000000-0000-0000-0000-000000000003")!,
             sourceLocalIdentifier: "local-1",
@@ -268,7 +268,7 @@ final class MomentsAPIClientTests: XCTestCase {
             }
             """
         )
-        let client = MomentsStoryClient(baseURLString: accountAPIBaseURL, session: session)
+        let client = MomentsStoryClient(baseURLString: momentsAPIBaseURL, session: session)
 
         _ = try await client.generatePlan(
             momentId: "moment-1",
@@ -278,7 +278,7 @@ final class MomentsAPIClientTests: XCTestCase {
             mediaAssets: []
         )
 
-        XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.url?.absoluteString, "\(accountAPIBaseURL)/v1/apps/momentsav/story/plans")
+        XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.url?.absoluteString, "\(momentsAPIBaseURL)/v1/apps/momentsav/story/plans")
         XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.value(forHTTPHeaderField: "Authorization"), "Bearer token-1")
     }
 
@@ -304,7 +304,7 @@ final class MomentsAPIClientTests: XCTestCase {
             """
         )
         let client = MomentsStoryClient(
-            baseURLString: accountAPIBaseURL,
+            baseURLString: momentsAPIBaseURL,
             session: session,
             retryPolicy: MomentsNetworkRetryPolicy(maximumRetries: 1, baseDelayNanoseconds: 1)
         )
@@ -356,7 +356,7 @@ final class MomentsAPIClientTests: XCTestCase {
             }
             """
         )
-        let client = MomentsFinalRenderClient(baseURLString: accountAPIBaseURL, session: session)
+        let client = MomentsFinalRenderClient(baseURLString: momentsAPIBaseURL, session: session)
         var form = MomentSetupForm(template: .partyRecap)
         form.theme = .travel
         form.look = .real
@@ -376,7 +376,7 @@ final class MomentsAPIClientTests: XCTestCase {
             selectedSourceLocalIdentifiers: [" local-1 ", "", "local-2"]
         )
 
-        XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.url?.absoluteString, "\(accountAPIBaseURL)/v1/apps/momentsav/renders/plan")
+        XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.url?.absoluteString, "\(momentsAPIBaseURL)/v1/apps/momentsav/renders/plan")
         XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.httpMethod, "POST")
         let body = try XCTUnwrap(MomentsURLProtocolMock.lastRequestBody)
         let json = try XCTUnwrap(JSONSerialization.jsonObject(with: body) as? [String: Any])
@@ -449,7 +449,7 @@ final class MomentsAPIClientTests: XCTestCase {
             }
             """
         )
-        let client = MomentsFinalRenderClient(baseURLString: accountAPIBaseURL, session: session)
+        let client = MomentsFinalRenderClient(baseURLString: momentsAPIBaseURL, session: session)
 
         let confirmation = try await client.confirmFinalRender(
             momentId: "moment-1",
@@ -463,7 +463,7 @@ final class MomentsAPIClientTests: XCTestCase {
             renderOptionId: "standard_moment"
         )
 
-        XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.url?.absoluteString, "\(accountAPIBaseURL)/v1/apps/momentsav/renders/final/confirm")
+        XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.url?.absoluteString, "\(momentsAPIBaseURL)/v1/apps/momentsav/renders/final/confirm")
         XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.httpMethod, "POST")
         XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.value(forHTTPHeaderField: "Authorization"), "Bearer token-1")
         XCTAssertEqual(confirmation.reservation.id, "reservation-1")
@@ -487,7 +487,7 @@ final class MomentsAPIClientTests: XCTestCase {
             }
             """
         )
-        let client = MomentsFinalRenderClient(baseURLString: accountAPIBaseURL, session: session)
+        let client = MomentsFinalRenderClient(baseURLString: momentsAPIBaseURL, session: session)
 
         let response = try await client.prepareFinalArtifactDownload(
             momentId: "moment-1",
@@ -495,7 +495,7 @@ final class MomentsAPIClientTests: XCTestCase {
             bearerToken: "token-1"
         )
 
-        XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.url?.absoluteString, "\(accountAPIBaseURL)/v1/apps/momentsav/artifacts/artifact-1/download")
+        XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.url?.absoluteString, "\(momentsAPIBaseURL)/v1/apps/momentsav/artifacts/artifact-1/download")
         XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.httpMethod, "POST")
         XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.value(forHTTPHeaderField: "Authorization"), "Bearer token-1")
         XCTAssertNil(response.r2Key)
@@ -522,11 +522,11 @@ final class MomentsAPIClientTests: XCTestCase {
             }
             """
         )
-        let client = MomentsRenderStatusClient(baseURLString: accountAPIBaseURL, session: session)
+        let client = MomentsRenderStatusClient(baseURLString: momentsAPIBaseURL, session: session)
 
         let status = try await client.fetchStatus(renderJobId: "render-1", bearerToken: "token-1")
 
-        XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.url?.absoluteString, "\(accountAPIBaseURL)/v1/apps/momentsav/renders/render-1/status")
+        XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.url?.absoluteString, "\(momentsAPIBaseURL)/v1/apps/momentsav/renders/render-1/status")
         XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.httpMethod, "GET")
         XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.value(forHTTPHeaderField: "Authorization"), "Bearer token-1")
         XCTAssertEqual(status.status, "running")
@@ -545,7 +545,7 @@ final class MomentsAPIClientTests: XCTestCase {
             }
             """
         )
-        let client = MomentsRenderStatusClient(baseURLString: accountAPIBaseURL, session: session)
+        let client = MomentsRenderStatusClient(baseURLString: momentsAPIBaseURL, session: session)
 
         do {
             _ = try await client.fetchStatus(renderJobId: "missing-render", bearerToken: "token-1")
@@ -575,11 +575,11 @@ final class MomentsAPIClientTests: XCTestCase {
             }
             """
         )
-        let client = MomentsCreditBalanceClient(baseURLString: accountAPIBaseURL, session: session)
+        let client = MomentsCreditBalanceClient(baseURLString: momentsAPIBaseURL, session: session)
 
         let balance = try await client.fetchBalance(bearerToken: "token-1")
 
-        XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.url?.absoluteString, "\(accountAPIBaseURL)/v1/apps/momentsav/credits/balance")
+        XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.url?.absoluteString, "\(momentsAPIBaseURL)/v1/apps/momentsav/credits/balance")
         XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.httpMethod, "GET")
         XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.value(forHTTPHeaderField: "Authorization"), "Bearer token-1")
         XCTAssertEqual(balance, MomentsCreditBalance(proMonthly: 0, promotional: 10, purchased: 0, availableCredits: 10))
@@ -615,19 +615,19 @@ final class MomentsAPIClientTests: XCTestCase {
             }
             """
         )
-        let client = MomentsPromoCodeClient(baseURLString: accountAPIBaseURL, session: session)
+        let client = MomentsPromoCodeClient(baseURLString: momentsAPIBaseURL, session: session)
 
         let response = try await client.redeem(code: "MOMENTS-DEMO-2026", bearerToken: "token-1")
 
-        XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.url?.absoluteString, "\(accountAPIBaseURL)/v1/apps/momentsav/credits/promotions/redeem")
+        XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.url?.absoluteString, "\(momentsAPIBaseURL)/v1/apps/momentsav/credits/promotions/redeem")
         XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.httpMethod, "POST")
         XCTAssertEqual(MomentsURLProtocolMock.lastRequest?.value(forHTTPHeaderField: "Authorization"), "Bearer token-1")
         XCTAssertEqual(response.creditsGranted, 5)
         XCTAssertEqual(response.balance, MomentsCreditBalance(proMonthly: 0, promotional: 5, purchased: 0, availableCredits: 5))
     }
 
-    private var accountAPIBaseURL: String {
-        "https://api-account-av-preview.avalsys.com"
+    private var momentsAPIBaseURL: String {
+        "https://api-moments-av-preview.avalsys.com"
     }
 
     private var uploadCompletionJSON: String {

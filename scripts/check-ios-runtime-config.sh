@@ -7,6 +7,8 @@ configuration="Debug"
 destination_args=(-destination "generic/platform=iOS")
 preview_worker_api_url="https://api-account-av-preview.avalsys.com"
 production_worker_api_url="https://api-account-av.avalsys.com"
+preview_moments_api_url="https://api-moments-av-preview.avalsys.com"
+production_moments_api_url="https://api-moments-av.avalsys.com"
 
 usage() {
   cat <<'USAGE'
@@ -98,6 +100,7 @@ require_present() {
 product_bundle_identifier="$(setting PRODUCT_BUNDLE_IDENTIFIER)"
 config_environment="$(setting MOMENTSAV_CONFIG_ENVIRONMENT)"
 api_base_url="$(setting ACCOUNTAV_API_BASE_URL)"
+moments_api_base_url="$(setting MOMENTSAV_API_BASE_URL)"
 convex_url="$(setting MOMENTSAV_CONVEX_URL)"
 publishable_key="$(setting ACCOUNTAV_PUBLISHABLE_KEY)"
 keychain_access_group="$(setting ACCOUNTAV_KEYCHAIN_ACCESS_GROUP)"
@@ -119,6 +122,7 @@ for item in \
   "PRODUCT_BUNDLE_IDENTIFIER:$product_bundle_identifier" \
   "MOMENTSAV_CONFIG_ENVIRONMENT:$config_environment" \
   "ACCOUNTAV_API_BASE_URL:$api_base_url" \
+  "MOMENTSAV_API_BASE_URL:$moments_api_base_url" \
   "MOMENTSAV_CONVEX_URL:$convex_url" \
   "ACCOUNTAV_PUBLISHABLE_KEY:$publishable_key" \
   "ACCOUNTAV_KEYCHAIN_ACCESS_GROUP:$keychain_access_group" \
@@ -167,10 +171,12 @@ fi
 
 if [ "$env_name" = "prod" ]; then
   [ "$api_base_url" = "$production_worker_api_url" ] || fail "prod API URL mismatch"
+  [ "$moments_api_base_url" = "$production_moments_api_url" ] || fail "prod Moments API URL mismatch"
   [[ "$publishable_key" == pk_live_* ]] || fail "prod publishable key must use pk_live"
-  if printf '%s\n%s\n%s\n%s\n%s\n%s\n%s\n' \
+  if printf '%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n' \
       "$product_bundle_identifier" \
       "$api_base_url" \
+      "$moments_api_base_url" \
       "$convex_url" \
       "$support_base_url" \
       "$privacy_url" \
@@ -181,9 +187,11 @@ if [ "$env_name" = "prod" ]; then
   fi
 elif [ "$env_name" = "staging" ]; then
   [ "$api_base_url" = "$preview_worker_api_url" ] || fail "staging API URL mismatch"
+  [ "$moments_api_base_url" = "$preview_moments_api_url" ] || fail "staging Moments API URL mismatch"
   [[ "$publishable_key" == pk_test_* ]] || fail "staging publishable key must use pk_test"
 else
   [ "$api_base_url" = "$preview_worker_api_url" ] || fail "dev API URL must be preview worker"
+  [ "$moments_api_base_url" = "$preview_moments_api_url" ] || fail "dev Moments API URL must be preview worker"
   [[ "$publishable_key" == pk_test_* ]] || fail "$env_name publishable key must use pk_test"
 fi
 
@@ -206,6 +214,7 @@ Moments AV iOS runtime config ($env_name)
   config environment: $config_environment
   development team: ${development_team:-unknown}
   Account AV API: $api_base_url
+  Moments AV API: $moments_api_base_url
   Convex URL: $convex_url
   support URL: $support_base_url
   support email: $support_email_to

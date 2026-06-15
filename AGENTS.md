@@ -40,6 +40,9 @@ Mandatory rules:
   `ACCOUNTAV_PUBLISHABLE_KEY`, `ACCOUNTAV_KEYCHAIN_SERVICE`, and
   `ACCOUNTAV_KEYCHAIN_ACCESS_GROUP` must be exposed through Info.plist,
   passed to Account AV, and validated by the runtime config check;
+- keep account and product APIs split: `ACCOUNTAV_API_BASE_URL` is for shared
+  Account AV routes such as `/v1/me`; `MOMENTSAV_API_BASE_URL` is for
+  `/v1/apps/momentsav/*`;
 - use the mock final-render route for no-spend validation unless private docs
   explicitly approve a paid provider smoke;
 - treat "no-spend" as "no paid provider call", not "skip user credit workflow";
