@@ -28,3 +28,8 @@ web visual audit.
 - The preview web app build no longer emits the large client chunk warning:
   vendor chunks are split for Clerk, serialization, UI, and app bootstrap while
   keeping the same public `/`, sign-in, and protected-route behavior.
+- The production web app was deployed at `https://app.moments-av.avalsys.com`.
+  Production QA passed for public `/`, `/sign-in`, `/create`, `/gallery`, and
+  `/avi` with localized routes, Clerk secrets present, no guest-mode copy, no
+  visible lowercase `avalsys`, and no app-owned links dropping the active
+  language.
