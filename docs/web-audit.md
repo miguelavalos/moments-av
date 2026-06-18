@@ -25,3 +25,6 @@ web visual audit.
   exceptions until matching preview targets exist.
 - Commercial metadata and Avi asset presentation were polished during the
   audit.
+- The preview web app build no longer emits the large client chunk warning:
+  vendor chunks are split for Clerk, serialization, UI, and app bootstrap while
+  keeping the same public `/`, sign-in, and protected-route behavior.
