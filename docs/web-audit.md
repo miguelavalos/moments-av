@@ -20,6 +20,8 @@ web visual audit.
 - Commercial desktop and mobile browser QA passed.
 - Web app desktop and mobile browser QA passed.
 - Protected app routes require sign-in and keep language on sign-in links.
-- Preview app legal/support/account links use preview URLs.
+- Preview app legal/support/account links use preview URLs when those URLs
+  exist; production links from preview are allowed only as documented temporary
+  exceptions until matching preview targets exist.
 - Commercial metadata and Avi asset presentation were polished during the
   audit.
