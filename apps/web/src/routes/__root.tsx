@@ -1,6 +1,6 @@
 import { AccountAvProvider } from "@avalsys/account-av-web";
-import { AppsAvWebProvider, useAppsAvLocale } from "@avalsys/apps-av-web";
-import { HeadContent, Outlet, Scripts, createRootRoute } from "@tanstack/react-router";
+import { AppsAvWebProvider, getAppsAvLocaleFromSearch, useAppsAvLocale } from "@avalsys/apps-av-web";
+import { HeadContent, Outlet, Scripts, createRootRoute, useRouterState } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 import { getAccountApiBaseUrl, getAccountPublishableKey } from "@/lib/moments-config";
 import { localizedAppPath, useMomentsAccountLocalization, useMomentsText } from "@/lib/moments-i18n";
@@ -26,37 +26,46 @@ function RootComponent() {
 }
 
 function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
-  const publishableKey = getAccountPublishableKey();
-  const locale = useAppsAvLocale();
-  const localization = useMomentsAccountLocalization();
+  const search = useRouterState({ select: (state) => state.location.searchStr });
+  const initialLocale = getAppsAvLocaleFromSearch(search);
 
   return (
-    <html lang={locale}>
+    <html lang={initialLocale}>
       <head>
         <HeadContent />
       </head>
       <body>
-        <AppsAvWebProvider>
-          {publishableKey ? (
-            <AccountAvProvider
-              accountApiBaseUrl={getAccountApiBaseUrl()}
-              afterSignOutUrl={localizedAppPath("/sign-in", locale)}
-              appDisplayName="Moments AV"
-              appId="momentsav"
-              localization={localization}
-              publishableKey={publishableKey}
-              signInUrl={localizedAppPath("/sign-in", locale)}
-              signUpUrl={localizedAppPath("/sign-in", locale)}
-            >
-              {children}
-            </AccountAvProvider>
-          ) : (
-            <MissingAuthConfiguration />
-          )}
+        <AppsAvWebProvider initialLocale={initialLocale}>
+          <AccountBoundary>{children}</AccountBoundary>
         </AppsAvWebProvider>
         <Scripts />
       </body>
     </html>
+  );
+}
+
+function AccountBoundary({ children }: Readonly<{ children: ReactNode }>) {
+  const publishableKey = getAccountPublishableKey();
+  const locale = useAppsAvLocale();
+  const localization = useMomentsAccountLocalization();
+
+  if (!publishableKey) {
+    return <MissingAuthConfiguration />;
+  }
+
+  return (
+    <AccountAvProvider
+      accountApiBaseUrl={getAccountApiBaseUrl()}
+      afterSignOutUrl={localizedAppPath("/sign-in", locale)}
+      appDisplayName="Moments AV"
+      appId="momentsav"
+      localization={localization}
+      publishableKey={publishableKey}
+      signInUrl={localizedAppPath("/sign-in", locale)}
+      signUpUrl={localizedAppPath("/sign-in", locale)}
+    >
+      {children}
+    </AccountAvProvider>
   );
 }
 
