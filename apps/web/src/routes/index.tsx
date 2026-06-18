@@ -1,10 +1,11 @@
 import { AccountUserButton, SignedIn, SignedOut } from "@avalsys/account-av-web";
 import { AppShell, useAppsAvLocale } from "@avalsys/apps-av-web";
-import { Navigate, createFileRoute } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { ArrowRight, Film, Images, SlidersHorizontal, Sparkles } from "lucide-react";
 import type { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { MomentsLoginPage } from "@/components/moments-login-page";
 import { momentsBrandAssets } from "@/lib/moments-config";
 import { localizedAppPath, useMomentsNavLinks, useMomentsProductConfig, useMomentsShellLabels, useMomentsText } from "@/lib/moments-i18n";
 
@@ -23,7 +24,7 @@ function IndexRoute() {
   return (
     <>
       <SignedOut>
-        <Navigate to={localizedAppPath("/sign-in", locale)} />
+        <MomentsLoginPage />
       </SignedOut>
       <SignedIn>
         <AppShell accountArea={<AccountUserButton />} footerLabels={text.footer} labels={shellLabels} navLinks={navLinks} product={productConfig}>
