@@ -63,7 +63,7 @@ function SignInRoute() {
               </div>
             </SignedIn>
             <SignedOut>
-              <AccountSignIn fallbackRedirectUrl="/" path="/sign-in" />
+              <AccountSignIn fallbackRedirectUrl={localizedAppPath("/", locale)} path="/sign-in" />
             </SignedOut>
           </div>
         </section>

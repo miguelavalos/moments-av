@@ -23,7 +23,7 @@ function IndexRoute() {
   return (
     <>
       <SignedOut>
-        <Navigate to="/sign-in" />
+        <Navigate to={localizedAppPath("/sign-in", locale)} />
       </SignedOut>
       <SignedIn>
         <AppShell accountArea={<AccountUserButton />} footerLabels={text.footer} labels={shellLabels} navLinks={navLinks} product={productConfig}>
