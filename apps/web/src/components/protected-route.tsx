@@ -1,5 +1,6 @@
-import { AuthLoading, SignedIn, SignedOut } from "@avalsys/account-av-web";
+import { AuthLoading, SignedIn, SignedOut, useAccountSession } from "@avalsys/account-av-web";
 import { AuthSkeleton, AvAppFooter, useAppsAvLocale } from "@avalsys/apps-av-web";
+import { useEffect } from "react";
 import type { ReactNode } from "react";
 import { momentsBrandAssets } from "@/lib/moments-config";
 import { localizedAppPath, useMomentsProductConfig, useMomentsText } from "@/lib/moments-i18n";
@@ -9,6 +10,13 @@ export function ProtectedRoute({ children }: { children: ReactNode }) {
   const productConfig = useMomentsProductConfig();
   const locale = useAppsAvLocale();
   const signInHref = localizedAppPath("/sign-in", locale);
+  const session = useAccountSession();
+
+  useEffect(() => {
+    if (session.isLoaded && !session.isSignedIn && window.location.pathname !== "/sign-in") {
+      window.location.replace(signInHref);
+    }
+  }, [session.isLoaded, session.isSignedIn, signInHref]);
 
   return (
     <>

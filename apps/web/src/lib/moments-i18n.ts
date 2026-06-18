@@ -544,9 +544,17 @@ export function useMomentsShellLabels() {
 export function useMomentsNavLinks(): AppsAvProductLink[] {
   const locale = useAppsAvLocale();
   const text = useMomentsText();
+  const inProgress = {
+    ca: "En curs",
+    de: "In Arbeit",
+    en: "In Progress",
+    es: "En curso",
+    fr: "En cours"
+  }[locale];
   return [
     { href: localizedAppPath("/", locale), label: text.nav.home },
     { href: localizedAppPath("/create", locale), label: text.nav.create },
+    { href: localizedAppPath("/in-progress", locale), label: inProgress },
     { href: localizedAppPath("/gallery", locale), label: text.nav.gallery },
     { href: localizedAppPath("/avi", locale), label: text.nav.avi }
   ];
@@ -558,6 +566,12 @@ export function useMomentsProductConfig(): AppsAvProductConfig {
 
   return useMemo(() => ({
     ...momentsProductConfig,
+    links: Object.fromEntries(
+      Object.entries(momentsProductConfig.links).map(([key, link]) => [
+        key,
+        link ? { ...link, href: preserveLangForLocalHref(link.href, locale) } : link
+      ])
+    ) as AppsAvProductConfig["links"],
     assistant: momentsProductConfig.assistant
       ? {
         ...momentsProductConfig.assistant,
@@ -575,4 +589,16 @@ export function localizedAppPath(path: string, locale: AppsAvLocale): string {
 
   const separator = path.includes("?") ? "&" : "?";
   return `${path}${separator}lang=${locale}`;
+}
+
+function preserveLangForLocalHref(href: string, locale: AppsAvLocale) {
+  if (locale === "en") {
+    return href;
+  }
+
+  if (href.startsWith("/") && !href.startsWith("//")) {
+    return localizedAppPath(href, locale);
+  }
+
+  return href;
 }

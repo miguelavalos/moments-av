@@ -2,6 +2,7 @@ import { AccountAvProvider } from "@avalsys/account-av-web";
 import { AppsAvWebProvider, getAppsAvLocaleFromSearch, useAppsAvLocale } from "@avalsys/apps-av-web";
 import { HeadContent, Outlet, Scripts, createRootRoute, useRouterState } from "@tanstack/react-router";
 import type { ReactNode } from "react";
+import { useEffect, useRef } from "react";
 import { getAccountApiBaseUrl, getAccountPublishableKey } from "@/lib/moments-config";
 import { localizedAppPath, useMomentsAccountLocalization, useMomentsText } from "@/lib/moments-i18n";
 import "../styles.css";
@@ -36,12 +37,47 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
       </head>
       <body>
         <AppsAvWebProvider initialLocale={initialLocale}>
+          <LocaleUrlSync />
           <AccountBoundary>{children}</AccountBoundary>
         </AppsAvWebProvider>
         <Scripts />
       </body>
     </html>
   );
+}
+
+function LocaleUrlSync() {
+  const locale = useAppsAvLocale();
+  const didSync = useRef(false);
+
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    let changed = false;
+    if (locale === "en") {
+      if (url.searchParams.has("lang")) {
+        url.searchParams.delete("lang");
+        changed = true;
+      }
+    } else {
+      if (url.searchParams.get("lang") !== locale) {
+        url.searchParams.set("lang", locale);
+        changed = true;
+      }
+    }
+    if (!changed) {
+      didSync.current = true;
+      return;
+    }
+    const nextUrl = `${url.pathname}${url.search}${url.hash}`;
+    if (didSync.current) {
+      window.history.pushState(window.history.state, "", nextUrl);
+    } else {
+      window.history.replaceState(window.history.state, "", nextUrl);
+      didSync.current = true;
+    }
+  }, [locale]);
+
+  return null;
 }
 
 function AccountBoundary({ children }: Readonly<{ children: ReactNode }>) {

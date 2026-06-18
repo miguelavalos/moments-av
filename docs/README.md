@@ -1,7 +1,7 @@
 # Moments AV Public Docs
 
-This folder contains public, frontend-safe documentation for the Moments AV iOS
-app repository.
+This folder contains public, frontend-safe documentation for the Moments AV
+client repository, including iOS and web client behavior.
 
 Keep this repo limited to information that is safe to publish with the client
 code. Product strategy, pricing, App Store review notes, promo codes, provider
@@ -18,6 +18,9 @@ handoff values belong in the private AVALSYS suite.
 - [client-architecture-guardrails.md](client-architecture-guardrails.md):
   public-safe iOS ownership rules for backend-owned workflows, backend-issued
   realtime sessions, and subscription-only Convex state.
+- [web-functional-parity-progress.md](web-functional-parity-progress.md):
+  public-safe web parity status, implemented API/realtime surfaces,
+  no-real-spend rule, verification, and remaining signed no-spend E2E work.
 - [production-config.md](production-config.md): public runtime-config hygiene,
   with no production values.
 - [release-checklist.md](release-checklist.md): public repo readiness checks.

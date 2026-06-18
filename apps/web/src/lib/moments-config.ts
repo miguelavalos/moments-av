@@ -45,6 +45,10 @@ export function getAccountPublishableKey() {
   return import.meta.env.VITE_ACCOUNTAV_PUBLISHABLE_KEY as string | undefined;
 }
 
+export function getMomentsConvexUrl() {
+  return trimTrailingSlash(import.meta.env.VITE_MOMENTSAV_CONVEX_URL);
+}
+
 function requiredUrl(value: string | undefined, key: string) {
   const normalized = trimTrailingSlash(value);
   if (!normalized) {

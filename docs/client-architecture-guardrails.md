@@ -1,10 +1,10 @@
 # Client Architecture Guardrails
 
-Status: active public-safe rule for the Moments AV iOS client.
+Status: active public-safe rule for the Moments AV iOS and web clients.
 
-This repository owns the native iOS client. It does not own private backend
-architecture, provider selection, pricing policy, admin operations, or secret
-runtime configuration.
+This repository owns the Moments AV clients. It does not own private backend
+architecture, provider selection, pricing policy, admin operations, paid
+provider authorization, or secret runtime configuration.
 
 ## Backend-Owned Workflows
 
@@ -20,7 +20,7 @@ Choose moments -> edit options -> Create video -> confirm credits -> final rende
 There is no public generated preview step and no separate Story Review currency
 in v1. Story preparation is internal planning support for final render.
 
-The iOS app must not:
+The clients must not:
 
 - calculate final video credit cost;
 - calculate final provider route, provider capability, or final duration;
@@ -32,9 +32,11 @@ The iOS app must not:
 - poll backend status endpoints for normal product UI;
 - treat a locally supplied owner id as sufficient authorization for realtime
   reads;
-- call provider APIs directly.
+- call provider APIs directly;
+- trigger real-money spend without explicit user approval in the current
+  conversation.
 
-The iOS app may:
+The clients may:
 
 - collect user media choices and setup options;
 - show local editing affordances before final confirmation;
@@ -50,6 +52,10 @@ The iOS app may:
 - render recovered Gallery metadata separately from current-device file
   availability;
 - show a temporary local loading state while waiting for synced state to arrive.
+
+The web app additionally treats browser downloads as local availability. A
+Gallery item can have remote metadata and a prepared download without the final
+video being saved in the current browser session.
 
 ## UI Rule
 

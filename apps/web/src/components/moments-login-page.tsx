@@ -10,6 +10,7 @@ export function MomentsLoginPage() {
   const text = useMomentsText();
   const locale = useAppsAvLocale();
   const productConfig = useMomentsProductConfig();
+  const signInHref = localizedAppPath("/sign-in", locale);
 
   return (
     <div className="moments-canvas min-h-screen overflow-hidden px-5 pt-5 sm:px-8">
@@ -31,7 +32,10 @@ export function MomentsLoginPage() {
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Button asChild className="h-12 rounded-full bg-[#7c2947] px-5 text-white shadow-lg shadow-[#7c2947]/18 hover:bg-[#963956]">
-                <a href={localizedAppPath("/sign-in", locale)}>
+                <a href={signInHref} onClick={(event) => {
+                  event.preventDefault();
+                  window.location.assign(signInHref);
+                }}>
                   {text.login.cta}
                   <ArrowRight className="size-4" aria-hidden="true" />
                 </a>

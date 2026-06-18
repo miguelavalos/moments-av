@@ -2,6 +2,7 @@ import { AccountSignIn, SignedIn, SignedOut } from "@avalsys/account-av-web";
 import { AvAppFooter, useAppsAvLocale } from "@avalsys/apps-av-web";
 import { createFileRoute } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
+import { useEffect } from "react";
 import { momentsBrandAssets } from "@/lib/moments-config";
 import { localizedAppPath, useMomentsProductConfig, useMomentsText } from "@/lib/moments-i18n";
 
@@ -15,7 +16,7 @@ function SignInRoute() {
   const productConfig = useMomentsProductConfig();
 
   return (
-    <div className="moments-canvas flex min-h-screen flex-col bg-[#fbf7f2]">
+    <div className="moments-canvas flex min-h-screen min-w-0 flex-col overflow-x-hidden bg-[#fbf7f2]">
       <main className="grid flex-1 lg:grid-cols-[0.92fr_1.08fr]">
         <section className="relative hidden min-h-screen overflow-hidden bg-[#20242e] p-10 text-white lg:flex lg:flex-col lg:justify-between">
           <div className="absolute inset-0 bg-[linear-gradient(160deg,#5e3041_0%,#20242e_54%,#11151d_100%)]" />
@@ -43,8 +44,8 @@ function SignInRoute() {
           </div>
         </section>
 
-        <section className="flex min-h-screen items-center justify-center px-5 py-10">
-          <div className="w-full max-w-md rounded-[1.5rem] border border-[#e5c1c7] bg-white/72 p-4 shadow-2xl shadow-[#7b233f]/10 backdrop-blur sm:p-6">
+        <section className="flex min-h-screen min-w-0 items-center justify-center overflow-x-hidden px-4 py-10">
+          <div className="w-full min-w-0 max-w-md overflow-hidden rounded-[1.5rem] border border-[#e5c1c7] bg-white/72 p-4 shadow-2xl shadow-[#7b233f]/10 backdrop-blur sm:p-6">
             <a className="mb-8 inline-flex items-center gap-2 text-sm font-medium text-[#6d5960] transition hover:text-[#20242e] lg:hidden" href={localizedAppPath("/", locale)}>
               <ArrowLeft className="size-4" aria-hidden="true" />
               Moments AV
@@ -64,6 +65,7 @@ function SignInRoute() {
             </SignedIn>
             <SignedOut>
               <AccountSignIn fallbackRedirectUrl={localizedAppPath("/", locale)} path="/sign-in" />
+              <PreserveClerkHomeLang locale={locale} />
             </SignedOut>
           </div>
         </section>
@@ -71,4 +73,27 @@ function SignInRoute() {
       <AvAppFooter labels={text.footer} product={productConfig} />
     </div>
   );
+}
+
+function PreserveClerkHomeLang({ locale }: { locale: ReturnType<typeof useAppsAvLocale> }) {
+  useEffect(() => {
+    if (locale === "en") return;
+    const localizedHome = localizedAppPath("/", locale);
+    const repair = () => {
+      const anchors = Array.from(document.querySelectorAll<HTMLAnchorElement>("a[href]"));
+      for (const anchor of anchors) {
+        if (anchor.closest("footer")) continue;
+        const url = new URL(anchor.href, window.location.origin);
+        if (url.origin === window.location.origin && url.pathname === "/" && !url.searchParams.has("lang")) {
+          anchor.href = localizedHome;
+        }
+      }
+    };
+    repair();
+    const observer = new MutationObserver(repair);
+    observer.observe(document.body, { childList: true, subtree: true });
+    return () => observer.disconnect();
+  }, [locale]);
+
+  return null;
 }

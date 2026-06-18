@@ -79,3 +79,14 @@ button,
 input {
   font: inherit;
 }
+
+.cl-rootBox,
+.cl-card,
+.cl-main,
+.cl-footer,
+.cl-form,
+.cl-formField,
+.cl-socialButtonsBlockButton {
+  max-width: 100%;
+  min-width: 0;
+}

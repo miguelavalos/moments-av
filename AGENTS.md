@@ -49,6 +49,10 @@ Mandatory rules:
 - keep account and product APIs split: `ACCOUNTAV_API_BASE_URL` is for shared
   Account AV routes such as `/v1/me`; `MOMENTSAV_API_BASE_URL` is for
   `/v1/apps/momentsav/*`;
+- never trigger real-money spend without explicit approval from the user in the
+  current conversation. Paid provider calls, real purchase flows, production
+  credit-consuming provider routes, and provider evaluation smokes are
+  prohibited until the user approves the exact spend path;
 - use the mock final-render route for no-spend validation unless private docs
   explicitly approve a paid provider smoke;
 - treat "no-spend" as "no paid provider call", not "skip user credit workflow";
