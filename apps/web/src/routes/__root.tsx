@@ -7,8 +7,8 @@ import { getAccountApiBaseUrl, getAccountPublishableKey } from "@/lib/moments-co
 import { localizedAppPath, useMomentsAccountLocalization, useMomentsText } from "@/lib/moments-i18n";
 import "../styles.css";
 
-const faviconUrl = "https://cdn.avalsys.com/apps-av/moments-av/favicon-32x32.png?v=20260619";
-const appleTouchIconUrl = "https://cdn.avalsys.com/apps-av/moments-av/apple-touch-icon.png?v=20260619";
+const faviconUrl = "https://cdn.avalsys.com/apps-av/moments-av/favicon-32x32.png?v=20260619b";
+const appleTouchIconUrl = "https://cdn.avalsys.com/apps-av/moments-av/apple-touch-icon.png?v=20260619b";
 
 export const Route = createRootRoute({
   component: RootComponent,
