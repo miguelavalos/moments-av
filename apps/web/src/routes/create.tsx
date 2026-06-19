@@ -38,6 +38,7 @@ function CreateRoute() {
 
 function CreateAuthed() {
   const text = useMomentsText();
+  const ui = text.createUi;
   const navLinks = useMomentsNavLinks();
   const productConfig = useMomentsProductConfig();
   const shellLabels = useMomentsShellLabels();
@@ -48,7 +49,7 @@ function CreateAuthed() {
   const [story, setStory] = useState<MomentsStoryResponse | null>(null);
   const [renderPlan, setRenderPlan] = useState<MomentsRenderPlanResponse | null>(null);
   const [confirmedPlanId, setConfirmedPlanId] = useState<string | null>(null);
-  const [message, setMessage] = useState("Select media to start.");
+  const [message, setMessage] = useState(ui.selectMediaToStart);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -79,7 +80,7 @@ function CreateAuthed() {
         })
       );
       setMedia((current) => [...current, ...prepared]);
-      setMessage(`${prepared.length} file${prepared.length === 1 ? "" : "s"} ready for upload.`);
+      setMessage(`${prepared.length} ${prepared.length === 1 ? ui.item : ui.items} ready for upload.`);
     } catch (caught) {
       setError(errorMessage(caught));
     } finally {
@@ -93,12 +94,12 @@ function CreateAuthed() {
     setStory(null);
     setRenderPlan(null);
     try {
-      setMessage("Creating workspace...");
+      setMessage(ui.creatingWorkspace);
       const newMomentId = momentId ?? await client.createMoment(form);
       setMomentId(newMomentId);
       await client.updateMomentSetup(newMomentId, form);
 
-      setMessage("Preparing uploads...");
+      setMessage(ui.preparingUploads);
       const uploaded = [];
       for (const item of media) {
         const preparedUpload = await client.prepareUpload(newMomentId, item);
@@ -123,10 +124,10 @@ function CreateAuthed() {
       setMessage("Checking final render cost...");
       const plan = await client.prepareRenderPlan(newMomentId, form, selectedIdentifiers, false);
       setRenderPlan(plan);
-      setMessage(plan.canCreateVideo ? "Render plan ready. Confirm once to create the final video." : plan.createVideoBlockers.join(" "));
+      setMessage(plan.canCreateVideo ? ui.renderPlanReady : plan.createVideoBlockers.join(" "));
     } catch (caught) {
       setError(errorMessage(caught));
-      setMessage("Create flow stopped.");
+      setMessage(ui.flowStopped);
     } finally {
       setBusy(false);
     }
@@ -140,7 +141,7 @@ function CreateAuthed() {
       setMessage("Confirming final render...");
       await client.confirmFinalRender(momentId, form, selectedIdentifiers, renderPlan.planId, renderPlan.plan.renderOptionId, false);
       setConfirmedPlanId(renderPlan.planId);
-      setMessage("Final render confirmed. Follow progress in In Progress, then download and finish to Gallery.");
+      setMessage(ui.finalVideoCreationConfirmed);
     } catch (caught) {
       setError(errorMessage(caught));
     } finally {
@@ -164,7 +165,7 @@ function CreateAuthed() {
 
   return (
     <AppShell accountArea={<AccountUserButton />} footerLabels={text.footer} labels={shellLabels} navLinks={navLinks} product={productConfig}>
-        <section className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_23rem]">
+        <section className="grid gap-5 pb-24 sm:pb-0 xl:grid-cols-[minmax(0,1fr)_23rem]">
           <Card className="moments-canvas gap-6 rounded-lg border-[#e5c1c7] p-5 text-[#20242e] shadow-sm">
             <div>
               <h1 className="text-3xl font-semibold">{text.create.title}</h1>
@@ -173,29 +174,29 @@ function CreateAuthed() {
 
             <div className="grid gap-4 lg:grid-cols-2">
               <label className="rounded-lg border border-dashed border-[#d3aab2] bg-white/70 p-5">
-                <span className="flex items-center gap-2 text-sm font-semibold"><UploadCloud className="size-4" /> Media</span>
+                <span className="flex items-center gap-2 text-sm font-semibold"><UploadCloud className="size-4" /> {ui.media}</span>
                 <Input className="mt-4" multiple accept="image/*,video/*" type="file" onChange={(event) => void addFiles(event.target.files)} />
               </label>
               <div className="rounded-lg border border-[#e5c1c7] bg-white/70 p-5">
-                <p className="text-sm font-semibold">Setup</p>
+                <p className="text-sm font-semibold">{ui.setup}</p>
                 <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                  <Input value={form.occasion} onChange={(event) => setForm({ ...form, occasion: event.target.value, title: event.target.value })} placeholder="Occasion" />
-                  <Input value={form.details} onChange={(event) => setForm({ ...form, details: event.target.value })} placeholder="Details" />
-                  <Select label="Mood" value={form.mood} values={["warm", "playful", "cinematic", "calm", "upbeat"]} onChange={(mood) => setForm({ ...form, mood })} />
-                  <Select label="Duration" value={form.duration} values={["auto", "short", "medium", "long"]} onChange={(duration) => setForm({ ...form, duration })} />
-                  <Select label="Look" value={form.look} values={["real", "cinematic", "clay"]} onChange={(look) => setForm({ ...form, look })} />
-                  <Select label="Media use" value={form.mediaUse} values={["aviPick", "useAll"]} onChange={(mediaUse) => setForm({ ...form, mediaUse })} />
+                  <Input value={form.occasion} onChange={(event) => setForm({ ...form, occasion: event.target.value, title: event.target.value })} placeholder={ui.occasion} />
+                  <Input value={form.details} onChange={(event) => setForm({ ...form, details: event.target.value })} placeholder={ui.details} />
+                  <Select label={ui.mood} value={form.mood} values={["warm", "playful", "cinematic", "calm", "upbeat"]} onChange={(mood) => setForm({ ...form, mood })} />
+                  <Select label={ui.duration} value={form.duration} values={["auto", "short", "medium", "long"]} onChange={(duration) => setForm({ ...form, duration })} />
+                  <Select label={ui.look} value={form.look} values={["real", "cinematic", "clay"]} onChange={(look) => setForm({ ...form, look })} />
+                  <Select label={ui.mediaUse} value={form.mediaUse} values={["aviPick", "useAll"]} onChange={(mediaUse) => setForm({ ...form, mediaUse })} />
                 </div>
               </div>
             </div>
 
             <div className="rounded-lg border border-[#e5c1c7] bg-white/70">
               <div className="flex items-center justify-between border-b border-[#ead1d6] px-4 py-3">
-                <p className="text-sm font-semibold">Selected media</p>
-                <span className="text-xs text-[#6d5960]">{media.length} item{media.length === 1 ? "" : "s"}</span>
+                <p className="text-sm font-semibold">{ui.selectedMedia}</p>
+                <span className="text-xs text-[#6d5960]">{media.length} {media.length === 1 ? ui.item : ui.items}</span>
               </div>
               <div className="divide-y divide-[#ead1d6]">
-                {media.length === 0 ? <p className="p-4 text-sm text-[#6d5960]">No browser media selected.</p> : media.map((item, index) => (
+                {media.length === 0 ? <p className="p-4 text-sm text-[#6d5960]">{ui.noBrowserMedia}</p> : media.map((item, index) => (
                   <div key={item.id} className="grid gap-3 p-4 sm:grid-cols-[1fr_auto] sm:items-center">
                     <div>
                       <p className="truncate text-sm font-medium">{index + 1}. {item.originalFilename}</p>
@@ -213,11 +214,11 @@ function CreateAuthed() {
             <div className="flex flex-wrap items-center gap-3">
               <Button className="bg-[#7c2947] text-white hover:bg-[#963956]" disabled={!canStart} onClick={() => void runCreateFlow()}>
                 {busy ? <Loader2 className="size-4 animate-spin" /> : <Images className="size-4" />}
-                Prepare story and cost
+                {ui.prepareStoryAndCost}
               </Button>
               <Button variant="outline" disabled={!renderPlan?.canCreateVideo || busy || confirmedPlanId === renderPlan?.planId} onClick={() => void confirmFinalRender()}>
                 <Film className="size-4" />
-                Confirm final video
+                {ui.confirmFinalVideo}
               </Button>
               <p className="text-sm text-[#4d5563]">{message}</p>
             </div>
@@ -225,9 +226,9 @@ function CreateAuthed() {
           </Card>
 
           <aside className="grid content-start gap-4">
-            <StatusCard title="Story" value={story ? `${story.scenes.length} scenes · ${story.status}` : "Not planned"} />
-            <StatusCard title="Render plan" value={renderPlan ? `${renderPlan.plan.totalCreditCost} credits · ${renderPlan.plan.rendererMode}` : "Not checked"} />
-            <StatusCard title="Confirm" value={confirmedPlanId ? "Final render queued" : "Waiting for explicit confirmation"} />
+            <StatusCard title={ui.story} value={story ? `${story.scenes.length} scenes · ${story.status}` : ui.notPlanned} />
+            <StatusCard title={ui.renderPlan} value={renderPlan ? `${renderPlan.plan.totalCreditCost} credits · ${renderPlan.plan.rendererMode}` : ui.notChecked} />
+            <StatusCard title={ui.confirm} value={confirmedPlanId ? ui.finalVideoQueued : ui.waitingForConfirmation} />
           </aside>
         </section>
     </AppShell>

@@ -24,6 +24,7 @@ function GalleryRoute() {
 
 function GalleryAuthed() {
   const text = useMomentsText();
+  const ui = text.galleryUi;
   const navLinks = useMomentsNavLinks();
   const productConfig = useMomentsProductConfig();
   const shellLabels = useMomentsShellLabels();
@@ -38,9 +39,9 @@ function GalleryAuthed() {
             <p className="max-w-2xl text-sm leading-6 text-[#4d5563]">{text.gallery.body}</p>
           </Card>
 
-          {gallery.status === "missing-config" ? <StateCard title="Convex cloud URL missing" body="Run the preview Varlock wrapper so VITE_MOMENTSAV_CONVEX_URL points at the cloud dev/preview deployment." /> : null}
-          {gallery.status === "loading" ? <StateCard title="Loading gallery" body="Opening a backend-issued realtime session and subscribing to Gallery Moments." loading /> : null}
-          {gallery.status === "error" ? <StateCard title="Gallery unavailable" body={gallery.error.message} /> : null}
+          {gallery.status === "missing-config" ? <StateCard title={ui.convexMissingTitle} body={ui.convexMissingBody} /> : null}
+          {gallery.status === "loading" ? <StateCard title={ui.galleryLoadingTitle} body={ui.galleryLoadingBody} loading /> : null}
+          {gallery.status === "error" ? <StateCard title={ui.galleryUnavailableTitle} body={gallery.error.message} /> : null}
 
           {gallery.status === "ready" && gallery.data.length === 0 ? (
             <Card className="rounded-lg border-dashed border-[#d3aab2] bg-[#fff8f3]/70 p-6 text-center">
@@ -61,10 +62,12 @@ function GalleryAuthed() {
 }
 
 function GalleryMomentCard({ moment }: { moment: InProgressMoment }) {
+  const text = useMomentsText();
+  const ui = text.galleryUi;
   const client = useMomentsApiClient();
   const artifact = moment.finalExport;
   const [busy, setBusy] = useState(false);
-  const [status, setStatus] = useState(localAvailabilityCopy(artifact));
+  const [status, setStatus] = useState(localAvailabilityCopy(artifact, ui));
 
   async function download() {
     if (!artifact) return;
@@ -75,7 +78,7 @@ function GalleryMomentCard({ moment }: { moment: InProgressMoment }) {
       const prepared = await client.prepareArtifactDownload(moment._id, artifactId);
       const response = await fetch(prepared.downloadUrl, { method: prepared.method, headers: prepared.headers });
       if (!response.ok) {
-        throw new Error("The prepared download did not complete.");
+        throw new Error(ui.downloadFailed);
       }
       const blob = await response.blob();
       const url = URL.createObjectURL(blob);
@@ -84,7 +87,7 @@ function GalleryMomentCard({ moment }: { moment: InProgressMoment }) {
       anchor.download = `${moment.title || "moment"}.mp4`;
       anchor.click();
       URL.revokeObjectURL(url);
-      setStatus("Downloaded in this browser session. Finish to Gallery keeps the cloud record visible even if the local file is later missing.");
+      setStatus(ui.downloaded);
     } catch (caught) {
       setStatus(caught instanceof Error ? caught.message : String(caught));
     } finally {
@@ -99,15 +102,15 @@ function GalleryMomentCard({ moment }: { moment: InProgressMoment }) {
         <p className="mt-1 text-xs uppercase text-[#b94e70]">{moment.status}</p>
       </div>
       <dl className="grid grid-cols-2 gap-3 text-sm">
-        <div><dt className="text-[#6d5960]">Duration</dt><dd>{Math.round(moment.durationSeconds)}s</dd></div>
-        <div><dt className="text-[#6d5960]">Credits</dt><dd>{moment.creditCost}</dd></div>
-        <div><dt className="text-[#6d5960]">Media</dt><dd>{moment.mediaCount ?? moment.mediaPreview?.length ?? 0}</dd></div>
-        <div><dt className="text-[#6d5960]">Artifact</dt><dd>{artifact?.status ?? "missing"}</dd></div>
+        <div><dt className="text-[#6d5960]">{ui.duration}</dt><dd>{Math.round(moment.durationSeconds)}s</dd></div>
+        <div><dt className="text-[#6d5960]">{ui.credits}</dt><dd>{moment.creditCost}</dd></div>
+        <div><dt className="text-[#6d5960]">{ui.media}</dt><dd>{moment.mediaCount ?? moment.mediaPreview?.length ?? 0}</dd></div>
+        <div><dt className="text-[#6d5960]">{ui.artifact}</dt><dd>{artifact?.status ?? ui.missing}</dd></div>
       </dl>
       <p className="min-h-12 text-sm leading-6 text-[#6d5960]">{status}</p>
       <Button variant="outline" disabled={!artifact || busy} onClick={() => void download()}>
         {busy ? <Loader2 className="size-4 animate-spin" /> : <Download className="size-4" />}
-        Prepare download
+        {ui.prepareDownload}
       </Button>
     </Card>
   );
@@ -122,15 +125,15 @@ function StateCard({ body, loading = false, title }: { body: string; loading?: b
   );
 }
 
-function localAvailabilityCopy(artifact: MomentArtifact | null | undefined) {
+function localAvailabilityCopy(artifact: MomentArtifact | null | undefined, ui: ReturnType<typeof useMomentsText>["galleryUi"]) {
   if (!artifact) {
-    return "Gallery metadata exists, but no final artifact is currently projected for download.";
+    return ui.noArtifact;
   }
   if (artifact.status !== "ready") {
-    return "Final artifact metadata is present, but the backend has not marked it ready for download.";
+    return ui.waitingForReady;
   }
   if (artifact.expiresAt && artifact.expiresAt < Date.now()) {
-    return "The cloud record is visible, but this artifact may need backend refresh before download.";
+    return ui.refreshNeeded;
   }
-  return "Remote download metadata is available. This browser has no saved local file until you download it here.";
+  return ui.downloadReady;
 }

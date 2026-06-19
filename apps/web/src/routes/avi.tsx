@@ -24,6 +24,7 @@ function AviRoute() {
 
 function AviAuthed() {
   const text = useMomentsText();
+  const ui = text.aviDashboard;
   const locale = useAppsAvLocale();
   const navLinks = useMomentsNavLinks();
   const productConfig = useMomentsProductConfig();
@@ -43,16 +44,16 @@ function AviAuthed() {
               <div className="flex flex-col justify-between gap-8 p-6 sm:p-8">
                 <div>
                   <p className="flex items-center gap-2 text-sm font-semibold text-[#b94e70]"><Sparkles className="size-4" /> Avi</p>
-                  <h1 className="mt-3 text-4xl font-semibold leading-tight">{headline(activeCount, galleryCount)}</h1>
-                  <p className="mt-4 text-base leading-7 text-[#4d5563]">{guidance(activeCount, galleryCount, proStatus)}</p>
+                  <h1 className="mt-3 text-4xl font-semibold leading-tight">{headline(activeCount, galleryCount, ui)}</h1>
+                  <p className="mt-4 text-base leading-7 text-[#4d5563]">{guidance(activeCount, galleryCount, proStatus, ui)}</p>
                 </div>
                 <div className="flex flex-wrap gap-3">
                   <Button asChild className="bg-[#7c2947] text-white hover:bg-[#963956]">
-                    <a href={localizedAppPath("/create", locale)}><Images className="size-4" /> Create</a>
+                    <a href={localizedAppPath("/create", locale)}><Images className="size-4" /> {ui.create}</a>
                   </Button>
                   <Button asChild variant="outline">
                     <a href={localizedAppPath(activeCount && activeCount > 0 ? "/in-progress" : "/gallery", locale)}>
-                      {activeCount && activeCount > 0 ? "Continue" : "Open gallery"}
+                      {activeCount && activeCount > 0 ? ui.continue : ui.openGallery}
                     </a>
                   </Button>
                 </div>
@@ -64,9 +65,9 @@ function AviAuthed() {
           </Card>
 
           <div className="grid content-start gap-4">
-            <AviCard icon={<WalletCards className="size-4" />} title="Credits" text={proStatus === "active" ? "Your account is active. Final render still uses the render plan as the cost source of truth." : "Avi will block final render when the render plan reports insufficient credits."} />
-            <AviCard icon={<Film className="size-4" />} title="In Progress" text={activeCount === null ? "Realtime state is loading from the cloud projection." : `${activeCount} active Moment${activeCount === 1 ? "" : "s"} available to continue.`} />
-            <AviCard icon={<Images className="size-4" />} title="Gallery" text={galleryCount === null ? "Gallery state is loading from the cloud projection." : `${galleryCount} Gallery Moment${galleryCount === 1 ? "" : "s"} with remote metadata.`} />
+            <AviCard icon={<WalletCards className="size-4" />} title={ui.creditsTitle} text={proStatus === "active" ? ui.creditsActive : ui.creditsBlocked} />
+            <AviCard icon={<Film className="size-4" />} title={ui.inProgressTitle} text={activeCount === null ? ui.inProgressLoading : `${activeCount} ${ui.inProgressReady}`} />
+            <AviCard icon={<Images className="size-4" />} title={ui.galleryTitle} text={galleryCount === null ? ui.galleryLoading : `${galleryCount} ${ui.galleryReady}`} />
           </div>
         </section>
     </AppShell>
@@ -82,15 +83,15 @@ function AviCard({ icon, text, title }: { icon: ReactNode; text: string; title: 
   );
 }
 
-function headline(activeCount: number | null, galleryCount: number | null) {
-  if (activeCount && activeCount > 0) return "Avi is ready to continue your active Moment.";
-  if (galleryCount && galleryCount > 0) return "Avi found finished Moments in your Gallery.";
-  return "Avi is ready to shape a new memory video.";
+function headline(activeCount: number | null, galleryCount: number | null, ui: ReturnType<typeof useMomentsText>["aviDashboard"]) {
+  if (activeCount && activeCount > 0) return ui.activeHeadline;
+  if (galleryCount && galleryCount > 0) return ui.readyGalleryHeadline;
+  return ui.newHeadline;
 }
 
-function guidance(activeCount: number | null, galleryCount: number | null, proStatus: string) {
-  if (activeCount && activeCount > 0) return "Continue from In Progress to inspect media, story scenes, render jobs, artifacts, and finish when Gallery is ready.";
-  if (galleryCount && galleryCount > 0) return "Open Gallery to prepare a download. The cloud record stays separate from this browser's local file availability.";
-  if (proStatus !== "active") return "Start with selected media. The render plan will decide cost and blockers before final confirmation.";
-  return "Choose browser media, upload it to the workspace, ask for a story plan, then confirm the final mock/no-spend render once.";
+function guidance(activeCount: number | null, galleryCount: number | null, proStatus: string, ui: ReturnType<typeof useMomentsText>["aviDashboard"]) {
+  if (activeCount && activeCount > 0) return ui.activeText;
+  if (galleryCount && galleryCount > 0) return ui.readyGalleryText;
+  if (proStatus !== "active") return ui.newText;
+  return ui.proNewText;
 }
