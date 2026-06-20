@@ -18,6 +18,9 @@ handoff values belong in the private AVALSYS suite.
 - [client-architecture-guardrails.md](client-architecture-guardrails.md):
   public-safe iOS ownership rules for backend-owned workflows, backend-issued
   realtime sessions, and subscription-only Convex state.
+- [localization-copy-guide.md](localization-copy-guide.md): public-safe
+  localized copy rules for product terminology, Photos asset wording,
+  placeholder parity, and fallback checks.
 - [web-functional-parity-progress.md](web-functional-parity-progress.md):
   public-safe web parity status, implemented API/realtime surfaces,
   no-real-spend rule, verification, and remaining signed no-spend E2E work.
