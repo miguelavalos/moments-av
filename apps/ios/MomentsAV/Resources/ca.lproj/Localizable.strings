@@ -1023,7 +1023,7 @@
 "create.workflowContent.prepareStoryFirst" = "Prepara la història primer";
 "create.workflowContent.preparedBeforeVideo" = "Preparat abans d'usar crèdits";
 "create.workflowContent.removeMark" = "Eliminar marca de Moments AV";
-"create.workflowContent.addCreditsForVersion" = "Add %@ to create this version.";
+"create.workflowContent.addCreditsForVersion" = "Afegeix %@ per crear aquesta versió.";
 "create.workflowContent.noMarkWithPro" = "Sense marca amb Pro";
 "create.workflowContent.noMarkSelected" = "Sense marca seleccionada";
 "create.workflowContent.includesMark" = "Inclou marca";
@@ -1032,7 +1032,7 @@
 "create.workflowContent.mediaAndTiming" = "Fotos, clips i ritme";
 "create.workflowContent.finalVideoCost" = "%@ vídeo final";
 "create.workflowContent.needsMediaBeforeVideo" = "Avi necessita fotos i clips abans de crear el vídeo.";
-"create.workflowContent.finalEditSummary" = "Avi usarà aquests elements seleccionats, la direcció de la història i el timing per al muntatge final.";
+"create.workflowContent.finalEditSummary" = "Avi usarà aquests elements seleccionats, la direcció de la història i el ritme per al muntatge final.";
 "create.workflowContent.itemCount" = "%d element";
 "create.workflowContent.itemsCount" = "%d elements";
 "create.workflowContent.locked" = "Bloquejat";
