@@ -71,6 +71,9 @@ struct MomentsAppBootstrapView: View {
     }
 
     private var shouldShowOnboarding: Bool {
+        if MomentsUITestEnvironment.current.initialChromeItem != nil {
+            return false
+        }
         guard !authenticationWasSkipped else { return false }
         let rootGate = AVProductAccountAuthFlowRootGate(
             accountState: dependencies.accountController.productAccountState,
