@@ -86,14 +86,18 @@ struct MomentsProfileScreen: View {
 
     @ViewBuilder
     private var accountContent: some View {
-        accountCard
-        if accountController.isSignedIn {
-            creditsCard
-        }
-        momentsProCard
-        if accountController.isSignedIn {
-            accountContinuityCard
+        if MomentsUITestEnvironment.current.showsAccountSafetyOnly {
             accountSafetyCard
+        } else {
+            accountCard
+            if accountController.isSignedIn {
+                creditsCard
+            }
+            momentsProCard
+            if accountController.isSignedIn {
+                accountContinuityCard
+                accountSafetyCard
+            }
         }
     }
 

@@ -46,11 +46,18 @@ struct MomentsUITestEnvironment {
         switch environment["MOMENTSAV_UI_TESTS_INITIAL_CHROME"] {
         case "account":
             return .account
+        case "accountSafety":
+            return .account
         case "settings":
             return .settings
         default:
             return nil
         }
+    }
+
+    var showsAccountSafetyOnly: Bool {
+        guard isEnabled else { return false }
+        return environment["MOMENTSAV_UI_TESTS_INITIAL_CHROME"] == "accountSafety"
     }
 
     var hasAccountOverride: Bool {
