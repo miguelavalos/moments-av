@@ -90,10 +90,10 @@ struct MomentsProfileScreen: View {
             accountSafetyCard
         } else {
             accountCard
+            momentsProCard
             if accountController.isSignedIn {
                 creditsCard
             }
-            momentsProCard
             if accountController.isSignedIn {
                 accountContinuityCard
                 accountSafetyCard
