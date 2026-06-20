@@ -57,8 +57,8 @@
 "profile.preferences.theme.system" = "Système";
 "profile.preferences.theme.title" = "Apparence";
 "profile.preferences.title" = "Préférences de l'app";
-"profile.creationPreferences.title" = "Création de Moments";
-"profile.creationPreferences.subtitle" = "Choisissez comment les nouveaux Moments commencent sur cet appareil.";
+"profile.creationPreferences.title" = "Préférences de Moments AV";
+"profile.creationPreferences.subtitle" = "Ajustez le comportement de création des Moments sur cet appareil.";
 "profile.creationPreferences.start.title" = "Début d'un nouveau Moment";
 "profile.creationPreferences.start.detail" = "Par défaut, la sélection rapide de photos et clips s'ouvre. Changez ce réglage si vous préférez les albums ou un écran de choix.";
 "profile.creationPreferences.start.ask.title" = "Toujours demander";

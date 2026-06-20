@@ -57,8 +57,8 @@
 "profile.preferences.theme.system" = "Sistema";
 "profile.preferences.theme.title" = "Aparença";
 "profile.preferences.title" = "Preferències de l'app";
-"profile.creationPreferences.title" = "Creació de Moments";
-"profile.creationPreferences.subtitle" = "Tria com comencen els nous Moments en aquest dispositiu.";
+"profile.creationPreferences.title" = "Preferències de Moments AV";
+"profile.creationPreferences.subtitle" = "Ajusta el comportament de creació de Moments en aquest dispositiu.";
 "profile.creationPreferences.start.title" = "Inici d'un nou Moment";
 "profile.creationPreferences.start.detail" = "Per defecte obre la selecció ràpida de fotos i clips. Canvia-ho si prefereixes àlbums o una pantalla amb opcions.";
 "profile.creationPreferences.start.ask.title" = "Pregunta sempre";

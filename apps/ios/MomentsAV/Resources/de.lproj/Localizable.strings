@@ -57,8 +57,8 @@
 "profile.preferences.theme.system" = "System";
 "profile.preferences.theme.title" = "Darstellung";
 "profile.preferences.title" = "App-Einstellungen";
-"profile.creationPreferences.title" = "Moment-Erstellung";
-"profile.creationPreferences.subtitle" = "Lege fest, wie neue Moments auf diesem Gerät starten.";
+"profile.creationPreferences.title" = "Moments AV Einstellungen";
+"profile.creationPreferences.subtitle" = "Passe das Erstellungsverhalten von Moments auf diesem Gerät an.";
 "profile.creationPreferences.start.title" = "Start eines neuen Moments";
 "profile.creationPreferences.start.detail" = "Standardmäßig öffnet sich die schnelle Foto- und Clip-Auswahl. Ändere dies, wenn du Alben oder einen Auswahlbildschirm bevorzugst.";
 "profile.creationPreferences.start.ask.title" = "Immer fragen";
