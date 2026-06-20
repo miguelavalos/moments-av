@@ -186,8 +186,8 @@ struct MomentsProfileScreen: View {
             privacyDetail: localized("profile.help.privacy.detail"),
             termsTitle: localized("profile.help.terms.title"),
             termsDetail: localized("profile.help.terms.detail"),
-            accountDeletionTitle: "",
-            accountDeletionDetail: "",
+            accountDeletionTitle: localized("profile.safety.delete.title"),
+            accountDeletionDetail: localized("profile.safety.delete.detail"),
             openURL: { url in openURL(url) }
         )
     }
