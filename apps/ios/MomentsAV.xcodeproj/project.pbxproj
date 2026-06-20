@@ -57,6 +57,12 @@
 		3A028D53D0387A1CF1C27A91 /* MomentsHomePresentationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 750B382E2243221F970E3804 /* MomentsHomePresentationTests.swift */; };
 		3EE79AF8F2E6DF737CA0800F /* MomentsGalleryScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA26EC3DFC46FC20F0858F76 /* MomentsGalleryScreen.swift */; };
 		4172632E981686DEDC63611F /* AccountController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10E6147A66969036F332BBD0 /* AccountController.swift */; };
+		41F1C6C39E9239304E167E21 /* MomentsAccountDeletionPolicyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41F1C6C39E9239304E167E20 /* MomentsAccountDeletionPolicyTests.swift */; };
+		41F1C6C39E9239304E167E11 /* MomentsAccountDeletionClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41F1C6C39E9239304E167E10 /* MomentsAccountDeletionClient.swift */; };
+		41F1C6C39E9239304E167E13 /* MomentsAccountDeletionModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41F1C6C39E9239304E167E12 /* MomentsAccountDeletionModels.swift */; };
+		41F1C6C39E9239304E167E15 /* MomentsAccountDeletionPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41F1C6C39E9239304E167E14 /* MomentsAccountDeletionPolicy.swift */; };
+		41F1C6C39E9239304E167E17 /* MomentsAccountDeletionScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41F1C6C39E9239304E167E16 /* MomentsAccountDeletionScreen.swift */; };
+		41F1C6C39E9239304E167E19 /* MomentsAccountDeletionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41F1C6C39E9239304E167E18 /* MomentsAccountDeletionViewModel.swift */; };
 		43CEDBBE9B0DAD987DA008AC /* MomentsInProgressListGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EA2167BB628439ABFA51C81 /* MomentsInProgressListGroup.swift */; };
 		46508F21B8B4408A15A1074B /* MomentsCreateWorkflowAvailability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0606F4B0CC87E4C7AF6DD11F /* MomentsCreateWorkflowAvailability.swift */; };
 		487F4C3F235411B436BD3E68 /* MomentsCreditProducts.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8DF51672B7512C1427AD327 /* MomentsCreditProducts.swift */; };
@@ -214,6 +220,12 @@
 		0A5E100611E4E7D5B9339969 /* MomentsCreateWorkflowContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MomentsCreateWorkflowContent.swift; sourceTree = "<group>"; };
 		0BF8E97BB52E90642F57F422 /* MomentsHomeSections.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MomentsHomeSections.swift; sourceTree = "<group>"; };
 		10E6147A66969036F332BBD0 /* AccountController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountController.swift; sourceTree = "<group>"; };
+		41F1C6C39E9239304E167E10 /* MomentsAccountDeletionClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MomentsAccountDeletionClient.swift; sourceTree = "<group>"; };
+		41F1C6C39E9239304E167E12 /* MomentsAccountDeletionModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MomentsAccountDeletionModels.swift; sourceTree = "<group>"; };
+		41F1C6C39E9239304E167E14 /* MomentsAccountDeletionPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MomentsAccountDeletionPolicy.swift; sourceTree = "<group>"; };
+		41F1C6C39E9239304E167E16 /* MomentsAccountDeletionScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MomentsAccountDeletionScreen.swift; sourceTree = "<group>"; };
+		41F1C6C39E9239304E167E18 /* MomentsAccountDeletionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MomentsAccountDeletionViewModel.swift; sourceTree = "<group>"; };
+		41F1C6C39E9239304E167E20 /* MomentsAccountDeletionPolicyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MomentsAccountDeletionPolicyTests.swift; sourceTree = "<group>"; };
 		10F64901CE28DED5F8FBD3C8 /* MomentsAviFocusCards.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MomentsAviFocusCards.swift; sourceTree = "<group>"; };
 		11A5237CD029624E93149F89 /* MomentsMediaModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MomentsMediaModels.swift; sourceTree = "<group>"; };
 		12D095393477FF611CAA3D1C /* MomentsCreditGateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MomentsCreditGateTests.swift; sourceTree = "<group>"; };
@@ -496,6 +508,7 @@
 				31D38D81B86509A36813BCA1 /* MomentsCreateTestFixtures.swift */,
 				59F36D7C1C5BBADDFDFD4526 /* MomentsCreateViewModelStoryStateTests.swift */,
 				74A90C01EE023B575C9D3951 /* MomentsCreateWorkflowPresentationTests.swift */,
+				41F1C6C39E9239304E167E20 /* MomentsAccountDeletionPolicyTests.swift */,
 				12D095393477FF611CAA3D1C /* MomentsCreditGateTests.swift */,
 				750B382E2243221F970E3804 /* MomentsHomePresentationTests.swift */,
 				D2F7DB5FD890412921C70147 /* MomentsInProgressArtifactPresentationTests.swift */,
@@ -671,6 +684,8 @@
 		6DDB032BB07FA4237805E7DF /* Profile */ = {
 			isa = PBXGroup;
 			children = (
+				41F1C6C39E9239304E167E16 /* MomentsAccountDeletionScreen.swift */,
+				41F1C6C39E9239304E167E18 /* MomentsAccountDeletionViewModel.swift */,
 				1A890E9549BB7FBCDE3320CD /* MomentsProfileScreen.swift */,
 			);
 			path = Profile;
@@ -934,7 +949,10 @@
 			isa = PBXGroup;
 			children = (
 				10E6147A66969036F332BBD0 /* AccountController.swift */,
+				41F1C6C39E9239304E167E10 /* MomentsAccountDeletionClient.swift */,
 				9532A67B620453F5D6AA15AC /* MomentsAccountContracts.swift */,
+				41F1C6C39E9239304E167E12 /* MomentsAccountDeletionModels.swift */,
+				41F1C6C39E9239304E167E14 /* MomentsAccountDeletionPolicy.swift */,
 			);
 			path = State;
 			sourceTree = "<group>";
@@ -1118,6 +1136,7 @@
 				5A51CF9DF4C15BB63AEF2BD2 /* MomentsCreateTestFixtures.swift in Sources */,
 				7C3BCAE359F6037F21F1A3DD /* MomentsCreateViewModelStoryStateTests.swift in Sources */,
 				39258CE3F97A85104BA00649 /* MomentsCreateWorkflowPresentationTests.swift in Sources */,
+				41F1C6C39E9239304E167E21 /* MomentsAccountDeletionPolicyTests.swift in Sources */,
 				AEBDEFABA1261671A0B306B4 /* MomentsCreditGateTests.swift in Sources */,
 				3A028D53D0387A1CF1C27A91 /* MomentsHomePresentationTests.swift in Sources */,
 				EBAE02F5DAB3D8F0E98937FA /* MomentsInProgressArtifactPresentationTests.swift in Sources */,
@@ -1167,7 +1186,12 @@
 				8CF8CCBDC59743C444E56343 /* MomentsAPIError.swift in Sources */,
 				25DE61AEB481F66A413BBC29 /* MomentsAVApp.swift in Sources */,
 				F44FA016AB4CBAF8E19F6E72 /* MomentsAVSplashView.swift in Sources */,
+				41F1C6C39E9239304E167E11 /* MomentsAccountDeletionClient.swift in Sources */,
 				E900C4D3ACAD73FA7DBE56E4 /* MomentsAccountContracts.swift in Sources */,
+				41F1C6C39E9239304E167E13 /* MomentsAccountDeletionModels.swift in Sources */,
+				41F1C6C39E9239304E167E15 /* MomentsAccountDeletionPolicy.swift in Sources */,
+				41F1C6C39E9239304E167E17 /* MomentsAccountDeletionScreen.swift in Sources */,
+				41F1C6C39E9239304E167E19 /* MomentsAccountDeletionViewModel.swift in Sources */,
 				0872999F687C62F66E92177E /* MomentsAppExperience.swift in Sources */,
 				B7A980D4579FFBE8F5D0903A /* MomentsAppPreferences.swift in Sources */,
 				DD7DE30642A3601B06C88C0E /* MomentsAppShellView.swift in Sources */,

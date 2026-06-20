@@ -21,6 +21,7 @@ struct MomentsProfileScreen: View {
     @State private var showsCreditDetails = false
     @State private var isShowingLocalDataActions = false
     @State private var isClearingLocalData = false
+    @State private var isShowingAccountDeletion = false
 
     var body: some View {
         AVSettingsProfileScreenScaffold(
@@ -51,6 +52,9 @@ struct MomentsProfileScreen: View {
             )
             .presentationDetents([.medium, .large])
             .presentationDragIndicator(.visible)
+        }
+        .sheet(isPresented: $isShowingAccountDeletion) {
+            MomentsAccountDeletionScreen(viewModel: accountDeletionViewModel)
         }
     }
 
@@ -324,7 +328,7 @@ struct MomentsProfileScreen: View {
                 systemImage: "exclamationmark.shield",
                 title: localized("profile.safety.delete.title"),
                 detail: localized("profile.safety.delete.detail"),
-                action: { openURL(appExperience.legalLinks.accountDeletionURL ?? AppConfig.accountDeletionURL) }
+                action: { isShowingAccountDeletion = true }
             )
             .accessibilityIdentifier("profile.safety.delete")
         }
@@ -545,6 +549,13 @@ struct MomentsProfileScreen: View {
             supportURL: appExperience.legalLinks.supportURL,
             privacyURL: appExperience.legalLinks.privacyURL,
             termsURL: appExperience.legalLinks.termsURL
+        )
+    }
+
+    private var accountDeletionViewModel: MomentsAccountDeletionViewModel {
+        MomentsAccountDeletionViewModel(
+            api: MomentsAccountDeletionClient(tokenProvider: accountController.currentBearerToken),
+            signOut: accountController.signOutAfterAccountDeletion
         )
     }
 
