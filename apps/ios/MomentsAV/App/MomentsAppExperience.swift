@@ -37,7 +37,7 @@ enum MomentsAppExperience {
             headerLogoName: "MomentsHeaderWordmark",
             splashLogoName: "MomentsAVLogo",
             splashHeroName: "MomentsSplashHero",
-            onboardingBrandName: "MomentsAVLogo",
+            onboardingBrandName: "MomentsOnboardingWordmark",
             onboardingHeroName: "MomentsOnboardingHero",
             onboardingCTACompanionName: "AviOnboardingCTA",
             onboardingAuthPanelCompanionName: "AviLoginSheetPeek",
