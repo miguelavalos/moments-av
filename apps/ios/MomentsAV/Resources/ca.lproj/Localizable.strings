@@ -14,11 +14,11 @@
 "profile.actions.signOut" = "Tancar sessió";
 "profile.help.privacy.detail" = "Consulta com Moments AV gestiona les teves dades.";
 "profile.help.privacy.title" = "Política de privacitat";
-"profile.help.opensource.detail" = "Moments AV es manté com un Moment open-source i independent.";
+"profile.help.opensource.detail" = "Moments AV es manté com una app open-source i independent.";
 "profile.help.opensource.title" = "Projecte open-source";
 "profile.help.sourceCode.detail" = "Consulta el repositori, les incidències i com contribuir.";
 "profile.help.sourceCode.title" = "Codi font";
-"profile.help.subtitle" = "Obre des d'aquí els enllaços del Moment, suport, privacitat i termes.";
+"profile.help.subtitle" = "Obre des d'aquí suport, privacitat, termes i enllaços del codi font.";
 "profile.help.support.detail" = "Obre el suport de Moments AV.";
 "profile.help.support.title" = "Contactar amb suport";
 "profile.help.terms.detail" = "Revisa els termes aplicables a Moments AV.";
@@ -37,7 +37,7 @@
 "profile.local.keep.gallery.detail" = "Els registres de Galeria vinculats al teu compte es conserven.";
 "profile.local.keep.gallery.title" = "Galeria es conserva";
 "profile.local.keep.photos.detail" = "Les fotos i clips continuen a Fotos.";
-"profile.local.keep.photos.title" = "Fotos es conserva";
+"profile.local.keep.photos.title" = "Fotos i clips es conserven";
 "profile.local.manage" = "Gestionar dades locals";
 "profile.local.media.detail" = "Les seleccions de media usades per esborranys actius de Moments AV es queden en aquest dispositiu.";
 "profile.local.media.title" = "Media seleccionada";

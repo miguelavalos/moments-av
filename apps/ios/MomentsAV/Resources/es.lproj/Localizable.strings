@@ -37,7 +37,7 @@
 "profile.local.keep.gallery.detail" = "Los registros de Galería vinculados a tu cuenta se conservan.";
 "profile.local.keep.gallery.title" = "Galería se conserva";
 "profile.local.keep.photos.detail" = "Las fotos y clips siguen en Fotos.";
-"profile.local.keep.photos.title" = "Fotos se conserva";
+"profile.local.keep.photos.title" = "Fotos y clips se conservan";
 "profile.local.manage" = "Gestionar datos locales";
 "profile.local.media.detail" = "Las selecciones de media usadas por Moments en progreso se quedan en este dispositivo.";
 "profile.local.media.title" = "Media seleccionada";
