@@ -103,6 +103,7 @@ SUPPORT_EMAIL_TO=support@avalsys.com
 MOMENTSAV_PRIVACY_URL=https://moments-av.avalsys.com/privacy
 MOMENTSAV_TERMS_URL=https://moments-av.avalsys.com/terms
 ACCOUNTAV_DELETE_ACCOUNT_URL=https://account-av.avalsys.com/account/delete
+MOMENTSAV_DELETE_ACCOUNT_URL=https://moments-av.avalsys.com/delete-account/
 MOMENTSAV_OPEN_SOURCE_URL=infisical()
 SCHEMA
 
@@ -184,6 +185,7 @@ support_email_to="$(read_required_config SUPPORT_EMAIL_TO)"
 privacy_url="$(read_required_config MOMENTSAV_PRIVACY_URL)"
 terms_url="$(read_required_config MOMENTSAV_TERMS_URL)"
 delete_account_url="$(read_required_config ACCOUNTAV_DELETE_ACCOUNT_URL)"
+moments_delete_account_url="$(read_required_config MOMENTSAV_DELETE_ACCOUNT_URL)"
 open_source_url="$(read_required_config MOMENTSAV_OPEN_SOURCE_URL)"
 
 require_http_url MOMENTSAV_CONVEX_URL "$moments_convex_url"
@@ -197,6 +199,7 @@ esac
 require_http_url MOMENTSAV_PRIVACY_URL "$privacy_url"
 require_http_url MOMENTSAV_TERMS_URL "$terms_url"
 require_http_url ACCOUNTAV_DELETE_ACCOUNT_URL "$delete_account_url"
+require_http_url MOMENTSAV_DELETE_ACCOUNT_URL "$moments_delete_account_url"
 require_http_url MOMENTSAV_OPEN_SOURCE_URL "$open_source_url"
 require_revenuecat_public_key "$revenuecat_api_key"
 [ -n "$revenuecat_offering_id" ] || {
@@ -239,6 +242,7 @@ SUPPORT_EMAIL_TO = $support_email_to
 MOMENTSAV_PRIVACY_URL = $(escape_xcconfig_value "$privacy_url")
 MOMENTSAV_TERMS_URL = $(escape_xcconfig_value "$terms_url")
 ACCOUNTAV_DELETE_ACCOUNT_URL = $(escape_xcconfig_value "$delete_account_url")
+MOMENTSAV_DELETE_ACCOUNT_URL = $(escape_xcconfig_value "$moments_delete_account_url")
 MOMENTSAV_OPEN_SOURCE_URL = $(escape_xcconfig_value "$open_source_url")
 EOF
 )"

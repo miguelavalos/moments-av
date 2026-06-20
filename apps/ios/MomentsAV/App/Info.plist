@@ -53,6 +53,8 @@
 	<string>$(MOMENTSAV_TERMS_URL)</string>
 	<key>ACCOUNTAV_DELETE_ACCOUNT_URL</key>
 	<string>$(ACCOUNTAV_DELETE_ACCOUNT_URL)</string>
+	<key>MOMENTSAV_DELETE_ACCOUNT_URL</key>
+	<string>$(MOMENTSAV_DELETE_ACCOUNT_URL)</string>
 	<key>MOMENTSAV_OPEN_SOURCE_URL</key>
 	<string>$(MOMENTSAV_OPEN_SOURCE_URL)</string>
 	<key>NSPhotoLibraryUsageDescription</key>

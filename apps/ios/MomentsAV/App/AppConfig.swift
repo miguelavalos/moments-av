@@ -62,7 +62,8 @@ enum AppConfig {
     }
 
     static var accountDeletionURL: URL {
-        configuredURL(for: "ACCOUNTAV_DELETE_ACCOUNT_URL", fallback: "https://account.avalsys.com/account/delete")
+        configuredOptionalURL(for: "MOMENTSAV_DELETE_ACCOUNT_URL")
+            ?? configuredURL(for: "ACCOUNTAV_DELETE_ACCOUNT_URL", fallback: "https://account.avalsys.com/account/delete")
     }
 
     static var openSourceURL: URL {

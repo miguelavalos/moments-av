@@ -18,6 +18,7 @@ SUPPORT_EMAIL_TO = $(inherited)
 MOMENTSAV_PRIVACY_URL = $(inherited)
 MOMENTSAV_TERMS_URL = $(inherited)
 ACCOUNTAV_DELETE_ACCOUNT_URL = $(inherited)
+MOMENTSAV_DELETE_ACCOUNT_URL = $(inherited)
 MOMENTSAV_OPEN_SOURCE_URL = $(inherited)
 MOMENTSAV_IOS_SENTRY_DSN = $(inherited)
 
