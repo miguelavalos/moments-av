@@ -18,6 +18,10 @@ repo-local purpose-named `-derivedDataPath` directories and remove repo-local
 `.DerivedData*`/`.derived-data*` caches after the task when no build is using
 them.
 
+Before changing `apps/ios/MomentsAV/Resources/*/Localizable.strings`, read
+`docs/localization-copy-guide.md` and run its key, placeholder, lint, and
+fallback checks before committing.
+
 This public repo does not define the full signed-runtime testing workflow.
 
 For any native app workflow validation that touches signed account state,
