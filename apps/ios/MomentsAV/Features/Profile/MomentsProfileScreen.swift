@@ -160,7 +160,7 @@ struct MomentsProfileScreen: View {
                 AVSettingsButton(
                     title: isClearingLocalData
                         ? localized("profile.local.clear.loading")
-                        : localized("profile.local.manage"),
+                        : localized("profile.actions.manageLocalData"),
                     style: .destructive,
                     action: { isShowingLocalDataActions = true }
                 )

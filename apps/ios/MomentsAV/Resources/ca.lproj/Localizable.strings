@@ -10,6 +10,7 @@
 "profile.account.title" = "Compte";
 "profile.accountScreen.subtitle" = "Gestiona inici de sessió, accés, facturació i seguretat del compte.";
 "profile.accountScreen.title" = "El meu compte";
+"profile.actions.manageLocalData" = "Gestionar l'emmagatzematge";
 "profile.actions.signOut" = "Tancar sessió";
 "profile.help.privacy.detail" = "Consulta com Moments AV gestiona les teves dades.";
 "profile.help.privacy.title" = "Política de privacitat";

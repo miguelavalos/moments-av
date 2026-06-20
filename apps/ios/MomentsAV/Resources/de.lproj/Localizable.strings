@@ -10,6 +10,7 @@
 "profile.account.title" = "Konto";
 "profile.accountScreen.subtitle" = "Verwalte Anmeldung, Zugriff, Abrechnung und Kontosicherheit.";
 "profile.accountScreen.title" = "Mein Konto";
+"profile.actions.manageLocalData" = "Speicher verwalten";
 "profile.actions.signOut" = "Abmelden";
 "profile.help.privacy.detail" = "Erfahre, wie Moments AV mit deinen Daten umgeht.";
 "profile.help.privacy.title" = "Datenschutzerklärung";
