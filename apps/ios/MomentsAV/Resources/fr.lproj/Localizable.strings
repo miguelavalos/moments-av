@@ -47,7 +47,7 @@
 "profile.local.sheet.danger" = "Nettoyage local";
 "profile.local.sheet.subtitle" = "Effacez le travail inachevé de cet appareil sans supprimer les médias Photos, les enregistrements de Galerie, les crédits, les achats ni le compte.";
 "profile.local.sheet.title" = "Données locales";
-"profile.local.subtitle" = "Vos Moments, médias sélectionnés et artefacts générés restent sur cet appareil.";
+"profile.local.subtitle" = "Vos Moments, médias sélectionnés et vidéos générées restent sur cet appareil.";
 "profile.local.title" = "Sur cet appareil";
 "profile.preferences.language.detail" = "Choisissez la langue utilisée par l'interface de Moments AV.";
 "profile.preferences.language.title" = "Langue de l'app";

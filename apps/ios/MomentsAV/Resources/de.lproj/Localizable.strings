@@ -47,7 +47,7 @@
 "profile.local.sheet.danger" = "Lokale Bereinigung";
 "profile.local.sheet.subtitle" = "Entferne unfertige Arbeit von diesem Gerät, ohne Fotos-Medien, Galerie-Einträge, Credits, Käufe oder dein Konto zu löschen.";
 "profile.local.sheet.title" = "Lokale Daten";
-"profile.local.subtitle" = "Deine Moments, ausgewählten Medien und generierten Artefakte bleiben auf diesem Gerät.";
+"profile.local.subtitle" = "Deine Moments, ausgewählten Medien und generierten Videos bleiben auf diesem Gerät.";
 "profile.local.title" = "Auf diesem Gerät";
 "profile.preferences.language.detail" = "Wähle die Sprache der Moments AV Oberfläche.";
 "profile.preferences.language.title" = "App-Sprache";
