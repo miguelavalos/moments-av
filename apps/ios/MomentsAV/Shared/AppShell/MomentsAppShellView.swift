@@ -14,7 +14,7 @@ struct MomentsAppShellView: View {
     @EnvironmentObject private var aviViewModel: MomentsAviViewModel
     @EnvironmentObject private var newMomentStartController: MomentsNewMomentStartController
     @Environment(\.avCommonAppExperience) private var appExperience
-    @State private var chromeItem: AVAppShellChromeItem?
+    @State private var chromeItem: AVAppShellChromeItem? = MomentsUITestEnvironment.current.initialChromeItem
     @State private var creditsPaywallIsPresented = false
     @State private var navigationPath = NavigationPath()
     @State private var navigationStackResetID = UUID()

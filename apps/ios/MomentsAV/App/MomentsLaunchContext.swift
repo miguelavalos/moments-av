@@ -1,3 +1,4 @@
+import AVAppShellFoundation
 import Foundation
 
 struct MomentsLaunchContext {
@@ -38,6 +39,18 @@ struct MomentsUITestEnvironment {
     var createFixture: String? {
         guard isEnabled else { return nil }
         return environment["MOMENTSAV_CREATE_FIXTURE"]
+    }
+
+    var initialChromeItem: AVAppShellChromeItem? {
+        guard isEnabled else { return nil }
+        switch environment["MOMENTSAV_UI_TESTS_INITIAL_CHROME"] {
+        case "account":
+            return .account
+        case "settings":
+            return .settings
+        default:
+            return nil
+        }
     }
 
     var hasAccountOverride: Bool {
