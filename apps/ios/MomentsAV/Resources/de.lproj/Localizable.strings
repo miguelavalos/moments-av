@@ -953,7 +953,7 @@
 "create.story.empty.needsMedia" = "Füge genug Fotos oder Clips hinzu, bevor du die Story vorbereitest.";
 "create.final.status.ready" = "Das finale Video ist bereit.";
 "create.story.status.alreadyReady" = "Der Storyplan ist bereits bereit.";
-"create.final.status.startAnother" = "Start another version with a fresh Moment.";
+"create.final.status.startAnother" = "Starte eine weitere Version mit einem neuen Moment.";
 "create.final.action.creating" = "Finales Video wird erstellt…";
 "create.final.empty.ready" = "Bereit, das finale Video zu erstellen.";
 "create.final.empty.createVideo" = "Erstelle das Video, wenn du bereit bist. Avi prüft zuerst Medien und Credits.";

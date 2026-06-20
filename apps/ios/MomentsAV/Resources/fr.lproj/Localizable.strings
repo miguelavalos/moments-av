@@ -951,7 +951,7 @@
 "create.story.empty.needsMedia" = "Ajoute assez de photos ou clips avant de préparer l’histoire.";
 "create.final.status.ready" = "La vidéo finale est prête.";
 "create.story.status.alreadyReady" = "Le plan de l’histoire est déjà prêt.";
-"create.final.status.startAnother" = "Start another version with a fresh Moment.";
+"create.final.status.startAnother" = "Commence une autre version avec un nouveau Moment.";
 "create.final.action.creating" = "Création de la vidéo finale…";
 "create.final.empty.ready" = "Prêt à créer la vidéo finale quand tu veux.";
 "create.final.empty.createVideo" = "Crée la vidéo quand tu es prêt. Avi vérifie d'abord les médias et les crédits.";

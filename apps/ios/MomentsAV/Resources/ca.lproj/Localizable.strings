@@ -820,10 +820,10 @@
 "create.preparation.uploadForVideo.detailWithCount" = "Enviant %d %@ necessaris per crear el vídeo final.";
 "create.preparation.uploadForVideo.detail" = "Enviant la mèdia seleccionada necessària per crear el vídeo final.";
 "create.preparation.prepareFinalPlan.detail" = "Avi revisa mèdia, opcions i cost.";
-"create.preparation.createVideo.detail" = "Avi está iniciando la edición final. Puede tardar unos minutos.";
+"create.preparation.createVideo.detail" = "Avi està iniciant l'edició final. Pot trigar uns minuts.";
 "create.preparation.prepareStory.progress" = "Preparant història…";
-"create.options.anotherTheme" = "otro tema";
-"create.options.suggestionUsing" = "Usando sugerencia de Avi: %@ · %@";
+"create.options.anotherTheme" = "un altre tema";
+"create.options.suggestionUsing" = "Usant el suggeriment d'Avi: %@ · %@";
 "create.storyDirection.title" = "Direcció de la història";
 "create.storyDirection.detail" = "Comprova el ritme i el missatge abans de gastar crèdits de vídeo.";
 "create.storyDirection.needsStory" = "Avi necessita preparar la història abans de crear el vídeo.";
@@ -951,7 +951,7 @@
 "create.story.empty.needsMedia" = "Afegeix prou fotos o clips abans de preparar la història.";
 "create.final.status.ready" = "El vídeo final està llest.";
 "create.story.status.alreadyReady" = "El pla de la història ja està llest.";
-"create.final.status.startAnother" = "Start another version with a fresh Moment.";
+"create.final.status.startAnother" = "Comença una altra versió amb un Moment nou.";
 "create.final.action.creating" = "Creant vídeo final…";
 "create.final.empty.ready" = "Llest per crear el vídeo final quan vulguis.";
 "create.final.empty.createVideo" = "Crea el vídeo quan estiguis a punt. Avi comprova mèdia i crèdits primer.";
