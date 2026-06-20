@@ -81,6 +81,14 @@
 "profile.pro.sync.detail" = "Les rendus finaux restent sans branding tant que Pro est actif.";
 "profile.pro.sync.title" = "Sans branding";
 "profile.pro.title" = "Moments AV Pro";
+"profile.continuity.title" = "Continuité du compte";
+"profile.continuity.subtitle" = "Votre compte garde les métadonnées des Moments disponibles entre installations et appareils.";
+"profile.continuity.inProgress.title" = "En cours";
+"profile.continuity.inProgress.detail" = "Les Moments actifs peuvent réapparaître après connexion si leur espace de compte est encore disponible.";
+"profile.continuity.gallery.title" = "Métadonnées de Galerie";
+"profile.continuity.gallery.detail" = "Les Moments terminés peuvent être récupérés comme métadonnées de compte, avec la disponibilité du téléchargement indiquée séparément.";
+"profile.continuity.localFiles.title" = "Fichiers vidéo locaux";
+"profile.continuity.localFiles.detail" = "Les vidéos téléchargées et les médias Photos sélectionnés dépendent toujours de cet appareil et de l’accès à Photos.";
 "profile.safety.delete.detail" = "Lancez une demande protégée dans l'app pour votre compte Apps AV partagé.";
 "profile.safety.delete.title" = "Supprimer le compte Apps AV";
 "profile.safety.subtitle" = "Les actions sensibles utilisent Account AV sans vous renvoyer vers une nouvelle connexion web.";

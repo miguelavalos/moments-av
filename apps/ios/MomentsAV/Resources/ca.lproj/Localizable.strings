@@ -81,6 +81,14 @@
 "profile.pro.sync.detail" = "Els vídeos acabats queden sense branding mentre Pro sigui actiu.";
 "profile.pro.sync.title" = "Sense branding";
 "profile.pro.title" = "Moments AV Pro";
+"profile.continuity.title" = "Continuïtat del compte";
+"profile.continuity.subtitle" = "El teu compte manté disponibles les metadades dels Moments entre instal·lacions i dispositius.";
+"profile.continuity.inProgress.title" = "En curs";
+"profile.continuity.inProgress.detail" = "Els Moments actius poden tornar a aparèixer després d’iniciar sessió si el seu espai de compte encara està disponible.";
+"profile.continuity.gallery.title" = "Metadades de Galeria";
+"profile.continuity.gallery.detail" = "Els Moments acabats es poden recuperar com a metadades de compte, amb la disponibilitat de descàrrega indicada a part.";
+"profile.continuity.localFiles.title" = "Fitxers de vídeo locals";
+"profile.continuity.localFiles.detail" = "Els vídeos descarregats i la media seleccionada de Fotos continuen depenent d’aquest dispositiu i de l’accés a Fotos.";
 "profile.safety.delete.detail" = "Inicia una sol·licitud protegida dins l'app per al teu compte compartit d'Apps AV.";
 "profile.safety.delete.title" = "Eliminar el compte d'Apps AV";
 "profile.safety.subtitle" = "Les accions sensibles usen Account AV sense enviar-te a iniciar sessió de nou al web.";

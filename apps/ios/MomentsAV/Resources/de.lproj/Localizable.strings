@@ -81,6 +81,14 @@
 "profile.pro.sync.detail" = "Finale Render bleiben ohne Branding, solange Pro aktiv ist.";
 "profile.pro.sync.title" = "Kein Branding";
 "profile.pro.title" = "Moments AV Pro";
+"profile.continuity.title" = "Kontinuität des Kontos";
+"profile.continuity.subtitle" = "Dein Konto hält Moment-Metadaten über Installationen und Geräte hinweg verfügbar.";
+"profile.continuity.inProgress.title" = "In Bearbeitung";
+"profile.continuity.inProgress.detail" = "Aktive Moments können nach der Anmeldung wieder erscheinen, wenn ihr Konto-Arbeitsbereich noch verfügbar ist.";
+"profile.continuity.gallery.title" = "Galerie-Metadaten";
+"profile.continuity.gallery.detail" = "Fertige Moments können als Konto-Metadaten wiederhergestellt werden; die Download-Verfügbarkeit wird separat angezeigt.";
+"profile.continuity.localFiles.title" = "Lokale Videodateien";
+"profile.continuity.localFiles.detail" = "Geladene Videos und ausgewählte Fotos-Medien hängen weiterhin von diesem Gerät und dem Fotos-Zugriff ab.";
 "profile.safety.delete.detail" = "Starte eine geschützte Anfrage in der App für dein gemeinsames Apps AV-Konto.";
 "profile.safety.delete.title" = "Apps AV-Konto löschen";
 "profile.safety.subtitle" = "Sensible Kontoaktionen nutzen Account AV, ohne dich erneut im Web anzumelden.";

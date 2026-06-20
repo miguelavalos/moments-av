@@ -92,6 +92,7 @@ struct MomentsProfileScreen: View {
         }
         momentsProCard
         if accountController.isSignedIn {
+            accountContinuityCard
             accountSafetyCard
         }
     }
@@ -316,6 +317,32 @@ struct MomentsProfileScreen: View {
             }
         }
         .accessibilityIdentifier("profile.pro.card")
+    }
+
+    private var accountContinuityCard: some View {
+        AVSettingsSectionCard(
+            title: localized("profile.continuity.title"),
+            subtitle: localized("profile.continuity.subtitle")
+        ) {
+            VStack(alignment: .leading, spacing: 12) {
+                AVSettingsInfoRow(
+                    systemImage: "tray.full",
+                    title: localized("profile.continuity.inProgress.title"),
+                    detail: localized("profile.continuity.inProgress.detail")
+                )
+                AVSettingsInfoRow(
+                    systemImage: "play.rectangle.on.rectangle",
+                    title: localized("profile.continuity.gallery.title"),
+                    detail: localized("profile.continuity.gallery.detail")
+                )
+                AVSettingsInfoRow(
+                    systemImage: "iphone",
+                    title: localized("profile.continuity.localFiles.title"),
+                    detail: localized("profile.continuity.localFiles.detail")
+                )
+            }
+        }
+        .accessibilityIdentifier("profile.continuity.card")
     }
 
     private var accountSafetyCard: some View {

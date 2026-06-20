@@ -81,6 +81,14 @@
 "profile.pro.sync.detail" = "Finished videos stay branding-free while Pro is active.";
 "profile.pro.sync.title" = "No branding";
 "profile.pro.title" = "Moments AV Pro";
+"profile.continuity.title" = "Account continuity";
+"profile.continuity.subtitle" = "Your account keeps Moment metadata available across installs and devices.";
+"profile.continuity.inProgress.title" = "In Progress";
+"profile.continuity.inProgress.detail" = "Active Moments can reappear after sign-in when their account workspace is still available.";
+"profile.continuity.gallery.title" = "Gallery metadata";
+"profile.continuity.gallery.detail" = "Finished Moments can recover as account metadata, with download availability shown separately.";
+"profile.continuity.localFiles.title" = "Local video files";
+"profile.continuity.localFiles.detail" = "Downloaded videos and selected Photos media still depend on this device and Photos access.";
 "profile.safety.delete.detail" = "Start a guarded in-app deletion request for your shared Apps AV account.";
 "profile.safety.delete.title" = "Delete Apps AV account";
 "profile.safety.subtitle" = "Sensitive account actions use Account AV without sending you through a second web sign-in.";
