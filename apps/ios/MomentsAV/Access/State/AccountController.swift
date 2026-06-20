@@ -24,6 +24,7 @@ final class AccountController: ObservableObject {
     private let purchaseService: MomentsPurchaseServicing
     private let userDefaults: UserDefaults
     private let lastKnownAccountUserKey = "momentsav.account.lastKnownUser"
+    private var accessRefreshGeneration = 0
 
     init(
         service: AVAccountService = DefaultAVAccountService(),
@@ -77,6 +78,8 @@ final class AccountController: ObservableObject {
     }
 
     func syncFromAccountProvider() async {
+        accessRefreshGeneration += 1
+        let generation = accessRefreshGeneration
         addAccountBreadcrumb("restore_started")
 
         let diagnostics = MomentsProductAccountDiagnostics()
@@ -95,6 +98,8 @@ final class AccountController: ObservableObject {
 
         let productAccountState = await sessionController.restore()
         let diagnosticEvents = await diagnostics.events
+
+        guard generation == accessRefreshGeneration else { return }
 
         if diagnosticEvents.contains(.providerSessionActive) {
             addAccountBreadcrumb("restore_active")
@@ -118,7 +123,7 @@ final class AccountController: ObservableObject {
             user = resolvedUser
             AVDiagnostics.setUserContext(AVDiagnosticsUserContext(id: resolvedUser.id))
             isAccountSessionTemporarilyUnavailable = false
-            await refreshCreditBalance()
+            refreshCreditBalanceInBackground(forGeneration: generation)
         case .temporarilyUnavailable(let session):
             user = AccountAVUser(productAccountUser: session.user)
             AVDiagnostics.setUserContext(AVDiagnosticsUserContext(id: session.user.id))
@@ -164,9 +169,11 @@ final class AccountController: ObservableObject {
 
     func signOut() {
         addAccountBreadcrumb("sign_out_started")
+        accessRefreshGeneration += 1
         startAuthTask { [self] in
             try await self.service.signOut()
             await self.purchaseService.logOut()
+            self.accessRefreshGeneration += 1
             self.user = nil
             AVDiagnostics.clearUserContext()
             self.addAccountBreadcrumb("sign_out_completed")
@@ -178,8 +185,10 @@ final class AccountController: ObservableObject {
 
     func signOutAfterAccountDeletion() async throws {
         addAccountBreadcrumb("account_deletion_sign_out_started")
+        accessRefreshGeneration += 1
         try await service.signOut()
         await purchaseService.logOut()
+        accessRefreshGeneration += 1
         user = nil
         AVDiagnostics.clearUserContext()
         isAccountSessionTemporarilyUnavailable = false
@@ -270,6 +279,40 @@ final class AccountController: ObservableObject {
             isAccountSessionTemporarilyUnavailable = false
             persistLastKnownAccountUser(user)
         } catch {
+            captureAccountError(error, operation: "credit_balance")
+            creditBalanceLoadState = MomentsCreditBalanceLoadState.failureState(for: error)
+            errorMessage = error.localizedDescription
+        }
+    }
+
+    private func refreshCreditBalanceInBackground(forGeneration generation: Int) {
+        creditBalanceLoadState = .loading
+        Task { [weak self] in
+            guard let self else { return }
+            await self.refreshCreditBalance(ifCurrentGeneration: generation)
+        }
+    }
+
+    private func refreshCreditBalance(ifCurrentGeneration generation: Int) async {
+        guard generation == accessRefreshGeneration else { return }
+        guard let user else {
+            resetSignedOutAccountState()
+            return
+        }
+
+        creditBalanceLoadState = .loading
+        do {
+            guard let token = try await currentBackendBearerToken(for: user) else {
+                throw MomentsAPIError(code: "moments_auth_token_missing", message: L10n.string("access.signInRequired.generic"))
+            }
+            let refreshedBalance = try await balanceClient.fetchBalance(bearerToken: token)
+            guard generation == accessRefreshGeneration, self.user?.id == user.id else { return }
+            creditBalance = refreshedBalance
+            creditBalanceLoadState = .loaded
+            isAccountSessionTemporarilyUnavailable = false
+            persistLastKnownAccountUser(user)
+        } catch {
+            guard generation == accessRefreshGeneration, self.user?.id == user.id else { return }
             captureAccountError(error, operation: "credit_balance")
             creditBalanceLoadState = MomentsCreditBalanceLoadState.failureState(for: error)
             errorMessage = error.localizedDescription
