@@ -29,6 +29,32 @@ export function MomentsLoginPage({ comingSoon = false, compact = false }: { comi
 }
 
 function LoginContent({ comingSoon, locale, signInHref, text }: { comingSoon: boolean; locale: ReturnType<typeof useAppsAvLocale>; signInHref: string; text: ReturnType<typeof useMomentsText> }) {
+  if (comingSoon) {
+    return (
+      <main className="moments-guest-stage mx-auto min-h-[32rem] max-w-6xl overflow-hidden rounded-[1.75rem] border border-[#e5c1c7] shadow-2xl shadow-[#7b233f]/14">
+        <img className="moments-guest-backdrop" src={momentsBrandAssets.guestHomeMemory} alt="" />
+        <div className="moments-guest-shade" />
+        <div className="relative z-10 flex min-h-[32rem] items-end p-6 sm:p-10">
+          <div className="max-w-xl rounded-[1.5rem] border border-[#e5c1c7] bg-[#fff8f3]/88 p-6 shadow-xl shadow-[#7b233f]/12 backdrop-blur sm:p-8">
+            <img className="h-auto w-56 max-w-full sm:w-64" src={momentsBrandAssets.logo} alt="Moments AV" />
+            <p className="mt-8 text-sm font-semibold uppercase tracking-[0.18em] text-[#b94e70]">
+              {comingSoonLabel(locale)}
+            </p>
+            <h1 className="mt-4 text-4xl font-semibold leading-tight text-[#112a55] sm:text-5xl">
+              {comingSoonTitle(locale)}
+            </h1>
+            <p className="mt-5 max-w-lg text-base leading-7 text-[#334766]">
+              {comingSoonBody(locale)}
+            </p>
+            <Button disabled className="mt-7 h-12 rounded-full bg-[#7c2947] px-5 text-white shadow-lg shadow-[#7c2947]/18 disabled:opacity-100">
+              {comingSoonLabel(locale)}
+            </Button>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
   const guestScenes = [
     {
       body: text.login.mapBody,
@@ -113,6 +139,26 @@ function LoginContent({ comingSoon, locale, signInHref, text }: { comingSoon: bo
 
 function comingSoonLabel(locale: ReturnType<typeof useAppsAvLocale>) {
   return ({ ca: "Properament", de: "Demnächst", en: "Coming soon", es: "Próximamente", fr: "Prochainement" } as const)[locale] ?? "Coming soon";
+}
+
+function comingSoonTitle(locale: ReturnType<typeof useAppsAvLocale>) {
+  return ({
+    ca: "Els teus records, ben aviat en video.",
+    de: "Deine Erinnerungen, bald als Video.",
+    en: "Your memories, soon shaped into video.",
+    es: "Tus recuerdos, muy pronto convertidos en video.",
+    fr: "Vos souvenirs, bientot transformes en video."
+  } as const)[locale] ?? "Your memories, soon shaped into video.";
+}
+
+function comingSoonBody(locale: ReturnType<typeof useAppsAvLocale>) {
+  return ({
+    ca: "Estem preparant una experiencia guiada per donar forma a fotos i clips seleccionats amb calma, cura i Avi al costat.",
+    de: "Wir bereiten eine gefuhrte Erfahrung vor, die ausgewahlte Fotos und Clips ruhig, sorgfaltig und mit Avi an deiner Seite formt.",
+    en: "A guided experience for selected photos and clips is being prepared with care, calm pacing, and Avi close by.",
+    es: "Estamos preparando una experiencia guiada para dar forma a fotos y clips seleccionados con calma, cuidado y Avi cerca.",
+    fr: "Nous preparons une experience guidee pour donner forme a vos photos et clips choisis, avec calme, soin et Avi a vos cotes."
+  } as const)[locale] ?? "A guided experience for selected photos and clips is being prepared with care, calm pacing, and Avi close by.";
 }
 
 function LoginMetric({ icon, label }: { icon: ReactNode; label: string }) {
