@@ -1,13 +1,12 @@
-import { AccountUserButton } from "@avalsys/account-av-web";
-import { AppShell } from "@avalsys/apps-av-web";
 import { createFileRoute } from "@tanstack/react-router";
 import { Download, Film, Loader2, RotateCw } from "lucide-react";
 import { useState } from "react";
+import { MomentsAppShell } from "@/components/moments-app-shell";
 import { ProtectedRoute } from "@/components/protected-route";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useMomentsApiClient, useMomentsList } from "@/lib/moments-hooks";
-import { useMomentsNavLinks, useMomentsProductConfig, useMomentsShellLabels, useMomentsText } from "@/lib/moments-i18n";
+import { useMomentsText } from "@/lib/moments-i18n";
 import type { InProgressMoment, MomentArtifact } from "@/lib/moments-types";
 
 export const Route = createFileRoute("/gallery")({
@@ -25,13 +24,10 @@ function GalleryRoute() {
 function GalleryAuthed() {
   const text = useMomentsText();
   const ui = text.galleryUi;
-  const navLinks = useMomentsNavLinks();
-  const productConfig = useMomentsProductConfig();
-  const shellLabels = useMomentsShellLabels();
   const gallery = useMomentsList("gallery");
 
   return (
-    <AppShell accountArea={<AccountUserButton />} footerLabels={text.footer} labels={shellLabels} navLinks={navLinks} product={productConfig}>
+    <MomentsAppShell>
         <section className="grid gap-5">
           <Card className="moments-canvas gap-3 rounded-lg border-[#e5c1c7] p-5 text-[#20242e] shadow-sm">
             <p className="text-sm font-semibold uppercase text-[#b94e70]">{text.gallery.kicker}</p>
@@ -57,7 +53,7 @@ function GalleryAuthed() {
             </div>
           ) : null}
         </section>
-    </AppShell>
+    </MomentsAppShell>
   );
 }
 

@@ -90,3 +90,16 @@ input {
   max-width: 100%;
   min-width: 0;
 }
+
+@media (max-width: 760px) {
+  .moments-guest-title {
+    max-width: 11ch;
+    font-size: clamp(2.25rem, 11vw, 3rem);
+    overflow-wrap: anywhere;
+  }
+
+  .moments-guest-body {
+    max-width: 18rem;
+    overflow-wrap: anywhere;
+  }
+}

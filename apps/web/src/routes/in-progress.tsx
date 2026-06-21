@@ -1,14 +1,13 @@
-import { AccountUserButton } from "@avalsys/account-av-web";
-import { AppShell } from "@avalsys/apps-av-web";
 import { createFileRoute } from "@tanstack/react-router";
 import { ArrowRight, Loader2, Trash2 } from "lucide-react";
 import { useState } from "react";
+import { MomentsAppShell } from "@/components/moments-app-shell";
 import { ProtectedRoute } from "@/components/protected-route";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useMomentsApiClient, useMomentWorkspace, useMomentsList } from "@/lib/moments-hooks";
-import { localizedAppPath, useMomentsNavLinks, useMomentsProductConfig, useMomentsShellLabels, useMomentsText } from "@/lib/moments-i18n";
+import { localizedAppPath, useMomentsText } from "@/lib/moments-i18n";
 import type { InProgressMoment } from "@/lib/moments-types";
 import { useAppsAvLocale } from "@avalsys/apps-av-web";
 
@@ -28,16 +27,13 @@ function InProgressAuthed() {
   const text = useMomentsText();
   const ui = text.inProgressUi;
   const locale = useAppsAvLocale();
-  const navLinks = useMomentsNavLinks();
-  const productConfig = useMomentsProductConfig();
-  const shellLabels = useMomentsShellLabels();
   const moments = useMomentsList("in_progress");
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const selected = selectedId ?? (moments.status === "ready" ? moments.data[0]?._id ?? null : null);
   const workspace = useMomentWorkspace(selected);
 
   return (
-    <AppShell accountArea={<AccountUserButton />} footerLabels={text.footer} labels={shellLabels} navLinks={navLinks} product={productConfig}>
+    <MomentsAppShell>
         <section className="grid gap-5 xl:grid-cols-[22rem_minmax(0,1fr)]">
           <Card className="moments-canvas gap-4 rounded-lg border-[#e5c1c7] p-5 text-[#20242e] shadow-sm">
             <div>
@@ -68,7 +64,7 @@ function InProgressAuthed() {
 
           <WorkspacePanel moment={moments.status === "ready" ? moments.data.find((item) => item._id === selected) : undefined} status={workspace} />
         </section>
-    </AppShell>
+    </MomentsAppShell>
   );
 }
 

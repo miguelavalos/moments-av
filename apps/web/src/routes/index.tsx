@@ -1,13 +1,14 @@
-import { AccountUserButton, SignedIn, SignedOut } from "@avalsys/account-av-web";
-import { AppShell, useAppsAvLocale } from "@avalsys/apps-av-web";
+import { SignedIn, SignedOut } from "@avalsys/account-av-web";
+import { useAppsAvLocale } from "@avalsys/apps-av-web";
 import { createFileRoute } from "@tanstack/react-router";
 import { ArrowRight, Film, Images, SlidersHorizontal, Sparkles } from "lucide-react";
 import type { ReactNode } from "react";
+import { MomentsAppShell } from "@/components/moments-app-shell";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { MomentsLoginPage } from "@/components/moments-login-page";
 import { momentsBrandAssets } from "@/lib/moments-config";
-import { localizedAppPath, useMomentsNavLinks, useMomentsProductConfig, useMomentsShellLabels, useMomentsText } from "@/lib/moments-i18n";
+import { localizedAppPath, useMomentsText } from "@/lib/moments-i18n";
 
 export const Route = createFileRoute("/")({
   component: IndexRoute
@@ -16,18 +17,10 @@ export const Route = createFileRoute("/")({
 function IndexRoute() {
   const text = useMomentsText();
   const locale = useAppsAvLocale();
-  const navLinks = useMomentsNavLinks();
-  const productConfig = useMomentsProductConfig();
-  const shellLabels = useMomentsShellLabels();
   const homeIcons = [<Images className="size-4" />, <SlidersHorizontal className="size-4" />, <Film className="size-4" />];
 
   return (
-    <>
-      <SignedOut>
-        <MomentsLoginPage />
-      </SignedOut>
-      <SignedIn>
-        <AppShell accountArea={<AccountUserButton />} footerLabels={text.footer} labels={shellLabels} navLinks={navLinks} product={productConfig}>
+    <MomentsAppShell>
           <section className="grid gap-6 lg:grid-cols-[1fr_22rem]">
             <Card className="moments-canvas gap-0 overflow-hidden rounded-[1.5rem] border-[#e5c1c7] p-6 py-6 shadow-lg shadow-[#7b233f]/8 sm:p-8 sm:py-8">
               <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
@@ -37,10 +30,18 @@ function IndexRoute() {
                     {text.home.body}
                   </p>
                 </div>
-                <a href={localizedAppPath("/create", locale)}>
-                  {text.home.cta}
-                  <ArrowRight className="size-4" aria-hidden="true" />
-                </a>
+                <SignedIn>
+                  <a href={localizedAppPath("/create", locale)}>
+                    {text.home.cta}
+                    <ArrowRight className="size-4" aria-hidden="true" />
+                  </a>
+                </SignedIn>
+                <SignedOut>
+                  <a href={localizedAppPath("/sign-in", locale)}>
+                    {text.login.cta}
+                    <ArrowRight className="size-4" aria-hidden="true" />
+                  </a>
+                </SignedOut>
               </div>
               <div className="mt-8 grid gap-3 sm:grid-cols-3">
                 {text.home.items.map((item, index) => (
@@ -63,9 +64,12 @@ function IndexRoute() {
               <img className="mt-auto h-56 w-full object-cover object-bottom" src={momentsBrandAssets.onboarding} alt="" />
             </Card>
           </section>
-        </AppShell>
-      </SignedIn>
-    </>
+      <SignedOut>
+        <div className="mt-6">
+          <MomentsLoginPage compact />
+        </div>
+      </SignedOut>
+    </MomentsAppShell>
   );
 }
 

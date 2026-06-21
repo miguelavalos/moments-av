@@ -995,8 +995,7 @@ export function useMomentsNavLinks(): AppsAvProductLink[] {
     { href: localizedAppPath("/", locale), label: text.nav.home },
     { href: localizedAppPath("/create", locale), label: text.nav.create },
     { href: localizedAppPath("/in-progress", locale), label: inProgress },
-    { href: localizedAppPath("/gallery", locale), label: text.nav.gallery },
-    { href: localizedAppPath("/avi", locale), label: text.nav.avi }
+    { href: localizedAppPath("/gallery", locale), label: text.nav.gallery }
   ];
 }
 

@@ -1,15 +1,14 @@
-import { AccountUserButton } from "@avalsys/account-av-web";
-import { AppShell } from "@avalsys/apps-av-web";
 import { createFileRoute } from "@tanstack/react-router";
 import { ArrowDown, ArrowUp, Film, Images, Loader2, UploadCloud } from "lucide-react";
 import { useMemo, useState } from "react";
+import { MomentsAppShell } from "@/components/moments-app-shell";
 import { ProtectedRoute } from "@/components/protected-route";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { fileSha256, MomentsApiError } from "@/lib/moments-api";
 import { useMomentsApiClient } from "@/lib/moments-hooks";
-import { useMomentsNavLinks, useMomentsProductConfig, useMomentsShellLabels, useMomentsText } from "@/lib/moments-i18n";
+import { useMomentsText } from "@/lib/moments-i18n";
 import type { MomentSetupForm, MomentsRenderPlanResponse, MomentsStoryResponse, WebSelectedMedia } from "@/lib/moments-types";
 
 export const Route = createFileRoute("/create")({
@@ -39,9 +38,6 @@ function CreateRoute() {
 function CreateAuthed() {
   const text = useMomentsText();
   const ui = text.createUi;
-  const navLinks = useMomentsNavLinks();
-  const productConfig = useMomentsProductConfig();
-  const shellLabels = useMomentsShellLabels();
   const client = useMomentsApiClient();
   const [form, setForm] = useState(defaultForm);
   const [media, setMedia] = useState<WebSelectedMedia[]>([]);
@@ -164,7 +160,7 @@ function CreateAuthed() {
   }
 
   return (
-    <AppShell accountArea={<AccountUserButton />} footerLabels={text.footer} labels={shellLabels} navLinks={navLinks} product={productConfig}>
+    <MomentsAppShell>
         <section className="grid gap-5 pb-24 sm:pb-0 xl:grid-cols-[minmax(0,1fr)_23rem]">
           <Card className="moments-canvas gap-6 rounded-lg border-[#e5c1c7] p-5 text-[#20242e] shadow-sm">
             <div>
@@ -231,7 +227,7 @@ function CreateAuthed() {
             <StatusCard title={ui.confirm} value={confirmedPlanId ? ui.finalVideoQueued : ui.waitingForConfirmation} />
           </aside>
         </section>
-    </AppShell>
+    </MomentsAppShell>
   );
 }
 

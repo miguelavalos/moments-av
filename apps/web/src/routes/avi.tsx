@@ -1,14 +1,15 @@
-import { AccountUserButton, useAccountAppAccess } from "@avalsys/account-av-web";
-import { AppShell, useAppsAvLocale } from "@avalsys/apps-av-web";
+import { useAccountAppAccess } from "@avalsys/account-av-web";
+import { useAppsAvLocale } from "@avalsys/apps-av-web";
 import { createFileRoute } from "@tanstack/react-router";
 import { Film, Images, Sparkles, WalletCards } from "lucide-react";
 import type { ReactNode } from "react";
+import { MomentsAppShell } from "@/components/moments-app-shell";
 import { ProtectedRoute } from "@/components/protected-route";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { momentsBrandAssets } from "@/lib/moments-config";
 import { useMomentsList } from "@/lib/moments-hooks";
-import { localizedAppPath, useMomentsNavLinks, useMomentsProductConfig, useMomentsShellLabels, useMomentsText } from "@/lib/moments-i18n";
+import { localizedAppPath, useMomentsText } from "@/lib/moments-i18n";
 
 export const Route = createFileRoute("/avi")({
   component: AviRoute
@@ -26,9 +27,6 @@ function AviAuthed() {
   const text = useMomentsText();
   const ui = text.aviDashboard;
   const locale = useAppsAvLocale();
-  const navLinks = useMomentsNavLinks();
-  const productConfig = useMomentsProductConfig();
-  const shellLabels = useMomentsShellLabels();
   const inProgress = useMomentsList("in_progress");
   const gallery = useMomentsList("gallery");
   const access = useAccountAppAccess("momentsav");
@@ -37,7 +35,7 @@ function AviAuthed() {
   const galleryCount = gallery.status === "ready" ? gallery.data.length : null;
 
   return (
-    <AppShell accountArea={<AccountUserButton />} footerLabels={text.footer} labels={shellLabels} navLinks={navLinks} product={productConfig}>
+    <MomentsAppShell>
         <section className="grid gap-5 lg:grid-cols-[1.05fr_0.95fr]">
           <Card className="moments-canvas gap-0 overflow-hidden rounded-lg border-[#e5c1c7] p-0 text-[#20242e] shadow-sm">
             <div className="grid min-h-[30rem] lg:grid-cols-[0.95fr_1.05fr]">
@@ -70,7 +68,7 @@ function AviAuthed() {
             <AviCard icon={<Images className="size-4" />} title={ui.galleryTitle} text={galleryCount === null ? ui.galleryLoading : `${galleryCount} ${ui.galleryReady}`} />
           </div>
         </section>
-    </AppShell>
+    </MomentsAppShell>
   );
 }
 
