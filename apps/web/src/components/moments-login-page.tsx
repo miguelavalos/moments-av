@@ -35,7 +35,7 @@ function LoginContent({ comingSoon, locale, signInHref, text }: { comingSoon: bo
         <img className="moments-guest-backdrop" src={momentsBrandAssets.guestHomeMemory} alt="" />
         <div className="moments-guest-shade" />
         <div className="relative z-10 flex min-h-[32rem] items-end p-6 sm:p-10">
-          <div className="max-w-xl rounded-[1.5rem] border border-[#e5c1c7] bg-[#fff8f3]/88 p-6 shadow-xl shadow-[#7b233f]/12 backdrop-blur sm:p-8">
+          <div className="max-w-2xl pb-2">
             <img className="h-auto w-56 max-w-full sm:w-64" src={momentsBrandAssets.logo} alt="Moments AV" />
             <p className="mt-8 text-sm font-semibold uppercase tracking-[0.18em] text-[#b94e70]">
               {comingSoonLabel(locale)}
