@@ -59,8 +59,7 @@ function IndexRoute() {
 
         <section className="grid gap-5 lg:grid-cols-[0.88fr_1.12fr]">
           <Card className="moments-public-copy-card gap-0 rounded-[1.25rem] border-[#e5c1c7] p-6 py-6 shadow-lg shadow-[#7b233f]/8">
-            <img className="h-auto w-44 max-w-full" src={momentsBrandAssets.wordmark} alt="Moments AV" />
-            <h2 className="mt-7 max-w-lg text-3xl font-semibold leading-tight text-[#20242e] sm:text-4xl">{text.login.heroTitle}</h2>
+            <h2 className="max-w-lg text-3xl font-semibold leading-tight text-[#20242e] sm:text-4xl">{text.login.heroTitle}</h2>
             <p className="mt-4 max-w-xl text-base leading-7 text-[#4d5563]">{text.login.heroBody}</p>
             <div className="mt-6 grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
               <NotebookItem icon={<Images className="size-4" />} label={text.login.search} value={text.home.items[0]?.value ?? text.login.cardBody} />
