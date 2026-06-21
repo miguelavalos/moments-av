@@ -30,9 +30,24 @@ export function MomentsLoginPage({ compact = false }: { compact?: boolean }) {
 
 function LoginContent({ locale: _locale, signInHref, text }: { locale: ReturnType<typeof useAppsAvLocale>; signInHref: string; text: ReturnType<typeof useMomentsText> }) {
   void _locale;
+  const guestScenes = [
+    {
+      body: text.login.mapBody,
+      src: momentsBrandAssets.guestHomePath,
+      title: text.login.mapTitle
+    },
+    {
+      body: text.login.cardBody,
+      src: momentsBrandAssets.guestHomeAlbum,
+      title: text.login.cardTitle
+    }
+  ];
+
   return (
-    <main className="mx-auto grid min-h-[32rem] max-w-6xl overflow-hidden rounded-[1.75rem] border border-[#e5c1c7] bg-[#fff8f3]/90 shadow-2xl shadow-[#7b233f]/14 backdrop-blur md:grid-cols-[0.95fr_1.05fr]">
-      <section className="flex min-w-0 flex-col justify-between gap-10 p-7 sm:p-10 lg:p-12">
+    <main className="moments-guest-stage mx-auto min-h-[32rem] max-w-6xl overflow-hidden rounded-[1.75rem] border border-[#e5c1c7] shadow-2xl shadow-[#7b233f]/14">
+      <img className="moments-guest-backdrop" src={momentsBrandAssets.guestHomeMemory} alt="" />
+      <div className="moments-guest-shade" />
+      <section className="moments-guest-copy">
         <div>
           <img className="h-auto w-56 max-w-full sm:w-64" src={momentsBrandAssets.logo} alt="Moments AV" />
           <p className="mt-4 max-w-sm text-sm leading-6 text-[#314568]">
@@ -67,31 +82,25 @@ function LoginContent({ locale: _locale, signInHref, text }: { locale: ReturnTyp
         </div>
       </section>
 
-      <section className="relative min-h-[32rem] overflow-hidden bg-[#20242e] p-6 text-white lg:min-h-full">
-        <div className="absolute inset-0 bg-[linear-gradient(160deg,#4c2736_0%,#20242e_52%,#11151d_100%)]" />
-        <div className="relative flex h-full flex-col justify-between gap-6 overflow-hidden rounded-[1.4rem] border border-white/14 bg-[#fbf7f2] p-5 text-[#20242e] shadow-2xl shadow-black/24">
-          <img className="absolute inset-y-0 right-0 h-full w-[60%] object-cover object-center opacity-90 sm:w-[58%]" src={momentsBrandAssets.onboarding} alt="" />
-          <div className="relative max-w-xs">
-            <p className="font-serif text-3xl leading-tight text-[#20242e]">{text.login.mapTitle}</p>
-            <p className="mt-4 text-sm leading-6 text-[#4d5563]">
-              {text.login.mapBody}
-            </p>
-          </div>
-          <Card className="relative mt-auto max-w-sm gap-2 rounded-2xl border-[#e5c1c7] bg-[#fff8f3]/90 p-5 py-5 text-[#20242e] shadow-xl shadow-[#7c2947]/12">
-            <p className="flex items-center gap-2 text-sm font-semibold">
-              <ListChecks className="size-4 text-[#b94e70]" aria-hidden="true" />
-              {text.login.cardTitle}
-            </p>
-            <p className="mt-2 text-sm leading-6 text-[#47566f]">
-              {text.login.cardBody}
-            </p>
-          </Card>
-          <img
-            className="absolute bottom-0 right-4 w-44 translate-y-8 drop-shadow-2xl sm:right-8 sm:w-52 lg:w-60"
-            src={momentsBrandAssets.aviLoginSheetPeek}
-            alt="Avi"
-          />
-        </div>
+      <section className="moments-guest-gallery" aria-hidden="true">
+        {guestScenes.map((scene, index) => (
+          <article className={`moments-guest-scene moments-guest-scene-${index + 1}`} key={scene.src}>
+            <img src={scene.src} alt="" />
+            <div>
+              <p className="font-serif text-2xl leading-tight text-[#20242e]">{scene.title}</p>
+              <p className="mt-2 text-sm leading-6 text-[#4d5563]">{scene.body}</p>
+            </div>
+          </article>
+        ))}
+        <Card className="moments-guest-note relative gap-2 rounded-2xl border-[#e5c1c7] bg-[#fff8f3]/92 p-5 py-5 text-[#20242e] shadow-xl shadow-[#7c2947]/12">
+          <p className="flex items-center gap-2 text-sm font-semibold">
+            <ListChecks className="size-4 text-[#b94e70]" aria-hidden="true" />
+            {text.login.cardTitle}
+          </p>
+          <p className="mt-2 text-sm leading-6 text-[#47566f]">
+            {text.login.cardBody}
+          </p>
+        </Card>
       </section>
     </main>
   );

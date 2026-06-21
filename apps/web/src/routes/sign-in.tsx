@@ -19,7 +19,8 @@ function SignInRoute() {
     <div className="moments-canvas flex min-h-screen min-w-0 flex-col overflow-x-hidden bg-[#fbf7f2]">
       <main className="grid flex-1 lg:grid-cols-[0.92fr_1.08fr]">
         <section className="relative hidden min-h-screen overflow-hidden bg-[#20242e] p-10 text-white lg:flex lg:flex-col lg:justify-between">
-          <div className="absolute inset-0 bg-[linear-gradient(160deg,#5e3041_0%,#20242e_54%,#11151d_100%)]" />
+          <img className="absolute inset-0 h-full w-full object-cover object-center opacity-58" src={momentsBrandAssets.guestHomeAlbum} alt="" />
+          <div className="absolute inset-0 bg-[linear-gradient(160deg,rgb(94_48_65/0.95)_0%,rgb(32_36_46/0.84)_50%,rgb(17_21_29/0.74)_100%)]" />
           <a className="relative inline-flex items-center gap-2 text-sm font-medium text-white/76 transition hover:text-white" href={localizedAppPath("/", locale)}>
             <ArrowLeft className="size-4" aria-hidden="true" />
             Moments AV
@@ -31,7 +32,7 @@ function SignInRoute() {
               {text.signIn.body}
             </p>
           </div>
-          <div className="relative overflow-hidden rounded-[1.5rem] border border-white/12 bg-[#fbf7f2] p-5 pb-0 text-[#20242e] shadow-2xl shadow-black/22">
+          <div className="relative overflow-hidden rounded-[1.5rem] border border-white/12 bg-[#fbf7f2]/92 p-5 pb-0 text-[#20242e] shadow-2xl shadow-black/22 backdrop-blur">
             <div className="relative z-10 max-w-xs pb-28">
               <p className="text-sm font-semibold text-[#b94e70]">Avi</p>
               <p className="mt-2 font-serif text-3xl leading-tight">{text.signIn.aviPanelBody}</p>
