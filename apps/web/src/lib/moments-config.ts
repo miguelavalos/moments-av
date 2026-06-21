@@ -1,5 +1,7 @@
 import type { AppsAvProductConfig } from "@avalsys/apps-av-web";
 
+const momentsCommercialWordmarkUrl = "https://cdn.avalsys.com/apps-av/moments-av/web-v2/moments-av-wordmark.webp";
+
 export const momentsProductConfig: AppsAvProductConfig = {
   appId: "momentsav",
   accentColor: "#B94E70",
@@ -10,8 +12,8 @@ export const momentsProductConfig: AppsAvProductConfig = {
     name: "Avi"
   },
   iconSrc: "/assets/moments-av-icon.webp",
-  logoSrc: "/assets/moments-av-logo.webp",
-  logoDarkSrc: "/assets/moments-av-logo.webp",
+  logoSrc: momentsCommercialWordmarkUrl,
+  logoDarkSrc: momentsCommercialWordmarkUrl,
   name: "Moments AV",
   links: {
     deleteAccount: externalLink(accountManagementUrl("/account/delete"), "Delete account"),
