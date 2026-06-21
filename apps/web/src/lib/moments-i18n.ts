@@ -1008,7 +1008,7 @@ export function useMomentsProductConfig(): AppsAvProductConfig {
     links: Object.fromEntries(
       Object.entries(momentsProductConfig.links).map(([key, link]) => [
         key,
-        link ? { ...link, href: preserveLangForLocalHref(link.href, locale) } : link
+        link ? { ...link, href: localizedProductHref(link.href, locale) } : link
       ])
     ) as AppsAvProductConfig["links"],
     assistant: momentsProductConfig.assistant
@@ -1040,4 +1040,23 @@ function preserveLangForLocalHref(href: string, locale: AppsAvLocale) {
   }
 
   return href;
+}
+
+function localizedProductHref(href: string, locale: AppsAvLocale) {
+  if (href.startsWith("/") && !href.startsWith("//")) {
+    return preserveLangForLocalHref(href, locale);
+  }
+
+  if (locale === "en") {
+    return href;
+  }
+
+  try {
+    const url = new URL(href);
+    const path = url.pathname === "/" ? "" : url.pathname.replace(/^\/(en|es|fr|de|ca)(?=\/|$)/, "");
+    url.pathname = `/${locale}${path}`;
+    return url.toString().replace(/\/$/, "");
+  } catch {
+    return href;
+  }
 }
