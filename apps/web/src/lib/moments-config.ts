@@ -9,9 +9,9 @@ export const momentsProductConfig: AppsAvProductConfig = {
     label: "Open Avi guidance",
     name: "Avi"
   },
-  iconSrc: "/assets/moments-av-icon.png",
-  logoSrc: "/assets/moments-av-logo.png",
-  logoDarkSrc: "/assets/moments-av-logo.png",
+  iconSrc: "/assets/moments-av-icon.webp",
+  logoSrc: "/assets/moments-av-logo.webp",
+  logoDarkSrc: "/assets/moments-av-logo.webp",
   name: "Moments AV",
   links: {
     deleteAccount: externalLink(accountManagementUrl("/account/delete"), "Delete account"),
@@ -24,16 +24,16 @@ export const momentsProductConfig: AppsAvProductConfig = {
 
 export const momentsBrandAssets = {
   aviFullBody: "/assets/avi-full-body.png",
-  aviLoginPeek: "/assets/moments-splash-hero.jpg",
+  aviLoginPeek: "/assets/moments-splash-hero.webp",
   aviLoginSheetPeek: "/assets/avi-login-sheet-peek.png",
   aviOnboardingCta: "/assets/avi-onboarding-cta.png",
   guestHomeMemory: "/assets/moments-av-guest-home-1.webp",
   guestHomePath: "/assets/moments-av-guest-home-2.webp",
   guestHomeAlbum: "/assets/moments-av-guest-home-3.webp",
-  hero: "/assets/moments-splash-hero.jpg",
-  logo: "/assets/moments-av-logo.png",
-  onboarding: "/assets/moments-onboarding-hero.jpg",
-  wordmark: "/assets/moments-av-wordmark.png"
+  hero: "/assets/moments-splash-hero.webp",
+  logo: "/assets/moments-av-logo.webp",
+  onboarding: "/assets/moments-onboarding-hero.webp",
+  wordmark: "/assets/moments-av-wordmark.webp"
 } as const;
 
 export function getMomentsApiBaseUrl() {
