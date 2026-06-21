@@ -84,6 +84,7 @@ function WorkspacePanel({ moment, status }: { moment?: InProgressMoment; status:
 
   async function remove() {
     if (!moment) return;
+    if (!window.confirm(ui.confirmDelete)) return;
     await client.deleteMoment(moment._id);
     setMessage(ui.deleteSent);
   }
