@@ -51,6 +51,10 @@ export function getAccountPublishableKey() {
   return import.meta.env.VITE_ACCOUNTAV_PUBLISHABLE_KEY as string | undefined;
 }
 
+export function isMomentsWebAppComingSoon() {
+  return import.meta.env.VITE_MOMENTSAV_WEBAPP_COMING_SOON === "true";
+}
+
 export function getMomentsConvexUrl() {
   return trimTrailingSlash(import.meta.env.VITE_MOMENTSAV_CONVEX_URL);
 }

@@ -7,7 +7,7 @@ import { MomentsAppShell } from "@/components/moments-app-shell";
 import { MomentsLoginPage } from "@/components/moments-login-page";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { momentsBrandAssets } from "@/lib/moments-config";
+import { isMomentsWebAppComingSoon, momentsBrandAssets } from "@/lib/moments-config";
 import { localizedAppPath, useMomentsText } from "@/lib/moments-i18n";
 
 export const Route = createFileRoute("/")({
@@ -15,6 +15,10 @@ export const Route = createFileRoute("/")({
 });
 
 function IndexRoute() {
+  if (isMomentsWebAppComingSoon()) {
+    return <MomentsLoginPage comingSoon />;
+  }
+
   const text = useMomentsText();
   const locale = useAppsAvLocale();
   const homeIcons = [<Images className="size-4" />, <SlidersHorizontal className="size-4" />, <Film className="size-4" />];

@@ -6,7 +6,7 @@ import { Card } from "@/components/ui/card";
 import { momentsBrandAssets } from "@/lib/moments-config";
 import { localizedAppPath, useMomentsProductConfig, useMomentsText } from "@/lib/moments-i18n";
 
-export function MomentsLoginPage({ compact = false }: { compact?: boolean }) {
+export function MomentsLoginPage({ comingSoon = false, compact = false }: { comingSoon?: boolean; compact?: boolean }) {
   const text = useMomentsText();
   const locale = useAppsAvLocale();
   const productConfig = useMomentsProductConfig();
@@ -15,21 +15,20 @@ export function MomentsLoginPage({ compact = false }: { compact?: boolean }) {
   if (compact) {
     return (
       <div className="overflow-hidden rounded-lg border border-[#e5c1c7] bg-[#fff8f3]/90 shadow-lg shadow-[#7b233f]/10">
-        <LoginContent locale={locale} signInHref={signInHref} text={text} />
+        <LoginContent comingSoon={comingSoon} locale={locale} signInHref={signInHref} text={text} />
       </div>
     );
   }
 
   return (
     <div className="moments-canvas min-h-screen overflow-hidden px-5 pt-5 sm:px-8">
-      <LoginContent locale={locale} signInHref={signInHref} text={text} />
+      <LoginContent comingSoon={comingSoon} locale={locale} signInHref={signInHref} text={text} />
       <AvAppFooter className="mt-4 border-transparent bg-transparent px-0 pb-4 pt-2" labels={text.footer} product={productConfig} />
     </div>
   );
 }
 
-function LoginContent({ locale: _locale, signInHref, text }: { locale: ReturnType<typeof useAppsAvLocale>; signInHref: string; text: ReturnType<typeof useMomentsText> }) {
-  void _locale;
+function LoginContent({ comingSoon, locale, signInHref, text }: { comingSoon: boolean; locale: ReturnType<typeof useAppsAvLocale>; signInHref: string; text: ReturnType<typeof useMomentsText> }) {
   const guestScenes = [
     {
       body: text.login.mapBody,
@@ -63,15 +62,21 @@ function LoginContent({ locale: _locale, signInHref, text }: { locale: ReturnTyp
             {text.login.heroBody}
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
-            <Button asChild className="h-12 rounded-full bg-[#7c2947] px-5 text-white shadow-lg shadow-[#7c2947]/18 hover:bg-[#963956]">
-              <a href={signInHref} onClick={(event) => {
-                event.preventDefault();
-                window.location.assign(signInHref);
-              }}>
-                {text.login.cta}
-                <ArrowRight className="size-4" aria-hidden="true" />
-              </a>
-            </Button>
+            {comingSoon ? (
+              <Button disabled className="h-12 rounded-full bg-[#7c2947] px-5 text-white shadow-lg shadow-[#7c2947]/18 disabled:opacity-100">
+                {comingSoonLabel(locale)}
+              </Button>
+            ) : (
+              <Button asChild className="h-12 rounded-full bg-[#7c2947] px-5 text-white shadow-lg shadow-[#7c2947]/18 hover:bg-[#963956]">
+                <a href={signInHref} onClick={(event) => {
+                  event.preventDefault();
+                  window.location.assign(signInHref);
+                }}>
+                  {text.login.cta}
+                  <ArrowRight className="size-4" aria-hidden="true" />
+                </a>
+              </Button>
+            )}
           </div>
         </div>
 
@@ -104,6 +109,10 @@ function LoginContent({ locale: _locale, signInHref, text }: { locale: ReturnTyp
       </section>
     </main>
   );
+}
+
+function comingSoonLabel(locale: ReturnType<typeof useAppsAvLocale>) {
+  return ({ ca: "Properament", de: "Demnächst", en: "Coming soon", es: "Próximamente", fr: "Prochainement" } as const)[locale] ?? "Coming soon";
 }
 
 function LoginMetric({ icon, label }: { icon: ReactNode; label: string }) {

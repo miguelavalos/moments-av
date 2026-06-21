@@ -3,7 +3,7 @@ import { AppsAvWebProvider, getAppsAvLocaleFromSearch, useAppsAvLocale } from "@
 import { HeadContent, Outlet, Scripts, createRootRoute, useRouterState } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 import { useEffect, useRef } from "react";
-import { getAccountApiBaseUrl, getAccountPublishableKey } from "@/lib/moments-config";
+import { getAccountApiBaseUrl, getAccountPublishableKey, isMomentsWebAppComingSoon } from "@/lib/moments-config";
 import { localizedAppPath, useMomentsAccountLocalization, useMomentsText } from "@/lib/moments-i18n";
 import "../styles.css";
 
@@ -45,12 +45,26 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
       <body>
         <AppsAvWebProvider initialLocale={initialLocale}>
           <LocaleUrlSync />
+          <ComingSoonRouteGate />
           <AccountBoundary>{children}</AccountBoundary>
         </AppsAvWebProvider>
         <Scripts />
       </body>
     </html>
   );
+}
+
+function ComingSoonRouteGate() {
+  const locale = useAppsAvLocale();
+  const pathname = useRouterState({ select: (state) => state.location.pathname });
+
+  useEffect(() => {
+    if (isMomentsWebAppComingSoon() && pathname !== "/") {
+      window.location.replace(localizedAppPath("/", locale));
+    }
+  }, [locale, pathname]);
+
+  return null;
 }
 
 function LocaleUrlSync() {
