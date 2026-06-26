@@ -14,6 +14,10 @@ in the private AVALSYS suite.
 - [ ] For TestFlight/App Store handoff, the private production local config has
   been generated and `scripts/check-ios-runtime-config.sh --env prod
   --configuration Release` passes before archive/upload.
+- [ ] The release Mac has completed the private
+  `docs/platform/apple-release-machine-setup.md` gate before unattended
+  export/upload; the Apple Distribution private key passes non-interactive
+  `codesign`.
 - [ ] Auth, account, credit, purchase, upload, render, and deletion smokes use a
   signed install. Any simulator that previously ran an unsigned build has had
   both `com.avalsys.momentsav.dev` and `com.avalsys.momentsav` uninstalled

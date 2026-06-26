@@ -50,6 +50,10 @@ Mandatory rules:
   `ACCOUNTAV_PUBLISHABLE_KEY`, `ACCOUNTAV_KEYCHAIN_SERVICE`, and
   `ACCOUNTAV_KEYCHAIN_ACCESS_GROUP` must be exposed through Info.plist,
   passed to Account AV, and validated by the runtime config check;
+- before unattended TestFlight/App Store export/upload from a new or recently
+  reconfigured Mac, complete the private release-machine setup in
+  `private/avalsys-suite/docs/platform/apple-release-machine-setup.md`; the
+  Apple Distribution private key must pass non-interactive `codesign`;
 - keep account and product APIs split: `ACCOUNTAV_API_BASE_URL` is for shared
   Account AV routes such as `/v1/me`; `MOMENTSAV_API_BASE_URL` is for
   `/v1/apps/momentsav/*`;
