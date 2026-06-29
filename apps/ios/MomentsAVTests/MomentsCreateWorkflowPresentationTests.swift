@@ -455,7 +455,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
         )
 
         XCTAssertEqual(presentation.activeMomentId, "moment-1")
-        XCTAssertEqual(presentation.pickerTitle, "Adding media...")
+        XCTAssertEqual(presentation.pickerTitle, "Adding media…")
         XCTAssertEqual(presentation.remainingSlots, 79)
         XCTAssertEqual(presentation.selectedCountTitle, "1 selected")
         XCTAssertEqual(presentation.selectionMessage, "")
@@ -494,7 +494,7 @@ final class MomentsCreateWorkflowPresentationTests: XCTestCase {
             availabilityMessage: "Ready."
         )
 
-        XCTAssertEqual(presentation.planButtonTitle, "Preparing story...")
+        XCTAssertEqual(presentation.planButtonTitle, "Preparing story…")
         XCTAssertEqual(presentation.emptyMessage, "Avi can prepare a story from your photos and clips.")
         XCTAssertEqual(presentation.savedScenes.map(\.id), ["scene-1", "scene-2"])
         XCTAssertTrue(presentation.canPlanStory)
