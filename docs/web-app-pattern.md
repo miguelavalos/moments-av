@@ -30,9 +30,9 @@ gallery, and Avi stay behind Account AV.
 Run:
 
 ```bash
-bun run typecheck
-bun run build:production
-bun run qa:shared
+vp run typecheck
+vp run build:production
+vp run qa:shared
 ```
 
 `qa:shared` covers five locales, product-owned locale links, signed-out

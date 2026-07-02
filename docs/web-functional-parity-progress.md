@@ -180,8 +180,8 @@ the selected locale remains shareable and Back/Reload stay coherent.
 Completed locally with preview Varlock config:
 
 ```bash
-bun run --cwd apps/web typecheck
-bun run --cwd apps/web build:preview
+vp run --filter ./apps/web typecheck
+vp run --filter ./apps/web build:preview
 ```
 
 Browser verification covered:

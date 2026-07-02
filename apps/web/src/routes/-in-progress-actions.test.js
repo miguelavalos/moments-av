@@ -1,5 +1,5 @@
 import { readFileSync } from "node:fs";
-import { describe, expect, it } from "bun:test";
+import { describe, expect, it } from "vite-plus/test";
 
 describe("Moments in-progress destructive actions", () => {
   const routeSource = readFileSync(new URL("./in-progress.tsx", import.meta.url), "utf8");
