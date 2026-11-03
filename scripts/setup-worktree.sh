@@ -2,8 +2,8 @@
 set -eu
 
 worktree_root="$(cd "$(dirname "$0")/.." && pwd)"
-main_root="$(cd "$(git -C "$worktree_root" rev-parse --git-common-dir)/.." && pwd)"
 cd "$worktree_root"
+main_root="$(cd "$(git rev-parse --path-format=absolute --git-common-dir)/.." && pwd)"
 
 for sibling in account-av apps-av; do
   source_dir="$(cd "$main_root/.." && pwd)/$sibling"
