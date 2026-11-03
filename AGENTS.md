@@ -73,3 +73,19 @@ Mandatory rules:
 
 If the private repo is unavailable, stop and say that the authoritative runbook
 cannot be checked. Do not substitute a guessed local workflow.
+
+## Verification
+
+Before opening a pull request, run `scripts/check-public-hygiene.sh` once from
+the repository root. The web typecheck, the full iOS suite, release builds and
+device runs belong to CI and the required checks and are not repeated locally
+unless the change needs it; a change to the iOS app runs the simulator test
+command in `docs/install-ios.md` before the pull request.
+
+## Review
+
+The independent review that sets `agent-review` follows
+[project-bootstrap/docs/REVIEW.md](https://github.com/miguelavalos/project-bootstrap/blob/main/docs/REVIEW.md),
+available as `~/github/project-bootstrap/docs/REVIEW.md` on agent machines.
+The reviewer is a fresh agent that did not write the change, and its review
+comment starts with `PASS` or `BLOCK`.
